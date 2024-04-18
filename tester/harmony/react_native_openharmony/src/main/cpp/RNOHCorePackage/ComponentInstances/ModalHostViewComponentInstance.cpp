@@ -10,6 +10,8 @@
 
 namespace rnoh {
 
+static constexpr int32_t ANIMATION_DURATION = 300;
+
 class ModalHostTouchHandler : public TouchEventHandler {
  private:
   ModalHostViewComponentInstance* m_rootView;
@@ -53,6 +55,18 @@ void ModalHostViewComponentInstance::updateDisplaySize(
       .width = screenMetrics.width / screenMetrics.scale,
       .height = screenMetrics.height / screenMetrics.scale};
   state->updateState({screenSize});
+  if (m_props != nullptr &&
+      m_props->animationType ==
+          facebook::react::ModalHostViewAnimationType::Slide) {
+    updateSlideTransition(displayMetrics);
+  }
+}
+
+void ModalHostViewComponentInstance::updateSlideTransition(
+    DisplayMetrics const& displayMetrics) {
+  auto screenSize = displayMetrics.screenPhysicalPixels;
+  m_rootStackNode.setTranslateTransition(
+      0, float(screenSize.height / screenSize.scale), ANIMATION_DURATION);
 }
 
 ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
@@ -66,6 +80,7 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
 
 void ModalHostViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
+  using AnimationType = facebook::react::ModalHostViewAnimationType;
   CppComponentInstance::onPropsChanged(props);
   if (!props) {
     return;
