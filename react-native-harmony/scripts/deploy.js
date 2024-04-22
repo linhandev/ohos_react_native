@@ -104,7 +104,7 @@ function runDeployment() {
                 });
                 const mergeRequestId = await createMergeRequest(
                   `release-react-native-harmony-${version}`,
-                  'release: react-native-harmony@${version}'
+                  `release: react-native-harmony@${version}`
                 );
                 console.log(`Please merge the following Merge Request:\n
                 https://gl.swmansion.com/rnoh/react-native-harmony/-/merge_requests/${mergeRequestId}`);
