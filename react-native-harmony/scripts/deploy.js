@@ -94,8 +94,12 @@ function runDeployment() {
                     stdio: 'inherit',
                   }
                 );
-                execSync(`git push -u origin HEAD`, { stdio: 'inherit' });
-                execSync(`git push -u origin v${version}`, {
+                execSync(`git push -u origin HEAD --no-verify`, {
+                  stdio: 'inherit',
+                });
+
+                execSync(`git tag v${version}`);
+                execSync(`git push -u origin v${version} --no-verify`, {
                   stdio: 'inherit',
                 });
                 const mergeRequestId = await createMergeRequest(
