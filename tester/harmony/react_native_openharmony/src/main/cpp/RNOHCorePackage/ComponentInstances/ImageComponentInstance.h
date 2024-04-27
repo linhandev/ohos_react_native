@@ -16,6 +16,7 @@ class ImageComponentInstance
     std::optional<bool> focusable;
     std::optional<std::string> alt;
     std::optional<std::string> loadingIndicatorSource;
+    std::optional<int32_t> fadeDuration;
     static ImageRawProps getFromDynamic(folly::dynamic value);
   };
   ImageRawProps m_rawProps;

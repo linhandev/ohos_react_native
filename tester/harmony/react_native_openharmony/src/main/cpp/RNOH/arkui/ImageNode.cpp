@@ -173,6 +173,15 @@ ImageNode& ImageNode::setAlt(std::string const& uri) {
   return *this;
 }
 
+ImageNode& ImageNode::setFadeDuration(int32_t duration) {
+  // TODO: duration should have a range and maybe need to be checked here.
+  ArkUI_NumberValue value[] = {{ .f32 = 0.0 }, { .i32 = duration }, { .i32 = ARKUI_CURVE_LINEAR }}
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_OPACITY_TRANSITION, &item));
+  return *this;
+}
+
 ImageNode& ImageNode::resetFocusable() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_FOCUSABLE));

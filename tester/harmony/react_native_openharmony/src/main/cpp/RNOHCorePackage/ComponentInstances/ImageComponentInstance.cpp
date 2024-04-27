@@ -45,6 +45,14 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     }
   }
 
+  if (m_rawProps.fadeDuration != rawProps.fadeDuration) {
+    m_rawProps.fadeDuration = rawProps.fadeDuration;
+    if (m_rawProps.fadeDuration.has_value()) {
+      this->getLocalRootArkUINode().setFadeDuration(
+          m_rawProps.fadeDuration.value());
+    }
+  }
+
   if (m_rawProps.loadingIndicatorSource != rawProps.loadingIndicatorSource) {
     m_rawProps.loadingIndicatorSource = rawProps.loadingIndicatorSource;
     if (m_rawProps.loadingIndicatorSource.has_value()) {
@@ -156,8 +164,11 @@ ImageComponentInstance::ImageRawProps::getFromDynamic(folly::dynamic value) {
   auto loadingIndicatorSource = (value.count("loadingIndicatorSource") > 0)
       ? std::optional(value["loadingIndicatorSource"].at("uri").getString())
       : std::nullopt;
+  auto fadeDuration = (value.count("fadeDuration") > 0)
+      ? std::optional(value["fadeDuration"].asInt())
+      : std::nullopt;
 
-  return {resizeMethod, focusable, alt, loadingIndicatorSource};
+  return {resizeMethod, focusable, alt, loadingIndicatorSource, fadeDuration};
 }
 
 } // namespace rnoh
