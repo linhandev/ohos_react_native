@@ -226,6 +226,12 @@ void TextInputNode::resetSelectedBackgroundColor() {
       m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR));
 }
 
+void TextInputNode::setPasswordRules(std::string rules) {
+  ArkUI_AttributeItem item = {.string = rules.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item));
+}
+
 std::string TextInputNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT);

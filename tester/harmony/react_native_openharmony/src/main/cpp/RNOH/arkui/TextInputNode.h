@@ -63,6 +63,8 @@ class TextInputNode : public TextInputNodeBase {
 
   void resetSelectedBackgroundColor();
 
+  void setPasswordRules(std::string rules);
+  
   std::string getTextContent() override;
 };
 

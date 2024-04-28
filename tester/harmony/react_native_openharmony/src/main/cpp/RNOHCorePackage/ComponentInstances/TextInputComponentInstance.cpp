@@ -123,6 +123,12 @@ void TextInputComponentInstance::onPropsChanged(
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
 
   if (!m_props ||
+        props->traits.passwordRules != 
+          m_props->traits.passwordRules) {
+      m_textInputNode.setPasswordRules(props->traits.passwordRules);
+  }
+
+  if (!m_props ||
       *(props->textAttributes.foregroundColor) !=
           *(m_props->textAttributes.foregroundColor)) {
     if (props->textAttributes.foregroundColor) {
