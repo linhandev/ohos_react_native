@@ -53,8 +53,8 @@ ToggleNode& ToggleNode::setSelectedColor(
 ToggleNode& ToggleNode::setUnselectedColor(
     facebook::react::SharedColor const& color) {
   if (!color) {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR));
+    // maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    //     m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR));
     return *this;
   }
   uint32_t colorValue = *color;
@@ -62,8 +62,8 @@ ToggleNode& ToggleNode::setUnselectedColor(
   ArkUI_AttributeItem colorItem = {
       preparedColorValue,
       sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR, &colorItem));
+  // maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  //     m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR, &colorItem));
   return *this;
 }
 
