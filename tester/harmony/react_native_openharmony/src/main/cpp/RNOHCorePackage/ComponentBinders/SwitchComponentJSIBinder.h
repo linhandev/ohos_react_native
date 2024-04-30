@@ -7,6 +7,7 @@ class SwitchComponentJSIBinder : public ViewComponentJSIBinder {
     auto nativeProps = ViewComponentJSIBinder::createNativeProps(rt);
     nativeProps.setProperty(rt, "thumbTintColor", "Color");
     nativeProps.setProperty(rt, "onTintColor", "Color");
+    nativeProps.setProperty(rt, "tintColor", "Color");
     nativeProps.setProperty(rt, "disabled", "boolean");
     nativeProps.setProperty(rt, "value", "boolean");
 
