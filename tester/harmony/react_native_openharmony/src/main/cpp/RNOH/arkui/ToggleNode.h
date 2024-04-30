@@ -23,6 +23,7 @@ class ToggleNode : public ArkUINode {
   void setToggleNodeDelegate(ToggleNodeDelegate* ToggleNodeDelegate);
 
   ToggleNode& setSelectedColor(facebook::react::SharedColor const& color);
+  ToggleNode& setUnselectedColor(facebook::react::SharedColor const& color);
   ToggleNode& setThumbColor(facebook::react::SharedColor const& color);
   ToggleNode& setDisable(bool disable);
   ToggleNode& setFocusable(bool focusable);

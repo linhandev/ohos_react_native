@@ -12,6 +12,7 @@ class ImageComponentJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "blurRadius", "number");
     object.setProperty(rt, "defaultSource", "RCTImageSource");
     object.setProperty(rt, "loadingIndicatorSource", "RCTImageSource");
+    object.setProperty(rt, "fadeDuration", "number");
     return object;
   }
   facebook::jsi::Object createDirectEventTypes(
