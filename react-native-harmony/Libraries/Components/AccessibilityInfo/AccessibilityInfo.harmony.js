@@ -52,22 +52,26 @@ const EventNames: Map<
   $Keys<AccessibilityEventDefinitions>,
   string
 > = Platform.OS === "android"
-  ? new Map([
+    ? new Map([
       ["change", "touchExplorationDidChange"],
       ["reduceMotionChanged", "reduceMotionDidChange"],
       ["screenReaderChanged", "touchExplorationDidChange"],
       ["accessibilityServiceChanged", "accessibilityServiceDidChange"],
     ])
-  : new Map([
-      ["announcementFinished", "announcementFinished"],
-      ["boldTextChanged", "boldTextChanged"],
-      ["change", "screenReaderChanged"],
-      ["grayscaleChanged", "grayscaleChanged"],
-      ["invertColorsChanged", "invertColorsChanged"],
-      ["reduceMotionChanged", "reduceMotionChanged"],
-      ["reduceTransparencyChanged", "reduceTransparencyChanged"],
-      ["screenReaderChanged", "screenReaderChanged"],
-    ]);
+    : (Platform.OS === "harmony" ?
+      new Map([
+        ["accessibilityServiceChanged", "accessibilityServiceChanged"],
+      ])
+      : new Map([
+        ["announcementFinished", "announcementFinished"],
+        ["boldTextChanged", "boldTextChanged"],
+        ["change", "screenReaderChanged"],
+        ["grayscaleChanged", "grayscaleChanged"],
+        ["invertColorsChanged", "invertColorsChanged"],
+        ["reduceMotionChanged", "reduceMotionChanged"],
+        ["reduceTransparencyChanged", "reduceTransparencyChanged"],
+        ["screenReaderChanged", "screenReaderChanged"],
+      ]));
 
 /**
  * Sometimes it's useful to know whether or not the device has a screen reader
@@ -278,7 +282,7 @@ const AccessibilityInfo = {
    */
   isAccessibilityServiceEnabled(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      if (Platform.OS === "android") {
+      if (Platform.OS === "android" || Platform.OS === "harmony") {
         if (
           NativeAccessibilityInfoAndroid != null &&
           NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled != null
