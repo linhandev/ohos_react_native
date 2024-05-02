@@ -67,6 +67,9 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
 void rnoh::ScrollViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
+
+  auto rawProps = ScrollViewRawProps::getFromDynamic(props->rawProps);
+
   if (props->rawProps.count("persistentScrollbar") > 0) {
     m_persistentScrollbar = props->rawProps["persistentScrollbar"].asBool();
   }
@@ -92,12 +95,33 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               : 0xFF000000)
       .setEnablePaging(props->pagingEnabled);
 
+  if (m_rawProps.overScrollMode != rawProps.overScrollMode) {
+    m_rawProps.overScrollMode = rawProps.overScrollMode;
+    if (m_rawProps.overScrollMode.has_value()) {
+      m_scrollNode.setScrollOverScrollMode(
+                      m_rawProps.overScrollMode.value(),
+                      isHorizontal(props) ? props->alwaysBounceHorizontal
+                      : props->alwaysBounceVertical);
+   }
+  }
+  if (m_rawProps.nestedScrollEnabled != rawProps.nestedScrollEnabled) {
+    m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
+    if (m_rawProps.nestedScrollEnabled.has_value()) {
+      m_scrollNode.setNestedScrollEnabled(m_rawProps.nestedScrollEnabled.value(), props->scrollEnabled);
+    }
+  }
+  if (m_rawProps.endFillColor != rawProps.endFillColor) {
+    m_rawProps.endFillColor = rawProps.endFillColor;
+    if (m_rawProps.endFillColor.has_value()) {
+      m_scrollNode.setEndFillColor(m_rawProps.endFillColor.value());
+    }
+  }
+
   if (!m_props || props->contentOffset != m_props->contentOffset) {
     m_scrollNode.scrollTo(
         props->contentOffset.x, props->contentOffset.y, false);
     updateStateWithContentOffset(props->contentOffset);
   }
-
   if (!m_props || props->centerContent != m_props->centerContent) {
     if (props->centerContent) {
       m_scrollNode.setCenterContent(true);
@@ -105,7 +129,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       m_scrollNode.setCenterContent(false);
     }
   }
-
   setScrollSnap(
       props->snapToStart,
       props->snapToEnd,
@@ -486,6 +509,21 @@ std::optional<float> ScrollViewComponentInstance::getNextSnapTarget() {
     nextSnapTarget = static_cast<float>(intervalIndex * interval);
   }
   return nextSnapTarget;
+}
+
+ScrollViewComponentInstance::ScrollViewRawProps
+ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic value) {
+  auto overScrollMode = (value.count("overScrollMode") > 0)
+      ? std::optional(value["overScrollMode"].asString())
+      : std::nullopt;
+  auto nestedEnabled = (value.count("nestedEnabled") > 0)
+      ? std::optional(value["nestedEnabled"].asBool())
+      : std::nullopt;
+  auto endFillColor = (value.count("endFillColor") > 0)
+      ? std::optional(value["endFillColor"] > 0)
+      : std::nullopt;
+  
+  return {overScrollMode, nestedEnabled, endFillColor};
 }
 
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()

@@ -83,6 +83,43 @@ void ScrollNode::setScrollNodeDelegate(ScrollNodeDelegate* scrollNodeDelegate) {
   m_scrollNodeDelegate = scrollNodeDelegate;
 }
 
+void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode, bool alwaysBounce) {
+  ArkUI_EdgeEffect edgeEffect;
+  if (overScrollMode == "never") {
+    edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_NONE;
+  } else if (overScrollMode == "auto") {
+    edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
+    alwaysBounce = false;
+  } else if (overScrollMode == "always") {
+    edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
+    alwaysBounce = true;
+  }
+  ArkUI_NumberValue value[] = {{.i32 = edgeEffect}, {.i32 = alwaysBounce}};
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));
+}
+
+void ScrollNode::setNestedScrollEnabled(bool nestedScrollEnabled, bool ScrollEnabled) {
+  bool status = true;
+  if (!nestedScrollEnabled || !ScrollEnabled) {
+    status = false;
+  }
+  ArkUI_NumberValue value[] = {{.i32 = status}};
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_SCROLL_ENABLE_SCROLL_INTERACTION, &item));
+}
+
+void ScrollNode::setEndFillColor(uint32_t color) {
+  ArkUI_NumberValue preparedColorValue[] = {{.u32 = color}};
+  ArkUI_AttributeItem colorItem = {
+      preparedColorValue,
+      sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_BACKGROUND_COLOR, &colorItem));
+}
+
 void ScrollNode::setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode) {
   std::array<ArkUI_NumberValue, 2> value{
       {{.i32 = scrollNestedMode}, {.i32 = scrollNestedMode}}};
