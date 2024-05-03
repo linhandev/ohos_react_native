@@ -73,8 +73,7 @@ export class WebSocketTurboModule extends TurboModule {
     if (url.startsWith('http')) {
       url = url.replace('http', 'ws')
     }
-
-    ws.on('open', (data) => {
+    ws.on('open', (err: BusinessError, value: Object) => {
       this.ctx.rnInstance.emitDeviceEvent("websocketOpen", {
         id: socketID,
         protocol: "",
@@ -82,16 +81,18 @@ export class WebSocketTurboModule extends TurboModule {
     });
 
     ws.on('error', (err) => this.handleError(socketID, err));
-    ws.on('message', (err, data) => this.onMessage(err, data, socketID));
+    ws.on('message', (err: BusinessError, value: string | ArrayBuffer) => {
+      this.onMessage(err, value, socketID);
+    });
     ws.on('close', (err, data) => {
       this.ctx.rnInstance.emitDeviceEvent("websocketClosed", {
         id: socketID,
         ...data,
       })
-
     })
-
-    ws.connect(url, { header: options.headers }, (err) => this.handleError(socketID, err));
+    ws.connect(url, { header: options.headers, protocol: (protocols ? protocols.join(',') : "") }, (err: BusinessError, value: boolean) => {
+      this.handleError(socketID, err)
+    });
     this.socketsById.set(socketID, ws);
   }
 

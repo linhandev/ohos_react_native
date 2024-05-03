@@ -286,4 +286,27 @@ TextNode& TextNode::setWordBreak(ArkUI_WordBreak wordBreak) {
   return *this;
 }
 
+TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
+  ArkUI_NumberValue value[] = {{.u32 = color}};
+  ArkUI_AttributeItem item = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR, &item));
+  return *this;
+}
+
+TextNode& TextNode::setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]) {
+  ArkUI_AttributeItem item = {
+      .value = types, .size = sizeof(types) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+  
+  ArkUI_NumberValue value[] = {{.i32 = enable}};
+  ArkUI_AttributeItem item2 = {
+      .value = types, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item2));
+  return *this;
+}
+
 } // namespace rnoh
