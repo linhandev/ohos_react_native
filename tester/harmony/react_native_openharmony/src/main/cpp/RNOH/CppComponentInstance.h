@@ -263,6 +263,14 @@ class CppComponentInstance : public ComponentInstance {
       markBoundingBoxAsDirty();
     }
 
+    auto rawProps = ViewRawProps::getFromDynamic(props->rawProps);
+    if (m_rawProps.needsOffscreenAlphaCompositing != rawProps.needsOffscreenAlphaCompositing) {
+      m_rawProps.needsOffscreenAlphaCompositing = rawProps.needsOffscreenAlphaCompositing;
+      if (m_rawProps.needsOffscreenAlphaCompositing.has_value()) {
+        this->getLocalRootArkUINode().setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing.value());
+      }
+    }
+
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
 
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
@@ -332,6 +340,18 @@ class CppComponentInstance : public ComponentInstance {
       return id;
     }
   }
+
+  struct ViewRawProps {
+    std::optional<bool> needsOffscreenAlphaCompositing;
+    static ViewRawProps getFromDynamic(folly::dynamic value) {
+      auto needsOffscreenAlphaCompositing = (value.count("needsOffscreenAlphaCompositing") > 0)
+        ? std::optional(value["needsOffscreenAlphaCompositing"].asBool())
+        : std::nullopt;
+
+      return {needsOffscreenAlphaCompositing};
+    }
+  };
+  ViewRawProps m_rawProps;
 
   SharedConcreteProps m_props;
   SharedConcreteState m_state;
