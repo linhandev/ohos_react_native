@@ -39,6 +39,10 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     this->getLocalRootArkUINode().setResizeMode(props->resizeMode);
   }
 
+  if (!m_props || m_props->capInsets != props->capInsets) {
+    this->getLocalRootArkUINode().setCapInsets(props->capInsets);
+  }
+
   if (!m_props || m_props->defaultSources != props->defaultSources) {
     if (!(props->defaultSources.empty())) {
       this->getLocalRootArkUINode().setAlt(props->defaultSources[0].uri);

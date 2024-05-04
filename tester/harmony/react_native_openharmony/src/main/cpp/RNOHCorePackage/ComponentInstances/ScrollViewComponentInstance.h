@@ -31,6 +31,15 @@ class ScrollViewComponentInstance
   float m_recentScrollFrameOffset = 0;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
 
+  // Mimics of implementation in ImageComponentInstance.cpp
+  struct ScrollViewRawProps {
+    std::optional<std::string> overScrollMode;
+    std::optional<bool> nestedScrollEnabled;
+    std::optional<uint32_t> endFillColor;
+    static ScrollViewRawProps getFromDynamic(folly::dynamic value);
+  };
+  ScrollViewRawProps m_rawProps;
+
   facebook::react::Float getFrictionFromDecelerationRate(
       facebook::react::Float decelerationRate);
   void emitOnScrollEndDragEvent();
@@ -100,5 +109,6 @@ class ScrollViewComponentInstance
   void updateStateWithContentOffset(facebook::react::Point contentOffset);
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
+  facebook::react::Point getContentViewOffset() const;
 };
 } // namespace rnoh

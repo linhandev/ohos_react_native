@@ -103,7 +103,7 @@ export const ImageTest = () => {
           return new Promise((resolve, reject) => {
             Image.getSizeWithHeaders(
               BASE64_IMAGE_STRING,
-              {crossOrigin:'use-credentials'},
+              {crossOrigin: 'use-credentials'},
               (width, height) => {
                 expect(width).to.be.eq(10);
                 expect(height).to.be.eq(10);
@@ -122,7 +122,7 @@ export const ImageTest = () => {
           return new Promise((resolve, reject) => {
             Image.getSizeWithHeaders(
               REMOTE_IMAGE_URL,
-              {referrerPolicy:'no-referrer-when-downgrad'},
+              {referrerPolicy: 'no-referrer-when-downgrad'},
               (width, height) => {
                 expect(width).to.be.eq(100);
                 expect(height).to.be.eq(100);
@@ -365,6 +365,34 @@ export const ImageTest = () => {
               style={{width: 64, height: 64, margin: 4}}
               source={LOCAL_IMAGE_ASSET_ID}
               blurRadius={25}
+            />
+          </View>
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="capInsets" >
+        <TestCase.Example
+          tags={['C_API']}
+          itShould="capInsets images with various cap insets">
+          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:0, right:0, top:0, bottom:0}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:10, right:10, top:10, bottom:10}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:20, right:20, top:20, bottom:20}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:30, right:30, top:30, bottom:30}}
             />
           </View>
         </TestCase.Example>

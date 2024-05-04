@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {useCallback, useEffect, useState} from 'react';
-import {TestCase} from '../components';
+import {Button, TestCase} from '../components';
 
 export const RefreshControlTest = () => {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -151,7 +151,9 @@ export const RefreshControlTest = () => {
         modal>
         <RefreshControlInsideFlatListWithStylesExample />
       </TestCase.Example>
-      <TestCase.Example itShould="display background color for refresh control indicator">
+      <TestCase.Example
+        tags={['C_API']}
+        itShould="display background color for refresh control indicator">
         <ScrollView
           style={{height: 128, backgroundColor: 'white'}}
           refreshControl={
@@ -164,6 +166,7 @@ export const RefreshControlTest = () => {
         />
       </TestCase.Example>
       <TestCase.Example
+        tags={['C_API']}
         itShould="display pink 'I am refreshing!' text below refresh control indicator"
         skip={{
           harmony: false,
@@ -181,9 +184,49 @@ export const RefreshControlTest = () => {
           }
         />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        tags={['C_API']}
+        itShould="disable/enable pull to refresh on click">
+        <PullToRefreshEnabledExample />
+      </TestCase.Example>
     </TestSuite>
   );
 };
+
+function PullToRefreshEnabledExample() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [enabled, setEnabled] = useState<boolean | undefined>(true);
+  return (
+    <>
+      <Text style={{margin: 4}}>
+        Refresh control {enabled ? 'enabled' : 'disabled'}
+      </Text>
+      <Button
+        label={enabled ? 'disable' : 'enable'}
+        onPress={() => setEnabled(prev => !prev)}
+      />
+      <Button label={'set undefined'} onPress={() => setEnabled(undefined)} />
+      <ScrollView
+        style={{height: 128, backgroundColor: 'white'}}
+        centerContent
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            enabled={enabled}
+            onRefresh={() => {
+              setIsRefreshing(true);
+              setTimeout(() => setIsRefreshing(false), 1000);
+            }}
+          />
+        }>
+        <Text style={{width: '100%', textAlign: 'center'}}>
+          Pull to show refresh control
+        </Text>
+      </ScrollView>
+    </>
+  );
+}
 
 function PullToRefreshExample({
   doNothingOnRefresh,

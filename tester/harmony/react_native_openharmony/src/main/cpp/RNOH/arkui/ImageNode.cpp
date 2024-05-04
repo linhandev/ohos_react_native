@@ -173,6 +173,17 @@ ImageNode& ImageNode::setAlt(std::string const& uri) {
   return *this;
 }
 
+ImageNode& ImageNode::setCapInsets(facebook::react::EdgeInsets const& capInsets)
+{
+  ArkUI_NumberValue value[] = {
+    {.f32 = static_cast<float>(capInsets.left)}, {.f32 = static_cast<float>(capInsets.top)},
+    {.f32 = static_cast<float>(capInsets.right)}, {.f32 = static_cast<float>(capInsets.bottom)}
+  };
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(m_nodeHandle, NODE_IMAGE_RESIZABLE, &item));
+  return *this;
+}
+
 ImageNode& ImageNode::setFadeDuration(int32_t duration) {
   // TODO: duration should have a range and maybe need to be checked here.
   ArkUI_NumberValue value[] = {{ .f32 = 0.0 }, { .i32 = duration }, { .i32 = ARKUI_CURVE_LINEAR }};
