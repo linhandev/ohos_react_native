@@ -183,6 +183,9 @@ export class RNInstancesCoordinator {
     this.rnInstanceRegistry.forEach(instance => instance.onBackground())
   }
 
+  public onWindowStageChange(windowStageEvent: window.WindowStageEventType) {
+    this.rnInstanceRegistry.forEach((rnInstance) => rnInstance.onWindowStageChange(windowStageEvent))
+  }
 
   public onWindowSizeChange(windowSize: window.Size) {
     this.displayMetricsManager.updateWindowSize(windowSize);
@@ -190,7 +193,7 @@ export class RNInstancesCoordinator {
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
-    this.displayMetricsManager.updateDisplayMetrics()
+    this.displayMetricsManager?.updateDisplayMetrics()
     this.rnInstanceRegistry?.forEach((rnInstance) => rnInstance.onConfigurationUpdate(systemConfiguration))
   }
 

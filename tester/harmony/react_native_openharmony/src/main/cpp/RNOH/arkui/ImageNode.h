@@ -29,6 +29,7 @@ class ImageNode : public ArkUINode {
   ImageNode& setBlur(facebook::react::Float blur);
   ImageNode& setObjectRepeat(
       facebook::react::ImageResizeMode const& resizeMode);
+  ImageNode& setCapInsets(facebook::react::EdgeInsets const& capInsets);
 
   ImageNode& setInterpolation(int32_t interpolation);
   ImageNode& setDraggable(bool draggable);
