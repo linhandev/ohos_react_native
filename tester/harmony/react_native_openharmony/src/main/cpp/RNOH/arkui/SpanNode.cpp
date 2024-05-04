@@ -121,6 +121,11 @@ SpanNode& SpanNode::setBackgroundStyle(uint32_t color) {
   return *this;
 }
 
+SpanNode& SpanNode::resetBackgroundStyle() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+      m_nodeHandle, NODE_SPAN_TEXT_BACKGROUND_STYLE));
+}
+
 SpanNode& SpanNode::setLengthMetricUnit(ArkUI_LengthMetricUnit unit) {
   maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(m_nodeHandle, unit));
   return *this;
