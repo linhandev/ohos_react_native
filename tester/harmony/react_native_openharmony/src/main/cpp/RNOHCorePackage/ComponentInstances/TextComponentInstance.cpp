@@ -114,8 +114,8 @@ void TextComponentInstance::onPropsChanged(
     
     // selectionColor
     if (textProps->rawProps.count("selectionColor") != 0) {
-      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
-      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
+//      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
+//      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
       // Setting this attribute will crash and temporarily block it
 //      m_textNode.setSelectedBackgroundColor(selectionColor);
     }
