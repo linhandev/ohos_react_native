@@ -293,8 +293,12 @@ void TextComponentInstance::setFragment(
   // BackgroundColor
   VLOG(3) << "[text-debug] textAttributes.backgroundColor="
           << (uint32_t)(*textAttributes.backgroundColor) << ", index=" << index;
-  if (textAttributes.backgroundColor) {
+  if (textAttributes.isHighlighted.has_value() && textAttributes.isHighlighted.value()) {
+    spanNode->setBackgroundStyle((uint32_t)(0xFF80808080)); // Hard-Coded grey color.
+  } else if (textAttributes.backgroundColor) {
     spanNode->setBackgroundStyle((uint32_t)(*textAttributes.backgroundColor));
+  } else {
+    spanNode->resetBackgroundStyle();
   }
 
   // letterSpacing
