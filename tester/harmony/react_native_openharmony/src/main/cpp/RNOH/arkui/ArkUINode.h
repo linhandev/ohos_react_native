@@ -94,6 +94,7 @@ class ArkUINode {
   virtual ArkUINode&
   setPadding(float left, float top, float right, float bottom);
   virtual ArkUINode& setVisibility(ArkUI_Visibility visibility);
+  virtual ArkUINode& setRenderGroup(bool flag);
 
   virtual ArkUINode& resetAccessibilityText();
 
