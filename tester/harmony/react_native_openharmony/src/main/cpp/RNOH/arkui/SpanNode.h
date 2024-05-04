@@ -20,8 +20,9 @@ class SpanNode : public ArkUINode {
   SpanNode& setFontFamily(const std::string& fontFamily);
   SpanNode& setFontWeight(int32_t fontWeight);
   SpanNode& setTextDecoration(
-      int32_t decorationStyle,
-      uint32_t decorationColor = 0xFFFF0000);
+      int32_t decorationType,
+      uint32_t decorationColor = 0xFFFF0000,
+      int32_t decorationStyle = 0);
   SpanNode& setTextLetterSpacing(float textLetterSpacing);
   SpanNode& setTextShadow(
       float textShadowRadius,
@@ -32,6 +33,7 @@ class SpanNode : public ArkUINode {
   SpanNode& setTextLineHeight(float textLineHeight);
   SpanNode& setTextCase(int32_t textCase);
   SpanNode& setBackgroundStyle(uint32_t color);
+  SpanNode& setLengthMetricUnit(ArkUI_LengthMetricUnit unit);
 };
 
 } // namespace rnoh

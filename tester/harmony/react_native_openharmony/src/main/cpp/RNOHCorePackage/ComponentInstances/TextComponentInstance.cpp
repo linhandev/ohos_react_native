@@ -111,6 +111,47 @@ void TextComponentInstance::onPropsChanged(
       m_textNode.setMinFontSize(minFontSize.value());
       VLOG(3) << "[text-debug] minFontSize=" << minFontSize.value();
     }
+    
+    // selectionColor
+    if (textProps->rawProps.count("selectionColor") != 0) {
+      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
+      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
+      // Setting this attribute will crash and temporarily block it
+//      m_textNode.setSelectedBackgroundColor(selectionColor);
+    }
+    
+    // dataDetectorType
+    if (textProps->rawProps.count("dataDetectorType") != 0) {
+      std::string dataDetectorType = textProps->rawProps["dataDetectorType"].asString();
+      VLOG(3) << "[text-debug] dataDetectorType: " << dataDetectorType;
+      if (dataDetectorType == "all") {
+        ArkUI_NumberValue types[] = {
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_PHONE_NUMBER},
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS},
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL},
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_URL}};
+        m_textNode.setTextDataDetectorType(true, types);
+      } else if (dataDetectorType == "address") {
+        ArkUI_NumberValue types[] = {
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS}};
+        m_textNode.setTextDataDetectorType(true, types);
+      } else if (dataDetectorType == "link") {
+        ArkUI_NumberValue types[] = {
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_URL}};
+        m_textNode.setTextDataDetectorType(true, types);
+      } else if (dataDetectorType == "phoneNumber") {
+        ArkUI_NumberValue types[] = {
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_PHONE_NUMBER}};
+        m_textNode.setTextDataDetectorType(true, types);
+      } else if (dataDetectorType == "email") {
+        ArkUI_NumberValue types[] = {
+            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL}};
+        m_textNode.setTextDataDetectorType(true, types);
+      } else {
+        ArkUI_NumberValue types[] = {};
+        m_textNode.setTextDataDetectorType(false, types);
+      }
+    }
   }
   this->setParagraphAttributes(textProps->paragraphAttributes);
   VLOG(3) << "[text-debug] setProps end";
@@ -189,7 +230,14 @@ void TextComponentInstance::setFragment(
             << ", index=" << index;
     spanNode->setFontWeight(realFontWeight);
   }
-
+  // allowFontScaling
+  bool allowFontScaling = textAttributes.allowFontScaling.has_value() ? textAttributes.allowFontScaling.value() : true;
+  VLOG(3) << "[text-debug] textAttributes.allowFontScaling=" << allowFontScaling << ", index=" << index;
+  if (allowFontScaling) {
+    spanNode->setLengthMetricUnit(ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP);
+  } else {
+    spanNode->setLengthMetricUnit(ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP);
+  }
   // FontSize
   float fontSize = isnan(textAttributes.fontSize)
       ? DEFAULT_FONT_SIZE
@@ -206,27 +254,32 @@ void TextComponentInstance::setFragment(
   }
 
   // TextDecoration
+  int32_t textDecorationType = ARKUI_TEXT_DECORATION_TYPE_NONE;
+  uint32_t textDecorationColor = 0xFF000000;
+  int32_t textDecorationStyle = ARKUI_TEXT_DECORATION_STYLE_SOLID;
   if (textAttributes.textDecorationLineType.has_value()) {
-    auto type = (int32_t)textAttributes.textDecorationLineType.value();
-    VLOG(3) << "[text-debug] textAttributes.textDecorationLineType=" << type
-            << ", textAttributes.textDecorationColor="
-            << (uint32_t)(*textAttributes.textDecorationColor)
-            << ", index=" << index;
-    uint32_t color = 0xFF000000;
+   textDecorationType = (int32_t)textAttributes.textDecorationLineType.value();
     if (textAttributes.textDecorationColor) {
-      color = (uint32_t)(*textAttributes.textDecorationColor);
+      textDecorationColor = (uint32_t)(*textAttributes.textDecorationColor);
     } else if (textAttributes.foregroundColor) {
-      color = (uint32_t)(*textAttributes.foregroundColor);
+      textDecorationColor = (uint32_t)(*textAttributes.foregroundColor);
     }
-    if (type ==
+    if (textDecorationType ==
             (int32_t)facebook::react::TextDecorationLineType::Strikethrough ||
-        type ==
+        textDecorationType ==
             (int32_t)facebook::react::TextDecorationLineType::
                 UnderlineStrikethrough) {
-      type = ARKUI_TEXT_DECORATION_TYPE_LINE_THROUGH;
+      textDecorationType = ARKUI_TEXT_DECORATION_TYPE_LINE_THROUGH;
     }
-    spanNode->setTextDecoration(type, color);
   }
+  if (textAttributes.textDecorationStyle.has_value()) {
+    textDecorationStyle = (int32_t)textAttributes.textDecorationStyle.value();
+  }
+  VLOG(3) << "[text-debug] textAttributes.textDecorationLineType=" << textDecorationType
+            << ", textAttributes.textDecorationColor=" << textDecorationColor
+            << ", textAttributes.textDecorationStyle=" << textDecorationStyle
+            << ", index=" << index;
+  spanNode->setTextDecoration(textDecorationType, textDecorationColor, textDecorationStyle);
 
   // TextLineHeight
   float lineHeight = isnan(textAttributes.lineHeight)
