@@ -520,7 +520,7 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic v
       ? std::optional(value["nestedEnabled"].asBool())
       : std::nullopt;
   auto endFillColor = (value.count("endFillColor") > 0)
-      ? std::optional(value["endFillColor"] > 0)
+      ? std::optional(value["endFillColor"].asInt())
       : std::nullopt;
   
   return {overScrollMode, nestedEnabled, endFillColor};

@@ -460,6 +460,14 @@ ArkUINode& ArkUINode::setVisibility(ArkUI_Visibility visibility) {
   return *this;
 }
 
+ArkUINode& ArkUINode::setRenderGroup(bool flag) {
+  ArkUI_NumberValue value[] = {{.i32 = (int32_t)flag}};
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_RENDER_GROUP, &item));
+  return *this;
+}
+
 ArkUINode::~ArkUINode() {
   if (m_nodeHandle != nullptr) {
     ArkUINodeRegistry::getInstance().unregisterNode(this);
