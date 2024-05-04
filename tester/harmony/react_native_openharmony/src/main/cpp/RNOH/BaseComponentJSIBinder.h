@@ -54,6 +54,7 @@ class BaseComponentJSIBinder : public ComponentJSIBinder {
     nativeProps.setProperty(rt, "role", "string");
     nativeProps.setProperty(rt, "importantForAccessibility", "number");
     nativeProps.setProperty(rt, "needsOffscreenAlphaCompositing", "boolean");
+    nativeProps.setProperty(rt, "shouldRasterizeIOS", "boolean");
     return nativeProps;
   }
 
