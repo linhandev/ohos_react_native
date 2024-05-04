@@ -13,6 +13,7 @@ class ImageComponentJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "defaultSource", "RCTImageSource");
     object.setProperty(rt, "loadingIndicatorSource", "RCTImageSource");
     object.setProperty(rt, "fadeDuration", "number");
+    object.setProperty(rt, "capInsets", "number");
     return object;
   }
   facebook::jsi::Object createDirectEventTypes(

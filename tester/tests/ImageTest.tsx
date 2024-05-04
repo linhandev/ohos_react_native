@@ -369,6 +369,34 @@ export const ImageTest = () => {
           </View>
         </TestCase.Example>
       </TestSuite>
+      <TestSuite name="capInsets" >
+        <TestCase.Example
+          tags={['C_API']}
+          itShould="capInsets images with various cap insets">
+          <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:0, right:0, top:0, bottom:0}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:10, right:10, top:10, bottom:10}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:20, right:20, top:20, bottom:20}}
+            />
+            <Image
+              style={{width: 100, height: 100, margin: 4}}
+              source={LOCAL_IMAGE_ASSET_ID}
+              capInsets={{left:30, right:30, top:30, bottom:30}}
+            />
+          </View>
+        </TestCase.Example>
+      </TestSuite>
       <TestCase.Example
         tags={['C_API']}
         itShould="replace opaque pixels with the green color (tintColor)">
