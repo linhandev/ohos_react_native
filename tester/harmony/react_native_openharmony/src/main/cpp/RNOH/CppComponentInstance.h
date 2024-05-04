@@ -271,6 +271,13 @@ class CppComponentInstance : public ComponentInstance {
       }
     }
 
+    if (m_rawProps.shouldRasterizeIOS != rawProps.shouldRasterizeIOS) {
+      m_rawProps.shouldRasterizeIOS = rawProps.shouldRasterizeIOS;
+      if (m_rawProps.shouldRasterizeIOS.has_value()) {
+        this->getLocalRootArkUINode().setRenderGroup(m_rawProps.shouldRasterizeIOS.value());
+      }
+    }
+
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
 
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
@@ -343,12 +350,17 @@ class CppComponentInstance : public ComponentInstance {
 
   struct ViewRawProps {
     std::optional<bool> needsOffscreenAlphaCompositing;
+    std::optional<bool> shouldRasterizeIOS;
     static ViewRawProps getFromDynamic(folly::dynamic value) {
       auto needsOffscreenAlphaCompositing = (value.count("needsOffscreenAlphaCompositing") > 0)
         ? std::optional(value["needsOffscreenAlphaCompositing"].asBool())
         : std::nullopt;
 
-      return {needsOffscreenAlphaCompositing};
+      auto shouldRasterizeIOS = (value.count("shouldRasterizeIOS") > 0)
+        ? std::optional(value["shouldRasterizeIOS"].asBool())
+        : std::nullopt;
+
+      return {needsOffscreenAlphaCompositing, shouldRasterizeIOS};
     }
   };
   ViewRawProps m_rawProps;
