@@ -34,6 +34,7 @@ class SpanNode : public ArkUINode {
   SpanNode& setTextCase(int32_t textCase);
   SpanNode& setBackgroundStyle(uint32_t color);
   SpanNode& setLengthMetricUnit(ArkUI_LengthMetricUnit unit);
+  SpanNode& resetBackgroundStyle();
 };
 
 } // namespace rnoh
