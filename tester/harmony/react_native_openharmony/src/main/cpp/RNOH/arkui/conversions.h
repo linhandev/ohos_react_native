@@ -84,6 +84,14 @@ inline ArkUI_EnterKeyType convertEnterKeyType(
   }
 }
 
+inline ArkUI_EnterKeyType convertTextAreaEnterKeyType(
+    facebook::react::ReturnKeyType returnKeyType) {
+  if (returnKeyType == facebook::react::ReturnKeyType::Default) {
+    return ARKUI_ENTER_KEY_TYPE_NEW_LINE;
+  }
+  return convertEnterKeyType(returnKeyType);
+}
+
 inline ArkUI_EnterKeyType convertEnterKeyLabel(
     std::string returnKeyLabel) {
   if (!returnKeyLabel.compare("done")) {
@@ -99,6 +107,14 @@ inline ArkUI_EnterKeyType convertEnterKeyLabel(
   } else {
     return ARKUI_ENTER_KEY_TYPE_DONE;
   }
+}
+
+inline ArkUI_EnterKeyType convertTextAreaEnterKeyLabel(
+    std::string returnKeyLabel) {
+  if (returnKeyLabel.empty()) {
+    return ARKUI_ENTER_KEY_TYPE_NEW_LINE;
+  }
+  return convertEnterKeyLabel(returnKeyLabel);
 }
 
 inline ArkUI_NumberValue convertTextAlign(
