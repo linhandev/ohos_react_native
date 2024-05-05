@@ -265,15 +265,19 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setCaretHidden(props->traits.caretHidden);
   }
   if (!m_props ||
-      props->traits.returnKeyType != m_props->traits.returnKeyType) {
-    m_textInputNode.setEnterKeyType(rnoh::convertEnterKeyType(props->traits.returnKeyType));
-    m_textAreaNode.setEnterKeyType(rnoh::convertEnterKeyType(props->traits.returnKeyType));
-  }
-    if (!m_props ||
+      props->traits.returnKeyType != m_props->traits.returnKeyType ||
       props->traits.returnKeyLabel != m_props->traits.returnKeyLabel) {
-    m_textInputNode.setEnterKeyType(rnoh::convertEnterKeyLabel(props->traits.returnKeyLabel));
-    m_textAreaNode.setEnterKeyType(rnoh::convertEnterKeyLabel(props->traits.returnKeyLabel));
-    
+    auto returnKeyType = rnoh::convertEnterKeyType(props->traits.returnKeyType);
+    auto textAreaReturnKeyType =
+        rnoh::convertTextAreaEnterKeyType(props->traits.returnKeyType);
+    if (props->traits.returnKeyType ==
+        facebook::react::ReturnKeyType::Default) {
+      returnKeyType = rnoh::convertEnterKeyLabel(props->traits.returnKeyLabel);
+      textAreaReturnKeyType =
+          rnoh::convertTextAreaEnterKeyLabel(props->traits.returnKeyLabel);
+    }
+    m_textInputNode.setEnterKeyType(returnKeyType);
+    m_textAreaNode.setEnterKeyType(textAreaReturnKeyType);
   }
   if (!m_props ||
       props->traits.clearButtonMode != m_props->traits.clearButtonMode) {
