@@ -9,7 +9,9 @@ static constexpr std::array TEXT_AREA_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_CUT,
     NODE_ON_FOCUS,
     NODE_ON_BLUR,
-    NODE_TEXT_AREA_ON_TEXT_SELECTION_CHANGE};
+    NODE_TEXT_AREA_ON_TEXT_SELECTION_CHANGE,
+    NODE_TEXT_AREA_ON_CONTENT_SCROLL,
+    NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE};
 
 namespace rnoh {
 
@@ -49,7 +51,15 @@ void TextAreaNode::onNodeEvent(
       m_textAreaNodeDelegate->onTextSelectionChange(
           selectionLocation, selectionLength);
     }
-  }
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SCROLL) {
+    if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onContentScroll();
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE){
+    if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onContentSizeChange();
+    } 
+}
 }
 
 void TextAreaNode::onNodeEvent(
@@ -93,7 +103,7 @@ void TextAreaNode::setTextContent(std::string const& textContent) {
       m_nodeHandle, NODE_TEXT_AREA_TEXT, &item));
 }
 
-void TextAreaNode::setInputType(ArkUI_TextInputType keyboardType) {
+void TextAreaNode::setInputType(ArkUI_TextAreaType  keyboardType) {
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -166,9 +176,60 @@ void TextAreaNode::defaultSetPadding() {
       m_nodeHandle, NODE_PADDING, &item));
 }
 
+void TextAreaNode::setEnterKeyType(
+    ArkUI_EnterKeyType returnKeyType) {
+  ArkUI_NumberValue value = {.i32 = returnKeyType};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_ENTER_KEY_TYPE, &item));
+}
 std::string TextAreaNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_AREA_TEXT);
   return item->string;
+}
+
+void TextAreaNode::SetContextMenuHidden(bool const& hidden) {
+  ArkUI_NumberValue value = {.i32 = hidden};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_AREA_SELECTION_MENU_HIDDEN, &item));
+}
+
+void TextAreaNode::setTextContentType(std::string const& textContentType){
+   ArkUI_NumberValue type = rnoh::convertContentType(textContentType); 
+    if (type.i32 == -1){
+        return;
+    }
+    std::array<ArkUI_NumberValue, 1> value = {type}; 
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
+}
+
+void TextAreaNode::setUnderlineColorAndroid(
+    facebook::react::SharedColor const& underlineColorAndroid) {
+  ArkUI_NumberValue showValue = {.i32 = 1};
+  ArkUI_AttributeItem showItem = {&showValue, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
+  ArkUI_NumberValue value[] = {
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)}};
+
+  ArkUI_AttributeItem item = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_UNDERLINE_COLOR, &item));
+}
+
+void TextAreaNode::setAutoFill(bool autoFill) {
+  uint32_t isAutoFill = static_cast<uint32_t>(autoFill);
+  ArkUI_NumberValue value = {.u32 = isAutoFill};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
 }
 } // namespace rnoh

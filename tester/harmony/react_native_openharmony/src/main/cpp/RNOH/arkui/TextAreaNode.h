@@ -16,6 +16,8 @@ class TextAreaNodeDelegate {
   virtual void onFocus(){};
   virtual void onPasteOrCut(){};
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
+  virtual void onContentScroll(){};
+  virtual void onContentSizeChange(){};
 };
 
 class TextAreaNode : public TextInputNodeBase {
@@ -38,7 +40,7 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setTextContent(std::string const& textContent);
 
-  void setInputType(ArkUI_TextInputType keyboardType);
+  void setInputType(ArkUI_TextAreaType keyboardType);
 
   void setFont(facebook::react::TextAttributes const& textAttributes) override;
 
@@ -51,6 +53,16 @@ class TextAreaNode : public TextInputNodeBase {
   void setPlaceholderColor(facebook::react::SharedColor const& color) override;
 
   void defaultSetPadding();
+  
+  void setEnterKeyType(ArkUI_EnterKeyType returnKeyType);
+  
+  void SetContextMenuHidden(bool const& hidden);
+  
+  void setTextContentType(std::string const& textContentType);
+  
+  void setUnderlineColorAndroid(facebook::react::SharedColor const& underlineColorAndroid);
+  
+  void setAutoFill(bool autoFill);
 
   std::string getTextContent() override;
 };

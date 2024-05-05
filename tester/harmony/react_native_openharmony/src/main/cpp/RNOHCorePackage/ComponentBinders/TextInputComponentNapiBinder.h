@@ -39,8 +39,12 @@ class TextInputComponentNapiBinder : public ViewComponentNapiBinder {
               .addProperty(
                   "returnKeyType",
                   returnKeyTypeToString(props->traits.returnKeyType))
+              .addProperty(
+                  "returnKeyLabel",
+                  props->traits.returnKeyLabel)
               .addProperty("textAlign", alignment)
               .addProperty("autoFocus", props->autoFocus)
+              .addProperty("importantForAutofill", props->importantForAutofill)
               .addProperty(
                   "keyboardType",
                   keyboardTypeToString(props->traits.keyboardType))
