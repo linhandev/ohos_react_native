@@ -75,6 +75,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   }
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
+  m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setEnableScrollInteraction(
           !m_isNativeResponderBlocked && props->scrollEnabled)
@@ -117,9 +118,10 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     }
   }
 
-  if (!m_props || props->contentOffset != m_props->contentOffset) {
+  if (!m_props || props->contentOffset != m_props->contentOffset ||
+      props->scrollToOverflowEnabled != m_props->scrollToOverflowEnabled) {
     m_scrollNode.scrollTo(
-        props->contentOffset.x, props->contentOffset.y, false);
+        props->contentOffset.x, props->contentOffset.y, false, m_scrollToOverflowEnabled);
     updateStateWithContentOffset(props->contentOffset);
   }
   if (!m_props || props->centerContent != m_props->centerContent) {
@@ -468,10 +470,10 @@ void ScrollViewComponentInstance::disableIntervalMomentum() {
   if (nextSnapTarget.has_value()) {
     if (isHorizontal(m_props)) {
       m_scrollNode.scrollTo(
-          nextSnapTarget.value(), static_cast<float>(m_currentOffset.y), true);
+          nextSnapTarget.value(), static_cast<float>(m_currentOffset.y), true, m_scrollToOverflowEnabled);
     } else {
       m_scrollNode.scrollTo(
-          static_cast<float>(m_currentOffset.x), nextSnapTarget.value(), true);
+          static_cast<float>(m_currentOffset.x), nextSnapTarget.value(), true, m_scrollToOverflowEnabled);
     }
   }
 }
