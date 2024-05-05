@@ -112,13 +112,12 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] minFontSize=" << minFontSize.value();
     }
     
-    // selectionColor
-    if (textProps->rawProps.count("selectionColor") != 0) {
+    // selectionColor, wait for CAPI
+//    if (textProps->rawProps.count("selectionColor") != 0 && !textProps->rawProps["selectionColor"].isNull()) {
 //      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
 //      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
-      // Setting this attribute will crash and temporarily block it
 //      m_textNode.setSelectedBackgroundColor(selectionColor);
-    }
+//    }
     
     // dataDetectorType
     if (textProps->rawProps.count("dataDetectorType") != 0) {
@@ -150,6 +149,26 @@ void TextComponentInstance::onPropsChanged(
       } else {
         ArkUI_NumberValue types[] = {};
         m_textNode.setTextDataDetectorType(false, types);
+      }
+    }
+    
+    // writingDirection
+    if (textProps->rawProps.count("writingDirection") != 0) {
+      int32_t writingDirection = TextConversions::getArkUIDirection(textProps->rawProps["writingDirection"].asString());
+      VLOG(3) << "[text-debug] writingDirection=" << writingDirection;
+      m_textNode.setWritingDirection(writingDirection);
+    }
+    
+    // fontVariant
+    if (textProps->rawProps.count("fontVariant") != 0) {
+      std::string fontVariants;
+      for(const auto& fontVariant : textProps->rawProps["fontVariant"]) {
+        fontVariants += TextConversions::getArkUIFontVariant(fontVariant.asString());
+      }
+      if(!fontVariants.empty()) {
+        fontVariants = fontVariants.substr(0, fontVariants.length() - 1);
+        VLOG(3) << "[text-debug] fontVariant=" << fontVariants;
+        m_textNode.setFontVariant(fontVariants);
       }
     }
   }

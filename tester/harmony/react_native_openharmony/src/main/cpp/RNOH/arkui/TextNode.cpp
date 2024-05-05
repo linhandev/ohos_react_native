@@ -309,4 +309,20 @@ TextNode& TextNode::setTextDataDetectorType(int32_t enable, ArkUI_NumberValue ty
   return *this;
 }
 
+TextNode& TextNode::setWritingDirection(int32_t direction) {
+  ArkUI_NumberValue value[] = {{.i32 = direction}};
+  ArkUI_AttributeItem item = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_DIRECTION, &item));
+  return *this;
+}
+
+TextNode& TextNode::setFontVariant(const std::string& fontVariants) {
+  ArkUI_AttributeItem item = {.string = fontVariants.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_FONT_FEATURE, &item));
+  return *this;
+}
+
 } // namespace rnoh
