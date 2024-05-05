@@ -286,6 +286,13 @@ void TextInputNode::setAutoFill(bool autoFill) {
       m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
 }
 
+void TextInputNode::setBlurOnSubmit(bool blurOnSubmit) {
+  ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
+}
+
 std::string TextInputNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT);

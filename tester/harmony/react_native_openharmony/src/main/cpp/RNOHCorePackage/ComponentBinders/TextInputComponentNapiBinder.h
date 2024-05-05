@@ -36,6 +36,7 @@ class TextInputComponentNapiBinder : public ViewComponentNapiBinder {
               .addProperty("caretHidden", props->traits.caretHidden)
               .addProperty("secureTextEntry", props->traits.secureTextEntry)
               .addProperty("selectionColor", props->selectionColor)
+              .addProperty("blurOnSubmit", props->blurOnSubmit)
               .addProperty(
                   "returnKeyType",
                   returnKeyTypeToString(props->traits.returnKeyType))

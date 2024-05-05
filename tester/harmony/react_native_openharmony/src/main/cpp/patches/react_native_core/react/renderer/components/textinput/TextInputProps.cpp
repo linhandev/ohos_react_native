@@ -105,6 +105,12 @@ TextInputProps::TextInputProps(
           "onKeyPressSync",
           sourceProps.onKeyPressSync,
           {})),
+      blurOnSubmit(convertRawProp(
+          context,
+          rawProps,
+          "blurOnSubmit",
+          sourceProps.blurOnSubmit,
+          {})),
       onChangeSync(convertRawProp(
           context,
           rawProps,
