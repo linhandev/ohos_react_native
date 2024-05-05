@@ -18,6 +18,14 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
 
+void TextInputComponentInstance::onContentSizeChange() {
+    m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+}
+
+void TextInputComponentInstance::onContentScroll() {
+  m_eventEmitter->onScroll(getTextInputMetrics());
+}
+
 void TextInputComponentInstance::onChange(std::string text) {
   m_valueChanged = true;
   m_content = std::move(text);
@@ -121,7 +129,29 @@ void TextInputComponentInstance::onPropsChanged(
   m_multiline = props->traits.multiline;
   CppComponentInstance::onPropsChanged(props);
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
-
+  
+  if (!m_props || props->importantForAutofill != m_props->importantForAutofill) {
+    m_textAreaNode.setAutoFill(convertImportantForAutofill(props->importantForAutofill));
+    m_textInputNode.setAutoFill(convertImportantForAutofill(props->importantForAutofill));
+  }
+  if (!m_props ||
+      props->traits.textContentType != m_props->traits.textContentType) {
+    m_textInputNode.setTextContentType(props->traits.textContentType);
+    m_textAreaNode.setTextContentType(props->traits.textContentType);
+  }
+  if (!m_props || props->traits.contextMenuHidden != m_props->traits.contextMenuHidden){
+    m_textInputNode.SetContextMenuHidden(props->traits.contextMenuHidden);
+    m_textAreaNode.SetContextMenuHidden(props->traits.contextMenuHidden);
+  }
+  if (!m_props || *(props->underlineColorAndroid) != *(m_props->underlineColorAndroid)) {
+    m_textInputNode.setUnderlineColorAndroid(props->underlineColorAndroid);
+    m_textAreaNode.setUnderlineColorAndroid(props->underlineColorAndroid);
+  }
+  if (!m_props ||
+        props->traits.passwordRules != 
+          m_props->traits.passwordRules) {
+      m_textInputNode.setPasswordRules(props->traits.passwordRules);
+  }
   if (!m_props ||
       *(props->textAttributes.foregroundColor) !=
           *(m_props->textAttributes.foregroundColor)) {
@@ -168,10 +198,18 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setEnabled(props->traits.editable);
   }
   if (!m_props || props->traits.keyboardType != m_props->traits.keyboardType) {
-    m_textInputNode.setInputType(
+    if(m_multiline){
+      if(props->traits.keyboardType == facebook::react::KeyboardType::DecimalPad){
+        m_textAreaNode.setInputType(rnoh::convertTextAreaInputType(facebook::react::KeyboardType::Numeric));
+      }else{
+        m_textAreaNode.setInputType(rnoh::convertTextAreaInputType(props->traits.keyboardType));
+      }
+    }else{
+      m_textInputNode.setInputType(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+    }
   }
   if (props->maxLength != 0) {
     if (!m_props || props->maxLength != m_props->maxLength) {
@@ -228,7 +266,14 @@ void TextInputComponentInstance::onPropsChanged(
   }
   if (!m_props ||
       props->traits.returnKeyType != m_props->traits.returnKeyType) {
-    m_textInputNode.setEnterKeyType(props->traits.returnKeyType);
+    m_textInputNode.setEnterKeyType(rnoh::convertEnterKeyType(props->traits.returnKeyType));
+    m_textAreaNode.setEnterKeyType(rnoh::convertEnterKeyType(props->traits.returnKeyType));
+  }
+    if (!m_props ||
+      props->traits.returnKeyLabel != m_props->traits.returnKeyLabel) {
+    m_textInputNode.setEnterKeyType(rnoh::convertEnterKeyLabel(props->traits.returnKeyLabel));
+    m_textAreaNode.setEnterKeyType(rnoh::convertEnterKeyLabel(props->traits.returnKeyLabel));
+    
   }
   if (!m_props ||
       props->traits.clearButtonMode != m_props->traits.clearButtonMode) {

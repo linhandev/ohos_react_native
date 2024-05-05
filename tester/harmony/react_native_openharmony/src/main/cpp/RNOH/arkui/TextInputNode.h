@@ -14,6 +14,8 @@ class TextInputNodeDelegate {
   virtual void onFocus(){};
   virtual void onSubmit(){};
   virtual void onPasteOrCut(){};
+  virtual void onContentScroll(){};
+  virtual void onContentSizeChange(){};
 
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
 };
@@ -46,7 +48,7 @@ class TextInputNode : public TextInputNodeBase {
 
   void setPasswordIconVisibility(bool isVisible);
 
-  void setEnterKeyType(facebook::react::ReturnKeyType returnKeyType);
+  void setEnterKeyType(ArkUI_EnterKeyType returnKeyType);
 
   void setCancelButtonMode(
       facebook::react::TextInputAccessoryVisibilityMode mode);
@@ -63,6 +65,16 @@ class TextInputNode : public TextInputNodeBase {
 
   void resetSelectedBackgroundColor();
 
+  void setPasswordRules(std::string rules);
+  
+  void setUnderlineColorAndroid(facebook::react::SharedColor const& underlineColorAndroid);
+  
+  void SetContextMenuHidden(bool const& hidden);
+  
+  void setTextContentType(std::string const& textContentType);
+  
+  void setAutoFill(bool autoFill);
+  
   std::string getTextContent() override;
 };
 

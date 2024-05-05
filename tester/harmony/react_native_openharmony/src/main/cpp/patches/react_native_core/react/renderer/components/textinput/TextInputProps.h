@@ -46,6 +46,7 @@ class TextInputProps final : public ViewProps, public BaseTextProps {
 
   std::string const placeholder{};
   SharedColor const placeholderTextColor{};
+  std::string const importantForAutofill{};
 
   int maxLength{};
 
