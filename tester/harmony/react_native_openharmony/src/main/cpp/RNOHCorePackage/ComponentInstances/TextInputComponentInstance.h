@@ -61,6 +61,10 @@ class TextInputComponentInstance
   void onPasteOrCut() override;
 
   void onTextSelectionChange(int32_t location, int32_t length) override;
+  
+  void onContentScroll() override;
+
+  void onContentSizeChange() override;
 
   ArkUINode& getLocalRootArkUINode() override;
 };
