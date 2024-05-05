@@ -28,6 +28,7 @@ class ScrollViewComponentInstance
   std::weak_ptr<NativeAnimatedTurboModule> m_nativeAnimatedTurboModule{};
   bool m_allowScrollPropagation = false;
   bool m_disableIntervalMomentum = false;
+  bool m_scrollToOverflowEnabled = false;
   float m_recentScrollFrameOffset = 0;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
 
