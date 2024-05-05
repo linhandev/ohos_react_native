@@ -47,7 +47,7 @@ class ScrollNode : public ArkUINode {
       const std::vector<facebook::react::Float>& snapPoints);
   ScrollNode& setEnablePaging(bool enablePaging);
   ScrollNode& setCenterContent(bool centerContent);
-  void scrollTo(float x, float y, bool animated);
+  void scrollTo(float x, float y, bool animated, bool scrollToOverflowEnabled = false);
   void setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode);
   void setScrollOverScrollMode(std::string const& overScrollMode, bool alwaysBounce);
   void setNestedScrollEnabled(bool nestedScrollEnabled,bool ScrollEnabled);
