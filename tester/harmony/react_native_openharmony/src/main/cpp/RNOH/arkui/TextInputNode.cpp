@@ -9,7 +9,9 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_SUBMIT,
     NODE_ON_FOCUS,
     NODE_ON_BLUR,
-    NODE_TEXT_INPUT_ON_TEXT_SELECTION_CHANGE};
+    NODE_TEXT_INPUT_ON_TEXT_SELECTION_CHANGE,
+    NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
+    NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE};
 
 namespace rnoh {
 
@@ -57,7 +59,15 @@ void TextInputNode::onNodeEvent(
       m_textInputNodeDelegate->onTextSelectionChange(
           selectionLocation, selectionLength);
     }
-  }
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_CONTENT_SCROLL) {
+    if (m_textInputNodeDelegate != nullptr) {
+      m_textInputNodeDelegate->onContentScroll();
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE) {
+    if (m_textInputNodeDelegate != nullptr) {
+      m_textInputNodeDelegate->onContentSizeChange();
+    }
+}
 }
 
 void TextInputNode::onNodeEvent(
@@ -137,8 +147,8 @@ void TextInputNode::setPasswordIconVisibility(bool isVisible) {
 }
 
 void TextInputNode::setEnterKeyType(
-    facebook::react::ReturnKeyType returnKeyType) {
-  ArkUI_NumberValue value = {.i32 = rnoh::convertEnterKeyType(returnKeyType)};
+    ArkUI_EnterKeyType returnKeyType) {
+  ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item));
@@ -224,6 +234,56 @@ void TextInputNode::setPlaceholderColor(
 void TextInputNode::resetSelectedBackgroundColor() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR));
+}
+
+void TextInputNode::setPasswordRules(std::string rules) {
+  ArkUI_AttributeItem item = {.string = rules.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item));
+}
+
+void TextInputNode::setUnderlineColorAndroid(
+    facebook::react::SharedColor const& underlineColorAndroid) {
+  ArkUI_NumberValue showValue = {.i32 = 1};
+  ArkUI_AttributeItem showItem = {&showValue, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
+  ArkUI_NumberValue value[] = {
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)}};
+
+  ArkUI_AttributeItem item = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_UNDERLINE_COLOR, &item));
+}
+
+void TextInputNode::SetContextMenuHidden(bool const& hidden) {
+  ArkUI_NumberValue value = {.i32 = hidden};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_SELECTION_MENU_HIDDEN, &item));
+}
+
+void TextInputNode::setTextContentType(std::string const& textContentType){
+   ArkUI_NumberValue type = rnoh::convertContentType(textContentType); 
+    if (type.i32 == -1){
+        return;
+    }
+    std::array<ArkUI_NumberValue, 1> value = {type}; 
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
+}
+
+void TextInputNode::setAutoFill(bool autoFill) {
+  uint32_t isAutoFill = static_cast<uint32_t>(autoFill);
+  ArkUI_NumberValue value = {.u32 = isAutoFill};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
 }
 
 std::string TextInputNode::getTextContent() {

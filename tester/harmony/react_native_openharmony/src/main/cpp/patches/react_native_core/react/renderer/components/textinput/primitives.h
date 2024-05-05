@@ -207,6 +207,12 @@ class TextInputTraits final {
   ReturnKeyType returnKeyType{ReturnKeyType::Default};
 
   /*
+   * Some values iOS- or Android-only (inherently particular-OS-specific)
+   * Default value: `Default`.
+   */
+  std::string returnKeyLabel{};
+  
+  /*
    * iOS & Android
    * Default value: `false`.
    */

@@ -84,6 +84,23 @@ inline ArkUI_EnterKeyType convertEnterKeyType(
   }
 }
 
+inline ArkUI_EnterKeyType convertEnterKeyLabel(
+    std::string returnKeyLabel) {
+  if (!returnKeyLabel.compare("done")) {
+    return ARKUI_ENTER_KEY_TYPE_DONE;
+  } else if (!returnKeyLabel.compare("go")) {
+    return ARKUI_ENTER_KEY_TYPE_GO;
+  } else if (!returnKeyLabel.compare("next")) {
+    return ARKUI_ENTER_KEY_TYPE_NEXT;
+  } else if (!returnKeyLabel.compare("search")) {
+    return ARKUI_ENTER_KEY_TYPE_SEARCH;
+  } else if (!returnKeyLabel.compare("send")) {
+    return ARKUI_ENTER_KEY_TYPE_SEND;
+  } else {
+    return ARKUI_ENTER_KEY_TYPE_DONE;
+  }
+}
+
 inline ArkUI_NumberValue convertTextAlign(
     facebook::react::TextAlignment alignment) {
   switch (alignment) {
@@ -127,5 +144,78 @@ inline ArkUI_NumberValue convertFontWeight(int fontWeight) {
     return {.i32 = ARKUI_FONT_WEIGHT_W800};
   }
   return {.i32 = ARKUI_FONT_WEIGHT_W900};
+}
+inline ArkUI_NumberValue convertContentType(std::string const& textContentType){
+    if (textContentType == "addressCity") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_CITY_ADDRESS};
+} else if (textContentType == "addressState") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PROVINCE_ADDRESS};
+} else if (textContentType == "countryName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_COUNTRY_ADDRESS};
+} else if (textContentType == "creditCardNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_BANK_CARD_NUMBER};
+} else if (textContentType == "fullStreetAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_FULL_STREET_ADDRESS};
+} else if (textContentType == "sublocality") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_DISTRICT_ADDRESS};
+} else if (textContentType == "telephoneNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_NUMBER};
+}else if (textContentType == "username") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_USER_NAME};
+} else if (textContentType == "password") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PASSWORD};
+} else if (textContentType == "newPassword") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_NEW_PASSWORD};
+} else if (textContentType == "houseNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_HOUSE_NUMBER};
+} else if (textContentType == "districtAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_DISTRICT_ADDRESS};
+} else if (textContentType == "cityAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_CITY_ADDRESS};
+} else if (textContentType == "provinceAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PROVINCE_ADDRESS};
+} else if (textContentType == "countryAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_COUNTRY_ADDRESS};
+} else if (textContentType == "personFullName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FULL_NAME};
+} else if (textContentType == "personLastName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_LAST_NAME};
+} else if (textContentType == "personFirstName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FIRST_NAME};
+} else if (textContentType == "phoneNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_NUMBER};
+} else if (textContentType == "phoneCountryCode") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_COUNTRY_CODE};
+} else if (textContentType == "fullPhoneNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_FULL_PHONE_NUMBER};
+} else if (textContentType == "emailAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_EMAIL_ADDRESS};
+} else if (textContentType == "bankCardNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_BANK_CARD_NUMBER};
+} else if (textContentType == "idCardNumber") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_ID_CARD_NUMBER};
+} else if (textContentType == "nickName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_NICKNAME};
+} else if (textContentType == "detailInfoWithoutStreet") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_DETAIL_INFO_WITHOUT_STREET};
+} else if (textContentType == "formatAddress") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_FORMAT_ADDRESS};
+}else{
+    return {.i32 = -1};
+}
+}
+
+inline bool convertImportantForAutofill(
+  std::string const& autoFill) {
+  auto string = (std::string)autoFill;
+  if (string == "no" || string == "noExcludeDescendants"
+    || string == "auto") {
+    return false;
+  } else if (string == "yes" || string == "yesExcludeDescendants") {
+    return true;
+  } else {
+    LOG(WARNING) << "Invalid ImportantForAutofill";
+    return true;
+  }
 }
 } // namespace rnoh

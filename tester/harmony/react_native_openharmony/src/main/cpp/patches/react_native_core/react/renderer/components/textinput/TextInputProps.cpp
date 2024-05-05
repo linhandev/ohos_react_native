@@ -44,6 +44,12 @@ TextInputProps::TextInputProps(
           "placeholderTextColor",
           sourceProps.placeholderTextColor,
           {})),
+      importantForAutofill(convertRawProp(
+          context,
+          rawProps,
+          "importantForAutofill",
+          sourceProps.importantForAutofill,
+          {})),
       maxLength(convertRawProp(
           context,
           rawProps,

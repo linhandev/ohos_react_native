@@ -27,7 +27,10 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "defaultValue", "string");
     nativeProps.setProperty(rt, "selectTextOnFocus", "boolean");
     nativeProps.setProperty(rt, "contextMenuHidden", "boolean");
-
+    nativeProps.setProperty(rt, "passwordRules", "string");
+    nativeProps.setProperty(rt, "underlineColorAndroid", "Color");
+    nativeProps.setProperty(rt, "returnKeyLabel", "string");
+    nativeProps.setProperty(rt, "textContentType", "string");
     return nativeProps;
   };
   facebook::jsi::Object createDirectEventTypes(
@@ -43,6 +46,8 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     events.setProperty(rt, "topKeyPress", createDirectEvent(rt, "onKeyPress"));
     events.setProperty(
         rt, "topSelectionChange", createDirectEvent(rt, "topSelectionChange"));
+    events.setProperty(rt, "topScroll", createDirectEvent(rt, "onScroll"));
+    events.setProperty(rt, "topContentSizeChange", createDirectEvent(rt, "onContentSizeChange"));
 
     return events;
   }
