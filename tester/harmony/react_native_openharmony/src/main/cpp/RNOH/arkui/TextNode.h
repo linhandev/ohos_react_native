@@ -72,6 +72,8 @@ class TextNode : public ArkUINode {
   TextNode& setWordBreak(ArkUI_WordBreak wordBreak);
   TextNode& setSelectedBackgroundColor(uint32_t color);
   TextNode& setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]);
+  TextNode& setWritingDirection(int32_t direction);
+  TextNode& setFontVariant(const std::string& fontVariants);
 };
 
 } // namespace rnoh

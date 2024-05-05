@@ -306,3 +306,29 @@ ArkUI_WordBreak TextConversions::getArkUIWordBreakStrategy(
       return ArkUI_WordBreak::ARKUI_WORD_BREAK_BREAK_WORD;
   }
 }
+
+ArkUI_Direction TextConversions::getArkUIDirection(std::string writingDirection) {
+  if (writingDirection == "ltr") {
+    return ArkUI_Direction::ARKUI_DIRECTION_LTR;
+  } else if (writingDirection == "rtl") {
+    return ArkUI_Direction::ARKUI_DIRECTION_RTL;
+  } else {
+    return ArkUI_Direction::ARKUI_DIRECTION_AUTO;
+  }
+}
+
+std::string TextConversions::getArkUIFontVariant(const std::string& fontVariant) {
+  std::string result;
+  if(fontVariant == "small-caps") {
+    result = "\"smcp\" on,";
+  } else if (fontVariant == "oldstyle-nums") {
+    result = "\"onum\" on,";
+  } else if (fontVariant == "lining-nums") {
+    result = "\"lnum\" on,";
+  } else if (fontVariant == "tabular-nums") {
+    result = "\"tnum\" on,";
+  } else if (fontVariant == "proportional-nums") {
+    result = "\"pnum\" on,";
+  }
+  return result;
+}
