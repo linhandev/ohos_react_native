@@ -1,6 +1,8 @@
 #pragma once
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
+#include <native_drawing/drawing_font_collection.h>
+#include <native_drawing/drawing_text_typography.h>
 #include <string>
 #include "ArkUITypography.h"
 #include "RNOH/FeatureFlagRegistry.h"
@@ -30,6 +32,10 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes const& paragraphAttributes,
       facebook::react::LayoutConstraints const& layoutConstraints);
 
+  std::vector<OH_Drawing_LineMetrics> getLineMetrics(
+      facebook::react::AttributedString const& attributedString,
+      facebook::react::ParagraphAttributes const& paragraphAttributes,
+      facebook::react::LayoutConstraints const& layoutConstraints) override;;
  private:
   napi_env m_env;
   napi_ref m_measureTextFnRef;

@@ -6,6 +6,7 @@
  */
 
 #include "TextLayoutManager.h"
+#include <codecvt>
 
 namespace facebook {
 namespace react {
@@ -38,7 +39,43 @@ LinesMeasurements TextLayoutManager::measureLines(
     AttributedString attributedString,
     ParagraphAttributes paragraphAttributes,
     Size size) const {
-    return {};
+    std::vector<OH_Drawing_LineMetrics> lineMetrics =
+        m_textLayoutManagerDelegate->getLineMetrics(attributedString, paragraphAttributes, {size, size});
+    VLOG(3) << "lineMetrics size=" << lineMetrics.size();
+    
+    std::string text = "";
+    auto const& fragments = attributedString.getFragments();
+    for (const auto& fragment : fragments) {
+        if (!fragment.isAttachment()) {
+            text += fragment.string.c_str();
+        }
+    }
+    std::u16string u16Text = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(text);
+        
+    LinesMeasurements ret;
+    for (int i = 0; i < lineMetrics.size(); i++) {
+        Rect frame;
+        frame.origin.x = static_cast<Float>(lineMetrics[i].x);
+        frame.origin.y = static_cast<Float>(lineMetrics[i].y);
+        frame.size.width = static_cast<Float>(lineMetrics[i].width);
+        frame.size.height = static_cast<Float>(lineMetrics[i].height);
+        VLOG(3) << "lineMetrics index=" << i << ", frame.origin.x=" << frame.origin.x
+            << ", frame.origin.y=" << frame.origin.y << ", frame.size.width=" << frame.size.width
+            << ", frame.size.height=" << frame.size.height;
+        
+        Float descender = static_cast<Float>(lineMetrics[i].descender);
+        Float ascender = static_cast<Float>(lineMetrics[i].ascender);
+        Float capHeight = static_cast<Float>(lineMetrics[i].capHeight);
+        Float xHeight = static_cast<Float>(lineMetrics[i].xHeight);
+        
+        std::u16string u16LineText = u16Text.substr(lineMetrics[i].startIndex, lineMetrics[i].endIndex- lineMetrics[i].startIndex);
+        std::string lineText = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(u16LineText);
+        
+        LineMeasurement line(lineText, frame, descender, capHeight, ascender, xHeight);
+        ret.push_back(line);
+    }
+    
+    return ret;
 }
 
 std::shared_ptr<void> TextLayoutManager::getHostTextStorage(
