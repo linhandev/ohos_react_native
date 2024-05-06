@@ -75,6 +75,8 @@ class TextInputNode : public TextInputNodeBase {
   
   void setAutoFill(bool autoFill);
   
+  void setBlurOnSubmit(bool blurOnSubmit);
+
   std::string getTextContent() override;
 };
 

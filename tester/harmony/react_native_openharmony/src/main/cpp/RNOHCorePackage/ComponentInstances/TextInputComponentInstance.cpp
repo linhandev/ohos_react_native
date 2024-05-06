@@ -316,6 +316,10 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
   }
+  if (!m_props || props->blurOnSubmit != m_props->blurOnSubmit) {
+    m_textInputNode.setBlurOnSubmit(props->blurOnSubmit);
+    m_textAreaNode.setBlurOnSubmit(props->blurOnSubmit);
+  }
 }
 
 void TextInputComponentInstance::setLayout(
