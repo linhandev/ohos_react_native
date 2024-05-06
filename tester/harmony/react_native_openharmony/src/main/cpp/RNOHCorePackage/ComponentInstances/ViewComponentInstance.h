@@ -20,6 +20,8 @@ class ViewComponentInstance
       ComponentInstance::Shared const& childComponentInstance) override;
 
   void onClick() override;
+  void onHoverIn() override;
+  void onHoverOut() override;
   StackNode& getLocalRootArkUINode() override;
 };
 } // namespace rnoh
