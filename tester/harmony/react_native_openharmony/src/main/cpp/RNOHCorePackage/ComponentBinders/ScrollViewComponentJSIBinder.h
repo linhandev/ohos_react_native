@@ -33,6 +33,7 @@ class ScrollViewComponentJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "overScrollMode", "string");
     object.setProperty(rt, "endFillColor", "Color");
     object.setProperty(rt, "centerContent", "boolean");
+    object.setProperty(rt, "removeClippedSubviews", "boolean");
     return object;
   }
 

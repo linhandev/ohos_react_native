@@ -465,6 +465,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/arkui/ToggleNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/RefreshNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/ComponentInstance.cpp"
+    "${RNOH_CPP_DIR}/RNOH/ClippingComponent.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/ImageComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/ViewComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/TextComponentInstance.cpp"

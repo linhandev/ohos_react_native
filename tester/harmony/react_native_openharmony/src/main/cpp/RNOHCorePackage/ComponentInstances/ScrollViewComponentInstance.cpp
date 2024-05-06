@@ -25,6 +25,9 @@ StackNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
 void ScrollViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
+  m_childComponent = childComponentInstance;
+  m_childComponent->setRemoveClippedSubviews(getRemoveClippedSubviews());
+  m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   CppComponentInstance::onChildInserted(childComponentInstance, index);
   m_contentContainerNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
@@ -33,6 +36,7 @@ void ScrollViewComponentInstance::onChildInserted(
 void ScrollViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
+  m_childComponent = nullptr;
   m_contentContainerNode.removeChild(
       childComponentInstance->getLocalRootArkUINode());
 }
@@ -47,6 +51,9 @@ void ScrollViewComponentInstance::setLayout(
     m_scrollNode.setNestedScroll(
         isContentSmallerThanContainer() ? ARKUI_SCROLL_NESTED_MODE_SELF_FIRST
                                         : ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
+  }
+  if (m_childComponent != nullptr) {
+    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   }
   markBoundingBoxAsDirty();
 }
@@ -76,6 +83,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
+  m_removeClippedSubviews = props->removeClippedSubviews;
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setEnableScrollInteraction(
           !m_isNativeResponderBlocked && props->scrollEnabled)
@@ -95,7 +103,10 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               ? 0xFFFFFFFF
               : 0xFF000000)
       .setEnablePaging(props->pagingEnabled);
-
+  if (m_childComponent != nullptr) {
+    m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews);
+    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
+  }
   if (m_rawProps.overScrollMode != rawProps.overScrollMode) {
     m_rawProps.overScrollMode = rawProps.overScrollMode;
     if (m_rawProps.overScrollMode.has_value()) {
@@ -220,6 +231,9 @@ void ScrollViewComponentInstance::onScroll() {
             << scrollViewMetrics.contentSize.height
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
+    if (m_childComponent != nullptr) {
+      m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
+    }
     m_eventEmitter->onScroll(scrollViewMetrics);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
