@@ -8,7 +8,6 @@ ClippingComponent::~ClippingComponent() {}
 
 void ClippingComponent::insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index){}
 
-// m_ListArkUINode遍历节点，做remove和insert 上树和下树的动作
 bool ClippingComponent::isIntersect(facebook::react::Rect& nodeRect)
 {
     if (!m_removeClippedSubviews){
@@ -30,7 +29,6 @@ void ClippingComponent::fillRect(float x, float y, float width, float height, fa
     rect.size.height = height;
 }
 
-// m_ListArkUINode遍历节点，做remove和insert 上树和下树的动作
 void ClippingComponent::updateVisible(bool isFrist){}
 
 void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset, facebook::react::Size contentSize)
@@ -43,7 +41,6 @@ void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset
       return;
   }
 
-  //往下 或 往右
   if (contentOffset.x > m_clippingRect.origin.x || contentOffset.y > m_clippingRect.origin.y) {
       isMoveDownOrRright = true;
   } else {
