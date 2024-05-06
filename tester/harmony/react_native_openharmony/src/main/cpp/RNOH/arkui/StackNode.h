@@ -18,6 +18,7 @@ class StackNode : public ArkUINode {
   ~StackNode() override;
 
   void insertChild(ArkUINode& child, std::size_t index);
+  void addChild(ArkUINode &child);
   void removeChild(ArkUINode& child);
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;

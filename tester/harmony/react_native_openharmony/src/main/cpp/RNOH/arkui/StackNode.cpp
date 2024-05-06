@@ -19,6 +19,10 @@ void StackNode::insertChild(ArkUINode& child, std::size_t index) {
       m_nodeHandle, child.getArkUINodeHandle(), static_cast<int32_t>(index)));
 }
 
+void StackNode::addChild(ArkUINode &child){
+  maybeThrow(NativeNodeApi::getInstance()->addChild(
+      m_nodeHandle, child.getArkUINodeHandle()));
+}
 void StackNode::removeChild(ArkUINode& child) {
   maybeThrow(NativeNodeApi::getInstance()->removeChild(
       m_nodeHandle, child.getArkUINodeHandle()));
