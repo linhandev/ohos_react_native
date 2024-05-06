@@ -77,6 +77,15 @@ class ArkUITypography final {
     }
     return result;
   }
+  
+  void getLineMetrics(std::vector<OH_Drawing_LineMetrics>& data) const {
+    auto count = OH_Drawing_TypographyGetLineCount(m_typography.get());
+    for (int i = 0; i < count; i++) {
+      OH_Drawing_LineMetrics metrics;
+      OH_Drawing_TypographyGetLineMetricsAt(m_typography.get(), i, &metrics);
+      data.push_back(metrics);
+    }
+  }
 
  private:
   ArkUITypography(
