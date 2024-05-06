@@ -80,10 +80,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       .setEnableScrollInteraction(
           !m_isNativeResponderBlocked && props->scrollEnabled)
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
-      .setEdgeEffect(
-          props->bounces,
-          isHorizontal(props) ? props->alwaysBounceHorizontal
-                              : props->alwaysBounceVertical)
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
           isHorizontal(props),
           m_persistentScrollbar,
@@ -96,15 +92,20 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               : 0xFF000000)
       .setEnablePaging(props->pagingEnabled);
 
-  if (m_rawProps.overScrollMode != rawProps.overScrollMode) {
-    m_rawProps.overScrollMode = rawProps.overScrollMode;
-    if (m_rawProps.overScrollMode.has_value()) {
-      m_scrollNode.setScrollOverScrollMode(
-                      m_rawProps.overScrollMode.value(),
-                      isHorizontal(props) ? props->alwaysBounceHorizontal
-                      : props->alwaysBounceVertical);
-   }
+  if (rawProps.overScrollMode.has_value()) {
+    if (m_rawProps.overScrollMode != rawProps.overScrollMode) {
+      m_rawProps.overScrollMode = rawProps.overScrollMode;
+      m_scrollNode.setScrollOverScrollMode(m_rawProps.overScrollMode.value());
+    }
+  } else {
+    if (!m_props || props->bounces != m_props->bounces ||
+        (isHorizontal(props) && props->alwaysBounceHorizontal != m_props->alwaysBounceHorizontal) ||
+        (!isHorizontal(props) && props->alwaysBounceVertical != m_props->alwaysBounceVertical)) {
+      m_scrollNode.setEdgeEffect(props->bounces,
+        isHorizontal(props) ? props->alwaysBounceHorizontal : props->alwaysBounceVertical);
+    }
   }
+
   if (m_rawProps.nestedScrollEnabled != rawProps.nestedScrollEnabled) {
     m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
     if (m_rawProps.nestedScrollEnabled.has_value()) {
@@ -151,7 +152,7 @@ void ScrollViewComponentInstance::handleCommand(
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
     m_scrollNode.scrollTo(
-        args[0].asDouble(), args[1].asDouble(), args[2].asBool());
+        args[0].asDouble(), args[1].asDouble(), args[2].asBool(), m_scrollToOverflowEnabled);
   } else if (commandName == "scrollToEnd") {
     scrollToEnd(args[0].asBool());
   }
