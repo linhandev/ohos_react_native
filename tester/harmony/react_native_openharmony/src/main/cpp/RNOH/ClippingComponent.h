@@ -18,7 +18,7 @@ namespace rnoh {
         facebook::react::Rect m_clippingRect;
         uint32_t m_startIndex = 0;
         uint32_t m_endIndex = 0;
-        bool isMoveDownOrRright = true; // 初值怎么确定
+        bool isMoveDownOrRright = true;
         virtual void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child,
             std::size_t index);
         bool isIntersect(facebook::react::Rect &nodeRect);
