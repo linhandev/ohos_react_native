@@ -6,7 +6,8 @@ ClippingComponent::ClippingComponent() {}
 
 ClippingComponent::~ClippingComponent() {}
 
-void ClippingComponent::insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index){}
+void ClippingComponent::insertNodeWithRemoveClipping(
+  std::shared_ptr<ComponentInstance> const& child, std::size_t index){}
 
 bool ClippingComponent::isIntersect(facebook::react::Rect& nodeRect)
 {
@@ -37,23 +38,24 @@ void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset
     return;
   }
 
-  if (contentOffset.x != m_clippingRect.origin.x && contentOffset.y != m_clippingRect.origin.y ) {
+  if (contentOffset == m_clippingRect.origin) {
+    updateVisible(true);
     return;
   }
 
-  if (contentOffset.x > m_clippingRect.origin.x || contentOffset.y > m_clippingRect.origin.y) {
-    isMoveDownOrRright = true;
+  if (contentOffset.x != m_clippingRect.origin.x &&
+      contentOffset.y != m_clippingRect.origin.y) {
+    return;
+  }
+
+  if (contentOffset.x == m_clippingRect.origin.x) {
+    shiftDirect = contentOffset.y > m_clippingRect.origin.y ? ClippingMoveDirect::MOVE_DOWN : ClippingMoveDirect::MOVE_UP;
   } else {
-    isMoveDownOrRright = false;
+    shiftDirect = contentOffset.x > m_clippingRect.origin.x ? ClippingMoveDirect::MOVE_RIGHT : ClippingMoveDirect::MOVE_LEFT;
   }
 
-  if (contentOffset.x <  0) {
-    contentOffset.x = 0;
-  }
-  if (contentOffset.y <  0) {
-    contentOffset.y = 0;
-  }
-
+  contentOffset.x = contentOffset.x < 0 ? 0 : contentOffset.x;
+  contentOffset.y = contentOffset.y < 0 ? 0 : contentOffset.y;
   fillRect(contentOffset.x, contentOffset.y, contentSize.width, contentSize.height, m_clippingRect);
 
   updateVisible(false);

@@ -6,10 +6,17 @@
 #include "RNOH/arkui/ArkUINode.h"
 #include <react/renderer/graphics/Size.h>
 
-
-
 namespace rnoh {
   class ComponentInstance;
+  enum class ClippingMoveDirect
+  {
+      MOVE_NONE = 0,
+      MOVE_UP,
+      MOVE_DOWN,
+      MOVE_LEFT,
+      MOVE_RIGHT
+  };
+
   class ClippingComponent
   {
     protected:
@@ -18,7 +25,7 @@ namespace rnoh {
         facebook::react::Rect m_clippingRect;
         uint32_t m_startIndex = 0;
         uint32_t m_endIndex = 0;
-        bool isMoveDownOrRright = true;
+        ClippingMoveDirect shiftDirect = ClippingMoveDirect::MOVE_NONE;
         virtual void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child,
             std::size_t index);
         bool isIntersect(facebook::react::Rect &nodeRect);
