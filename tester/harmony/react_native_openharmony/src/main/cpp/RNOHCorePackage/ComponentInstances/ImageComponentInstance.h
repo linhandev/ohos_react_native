@@ -21,6 +21,9 @@ class ImageComponentInstance
   };
   ImageRawProps m_rawProps;
 
+  // used for find local cache of uri, if not find return uri
+  std::string FindLocalCacheByUri(facebook::react::ImageSources const& src);
+
  public:
   ImageComponentInstance(Context context);
   void onPropsChanged(SharedConcreteProps const& props) override;

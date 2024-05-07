@@ -101,4 +101,8 @@ export class ImageLoaderTurboModule extends TurboModule {
       throw e;
     }
   }
+
+  public getCacheFilePath(uri: string): string {
+    return this.imageLoader.getCacheFilePath(uri);
+  }
 }
