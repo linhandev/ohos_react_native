@@ -49,15 +49,20 @@ void ImageNode::onNodeEvent(
   }
 }
 
-ImageNode& ImageNode::setSources(facebook::react::ImageSources const& src) {
-  ArkUI_AttributeItem item;
+ImageNode& ImageNode::setSources(facebook::react::ImageSources const& src, std::string cache) {
   m_uri = src[0].uri;
+  std::string imageSrc = src[0].uri;
+  if (src[0].uri != cache && cache != "") {
+    imageSrc = cache;
+  }
+
+  ArkUI_AttributeItem item;
   std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
-  if (m_uri.rfind(ASSET_PREFIX, 0) == 0) {
-    resourceStr += m_uri.substr(ASSET_PREFIX.size());
+  if (imageSrc.rfind(ASSET_PREFIX, 0) == 0) {
+    resourceStr += imageSrc.substr(ASSET_PREFIX.size());
     item = {.string = resourceStr.c_str()};
   } else {
-    item = {.string = m_uri.c_str()};
+    item = {.string = imageSrc.c_str()};
   }
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_IMAGE_SRC, &item));
@@ -175,6 +180,7 @@ ImageNode& ImageNode::setAlt(std::string const& uri) {
 
 ImageNode& ImageNode::setCapInsets(facebook::react::EdgeInsets const& capInsets)
 {
+  LOG(INFO) << "jinqi " << capInsets.left << " " << capInsets.right << " " << capInsets.top << " " << capInsets.bottom;
   ArkUI_NumberValue value[] = {
     {.f32 = static_cast<float>(capInsets.left)}, {.f32 = static_cast<float>(capInsets.top)},
     {.f32 = static_cast<float>(capInsets.right)}, {.f32 = static_cast<float>(capInsets.bottom)}

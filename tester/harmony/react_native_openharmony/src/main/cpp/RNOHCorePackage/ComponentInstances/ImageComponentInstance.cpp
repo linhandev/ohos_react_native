@@ -14,13 +14,22 @@ ImageComponentInstance::ImageComponentInstance(Context context)
   this->getLocalRootArkUINode().setDraggable(false);
 }
 
+std::string ImageComponentInstance::FindLocalCacheByUri(facebook::react::ImageSources const& src) {
+  auto rnInstance = m_deps->rnInstance.lock();
+  auto turboModule = rnInstance->getTurboModule("ImageLoader");
+  auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
+  auto cache = arkTsTurboModule->callSync("getCacheFilePath", {src[0].uri});
+  return cache.asString();
+}
+
 void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
   if (!m_props || m_props->sources != props->sources) {
-    this->getLocalRootArkUINode().setSources(props->sources);
+    std::string cache = FindLocalCacheByUri(props->sources);
+    this->getLocalRootArkUINode().setSources(props->sources, cache);
     if (!this->getLocalRootArkUINode().getUri().empty()) {
       onLoadStart();
     }
