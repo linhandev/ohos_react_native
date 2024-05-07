@@ -188,4 +188,11 @@ export class RemoteImageLoader {
     }
     return undefined;
   }
+
+  public getCacheFilePath(uri: string): string {
+    if (this.diskCache.has(uri)) {
+      return `file://${this.diskCache.getLocation(uri)}`;
+    }
+    return uri;
+  }
 }
