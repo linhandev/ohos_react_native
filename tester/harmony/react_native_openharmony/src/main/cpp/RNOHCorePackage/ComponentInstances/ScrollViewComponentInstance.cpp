@@ -90,8 +90,8 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       .setScrollBarColor(
           props->indicatorStyle ==
                   facebook::react::ScrollViewIndicatorStyle::White
-              ? 0xFFFFFFFF
-              : 0xFF000000)
+              ? 0x66FFFFFF
+              : 0x66000000)
       .setEnablePaging(props->pagingEnabled);
 
   if (rawProps.overScrollMode.has_value()) {
