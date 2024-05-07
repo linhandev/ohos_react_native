@@ -334,6 +334,11 @@ class CppComponentInstance : public ComponentInstance {
     this->getLocalRootArkUINode().setOpacity(validOpacity);
   }
 
+  std::string getCompId() override {
+    return getIdFromProps(m_props);
+  }
+
+    
  protected:
   std::string getIdFromProps(SharedConcreteProps const& props) const {
     if (props->testId != "") {
