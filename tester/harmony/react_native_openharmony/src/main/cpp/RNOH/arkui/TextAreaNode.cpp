@@ -241,4 +241,10 @@ void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
 }
+void TextAreaNode::setshowSoftInputOnFocus(int32_t enable){
+  ArkUI_NumberValue value = {.i32 = enable};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_SHOW_KEYBOARD_ON_FOCUS, &item));
+}
 } // namespace rnoh

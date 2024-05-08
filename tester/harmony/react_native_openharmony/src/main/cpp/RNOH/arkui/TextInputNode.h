@@ -77,6 +77,8 @@ class TextInputNode : public TextInputNodeBase {
   
   void setBlurOnSubmit(bool blurOnSubmit);
 
+  void setshowSoftInputOnFocus(int32_t enable);
+
   std::string getTextContent() override;
 };
 

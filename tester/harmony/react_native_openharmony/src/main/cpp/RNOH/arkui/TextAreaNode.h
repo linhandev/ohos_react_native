@@ -65,6 +65,8 @@ class TextAreaNode : public TextInputNodeBase {
   void setAutoFill(bool autoFill);
 
   void setBlurOnSubmit(bool blurOnSubmit);
+  
+  void setshowSoftInputOnFocus(int32_t enable);
 
   std::string getTextContent() override;
 };
