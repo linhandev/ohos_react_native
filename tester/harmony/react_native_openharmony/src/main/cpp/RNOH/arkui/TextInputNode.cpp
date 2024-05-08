@@ -293,6 +293,13 @@ void TextInputNode::setBlurOnSubmit(bool blurOnSubmit) {
       m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
 }
 
+void TextInputNode::setshowSoftInputOnFocus(int32_t enable) {
+  ArkUI_NumberValue value = {.i32 = enable};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_KEYBOARD_ON_FOCUS, &item));
+}
+
 std::string TextInputNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT);
