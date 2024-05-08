@@ -47,6 +47,12 @@ void ImageNode::onNodeEvent(
       m_imageNodeDelegate->onError(eventArgs[0].i32);
     }
   }
+
+  if (eventType == ArkUI_NodeEventType::NODE_IMAGE_ON_DOWNLOAD_PROGRESS) {
+    if (m_imageNodeDelegate != nullptr) {
+      m_imageNodeDelegate->onProgress(eventArgs[0].u32, eventArgs[1].u32);
+    }
+  }
 }
 
 ImageNode& ImageNode::setSources(facebook::react::ImageSources const& src, std::string cache) {
@@ -178,12 +184,11 @@ ImageNode& ImageNode::setAlt(std::string const& uri) {
   return *this;
 }
 
-ImageNode& ImageNode::setCapInsets(facebook::react::EdgeInsets const& capInsets)
+ImageNode& ImageNode::setCapInsets(facebook::react::EdgeInsets const& capInsets, float dpi)
 {
-  LOG(INFO) << "jinqi " << capInsets.left << " " << capInsets.right << " " << capInsets.top << " " << capInsets.bottom;
   ArkUI_NumberValue value[] = {
-    {.f32 = static_cast<float>(capInsets.left)}, {.f32 = static_cast<float>(capInsets.top)},
-    {.f32 = static_cast<float>(capInsets.right)}, {.f32 = static_cast<float>(capInsets.bottom)}
+    {.f32 = static_cast<float>(capInsets.left / dpi)}, {.f32 = static_cast<float>(capInsets.top / dpi)},
+    {.f32 = static_cast<float>(capInsets.right / dpi)}, {.f32 = static_cast<float>(capInsets.bottom / dpi)}
   };
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(m_nodeHandle, NODE_IMAGE_RESIZABLE, &item));

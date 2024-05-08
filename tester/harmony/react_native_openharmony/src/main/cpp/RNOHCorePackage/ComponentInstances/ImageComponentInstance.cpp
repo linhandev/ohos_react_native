@@ -49,7 +49,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   }
 
   if (!m_props || m_props->capInsets != props->capInsets) {
-    this->getLocalRootArkUINode().setCapInsets(props->capInsets);
+    this->getLocalRootArkUINode().setCapInsets(props->capInsets, m_layoutMetrics.pointScaleFactor);
   }
 
   if (!m_props || m_props->defaultSources != props->defaultSources) {
@@ -156,6 +156,22 @@ void ImageComponentInstance::onError(int32_t errorCode) {
         return payload;
       });
   m_eventEmitter->onLoadEnd();
+}
+
+void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
+  if (m_eventEmitter == nullptr) {
+    return;
+  }
+
+  m_eventEmitter->dispatchEvent(
+    "progress", [=](facebook::jsi::Runtime& runtime) {
+      auto payload = facebook::jsi::Object(runtime);
+      auto source = facebook::jsi::Object(runtime);
+      source.setProperty(runtime, "loaded", (int32_t)loaded);
+      source.setProperty(runtime, "total", (int32_t)total);
+      payload.setProperty(runtime, "source", source);
+      return payload;
+    });
 }
 
 void ImageComponentInstance::onLoadStart() {

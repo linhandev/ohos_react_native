@@ -12,6 +12,7 @@ class ImageNodeDelegate {
   virtual ~ImageNodeDelegate() = default;
   virtual void onComplete(float width, float height){};
   virtual void onError(int32_t errorCode){};
+  virtual void onProgress(uint32_t loaded, uint32_t total){};
 };
 
 class ImageNode : public ArkUINode {
@@ -29,7 +30,7 @@ class ImageNode : public ArkUINode {
   ImageNode& setBlur(facebook::react::Float blur);
   ImageNode& setObjectRepeat(
       facebook::react::ImageResizeMode const& resizeMode);
-  ImageNode& setCapInsets(facebook::react::EdgeInsets const& capInsets);
+  ImageNode& setCapInsets(facebook::react::EdgeInsets const& capInsets, float dpi);
 
   ImageNode& setInterpolation(int32_t interpolation);
   ImageNode& setDraggable(bool draggable);
