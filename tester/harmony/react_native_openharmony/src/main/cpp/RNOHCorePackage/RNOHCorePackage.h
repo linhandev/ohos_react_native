@@ -46,7 +46,7 @@
 #include "RNOHCorePackage/EventEmitRequestHandlers/TouchEventEmitRequestHandler.h"
 #include "RNOHCorePackage/EventEmitRequestHandlers/ViewEventEmitRequestHandler.h"
 #include "RNOHCorePackage/GlobalBinders/BlobCollectorJSIBinder.h"
-#include "RNOHCorePackage/TurboModules/AccessibilityInfoTurboModule.h"
+#include "RNOHCorePackage/TurboModules/AccessibilityManagerTurboModule.h"
 #include "RNOHCorePackage/TurboModules/AlertManagerTurboModule.h"
 #include "RNOHCorePackage/TurboModules/Animated/NativeAnimatedTurboModule.h"
 #include "RNOHCorePackage/TurboModules/AppStateTurboModule.h"
@@ -81,8 +81,8 @@ class RNOHCoreTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
  public:
   SharedTurboModule createTurboModule(Context ctx, const std::string& name)
       const override {
-    if (name == "AccessibilityInfo") {
-      return std::make_shared<AccessibilityInfoTurboModule>(ctx, name);
+    if (name == "AccessibilityManager") {
+      return std::make_shared<AccessibilityManagerTurboModule>(ctx, name);
     } else if (name == "AlertManager") {
       return std::make_shared<AlertManagerTurboModule>(ctx, name);
     } else if (name == "Appearance") {

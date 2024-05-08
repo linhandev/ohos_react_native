@@ -58,6 +58,8 @@ class ComponentInstance
   Tag getTag() const {
     return m_tag;
   }
+    
+  virtual std::string getCompId() = 0;
 
   std::string getId() const {
     auto props = getProps();
