@@ -10,27 +10,32 @@ ViewComponentInstance::ViewComponentInstance(Context context)
 }
 
 void ViewComponentInstance::onChildInserted(
-    ComponentInstance::Shared const& childComponentInstance,
-    std::size_t index) {
-  CppComponentInstance::onChildInserted(childComponentInstance, index);
-  if (m_removeClippedSubviews){
+    ComponentInstance::Shared const& childComponentInstance, std::size_t index) {
+    CppComponentInstance::onChildInserted(childComponentInstance, index);
+
+    if (m_removeClippedSubviews){
       insertNodeWithRemoveClipping(childComponentInstance, index);
-  } else {
-    childComponentInstance->setIsClipped(false);
-  m_stackNode.insertChild(
-      childComponentInstance->getLocalRootArkUINode(), index);
-  }
+    } else {
+        childComponentInstance->setIsClipped(false);
+        m_stackNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+    }
 }
 
 void ViewComponentInstance::onChildRemoved(
-    ComponentInstance::Shared const& childComponentInstance) {
+    ComponentInstance::Shared const& childComponentInstance)
+{
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  if (m_removeClippedSubviews && !childComponentInstance->getIsClipped()){
+    if (m_removeClippedSubviews) {
+        if (!childComponentInstance->getIsClipped()) {
   m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
   }
+    } else {
+        m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+    } 
 };
 
-void ViewComponentInstance::onClick() {
+void ViewComponentInstance::onClick()
+{
   if (m_eventEmitter != nullptr) {
     m_eventEmitter->dispatchEvent(
         "click", [=](facebook::jsi::Runtime& runtime) {
@@ -40,8 +45,53 @@ void ViewComponentInstance::onClick() {
   }
 }
 
-StackNode& ViewComponentInstance::getLocalRootArkUINode() {
-  return m_stackNode;
+StackNode& ViewComponentInstance::getLocalRootArkUINode()
+{
+    return m_stackNode;
+}
+
+void ViewComponentInstance::updateClippingIndex(bool isInsert, uint32_t index)
+{
+    if (!m_removeClippedSubviews) {
+        return;
+    }
+
+    uint32_t start = ClippingComponent::getStartIndex();
+    uint32_t end = ClippingComponent::getEndIndex();
+    std::vector<ComponentInstance::Shared> childNodes = getChildren();
+    if (start > end || start >= childNodes.size() || end >= childNodes.size()) {
+        updateVisibleFirst(childNodes);
+    }
+    if (isInsert) {
+        if (index < start) {
+            start < childNodes.size() - 1 ?  ClippingComponent::setStartIndex(start + 1) : 
+                ClippingComponent::setStartIndex(childNodes.size() - 1);
+            end < childNodes.size() - 1 ? ClippingComponent::setEndIndex(end + 1) : 
+                ClippingComponent::setEndIndex(childNodes.size() - 1);
+        } else if (index < end) {
+            end < childNodes.size() - 1 ? ClippingComponent::setEndIndex(end + 1) : 
+                ClippingComponent::setEndIndex(childNodes.size() - 1);
+        }
+    } else {
+        if (start == 0 && end == 0 || start > end) {
+            return;
+        }
+        if (index < start) {
+            if (start > 0) {
+                ClippingComponent::setStartIndex(start - 1);
+            }
+            if (end > 0) {
+                ClippingComponent::setEndIndex(end - 1);
+            }
+        } else if (index <= end) {
+            if (start == end) {
+                ClippingComponent::setStartIndex(start - 1);
+            }
+            ClippingComponent::setEndIndex(end - 1);
+        }
+    }
+
+    return;
 }
 
 void ViewComponentInstance::getChildViewRect(std::shared_ptr<ComponentInstance> const& child,
@@ -51,32 +101,32 @@ void ViewComponentInstance::getChildViewRect(std::shared_ptr<ComponentInstance> 
     auto itemPos = NativeNodeApi::getInstance()->getAttribute(nodeHandle, NODE_POSITION);
     auto measureSize = NativeNodeApi::getInstance()->getMeasuredSize(nodeHandle);
     ClippingComponent::fillRect(itemPos->value[0].f32, itemPos->value[1].f32,
-        measureSize.width/m_layoutMetrics.pointScaleFactor,
-        measureSize.height/m_layoutMetrics.pointScaleFactor, rect);
+    measureSize.width/m_layoutMetrics.pointScaleFactor,
+    measureSize.height/m_layoutMetrics.pointScaleFactor, rect);
 }
+
 void ViewComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child,
   std::size_t index)
 {
-    if (!m_removeClippedSubviews){
+    if (!m_removeClippedSubviews) {
         return;
     }
+
     facebook::react::Rect nodeRect;
-    getChildViewRect(child, nodeRect);
-    if (ClippingComponent::isIntersect(nodeRect)) { 
-      child->setIsClipped(false);
-      if (index < ClippingComponent::getStartIndex()) {
-        ClippingComponent::setStartIndex(index);
-      }
-      if (index > ClippingComponent::getEndIndex()) {
-        ClippingComponent::setEndIndex(index);
-      }
-  } else {
+    ViewComponentInstance::getChildViewRect(child, nodeRect);
+    if (ClippingComponent::isIntersect(nodeRect) || 
+        (index >= ClippingComponent::getStartIndex() && index <= ClippingComponent::getEndIndex() ))
+    {
+        m_stackNode.insertChild(child->getLocalRootArkUINode(), index);
+        child->setIsClipped(false);
+    } else {
         if (!child->getIsClipped()) {
             m_stackNode.removeChild(child->getLocalRootArkUINode());
-            child->setIsClipped(true);
         }
+        child->setIsClipped(true);
     }
-  return;
+
+    return;
 }
 
 void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Shared> &childNodes)
@@ -97,18 +147,21 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
                 ClippingComponent::setEndIndex(i);
                 findBottom = true;
             }
+            if (i > ClippingComponent::getEndIndex() && findBottom) {
+                findBottom = false;
+            }
             if (item->getIsClipped()) {
                 m_stackNode.addChild(item->getLocalRootArkUINode());
                 item->setIsClipped(false);
             }
         } else {
-            if(findTop && !findBottom && i >= 1) {
+            if(findTop && !findBottom && i > 0) {
                 ClippingComponent::setEndIndex(i - 1);
                 findBottom = true;
-        }
-        if (!item->getIsClipped()) {
-            m_stackNode.removeChild(item->getLocalRootArkUINode());
-            item->setIsClipped(true);
+            }
+            if (!item->getIsClipped()) {
+                m_stackNode.removeChild(item->getLocalRootArkUINode());
+                item->setIsClipped(true);
             }
         }
     }
@@ -116,13 +169,15 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
 
 void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Shared> &childNodes)
 {
-    int32_t minIndex = ClippingComponent::getEndIndex();
+    int32_t bottom = ClippingComponent::getEndIndex();
     int32_t maxIndex = childNodes.size();
-    if (ClippingComponent::getEndIndex() == maxIndex -1) {
-        return;
+    if (bottom >= maxIndex && maxIndex > 0) {
+        bottom = maxIndex - 1;
+        ClippingComponent::setEndIndex(bottom);
     }
+
     facebook::react::Rect nodeRect;
-    for (int32_t i = minIndex; i < maxIndex; i++) {
+    for (int32_t i = bottom; i < maxIndex; i++) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
         if (ClippingComponent::isIntersect(nodeRect)) {
@@ -130,7 +185,7 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
                 ClippingComponent::setEndIndex(i);
             }
             if (item->getIsClipped()) {
-               m_stackNode.addChild(item->getLocalRootArkUINode());
+                m_stackNode.addChild(item->getLocalRootArkUINode());
                 item->setIsClipped(false);
             }
         } else {
@@ -140,17 +195,17 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
             }
         }
     }
-    minIndex = ClippingComponent::getStartIndex();
-    maxIndex = ClippingComponent::getEndIndex();
-    for (int32_t i = minIndex; i < maxIndex; i++) {
+
+    int32_t top = ClippingComponent::getStartIndex();
+    for (int32_t i = top; i < bottom; i++) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
         if (ClippingComponent::isIntersect(nodeRect)) {
-                ClippingComponent::setStartIndex(i);
+            ClippingComponent::setStartIndex(i);
             break;
         } else {
             if (!item->getIsClipped()) {
-			    m_stackNode.removeChild(item->getLocalRootArkUINode());
+                m_stackNode.removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -165,12 +220,6 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
     auto lasItem = childNodes.back();
     getChildViewRect(lasItem, nodeRect);
 
-    if (shiftDirect == ClippingMoveDirect::MOVE_UP && m_clippingRect.getMaxY() > nodeRect.getMaxY()) {
-        return;
-    }
-    if (shiftDirect == ClippingMoveDirect::MOVE_LEFT && m_clippingRect.getMaxX() > nodeRect.getMaxX()) {
-        return;
-    }
     for (int32_t i = maxIndex; i >= minIndex; i--) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
@@ -189,6 +238,7 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
             }
         }
     }
+    bool findEnd = false;
     minIndex = ClippingComponent::getStartIndex();
     maxIndex = ClippingComponent::getEndIndex();
     for (int32_t i = maxIndex; i >= minIndex; i--) {
@@ -214,12 +264,13 @@ void ViewComponentInstance::updateVisible(bool isFrist)
     if (m_clippingRect.size.width == 0 || m_clippingRect.size.height == 0) {
         return;
     }
+    uint32_t start = ClippingComponent::getStartIndex();
+    uint32_t end = ClippingComponent::getEndIndex();
     std::vector<ComponentInstance::Shared> childNodes = getChildren();
-
-    if (isFrist || (ClippingComponent::getStartIndex() == 0 && ClippingComponent::getEndIndex() == 0)) {
+    if (isFrist || (start == 0 && end== 0) || (start > end) || start >= childNodes.size() || end >= childNodes.size()) {
         updateVisibleFirst(childNodes);
         return;
-    } 
+    }
 
     if (shiftDirect == ClippingMoveDirect::MOVE_DOWN || shiftDirect == ClippingMoveDirect::MOVE_RIGHT) {
         updateVisibleDown(childNodes);
@@ -229,4 +280,5 @@ void ViewComponentInstance::updateVisible(bool isFrist)
         updateVisibleFirst(childNodes);
     }
 }
+
 } // namespace rnoh

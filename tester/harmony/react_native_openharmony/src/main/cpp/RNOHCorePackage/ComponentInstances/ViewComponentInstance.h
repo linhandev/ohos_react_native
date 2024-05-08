@@ -13,6 +13,7 @@ class ViewComponentInstance
     void updateVisibleFirst(std::vector<ComponentInstance::Shared> &childNodes);
     void updateVisibleDown(std::vector<ComponentInstance::Shared> &childNodes);
     void updateVisibleUp(std::vector<ComponentInstance::Shared> &childNodes);
+    void updateClippingIndex(bool isInsert, uint32_t index) override;
  public:
   ViewComponentInstance(Context context);
 
