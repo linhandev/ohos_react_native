@@ -15,7 +15,7 @@ class TextInputNodeDelegate {
   virtual void onSubmit(){};
   virtual void onPasteOrCut(){};
   virtual void onContentScroll(){};
-  virtual void onContentSizeChange(){};
+  virtual void onContentSizeChange(float width, float height){};
 
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
 };
