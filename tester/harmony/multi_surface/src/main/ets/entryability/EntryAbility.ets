@@ -17,10 +17,6 @@ export default class EntryAbility extends RNAbility {
     const rnInstance: RNInstance = await rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages,
       enableCAPIArchitecture: true
-    }, {
-      create(tag: Tag, componentName: string): undefined {
-        return undefined;
-      }
     })
     rnInstance.runJSBundle(new AnyJSBundleProvider([new MetroJSBundleProvider(), new ResourceJSBundleProvider(this.context.resourceManager, 'bundle.harmony.js')]))
     AppStorage.setOrCreate("AppRNInstance", rnInstance);
