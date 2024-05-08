@@ -19,9 +19,10 @@ import type { ElementRef } from "react";
 import RCTDeviceEventEmitter from "react-native/Libraries/EventEmitter/RCTDeviceEventEmitter";
 import { sendAccessibilityEvent } from "react-native/Libraries/ReactNative/RendererProxy";
 import Platform from "../../Utilities/Platform";
-import legacySendAccessibilityEvent from "react-native/Libraries/Components/AccessibilityInfo/legacySendAccessibilityEvent";
+import legacySendAccessibilityEvent from "./legacySendAccessibilityEvent";
 import NativeAccessibilityInfoAndroid from "react-native/Libraries/Components/AccessibilityInfo/NativeAccessibilityInfo";
 import NativeAccessibilityManagerIOS from "react-native/Libraries/Components/AccessibilityInfo/NativeAccessibilityManager";
+import NativeAccessibilityManagerHarmony from "./NativeAccessibilityManager";
 
 // Events that are only supported on Android.
 type AccessibilityEventDefinitionsAndroid = {
@@ -251,7 +252,13 @@ const AccessibilityInfo = {
   isScreenReaderEnabled(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       // RNOH: path to support open harmony
-      if (Platform.OS === "android" || Platform.OS === "harmony") {
+      if (Platform.OS === "harmony"){
+        if (NativeAccessibilityManagerHarmony != null) {
+          NativeAccessibilityManagerHarmony.isTouchExplorationEnabled(resolve);
+        } else {
+          reject(null);
+        }
+      } else if (Platform.OS === "android" ) {
         if (NativeAccessibilityInfoAndroid != null) {
           NativeAccessibilityInfoAndroid.isTouchExplorationEnabled(resolve);
         } else {
@@ -282,7 +289,13 @@ const AccessibilityInfo = {
    */
   isAccessibilityServiceEnabled(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      if (Platform.OS === "android" || Platform.OS === "harmony") {
+      if (Platform.OS === "harmony") {
+        if (NativeAccessibilityInfoHarmony != null) {
+          NativeAccessibilityInfoHarmony.isAccessibilityServiceEnabled(resolve);
+        } else {
+          reject(null);
+        }
+      } else if (Platform.OS === "android") {
         if (
           NativeAccessibilityInfoAndroid != null &&
           NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled != null
@@ -373,7 +386,9 @@ const AccessibilityInfo = {
    * See https://reactnative.dev/docs/accessibilityinfo#announceforaccessibility
    */
   announceForAccessibility(announcement: string): void {
-    if (Platform.OS === "android") {
+    if(Platform.OS === "harmony") {
+      NativeAccessibilityManagerHarmony?.announceForAccessibility(announcement);
+    } else if (Platform.OS === "android") {
       NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
     } else {
       NativeAccessibilityManagerIOS?.announceForAccessibility(announcement);

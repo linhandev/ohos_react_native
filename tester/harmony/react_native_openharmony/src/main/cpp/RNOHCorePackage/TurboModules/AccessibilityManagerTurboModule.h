@@ -5,9 +5,9 @@
 
 namespace rnoh {
 
-class JSI_EXPORT AccessibilityInfoTurboModule : public ArkTSTurboModule {
+class JSI_EXPORT AccessibilityManagerTurboModule : public ArkTSTurboModule {
  public:
-  AccessibilityInfoTurboModule(
+  AccessibilityManagerTurboModule(
       const ArkTSTurboModule::Context ctx,
       const std::string name);
 };
