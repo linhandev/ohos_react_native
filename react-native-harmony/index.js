@@ -52,7 +52,7 @@ module.exports = {
     return require('react-native/Libraries/Lists/FlatList');
   },
   get Image() {
-    return require('react-native/Libraries/Image/Image');
+    return require('./Libraries/Components/Image/Image');
   },
   get ImageBackground() {
     return require('react-native/Libraries/Image/ImageBackground');
