@@ -13,6 +13,10 @@ class ScrollViewComponentInstance
       public ScrollNodeDelegate {
  private:
   enum ScrollState : int32_t { IDLE, SCROLL, FLING };
+  struct ChildTagWithOffset {
+    facebook::react::Tag tag;
+    facebook::react::Float offset;
+  };
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
   StackNode m_scrollContainerNode;
@@ -32,6 +36,7 @@ class ScrollViewComponentInstance
   bool m_scrollToOverflowEnabled = false;
   float m_recentScrollFrameOffset = 0;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
+  std::optional<ChildTagWithOffset> m_firstVisibleView = std::nullopt;
 
   // Mimics of implementation in ImageComponentInstance.cpp
   struct ScrollViewRawProps {
@@ -67,6 +72,11 @@ class ScrollViewComponentInstance
   bool isHorizontal(SharedConcreteProps const& props);
   void disableIntervalMomentum();
   std::optional<float> getNextSnapTarget();
+  void adjustVisibleContentPosition(
+      facebook::react::ScrollViewMaintainVisibleContentPosition const&
+          scrollViewMaintainVisibleContentPosition);
+  std::optional<ChildTagWithOffset> getFirstVisibleView(
+      int32_t minIndexForVisible);
 
  public:
   ScrollViewComponentInstance(Context context);

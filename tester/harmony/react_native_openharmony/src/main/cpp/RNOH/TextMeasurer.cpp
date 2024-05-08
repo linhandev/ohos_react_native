@@ -1,6 +1,4 @@
 #include "RNOH/TextMeasurer.h"
-#include <native_drawing/drawing_font_collection.h>
-#include <native_drawing/drawing_text_typography.h>
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkUITypography.h"
 #include "RNOHCorePackage/ComponentInstances/TextConversions.h"
@@ -205,6 +203,19 @@ int32_t TextMeasurer::getOHDrawingTextAlign(
       break;
   }
   return align;
+}
+
+std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
+    AttributedString const& attributedString,
+    ParagraphAttributes const& paragraphAttributes,
+    LayoutConstraints const& layoutConstraints) {
+    auto typography = measureTypography(
+        attributedString,
+        paragraphAttributes,
+        layoutConstraints);
+    std::vector<OH_Drawing_LineMetrics> data;
+    typography.getLineMetrics(data);
+    return data;
 }
 
 } // namespace rnoh

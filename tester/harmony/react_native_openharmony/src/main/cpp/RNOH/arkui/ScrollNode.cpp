@@ -56,8 +56,8 @@ void ScrollNode::onNodeEvent(
 facebook::react::Point ScrollNode::getScrollOffset() const {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_SCROLL_OFFSET);
-  facebook::react::Float x = item->value[0].i32;
-  facebook::react::Float y = item->value[1].i32;
+  facebook::react::Float x = item->value[0].f32;
+  facebook::react::Float y = item->value[1].f32;
   return Point{x, y};
 }
 
@@ -83,13 +83,13 @@ void ScrollNode::setScrollNodeDelegate(ScrollNodeDelegate* scrollNodeDelegate) {
   m_scrollNodeDelegate = scrollNodeDelegate;
 }
 
-void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode, bool alwaysBounce) {
+void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode) {
+  bool alwaysBounce = false;
   ArkUI_EdgeEffect edgeEffect;
   if (overScrollMode == "never") {
     edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_NONE;
   } else if (overScrollMode == "auto") {
     edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
-    alwaysBounce = false;
   } else if (overScrollMode == "always") {
     edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
     alwaysBounce = true;
