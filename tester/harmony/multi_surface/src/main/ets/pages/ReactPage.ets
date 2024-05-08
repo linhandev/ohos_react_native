@@ -72,7 +72,8 @@ struct ReactPage {
           height: 0,
           surfaceOffsetX: 0,
           surfaceOffsetY: 0,
-          pixelRatio: vp2px(1)
+          pixelRatio: vp2px(1),
+          isRTL: false
         },
         {});
       surfacesMap[this.appKey] = surfaceHandle;
