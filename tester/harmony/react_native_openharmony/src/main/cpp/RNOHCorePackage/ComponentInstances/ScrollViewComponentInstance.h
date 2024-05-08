@@ -20,6 +20,7 @@ class ScrollViewComponentInstance
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
   StackNode m_scrollContainerNode;
+  std::shared_ptr<ComponentInstance> m_childComponent; 
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
   ScrollState m_scrollState = IDLE;
