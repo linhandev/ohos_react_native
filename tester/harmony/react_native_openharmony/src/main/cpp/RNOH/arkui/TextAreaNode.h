@@ -17,7 +17,7 @@ class TextAreaNodeDelegate {
   virtual void onPasteOrCut(){};
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
   virtual void onContentScroll(){};
-  virtual void onContentSizeChange(){};
+  virtual void onContentSizeChange(float width, float height){};
 };
 
 class TextAreaNode : public TextInputNodeBase {
@@ -63,6 +63,10 @@ class TextAreaNode : public TextInputNodeBase {
   void setUnderlineColorAndroid(facebook::react::SharedColor const& underlineColorAndroid);
   
   void setAutoFill(bool autoFill);
+
+  void setBlurOnSubmit(bool blurOnSubmit);
+  
+  void setshowSoftInputOnFocus(int32_t enable);
 
   std::string getTextContent() override;
 };

@@ -10,6 +10,7 @@ rnoh::ImageLoaderTurboModule::ImageLoaderTurboModule(
     : rnoh::ArkTSTurboModule(ctx, name) {
   methodMap_ = {
       ARK_METHOD_METADATA(getConstants, 0),
+      ARK_METHOD_METADATA(getCacheFilePath, 1),
       ARK_ASYNC_METHOD_METADATA(getSize, 1),
       ARK_ASYNC_METHOD_METADATA(getSizeWithHeaders, 2),
       ARK_ASYNC_METHOD_METADATA(prefetchImage, 1),

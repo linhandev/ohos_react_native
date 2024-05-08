@@ -18,8 +18,10 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
 
-void TextInputComponentInstance::onContentSizeChange() {
-    m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+void TextInputComponentInstance::onContentSizeChange(float width, float height) {
+  m_contentSizeWidth = width;
+  m_contentSizeHeight = height;
+  m_eventEmitter->onContentSizeChange(getTextInputMetrics());
 }
 
 void TextInputComponentInstance::onContentScroll() {
@@ -119,6 +121,8 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.eventCount = this->m_nativeEventCount;
   textInputMetrics.selectionRange.location = this->m_selectionLocation;
   textInputMetrics.selectionRange.length = this->m_selectionLength;
+  textInputMetrics.contentSize.width = this->m_contentSizeWidth;
+  textInputMetrics.contentSize.height = this->m_contentSizeHeight;
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
@@ -129,7 +133,11 @@ void TextInputComponentInstance::onPropsChanged(
   m_multiline = props->traits.multiline;
   CppComponentInstance::onPropsChanged(props);
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
-  
+  if (!m_props ||
+      props->traits.showSoftInputOnFocus != m_props->traits.showSoftInputOnFocus){
+    m_textAreaNode.setshowSoftInputOnFocus((int32_t)props->traits.showSoftInputOnFocus);
+    m_textInputNode.setshowSoftInputOnFocus((int32_t)props->traits.showSoftInputOnFocus);
+  }
   if (!m_props || props->importantForAutofill != m_props->importantForAutofill) {
     m_textAreaNode.setAutoFill(convertImportantForAutofill(props->importantForAutofill));
     m_textInputNode.setAutoFill(convertImportantForAutofill(props->importantForAutofill));
@@ -315,6 +323,10 @@ void TextInputComponentInstance::onPropsChanged(
       !(props->yogaStyle.padding() == m_props->yogaStyle.padding())) {
     m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
+  }
+  if (!m_props || props->blurOnSubmit != m_props->blurOnSubmit) {
+    m_textInputNode.setBlurOnSubmit(props->blurOnSubmit);
+    m_textAreaNode.setBlurOnSubmit(props->blurOnSubmit);
   }
 }
 

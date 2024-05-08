@@ -24,6 +24,8 @@ class ViewComponentInstance
       ComponentInstance::Shared const& childComponentInstance) override;
 
   void onClick() override;
+  void onHoverIn() override;
+  void onHoverOut() override;
   StackNode& getLocalRootArkUINode() override;
   void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index) override;
   void updateVisible(bool isFrist) override;

@@ -23,7 +23,7 @@ class ImageNode : public ArkUINode {
  public:
   ImageNode();
   ~ImageNode();
-  ImageNode& setSources(facebook::react::ImageSources const& src);
+  ImageNode& setSources(facebook::react::ImageSources const& src, std::string cache = "");
   ImageNode& setResizeMode(facebook::react::ImageResizeMode const& mode);
   ImageNode& setTintColor(facebook::react::SharedColor const& sharedColor);
   ImageNode& setBlur(facebook::react::Float blur);

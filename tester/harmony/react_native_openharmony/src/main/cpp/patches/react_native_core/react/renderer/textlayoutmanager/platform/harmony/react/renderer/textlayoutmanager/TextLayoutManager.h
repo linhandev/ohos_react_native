@@ -8,7 +8,8 @@
 #pragma once
 
 #include <memory>
-
+#include <native_drawing/drawing_font_collection.h>
+#include <native_drawing/drawing_text_typography.h>
 #include <react/renderer/attributedstring/AttributedString.h>
 #include <react/renderer/attributedstring/AttributedStringBox.h>
 #include <react/renderer/attributedstring/ParagraphAttributes.h>
@@ -29,6 +30,9 @@ class TextLayoutManagerDelegate {
     virtual TextMeasurement measure(AttributedString attributedString,
                                     ParagraphAttributes paragraphAttributes,
                                     LayoutConstraints layoutConstraints) = 0;
+    virtual std::vector<OH_Drawing_LineMetrics> getLineMetrics(AttributedString const& attributedString,
+                                    ParagraphAttributes const& paragraphAttributes,
+                                    LayoutConstraints const& layoutConstraints) = 0;
 };
 
 /*

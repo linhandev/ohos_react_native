@@ -55,11 +55,13 @@ void TextAreaNode::onNodeEvent(
     if (m_textAreaNodeDelegate != nullptr) {
       m_textAreaNodeDelegate->onContentScroll();
     }
-  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE){
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE) {
     if (m_textAreaNodeDelegate != nullptr) {
-      m_textAreaNodeDelegate->onContentSizeChange();
-    } 
-}
+      float width = eventArgs[0].f32;
+      float height = eventArgs[1].f32;
+      m_textAreaNodeDelegate->onContentSizeChange(width, height);
+    }
+  }
 }
 
 void TextAreaNode::onNodeEvent(
@@ -231,5 +233,18 @@ void TextAreaNode::setAutoFill(bool autoFill) {
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
+}
+
+void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {
+  ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
+}
+void TextAreaNode::setshowSoftInputOnFocus(int32_t enable){
+  ArkUI_NumberValue value = {.i32 = enable};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_SHOW_KEYBOARD_ON_FOCUS, &item));
 }
 } // namespace rnoh
