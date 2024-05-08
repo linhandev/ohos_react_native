@@ -239,7 +239,7 @@ void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {
   ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
   ArkUI_AttributeItem item = {&value, 1};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
+      m_nodeHandle, NODE_TEXT_AREA_BLUR_ON_SUBMIT, &item));
 }
 void TextAreaNode::setshowSoftInputOnFocus(int32_t enable){
   ArkUI_NumberValue value = {.i32 = enable};
