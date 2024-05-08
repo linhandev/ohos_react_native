@@ -16,6 +16,7 @@ export interface ScrollViewProps extends ViewBaseProps {
   indicatorStyle?: IndicatorStyle
   decelerationRate: number
   scrollEventThrottle: number
+  removeClippedSubviews:boolean
 }
 
 export interface ScrollViewRawProps extends ViewRawProps {

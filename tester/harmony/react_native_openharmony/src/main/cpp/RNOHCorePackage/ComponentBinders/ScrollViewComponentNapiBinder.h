@@ -49,6 +49,7 @@ class ScrollViewComponentNapiBinder : public ViewComponentNapiBinder {
               "indicatorStyle", static_cast<int>(props->indicatorStyle))
           .addProperty("decelerationRate", props->decelerationRate)
           .addProperty("scrollEventThrottle", props->scrollEventThrottle)
+          .addProperty("removeClippedSubviews", props->removeClippedSubviews)
           .build();
     }
     return napiViewProps;
