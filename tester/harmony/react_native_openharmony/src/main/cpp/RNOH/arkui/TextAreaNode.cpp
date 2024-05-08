@@ -55,11 +55,13 @@ void TextAreaNode::onNodeEvent(
     if (m_textAreaNodeDelegate != nullptr) {
       m_textAreaNodeDelegate->onContentScroll();
     }
-  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE){
+  } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE) {
     if (m_textAreaNodeDelegate != nullptr) {
-      m_textAreaNodeDelegate->onContentSizeChange();
-    } 
-}
+      float width = eventArgs[0].f32;
+      float height = eventArgs[1].f32;
+      m_textAreaNodeDelegate->onContentSizeChange(width, height);
+    }
+  }
 }
 
 void TextAreaNode::onNodeEvent(

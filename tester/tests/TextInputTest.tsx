@@ -91,6 +91,12 @@ export function TextInputTest() {
           expect(state).to.be.true;
         }}
       />
+      <TestCase.Example
+        modal
+        tags={['C_API']}
+        itShould="report content size changes with parameter(onContentSizeChange)">
+        <OnContentSizeChangeView />
+      </TestCase.Example>
       <TestSuite name="focus/blur">
         <TestCase.Manual
           tags={['C_API']}
@@ -800,6 +806,39 @@ const ReturnKeyTypeView = () => {
     </>
   );
 };
+const OnContentSizeChangeView = () => {
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
+  const [inputWidth, setInputWidth] = useState<number>(0);
+  const [inputHeight, setInputHeight] = useState<number>(0);
+  const renderSize = (event: any) => {
+    setWidth(event.nativeEvent.contentSize.width);
+    setHeight(event.nativeEvent.contentSize.height);
+  }
+  const renderInputSize = (event: any) => {
+    setInputWidth(event.nativeEvent.contentSize.width);
+    setInputHeight(event.nativeEvent.contentSize.height);
+  }
+  return (
+    <View style={{backgroundColor: 'black'}}>
+      <Text style={styles.text}>Textinput content size:</Text>
+      <TextInputWithText
+        style={styles.textInput}
+        onContentSizeChange={(event) => renderInputSize(event)}
+      />
+      <Text style={styles.text}>input content size width: {inputWidth}</Text>
+      <Text style={styles.text}>input content size height: {inputHeight}</Text>
+      <Text style={styles.text}>Multiline textinput content size:</Text>
+      <TextInputWithText
+        style={styles.textInputBigger}
+        multiline
+        onContentSizeChange={(event) => renderSize(event)}
+      />
+      <Text style={styles.text}>content size width: {width}</Text>
+      <Text style={styles.text}>content size height: {height}</Text>
+    </View>
+  );
+}
 const EnterKeyHintExample = () => {
   const [index, setIndex] = useState(0);
   const enterKey: Array<EnterKeyHintType | EnterKeyHintTypeAndroid> = [
