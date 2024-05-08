@@ -7,18 +7,18 @@
 #include <react/renderer/graphics/Size.h>
 
 namespace rnoh {
-  class ComponentInstance;
-  enum class ClippingMoveDirect
-  {
-      MOVE_NONE = 0,
-      MOVE_UP,
-      MOVE_DOWN,
-      MOVE_LEFT,
-      MOVE_RIGHT
-  };
+class ComponentInstance;
+enum class ClippingMoveDirect
+{
+    MOVE_NONE = 0,
+    MOVE_UP,
+    MOVE_DOWN,
+    MOVE_LEFT,
+    MOVE_RIGHT
+};
 
-  class ClippingComponent
-  {
+class ClippingComponent
+{
     protected:
         bool m_removeClippedSubviews = false;
         bool m_isClipped = false;
@@ -34,6 +34,7 @@ namespace rnoh {
         void setStartIndex(uint32_t i);
         uint32_t getEndIndex();
         void setEndIndex(uint32_t i);
+        virtual void updateClippingIndex(bool isInsert, uint32_t index);
     public:
         ClippingComponent();
         ~ClippingComponent();
@@ -41,8 +42,8 @@ namespace rnoh {
         bool getRemoveClippedSubviews();
         void setIsClipped(bool isClipped);
         bool getIsClipped();
-        void updateContentOffset(facebook::react::Point contentOffset, facebook::react::Size contentSize);
+        void updateContentOffset(facebook::react::Point contentOffset, facebook::react::Size containerSize);
         virtual void updateVisible(bool isFrist);  
-  };
+};
 
 } // namespace rnoh
