@@ -65,7 +65,9 @@ void TextInputNode::onNodeEvent(
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE) {
     if (m_textInputNodeDelegate != nullptr) {
-      m_textInputNodeDelegate->onContentSizeChange();
+      float width = eventArgs[0].f32;
+      float height = eventArgs[1].f32;
+      m_textInputNodeDelegate->onContentSizeChange(width, height);
     }
 }
 }
