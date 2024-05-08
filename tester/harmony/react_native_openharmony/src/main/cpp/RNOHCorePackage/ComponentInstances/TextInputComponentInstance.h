@@ -31,6 +31,9 @@ class TextInputComponentInstance
 
   int32_t m_selectionLength = 0;
 
+  float m_contentSizeWidth = 0;
+  float m_contentSizeHeight = 0;
+
   bool m_textWasPastedOrCut = false;
   bool m_valueChanged = false;
 
@@ -64,7 +67,7 @@ class TextInputComponentInstance
   
   void onContentScroll() override;
 
-  void onContentSizeChange() override;
+  void onContentSizeChange(float width, float height) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 };
