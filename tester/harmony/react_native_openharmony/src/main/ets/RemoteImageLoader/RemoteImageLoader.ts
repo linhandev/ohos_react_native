@@ -11,6 +11,7 @@ import { common } from '@kit.AbilityKit';
 export class RemoteImageLoader {
   private activeRequestByUrl: Map<string, Promise<FetchResult>> = new Map();
   private activePrefetchByUrl: Map<string, Promise<boolean>> = new Map();
+  private abortPrefetchByUrl: Map<number, {uri: string, downloadTask: request.DownloadTask}> = new Map()
 
   public constructor(
     private memoryCache: RemoteImageMemoryCache,
@@ -128,7 +129,44 @@ export class RemoteImageLoader {
     return true;
   }
 
-  public async prefetch(uri: string): Promise<boolean> {
+  public async abortPrefetch(requestId: number): Promise<boolean> {
+    let {uri, downloadTask} = this.abortPrefetchByUrl[requestId];
+    if (uri === undefined) {
+      return true;
+    }
+
+    await downloadTask?.delete();
+    if (this.memoryCache.has(uri)) {
+      this.memoryCache.remove(uri);
+    }
+
+    if (this.diskCache.has(uri)) {
+      this.diskCache.remove(uri);
+    }
+
+    this.abortPrefetchByUrl.delete(requestId);
+    return true;
+  }
+
+  private addRequestListener(downloadTask: request.DownloadTask, requestId: number, uri: string): void {
+    let progressCallback = (receiveSize: number, totalSize) => {
+      this.abortPrefetchByUrl[requestId] = {uri: uri, downloadTask: downloadTask}
+    };
+
+    let failCallback = (err: number) => {
+      this.abortPrefetchByUrl.delete(requestId);
+    };
+
+    let completeCallback = () => {
+      this.abortPrefetchByUrl.delete(requestId);
+    };
+
+    downloadTask.on('progress', progressCallback);
+    downloadTask.on('fail', failCallback);
+    downloadTask.on('complete', completeCallback);
+  }
+
+  public async prefetch(uri: string, requestId: number): Promise<boolean> {
     if (this.diskCache.has(uri)) {
       return true;
     }
@@ -142,7 +180,7 @@ export class RemoteImageLoader {
       this.memoryCache.remove(uri);
     }
 
-    const promise = this.downloadFile(uri);
+    const promise = this.downloadFile(uri, requestId);
     this.activePrefetchByUrl.set(uri, promise);
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
@@ -151,11 +189,13 @@ export class RemoteImageLoader {
     return await promise;
   }
 
-  private async downloadFile(uri: string): Promise<boolean> {
+  private async downloadFile(uri: string, requestId: number): Promise<boolean> {
     const path = this.diskCache.getLocation(uri);
 
     try {
-      await request.downloadFile(this.context, { url: uri, filePath: path });
+      await request.downloadFile(this.context, { url: uri, filePath: path }).then((data: request.DownloadTask) => {
+        this.addRequestListener(data, requestId, uri)
+      });
       this.diskCache.set(uri);
     } catch (e) {
       // request.downloadFile does not allow overwriting,
@@ -166,6 +206,8 @@ export class RemoteImageLoader {
           await request.downloadFile(this.context, {
             url: uri,
             filePath: tempPath,
+          }).then((data: request.DownloadTask) => {
+            this.addRequestListener(data, requestId, uri)
           });
           await fs.moveFile(tempPath, path);
           this.diskCache.set(uri);
