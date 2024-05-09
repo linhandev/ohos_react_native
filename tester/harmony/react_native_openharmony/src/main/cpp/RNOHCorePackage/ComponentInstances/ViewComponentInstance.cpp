@@ -27,12 +27,14 @@ void ViewComponentInstance::onChildRemoved(
   CppComponentInstance::onChildRemoved(childComponentInstance);
     if (m_removeClippedSubviews) {
         if (!childComponentInstance->getIsClipped()) {
-  m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+            m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+        childComponentInstance->setIsClipped(true);
   }
     } else {
         m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+        childComponentInstance->setIsClipped(true);
     } 
-};
+}
 
 void ViewComponentInstance::onHoverIn() {
   m_eventEmitter->dispatchEvent(
@@ -132,7 +134,12 @@ void ViewComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<Compone
     if (ClippingComponent::isIntersect(nodeRect) || 
         (index >= ClippingComponent::getStartIndex() && index <= ClippingComponent::getEndIndex() ))
     {
+        uint32_t totalCnt = NativeNodeApi::getInstance()->getTotalChildCount(m_stackNode.getArkUINodeHandle());
+        if (index > totalCnt) {
+            m_stackNode.addChild(child->getLocalRootArkUINode());
+        } else {
         m_stackNode.insertChild(child->getLocalRootArkUINode(), index);
+        }
         child->setIsClipped(false);
     } else {
         if (!child->getIsClipped()) {
@@ -150,6 +157,11 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
     bool findBottom = false;
     facebook::react::Rect nodeRect;
     uint32_t maxIndex = childNodes.size();
+    if (maxIndex == 0) {
+        return;
+    }
+
+    uint32_t fristOnTree = 0;
     for (uint32_t i = 0; i < maxIndex; i++) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
@@ -165,9 +177,8 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
             if (i > ClippingComponent::getEndIndex() && findBottom) {
                 findBottom = false;
             }
-            if (item->getIsClipped()) {
-                m_stackNode.addChild(item->getLocalRootArkUINode());
-                item->setIsClipped(false);
+            if (!item->getIsClipped()) {
+                fristOnTree = i;
             }
         } else {
             if(findTop && !findBottom && i > 0) {
@@ -178,6 +189,21 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
                 m_stackNode.removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
+        }
+    }
+    if (!findTop || !findBottom) {
+        return;
+    }
+    uint32_t start = ClippingComponent::getStartIndex();
+    uint32_t end = ClippingComponent::getEndIndex();
+    if (fristOnTree < start) {
+        fristOnTree = start;
+    }
+    for (uint32_t i = start; i <= end; i++) {
+        const auto& item = childNodes[i];
+        if (item->getIsClipped()) {
+            m_stackNode.insertChild(item->getLocalRootArkUINode(), (i - fristOnTree));
+            item->setIsClipped(false);
         }
     }
 }
