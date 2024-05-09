@@ -8,7 +8,7 @@ import bundleManager from '@ohos.bundle.bundleManager';
 export class LinkingManagerTurboModule extends TurboModule {
   public static readonly NAME = 'LinkingManager' as const;
 
-  private static readonly CUSTOM_HANDLED_SCHEMES = ['tel', 'sms']; // those exceptions are manually handled in openURL because OH doesn't support opening urls with those schemes
+  private static readonly CUSTOM_HANDLED_SCHEMES = ['tel', 'sms', 'map']; // those exceptions are manually handled in openURL because OH doesn't support opening urls with those schemes
 
   private initialUrl: string | undefined;
 
