@@ -28,7 +28,8 @@ auto rnoh::TouchTarget::computeChildPoint(
 
   // transform the vector from the origin of the transformation
   auto transformedOffsetFromCenter =
-      (point - transformationOrigin) * inverseTransform.value();
+      (point + this->getCurrentOffset() - transformationOrigin) *
+      inverseTransform.value();
 
   // add back the offset of the center relative to the origin of the view
   auto localPoint = transformedOffsetFromCenter + center;
