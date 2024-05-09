@@ -77,16 +77,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
 
   void schedulerDidRequestPreliminaryViewAllocation(
       facebook::react::SurfaceId surfaceId,
-      const facebook::react::ShadowNode& shadowNode) override {
-    auto componentInstance = m_componentInstanceFactory->create(
-        shadowNode.getTag(), shadowNode.getComponentHandle(), shadowNode.getComponentName());
-    if (componentInstance == nullptr) {
-      LOG(INFO) << "Couldn't create CppComponentInstance for: "
-                << shadowNode.getComponentName();
-    } else {
-      m_componentInstanceRegistry->insert(componentInstance);
-    }
-  }
+      const facebook::react::ShadowNode& shadowNode) override {}
 
   void schedulerDidDispatchCommand(
       const facebook::react::ShadowView& shadowView,
@@ -151,8 +142,15 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
-        auto componentInstance = m_componentInstanceRegistry->findByTag(newChild.tag);
-        updateComponentWithShadowView(componentInstance, newChild);
+        auto componentInstance = m_componentInstanceFactory->create(
+            newChild.tag, newChild.componentHandle, newChild.componentName);
+        if (componentInstance != nullptr) {
+          updateComponentWithShadowView(componentInstance, newChild);
+          m_componentInstanceRegistry->insert(componentInstance);
+        } else {
+          LOG(INFO) << "Couldn't create CppComponentInstance for: "
+                    << newChild.componentName;
+        }
         break;
       }
       case facebook::react::ShadowViewMutation::Delete: {
