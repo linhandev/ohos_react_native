@@ -150,9 +150,7 @@ void ImageComponentInstance::onError(int32_t errorCode) {
   m_eventEmitter->dispatchEvent(
       "error", [errMsg](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
-        auto source = facebook::jsi::Object(runtime);
-        source.setProperty(runtime, "error", errMsg);
-        payload.setProperty(runtime, "source", source);
+        payload.setProperty(runtime, "error", errMsg);
         return payload;
       });
   m_eventEmitter->onLoadEnd();
@@ -166,10 +164,8 @@ void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
   m_eventEmitter->dispatchEvent(
     "progress", [=](facebook::jsi::Runtime& runtime) {
       auto payload = facebook::jsi::Object(runtime);
-      auto source = facebook::jsi::Object(runtime);
-      source.setProperty(runtime, "loaded", (int32_t)loaded);
-      source.setProperty(runtime, "total", (int32_t)total);
-      payload.setProperty(runtime, "source", source);
+      payload.setProperty(runtime, "loaded", (int32_t)loaded);
+      payload.setProperty(runtime, "total", (int32_t)total);
       return payload;
     });
 }
