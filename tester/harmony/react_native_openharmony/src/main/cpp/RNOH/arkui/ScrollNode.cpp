@@ -100,12 +100,8 @@ void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode) {
       m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));
 }
 
-void ScrollNode::setNestedScrollEnabled(bool nestedScrollEnabled, bool ScrollEnabled) {
-  bool status = true;
-  if (!nestedScrollEnabled || !ScrollEnabled) {
-    status = false;
-  }
-  ArkUI_NumberValue value[] = {{.i32 = status}};
+void ScrollNode::setNestedScrollEnabled(bool nestedScrollEnabled) {
+  ArkUI_NumberValue value[] = {{.i32 = nestedScrollEnabled}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_SCROLL_ENABLE_SCROLL_INTERACTION, &item));
