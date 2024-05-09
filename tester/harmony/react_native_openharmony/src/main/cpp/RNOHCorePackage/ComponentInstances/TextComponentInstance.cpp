@@ -112,12 +112,12 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] minFontSize=" << minFontSize.value();
     }
     
-    // selectionColor, wait for CAPI
-//    if (textProps->rawProps.count("selectionColor") != 0 && !textProps->rawProps["selectionColor"].isNull()) {
-//      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
-//      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
-//      m_textNode.setSelectedBackgroundColor(selectionColor);
-//    }
+    // selectionColor
+    if (textProps->rawProps.count("selectionColor") != 0 && !textProps->rawProps["selectionColor"].isNull()) {
+      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
+      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
+      m_textNode.setSelectedBackgroundColor(selectionColor);
+    }
     
     // dataDetectorType
     if (textProps->rawProps.count("dataDetectorType") != 0) {
