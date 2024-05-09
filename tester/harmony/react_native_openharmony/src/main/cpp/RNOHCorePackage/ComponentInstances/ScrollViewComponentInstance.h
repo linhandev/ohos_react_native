@@ -106,9 +106,7 @@ class ScrollViewComponentInstance
   void finalizeUpdates() override;
 
   // TouchTarget implementation
-  facebook::react::Point computeChildPoint(
-      facebook::react::Point const& point,
-      TouchTarget::Shared const& child) const override;
+  facebook::react::Point getCurrentOffset() const override;
 
   facebook::react::ScrollViewMetrics getScrollViewMetrics();
 

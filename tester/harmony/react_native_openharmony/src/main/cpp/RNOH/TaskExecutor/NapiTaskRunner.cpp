@@ -54,11 +54,9 @@ NapiTaskRunner::NapiTaskRunner(napi_env env, ExceptionHandler exceptionHandler)
 NapiTaskRunner::~NapiTaskRunner() {
   running->store(false);
   cv.notify_all();
-  uv_close(reinterpret_cast<uv_handle_t*>(asyncHandle),
-    [] (uv_handle_t* handle) {
-      delete (uv_async_t*) handle;
-    }
-  );
+  uv_close(
+      reinterpret_cast<uv_handle_t*>(asyncHandle),
+      [](uv_handle_t* handle) { delete (uv_async_t*)handle; });
 }
 
 void NapiTaskRunner::runAsyncTask(Task&& task) {

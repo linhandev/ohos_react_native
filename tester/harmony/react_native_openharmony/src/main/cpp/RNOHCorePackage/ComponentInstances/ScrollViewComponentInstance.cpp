@@ -189,13 +189,11 @@ void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
   }
 }
 
-facebook::react::Point rnoh::ScrollViewComponentInstance::computeChildPoint(
-    facebook::react::Point const& point,
-    TouchTarget::Shared const& child) const {
+facebook::react::Point rnoh::ScrollViewComponentInstance::getCurrentOffset()
+    const {
   auto offset = m_scrollNode.getScrollOffset();
   auto contentViewOffset = getContentViewOffset();
-  return CppComponentInstance::computeChildPoint(
-      point + offset - contentViewOffset, child);
+  return offset - contentViewOffset;
 }
 
 void rnoh::ScrollViewComponentInstance::updateStateWithContentOffset(
