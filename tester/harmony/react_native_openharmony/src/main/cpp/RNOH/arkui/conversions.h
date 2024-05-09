@@ -212,7 +212,13 @@ inline ArkUI_NumberValue convertContentType(std::string const& textContentType){
     return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_ID_CARD_NUMBER};
 } else if (textContentType == "nickName") {
     return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_NICKNAME};
-} else if (textContentType == "detailInfoWithoutStreet") {
+} else if (textContentType == "name") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FULL_NAME};
+} else if (textContentType == "familyName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_LAST_NAME};
+}else if (textContentType == "givenName") {
+    return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FIRST_NAME};
+}else if (textContentType == "detailInfoWithoutStreet") {
     return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_DETAIL_INFO_WITHOUT_STREET};
 } else if (textContentType == "formatAddress") {
     return {.i32 = ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_FORMAT_ADDRESS};
