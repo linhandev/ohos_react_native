@@ -85,8 +85,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
   m_removeClippedSubviews = props->removeClippedSubviews;
   m_scrollNode.setHorizontal(isHorizontal(props))
-      .setEnableScrollInteraction(
-          !m_isNativeResponderBlocked && props->scrollEnabled)
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
           isHorizontal(props),
@@ -118,12 +116,15 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews);
     m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   }
-    
-  if (m_rawProps.nestedScrollEnabled != rawProps.nestedScrollEnabled) {
-    m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
-    if (m_rawProps.nestedScrollEnabled.has_value()) {
-      m_scrollNode.setNestedScrollEnabled(m_rawProps.nestedScrollEnabled.value(), props->scrollEnabled);
+
+  if (rawProps.nestedScrollEnabled.has_value() && !rawProps.nestedScrollEnabled.value()) {
+    if (m_rawProps.nestedScrollEnabled != rawProps.nestedScrollEnabled) {
+      m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
+      m_scrollNode.setNestedScrollEnabled(m_rawProps.nestedScrollEnabled.value());
     }
+  } else {
+    m_scrollNode.setEnableScrollInteraction(
+      !m_isNativeResponderBlocked && props->scrollEnabled);
   }
   if (m_rawProps.endFillColor != rawProps.endFillColor) {
     m_rawProps.endFillColor = rawProps.endFillColor;
@@ -177,7 +178,14 @@ void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
   if (isBlocked) {
     m_scrollNode.setEnableScrollInteraction(false);
   } else {
-    m_scrollNode.setEnableScrollInteraction(m_props->scrollEnabled);
+    bool scrollEnabled = true;
+    if (m_rawProps.nestedScrollEnabled.has_value()) {
+      scrollEnabled &= m_rawProps.nestedScrollEnabled.value();
+    }
+    if (m_props) {
+      scrollEnabled &= m_props->scrollEnabled;
+    }
+    m_scrollNode.setEnableScrollInteraction(scrollEnabled);
   }
 }
 
@@ -529,8 +537,8 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic v
   auto overScrollMode = (value.count("overScrollMode") > 0)
       ? std::optional(value["overScrollMode"].asString())
       : std::nullopt;
-  auto nestedEnabled = (value.count("nestedEnabled") > 0)
-      ? std::optional(value["nestedEnabled"].asBool())
+  auto nestedEnabled = (value.count("nestedScrollEnabled") > 0)
+      ? std::optional(value["nestedScrollEnabled"].asBool())
       : std::nullopt;
   auto endFillColor = (value.count("endFillColor") > 0)
       ? std::optional(value["endFillColor"].asInt())

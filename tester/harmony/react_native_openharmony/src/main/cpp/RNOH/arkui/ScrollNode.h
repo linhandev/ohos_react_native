@@ -50,7 +50,7 @@ class ScrollNode : public ArkUINode {
   void scrollTo(float x, float y, bool animated, bool scrollToOverflowEnabled = false);
   void setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode);
   void setScrollOverScrollMode(std::string const& overScrollMode);
-  void setNestedScrollEnabled(bool nestedScrollEnabled,bool ScrollEnabled);
+  void setNestedScrollEnabled(bool nestedScrollEnabled);
   void setEndFillColor(uint32_t color);
 };
 
