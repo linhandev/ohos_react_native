@@ -15,6 +15,12 @@ class TouchTarget {
   virtual Point computeChildPoint(
       Point const& point,
       TouchTarget::Shared const& child) const;
+  /**
+   * Provides the current offset of a scrollable touch target.
+   */
+  virtual Point getCurrentOffset() const {
+    return {0, 0};
+  }
   virtual bool containsPoint(Point const& point) const = 0;
   virtual bool containsPointInBoundingBox(Point const& point) = 0;
   virtual bool canHandleTouch() const = 0;
