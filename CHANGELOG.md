@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72.26
+ - added TouchTarget::getCurrentOffset method ([e2d3a5424f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e2d3a5424f1bad6d59892bcad79246e981edff1b))
+- added doc comments ([fd99f5dc98](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fd99f5dc98cee883f0cff3e5fc1dc1a0e32d515d))
+- added delegate releasing asyncHandle to the uv_close function call in class destructor. ([30d553764e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/30d553764efdc1e119d0bdf5ab82fa9dde198ed9))
+- wrapped NapiTaskRunner::asyncHandle into a pointer ([30d553764e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/30d553764efdc1e119d0bdf5ab82fa9dde198ed9))
+
+
 ## v0.72.25
  - [breaking] changed signature of `RNOHCoreContext.createAndRegisterRNInstance` ([a52a79cfee](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a52a79cfee2394977d431d064f136f9b3c3dbde1))
 - added support for `ScrollView::maintainVisibleContentPosition` ([c51f235c57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c51f235c577abd5ebf6abe48e173eb493dc14c31))
