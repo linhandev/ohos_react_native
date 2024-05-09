@@ -55,7 +55,8 @@ export class NapiBridge {
                             onCppMessage: (type: string, payload: any) => void,
                             shouldEnableDebugger: boolean,
                             shouldEnableBackgroundExecutor: boolean,
-                            cppFeatureFlags: CppFeatureFlag[]
+                            cppFeatureFlags: CppFeatureFlag[],
+                            arkTsComponentNames: Array<string>
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -82,6 +83,7 @@ export class NapiBridge {
       shouldEnableBackgroundExecutor,
       cppFeatureFlagStatusByName,
       frameNodeFactoryRef,
+      arkTsComponentNames,
     );
   }
 
