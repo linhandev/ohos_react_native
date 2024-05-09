@@ -291,7 +291,7 @@ TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR, &item));
+      m_nodeHandle, NODE_TEXT_SELECTED_BACKGROUND_COLOR, &item));
   return *this;
 }
 
