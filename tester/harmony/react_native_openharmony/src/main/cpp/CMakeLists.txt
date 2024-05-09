@@ -451,6 +451,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINodeRegistry.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/XComponentSurface.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINode.cpp"
+    "${RNOH_CPP_DIR}/RNOH/arkui/ColumnNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ImageNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ScrollNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/StackNode.cpp"

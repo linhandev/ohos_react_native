@@ -190,6 +190,22 @@ export const RefreshControlTest = () => {
         itShould="disable/enable pull to refresh on click">
         <PullToRefreshEnabledExample />
       </TestCase.Example>
+      <TestCase.Example
+        tags={['C_API']}
+        itShould="display a large refresh control indicator">
+        <ScrollView
+          style={{height: 128, backgroundColor: 'white'}}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshKey % 2 === 0}
+              title="I am large!"
+              // @ts-ignore
+              size={'large'}
+              onRefresh={() => {}}
+            />
+          }
+        />
+      </TestCase.Example>
     </TestSuite>
   );
 };
