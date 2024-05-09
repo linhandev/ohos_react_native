@@ -164,9 +164,9 @@ class RefreshControl extends React.Component<RefreshControlProps> {
   render(): React.Node {
     // RNOH: patch - replaced occurrences Platform.OS with OS
     if (OS === "ios") {
-      // RNOH: patch - change descructuring to pass "progressBackgroundColor" and "enabled" to PullToRefreshViewNativeComponent
+      // RNOH: patch - change descructuring to pass "progressBackgroundColor", "enabled" and "size" to PullToRefreshViewNativeComponent
       // BEFORE: const { enabled, colors, progressBackgroundColor, size, ...props } =
-      const {colors, tintColor, size, ...props } =
+      const {colors, ...props } = (RefreshControl refactor + size property)
         this.props;
       var preferTintColor = tintColor;
       if (colors && colors.length) {
