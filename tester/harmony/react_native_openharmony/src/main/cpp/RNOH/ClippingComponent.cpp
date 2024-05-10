@@ -100,27 +100,27 @@ bool ClippingComponent::getIsClipped()
     return m_isClipped;
 }
 
-uint32_t ClippingComponent::getStartIndex()
+std::size_t ClippingComponent::getStartIndex()
 {
     return m_startIndex;
 }
 
-void ClippingComponent::setStartIndex(uint32_t i)
+void ClippingComponent::setStartIndex(std::size_t i)
 {
     m_startIndex = i;
 }
 
-uint32_t ClippingComponent::getEndIndex()
+std::size_t ClippingComponent::getEndIndex()
 {
     return m_endIndex;
 }
 
-void ClippingComponent::setEndIndex(uint32_t i)
+void ClippingComponent::setEndIndex(std::size_t i)
 {
     m_endIndex = i;
 }
 
-void ClippingComponent::updateClippingIndex(bool isInsert, uint32_t index)
+void ClippingComponent::updateClippingIndex(bool isInsert, std::size_t index)
 {
     return;
 }
