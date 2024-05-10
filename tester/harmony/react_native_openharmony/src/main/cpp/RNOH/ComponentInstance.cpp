@@ -23,7 +23,7 @@ void ComponentInstance::removeChild(
   auto it =
       std::find(m_children.begin(), m_children.end(), childComponentInstance);
   if (it != m_children.end()) {
-    uint32_t index = it - m_children.begin();
+    std::size_t index = it - m_children.begin();
     updateClippingIndex(false, index);
     auto childComponentInstance = std::move(*it);
     m_children.erase(it);
