@@ -29,8 +29,12 @@ void TextInputComponentInstance::onContentScroll() {
 }
 
 void TextInputComponentInstance::onChange(std::string text) {
-  m_valueChanged = true;
   m_content = std::move(text);
+  if (m_shouldIgnoreNextChangeEvent) {
+    m_shouldIgnoreNextChangeEvent = false;
+    return;
+  }
+  m_valueChanged = true;
 }
 
 void TextInputComponentInstance::onSubmit() {
@@ -375,6 +379,9 @@ void TextInputComponentInstance::onStateChanged(
     contentStream << fragment.string;
   }
   auto content = contentStream.str();
+  if (m_content != content) {
+    m_shouldIgnoreNextChangeEvent = true;
+  }
   m_textAreaNode.setTextContent(content);
   m_textInputNode.setTextContent(content);
 }
