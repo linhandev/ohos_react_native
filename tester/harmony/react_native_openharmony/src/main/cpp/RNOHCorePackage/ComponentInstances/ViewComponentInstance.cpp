@@ -161,7 +161,6 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
         return;
     }
 
-    uint32_t fristOnTree = 0;
     for (uint32_t i = 0; i < maxIndex; i++) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
@@ -174,11 +173,8 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
                 ClippingComponent::setEndIndex(i);
                 findBottom = true;
             }
-            if (i > ClippingComponent::getEndIndex() && findBottom) {
+            if (findBottom && i > ClippingComponent::getEndIndex()) {
                 findBottom = false;
-            }
-            if (!item->getIsClipped()) {
-                fristOnTree = i;
             }
         } else {
             if(findTop && !findBottom && i > 0) {
@@ -196,13 +192,10 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
     }
     uint32_t start = ClippingComponent::getStartIndex();
     uint32_t end = ClippingComponent::getEndIndex();
-    if (fristOnTree < start) {
-        fristOnTree = start;
-    }
     for (uint32_t i = start; i <= end; i++) {
         const auto& item = childNodes[i];
         if (item->getIsClipped()) {
-            m_stackNode.insertChild(item->getLocalRootArkUINode(), (i - fristOnTree));
+            m_stackNode.insertChild(item->getLocalRootArkUINode(), (i - start));
             item->setIsClipped(false);
         }
     }
