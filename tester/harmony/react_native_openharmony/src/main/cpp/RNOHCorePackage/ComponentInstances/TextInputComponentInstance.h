@@ -35,6 +35,8 @@ class TextInputComponentInstance
   bool m_valueChanged = false;
 
   bool m_focused{false};
+  bool m_shouldIgnoreNextChangeEvent = false;
+
   void focus();
   void blur();
 

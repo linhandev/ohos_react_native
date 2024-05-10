@@ -631,6 +631,35 @@ export function TextInputTest() {
           selectTextOnFocus
         />
       </TestCase.Example>
+      <TestCase.Manual
+        tags={['C_API']}
+        modal
+        itShould="not trigger onChange event after changing value through state"
+        initialState={{text: '', onChangeFired: false}}
+        arrange={({setState, state}) => {
+          return (
+            <View>
+              <TextInput
+                style={styles.textInput}
+                value={state.text}
+                onChange={() => {
+                  setState(prev => ({...prev, onChangeFired: true}));
+                }}
+              />
+              <Button
+                label="change text"
+                onPress={() =>
+                  setState(prev => ({...prev, text: prev.text + 'a'}))
+                }
+              />
+            </View>
+          );
+        }}
+        assert={({expect, state}) => {
+          expect(state.onChangeFired).to.be.false;
+          expect(state.text).to.not.be.equal('');
+        }}
+      />
     </TestSuite>
   );
 }
