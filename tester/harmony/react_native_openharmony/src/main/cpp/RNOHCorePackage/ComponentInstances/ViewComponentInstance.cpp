@@ -137,7 +137,7 @@ void ViewComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<Compone
         if (index > totalCnt) {
             m_stackNode.addChild(child->getLocalRootArkUINode());
         } else {
-        m_stackNode.insertChild(child->getLocalRootArkUINode(), index);
+            m_stackNode.insertChild(child->getLocalRootArkUINode(), index);
         }
         child->setIsClipped(false);
     } else {
