@@ -23,18 +23,18 @@ class ClippingComponent
         bool m_removeClippedSubviews = false;
         bool m_isClipped = false;
         facebook::react::Rect m_clippingRect;
-        uint32_t m_startIndex = 0;
-        uint32_t m_endIndex = 0;
+        std::size_t m_startIndex = 0;
+        std::size_t m_endIndex = 0;
         ClippingMoveDirect shiftDirect = ClippingMoveDirect::MOVE_NONE;
         virtual void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child,
             std::size_t index);
         bool isIntersect(facebook::react::Rect &nodeRect);
         void fillRect(float x, float y, float width, float height, facebook::react::Rect &rect);
-        uint32_t getStartIndex();
-        void setStartIndex(uint32_t i);
-        uint32_t getEndIndex();
-        void setEndIndex(uint32_t i);
-        virtual void updateClippingIndex(bool isInsert, uint32_t index);
+        std::size_t getStartIndex();
+        void setStartIndex(std::size_t i);
+        std::size_t getEndIndex();
+        void setEndIndex(std::size_t i);
+        virtual void updateClippingIndex(bool isInsert, std::size_t index);
     public:
         ClippingComponent();
         ~ClippingComponent();
