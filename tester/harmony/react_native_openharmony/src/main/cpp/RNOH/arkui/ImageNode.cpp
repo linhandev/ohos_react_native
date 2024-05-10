@@ -5,7 +5,8 @@
 
 static constexpr ArkUI_NodeEventType IMAGE_NODE_EVENT_TYPES[] = {
     NODE_IMAGE_ON_COMPLETE,
-    NODE_IMAGE_ON_ERROR};
+    NODE_IMAGE_ON_ERROR,
+    NODE_IMAGE_ON_DOWNLOAD_PROGRESS};
 
 namespace rnoh {
 
@@ -186,10 +187,15 @@ ImageNode& ImageNode::setAlt(std::string const& uri) {
 
 ImageNode& ImageNode::setCapInsets(facebook::react::EdgeInsets const& capInsets, float dpi)
 {
-  ArkUI_NumberValue value[] = {
-    {.f32 = static_cast<float>(capInsets.left / dpi)}, {.f32 = static_cast<float>(capInsets.top / dpi)},
-    {.f32 = static_cast<float>(capInsets.right / dpi)}, {.f32 = static_cast<float>(capInsets.bottom / dpi)}
-  };
+  if (capInsets == facebook::react::EdgeInsets::ZERO) {
+    return *this;
+  }
+
+  float left = capInsets.left / (dpi * 2);
+  float right = capInsets.right < 1 ? 1 : capInsets.right / (dpi * 2); // arkui need right >= 1 if wants capInsets works
+  float top = capInsets.top / (dpi * 2);
+  float bottom =  capInsets.bottom < 1 ? 1 : capInsets.bottom / (dpi * 2); // arkui need bottom >= 1 if wants capInsets works
+  ArkUI_NumberValue value[] = {{.f32 = left}, {.f32 = top}, {.f32 = right}, {.f32 = bottom}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(m_nodeHandle, NODE_IMAGE_RESIZABLE, &item));
   return *this;
