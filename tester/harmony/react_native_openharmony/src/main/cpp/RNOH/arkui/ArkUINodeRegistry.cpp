@@ -70,6 +70,10 @@ ArkUINodeRegistry::ArkUINodeRegistry(ArkTSBridge::Shared arkTSBridge)
       [](ArkUI_NodeEvent* event) {
         ArkUINodeRegistry::getInstance().receiveEvent(event);
       });
+  NativeNodeApi::getInstance()->registerNodeCustomEventReceiver(
+      [](ArkUI_NodeCustomEvent* event) {
+        ArkUINodeRegistry::getInstance().receiveCustomEvent(event);
+      });
 }
 
 void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
@@ -114,6 +118,24 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
       return;
     }
 
+  } catch (std::exception& e) {
+    m_arkTSBridge->handleError(std::current_exception());
+  }
+#endif
+}
+
+void ArkUINodeRegistry::receiveCustomEvent(ArkUI_NodeCustomEvent* event) {
+#ifdef C_API_ARCH
+  try {
+    auto eventType = OH_ArkUI_NodeCustomEvent_GetEventType(event);
+    auto node = OH_ArkUI_NodeCustomEvent_GetNodeHandle(event);
+
+    auto it = m_nodeByHandle.find(node);
+    if (it == m_nodeByHandle.end()) {
+      LOG(INFO) << "Custom Node with handle: " << node << " not found";
+      return;
+    }
+    it->second->onCustomNodeEvent(event);
   } catch (std::exception& e) {
     m_arkTSBridge->handleError(std::current_exception());
   }

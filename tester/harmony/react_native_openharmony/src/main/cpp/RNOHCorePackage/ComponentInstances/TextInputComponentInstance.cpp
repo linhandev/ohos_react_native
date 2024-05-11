@@ -372,11 +372,11 @@ void TextInputComponentInstance::setLayout(
     facebook::react::LayoutMetrics layoutMetrics) {
   CppComponentInstance::setLayout(layoutMetrics);
   if (m_multiline) {
-    m_textInputNode.setPosition(layoutMetrics.frame.origin);
-    m_textInputNode.setSize(layoutMetrics.frame.size);
+    m_textInputNode.setLayoutRect(
+      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
   } else {
-    m_textAreaNode.setPosition(layoutMetrics.frame.origin);
-    m_textAreaNode.setSize(layoutMetrics.frame.size);
+    m_textAreaNode.setLayoutRect(
+      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
   }
 }
 

@@ -4,8 +4,8 @@ namespace rnoh {
 
 SampleViewComponentInstance::SampleViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.setStackNodeDelegate(this);
-  m_stackNode.insertChild(m_textNode, 0);
+  m_customNode.setCustomNodeDelegate(this);
+  m_customNode.insertChild(m_textNode, 0);
   m_textNode.setTextContent(std::to_string(m_tag));
   m_textNode.setFontSize(m_fontSize);
   m_textNode.setFontColor(*facebook::react::whiteColor());
@@ -15,14 +15,14 @@ void SampleViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
-  m_stackNode.insertChild(
+  m_customNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index + 1);
 }
 
 void SampleViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  m_customNode.removeChild(childComponentInstance->getLocalRootArkUINode());
 }
 
 void SampleViewComponentInstance::onPropsChanged(
@@ -49,7 +49,7 @@ void SampleViewComponentInstance::handleCommand(
 }
 
 ArkUINode& SampleViewComponentInstance::getLocalRootArkUINode() {
-  return m_stackNode;
+  return m_customNode;
 }
 
 void SampleViewComponentInstance::onClick() {

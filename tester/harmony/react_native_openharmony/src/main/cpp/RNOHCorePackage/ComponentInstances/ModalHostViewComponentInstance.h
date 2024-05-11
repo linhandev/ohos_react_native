@@ -4,6 +4,7 @@
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUIDialogHandler.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"
+#include "RNOH/arkui/CustomNode.h"
 #include "RNOH/arkui/StackNode.h"
 #include "react/renderer/components/modal/ModalHostViewShadowNode.h"
 
@@ -15,7 +16,7 @@ class ModalHostViewComponentInstance
  private:
   using ScreenOrientation = facebook::react::ModalHostViewEventEmitter::
       OnOrientationChangeOrientation;
-  StackNode m_virtualNode;
+  CustomNode m_virtualNode;
   StackNode m_rootStackNode;
   ArkUIDialogHandler m_dialogHandler;
   std::unique_ptr<TouchEventHandler> m_touchHandler;
@@ -49,7 +50,7 @@ class ModalHostViewComponentInstance
 
   void onRequestClose() override;
 
-  StackNode& getLocalRootArkUINode() override;
+  CustomNode& getLocalRootArkUINode() override;
 
   // ArkTSMessageHub::Observer
   void onMessageReceived(ArkTSMessage const& message) override;
