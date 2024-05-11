@@ -15,6 +15,7 @@ void ComponentInstance::insertChild(
   updateClippingIndex(true, index);
   onChildInserted(childComponentInstance, index);
   childComponentInstance->setParent(shared_from_this());
+  childComponentInstance->setIndex(index);
   m_children.insert(it, std::move(childComponentInstance));
 }
 

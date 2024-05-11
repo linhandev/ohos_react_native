@@ -143,6 +143,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
     // NOTE: updating tag by id must happen before updating props
     m_componentInstanceRegistry->updateTagById(
         shadowView.tag, shadowView.props->nativeId, componentInstance->getId());
+    componentInstance->setShadowView(shadowView);
     componentInstance->setLayout(shadowView.layoutMetrics);
     componentInstance->setEventEmitter(shadowView.eventEmitter);
     componentInstance->setState(shadowView.state);
@@ -156,6 +157,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
                     ? mutation.newChildShadowView.componentName
                     : "null")
             << "; newTag: " << mutation.newChildShadowView.tag
+            << "; index: " << mutation.index
             << "; oldTag: " << mutation.oldChildShadowView.tag
             << "; parentTag: " << mutation.parentShadowView.tag << ")";
     switch (mutation.type) {
@@ -203,8 +205,39 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
 
         if (parentComponentInstance != nullptr &&
             newChildComponentInstance != nullptr) {
-          parentComponentInstance->insertChild(
-              newChildComponentInstance, mutation.index);
+          // text need change stackNode
+          if (parentComponentInstance->checkUpdateBaseNode()) {
+            if (parentComponentInstance->getParent().lock() != nullptr) {
+              facebook::react::Tag grandParentTag = parentComponentInstance->getParent().lock()->getTag();
+              std::size_t parentIndex = parentComponentInstance->getIndex();
+              //  mutation.newChildShadowView is old data
+              facebook::react::ShadowView parentShadowView = parentComponentInstance->getShadowView();
+              LOG(INFO) << "need update text node, parent tag=" << parentComponentInstance->getTag()
+                << ", grandParentTag tag=" << grandParentTag << ", parent index=" << parentIndex
+                << ", child index=" << mutation.index;
+              auto grandParentComponentInstance = m_componentInstanceRegistry->findByTag(grandParentTag);
+              if (grandParentComponentInstance != nullptr) {
+                grandParentComponentInstance->removeChild(parentComponentInstance);
+                m_componentInstanceRegistry->deleteByTag(parentComponentInstance->getTag());
+                auto newParentComponentInstance = m_componentInstanceFactory->create(
+                  parentShadowView.tag, parentShadowView.componentHandle, parentShadowView.componentName);
+                if (newParentComponentInstance != nullptr) {
+                  updateComponentWithShadowView(newParentComponentInstance, parentShadowView);
+                  m_componentInstanceRegistry->insert(newParentComponentInstance);
+                  newParentComponentInstance->insertChild(newChildComponentInstance, mutation.index);
+                  grandParentComponentInstance->insertChild(newParentComponentInstance, parentIndex);
+                }
+              } else {
+                LOG(FATAL) << "Couldn't find grandParentComponentInstance by tag=" << grandParentTag;
+              }
+            } else {
+              LOG(FATAL) << "Couldn't find grandParentComponentInstance";
+            }
+          } else {
+            parentComponentInstance->insertChild(
+                newChildComponentInstance, mutation.index);
+          }
+          
         }
         break;
       }
