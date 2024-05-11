@@ -112,6 +112,24 @@ class ComponentInstance
     m_parent = parent;
   }
 
+  virtual std::size_t const getIndex() const {
+    return m_index;
+  }
+
+  virtual void setIndex(std::size_t index) {
+    m_index = index;
+  }
+
+  virtual bool checkUpdateBaseNode() {
+    return false;
+  }
+
+  virtual void setShadowView(facebook::react::ShadowView const& shadowView) {}
+
+  virtual facebook::react::ShadowView& getShadowView() {
+    return m_shadowView;
+  }
+
   void setNativeResponderBlocked(
       bool blocked,
       const std::string& origin = "REACT_NATIVE") {
@@ -172,10 +190,12 @@ class ComponentInstance
   ComponentHandle m_componentHandle;
   std::vector<ComponentInstance::Shared> m_children;
   ComponentInstance::Weak m_parent;
+  std::size_t m_index = 0;
   facebook::react::BorderMetrics m_oldBorderMetrics;
   facebook::react::LayoutMetrics m_layoutMetrics;
   Dependencies::Shared m_deps;
   std::unordered_set<std::string> m_ignoredPropKeys;
+  facebook::react::ShadowView m_shadowView;
 };
 
 } // namespace rnoh
