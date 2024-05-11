@@ -8,14 +8,34 @@ export function SafeAreaViewExample() {
   return (
     <>
       <StatusBar hidden={isStatusBarHidden} />
-      <SafeAreaView style={{backgroundColor: 'red', flex: 1}}>
-        <View style={{backgroundColor: 'green', flex: 1}}>
-          <Button
-            onPress={() => {
-              setIsStatusBarHidden(prev => !prev);
-            }}
-            label="Toogle Status Bar"
-          />
+      <SafeAreaView
+        style={{
+          paddingTop: 300,
+          backgroundColor: 'red',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        collapsable={false}>
+        <View
+          style={{
+            backgroundColor: 'purple',
+            width: 250,
+            height: 250,
+            flex: 1,
+            alignItems: 'center',
+          }}
+          collapsable={false}>
+          <View
+            style={{backgroundColor: 'green', width: 150, height: 150}}
+            collapsable={false}>
+            <Button
+              onPress={() => {
+                setIsStatusBarHidden(prev => !prev);
+              }}
+              label="Toogle Status Bar"
+            />
+          </View>
         </View>
       </SafeAreaView>
     </>

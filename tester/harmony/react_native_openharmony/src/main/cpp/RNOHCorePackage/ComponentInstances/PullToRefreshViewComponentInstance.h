@@ -1,8 +1,11 @@
 #pragma once
 #include <react/renderer/components/rncore/EventEmitters.h>
 #include "RNOH/CppComponentInstance.h"
+#include "RNOH/arkui/ColumnNode.h"
 #include "RNOH/arkui/LoadingProgressNode.h"
 #include "RNOH/arkui/RefreshNode.h"
+#include "RNOH/arkui/StackNode.h"
+#include "RNOH/arkui/TextNode.h"
 #include "react/renderer/components/rncore/ShadowNodes.h"
 
 namespace rnoh {
@@ -11,8 +14,24 @@ class PullToRefreshViewComponentInstance
     : public CppComponentInstance<facebook::react::PullToRefreshViewShadowNode>,
       public RefreshNodeDelegate {
  private:
+  static constexpr float REFRESH_INDICATOR_SIZE = 29;
+
   RefreshNode m_refreshNode;
-  LoadingProgressNode m_loadingProgressNode;
+
+  ColumnNode m_refreshIndicatorContainerNode;
+  StackNode m_refreshIndicatorBackgroundNode;
+  LoadingProgressNode m_refreshIndicatorSpinnerNode;
+  TextNode m_refreshIndicatorTitleNode;
+
+  void createRefreshIndicatorTitle(
+      const std::string& refreshIndicatorTitleText,
+      facebook::react::SharedColor const& refreshIndicatorTitleColor);
+  void createOrUpdateRefreshIndicatorTitle(
+      const std::string& refreshIndicatorTitleText,
+      facebook::react::SharedColor const& refreshIndicatorTitleColor);
+  void updateRefreshIndicatorTitleNode(
+      const std::string& title,
+      facebook::react::SharedColor const& color);
 
  public:
   PullToRefreshViewComponentInstance(Context context);
