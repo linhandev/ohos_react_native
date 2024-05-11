@@ -161,7 +161,7 @@ void ModalHostViewComponentInstance::onRequestClose() {
   }
 }
 
-StackNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
+CustomNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
   return m_virtualNode;
 }
 

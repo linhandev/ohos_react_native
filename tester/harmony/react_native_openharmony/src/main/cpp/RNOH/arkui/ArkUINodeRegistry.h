@@ -37,6 +37,8 @@ class ArkUINodeRegistry {
 
   void receiveEvent(ArkUI_NodeEvent* event);
 
+  void receiveCustomEvent(ArkUI_NodeCustomEvent* event);
+
   std::unordered_map<ArkUI_NodeHandle, ArkUINode*> m_nodeByHandle;
   std::unordered_map<ArkUI_NodeHandle, TouchEventHandler*>
       m_touchHandlerByNodeHandle;

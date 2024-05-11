@@ -76,6 +76,21 @@ ArkUINode& ArkUINode::setHeight(float height) {
   return *this;
 }
 
+ArkUINode& ArkUINode::setLayoutRect(
+  facebook::react::Point const& position, facebook::react::Size const& size,
+  facebook::react::Float pointScaleFactor) {
+  ArkUI_NumberValue value[] = {
+    {.i32 = static_cast<int32_t>(position.x * pointScaleFactor)},
+    {.i32 = static_cast<int32_t>(position.y * pointScaleFactor)},
+    {.i32 = static_cast<int32_t>((size.width > 0 ? size.width : 0.01) * pointScaleFactor)},
+    {.i32 = static_cast<int32_t>((size.height > 0 ? size.height : 0.01) * pointScaleFactor)}
+  };
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_LAYOUT_RECT, &item));  
+  return *this;
+}
+
 ArkUINode& ArkUINode::setWidth(float width) {
   ArkUI_NumberValue widthValue[] = {{.f32 = width}};
   ArkUI_AttributeItem widthItem = {
@@ -423,6 +438,8 @@ void ArkUINode::onNodeEvent(
 void ArkUINode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     std::string_view eventString) {}
+
+void ArkUINode::onCustomNodeEvent(ArkUI_NodeCustomEvent* event) {}
 
 ArkUINode& ArkUINode::setFocusStatus(int32_t focus) {
   std::array<ArkUI_NumberValue, 1> value = {{{.i32 = focus}}};
