@@ -167,14 +167,9 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         auto componentInstance =
             m_componentInstanceRegistry->findByTag(newChild.tag);
         if (componentInstance == nullptr) {
-          componentInstance = m_componentInstanceFactory->create(
-              newChild.tag, newChild.componentHandle, newChild.componentName);
-            if (componentInstance == nullptr) {
-              LOG(ERROR) << "Couldn't create CppComponentInstance for: "
-                        << newChild.componentName;
-              return;
-            }
-            m_componentInstanceRegistry->insert(componentInstance);
+          LOG(ERROR) << "Couldn't create CppComponentInstance for: "
+                    << newChild.componentName;
+          return;
         }
         updateComponentWithShadowView(componentInstance, newChild);
         break;
