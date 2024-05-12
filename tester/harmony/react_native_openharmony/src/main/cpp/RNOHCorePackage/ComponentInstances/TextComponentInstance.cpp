@@ -14,11 +14,14 @@ const static float DEFAULT_LINE_SPACING = 0.15f;
 
 TextComponentInstance::TextComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.insertChild(m_textNode, 0);
   m_childNodes.clear();
 }
 
 TextComponentInstance::~TextComponentInstance() {
+  if (m_stackNodePtr != nullptr) {
+    m_stackNodePtr->removeChild(m_textNode);
+    delete m_stackNodePtr;
+  }
   for (auto const& item : m_childNodes) {
     m_textNode.removeChild(*item);
   }
@@ -28,13 +31,17 @@ TextComponentInstance::~TextComponentInstance() {
 void TextComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
-  m_stackNode.insertChild(
-      childComponentInstance->getLocalRootArkUINode(), index);
+    if (m_stackNodePtr != nullptr) {
+      m_stackNodePtr->insertChild(
+        childComponentInstance->getLocalRootArkUINode(), index);
+    }
 }
 
 void TextComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
-  m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  if (m_stackNodePtr != nullptr) {
+    m_stackNodePtr->removeChild(childComponentInstance->getLocalRootArkUINode());
+  }
 }
 
 void TextComponentInstance::onPropsChanged(
@@ -94,7 +101,11 @@ void TextComponentInstance::onPropsChanged(
     if (!m_props || stackAlign != stackAlignOld) {
       VLOG(3) << "[text-debug] stackAlign=" << stackAlign
               << ", stackAlignOld=" << stackAlignOld;
-      m_stackNode.setAlign(stackAlign);
+      if (m_stackNodePtr) {
+        m_stackNodePtr->setAlign(stackAlign);
+      } else {
+        m_textNode.setAlignment((ArkUI_Alignment)stackAlign);
+      }
     }
 
     // enable
@@ -462,8 +473,12 @@ std::string TextComponentInstance::stringCapitalize(
   return strRes;
 }
 
-StackNode& TextComponentInstance::getLocalRootArkUINode() {
-  return m_stackNode;
+ArkUINode& TextComponentInstance::getLocalRootArkUINode() {
+    if (m_stackNodePtr != nullptr) {
+      return *m_stackNodePtr;
+    } else {
+      return m_textNode;
+    }
 }
 
 class TextFragmentTouchTarget : public TouchTarget {
@@ -631,4 +646,38 @@ void TextComponentInstance::updateFragmentTouchTargets(
   }
   m_fragmentTouchTargetByTag = std::move(touchTargetByTag);
 }
+
+bool TextComponentInstance::checkUpdateBaseNode() {
+    return m_stackNodePtr == nullptr;
+}
+
+void TextComponentInstance::setShadowView(facebook::react::ShadowView const& shadowView) {
+  CppComponentInstance::setShadowView(shadowView);
+  m_shadowView = shadowView;
+  if (m_hasCheckNesting) {
+    return;
+  }
+  m_hasCheckNesting = true;
+  auto textState = std::dynamic_pointer_cast<const ConcreteState>(shadowView.state);
+  if (!textState) {
+    return;
+  }
+  bool isNesting = false;
+  auto const& fragments = textState->getData().attributedString.getFragments();
+  for (const auto& fragment : fragments) {
+    if (fragment.isAttachment()) {
+      isNesting = true;
+    }
+  }
+  if (isNesting) {
+    LOG(INFO) << "new StackNode, tag=" << getTag();
+    m_stackNodePtr = new StackNode();
+    if (m_stackNodePtr == nullptr) {
+      LOG(INFO) << "new StackNode error";
+      return;
+    }
+    m_stackNodePtr->insertChild(m_textNode, 0);
+  }
+}
+
 } // namespace rnoh

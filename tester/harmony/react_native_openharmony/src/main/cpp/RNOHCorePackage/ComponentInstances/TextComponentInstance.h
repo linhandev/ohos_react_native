@@ -14,17 +14,19 @@ class TextComponentInstance
       std::unordered_map<facebook::react::Tag, std::shared_ptr<TouchTarget>>;
 
   TextNode m_textNode{};
-  StackNode m_stackNode{};
+  StackNode* m_stackNodePtr = nullptr;
   std::vector<std::shared_ptr<ArkUINode>> m_childNodes{};
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
+  bool m_hasCheckNesting = false;
 
  public:
   TextComponentInstance(Context context);
   ~TextComponentInstance() override;
-  StackNode& getLocalRootArkUINode() override;
+  ArkUINode& getLocalRootArkUINode() override;
   std::vector<TouchTarget::Shared> getTouchTargetChildren() override;
-
+  bool checkUpdateBaseNode() override;
+  void setShadowView(facebook::react::ShadowView const& shadowView) override;
  protected:
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,

@@ -1,9 +1,9 @@
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
-import { TurboModuleRegistry, View, ViewProps } from 'react-native';
-import { useEffect, useState } from 'react';
-import React from 'react';
+import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
+import { TurboModuleRegistry, View, ViewProps } from "react-native";
+import { useEffect, useState } from "react";
+import React from "react";
 
-import RCTDeviceEventEmitter from 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter.js';
+import RCTDeviceEventEmitter from "react-native/Libraries/EventEmitter/RCTDeviceEventEmitter.js";
 
 type SafeAreaInsets = {
   top: number;
@@ -19,11 +19,11 @@ interface SafeAreaTurboModuleProtocol {
 interface Spec extends TurboModule, SafeAreaTurboModuleProtocol {}
 
 const safeAreaTurboModule = TurboModuleRegistry.get<Spec>(
-  'SafeAreaTurboModule'
+  "SafeAreaTurboModule"
 )!;
 
 export default React.forwardRef<View, ViewProps>(
-  ({ children, ...otherProps }, ref) => {
+  ({ children, style, ...otherProps }, ref) => {
     const [topInset, setTopInset] = useState(
       safeAreaTurboModule.getInitialInsets().top
     );
@@ -40,7 +40,7 @@ export default React.forwardRef<View, ViewProps>(
     useEffect(
       function subscribeToSafeAreaChanges() {
         const subscription = (RCTDeviceEventEmitter as any).addListener(
-          'SAFE_AREA_INSETS_CHANGE',
+          "SAFE_AREA_INSETS_CHANGE",
           (insets: SafeAreaInsets) => {
             setTopInset(insets.top);
             setBottomInset(insets.bottom);
@@ -56,19 +56,19 @@ export default React.forwardRef<View, ViewProps>(
     );
 
     return (
-      <View ref={ref} {...otherProps}>
-        <View
-          style={{
-            width: '100%',
-            height: '100%',
+      <View
+        ref={ref}
+        style={[
+          style,
+          {
             paddingTop: topInset,
             paddingLeft: leftInset,
             paddingRight: rightInset,
             paddingBottom: bottomInset,
-          }}
-        >
-          {children}
-        </View>
+          },
+        ]}
+      >
+        {children}
       </View>
     );
   }
