@@ -179,15 +179,12 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
-    auto preAllocationBuffer =
-        std::make_shared<PreAllocationBuffer>();
     auto schedulerDelegateCAPI = std::make_unique<SchedulerDelegateCAPI>(
         taskExecutor,
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(schedulerDelegateArkTS),
         mountingManager,
-        preAllocationBuffer,
         arkTsComponentNames);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
