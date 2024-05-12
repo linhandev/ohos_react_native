@@ -35,6 +35,7 @@ export class RNInstanceRegistry {
       options.enableImageLoader ?? false,
       options.enableCAPIArchitecture ?? false,
       options.assetsDest,
+      options.arkTsComponentNames,
       this.httpClientProvider,
     )
     await instance.initialize(options.createRNPackages({}))
