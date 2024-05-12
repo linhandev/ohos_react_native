@@ -168,16 +168,11 @@ class RefreshControl extends React.Component<RefreshControlProps> {
       // BEFORE: const { enabled, colors, progressBackgroundColor, size, ...props } =
       const {colors, ...props } =
         this.props;
-      var preferTintColor = tintColor;
-      if (colors && colors.length) {
-        preferTintColor = colors[0];
-      }
       return (
         <PullToRefreshViewNativeComponent
           {...props}
           ref={this._setNativeRef}
           onRefresh={this._onRefresh}
-          tintColor={preferTintColor}
         />
       );
     } else {
