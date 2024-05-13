@@ -43,7 +43,7 @@ type ImageComponentStaticsHarmony = $ReadOnly<{|
 
   resolveAssetSource(source: any): ?ResolvedAssetSource,
 
-  abortPrefetch(requestId: number): any,
+  abortPrefetch(requestId: number): void,
 |}>;
 
 export type ImageHarmony = React.AbstractComponent<
