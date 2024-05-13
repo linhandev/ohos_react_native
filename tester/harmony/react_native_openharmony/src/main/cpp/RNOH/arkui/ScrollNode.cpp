@@ -226,4 +226,11 @@ ScrollNode& ScrollNode::setCenterContent(bool centerContent) {
       m_nodeHandle, NODE_STACK_ALIGN_CONTENT, &item));
   return *this;
 }
+
+ScrollNode& ScrollNode::resetScrollSnap() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+      m_nodeHandle, NODE_SCROLL_SNAP));
+  return *this;
+}
+
 } // namespace rnoh

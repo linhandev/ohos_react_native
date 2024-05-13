@@ -31,7 +31,7 @@ class ScrollViewComponentInstance
   facebook::react::Float m_scrollEventThrottle = 0;
   bool m_isNativeResponderBlocked = false;
   std::weak_ptr<NativeAnimatedTurboModule> m_nativeAnimatedTurboModule{};
-  bool m_allowScrollPropagation = false;
+  bool m_allowScrollPropagation = true;
   bool m_disableIntervalMomentum = false;
   bool m_scrollToOverflowEnabled = false;
   float m_recentScrollFrameOffset = 0;
