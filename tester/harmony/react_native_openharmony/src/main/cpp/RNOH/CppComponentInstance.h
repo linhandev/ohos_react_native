@@ -175,11 +175,14 @@ class CppComponentInstance : public ComponentInstance {
   };
 
  protected:
-  virtual void onPropsChanged(SharedConcreteProps const& props) {
+  virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
+    auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
+        concreteProps);
+    auto old =
+        std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
     auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
     auto isTransformManagedByAnimated =
         getIgnoredPropKeys().count("transform") > 0;
-    auto old = m_props;
     if (!old || *(props->backgroundColor) != *(old->backgroundColor)) {
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
@@ -319,7 +322,7 @@ class CppComponentInstance : public ComponentInstance {
   };
 
  private:
-  void setOpacity(SharedConcreteProps const& props) {
+  void setOpacity(facebook::react::SharedViewProps const& props) {
     auto opacity = props->opacity;
     float validOpacity = std::max(0.0f, std::min((float)opacity, 1.0f));
     facebook::react::Transform transform = props->transform;
@@ -340,7 +343,8 @@ class CppComponentInstance : public ComponentInstance {
 
     
  protected:
-  std::string getIdFromProps(SharedConcreteProps const& props) const {
+  std::string getIdFromProps(
+      facebook::react::SharedViewProps const& props) const {
     if (props->testId != "") {
       return props->testId;
     } else if (props->nativeId != "") {
