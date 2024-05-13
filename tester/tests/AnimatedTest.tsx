@@ -814,7 +814,7 @@ const Perspective = () => {
   );
 };
 
-export const ColorInterpolationExample: React.FC = () => {
+const ColorInterpolationExample: React.FC = () => {
   const animatedValue = new Animated.Value(0);
 
   const backgroundColor = animatedValue.interpolate({
