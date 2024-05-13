@@ -41,6 +41,16 @@ static jsi::Value textInputMetricsPayload(
         runtime, "height", textInputMetrics.contentSize.height);
     payload.setProperty(runtime, "contentSize", contentSize);
   }
+
+  {
+    auto contentOffset = jsi::Object(runtime);
+    contentOffset.setProperty(
+        runtime, "x", textInputMetrics.contentOffset.x);
+    contentOffset.setProperty(
+        runtime, "y", textInputMetrics.contentOffset.y);
+    payload.setProperty(runtime, "contentOffset", contentOffset);
+  } 
+  
   return payload;
 };
 

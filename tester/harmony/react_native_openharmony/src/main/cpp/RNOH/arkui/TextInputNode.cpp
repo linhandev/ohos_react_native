@@ -106,6 +106,15 @@ facebook::react::Point TextInputNode::getTextInputOffset() const {
   return facebook::react::Point{x, y};
 }
 
+facebook::react::Rect TextInputNode::getTextContentRect() const {
+  auto value = getAttribute(NODE_TEXT_INPUT_CONTENT_RECT).value;
+  facebook::react::Float x = value[0].f32;
+  facebook::react::Float y = value[1].f32;
+  facebook::react::Float width = value[2].f32;
+  facebook::react::Float height = value[3].f32;
+  return {x, y, width, height};
+}
+
 void TextInputNode::setTextContent(std::string const& textContent) {
   ArkUI_AttributeItem item = {.string = textContent.c_str()};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
