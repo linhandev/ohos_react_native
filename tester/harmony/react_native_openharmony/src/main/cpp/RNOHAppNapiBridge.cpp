@@ -95,7 +95,7 @@ static napi_value createReactNativeInstance(
     DLOG(INFO) << "createReactNativeInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJs.getCallbackArgs(info, 11);
+    auto args = arkJs.getCallbackArgs(info, 10);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto arkTsTurboModuleProviderRef = arkJs.createReference(args[1]);
     auto mutationsListenerRef = arkJs.createReference(args[2]);
@@ -111,11 +111,6 @@ static napi_value createReactNativeInstance(
           arkJs.getBoolean(featureFlagNameAndStatus.second));
     }
     auto frameNodeFactoryRef = arkJs.createReference(args[9]);
-    auto arkTsComponentNamesDynamic = arkJs.getDynamic(args[10]);
-    std::unordered_set<std::string> arkTsComponentNames = {};   
-    for (size_t i = 0; i < arkTsComponentNamesDynamic.size(); ++i) {
-        arkTsComponentNames.emplace(arkTsComponentNamesDynamic[i].asString());
-    }    
     auto rnInstance = createRNInstance(
         instanceId,
         env,
@@ -162,8 +157,7 @@ static napi_value createReactNativeInstance(
         featureFlagRegistry,
         uiTicker,
         shouldEnableDebugger,
-        shouldEnableBackgroundExecutor,
-        arkTsComponentNames);
+        shouldEnableBackgroundExecutor);
 
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
     if (rnInstanceById.find(instanceId) != rnInstanceById.end()) {
