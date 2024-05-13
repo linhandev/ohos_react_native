@@ -19,7 +19,7 @@ class Package {
   };
 
   Package(Context ctx);
-  virtual ~Package(){};
+  virtual ~Package() {};
 
   virtual std::unique_ptr<TurboModuleFactoryDelegate>
   createTurboModuleFactoryDelegate();
