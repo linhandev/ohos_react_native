@@ -8,19 +8,27 @@ export class NetworkEventsDispatcher {
     this.sendEvent("didReceiveNetworkData", [requestId, data])
   }
 
-   dispatchDidReceiveNetworkResponse(requestId: number, status: number, headers: Object, url: string) {
+  dispatchDidReceiveNetworkResponse(requestId: number, status: number, headers: Object, url: string) {
     this.sendEvent("didReceiveNetworkResponse", [requestId, status, headers, url])
   }
 
-   dispatchDidCompleteNetworkResponse(requestId: number) {
+  dispatchDidCompleteNetworkResponse(requestId: number) {
     this.sendEvent("didCompleteNetworkResponse", [requestId, ""])
   }
 
-   dispatchDidCompleteNetworkResponseWithError(requestId: number, error: string) {
+  dispatchDidCompleteNetworkResponseWithError(requestId: number, error: string) {
     this.sendEvent("didCompleteNetworkResponse", [requestId, error])
   }
 
-  private  sendEvent(eventName: string, body: Object) {
+  dispatchDidReceiveNetworkDataProgress(requestId: number, progress: number, total: number) {
+    this.sendEvent("didReceiveNetworkDataProgress", [requestId, progress, total])
+  }
+
+  dispatchDidReceiveNetworkIncrementalData(requestId: number, data: string, progress: number, total: number) {
+    this.sendEvent("didReceiveNetworkIncrementalData", [requestId, data, progress, total])
+  }
+
+  private sendEvent(eventName: string, body: Object) {
     this.rnInstance.emitDeviceEvent(eventName, body)
   }
 }

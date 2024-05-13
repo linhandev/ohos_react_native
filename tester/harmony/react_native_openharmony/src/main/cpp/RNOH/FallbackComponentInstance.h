@@ -15,7 +15,7 @@ class FallbackComponentInstance
 
  public:
   FallbackComponentInstance(Context ctx, std::unique_ptr<ArkUINode> arkUINode)
-      : CppComponentInstance(ctx), m_arkUINode(std::move(arkUINode)){};
+      : CppComponentInstance(ctx), m_arkUINode(std::move(arkUINode)) {};
 
   ArkUINode& getLocalRootArkUINode() override {
     return *m_arkUINode;
