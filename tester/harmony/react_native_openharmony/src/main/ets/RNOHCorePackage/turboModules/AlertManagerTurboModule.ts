@@ -30,7 +30,8 @@ export class AlertManagerTurboModule extends TurboModule {
       return ({
         value: button,
         action: () => {
-          onAction(this.constants.buttonClicked, buttonKey);
+          onAction?.(this.constants.buttonClicked, buttonKey);
+          onAction = undefined;
         }
       })
     }
