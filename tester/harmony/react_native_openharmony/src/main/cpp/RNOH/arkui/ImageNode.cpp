@@ -56,20 +56,14 @@ void ImageNode::onNodeEvent(
   }
 }
 
-ImageNode& ImageNode::setSources(facebook::react::ImageSources const& src, std::string cache) {
-  m_uri = src[0].uri;
-  std::string imageSrc = src[0].uri;
-  if (src[0].uri != cache && cache != "") {
-    imageSrc = cache;
-  }
-
+ImageNode& ImageNode::setSources(std::string const& uri) {
   ArkUI_AttributeItem item;
   std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
-  if (imageSrc.rfind(ASSET_PREFIX, 0) == 0) {
-    resourceStr += imageSrc.substr(ASSET_PREFIX.size());
+  if (uri.rfind(ASSET_PREFIX, 0) == 0) {
+    resourceStr += uri.substr(ASSET_PREFIX.size());
     item = {.string = resourceStr.c_str()};
   } else {
-    item = {.string = imageSrc.c_str()};
+    item = {.string = uri.c_str()};
   }
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_IMAGE_SRC, &item));
@@ -219,9 +213,5 @@ ImageNode& ImageNode::resetResizeMethod() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
-}
-
-std::string ImageNode::getUri() {
-  return m_uri;
 }
 } // namespace rnoh
