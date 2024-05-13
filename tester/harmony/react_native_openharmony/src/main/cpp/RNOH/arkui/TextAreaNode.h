@@ -11,11 +11,11 @@ namespace rnoh {
 class TextAreaNodeDelegate {
  public:
   virtual ~TextAreaNodeDelegate() = default;
-  virtual void onChange(std::string text){};
-  virtual void onBlur(){};
-  virtual void onFocus(){};
-  virtual void onPasteOrCut(){};
-  virtual void onTextSelectionChange(int32_t location, int32_t length){};
+  virtual void onChange(std::string text) {};
+  virtual void onBlur() {};
+  virtual void onFocus() {};
+  virtual void onPasteOrCut() {};
+  virtual void onTextSelectionChange(int32_t location, int32_t length) {};
 };
 
 class TextAreaNode : public TextInputNodeBase {

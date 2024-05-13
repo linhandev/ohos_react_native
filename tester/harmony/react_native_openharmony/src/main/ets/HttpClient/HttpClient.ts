@@ -46,7 +46,7 @@ export class DefaultHttpClient implements HttpClient {
   protected baseRequestOptions: RequestOptions;
   private nextId: number = 0
 
-  constructor({baseRequestOptions, responseInterceptors, requestInterceptors}: {
+  constructor({ baseRequestOptions, responseInterceptors, requestInterceptors }: {
     baseRequestOptions?: RequestOptions
     responseInterceptors?: ResponseInterceptor[],
     requestInterceptors?: RequestInterceptor[],
@@ -69,7 +69,6 @@ export class DefaultHttpClient implements HttpClient {
     cancel: CancelRequestCallback,
     promise: Promise<HttpResponse>
   } {
-    const requestId = this.createId();
     const httpRequest = http.createHttp();
     let headers: Object | undefined;
     let resultBody: ArrayBuffer;
@@ -111,7 +110,7 @@ export class DefaultHttpClient implements HttpClient {
     const promise: Promise<HttpResponse> = new Promise((resolve, reject) => {
       httpRequest.once('headersReceive', (data) => {
         headers = data;
-        totalLength = headers['Content-Length'];
+        totalLength = headers['Content-Length'] ?? -1;
         let httpResponse = maybeCreateHttpResponse();
         if (httpResponse) {
           cleanup();

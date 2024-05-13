@@ -32,7 +32,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_schedulerDelegateArkTS(std::move(schedulerDelegateArkTS)),
-        m_mountingManager(std::move(mountingManager)){};
+        m_mountingManager(std::move(mountingManager)) {};
 
   ~SchedulerDelegateCAPI() {
     VLOG(1) << "~SchedulerDelegateCAPI";

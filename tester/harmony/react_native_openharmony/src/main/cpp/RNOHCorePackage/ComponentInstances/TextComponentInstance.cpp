@@ -467,7 +467,7 @@ class TextFragmentTouchTarget : public TouchTarget {
     return false;
   }
 
-  void markBoundingBoxAsDirty() override{};
+  void markBoundingBoxAsDirty() override {};
 
  private:
   facebook::react::Tag m_tag;

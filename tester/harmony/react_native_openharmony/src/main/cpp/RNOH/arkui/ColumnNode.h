@@ -6,7 +6,7 @@ namespace rnoh {
 class ColumnNodeDelegate {
  public:
   virtual ~ColumnNodeDelegate() = default;
-  virtual void onClick(){};
+  virtual void onClick() {};
 };
 
 class ColumnNode : public ArkUINode {

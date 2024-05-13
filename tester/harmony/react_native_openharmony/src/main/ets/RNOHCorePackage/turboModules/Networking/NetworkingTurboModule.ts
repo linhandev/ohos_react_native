@@ -5,7 +5,7 @@ import { TurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
-import { CancelRequestCallback, HttpErrorResponse } from '../../../HttpClient/types';
+import { CancelRequestCallback, HttpErrorResponse, PartialProgress } from '../../../HttpClient/types';
 
 type ResponseType =
 | 'base64'
@@ -104,7 +104,7 @@ export class NetworkingTurboModule extends TurboModule {
     this.responseBodyHandlers.remove(handler)
   }
 
-  decodeBuffer(buf: ArrayBuffer): string {
+  decodeBufferToText(buf: ArrayBuffer): string {
     const textDecoder = util.TextDecoder.create();
     const byteArray = new Uint8Array(buf);
     return textDecoder.decodeWithStream(byteArray, { stream: false });
@@ -115,7 +115,7 @@ export class NetworkingTurboModule extends TurboModule {
       if (typeof response === 'string') {
         return response;
       } else if (response instanceof ArrayBuffer) {
-        return this.decodeBuffer(response);
+        return this.decodeBufferToText(response);
       } else {
         // NOTE: Object responses have been long deprecated in Ark, we don't expect them here
         throw new Error("INTERNAL: unexpected Object http response");
@@ -199,10 +199,29 @@ export class NetworkingTurboModule extends TurboModule {
     } else if ('formData' in query.data) {
       headers['Content-Type'] = 'multipart/form-data'
       multiFormDataList = this.encodeFormData(query.data as JsFormData);
-    }
-    else {
+    } else {
       extraData = this.encodeBody(query.data);
     }
+    let onProgress: (partialProgress: PartialProgress) => void | null = null;
+
+    if (query.incrementalUpdates) {
+      if (query.responseType === 'text') {
+        const textDecoder = util.TextDecoder.create('utf-8');
+        onProgress = (partialProgress: PartialProgress) => {
+          const uintArray = new Uint8Array(partialProgress.bitsReceived);
+          const decodedStr = textDecoder.decodeWithStream(uintArray,
+            { stream: true }); //we want to carry over bytes from incomplete characters
+          this.networkEventDispatcher.dispatchDidReceiveNetworkIncrementalData(requestId, decodedStr,
+            partialProgress.lengthReceived, partialProgress.totalLength)
+        }
+      } else {
+        onProgress = (partialProgress: PartialProgress) => {
+          this.networkEventDispatcher.dispatchDidReceiveNetworkDataProgress(requestId, partialProgress.lengthReceived,
+            partialProgress.totalLength)
+        }
+      }
+    }
+
     const { cancel, promise } = httpClient.sendRequest(query.url,
       {
         method: this.REQUEST_METHOD_BY_NAME[query.method],
@@ -211,27 +230,31 @@ export class NetworkingTurboModule extends TurboModule {
         connectTimeout: query.timeout,
         readTimeout: query.timeout,
         multiFormDataList: multiFormDataList
-      })
+      }, onProgress)
     this.requestCancellersById.set(requestId, cancel);
 
     promise.then(async (httpResponse) => {
-      this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, httpResponse.statusCode, httpResponse.headers, query.url);
+      this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, httpResponse.statusCode,
+        httpResponse.headers, query.url);
       if (this.requestCancellersById[requestId]) {
         this.requestCancellersById.delete(requestId);
       }
       for (const handler of this.responseBodyHandlers) {
         if (handler.supports(query.responseType)) {
-          this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, handler.handleResponse(httpResponse.body));
+          this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId,
+            handler.handleResponse(httpResponse.body));
           this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
           return;
         }
       }
-      this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, await this.encodeResponse(httpResponse.body, query.responseType));
+      this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId,
+        await this.encodeResponse(httpResponse.body, query.responseType));
       this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
     }).catch((errorResponse: HttpErrorResponse) => {
-      this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, errorResponse.statusCode || 0, {
-      }, query.url)
-      this.networkEventDispatcher.dispatchDidCompleteNetworkResponseWithError(requestId, errorResponse.error.toString());
+      this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, errorResponse.statusCode || 0, {},
+        query.url)
+      this.networkEventDispatcher.dispatchDidCompleteNetworkResponseWithError(requestId,
+        errorResponse.error.toString());
       if (this.requestCancellersById[requestId]) {
         this.requestCancellersById.delete(requestId);
       }
