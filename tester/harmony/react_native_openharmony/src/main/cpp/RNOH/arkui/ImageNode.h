@@ -19,12 +19,11 @@ class ImageNode : public ArkUINode {
  protected:
   ArkUI_NodeHandle m_childArkUINodeHandle;
   ImageNodeDelegate* m_imageNodeDelegate;
-  std::string m_uri;
 
  public:
   ImageNode();
   ~ImageNode();
-  ImageNode& setSources(facebook::react::ImageSources const& src, std::string cache = "");
+  ImageNode& setSources(std::string const& uri);
   ImageNode& setResizeMode(facebook::react::ImageResizeMode const& mode);
   ImageNode& setTintColor(facebook::react::SharedColor const& sharedColor);
   ImageNode& setBlur(facebook::react::Float blur);
@@ -45,7 +44,5 @@ class ImageNode : public ArkUINode {
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
   void setNodeDelegate(ImageNodeDelegate* imageNodeDelegate);
-
-  std::string getUri();
 };
 } // namespace rnoh
