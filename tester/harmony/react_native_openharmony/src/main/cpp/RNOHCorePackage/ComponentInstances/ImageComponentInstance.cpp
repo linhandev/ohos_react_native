@@ -14,11 +14,27 @@ ImageComponentInstance::ImageComponentInstance(Context context)
   this->getLocalRootArkUINode().setDraggable(false);
 }
 
-std::string ImageComponentInstance::FindLocalCacheByUri(facebook::react::ImageSources const& src) {
+std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) {
+  if(uri.find("http", 0) != 0) {
+    return uri;
+  }
+
   auto rnInstance = m_deps->rnInstance.lock();
+  if (!rnInstance) {
+    return uri;
+  }
+
   auto turboModule = rnInstance->getTurboModule("ImageLoader");
+  if (!turboModule) {
+    return uri;
+  }
+
   auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
-  auto cache = arkTsTurboModule->callSync("getCacheFilePath", {src[0].uri});
+  if (!arkTsTurboModule) {
+    return uri;
+  }
+
+  auto cache = arkTsTurboModule->callSync("getCacheFilePath", {uri});
   return cache.asString();
 }
 
@@ -28,9 +44,10 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
   if (!m_props || m_props->sources != props->sources) {
-    std::string cache = FindLocalCacheByUri(props->sources);
-    this->getLocalRootArkUINode().setSources(props->sources, cache);
-    if (!this->getLocalRootArkUINode().getUri().empty()) {
+    m_uri = props->sources[0].uri;
+    std::string uri = FindLocalCacheByUri(props->sources[0].uri);
+    this->getLocalRootArkUINode().setSources(uri);
+    if (!m_uri.empty()) {
       onLoadStart();
     }
   }
@@ -106,8 +123,9 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
-  auto vector = {state->getData().getImageSource()};
-  this->getLocalRootArkUINode().setSources(vector);
+  auto source = state->getData().getImageSource();
+  m_uri = source.uri;
+  this->getLocalRootArkUINode().setSources(FindLocalCacheByUri(source.uri));
   this->getLocalRootArkUINode().setBlur(state->getData().getBlurRadius());
 }
 
@@ -120,13 +138,12 @@ void ImageComponentInstance::onComplete(float width, float height) {
     return;
   }
 
-  std::string uri = this->getLocalRootArkUINode().getUri();
   m_eventEmitter->dispatchEvent("load", [=](facebook::jsi::Runtime& runtime) {
     auto payload = facebook::jsi::Object(runtime);
     auto source = facebook::jsi::Object(runtime);
     source.setProperty(runtime, "width", width);
     source.setProperty(runtime, "height", height);
-    source.setProperty(runtime, "uri", uri.c_str());
+    source.setProperty(runtime, "uri", m_uri.c_str());
     payload.setProperty(runtime, "source", source);
     return payload;
   });
