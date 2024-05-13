@@ -119,7 +119,7 @@ export abstract class RNAbility extends UIAbility {
       }
       await this.onWindowSetup(mainWindow)
       await this.onWindowStageSetup(windowStage)
-      this.rnInstancesCoordinator.onWindowSizeChange(mainWindow.getWindowProperties().windowRect)
+      this.rnInstancesCoordinator?.onWindowSizeChange(mainWindow.getWindowProperties().windowRect)
     } catch (err) {
       logger.error("Failed to setup window", JSON.stringify(err))
     } finally {
@@ -128,18 +128,18 @@ export abstract class RNAbility extends UIAbility {
   }
 
   onMemoryLevel(level: AbilityConstant.MemoryLevel) {
-    this.rnInstancesCoordinator.onMemoryLevel(level)
+    this.rnInstancesCoordinator?.onMemoryLevel(level)
   }
 
   onConfigurationUpdate(config: AbilityConfiguration.Configuration) {
-    this.rnInstancesCoordinator.onConfigurationUpdate(config)
+    this.rnInstancesCoordinator?.onConfigurationUpdate(config)
   }
 
   onForeground() {
-    this.rnInstancesCoordinator.onForeground();
+    this.rnInstancesCoordinator?.onForeground();
   }
 
   onBackground() {
-    this.rnInstancesCoordinator.onBackground();
+    this.rnInstancesCoordinator?.onBackground();
   }
 }
