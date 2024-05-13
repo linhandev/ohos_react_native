@@ -38,7 +38,7 @@ export const NestedScrollingExample = () => {
   );
 };
 
-const GENERATED_DATA = Array.from({length: 100}, (_, index) => ({
+const GENERATED_DATA = Array.from({length: 20}, (_, index) => ({
   id: String(index),
   title: `Item ${index + 1}`,
 }));

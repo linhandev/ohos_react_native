@@ -16,6 +16,7 @@ ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
   // NOTE: perhaps this needs to take rtl into account?
   m_scrollNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
   m_scrollNode.setScrollNodeDelegate(this);
+  m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
 }
 
 StackNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
@@ -44,9 +45,6 @@ void ScrollViewComponentInstance::setLayout(
   m_layoutMetrics = layoutMetrics;
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
-    m_scrollNode.setNestedScroll(
-        isContentSmallerThanContainer() ? ARKUI_SCROLL_NESTED_MODE_SELF_FIRST
-                                        : ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
   }
   markBoundingBoxAsDirty();
 }
@@ -58,9 +56,6 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
   m_contentContainerNode.setSize(stateData.getContentSize());
   if (m_contentSize != stateData.getContentSize()) {
     m_contentSize = stateData.getContentSize();
-    m_scrollNode.setNestedScroll(
-        isContentSmallerThanContainer() ? ARKUI_SCROLL_NESTED_MODE_SELF_FIRST
-                                        : ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
   }
 }
 
@@ -325,14 +320,15 @@ void ScrollViewComponentInstance::setScrollSnap(
         snapToStart,
         snapToEnd,
         m_snapToOffsets);
-  }
-  if (snapToInterval > 0) {
+  } else if (snapToInterval > 0) {
     const std::vector<facebook::react::Float> snapPoints = {snapToInterval};
     m_scrollNode.setScrollSnap(
         getArkUI_ScrollSnapAlign(snapToAlignment),
         snapToStart,
         snapToEnd,
         snapPoints);
+  } else {
+    m_scrollNode.resetScrollSnap();
   }
 }
 bool ScrollViewComponentInstance::scrollMovedBySignificantOffset(
