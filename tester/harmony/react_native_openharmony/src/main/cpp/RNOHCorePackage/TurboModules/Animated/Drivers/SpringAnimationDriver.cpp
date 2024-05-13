@@ -40,29 +40,35 @@ void SpringAnimationDriver::resetConfig(folly::dynamic const& config) {
 
 void SpringAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
   int64_t frameTimeMillis = frameTimeNanos / 1e6;
-  auto& animatedValue = m_nodesManager.getValueNodeByTag(m_animatedNodeTag);
-  if (!m_springStarted) {
-    if (m_currentLoop == 0) {
-      m_originalValue = animatedValue.m_value;
-      m_currentLoop = 1;
+  try {
+    auto& animatedValue = m_nodesManager.getValueNodeByTag(m_animatedNodeTag);
+    if (!m_springStarted) {
+      if (m_currentLoop == 0) {
+        m_originalValue = animatedValue.m_value;
+        m_currentLoop = 1;
+      }
+      m_fromValue = m_position = animatedValue.m_value;
+      m_lastTime = frameTimeMillis;
+      m_timeAccumulator = 0;
+      m_springStarted = true;
     }
-    m_fromValue = m_position = animatedValue.m_value;
+    advance((frameTimeMillis - m_lastTime) / 1000.0);
     m_lastTime = frameTimeMillis;
-    m_timeAccumulator = 0;
-    m_springStarted = true;
-  }
-  advance((frameTimeMillis - m_lastTime) / 1000.0);
-  m_lastTime = frameTimeMillis;
-  animatedValue.setValue(m_position);
-  if (isAtRest()) {
-    if (m_iterations == -1 || m_currentLoop < m_iterations) {
-      // reset animation for the next loop
-      m_springStarted = false;
-      animatedValue.setValue(m_originalValue);
-      m_currentLoop++;
-    } else {
-      m_hasFinished = true;
+    animatedValue.setValue(m_position);
+    if (isAtRest()) {
+      if (m_iterations == -1 || m_currentLoop < m_iterations) {
+        // reset animation for the next loop
+        m_springStarted = false;
+        animatedValue.setValue(m_originalValue);
+        m_currentLoop++;
+      } else {
+        m_hasFinished = true;
+      }
     }
+  } catch (std::out_of_range& _e) {
+    // if a node is not found we skip over it and proceed with the
+    // animation to maintain consistency with other platforms
+    m_hasFinished = true;
   }
 }
 
