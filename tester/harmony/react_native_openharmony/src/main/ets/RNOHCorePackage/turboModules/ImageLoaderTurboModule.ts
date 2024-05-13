@@ -54,8 +54,8 @@ export class ImageLoaderTurboModule extends TurboModule {
     return this.imageLoader.prefetch(uri, requestId);
   }
 
-  public async abortPrefetch(requestId: number): Promise<boolean> {
-    return this.imageLoader.abortPrefetch(requestId)
+  public abortPrefetch(requestId: number): void {
+    this.imageLoader.abortPrefetch(requestId)
   }
 
   public prefetchImageWithMetadata(uri: string, queryRootName: string, rootTag: number): Promise<boolean> {
