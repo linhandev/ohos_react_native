@@ -9,6 +9,7 @@
 #include <react/renderer/core/ConcreteState.h>
 #include <sstream>
 #include <utility>
+#include <algorithm>
 
 namespace rnoh {
 
@@ -117,9 +118,18 @@ void TextInputComponentInstance::onTextSelectionChange(
 facebook::react::TextInputMetrics
 TextInputComponentInstance::getTextInputMetrics() {
   auto textInputMetrics = facebook::react::TextInputMetrics();
-  textInputMetrics.contentOffset = m_multiline
-      ? m_textAreaNode.getTextAreaOffset()
-      : m_textInputNode.getTextInputOffset();
+
+  auto contentOffset = m_multiline
+      ? m_textAreaNode.getTextContentRect().origin
+      : m_textInputNode.getTextContentRect().origin;
+  float pointScaleFactor = m_layoutMetrics.pointScaleFactor;
+  auto padding = m_layoutMetrics.contentInsets - m_layoutMetrics.borderWidth;
+  contentOffset.x = contentOffset.x / pointScaleFactor - padding.left;
+  contentOffset.y = contentOffset.y / pointScaleFactor - padding.top;
+  contentOffset.x = std::max<float>(-contentOffset.x, 0.0f);
+  contentOffset.y = std::max<float>(-contentOffset.y, 0.0f);
+  textInputMetrics.contentOffset = contentOffset;
+
   textInputMetrics.containerSize = m_layoutMetrics.frame.size;
 
   textInputMetrics.eventCount = this->m_nativeEventCount;

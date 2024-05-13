@@ -30,6 +30,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   facebook::react::Point getTextAreaOffset() const;
 
+  facebook::react::Rect getTextContentRect() const override;
+
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
 

@@ -118,6 +118,9 @@ class ArkUINode {
     }
   }
 
+  const ArkUI_AttributeItem& getAttribute(
+      ArkUI_NodeAttributeType attribute) const;
+
   ArkUI_NodeHandle m_nodeHandle;
 };
 } // namespace rnoh
