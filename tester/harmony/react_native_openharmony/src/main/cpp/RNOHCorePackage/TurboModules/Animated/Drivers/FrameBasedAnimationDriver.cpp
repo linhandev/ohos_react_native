@@ -39,34 +39,40 @@ void FrameBasedAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
   if (m_hasFinished) {
     return;
   }
+  try {
+    auto& animatedValue = getAnimatedValue();
 
-  auto& animatedValue = getAnimatedValue();
-
-  if (m_startTimeNanos < 0) {
-    m_startTimeNanos = frameTimeNanos;
-    if (m_currentLoop == 1) {
-      m_fromValue = animatedValue.m_value;
+    if (m_startTimeNanos < 0) {
+      m_startTimeNanos = frameTimeNanos;
+      if (m_currentLoop == 1) {
+        m_fromValue = animatedValue.m_value;
+      }
     }
-  }
 
-  auto timeFromStart = frameTimeNanos - m_startTimeNanos;
-  uint64_t timeFromStartMillis = timeFromStart / 1e6;
-  auto frameIndex =
-      static_cast<uint64_t>((timeFromStartMillis) / FRAME_TIME_MILLIS);
+    auto timeFromStart = frameTimeNanos - m_startTimeNanos;
+    uint64_t timeFromStartMillis = timeFromStart / 1e6;
+    auto frameIndex =
+        static_cast<uint64_t>((timeFromStartMillis) / FRAME_TIME_MILLIS);
 
-  double nextValue;
-  if (frameIndex >= m_frames.size() - 1) {
-    nextValue = m_toValue;
-    if (m_iterations == -1 || m_currentLoop < m_iterations) {
-      m_startTimeNanos = -1;
-      m_currentLoop++;
+    double nextValue;
+    if (frameIndex >= m_frames.size() - 1) {
+      nextValue = m_toValue;
+      if (m_iterations == -1 || m_currentLoop < m_iterations) {
+        m_startTimeNanos = -1;
+        m_currentLoop++;
+      } else {
+        m_hasFinished = true;
+      }
     } else {
-      m_hasFinished = true;
+      nextValue =
+          m_fromValue + (m_toValue - m_fromValue) * m_frames[frameIndex];
     }
-  } else {
-    nextValue = m_fromValue + (m_toValue - m_fromValue) * m_frames[frameIndex];
+    animatedValue.setValue(nextValue);
+  } catch (std::out_of_range& _e) {
+    // if a node is not found we skip over it and proceed with the
+    // animation to maintain consistency with other platforms
+    m_hasFinished = true;
   }
-  animatedValue.setValue(nextValue);
 }
 
 } // namespace rnoh

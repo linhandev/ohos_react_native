@@ -298,13 +298,18 @@ void AnimatedNodesManager::updateNodes() {
     }
 
     visitedNodeTags.insert(tag);
-    activeNodesCount++;
+    try {
+      auto& node = getNodeByTag(tag);
+      activeNodesCount++;
 
-    auto& node = getNodeByTag(tag);
-
-    for (auto childTag : node.getChildrenTags()) {
-      nodeTagsQueue.push(childTag);
-      incomingEdgesCount[childTag]++;
+      for (auto childTag : node.getChildrenTags()) {
+        nodeTagsQueue.push(childTag);
+        incomingEdgesCount[childTag]++;
+      }
+    } catch (std::out_of_range& _e) {
+      // if a node is not found we skip over it and proceed with the
+      // animation to maintain consistency with other platforms
+      continue;
     }
   }
 
@@ -320,26 +325,33 @@ void AnimatedNodesManager::updateNodes() {
     auto tag = nodeTagsQueue.front();
     nodeTagsQueue.pop();
 
-    auto& node = getNodeByTag(tag);
-    node.update();
+    try {
+      auto& node = getNodeByTag(tag);
+      node.update();
 
-    if (auto propsNode = dynamic_cast<PropsAnimatedNode*>(&node);
-        propsNode != nullptr) {
-      propsNode->updateView();
-    }
-
-    if (auto valueNode = dynamic_cast<ValueAnimatedNode*>(&node);
-        valueNode != nullptr) {
-      valueNode->onValueUpdate();
-    }
-
-    updatedNodesCount++;
-
-    for (auto childTag : node.getChildrenTags()) {
-      incomingEdgesCount[childTag]--;
-      if (incomingEdgesCount[childTag] == 0) {
-        nodeTagsQueue.push(childTag);
+      if (auto propsNode = dynamic_cast<PropsAnimatedNode*>(&node);
+          propsNode != nullptr) {
+        propsNode->updateView();
       }
+
+      if (auto valueNode = dynamic_cast<ValueAnimatedNode*>(&node);
+          valueNode != nullptr) {
+        valueNode->onValueUpdate();
+      }
+
+      updatedNodesCount++;
+
+      for (auto childTag : node.getChildrenTags()) {
+        incomingEdgesCount[childTag]--;
+        if (incomingEdgesCount[childTag] == 0) {
+          nodeTagsQueue.push(childTag);
+        }
+      }
+
+    } catch (std::out_of_range& _e) {
+      // if a node is not found we skip over it and proceed with the
+      // animation to maintain consistency with other platforms
+      continue;
     }
   }
 
