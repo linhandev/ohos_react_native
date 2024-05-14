@@ -5,50 +5,6 @@ import {TestCase} from '../components';
 
 const FILE_URI = '/data/storage/el2/base/files/testFile.txt';
 
-const WebSocketEcho = () => {
-  const [status, setStatus] = React.useState('Loading...');
-  const [data, setData] = React.useState<string>();
-
-  const runWebSockSession = () => {
-    // connect to Postman's echo server
-    var ws = new WebSocket('wss://ws.postman-echo.com/raw');
-
-    ws.onopen = () => {
-      setStatus('Connected');
-      ws.send('something');
-    };
-
-    ws.onmessage = e => {
-      setData(JSON.stringify(e));
-      setTimeout(() => {
-        setStatus('Closing...');
-        ws.close();
-      }, 3000);
-    };
-
-    ws.onerror = e => {
-      console.error(e.message);
-      setStatus(`Error ${e.message}`);
-    };
-
-    ws.onclose = e => {
-      console.log(e.code, e.reason);
-      setStatus(`Closed ${e.code} ${e.reason}`);
-    };
-  };
-
-  React.useEffect(() => {
-    runWebSockSession();
-  }, []);
-
-  return (
-    <View>
-      <Text style={styles.loadingText}>{status}</Text>
-      {data && <Text style={styles.movieDetails}>{data}</Text>}
-    </View>
-  );
-};
-
 export const NetworkingTest = () => {
   const canFetch = async (url: string) => {
     try {
@@ -212,13 +168,183 @@ export const NetworkingTest = () => {
         />
       </TestSuite>
       <TestSuite name="WebSocket">
-        <TestCase.Example itShould="connect to websockets">
+        <TestCase.Example tags={['C_API']} itShould="connect to websockets">
           <WebSocketEcho />
+        </TestCase.Example>
+        <TestCase.Example
+          tags={['C_API']}
+          modal
+          itShould="send and receive arraybuffer through websocket and display 'Hello World from WebSocket!'">
+          <WebSocketSendingAndReceivingArrayBuffer />
+        </TestCase.Example>
+        <TestCase.Example
+          tags={['C_API']}
+          modal
+          itShould="send and receive blob through websocket and display blob size">
+          <WebSocketSendingAndReceivingBlob />
         </TestCase.Example>
       </TestSuite>
     </TestSuite>
   );
 };
+
+function arrayBufferToStr(buf: ArrayBuffer | ArrayBufferLike) {
+  return String.fromCharCode(...new Uint8Array(buf));
+}
+
+function stringToArrayBuffer(str: string) {
+  const buffer = new ArrayBuffer(str.length);
+  const bufferView = new Uint8Array(buffer);
+  for (let i = 0; i < str.length; i++) {
+    bufferView[i] = str.charCodeAt(i);
+  }
+  return buffer;
+}
+
+const WebSocketResultBlock = ({
+  status,
+  data,
+}: {
+  status: string;
+  data: undefined | string;
+}) => {
+  return (
+    <View>
+      <View style={{gap: 8, flexDirection: 'row'}}>
+        <Text style={{width: 50}}>Status: </Text>
+        <Text>{status}</Text>
+      </View>
+      <View style={{gap: 8, flexDirection: 'row'}}>
+        <Text style={{width: 50}}>Data: </Text>
+        <Text style={styles.movieDetails}>
+          {data ? data : 'Nothing to show!'}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const WebSocketEcho = () => {
+  const [status, setStatus] = React.useState('Loading...');
+  const [data, setData] = React.useState<string>();
+
+  const runWebSockSession = () => {
+    // connect to Postman's echo server
+    var ws = new WebSocket('wss://ws.postman-echo.com/raw');
+
+    ws.onopen = () => {
+      setStatus('Connected');
+      ws.send('something');
+    };
+
+    ws.onmessage = e => {
+      setData(JSON.stringify(e));
+      setTimeout(() => {
+        setStatus('Closing...');
+        ws.close();
+      }, 3000);
+    };
+
+    ws.onerror = e => {
+      console.error(e.message);
+      setStatus(`Error ${e.message}`);
+    };
+
+    ws.onclose = e => {
+      console.log(e.code, e.reason);
+      setStatus(`Closed ${e.code} ${e.reason}`);
+    };
+  };
+
+  React.useEffect(() => {
+    runWebSockSession();
+  }, []);
+
+  return <WebSocketResultBlock status={status} data={data} />;
+};
+
+function WebSocketSendingAndReceivingArrayBuffer() {
+  const [status, setStatus] = React.useState('Loading...');
+  const [data, setData] = React.useState<string>();
+
+  const runWebSocketSession = () => {
+    const ws = new WebSocket('wss://echo.websocket.org/');
+
+    // @ts-ignore
+    ws.binaryType = 'arraybuffer';
+
+    ws.onopen = () => {
+      setStatus('Connected');
+      const text = 'Hello World - arraybuffer!';
+      const buffer = stringToArrayBuffer(text);
+      ws.send(buffer);
+    };
+
+    ws.onmessage = event => {
+      if (event.data instanceof ArrayBuffer) {
+        setData(arrayBufferToStr(event.data));
+        ws.close();
+      }
+    };
+
+    ws.onerror = error => {
+      setStatus(`Error ${error.message}`);
+    };
+
+    ws.onclose = event => {
+      setStatus(`Closed ${event.code} ${event.reason}`);
+    };
+  };
+
+  React.useEffect(() => {
+    runWebSocketSession();
+  }, []);
+
+  return <WebSocketResultBlock status={status} data={data} />;
+}
+
+function WebSocketSendingAndReceivingBlob() {
+  const [status, setStatus] = React.useState('Loading...');
+  const [data, setData] = React.useState<string>();
+
+  const runWebSocketSession = () => {
+    const ws = new WebSocket('wss://echo.websocket.org/');
+
+    // @ts-ignore
+    ws.binaryType = 'blob';
+
+    ws.onopen = () => {
+      setStatus('Connected');
+      const blobString = 'Hello World - blob!';
+      const blob = new Blob([blobString], {
+        type: 'text/plain',
+        lastModified: Date.now(),
+      });
+      ws.send(blob);
+    };
+
+    ws.onmessage = event => {
+      if (event.data instanceof Blob) {
+        setData(`Size of the blob: ${event.data?.size}`);
+        ws.close();
+      }
+    };
+
+    ws.onerror = error => {
+      setStatus(`Error ${error.message}`);
+    };
+
+    ws.onclose = event => {
+      setStatus(`Closed ${event.code} ${event.reason}`);
+    };
+  };
+
+  React.useEffect(() => {
+    runWebSocketSession();
+  }, []);
+
+  return <WebSocketResultBlock status={status} data={data} />;
+}
 
 const styles = StyleSheet.create({
   movieDetails: {
