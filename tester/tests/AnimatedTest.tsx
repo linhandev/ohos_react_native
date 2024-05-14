@@ -1,6 +1,14 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
-import {Animated, Pressable, Text, View} from 'react-native';
+import {
+  Animated,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../components';
@@ -97,10 +105,154 @@ export function AnimatedTest() {
         itShould="gradually change color from green to red when scrolling down (color interpolation)">
         <ColorInterpolationExample />
       </TestCase.Example>
+      <TestCase.Example
+        tags={['C_API']}
+        itShould="stop updating current offset after detachching listener (fork/unfork event)">
+        <AnimatedForkUnforkEventTest />
+      </TestCase.Example>
+      <TestCase.Example
+        tags={['C_API']}
+        itShould="move red square horizontally relatively to the scroll offset (attachNativeEvent)">
+        <AnimatedAttachNativeEventTest />
+      </TestCase.Example>
     </TestSuite>
   );
 }
 
+const AnimatedAttachNativeEventTest = () => {
+  const ref = useRef<ScrollView>(null);
+  const animatedValue = new Animated.Value(0);
+  const translation = animatedValue.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, 200],
+    extrapolate: 'clamp',
+  });
+  useEffect(() => {
+    if (ref !== null) {
+      // @ts-ignore
+      Animated.attachNativeEvent(ref.current, 'onScroll', [
+        {nativeEvent: {contentOffset: {y: animatedValue}}},
+      ]);
+    }
+  }, [ref]);
+
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 100,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+      <ScrollView
+        ref={ref}
+        style={{width: '100%', height: '100%'}}
+        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+        scrollEventThrottle={16}>
+        {new Array(3).fill(0).map((_, idx) => {
+          return (
+            <View
+              key={idx}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'gray',
+                marginBottom: 50,
+              }}
+            />
+          );
+        })}
+      </ScrollView>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            transform: [{translateX: translation}],
+            width: 32,
+            height: 32,
+            backgroundColor: 'red',
+          },
+        ]}
+      />
+    </View>
+  );
+};
+
+type ScrollViewScrollEvent = NativeSyntheticEvent<NativeScrollEvent>;
+
+const AnimatedForkUnforkEventTest = () => {
+  const [offset, setOffset] = useState(0);
+  const scrollY = new Animated.Value(0);
+  const translation = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, 200],
+    extrapolate: 'clamp',
+  });
+
+  const animatedEvent = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {
+      useNativeDriver: true,
+    },
+  );
+  const handleScroll = (event: ScrollViewScrollEvent) => {
+    setOffset(event.nativeEvent.contentOffset.y);
+  };
+
+  const detachchOffsetListener = () => {
+    // @ts-ignore
+    Animated.unforkEvent(animatedEvent, handleScroll);
+  };
+
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 100,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+      <Text>{`Offset: ${offset}`}</Text>
+      <Button
+        label={'detachch offset listener from onScroll'}
+        onPress={detachchOffsetListener}
+      />
+      <Animated.ScrollView
+        style={{width: '100%', height: '100%'}}
+        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+        scrollEventThrottle={16}
+        // @ts-ignore
+        onScroll={Animated.forkEvent(animatedEvent, handleScroll)}>
+        {new Array(3).fill(0).map((_, idx) => {
+          return (
+            <View
+              key={idx}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'gray',
+                marginBottom: 50,
+              }}
+            />
+          );
+        })}
+      </Animated.ScrollView>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            transform: [{translateX: translation}],
+            width: 32,
+            height: 32,
+            backgroundColor: 'red',
+          },
+        ]}
+      />
+    </View>
+  );
+};
 function AnimatedRectangle() {
   const animWidth = React.useRef(new Animated.Value(100)).current;
 
