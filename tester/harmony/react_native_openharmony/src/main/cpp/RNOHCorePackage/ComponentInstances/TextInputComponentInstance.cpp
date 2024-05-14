@@ -107,7 +107,7 @@ void TextInputComponentInstance::onTextSelectionChange(
   if (m_valueChanged) {
     m_valueChanged = false;
     m_nativeEventCount++;
-    m_eventEmitter->onChange(getTextInputMetrics());
+    m_eventEmitter->onChange(getOnChangeMetrics());
   }
 
   m_selectionLocation = location;
@@ -140,6 +140,14 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
+}
+
+facebook::react::OnChangeMetrics
+TextInputComponentInstance::getOnChangeMetrics() {
+  auto OnChangeMetrics = facebook::react::OnChangeMetrics();
+  OnChangeMetrics.eventCount = this->m_nativeEventCount;
+  OnChangeMetrics.text = this->m_content;
+  return OnChangeMetrics;
 }
 
 void TextInputComponentInstance::onPropsChanged(
