@@ -93,6 +93,7 @@ export class DescriptorRegistry {
       if (descriptorWrapper.id) {
         this.descriptorTagById.delete(descriptorWrapper.id)
       }
+      this.descriptorWrapperByTag.delete(tag)
     }
   }
 
