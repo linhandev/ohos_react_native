@@ -20,6 +20,7 @@ class TextInputComponentInstance
 
   facebook::react::TextInputMetrics getTextInputMetrics();
   facebook::react::TextInputMetrics getTextInputMetrics(std::string text);
+  facebook::react::OnChangeMetrics getOnChangeMetrics();
 
   bool m_secureInput{false};
 
