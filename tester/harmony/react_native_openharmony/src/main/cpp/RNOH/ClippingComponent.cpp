@@ -76,7 +76,7 @@ void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset
 
 void ClippingComponent::setRemoveClippedSubviews(bool isClipping, bool isHorizontal)
 {
-    if (m_horizontal != isHorizontal) {
+    if (m_horizontal != isHorizontal && m_removeClippedSubviews) {
         clearSortChildren();
         initSortChildren();
     }
