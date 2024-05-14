@@ -130,10 +130,9 @@ void ViewComponentInstance::clearSortChildren() {
 
 bool positionCompare(std::shared_ptr<ComponentInstance> lhs, std::shared_ptr<ComponentInstance> rhs)
 {
-    auto metrics1 = lhs->m_layoutMetrics;
-    auto metrics2 = rhs->m_layoutMetrics;
+    auto metrics1 = lhs->getLayoutMetrics();
+    auto metrics2 = rhs->getLayoutMetrics();
     auto parentCom = lhs->getParent().lock();
-
     if (parentCom == nullptr) {
         return false;
     }
@@ -163,7 +162,6 @@ void ViewComponentInstance::insertSortChild(std::shared_ptr<ComponentInstance> c
     if (!m_removeClippedSubviews) {
         return;
     }
-    auto children1 = ClippingComponent::getSortChildren();
     auto children = m_sortChildren;
     auto it = std::upper_bound(m_sortChildren.begin(), m_sortChildren.end(), child, positionCompare);
     m_sortChildren.insert(it, child);
@@ -177,10 +175,10 @@ void ViewComponentInstance::removeSortChild(std::shared_ptr<ComponentInstance> c
     if (!m_removeClippedSubviews) {
         return;
     }
-    auto children = ClippingComponent::getSortChildren();
     auto it = std::find(m_sortChildren.begin(), m_sortChildren.end(), child);
     if (it != m_sortChildren.end()) {
         index = it - m_sortChildren.begin();
+        auto child = std::move(*it);
         m_sortChildren.erase(it);
     }
     return;
@@ -192,8 +190,10 @@ void ViewComponentInstance::getChildViewRect(std::shared_ptr<ComponentInstance> 
     if (child == nullptr) {
         return;
     }
-    ClippingComponent::fillRect(child->m_layoutMetrics.frame.origin.x, child->m_layoutMetrics.frame.origin.y,
-        child->m_layoutMetrics.frame.size.width, child->m_layoutMetrics.frame.size.height, rect);
+    auto metrics = child->getLayoutMetrics();
+    ClippingComponent::fillRect(metrics.frame.origin.x, metrics.frame.origin.y,
+        metrics.frame.size.width, metrics.frame.size.height, rect);
+    return;
 }
 
 void ViewComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index) 
