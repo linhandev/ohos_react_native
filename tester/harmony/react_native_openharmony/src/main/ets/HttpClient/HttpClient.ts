@@ -159,6 +159,12 @@ export class DefaultHttpClient implements HttpClient {
                 error: err,
                 statusCode: responseCode ?? 0
               } as HttpErrorResponse);
+            } else {
+              let httpResponse = maybeCreateHttpResponse();
+              if (httpResponse) {
+                cleanup();
+                resolve(httpResponse);
+              }
             }
           }
         );
