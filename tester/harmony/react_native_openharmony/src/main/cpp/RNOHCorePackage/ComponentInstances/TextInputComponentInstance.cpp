@@ -22,7 +22,7 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
 void TextInputComponentInstance::onContentSizeChange(float width, float height) {
   m_contentSizeWidth = width;
   m_contentSizeHeight = height;
-  m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+  m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
 }
 
 void TextInputComponentInstance::onContentScroll() {
@@ -148,6 +148,14 @@ TextInputComponentInstance::getOnChangeMetrics() {
   OnChangeMetrics.eventCount = this->m_nativeEventCount;
   OnChangeMetrics.text = this->m_content;
   return OnChangeMetrics;
+}
+
+facebook::react::Size
+TextInputComponentInstance::getOnContentSizeChangeMetrics() {
+  auto OnContentSizeChangeMetrics = facebook::react::Size();
+  OnContentSizeChangeMetrics.width= this->m_contentSizeWidth;
+  OnContentSizeChangeMetrics.height = this->m_contentSizeHeight;
+  return OnContentSizeChangeMetrics;
 }
 
 void TextInputComponentInstance::onPropsChanged(
