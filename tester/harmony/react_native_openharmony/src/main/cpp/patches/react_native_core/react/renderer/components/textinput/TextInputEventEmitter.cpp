@@ -32,16 +32,6 @@ static jsi::Value textInputMetricsPayload(
             textInputMetrics.selectionRange.length);
     payload.setProperty(runtime, "selection", selection);
   }
-
-  {
-    auto contentSize = jsi::Object(runtime);
-      contentSize.setProperty(
-        runtime, "width", textInputMetrics.contentSize.width);
-      contentSize.setProperty(
-        runtime, "height", textInputMetrics.contentSize.height);
-    payload.setProperty(runtime, "contentSize", contentSize);
-  }
-
   {
     auto contentOffset = jsi::Object(runtime);
     contentOffset.setProperty(
@@ -49,8 +39,8 @@ static jsi::Value textInputMetricsPayload(
     contentOffset.setProperty(
         runtime, "y", textInputMetrics.contentOffset.y);
     payload.setProperty(runtime, "contentOffset", contentOffset);
-  } 
-  
+  }
+
   return payload;
 };
 
@@ -92,6 +82,21 @@ static jsi::Value onChangeMetricsPayload(
   return payload;
 };
 
+static jsi::Value onContentSizeChangeMetricsPayload(
+    jsi::Runtime& runtime,
+    Size const& onContentSizeChangeMetrics) {
+  auto payload = jsi::Object(runtime);
+
+    auto contentSize = jsi::Object(runtime);
+    contentSize.setProperty(
+        runtime, "width", onContentSizeChangeMetrics.width);
+    contentSize.setProperty(
+        runtime, "height", onContentSizeChangeMetrics.height);
+    payload.setProperty(runtime, "contentSize", contentSize);
+
+  return payload;
+};
+
 void TextInputEventEmitter::onFocus(
     TextInputMetrics const &textInputMetrics) const {
   dispatchTextInputEvent("focus", textInputMetrics);
@@ -117,8 +122,13 @@ void TextInputEventEmitter::onChangeSync(
 }
 
 void TextInputEventEmitter::onContentSizeChange(
-    TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent("contentSizeChange", textInputMetrics);
+    Size const &onContentSizeChangeMetrics) const {
+  dispatchEvent(
+      "contentSizeChange",
+      [onContentSizeChangeMetrics](jsi::Runtime& runtime) {
+        return onContentSizeChangeMetricsPayload(runtime, onContentSizeChangeMetrics);
+      },
+      EventPriority::AsynchronousBatched);
 }
 
 void TextInputEventEmitter::onSelectionChange(
