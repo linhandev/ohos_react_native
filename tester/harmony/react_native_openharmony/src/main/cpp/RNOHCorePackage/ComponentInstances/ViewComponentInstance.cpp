@@ -109,7 +109,12 @@ void ViewComponentInstance::updateClippingIndex(bool isInsert, std::size_t index
     return;
 }
 
-void ViewComponentInstance::initSortChildren() {
+void ViewComponentInstance::initSortChildren() 
+{
+    if (!m_removeClippedSubviews) {
+        return;
+    }
+ 
     auto children = getChildren();
     std::size_t index = 0;
     for (auto item = children.begin(); item != children.end(); item++) {
@@ -119,7 +124,8 @@ void ViewComponentInstance::initSortChildren() {
     return;
 }
 
-void ViewComponentInstance::clearSortChildren() {
+void ViewComponentInstance::clearSortChildren() 
+{
     auto children = ClippingComponent::getSortChildren();
     std::size_t index = 0;
     for (auto item = children.begin(); item != children.end(); item++) {
@@ -390,6 +396,25 @@ void ViewComponentInstance::updateVisible(bool isFirst)
     } else {
         updateVisibleFirst(childNodes);
     }
+}
+
+void ViewComponentInstance::restoreRsTree()
+{
+    if (!m_removeClippedSubviews){
+        return;
+    }
+
+    auto children = ClippingComponent::getSortChildren();
+    uint32_t total = children.size();
+    for (std::size_t i = 0; i < total; i++) {
+        const auto& item = children[i];
+        if (item->getIsClipped()) {          
+            m_stackNode.insertChild(item->getLocalRootArkUINode(), i);
+            item->setIsClipped(false);
+        }
+    }
+
+    return;
 }
 
 } // namespace rnoh

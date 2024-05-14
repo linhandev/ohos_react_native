@@ -76,22 +76,21 @@ void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset
 
 void ClippingComponent::setRemoveClippedSubviews(bool isClipping, bool isHorizontal)
 {
-    if (m_horizontal != isHorizontal && m_removeClippedSubviews) {
-        clearSortChildren();
-        initSortChildren();
-    }
-    m_horizontal = isHorizontal;
-    
-    if (m_removeClippedSubviews == isClipping){
-        return;
-    }
-    m_removeClippedSubviews = isClipping;
     if (isClipping) {
-        initSortChildren();
+        if (m_horizontal != isHorizontal || m_removeClippedSubviews != isClipping) {
+            m_removeClippedSubviews = isClipping;
+            m_horizontal = isHorizontal;
+            clearSortChildren();
+            initSortChildren();
+            updateVisible(true);
+        }
     } else {
+        if(m_removeClippedSubviews != isClipping) {
+            restoreRsTree();
+        }
         clearSortChildren();
     }
-    updateVisible(true);
+    
     return;
 }
 
@@ -154,4 +153,8 @@ void ClippingComponent::removeSortChild(std::shared_ptr<ComponentInstance> child
     return;
 }
 
+void ClippingComponent::restoreRsTree()
+{
+    return;
+}
 } // namespace rnoh
