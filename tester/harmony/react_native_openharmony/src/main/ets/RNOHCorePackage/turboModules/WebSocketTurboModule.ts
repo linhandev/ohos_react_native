@@ -8,7 +8,7 @@ const WEB_SOCKET_SUPPORTED_EVENT_NAMES = ["websocketOpen", "websocketClosed", "w
 
 type MessageParams = {
   id: number,
-  type: string,
+  type: "text" | "binary" | "blob",
   data?: string | BlobMetadata,
 }
 
@@ -30,7 +30,6 @@ export class WebSocketTurboModule extends TurboModule {
     this.logger = ctx.logger.clone("WebSocketTurboModule")
   }
 
-
   getSupportedEvents() {
     return WEB_SOCKET_SUPPORTED_EVENT_NAMES
   }
@@ -45,7 +44,7 @@ export class WebSocketTurboModule extends TurboModule {
 
   private onMessage(err: BusinessError<void>, data: string | ArrayBuffer, socketID:number) {
     const contentHandler = this.contentHandlersBySocketID.get(socketID);
-
+    
     if (typeof data === "string") {
       let params: MessageParams = { id: socketID, type: 'text', data: data };
       if (contentHandler) {
@@ -55,7 +54,9 @@ export class WebSocketTurboModule extends TurboModule {
       this.ctx.rnInstance.emitDeviceEvent("websocketMessage", params);
     } else if (data instanceof ArrayBuffer) {
       const base64Data = this.base64.encodeToStringSync(new Uint8Array(data));
-      let params: MessageParams = { id: socketID, type: 'text', data: base64Data };
+
+      let params: MessageParams = { id: socketID, type: 'binary', data: base64Data };
+
       if (contentHandler) {
         params = contentHandler.processByteMessage(data, params);
       }
@@ -109,8 +110,8 @@ export class WebSocketTurboModule extends TurboModule {
     if (!ws) {
       throw new Error(`Trying to send a message on websocket "${socketID}" but there is no socket.`);
     }
-
     const message = this.base64.decodeSync(base64Message);
+
     ws.send(message.buffer, (err) => this.handleError(socketID, err));
   }
 
