@@ -35,10 +35,20 @@ class ClippingComponent
         std::size_t getEndIndex();
         void setEndIndex(std::size_t i);
         virtual void updateClippingIndex(bool isInsert, std::size_t index);
+        std::vector<std::shared_ptr<ComponentInstance>> m_sortChildren;
+        std::vector<std::shared_ptr<ComponentInstance>>& getSortChildren() {
+            return m_sortChildren;
+        }
+        virtual void initSortChildren();
+        virtual void clearSortChildren();
+        virtual void insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index);
+        virtual void removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index);
+        virtual void restoreRsTree();  
     public:
         ClippingComponent();
         ~ClippingComponent();
-        void setRemoveClippedSubviews(bool isClipping);
+        bool m_horizontal = false;
+        void setRemoveClippedSubviews(bool isClipping, bool isHorizontal);
         bool getRemoveClippedSubviews();
         void setIsClipped(bool isClipped);
         bool getIsClipped();

@@ -104,6 +104,10 @@ class ComponentInstance
     return m_children;
   }
 
+  virtual facebook::react::LayoutMetrics& getLayoutMetrics() {
+    return m_layoutMetrics;
+  }
+
   virtual ComponentInstance::Weak const getParent() const {
     return m_parent;
   }
