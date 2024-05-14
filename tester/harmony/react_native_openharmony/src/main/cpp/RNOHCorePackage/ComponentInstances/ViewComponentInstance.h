@@ -18,6 +18,7 @@ class ViewComponentInstance
     void clearSortChildren() override;
     void insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
     void removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
+    void restoreRsTree() override; 
  public:
   ViewComponentInstance(Context context);
 

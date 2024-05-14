@@ -43,6 +43,7 @@ class ClippingComponent
         virtual void clearSortChildren();
         virtual void insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index);
         virtual void removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index);
+        virtual void restoreRsTree();  
     public:
         ClippingComponent();
         ~ClippingComponent();
