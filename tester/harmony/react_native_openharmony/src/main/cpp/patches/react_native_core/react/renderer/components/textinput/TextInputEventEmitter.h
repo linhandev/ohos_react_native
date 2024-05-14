@@ -33,13 +33,19 @@ class KeyPressMetrics {
   int eventCount;
 };
 
+class OnChangeMetrics {
+  public:
+  std::string text;
+  int eventCount;
+};
+
 class TextInputEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
 
   void onFocus(TextInputMetrics const &textInputMetrics) const;
   void onBlur(TextInputMetrics const &textInputMetrics) const;
-  void onChange(TextInputMetrics const &textInputMetrics) const;
+  void onChange(OnChangeMetrics const &onChangeMetrics) const;
   void onChangeSync(TextInputMetrics const &textInputMetrics) const;
   void onContentSizeChange(TextInputMetrics const &textInputMetrics) const;
   void onSelectionChange(TextInputMetrics const &textInputMetrics) const;
@@ -53,6 +59,10 @@ class TextInputEventEmitter : public ViewEventEmitter {
   void dispatchTextInputEvent(
       std::string const &name,
       TextInputMetrics const &textInputMetrics,
+      EventPriority priority = EventPriority::AsynchronousBatched) const;
+  void dispatchTextInputOnChangeEvent(
+      std::string const& name,
+      TextInputMetrics const& textInputMetrics,
       EventPriority priority = EventPriority::AsynchronousBatched) const;
 };
 
