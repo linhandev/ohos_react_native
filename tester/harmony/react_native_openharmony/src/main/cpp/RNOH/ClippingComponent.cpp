@@ -87,8 +87,12 @@ void ClippingComponent::setRemoveClippedSubviews(bool isClipping, bool isHorizon
     } else {
         if(m_removeClippedSubviews != isClipping) {
             restoreRsTree();
+            setEndIndex(0);
+            setStartIndex(0);
         }
         clearSortChildren();
+        m_removeClippedSubviews = isClipping;
+        m_horizontal = isHorizontal;
     }
     
     return;
