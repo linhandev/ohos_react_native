@@ -38,7 +38,7 @@ class ComponentInstance
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
   };
-
+  facebook::react::LayoutMetrics m_layoutMetrics;
   struct Context {
     Tag tag;
     ComponentHandle componentHandle;
@@ -192,7 +192,6 @@ class ComponentInstance
   ComponentInstance::Weak m_parent;
   std::size_t m_index = 0;
   facebook::react::BorderMetrics m_oldBorderMetrics;
-  facebook::react::LayoutMetrics m_layoutMetrics;
   Dependencies::Shared m_deps;
   std::unordered_set<std::string> m_ignoredPropKeys;
   facebook::react::ShadowView m_shadowView;
