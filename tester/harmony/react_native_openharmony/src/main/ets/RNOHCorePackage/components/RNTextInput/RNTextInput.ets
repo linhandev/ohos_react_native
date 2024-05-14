@@ -361,6 +361,9 @@ export struct RNTextInput {
             this.isEditing = isEditing;
           })
           .selectionMenuHidden(this.descriptorWrapper?.contextMenuHidden)
+          .inputFilter('.*')
+          .hitTestBehavior(this.descriptorWrapper?.pointerEvents === "none" ? HitTestMode.None :
+          HitTestMode.Default)
       } else {
         TextInput({
           controller: this.inputController,
@@ -420,6 +423,9 @@ export struct RNTextInput {
             this.isEditing = isEditing;
           })
           .selectionMenuHidden(this.descriptorWrapper?.contextMenuHidden)
+          .inputFilter('.*')
+          .hitTestBehavior(this.descriptorWrapper?.pointerEvents === "none" ? HitTestMode.None :
+          HitTestMode.Default)
       }
     }
   }
