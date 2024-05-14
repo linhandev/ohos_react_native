@@ -14,6 +14,10 @@ class ViewComponentInstance
     void updateVisibleDown(std::vector<ComponentInstance::Shared> &childNodes);
     void updateVisibleUp(std::vector<ComponentInstance::Shared> &childNodes);
     void updateClippingIndex(bool isInsert, std::size_t index) override;
+    void initSortChildren() override;
+    void clearSortChildren() override;
+    void insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
+    void removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
  public:
   ViewComponentInstance(Context context);
 
@@ -28,6 +32,6 @@ class ViewComponentInstance
   void onHoverOut() override;
   StackNode& getLocalRootArkUINode() override;
   void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index) override;
-  void updateVisible(bool isFrist) override;
+  void updateVisible(bool isFirst) override;
 };
 } // namespace rnoh

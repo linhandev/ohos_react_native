@@ -26,7 +26,7 @@ void ScrollViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   m_childComponent = childComponentInstance;
-  m_childComponent->setRemoveClippedSubviews(getRemoveClippedSubviews());
+  m_childComponent->setRemoveClippedSubviews(getRemoveClippedSubviews(), m_horizontal);
   m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   CppComponentInstance::onChildInserted(childComponentInstance, index);
   m_contentContainerNode.insertChild(
@@ -84,6 +84,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
   m_removeClippedSubviews = props->removeClippedSubviews;
+  m_horizontal = isHorizontal(props);
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
@@ -113,7 +114,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   }
 
   if (m_childComponent != nullptr) {
-    m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews);
+    m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews, m_horizontal);
     m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   }
 
