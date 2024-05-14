@@ -67,6 +67,21 @@ static jsi::Value keyPressMetricsPayload(
   return payload;
 };
 
+static jsi::Value onChangeMetricsPayload(
+    jsi::Runtime& runtime,
+    OnChangeMetrics const& onChangeMetrics) {
+  auto payload = jsi::Object(runtime);
+
+  payload.setProperty(
+      runtime,
+      "text",
+      jsi::String::createFromUtf8(runtime, onChangeMetrics.text));
+
+  payload.setProperty(runtime, "eventCount", onChangeMetrics.eventCount);
+
+  return payload;
+};
+
 void TextInputEventEmitter::onFocus(
     TextInputMetrics const &textInputMetrics) const {
   dispatchTextInputEvent("focus", textInputMetrics);
@@ -78,10 +93,13 @@ void TextInputEventEmitter::onBlur(
 }
 
 void TextInputEventEmitter::onChange(
-    TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent("change", textInputMetrics);
+    OnChangeMetrics const &onChangeMetrics) const {
+  dispatchEvent("change",
+  [onChangeMetrics](jsi::Runtime& runtime) {
+    return onChangeMetricsPayload(runtime, onChangeMetrics);
+  },
+  EventPriority::AsynchronousBatched);
 }
-
 void TextInputEventEmitter::onChangeSync(
     TextInputMetrics const &textInputMetrics) const {
   dispatchTextInputEvent(

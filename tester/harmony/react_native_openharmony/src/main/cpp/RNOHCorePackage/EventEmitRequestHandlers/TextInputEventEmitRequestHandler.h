@@ -35,6 +35,17 @@ facebook::react::KeyPressMetrics convertKeyPressEvent(
   return keyPressMetrics;
 }
 
+facebook::react::OnChangeMetrics convertOnChangeEvent(
+    ArkJS& arkJs,
+    napi_value eventObject) {
+  auto text = arkJs.getString(arkJs.getObjectProperty(eventObject, "text"));
+  auto eventCount =
+      arkJs.getInteger(arkJs.getObjectProperty(eventObject, "eventCount"));
+  facebook::react::OnChangeMetrics onChangeMetrics{
+      .text = text, .eventCount = eventCount};
+  return onChangeMetrics;
+}
+
 enum TextInputEventType {
   TEXT_INPUT_UNSUPPORTED,
   TEXT_INPUT_ON_CHANGE,
@@ -83,7 +94,7 @@ class TextInputEventEmitRequestHandler : public EventEmitRequestHandler {
     ArkJS arkJs(ctx.env);
     switch (eventType) {
       case TextInputEventType::TEXT_INPUT_ON_CHANGE:
-        eventEmitter->onChange(convertTextInputEvent(arkJs, ctx.payload));
+        eventEmitter->onChange(convertOnChangeEvent(arkJs, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_SUBMIT_EDITING:
         eventEmitter->onSubmitEditing(
