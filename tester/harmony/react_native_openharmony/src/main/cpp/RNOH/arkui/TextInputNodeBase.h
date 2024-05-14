@@ -46,6 +46,8 @@ class TextInputNodeBase : public ArkUINode {
       std::optional<facebook::react::TextAlignment> const& textAlign);
 
   std::string virtual getTextContent() = 0;
+  
+  virtual facebook::react::Rect getTextContentRect() const = 0;
 };
 
 } // namespace rnoh
