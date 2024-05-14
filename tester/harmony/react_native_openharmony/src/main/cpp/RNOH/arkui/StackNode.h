@@ -6,7 +6,9 @@ namespace rnoh {
 class StackNodeDelegate {
  public:
   virtual ~StackNodeDelegate() = default;
-  virtual void onClick() {};
+  virtual void onClick(){};
+  virtual void onHoverIn(){};
+  virtual void onHoverOut(){};
 };
 
 class StackNode : public ArkUINode {
