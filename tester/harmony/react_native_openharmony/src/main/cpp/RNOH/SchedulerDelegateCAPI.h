@@ -81,10 +81,12 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
   }
     
  facebook::react::ShadowViewMutationList getValidMutations(facebook::react::ShadowViewMutationList const& mutations) {
-      facebook::react::ShadowViewMutationList validUpdateMutations;
+      if (m_arkTsComponentNames.empty()) {
+            return {};
+      }  
       facebook::react::ShadowViewMutationList validCreateMutations;
       facebook::react::ShadowViewMutationList validInsertMutations;
-      facebook::react::ShadowViewMutationList validRemoveMutations;
+      facebook::react::ShadowViewMutationList validOtherMutations;
       facebook::react::ShadowViewMutationList validMutations;
         
       std::queue<facebook::react::Tag> arkTsComponentTags;
@@ -112,11 +114,15 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
                 break;
               }
               case facebook::react::ShadowViewMutation::Update: {
-                validUpdateMutations.push_back(mutation);
+                validOtherMutations.push_back(mutation);
                 break;
               }
               case facebook::react::ShadowViewMutation::Remove: {
-                validRemoveMutations.push_back(mutation);
+                validOtherMutations.push_back(mutation);
+                break;
+              }
+              case facebook::react::ShadowViewMutation::Delete: {
+                validOtherMutations.push_back(mutation);
                 break;
               }
             }
@@ -149,11 +155,10 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
             }
         }
         
-      validMutations.insert(validMutations.end(), validUpdateMutations.begin(), validUpdateMutations.end());
       validMutations.insert(validMutations.end(), validCreateMutations.begin(), validCreateMutations.end());
       validMutations.insert(validMutations.end(), validInsertMutations.begin(), validInsertMutations.end());
-      validMutations.insert(validMutations.end(), validRemoveMutations.begin(), validRemoveMutations.end());
-      return validCreateMutations;
+      validMutations.insert(validMutations.end(), validOtherMutations.begin(), validOtherMutations.end());
+      return validMutations;
   } 
 
   void schedulerDidRequestPreliminaryViewAllocation(
