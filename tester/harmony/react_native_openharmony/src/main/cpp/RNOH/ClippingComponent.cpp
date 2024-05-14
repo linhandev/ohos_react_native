@@ -74,7 +74,7 @@ void ClippingComponent::updateContentOffset(facebook::react::Point contentOffset
     return;
 }
 
-void ClippingComponent::setRemoveClippedSubviews(bool isClipping)
+void ClippingComponent::setRemoveClippedSubviews(bool isClipping, bool isHorizontal)
 {
     m_horizontal = isHorizontal;
     if (m_removeClippedSubviews == isClipping){
@@ -126,6 +126,25 @@ void ClippingComponent::setEndIndex(std::size_t i)
 }
 
 void ClippingComponent::updateClippingIndex(bool isInsert, std::size_t index)
+{
+    return;
+}
+
+void ClippingComponent::initSortChildren()
+{
+    return;
+}
+void ClippingComponent::clearSortChildren()
+{
+    return;
+}
+
+void ClippingComponent::insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index)
+{
+    return;
+}
+
+void ClippingComponent::removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index)
 {
     return;
 }

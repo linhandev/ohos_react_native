@@ -36,7 +36,7 @@ class ClippingComponent
         void setEndIndex(std::size_t i);
         virtual void updateClippingIndex(bool isInsert, std::size_t index);
         std::vector<std::shared_ptr<ComponentInstance>> m_sortChildren;
-        std::vector<std::shared_ptr<ComponentInstance>> getSortChildren() {
+        std::vector<std::shared_ptr<ComponentInstance>>& getSortChildren() {
             return m_sortChildren;
         }
         virtual void initSortChildren();
