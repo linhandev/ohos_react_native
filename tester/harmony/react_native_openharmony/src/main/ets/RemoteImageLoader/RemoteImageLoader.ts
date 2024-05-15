@@ -129,28 +129,35 @@ export class RemoteImageLoader {
     return true;
   }
 
-  public async abortPrefetch(requestId: number): Promise<boolean> {
-    let {uri, downloadTask} = this.abortPrefetchByUrl[requestId];
-    if (uri === undefined) {
-      return true;
+  public async abortPrefetch(requestId: number): Promise<void> {
+    if (!this.abortPrefetchByUrl.has(requestId)) {
+      return;
     }
 
-    await downloadTask?.delete();
-    if (this.memoryCache.has(uri)) {
-      this.memoryCache.remove(uri);
+    let value = this.abortPrefetchByUrl.get(requestId);
+    if (value === null || value === undefined) {
+      return;
     }
 
-    if (this.diskCache.has(uri)) {
-      this.diskCache.remove(uri);
+    try {
+      await value.downloadTask?.delete();
+      if (this.memoryCache.has(value.uri)) {
+        this.memoryCache.remove(value.uri);
+      }
+    
+      if (this.diskCache.has(value.uri)) {
+        this.diskCache.remove(value.uri);
+      }
+    } catch(err) {
+      console.error('Error occurred when removing file' + err.message);
     }
-
+    
     this.abortPrefetchByUrl.delete(requestId);
-    return true;
   }
 
   private addRequestListener(downloadTask: request.DownloadTask, requestId: number, uri: string): void {
     let progressCallback = (receiveSize: number, totalSize) => {
-      this.abortPrefetchByUrl[requestId] = {uri: uri, downloadTask: downloadTask}
+      this.abortPrefetchByUrl.set(requestId, {uri: uri, downloadTask: downloadTask});
     };
 
     let failCallback = (err: number) => {

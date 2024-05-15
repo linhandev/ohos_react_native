@@ -88,8 +88,8 @@ function prefetch(url: string, callback: ?(requestId: number) => void): any {
   return NativeImageLoaderHarmony.prefetchImage(url, requestId);
 }
 
-function abortPrefetch(requestId: number): any {
-  return NativeImageLoaderHarmony.abortPrefetch(requestId);
+function abortPrefetch(requestId: number): void {
+  NativeImageLoaderHarmony.abortPrefetch(requestId);
 }
 
 async function queryCache(
