@@ -9,9 +9,11 @@ import {
   ViewToken,
   ScrollViewComponent,
   ScrollResponderMixin,
+  ViewabilityConfig,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {Button, ObjectDisplayer, TestCase} from '../components';
+import { MockedVideoPlayer } from './VirtualizedListTest';
 interface ItemData {
   title: string;
   id: string;
@@ -195,6 +197,12 @@ export const FlatListTest = () => {
           expect(state).to.be.not.undefined;
         }}
       />
+      <TestCase.Example
+        tags={['C_API']}
+        modal
+        itShould="change background color of visible items after scrolling slightly (to blue when fully visible and lightblue when at least 20% is visible)">
+        <FlatListTestViewabiliyConfigCallbackPairs />
+      </TestCase.Example>
       <TestCase.Example
         modal
         skip={{
@@ -528,5 +536,92 @@ function FlatListGetScrollResponder({
     </>
   );
 }
+
+const firstViewabilityConfig: ViewabilityConfig = {
+  waitForInteraction: true,
+  minimumViewTime: 100,
+  itemVisiblePercentThreshold: 100,
+};
+
+const secondViewabilityConfig: ViewabilityConfig = {
+  waitForInteraction: true,
+  minimumViewTime: 100,
+  itemVisiblePercentThreshold: 20,
+};
+
+const CUSTOM_DATA: ItemData[] = Array(50).fill(0).map((_, index) => ({
+  id: index.toString(),
+  title: `Item ${index + 1}`,
+}));
+
+function FlatListTestViewabiliyConfigCallbackPairs() {
+  const [firstVisibleItems, setFirstVisibleItems] = useState<string[]>([]);
+  const [secondVisibleItems, setSecondVisibleItems] = useState<string[]>([]);
+
+  const viewabilityConfigCallbackPairsRef = useRef([
+    {
+      viewabilityConfig: firstViewabilityConfig,
+      onViewableItemsChanged: ({
+        viewableItems,
+      }: OnViewableItemsChangedType<ItemData>) => {
+        const newFirstVisibleItems = viewableItems.map(
+          viewableItem => viewableItem.item.id,
+        );
+        setFirstVisibleItems(newFirstVisibleItems);
+      },
+    },
+    {
+      viewabilityConfig: secondViewabilityConfig,
+      onViewableItemsChanged: ({
+        viewableItems,
+      }: OnViewableItemsChangedType<ItemData>) => {
+        const newSecondVisibleItems = viewableItems.map(
+          viewableItem => viewableItem.item.id,
+        );
+        setSecondVisibleItems(newSecondVisibleItems);
+      },
+    },
+  ]);
+
+  return (
+    <View style={{height: 600}}>
+      <View style={{marginBottom: 10}}>
+        <Text>
+          First threshold {firstViewabilityConfig.itemVisiblePercentThreshold}%{' '}
+          visible items are: {JSON.stringify(firstVisibleItems)}
+        </Text>
+        <Text>
+          second threshold {secondViewabilityConfig.itemVisiblePercentThreshold}
+          % visible items are: {JSON.stringify(secondVisibleItems)}
+        </Text>
+      </View>
+      <FlatList
+        data={CUSTOM_DATA}
+        nestedScrollEnabled={true}
+        renderItem={({item}: {item: ItemData}) => (
+          <MockedVideoPlayer
+            height={300}
+            itemId={item.id}
+            playMockVideo={firstVisibleItems.includes(item.id)}
+            prefetchMockVideo={secondVisibleItems.includes(item.id)}
+          />
+        )}
+        keyExtractor={(item: ItemData) => item.id}
+        viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairsRef.current}
+      />
+    </View>
+  );
+}
+interface ViewItemToken<TItem> {
+  item: TItem;
+  key: string;
+  index: number | null;
+  isViewable: boolean;
+  section?: any | undefined;
+}
+type OnViewableItemsChangedType<TItem> = {
+  viewableItems: Array<ViewItemToken<TItem>>;
+  changed: Array<ViewItemToken<TItem>>;
+};
 
 export default FlatListTest;
