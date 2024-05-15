@@ -122,3 +122,19 @@ void PullToRefreshViewComponentInstance::onRefresh() {
   m_refreshNode.setNativeRefreshing(true);
   m_eventEmitter->onRefresh({});
 }
+
+facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
+    const override {
+  if (!this->getChildren().empty() && this->getChildren()[0] != nullptr) {
+    auto scrollComponent = this->getChildren()[0];
+    auto scrollPosition =
+        scrollComponent->getLocalRootArkUINode().getLayoutPosition();
+    auto pointScaleFactor = m_layoutMetrics.pointScaleFactor;
+
+    return {
+        -scrollPosition.x / pointScaleFactor,
+        -scrollPosition.y / pointScaleFactor};
+  }
+
+  return {0, 0};
+}
