@@ -124,7 +124,7 @@ void PullToRefreshViewComponentInstance::onRefresh() {
 }
 
 facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
-    const override {
+    const {
   if (!this->getChildren().empty() && this->getChildren()[0] != nullptr) {
     auto scrollComponent = this->getChildren()[0];
     auto scrollPosition =
