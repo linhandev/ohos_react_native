@@ -577,7 +577,7 @@ const deafultViewabilityConfig: ViewabilityConfig = {
   itemVisiblePercentThreshold: 70,
 };
 
-const MockedVideoPlayer = ({
+export const MockedVideoPlayer = ({
   itemId,
   height,
   playMockVideo,
