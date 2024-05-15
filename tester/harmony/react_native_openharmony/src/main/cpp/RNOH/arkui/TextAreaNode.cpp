@@ -109,21 +109,25 @@ void TextAreaNode::setFont(
     fontFamily = textAttributes.fontFamily;
   }
 
-  ArkUI_NumberValue fontWeight = {.i32 = ARKUI_FONT_WEIGHT_NORMAL};
-  if (textAttributes.fontWeight) {
-    fontWeight =
-        rnoh::convertFontWeight((int32_t)textAttributes.fontWeight.value());
+  auto fontWeight = ARKUI_FONT_WEIGHT_NORMAL;
+  if (textAttributes.fontWeight.has_value()) {
+    fontWeight = rnoh::convertFontWeight(textAttributes.fontWeight.value());
   }
 
-  ArkUI_NumberValue tempStyle = {.i32 = ARKUI_FONT_STYLE_NORMAL};
-  if (textAttributes.fontStyle == facebook::react::FontStyle::Italic) {
-    tempStyle = {.i32 = ARKUI_FONT_STYLE_ITALIC};
+  auto fontStyle = ARKUI_FONT_STYLE_NORMAL;
+  if (textAttributes.fontStyle.has_value() &&
+      textAttributes.fontStyle.value() == facebook::react::FontStyle::Italic) {
+    fontStyle = ARKUI_FONT_STYLE_ITALIC;
   }
 
+  float fontSize = 16;
+  if (!std::isnan(textAttributes.fontSize)) {
+    fontSize = static_cast<float>(textAttributes.fontSize);
+  }
   std::array<ArkUI_NumberValue, 3> value = {
-      {{.f32 = static_cast<float>(textAttributes.fontSize)},
-       tempStyle,
-       fontWeight}};
+      {{.f32 = fontSize},
+       {.i32 = static_cast<int32_t>(fontStyle)},
+       {.i32 = static_cast<int32_t>(fontWeight)}}};
   ArkUI_AttributeItem item = {value.data(), value.size(), fontFamily.c_str()};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_PLACEHOLDER_FONT, &item));

@@ -84,48 +84,50 @@ inline ArkUI_EnterKeyType convertEnterKeyType(
   }
 }
 
-inline ArkUI_NumberValue convertTextAlign(
+inline ArkUI_TextAlignment convertTextAlign(
     facebook::react::TextAlignment alignment) {
   switch (alignment) {
     case facebook::react::TextAlignment::Natural:
     case facebook::react::TextAlignment::Left:
-      return {.i32 = static_cast<int32_t>(ARKUI_TEXT_ALIGNMENT_START)};
+      return ARKUI_TEXT_ALIGNMENT_START;
     case facebook::react::TextAlignment::Right:
-      return {.i32 = static_cast<int32_t>(ARKUI_TEXT_ALIGNMENT_END)};
+      return ARKUI_TEXT_ALIGNMENT_END;
     case facebook::react::TextAlignment::Center:
-      return {.i32 = static_cast<int32_t>(ARKUI_TEXT_ALIGNMENT_CENTER)};
+      return ARKUI_TEXT_ALIGNMENT_CENTER;
     case facebook::react::TextAlignment::Justified:
-      return {.i32 = static_cast<int32_t>(ARKUI_TEXT_ALIGNMENT_JUSTIFY)};
+      return ARKUI_TEXT_ALIGNMENT_JUSTIFY;
     default:
-      return {.i32 = static_cast<int32_t>(ARKUI_TEXT_ALIGNMENT_START)};
+      return ARKUI_TEXT_ALIGNMENT_START;
   }
 }
 
-inline ArkUI_NumberValue convertFontWeight(int fontWeight) {
-  if (fontWeight < 200) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W100};
+inline ArkUI_FontWeight convertFontWeight(
+    facebook::react::FontWeight fontWeight) {
+  auto fontWeightInt = static_cast<int32_t>(fontWeight);
+  if (fontWeightInt < 200) {
+    return ARKUI_FONT_WEIGHT_W100;
   }
-  if (fontWeight < 300) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W200};
+  if (fontWeightInt < 300) {
+    return ARKUI_FONT_WEIGHT_W200;
   }
-  if (fontWeight < 400) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W300};
+  if (fontWeightInt < 400) {
+    return ARKUI_FONT_WEIGHT_W300;
   }
-  if (fontWeight < 500) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W400};
+  if (fontWeightInt < 500) {
+    return ARKUI_FONT_WEIGHT_W400;
   }
-  if (fontWeight < 600) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W500};
+  if (fontWeightInt < 600) {
+    return ARKUI_FONT_WEIGHT_W500;
   }
-  if (fontWeight < 700) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W600};
+  if (fontWeightInt < 700) {
+    return ARKUI_FONT_WEIGHT_W600;
   }
-  if (fontWeight < 800) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W700};
+  if (fontWeightInt < 800) {
+    return ARKUI_FONT_WEIGHT_W700;
   }
-  if (fontWeight < 900) {
-    return {.i32 = ARKUI_FONT_WEIGHT_W800};
+  if (fontWeightInt < 900) {
+    return ARKUI_FONT_WEIGHT_W800;
   }
-  return {.i32 = ARKUI_FONT_WEIGHT_W900};
+  return ARKUI_FONT_WEIGHT_W900;
 }
 } // namespace rnoh

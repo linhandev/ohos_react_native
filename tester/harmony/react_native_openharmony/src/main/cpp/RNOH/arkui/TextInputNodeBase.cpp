@@ -60,46 +60,64 @@ void TextInputNodeBase::setFontColor(
 
 void TextInputNodeBase::setCommonFontAttributes(
     facebook::react::TextAttributes const& textAttributes) {
-  std::string fontFamily = "HarmonyOS Sans";
-  if (!textAttributes.fontFamily.empty()) {
-    fontFamily = textAttributes.fontFamily;
+  if (textAttributes.fontFamily.empty()) {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_FONT_FAMILY));
+  } else {
+    ArkUI_AttributeItem item = {.string = textAttributes.fontFamily.c_str()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FONT_FAMILY, &item));
   }
-  ArkUI_AttributeItem itemFamily = {.string = fontFamily.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FONT_FAMILY, &itemFamily));
 
-  ArkUI_NumberValue valueSize[] = {(float)textAttributes.fontSize};
-  ArkUI_AttributeItem itemSize = {
-      valueSize, sizeof(valueSize) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FONT_SIZE, &itemSize));
-
-  ArkUI_NumberValue fontWeight = {.i32 = ARKUI_FONT_WEIGHT_NORMAL};
-  if (textAttributes.fontWeight) {
-    fontWeight =
-        rnoh::convertFontWeight((int32_t)textAttributes.fontWeight.value());
+  if (std::isnan(textAttributes.fontSize)) {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_FONT_SIZE));
+  } else {
+    std::array<ArkUI_NumberValue, 1> value = {
+        {{.f32 = static_cast<float>(textAttributes.fontSize)}}};
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FONT_SIZE, &item));
   }
-  ArkUI_NumberValue valueWeight[] = {fontWeight};
-  ArkUI_AttributeItem itemWeight = {valueWeight, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FONT_WEIGHT, &itemWeight));
 
-  ArkUI_NumberValue tempStyle = {.i32 = ARKUI_FONT_STYLE_NORMAL};
-  if (textAttributes.fontStyle == facebook::react::FontStyle::Italic) {
-    tempStyle = {.i32 = ARKUI_FONT_STYLE_ITALIC};
+  if (textAttributes.fontWeight.has_value()) {
+    std::array<ArkUI_NumberValue, 1> value = {
+        {{.i32 = static_cast<int32_t>(
+              rnoh::convertFontWeight(textAttributes.fontWeight.value()))}}};
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FONT_WEIGHT, &item));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_FONT_WEIGHT));
   }
-  ArkUI_NumberValue valueStyle[] = {tempStyle};
-  ArkUI_AttributeItem itemStyle = {valueStyle, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FONT_STYLE, &itemStyle));
+
+  if (textAttributes.fontStyle.has_value() &&
+      textAttributes.fontStyle.value() == facebook::react::FontStyle::Italic) {
+    std::array<ArkUI_NumberValue, 1> value = {
+        {{.i32 = static_cast<int32_t>(ARKUI_FONT_STYLE_ITALIC)}}};
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FONT_STYLE, &item));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_FONT_STYLE));
+  }
 }
 
 void TextInputNodeBase::setTextAlign(
     std::optional<facebook::react::TextAlignment> const& textAlign) {
-  ArkUI_NumberValue value[] = {rnoh::convertTextAlign(textAlign.value())};
-  ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_ALIGN, &item));
+  if (textAlign.has_value()) {
+    std::array<ArkUI_NumberValue, 1> value = {
+        {{.i32 = static_cast<int32_t>(
+              rnoh::convertTextAlign(textAlign.value()))}}};
+    ArkUI_AttributeItem item = {value.data(), value.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_ALIGN, &item));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_ALIGN));
+  }
 }
 
 void TextInputNodeBase::setTextSelection(int32_t start, int32_t end) {
