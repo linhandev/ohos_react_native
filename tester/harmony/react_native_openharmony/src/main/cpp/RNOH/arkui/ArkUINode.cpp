@@ -460,6 +460,10 @@ ArkUINode& ArkUINode::setVisibility(ArkUI_Visibility visibility) {
   return *this;
 }
 
+ArkUI_IntOffset ArkUINode::getLayoutPosition() {
+  return NativeNodeApi::getInstance()->getLayoutPosition(m_nodeHandle);
+}
+
 ArkUINode::~ArkUINode() {
   if (m_nodeHandle != nullptr) {
     ArkUINodeRegistry::getInstance().unregisterNode(this);

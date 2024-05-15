@@ -97,7 +97,10 @@ class ArkUINode {
 
   virtual ArkUINode& resetAccessibilityText();
 
-  // method for handling node events with ArkUI_NodeComponentEvent payload type
+  virtual ArkUI_IntOffset getLayoutPosition();
+
+  // method for handling node events with ArkUI_NodeComponentEvent payload
+  // type
   virtual void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs);
   // method for handling node events with ArkUI_StringAsyncEvent payload type
   virtual void onNodeEvent(
