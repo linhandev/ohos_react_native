@@ -10,6 +10,7 @@
 #include <sstream>
 #include <utility>
 #include <algorithm>
+#include <boost/locale.hpp>
 
 namespace rnoh {
 
@@ -90,17 +91,22 @@ void TextInputComponentInstance::onTextSelectionChange(
   if (m_textWasPastedOrCut) {
     m_textWasPastedOrCut = false;
   } else if (m_valueChanged) {
-    std::string key;
+    std::u16string key;
     bool noPreviousSelection = m_selectionLength == 0;
     bool cursorDidNotMove = location == m_selectionLocation;
     bool cursorMovedBackwardsOrAtBeginningOfInput =
         (location < m_selectionLocation) || location <= 0;
     if (!cursorMovedBackwardsOrAtBeginningOfInput &&
         (noPreviousSelection || !cursorDidNotMove)) {
-      key = m_content.at(location - 1);
+      auto utfContent = boost::locale::conv::utf_to_utf<char16_t>(m_content);
+      if (location > 0 && location <= utfContent.size()) {
+        int length = std::max(location - m_selectionLocation, 1);
+        length = std::min(length, location);
+        key = utfContent.substr(location - length, length);
+      }
     }
     auto keyPressMetrics = facebook::react::KeyPressMetrics();
-    keyPressMetrics.text = key;
+    keyPressMetrics.text = boost::locale::conv::utf_to_utf<char>(key);
     keyPressMetrics.eventCount = m_nativeEventCount;
     m_eventEmitter->onKeyPress(keyPressMetrics);
   }
@@ -135,8 +141,10 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.eventCount = this->m_nativeEventCount;
   textInputMetrics.selectionRange.location = this->m_selectionLocation;
   textInputMetrics.selectionRange.length = this->m_selectionLength;
-  textInputMetrics.contentSize.width = this->m_contentSizeWidth;
-  textInputMetrics.contentSize.height = this->m_contentSizeHeight;
+  textInputMetrics.contentSize.width =
+      this->m_contentSizeWidth / pointScaleFactor;
+  textInputMetrics.contentSize.height =
+      this->m_contentSizeHeight / pointScaleFactor;
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;

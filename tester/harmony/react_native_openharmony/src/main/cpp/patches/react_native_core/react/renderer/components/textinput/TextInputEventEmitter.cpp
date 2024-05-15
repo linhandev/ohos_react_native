@@ -32,12 +32,27 @@ static jsi::Value textInputMetricsPayload(
             textInputMetrics.selectionRange.length);
     payload.setProperty(runtime, "selection", selection);
   }
+
+  return payload;
+};
+
+static jsi::Value scrollMetricsPayload(
+    jsi::Runtime& runtime,
+    TextInputMetrics const& textInputMetrics) {
+  auto payload = jsi::Object(runtime);
+  {
+    auto contentSize = jsi::Object(runtime);
+    contentSize.setProperty(
+        runtime, "width", textInputMetrics.contentSize.width);
+    contentSize.setProperty(
+        runtime, "height", textInputMetrics.contentSize.height);
+    payload.setProperty(runtime, "contentSize", contentSize);
+  }
+
   {
     auto contentOffset = jsi::Object(runtime);
-    contentOffset.setProperty(
-        runtime, "x", textInputMetrics.contentOffset.x);
-    contentOffset.setProperty(
-        runtime, "y", textInputMetrics.contentOffset.y);
+    contentOffset.setProperty(runtime, "x", textInputMetrics.contentOffset.x);
+    contentOffset.setProperty(runtime, "y", textInputMetrics.contentOffset.y);
     payload.setProperty(runtime, "contentOffset", contentOffset);
   }
 
@@ -59,7 +74,7 @@ static jsi::Value keyPressMetricsPayload(
     } else if (keyPressMetrics.text.front() == '\t') {
       key = "Tab";
     } else {
-      key = keyPressMetrics.text.front();
+      key = keyPressMetrics.text;
     }
   }
   payload.setProperty(
@@ -168,7 +183,12 @@ void TextInputEventEmitter::onKeyPressSync(
 
 void TextInputEventEmitter::onScroll(
     TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent("scroll", textInputMetrics);
+  dispatchEvent(
+      "scroll",
+      [textInputMetrics](jsi::Runtime& runtime) {
+        return scrollMetricsPayload(runtime, textInputMetrics);
+      },
+      EventPriority::AsynchronousBatched);
 }
 
 void TextInputEventEmitter::dispatchTextInputEvent(
