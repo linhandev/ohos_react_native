@@ -45,5 +45,6 @@ class PullToRefreshViewComponentInstance
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onRefresh() override;
+  facebook::react::Point getCurrentOffset() const override;
 };
 } // namespace rnoh

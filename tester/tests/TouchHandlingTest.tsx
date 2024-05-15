@@ -2,8 +2,12 @@ import {TestSuite} from '@rnoh/testerino';
 import {useEffect, useRef, useState} from 'react';
 import {
   Animated,
+  FlatList,
   PanResponder,
+  Pressable,
+  RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -16,6 +20,14 @@ import React from 'react';
 import {PALETTE} from '../components/palette';
 
 export function TouchHandlingTest() {
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 10000);
+  }, []);
   return (
     <TestSuite name="Touch Handling">
       <TestCase.Manual
@@ -313,6 +325,50 @@ export function TouchHandlingTest() {
         }}
         assert={({expect, state}) => {
           expect(state).to.be.true;
+        }}
+      />
+      <TestCase.Manual
+        tags={['C_API']}
+        itShould="take into account offset added by RefreshControl while refreshing - press 0 while refreshing to pass"
+        initialState={undefined as number | undefined}
+        arrange={({setState}) => {
+          const styles = StyleSheet.create({
+            item: {
+              backgroundColor: '#f9c2ff',
+              padding: 10,
+              marginVertical: 4,
+              marginHorizontal: 8,
+            },
+            title: {
+              fontSize: 32,
+            },
+          });
+          const DATA = [0, 1, 2, 3, 4];
+
+          const Item = ({index}: {index: number}) => (
+            <Pressable
+              style={styles.item}
+              onPress={() => {
+                setState(index);
+              }}>
+              <Text style={styles.title}>{index}</Text>
+            </Pressable>
+          );
+          return (
+            <FlatList
+              refreshing={false}
+              data={DATA}
+              style={{flex: 1, backgroundColor: 'yellow', height: 200}}
+              renderItem={({index}) => <Item index={index} />}
+              keyExtractor={item => `${item}`}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            />
+          );
+        }}
+        assert={({expect, state}) => {
+          expect(state).to.be.eq(0);
         }}
       />
     </TestSuite>
