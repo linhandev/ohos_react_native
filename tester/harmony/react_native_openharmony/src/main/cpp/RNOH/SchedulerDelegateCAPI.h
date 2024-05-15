@@ -27,14 +27,12 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
       rnoh::SchedulerDelegateArkTS::Unique schedulerDelegateArkTS,
-      MountingManager::Shared mountingManager,
-      std::unordered_set<std::string> arkTsComponentNames)
+      MountingManager::Shared mountingManager)
       : m_taskExecutor(taskExecutor),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_schedulerDelegateArkTS(std::move(schedulerDelegateArkTS)),
-        m_mountingManager(std::move(mountingManager)),
-        m_arkTsComponentNames(std::move(arkTsComponentNames)){};
+        m_mountingManager(std::move(mountingManager)){};
 
   ~SchedulerDelegateCAPI() {
     VLOG(1) << "~SchedulerDelegateCAPI";
@@ -61,10 +59,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
             facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
           // Did mount
           auto mutations = transaction.getMutations();
-          auto validMutations = getValidMutations(mutations);
-          if (!validMutations.empty()) {
-              m_mountingManager->processMutations(validMutations);
-          }
+          m_mountingManager->processMutations(mutations);
           m_taskExecutor->runTask(TaskThread::MAIN, [this, mutations] {
             for (auto mutation : mutations) {
               try {
@@ -80,87 +75,6 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         });
   }
     
- facebook::react::ShadowViewMutationList getValidMutations(facebook::react::ShadowViewMutationList const& mutations) {
-      if (m_arkTsComponentNames.empty()) {
-            return {};
-      }  
-      facebook::react::ShadowViewMutationList validCreateMutations;
-      facebook::react::ShadowViewMutationList validInsertMutations;
-      facebook::react::ShadowViewMutationList validOtherMutations;
-      facebook::react::ShadowViewMutationList validMutations;
-        
-      std::queue<facebook::react::Tag> arkTsComponentTags;
-      std::unordered_map<facebook::react::Tag, facebook::react::ShadowViewMutationList> mutationByTag;
-        
-      for (auto mutation : mutations) {
-            switch (mutation.type) {
-              case facebook::react::ShadowViewMutation::Create: {
-                auto newChild = mutation.newChildShadowView;
-                if (m_arkTsComponentNames.count(newChild.componentName)) {
-                  validCreateMutations.push_back(mutation);
-                  arkTsComponentTags.push(newChild.tag);
-                }
-                break;
-              }
-              case facebook::react::ShadowViewMutation::Insert: {
-                auto tag = mutation.parentShadowView.tag;
-                facebook::react::ShadowViewMutationList childMutations;
-                if (mutationByTag.count(tag)) {
-                  childMutations = mutationByTag.at(tag);
-                }
-            
-                childMutations.push_back(mutation);
-                mutationByTag[tag] = childMutations;
-                break;
-              }
-              case facebook::react::ShadowViewMutation::Update: {
-                validOtherMutations.push_back(mutation);
-                break;
-              }
-              case facebook::react::ShadowViewMutation::Remove: {
-                validOtherMutations.push_back(mutation);
-                break;
-              }
-              case facebook::react::ShadowViewMutation::Delete: {
-                validOtherMutations.push_back(mutation);
-                break;
-              }
-            }
-        }
-        
-      std::unordered_set<facebook::react::Tag> arkTsChildTags;
-      while(!arkTsComponentTags.empty()) {
-            auto tag = arkTsComponentTags.front();
-            arkTsComponentTags.pop();
-            if (!mutationByTag.count(tag)) {
-                continue;
-            }
-            
-            auto childMutations = mutationByTag.at(tag);
-            for (auto mutation: childMutations) {
-                auto newChild = mutation.newChildShadowView;
-                validInsertMutations.push_back(mutation);
-                arkTsComponentTags.push(newChild.tag);
-                arkTsChildTags.insert(newChild.tag);
-            }
-        }
-        
-      for (auto mutation : mutations) {
-            if (mutation.type != facebook::react::ShadowViewMutation::Create) {
-                continue;
-            }
-            auto newChild = mutation.newChildShadowView;
-            if (arkTsChildTags.count(newChild.tag)) {
-                validCreateMutations.push_back(mutation);
-            }
-        }
-        
-      validMutations.insert(validMutations.end(), validCreateMutations.begin(), validCreateMutations.end());
-      validMutations.insert(validMutations.end(), validInsertMutations.begin(), validInsertMutations.end());
-      validMutations.insert(validMutations.end(), validOtherMutations.begin(), validOtherMutations.end());
-      return validMutations;
-  } 
-
   void schedulerDidRequestPreliminaryViewAllocation(
       facebook::react::SurfaceId surfaceId,
       const facebook::react::ShadowNode& shadowNode) override {}
@@ -201,7 +115,6 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
   facebook::react::ContextContainer::Shared m_contextContainer;
   rnoh::SchedulerDelegateArkTS::Unique m_schedulerDelegateArkTS;
   MountingManager::Shared m_mountingManager;
-  std::unordered_set<std::string> m_arkTsComponentNames;
 
   void updateComponentWithShadowView(
       ComponentInstance::Shared const& componentInstance,

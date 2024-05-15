@@ -267,11 +267,6 @@ export type RNInstanceOptions = {
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
    */
   assetsDest?: string,
-  /**
-   * config the ArkTsComponent names to be use
-   *
-   */
-  arkTsComponentNames: Array<string>,
 }
 
 /**
@@ -322,7 +317,6 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseImageLoader: boolean,
     private shouldUseCApiArchitecture: boolean,
     private assetsDest: string,
-    private arkTsComponentNames: Array<string>,
     httpClientProvider: HttpClientProvider,
   ) {
     this.httpClient = httpClientProvider.getInstance(this)
@@ -432,8 +426,7 @@ export class RNInstanceImpl implements RNInstance {
       },
       this.shouldEnableDebugger,
       this.shouldEnableBackgroundExecutor,
-      cppFeatureFlags,
-      this.arkTsComponentNames,
+      cppFeatureFlags
     )
     stopTracing()
   }
