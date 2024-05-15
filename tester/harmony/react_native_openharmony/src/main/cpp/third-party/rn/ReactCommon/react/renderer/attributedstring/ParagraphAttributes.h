@@ -45,7 +45,7 @@ class ParagraphAttributes : public DebugStringConvertible {
   /*
    * (Android only) Break strategy for breaking paragraphs into lines.
    */
-  TextBreakStrategy textBreakStrategy{TextBreakStrategy::HighQuality};
+  TextBreakStrategy textBreakStrategy{TextBreakStrategy::Simple};
 
   /*
    * Enables font size adjustment to fit constrained boundaries.
