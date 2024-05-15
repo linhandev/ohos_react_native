@@ -32,7 +32,7 @@ export interface Spec extends TurboModule {
     rootTag: RootTag,
   ) => Promise<boolean>;
   +queryCache: (uris: Array<string>) => Promise<Object>;
-  +abortPrefetch: (requestId: number) => Promise<boolean>;
+  +abortPrefetch: (requestId: number) => void;
 }
 
 export default (TurboModuleRegistry.getEnforcing<Spec>('ImageLoader'): Spec);
