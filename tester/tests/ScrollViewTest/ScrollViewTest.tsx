@@ -13,6 +13,7 @@ import {KeyboardTest} from './KeyboardTest';
 import {MiscPropsTest} from './MiscPropsTest';
 import {ScrollToTest} from './ScrollToTest';
 import {CenterContentTest} from './CenterContentTest';
+import {OverScrollTest} from './OverScrollTest';
 
 export function ScrollViewTest() {
   return (
@@ -28,6 +29,7 @@ export function ScrollViewTest() {
       <ScrollToTest />
       <MiscPropsTest />
       <CenterContentTest />
+      <OverScrollTest />
       <TestCase
         modal
         itShould="maintain scroll position when adding/removing elements">
