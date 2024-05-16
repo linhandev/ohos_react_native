@@ -268,6 +268,7 @@ void ScrollViewComponentInstance::onScrollStop() {
     m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
     m_allowScrollPropagation = true;
   }
+  onScroll();
 }
 
 float ScrollViewComponentInstance::onScrollFrameBegin(
