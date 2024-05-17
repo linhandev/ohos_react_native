@@ -23,7 +23,7 @@ class ImageNode : public ArkUINode {
  public:
   ImageNode();
   ~ImageNode();
-  ImageNode& setSources(std::string const& uri);
+  ImageNode& setSources(std::string const& uri, std::string prefix = "");
   ImageNode& setResizeMode(facebook::react::ImageResizeMode const& mode);
   ImageNode& setTintColor(facebook::react::SharedColor const& sharedColor);
   ImageNode& setBlur(facebook::react::Float blur);
@@ -35,7 +35,7 @@ class ImageNode : public ArkUINode {
   ImageNode& setDraggable(bool draggable);
   ImageNode& setFocusable(bool focusable);
   ImageNode& setResizeMethod(std::string const& resizeMethod);
-  ImageNode& setAlt(std::string const& uri);
+  ImageNode& setAlt(std::string const& uri, std::string prefix = "");
   ImageNode& setFadeDuration(int32_t duration);
 
   ImageNode& resetFocusable();

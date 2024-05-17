@@ -185,6 +185,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) override;
+  void setBundlePath(std::string const& path) override;
+  std::string getBundlePath() override;
 
  protected:
   int m_id;
@@ -218,6 +220,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   std::shared_ptr<facebook::react::Instance> instance;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
+  std::string m_bundlePath;
 
   void initialize();
   void initializeScheduler(
