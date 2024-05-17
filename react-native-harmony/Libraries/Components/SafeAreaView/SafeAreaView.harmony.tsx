@@ -67,6 +67,7 @@ export default React.forwardRef<View, ViewProps>(
             paddingBottom: bottomInset,
           },
         ]}
+        {...otherProps}
       >
         {children}
       </View>
