@@ -57,7 +57,7 @@ export default React.forwardRef<View, ViewProps>(
 
     return (
       <View
-        ref={ref}
+        ref={ref} {...otherProps}
         style={[
           style,
           {
