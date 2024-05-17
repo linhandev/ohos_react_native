@@ -170,6 +170,8 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) override;
+  void setBundlePath(std::string const& path) override;
+  std::string getBundlePath() override;
 
   std::shared_ptr<TaskExecutor> taskExecutor;
 
@@ -201,6 +203,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
   bool m_shouldEnableBackgroundExecutor;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
+  std::string m_bundlePath;
 
   void initialize();
   void initializeScheduler(

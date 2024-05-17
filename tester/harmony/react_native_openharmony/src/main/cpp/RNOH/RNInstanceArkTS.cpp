@@ -405,6 +405,15 @@ void RNInstanceArkTS::synchronouslyUpdateViewOnUIThread(
       << "RNInstance::synchronouslyUpdateViewOnUIThread is not supported in ArkTS architecture";
 };
 
+void RNInstanceArkTS::setBundlePath(std::string const& path)
+{
+  m_bundlePath = path;
+}
+
+std::string RNInstanceArkTS::getBundlePath() {
+  return m_bundlePath;
+}
+
 TurboModule::Shared RNInstanceArkTS::getTurboModule(const std::string& name) {
   auto turboModule = m_turboModuleProvider->getTurboModule(name);
   if (turboModule != nullptr) {

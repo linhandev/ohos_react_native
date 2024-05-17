@@ -12,6 +12,7 @@ namespace rnoh {
 
 using namespace std::literals;
 constexpr std::string_view ASSET_PREFIX = "asset://"sv;
+const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 
 ImageNode::ImageNode()
     : ArkUINode(NativeNodeApi::getInstance()->createNode(
@@ -56,12 +57,12 @@ void ImageNode::onNodeEvent(
   }
 }
 
-ImageNode& ImageNode::setSources(std::string const& uri) {
+ImageNode& ImageNode::setSources(std::string const& uri, std::string prefix) {
   ArkUI_AttributeItem item;
-  std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
+  std::string absolutePath = prefix == "" ? RAWFILE_PREFIX : prefix;
   if (uri.rfind(ASSET_PREFIX, 0) == 0) {
-    resourceStr += uri.substr(ASSET_PREFIX.size());
-    item = {.string = resourceStr.c_str()};
+    absolutePath += uri.substr(ASSET_PREFIX.size());
+    item = {.string = absolutePath.c_str()};
   } else {
     item = {.string = uri.c_str()};
   }
@@ -168,9 +169,9 @@ ImageNode& ImageNode::setResizeMethod(std::string const& resizeMethod) {
   return *this;
 }
 
-ImageNode& ImageNode::setAlt(std::string const& uri) {
+ImageNode& ImageNode::setAlt(std::string const& uri, std::string prefix) {
   if (!uri.empty()) {
-    std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
+    std::string resourceStr = prefix == "" ? RAWFILE_PREFIX : prefix;
     resourceStr += uri.substr(ASSET_PREFIX.size());
     ArkUI_AttributeItem item = {.string = resourceStr.c_str()};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(

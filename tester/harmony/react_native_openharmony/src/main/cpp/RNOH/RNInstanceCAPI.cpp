@@ -443,3 +443,12 @@ void RNInstanceCAPI::postMessageToArkTS(
     folly::dynamic const& payload) {
   m_arkTSChannel->postMessage(name, payload);
 };
+
+void RNInstanceCAPI::setBundlePath(std::string const& path)
+{
+  m_bundlePath = path;
+}
+
+std::string RNInstanceCAPI::getBundlePath() {
+  return m_bundlePath;
+}
