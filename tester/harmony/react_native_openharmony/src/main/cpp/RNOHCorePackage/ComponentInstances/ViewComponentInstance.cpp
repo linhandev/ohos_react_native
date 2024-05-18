@@ -290,6 +290,7 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
     }
 
     facebook::react::Rect nodeRect;
+    bool isFindEnd = false;
     for (std::size_t i = end; i < total; i++) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
@@ -300,12 +301,13 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
             if (item->getIsClipped()) {
                 m_stackNode.addChild(item->getLocalRootArkUINode());
                 item->setIsClipped(false);
+                isFindEnd = true;
             }
-        } else {
-            if ( i > ClippingComponent::getStartIndex()) {
-                ClippingComponent::setEndIndex(i - 1);
-                break;
-            }
+        }
+        else if (isFindEnd && i > ClippingComponent::getStartIndex())
+        {
+            ClippingComponent::setEndIndex(i - 1);
+            break;
         }
     }
 
@@ -331,6 +333,7 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
     facebook::react::Rect nodeRect;
     std::size_t start = ClippingComponent::getStartIndex();
 
+    bool isFindStart = false;
     for (std::size_t i = start; i >= 0; i--) {
         const auto& item = childNodes[i];
         getChildViewRect(item, nodeRect);
@@ -341,12 +344,13 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
             if (item->getIsClipped()) {          
                 m_stackNode.insertChild(item->getLocalRootArkUINode(), 0);
                 item->setIsClipped(false);
+                isFindStart = true;
             }
-        } else {
-            if ( i < ClippingComponent::getEndIndex()) {
-                ClippingComponent::setStartIndex(i + 1);
-                break;
-            }
+        }
+        else if (isFindStart && i < ClippingComponent::getEndIndex())
+        {
+            ClippingComponent::setStartIndex(i + 1);
+            break;
         }
         if (i == 0) {
             break;
