@@ -46,7 +46,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
           if (componentInstance != nullptr) {
             m_componentInstanceRegistry->insert(componentInstance);
           } else {
-            LOG(INFO) << "Couldn't create CppComponentInstance for: " << componentName;
+//            LOG(ERROR) << "Couldn't create CppComponentInstance for: " << componentName;
           }
         });
   };
@@ -225,15 +225,15 @@ facebook::react::ShadowViewMutationList getValidMutations(
   }
 
   void handleMutation(facebook::react::ShadowViewMutation mutation) {
-    VLOG(1) << "Mutation (type:" << this->getMutationNameFromType(mutation.type)
-            << "; componentName: "
-            << (mutation.newChildShadowView.componentName != nullptr
-                    ? mutation.newChildShadowView.componentName
-                    : "null")
-            << "; newTag: " << mutation.newChildShadowView.tag
-            << "; index: " << mutation.index
-            << "; oldTag: " << mutation.oldChildShadowView.tag
-            << "; parentTag: " << mutation.parentShadowView.tag << ")";
+//    VLOG(1) << "Mutation (type:" << this->getMutationNameFromType(mutation.type)
+//            << "; componentName: "
+//            << (mutation.newChildShadowView.componentName != nullptr
+//                    ? mutation.newChildShadowView.componentName
+//                    : "null")
+//            << "; newTag: " << mutation.newChildShadowView.tag
+//            << "; index: " << mutation.index
+//            << "; oldTag: " << mutation.oldChildShadowView.tag
+//            << "; parentTag: " << mutation.parentShadowView.tag << ")";
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
@@ -243,7 +243,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
           componentInstance = m_componentInstanceFactory->create(
               newChild.tag, newChild.componentHandle, newChild.componentName);
           if (componentInstance == nullptr) {
-            LOG(ERROR) << "Couldn't create CppComponentInstance for: " << newChild.componentName;
+//            LOG(INFO) << "Couldn't create CppComponentInstance for: " << newChild.componentName;
             return;
           }
           m_componentInstanceRegistry->insert(componentInstance);

@@ -27,7 +27,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::shared_ptr<MessageQueueThread> jsQueue,
     std::shared_ptr<facebook::react::Scheduler> scheduler,
     std::weak_ptr<RNInstance> instance) const {
-  LOG(INFO) << "Providing Turbo Module: " << name;
+//  LOG(INFO) << "Providing Turbo Module: " << name;
   Context ctx{
       {.jsInvoker = jsInvoker, .instance = instance},
       .env = m_env,

@@ -15,9 +15,9 @@ void maybeAttachRootNode(
     OH_NativeXComponent* nativeXComponent,
     ComponentInstance& rootView) {
   if (nativeXComponent != nullptr) {
-    LOG(INFO)
-        << "Attaching native root node to nativeXComponent for surface with id: "
-        << rootView.getTag();
+//    LOG(INFO)
+//        << "Attaching native root node to nativeXComponent for surface with id: "
+//        << rootView.getTag();
 #ifdef C_API_ARCH
     OH_NativeXComponent_AttachNativeRootNode(
         nativeXComponent,
