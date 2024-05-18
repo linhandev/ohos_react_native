@@ -557,6 +557,7 @@ export class RNInstanceImpl implements RNInstance {
       })
       this.initialBundleUrl = this.initialBundleUrl ?? jsBundleProvider.getURL()
       await this.napiBridge.loadScript(this.id, jsBundle, bundleURL)
+      this.napiBridge.setBundlePath(this.id, jsBundleProvider.getURL());
       this.lifecycleState = LifecycleState.READY
       const hotReloadConfig = jsBundleProvider.getHotReloadConfig()
       if (hotReloadConfig) {

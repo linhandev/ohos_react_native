@@ -25,6 +25,9 @@ class ImageComponentInstance
   // used for find local cache of uri, if not find return uri
   std::string FindLocalCacheByUri(std::string const& uri);
 
+  std::string getBundlePath();
+  std::string getAbsolutePathPrefix(std::string const& bundlePath);
+
  public:
   ImageComponentInstance(Context context);
   void onPropsChanged(SharedConcreteProps const& props) override;

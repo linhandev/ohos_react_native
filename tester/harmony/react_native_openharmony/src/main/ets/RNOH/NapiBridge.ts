@@ -45,6 +45,10 @@ export class NapiBridge {
     return this.libRNOHApp?.getNextRNInstanceId()
   }
 
+  setBundlePath(instanceId: number, path: string): void {
+    this.libRNOHApp?.setBundlePath(instanceId, path);
+  }
+
   createReactNativeInstance(instanceId: number,
                             turboModuleProvider: TurboModuleProvider,
                             frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },

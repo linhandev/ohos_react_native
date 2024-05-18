@@ -6,6 +6,9 @@
 
 namespace rnoh {
 
+const std::string BUNDLE_HARMONY_JS = "bundle.harmony.js";
+const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
+
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
@@ -38,6 +41,30 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
   return cache.asString();
 }
 
+std::string ImageComponentInstance::getBundlePath() {
+  auto rnInstance = m_deps->rnInstance.lock();
+  if (!rnInstance) {
+    return BUNDLE_HARMONY_JS;
+  }
+
+  auto internalInstance = std::dynamic_pointer_cast<RNInstanceInternal>(rnInstance);
+  if (!internalInstance) {
+    return BUNDLE_HARMONY_JS;
+  }
+
+  return internalInstance->getBundlePath();
+}
+
+std::string ImageComponentInstance::getAbsolutePathPrefix(std::string const& bundlePath) {
+  auto pos = bundlePath.rfind('/');
+  if (pos == std::string::npos) {
+    return RAWFILE_PREFIX;
+  }
+
+  std::string prefix = "file://" + bundlePath.substr(0, pos + 1);
+  return prefix;
+}
+
 void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
@@ -46,7 +73,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   if (!m_props || m_props->sources != props->sources) {
     m_uri = props->sources[0].uri;
     std::string uri = FindLocalCacheByUri(props->sources[0].uri);
-    this->getLocalRootArkUINode().setSources(uri);
+    this->getLocalRootArkUINode().setSources(uri, getAbsolutePathPrefix(getBundlePath()));
     if (!m_uri.empty()) {
       onLoadStart();
     }
@@ -71,7 +98,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
   if (!m_props || m_props->defaultSources != props->defaultSources) {
     if (!(props->defaultSources.empty())) {
-      this->getLocalRootArkUINode().setAlt(props->defaultSources[0].uri);
+      this->getLocalRootArkUINode().setAlt(props->defaultSources[0].uri, getAbsolutePathPrefix(getBundlePath()));
     }
   }
 
@@ -87,7 +114,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     m_rawProps.loadingIndicatorSource = rawProps.loadingIndicatorSource;
     if (m_rawProps.loadingIndicatorSource.has_value()) {
       this->getLocalRootArkUINode().setAlt(
-          m_rawProps.loadingIndicatorSource.value());
+          m_rawProps.loadingIndicatorSource.value(), getAbsolutePathPrefix(getBundlePath()));
     }
   }
 
@@ -125,7 +152,7 @@ void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto source = state->getData().getImageSource();
   m_uri = source.uri;
-  this->getLocalRootArkUINode().setSources(FindLocalCacheByUri(source.uri));
+  this->getLocalRootArkUINode().setSources(FindLocalCacheByUri(source.uri), getAbsolutePathPrefix(getBundlePath()));
   this->getLocalRootArkUINode().setBlur(state->getData().getBlurRadius());
 }
 
@@ -203,6 +230,7 @@ ImageComponentInstance::ImageRawProps::getFromDynamic(folly::dynamic value) {
       : std::nullopt;
   auto alt = (value.count("alt") > 0) ? std::optional(value["alt"].asString())
                                       : std::nullopt;
+                        
   auto loadingIndicatorSource = (value.count("loadingIndicatorSource") > 0)
       ? std::optional(value["loadingIndicatorSource"].at("uri").getString())
       : std::nullopt;
