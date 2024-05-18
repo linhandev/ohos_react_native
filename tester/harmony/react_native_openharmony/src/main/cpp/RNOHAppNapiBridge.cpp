@@ -529,12 +529,41 @@ static void registerNativeXComponent(napi_env env, napi_value exports) {
   DLOG(INFO) << "registerNativeXComponent: id = " << instanceId << "\n";
 }
 
+static napi_value setBundlePath(napi_env env, napi_callback_info info)
+{
+  DLOG(INFO) << "setBundlePath";
+  ArkJS arkJs(env);
+  try {
+    auto args = arkJs.getCallbackArgs(info, 2);
+    size_t instanceId = arkJs.getDouble(args[0]);
+    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
+    auto it = rnInstanceById.find(instanceId);
+    if (it == rnInstanceById.end()) {
+      return arkJs.getUndefined();
+    }
+    auto& rnInstance = it->second;
+    rnInstance->setBundlePath(arkJs.getString(args[1]));
+  } catch (...) {
+    ArkTSBridge::getInstance()->handleError(std::current_exception());
+  }
+
+  return arkJs.getUndefined();
+}
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
       {"onInit",
        nullptr,
        onInit,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"setBundlePath",
+       nullptr,
+       setBundlePath,
        nullptr,
        nullptr,
        nullptr,

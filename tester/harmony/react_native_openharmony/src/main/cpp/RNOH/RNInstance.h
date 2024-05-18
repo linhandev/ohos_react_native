@@ -108,6 +108,8 @@ class RNInstanceInternal : public RNInstance,
   virtual void handleArkTSMessage(
       const std::string& name,
       folly::dynamic const& payload) = 0;
+  virtual void setBundlePath(std::string const& path) = 0;
+  virtual std::string getBundlePath() = 0;
 };
 
 } // namespace rnoh
