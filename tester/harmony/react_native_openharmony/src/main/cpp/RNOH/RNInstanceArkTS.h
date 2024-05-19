@@ -76,9 +76,9 @@ class RNInstanceArkTS : public RNInstanceInternal,
         m_arkTSChannel(std::move(arkTSChannel)),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor) {
     this->unsubscribeUITickListener =
-        this->m_uiTicker->subscribe(m_id, [this]() {
+        this->m_uiTicker->subscribe(m_id, [this](long long timestamp) {
           this->taskExecutor->runTask(
-              TaskThread::MAIN, [this]() { this->onUITick(); });
+              TaskThread::MAIN, [this, timestamp]() { this->onUITick(timestamp); });
         });
   }
 
@@ -209,7 +209,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void initializeScheduler(
       std::shared_ptr<TurboModuleProvider> turboModuleProvider);
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider();
-  void onUITick();
+  void onUITick(long long timestamp);
 
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()

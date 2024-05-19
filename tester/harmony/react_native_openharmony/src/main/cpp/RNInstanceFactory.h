@@ -14,6 +14,7 @@
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
+#include "RNOH/PreAllocationBuffer.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
@@ -179,13 +180,15 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
+    auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>();
     auto schedulerDelegateCAPI = std::make_unique<SchedulerDelegateCAPI>(
         taskExecutor,
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(schedulerDelegateArkTS),
         mountingManager,
-        arkTsComponentNames);
+        arkTsComponentNames,
+		preAllocationBuffer);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,

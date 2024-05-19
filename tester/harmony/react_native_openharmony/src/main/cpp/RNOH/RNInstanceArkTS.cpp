@@ -381,7 +381,7 @@ void RNInstanceArkTS::onAllAnimationsComplete() {
   m_shouldRelayUITick.store(false);
 }
 
-void RNInstanceArkTS::onUITick() {
+void RNInstanceArkTS::onUITick(long long timestamp) {
   if (this->m_shouldRelayUITick.load()) {
     this->scheduler->animationTick();
   }
