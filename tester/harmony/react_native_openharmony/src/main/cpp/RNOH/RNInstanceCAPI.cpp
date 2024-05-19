@@ -296,9 +296,21 @@ void RNInstanceCAPI::onAllAnimationsComplete() {
   m_shouldRelayUITick.store(false);
 }
 
-void RNInstanceCAPI::onUITick() {
+void RNInstanceCAPI::onUITick(long long timestamp) {
   if (this->m_shouldRelayUITick.load()) {
     this->scheduler->animationTick();
+  }
+  long long vsyncPeriod;
+  this->m_uiTicker->getVsyncPeriod(&vsyncPeriod);
+  schedulerTransactionByVsync(timestamp, vsyncPeriod);
+}
+
+void RNInstanceCAPI::schedulerTransactionByVsync(long long timestamp, long long period) {
+  auto schedulerDelegateCapi =
+      dynamic_cast<SchedulerDelegateCAPI *>(m_schedulerDelegate.get());
+  if (schedulerDelegateCapi != nullptr) {
+    schedulerDelegateCapi->schedulerDidViewAllocationByVsync(timestamp, period);
+    return;
   }
 }
 

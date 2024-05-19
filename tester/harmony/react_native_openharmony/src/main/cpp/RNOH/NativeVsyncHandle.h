@@ -40,6 +40,11 @@ class NativeVsyncHandle {
     OH_NativeVSync_RequestFrame(m_nativeVSync, callback, data);
   }
 
+  int getVsyncPeriod(long long *period)
+  {
+    return OH_NativeVSync_GetPeriod(m_nativeVSync, period);
+  }
+
   std::string m_name;
   OH_NativeVSync* m_nativeVSync = nullptr;
 };

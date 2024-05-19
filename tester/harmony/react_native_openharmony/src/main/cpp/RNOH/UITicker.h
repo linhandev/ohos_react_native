@@ -13,14 +13,14 @@ class UITicker {
  public:
   static void scheduleNextTick(long long timestamp, void* data) {
     auto self = static_cast<UITicker*>(data);
-    self->tick();
+    self->tick(timestamp);
   }
 
   UITicker() : m_vsyncHandle("UITicker") {}
 
   using Shared = std::shared_ptr<UITicker>;
 
-  std::function<void()> subscribe(int id, std::function<void()>&& listener) {
+  std::function<void()> subscribe(int id, std::function<void(long long)>&& listener) {
     std::lock_guard lock(listenersMutex);
     auto listenersCount = m_listenerById.size();
     m_listenerById.insert_or_assign(id, std::move(listener));
@@ -33,19 +33,23 @@ class UITicker {
     };
   }
 
+  int getVsyncPeriod(long long* period) {
+    return m_vsyncHandle.getVsyncPeriod(period);
+  }
+
  private:
-  std::unordered_map<int, std::function<void()>> m_listenerById;
-  std::mutex listenersMutex;
-  NativeVsyncHandle m_vsyncHandle;
+   std::unordered_map < int, std::function <void(long long)>> m_listenerById;
+   std::mutex listenersMutex;
+   NativeVsyncHandle m_vsyncHandle;
 
   void requestNextTick() {
     m_vsyncHandle.requestFrame(scheduleNextTick, this);
   }
 
-  void tick() {
+  void tick(long long timestamp) {
     std::lock_guard lock(listenersMutex);
     for (const auto& idAndListener : m_listenerById) {
-      idAndListener.second();
+      idAndListener.second(timestamp);
     }
     this->requestNextTick();
   }

@@ -2,12 +2,14 @@
  * Used only in C-API based Architecture.
  */
 #pragma once
+#include <time.h>
 #include <folly/dynamic.h>
 #include <react/renderer/core/ComponentDescriptor.h>
 #include <react/renderer/scheduler/SchedulerDelegate.h>
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/MountingManager.h"
+#include "RNOH/PreAllocationBuffer.h"
 #include "RNOH/SchedulerDelegateArkTS.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
@@ -28,16 +30,30 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
       ComponentInstanceFactory::Shared componentInstanceFactory,
       rnoh::SchedulerDelegateArkTS::Unique schedulerDelegateArkTS,
       MountingManager::Shared mountingManager,
-      std::unordered_set<std::string> arkTsComponentNames)
+      std::unordered_set<std::string> arkTsComponentNames,
+      PreAllocationBuffer::Shared preAllocationBuffer)
       : m_taskExecutor(taskExecutor),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_schedulerDelegateArkTS(std::move(schedulerDelegateArkTS)),
         m_mountingManager(std::move(mountingManager)),
-        m_arkTsComponentNames(std::move(arkTsComponentNames)) {};
+        m_arkTsComponentNames(std::move(arkTsComponentNames)) ,
+        m_preAllocationBuffer(std::move(preAllocationBuffer)) {
+    m_preAllocationBuffer->setPreAllocDelegate(
+        [this](
+            facebook::react::Tag tag,facebook::react::ComponentHandle componentHandle,std::string componentName) {
+          auto componentInstance = m_componentInstanceFactory->create(tag, componentHandle, componentName);
+          if (componentInstance != nullptr) {
+            m_componentInstanceRegistry->insert(componentInstance);
+          } else {
+            LOG(INFO) << "Couldn't create CppComponentInstance for: " << componentName;
+          }
+        });
+  };
 
   ~SchedulerDelegateCAPI() {
     VLOG(1) << "~SchedulerDelegateCAPI";
+    m_preAllocationBuffer->setPreAllocDelegate(nullptr);
   }
 
   void schedulerDidFinishTransaction(
@@ -75,11 +91,10 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
                            << " failed: " << e.what();
               }
             }
-            finalizeMutationUpdates(mutations);
-          });
+            finalizeMutationUpdates(mutations); });
         });
   }
-
+    
 facebook::react::ShadowViewMutationList getValidMutations(
       facebook::react::ShadowViewMutationList const& mutations) {
     if (m_arkTsComponentNames.empty()) {
@@ -146,9 +161,16 @@ facebook::react::ShadowViewMutationList getValidMutations(
     return validMutations;
   }
 
+
+  void schedulerDidViewAllocationByVsync(long long timestamp, long long period) {
+    m_preAllocationBuffer->flushByVsync(timestamp, period);
+  }
+
   void schedulerDidRequestPreliminaryViewAllocation(
       facebook::react::SurfaceId surfaceId,
-      const facebook::react::ShadowNode& shadowNode) override {}
+      const facebook::react::ShadowNode& shadowNode) override {
+    m_preAllocationBuffer->push(shadowNode);
+  }
 
   void schedulerDidDispatchCommand(
       const facebook::react::ShadowView& shadowView,
@@ -187,6 +209,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
   rnoh::SchedulerDelegateArkTS::Unique m_schedulerDelegateArkTS;
   MountingManager::Shared m_mountingManager;
   std::unordered_set<std::string> m_arkTsComponentNames;
+  PreAllocationBuffer::Shared m_preAllocationBuffer;
 
   void updateComponentWithShadowView(
       ComponentInstance::Shared const& componentInstance,
@@ -214,15 +237,18 @@ facebook::react::ShadowViewMutationList getValidMutations(
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
-        auto componentInstance = m_componentInstanceFactory->create(
-            newChild.tag, newChild.componentHandle, newChild.componentName);
-        if (componentInstance != nullptr) {
-          updateComponentWithShadowView(componentInstance, newChild);
+        auto componentInstance =
+              m_componentInstanceRegistry->findByTag(newChild.tag);
+        if (componentInstance == nullptr) {
+          componentInstance = m_componentInstanceFactory->create(
+              newChild.tag, newChild.componentHandle, newChild.componentName);
+          if (componentInstance == nullptr) {
+            LOG(ERROR) << "Couldn't create CppComponentInstance for: " << newChild.componentName;
+            return;
+          }
           m_componentInstanceRegistry->insert(componentInstance);
-        } else {
-          LOG(INFO) << "Couldn't create CppComponentInstance for: "
-                    << newChild.componentName;
         }
+        updateComponentWithShadowView(componentInstance, newChild);
         break;
       }
       case facebook::react::ShadowViewMutation::Delete: {

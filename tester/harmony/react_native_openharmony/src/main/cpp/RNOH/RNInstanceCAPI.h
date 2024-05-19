@@ -84,11 +84,10 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_componentInstanceFactory(componentInstanceFactory),
         m_arkTSChannel(std::move(arkTSChannel)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)) {
-    this->unsubscribeUITickListener =
-        this->m_uiTicker->subscribe(m_id, [this]() {
-          this->taskExecutor->runTask(
-              TaskThread::MAIN, [this]() { this->onUITick(); });
-        });
+      this->unsubscribeUITickListener =
+          this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
+		  this->taskExecutor->runTask(
+            TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
   }
 
   ~RNInstanceCAPI() {
@@ -227,8 +226,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void initializeScheduler(
       std::shared_ptr<TurboModuleProvider> turboModuleProvider);
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider();
-  void onUITick();
-
+  void onUITick(long long timestamp);
+  void schedulerTransactionByVsync(long long timestamp, long long period);
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()
       override; // react::LayoutAnimationStatusDelegate
