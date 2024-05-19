@@ -141,10 +141,8 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.eventCount = this->m_nativeEventCount;
   textInputMetrics.selectionRange.location = this->m_selectionLocation;
   textInputMetrics.selectionRange.length = this->m_selectionLength;
-  textInputMetrics.contentSize.width =
-      this->m_contentSizeWidth / pointScaleFactor;
-  textInputMetrics.contentSize.height =
-      this->m_contentSizeHeight / pointScaleFactor;
+  textInputMetrics.contentSize.width = this->m_contentSizeWidth;
+  textInputMetrics.contentSize.height = this->m_contentSizeHeight;
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
