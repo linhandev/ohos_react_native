@@ -73,6 +73,10 @@ std::string ImageComponentInstance::getBundlePath() {
 }
 
 std::string ImageComponentInstance::getAbsolutePathPrefix(std::string const& bundlePath) {
+  if (bundlePath.find('/', 0) != 0) {
+    return RAWFILE_PREFIX;
+  }
+
   auto pos = bundlePath.rfind('/');
   if (pos == std::string::npos) {
     return RAWFILE_PREFIX;
