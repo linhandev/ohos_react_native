@@ -316,6 +316,12 @@ void TextInputNode::setshowSoftInputOnFocus(int32_t enable) {
       m_nodeHandle, NODE_TEXT_INPUT_SHOW_KEYBOARD_ON_FOCUS, &item));
 }
 
+void TextInputNode::setInputFilter(const std::string& inputFilter) {
+  ArkUI_AttributeItem item = {.string = inputFilter.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_INPUT_FILTER, &item));
+}
+
 std::string TextInputNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT);

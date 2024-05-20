@@ -260,4 +260,10 @@ void TextAreaNode::setshowSoftInputOnFocus(int32_t enable){
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_SHOW_KEYBOARD_ON_FOCUS, &item));
 }
+
+void TextAreaNode::setInputFilter(const std::string &inputFilter) {
+  ArkUI_AttributeItem item = {.string = inputFilter.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_INPUT_FILTER, &item));
+}
 } // namespace rnoh
