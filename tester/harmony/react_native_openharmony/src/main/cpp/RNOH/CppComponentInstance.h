@@ -231,6 +231,8 @@ class CppComponentInstance : public ComponentInstance {
 
     if (!old || props->pointerEvents != old->pointerEvents) {
       this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
+      this->getLocalRootArkUINode().setEnabled(
+          props->pointerEvents != facebook::react::PointerEventsMode::None);
     }
 
     if (!old || props->accessibilityHint != old->accessibilityHint) {
@@ -271,10 +273,10 @@ class CppComponentInstance : public ComponentInstance {
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
   };
 
-  virtual void onStateChanged(SharedConcreteState const& state) {};
+  virtual void onStateChanged(SharedConcreteState const& state){};
 
   virtual void onEventEmitterChanged(
-      SharedConcreteEventEmitter const& eventEmitter) {};
+      SharedConcreteEventEmitter const& eventEmitter){};
 
   void calculateBoundingBox() {
     auto newBoundingBox = getHitRect();

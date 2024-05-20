@@ -11,6 +11,7 @@ export * from './KeyboardShouldPersistTapsExample';
 export * from './LargeImageScrollExample';
 export * from './NestedScrollWithTouchableExample';
 export * from './NestedScrollingExample';
+export * from './PointerEventsExample';
 export * from './SafeAreaViewExample';
 export * from './ScrollToEndOnLayoutExample';
 export * from './StickyHeadersExample';

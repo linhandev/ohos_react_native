@@ -21,9 +21,7 @@ void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   if (!m_props || props->thumbTintColor != m_props->thumbTintColor) {
     m_toggleNode.setThumbColor(props->thumbTintColor);
   }
-  if (!m_props || props->disabled != m_props->disabled) {
-    m_toggleNode.setDisable(props->disabled);
-  }
+  m_toggleNode.setEnabled(!props->disabled);
   if (props->rawProps.count("focusable") > 0) {
     if (!m_props ||
         props->rawProps["focusable"].asBool() !=

@@ -167,10 +167,6 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setCaretColor(facebook::react::blackColor());
     }
   }
-  if (!m_props || props->traits.editable != m_props->traits.editable) {
-    m_textAreaNode.setEnabled(props->traits.editable);
-    m_textInputNode.setEnabled(props->traits.editable);
-  }
   if (!m_props || props->traits.keyboardType != m_props->traits.keyboardType) {
     m_textInputNode.setInputType(
         props->traits.secureTextEntry
@@ -271,6 +267,8 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
   }
+  m_textAreaNode.setEnabled(props->traits.editable);
+  m_textInputNode.setEnabled(props->traits.editable);
 }
 
 void TextInputComponentInstance::setLayout(
