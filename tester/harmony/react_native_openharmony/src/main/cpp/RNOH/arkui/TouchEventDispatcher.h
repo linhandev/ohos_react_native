@@ -29,6 +29,10 @@ class TouchEventDispatcher {
   bool canIgnoreMoveEvent(facebook::react::TouchEvent currentEvent);
   bool maybeCancelPreviousTouchEvent(double timestampInMs, TouchTarget::Shared);
   void shouldCancelTouchesForTag(facebook::react::Tag tag);
+  void cancelTouch(
+      TouchPoint const& touchPoint,
+      TouchTarget::Shared const& target,
+      double timestampSeconds);
 
   std::unordered_map<TouchId, TouchTarget::Weak> m_touchTargetByTouchId;
   facebook::react::TouchEvent m_previousEvent;

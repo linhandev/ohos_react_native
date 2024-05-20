@@ -107,7 +107,10 @@ export function TouchHandlingTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example itShould="report transformed touch coordinates">
+      <TestCase.Example
+        modal
+        tags={['C_API']}
+        itShould="report transformed touch coordinates">
         <TouchCoordinatesTest
           transform={[
             {rotate: '45deg'},
@@ -118,7 +121,10 @@ export function TouchHandlingTest() {
           ]}
         />
       </TestCase.Example>
-      <TestCase.Example itShould="report transformed touch coordinates (2)">
+      <TestCase.Example
+        modal
+        tags={['C_API']}
+        itShould="report transformed touch coordinates (2)">
         <TouchCoordinatesTest
           transform={[
             {rotate: '-45deg'},
