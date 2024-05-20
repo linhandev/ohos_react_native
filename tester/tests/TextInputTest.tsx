@@ -660,6 +660,18 @@ export function TextInputTest() {
           expect(state.text).to.not.be.equal('');
         }}
       />
+      <TestCase.Example
+        tags={['C_API']}
+        modal
+        itShould="change the text input value programmatically on blur">
+        <TextInputValueSetProgrammaticallyOnBlur />
+      </TestCase.Example>
+      <TestCase.Example
+        tags={['C_API']}
+        modal
+        itShould="change the text input value programmatically when submitted">
+        <TextInputValueSetProgrammaticallyWhenSubmitted />
+      </TestCase.Example>
     </TestSuite>
   );
 }
@@ -911,6 +923,46 @@ const ControlledSelectionTest = () => {
         multiline
       />
     </View>
+  );
+};
+
+const TextInputValueSetProgrammaticallyOnBlur = () => {
+  const [value, setValue] = useState("I'm the first text input.");
+
+  return (
+    <>
+      <TextInput
+        value={value}
+        autoFocus
+        onChangeText={text => setValue(text)}
+        style={styles.textInput}
+      />
+      <TextInput
+        onFocus={() => setValue('It works!')}
+        multiline
+        defaultValue="Click me and see if the value of the first text input has been changed."
+        style={styles.textInputBigger}
+      />
+    </>
+  );
+};
+
+const TextInputValueSetProgrammaticallyWhenSubmitted = () => {
+  const [value, setValue] = useState('(1) Submit the text input.');
+
+  return (
+    <>
+      <TextInput
+        value={value}
+        autoFocus
+        onChangeText={text => setValue(text)}
+        style={styles.textInput}
+      />
+      <Button
+        label="(2) Press to change the text of the text input"
+        onPress={() => setValue('(3) It works!')}
+      />
+    </>
   );
 };
 
