@@ -4,7 +4,6 @@
 #include <react/renderer/components/text/ParagraphState.h>
 #include <react/renderer/core/ConcreteState.h>
 #include <sstream>
-#include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/TextMeasurer.h"
 #include "TextConversions.h"
 #include "react/renderer/attributedstring/primitives.h"
@@ -27,11 +26,6 @@ TextComponentInstance::~TextComponentInstance() {
     m_textNode.removeChild(*item);
   }
   m_childNodes.clear();
-  if (m_tag != -1) {
-    m_textNode.resetTextContentWithStyledString();
-    TextMeasureRegisty::getTextMeasureRegisty().eraseOldTextMeasureInfo(m_tag);
-    TextMeasureRegisty::getTextMeasureRegisty().eraseTextMeasureInfo(m_tag);
-  }
 }
 
 void TextComponentInstance::onChildInserted(
@@ -70,6 +64,13 @@ void TextComponentInstance::onPropsChanged(
     testCopyOption = ArkUI_CopyOptions::ARKUI_COPY_OPTIONS_LOCAL_DEVICE;
   }
   m_textNode.setTextCopyOption(testCopyOption);
+
+  // MaxFontSize
+  std::optional<float> maxFontSize = TextConversions::getMaxFontSize(textProps);
+  if (maxFontSize.has_value()) {
+    m_textNode.setMaxFontSize(maxFontSize.value());
+    VLOG(3) << "[text-debug] maxFontSize=" << maxFontSize.value();
+  }
 
   if (textProps->rawProps != nullptr) {
     // stack align
@@ -113,6 +114,14 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] rawProps->disabled=" << enableFlag;
       m_textNode.setTextEnable(!enableFlag);
     }
+
+    // MinFontSize
+    std::optional<float> minFontSize =
+        TextConversions::getMinFontSize(textProps);
+    if (minFontSize.has_value()) {
+      m_textNode.setMinFontSize(minFontSize.value());
+      VLOG(3) << "[text-debug] minFontSize=" << minFontSize.value();
+    }
     
     // selectionColor
     if (textProps->rawProps.count("selectionColor") != 0 && !textProps->rawProps["selectionColor"].isNull()) {
@@ -132,29 +141,36 @@ void TextComponentInstance::onPropsChanged(
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS},
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL},
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_URL}};
-        m_textNode.setTextDataDetectorType(true, types, 4);
+        m_textNode.setTextDataDetectorType(true, types);
       } else if (dataDetectorType == "address") {
         ArkUI_NumberValue types[] = {
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS}};
-        m_textNode.setTextDataDetectorType(true, types, 1);
+        m_textNode.setTextDataDetectorType(true, types);
       } else if (dataDetectorType == "link") {
         ArkUI_NumberValue types[] = {
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_URL}};
-        m_textNode.setTextDataDetectorType(true, types, 1);
+        m_textNode.setTextDataDetectorType(true, types);
       } else if (dataDetectorType == "phoneNumber") {
         ArkUI_NumberValue types[] = {
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_PHONE_NUMBER}};
-        m_textNode.setTextDataDetectorType(true, types, 1);
+        m_textNode.setTextDataDetectorType(true, types);
       } else if (dataDetectorType == "email") {
         ArkUI_NumberValue types[] = {
             {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL}};
-        m_textNode.setTextDataDetectorType(true, types, 1);
+        m_textNode.setTextDataDetectorType(true, types);
       } else {
         ArkUI_NumberValue types[] = {};
-        m_textNode.setTextDataDetectorType(false, types, 0);
+        m_textNode.setTextDataDetectorType(false, types);
       }
     }
-
+    
+    // writingDirection
+    if (textProps->rawProps.count("writingDirection") != 0) {
+      int32_t writingDirection = TextConversions::getArkUIDirection(textProps->rawProps["writingDirection"].asString());
+      VLOG(3) << "[text-debug] writingDirection=" << writingDirection;
+      m_textNode.setWritingDirection(writingDirection);
+    }
+    
     // fontVariant
     if (textProps->rawProps.count("fontVariant") != 0) {
       std::string fontVariants;
@@ -168,6 +184,7 @@ void TextComponentInstance::onPropsChanged(
       }
     }
   }
+  this->setParagraphAttributes(textProps->paragraphAttributes);
   VLOG(3) << "[text-debug] setProps end";
 }
 
@@ -185,19 +202,25 @@ void TextComponentInstance::onStateChanged(
   if (fragments.empty()) {
     return;
   }
-  if (!fragments.empty()) {
-    int oldTag = m_tag;
-    m_tag = fragments[0].parentShadowView.tag;
-    ArkUI_StyledString* styledString =
-    TextMeasureRegisty::getTextMeasureRegisty().getTextStyledString(m_tag);
-    
-    if (styledString != nullptr) {
-      VLOG(3) << "[text-debug] setTextContentWithStyledString";
-      m_textNode.setTextContentWithStyledString(styledString);
+  for (const auto& fragment : fragments) {
+    if (!fragment.isAttachment()) {
+      std::shared_ptr<SpanNode> spanNode = std::make_shared<SpanNode>();
+      VLOG(3) << "[text-debug] create span text=" << fragment.string.c_str()
+              << ", index=" << childIndex;
+      m_textNode.insertChild(*spanNode, childIndex);
+      m_childNodes.push_back(spanNode);
+      setFragment(fragment, spanNode, childIndex);
+      childIndex++;
+    } else {
+      VLOG(3) << "[text-debug] create image span, index=" << childIndex;
+      std::shared_ptr<ImageSpanNode> imageSpanNode =
+          std::make_shared<ImageSpanNode>();
+      m_textNode.insertChild(*imageSpanNode, childIndex);
+      m_childNodes.push_back(imageSpanNode);
+      setImageSpanSize(
+          fragment.parentShadowView.layoutMetrics.frame.size, imageSpanNode);
+      childIndex++;
     }
-    TextMeasureRegisty::getTextMeasureRegisty().eraseOldTextMeasureInfo(oldTag);
-  } else {
-    m_tag = -1;
   }
   this->setTextAttributes(fragments[0].textAttributes);
 }
@@ -211,6 +234,244 @@ void TextComponentInstance::setTextAttributes(
     VLOG(3) << "[text-debug] textAttributes.alignment=" << align;
     m_textNode.setTextAlign(align);
   }
+}
+
+void TextComponentInstance::setFragment(
+    const facebook::react::AttributedString::Fragment& fragment,
+    std::shared_ptr<SpanNode> spanNode,
+    uint32_t index) {
+  if (spanNode == nullptr) {
+    return;
+  }
+
+  facebook::react::TextAttributes textAttributes = fragment.textAttributes;
+  spanNode->setSpanContent(fragment.string);
+  VLOG(3) << "[text-debug] fontColor="
+          << (uint32_t)(*textAttributes.foregroundColor);
+  if (textAttributes.foregroundColor) {
+    spanNode->setFontColor((uint32_t)(*textAttributes.foregroundColor));
+  }
+  VLOG(3) << "[text-debug] fontFamily=" << textAttributes.fontFamily;
+  spanNode->setFontFamily(textAttributes.fontFamily);
+
+  if (textAttributes.fontWeight.has_value()) {
+    int32_t realFontWeight = TextConversions::getArkUIFontWeight(
+        (int32_t)textAttributes.fontWeight.value());
+    VLOG(3) << "[text-debug] realFontWeight=" << realFontWeight
+            << ", index=" << index;
+    spanNode->setFontWeight(realFontWeight);
+  }
+  // allowFontScaling
+  bool allowFontScaling = textAttributes.allowFontScaling.has_value() ? textAttributes.allowFontScaling.value() : true;
+  VLOG(3) << "[text-debug] textAttributes.allowFontScaling=" << allowFontScaling << ", index=" << index;
+  if (allowFontScaling) {
+    spanNode->setLengthMetricUnit(ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP);
+  } else {
+    spanNode->setLengthMetricUnit(ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP);
+  }
+  // FontSize
+  float fontSize = isnan(textAttributes.fontSize)
+      ? DEFAULT_FONT_SIZE
+      : (float)textAttributes.fontSize;
+  VLOG(3) << "[text-debug] textAttributes.fontSize=" << textAttributes.fontSize
+          << ", fontSize=" << fontSize << ", index=" << index;
+  spanNode->setFontSize(fontSize);
+
+  // FontStyle
+  if (textAttributes.fontStyle.has_value()) {
+    VLOG(3) << "[text-debug] textAttributes.fontStyle="
+            << (int32_t)textAttributes.fontStyle.value() << ", index=" << index;
+    spanNode->setFontStyle((int32_t)textAttributes.fontStyle.value());
+  }
+
+  // TextDecoration
+  int32_t textDecorationType = ARKUI_TEXT_DECORATION_TYPE_NONE;
+  uint32_t textDecorationColor = 0xFF000000;
+  int32_t textDecorationStyle = ARKUI_TEXT_DECORATION_STYLE_SOLID;
+  if (textAttributes.textDecorationLineType.has_value()) {
+   textDecorationType = (int32_t)textAttributes.textDecorationLineType.value();
+    if (textAttributes.textDecorationColor) {
+      textDecorationColor = (uint32_t)(*textAttributes.textDecorationColor);
+    } else if (textAttributes.foregroundColor) {
+      textDecorationColor = (uint32_t)(*textAttributes.foregroundColor);
+    }
+    if (textDecorationType ==
+            (int32_t)facebook::react::TextDecorationLineType::Strikethrough ||
+        textDecorationType ==
+            (int32_t)facebook::react::TextDecorationLineType::
+                UnderlineStrikethrough) {
+      textDecorationType = ARKUI_TEXT_DECORATION_TYPE_LINE_THROUGH;
+    }
+  }
+  if (textAttributes.textDecorationStyle.has_value()) {
+    textDecorationStyle = (int32_t)textAttributes.textDecorationStyle.value();
+  }
+  VLOG(3) << "[text-debug] textAttributes.textDecorationLineType=" << textDecorationType
+            << ", textAttributes.textDecorationColor=" << textDecorationColor
+            << ", textAttributes.textDecorationStyle=" << textDecorationStyle
+            << ", index=" << index;
+  spanNode->setTextDecoration(textDecorationType, textDecorationColor, textDecorationStyle);
+
+  // TextLineHeight
+  float lineHeight = isnan(textAttributes.lineHeight)
+      ? fontSize * (1 + DEFAULT_LINE_SPACING)
+      : (float)textAttributes.lineHeight;
+  VLOG(3) << "[text-debug] textAttributes.lineHeight="
+          << (float)textAttributes.lineHeight << ", lineHeight=" << lineHeight
+          << ", index=" << index;
+  spanNode->setTextLineHeight(lineHeight);
+
+  // BackgroundColor
+  VLOG(3) << "[text-debug] textAttributes.backgroundColor="
+          << (uint32_t)(*textAttributes.backgroundColor) << ", index=" << index;
+  if (textAttributes.isHighlighted.has_value() && textAttributes.isHighlighted.value()) {
+    spanNode->setBackgroundStyle((uint32_t)(0xFF80808080)); // Hard-Coded grey color.
+  } else if (textAttributes.backgroundColor) {
+    spanNode->setBackgroundStyle((uint32_t)(*textAttributes.backgroundColor));
+  } else {
+    spanNode->resetBackgroundStyle();
+  }
+
+  // letterSpacing
+  if (!std::isnan(textAttributes.letterSpacing)) {
+    VLOG(3) << "[text-debug] textAttributes.letterSpacing="
+            << textAttributes.letterSpacing << ", index=" << index;
+    spanNode->setTextLetterSpacing(textAttributes.letterSpacing);
+  }
+
+  // shadow
+  float textShadowRadius = isnan(textAttributes.textShadowRadius)
+      ? 0.0f
+      : textAttributes.textShadowRadius;
+  int32_t textShadowType = ARKUI_SHADOW_TYPE_COLOR;
+  uint32_t textShadowColor = *textAttributes.textShadowColor;
+  float textShadowOffsetX = textAttributes.textShadowOffset.has_value()
+      ? textAttributes.textShadowOffset.value().width
+      : 0.0f;
+  float textShadowOffsetY = textAttributes.textShadowOffset.has_value()
+      ? textAttributes.textShadowOffset.value().height
+      : 0.0f;
+  VLOG(3) << "[text-debug] setTextShadow:" << textShadowRadius
+          << ", textShadowType:" << textShadowType
+          << ", textShadowColor:" << textShadowColor
+          << ", textShadowOffsetX:" << textShadowOffsetX
+          << ", textShadowOffsetY:" << textShadowOffsetY << ", index=" << index;
+  spanNode->setTextShadow(
+      textShadowRadius,
+      textShadowType,
+      textShadowColor,
+      textShadowOffsetX,
+      textShadowOffsetY);
+
+  // text Case
+  if (textAttributes.textTransform.has_value()) {
+    VLOG(3) << "[text-debug] textAttributes.textTransform="
+            << (int)textAttributes.textTransform.value() << ", index=" << index;
+    switch (textAttributes.textTransform.value()) {
+      case facebook::react::TextTransform::None:
+      case facebook::react::TextTransform::Uppercase:
+      case facebook::react::TextTransform::Lowercase: {
+        int32_t textCase = TextConversions::getArkUITextCase(
+            textAttributes.textTransform.value());
+        spanNode->setTextCase(textCase);
+        break;
+      }
+      case facebook::react::TextTransform::Capitalize: {
+        spanNode->setSpanContent(stringCapitalize(fragment.string));
+        break;
+      }
+      default:
+        // do nothing
+        break;
+    }
+  }
+  VLOG(3) << "[text-debug] setFragment end, index=" << index;
+}
+
+void TextComponentInstance::setImageSpanSize(
+    const facebook::react::Size& imageSize,
+    std::shared_ptr<ImageSpanNode> imageSpanNode) {
+  if (imageSpanNode == nullptr) {
+    return;
+  }
+  imageSpanNode->setSize(imageSize);
+}
+
+void TextComponentInstance::setParagraphAttributes(
+    const facebook::react::ParagraphAttributes& paragraphAttributes) {
+  // maximumNumberOfLines
+  VLOG(3) << "[text-debug] paragraphAttributes.maximumNumberOfLines="
+          << paragraphAttributes.maximumNumberOfLines;
+  if (paragraphAttributes.maximumNumberOfLines > 0) {
+    m_textNode.setTextMaxLines(paragraphAttributes.maximumNumberOfLines);
+  } else {
+    m_textNode.resetTextMaxLines();
+  }
+
+  // height Adaptive Policy
+  VLOG(3) << "[text-debug] paragraphAttributes.heightAdaptivePolicy="
+          << (int)paragraphAttributes.adjustsFontSizeToFit;
+  int32_t heightAdaptivePolicy = paragraphAttributes.adjustsFontSizeToFit
+      ? ARKUI_TEXT_HEIGHT_ADAPTIVE_POLICY_MIN_FONT_SIZE_FIRST
+      : ARKUI_TEXT_HEIGHT_ADAPTIVE_POLICY_MAX_LINES_FIRST;
+  m_textNode.setTextHeightAdaptivePolicy(heightAdaptivePolicy);
+
+  // overflow
+  int32_t ellipsizeMode =
+      TextConversions::getArkUIEllipsizeMode(paragraphAttributes.ellipsizeMode);
+  VLOG(3) << "[text-debug] paragraphAttributes.ellipsizeMode=" << ellipsizeMode;
+  if (ellipsizeMode == -1) {
+    m_textNode.setTextOverflow(ARKUI_TEXT_OVERFLOW_CLIP);
+  } else {
+    m_textNode.setTextOverflow(ARKUI_TEXT_OVERFLOW_ELLIPSIS);
+    m_textNode.setTextEllipsisMode(ellipsizeMode);
+  }
+
+  // TextBreakStrategy
+  auto textBreak = TextConversions::getArkUIWordBreakStrategy(
+      paragraphAttributes.textBreakStrategy);
+  m_textNode.setWordBreak(textBreak);
+}
+
+std::string TextComponentInstance::stringCapitalize(
+    const std::string& strInput) {
+  if (strInput.empty()) {
+    return strInput;
+  }
+
+  std::string strRes;
+  std::string split = " ";
+  std::vector<std::string> subStringVector;
+  subStringVector.clear();
+
+  std::string strSrc = strInput + split;
+  auto pos = strSrc.find(split);
+  auto step = split.size();
+
+  while (pos != std::string::npos) {
+    std::string strTemp = strSrc.substr(0, pos);
+    subStringVector.push_back(strTemp);
+
+    strSrc = strSrc.substr(pos + step, strSrc.size());
+    pos = strSrc.find(split);
+  }
+
+  for (auto subString : subStringVector) {
+    if (std::isalpha(subString[0]) != 0) {
+      std::transform(
+          subString.begin(),
+          subString.end(),
+          subString.begin(),
+          [](unsigned char c) { return std::tolower(c); });
+      subString[0] = std::toupper(static_cast<unsigned char>(subString[0]));
+    }
+    if (!strRes.empty()) {
+      strRes += split;
+    }
+    strRes += subString;
+  }
+
+  return strRes;
 }
 
 ArkUINode& TextComponentInstance::getLocalRootArkUINode() {
@@ -351,7 +612,7 @@ void TextComponentInstance::updateFragmentTouchTargets(
   auto typography = textMeasurer->measureTypography(
       newState.attributedString,
       newState.paragraphAttributes,
-      {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size}).build();
+      {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size});
   auto rects = typography.getRectsForFragments();
 
   FragmentTouchTargetByTag touchTargetByTag;

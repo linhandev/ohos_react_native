@@ -8,7 +8,6 @@
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
-#include "TextMeasureRegisty.h"
 
 namespace rnoh {
 class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
@@ -28,7 +27,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes paragraphAttributes,
       facebook::react::LayoutConstraints layoutConstraints) override;
 
-  ArkUITypographyBuilder measureTypography(
+  ArkUITypography measureTypography(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,
       facebook::react::LayoutConstraints const& layoutConstraints);
@@ -36,26 +35,13 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   std::vector<OH_Drawing_LineMetrics> getLineMetrics(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,
-      facebook::react::LayoutConstraints const& layoutConstraints) override;
-  
-  void setScreenScale(float m_fontScale, float m_scale);
+      facebook::react::LayoutConstraints const& layoutConstraints) override;;
  private:
-  
-  ArkUITypography findFitFontSize(int maxFontSize,
-    facebook::react::AttributedString& attributedString,
-    facebook::react::ParagraphAttributes& paragraphAttributes,
-    facebook::react::LayoutConstraints& layoutConstraints);
-  
-  std::string stringCapitalize(const std::string& strInput);
-  void textCaseTransform(std::string& textContent, facebook::react::TextTransform type);
-  
   napi_env m_env;
   napi_ref m_measureTextFnRef;
   std::shared_ptr<TaskExecutor> m_taskExecutor;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   int32_t getOHDrawingTextAlign(
       const facebook::react::TextAlignment& textAlign);
-  float m_fontScale = 1.0;
-  float m_scale = 1.0;
 };
 } // namespace rnoh

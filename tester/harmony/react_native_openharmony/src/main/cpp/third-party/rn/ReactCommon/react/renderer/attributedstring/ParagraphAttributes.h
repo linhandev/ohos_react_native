@@ -51,7 +51,6 @@ class ParagraphAttributes : public DebugStringConvertible {
    * Enables font size adjustment to fit constrained boundaries.
    */
   bool adjustsFontSizeToFit{};
-  Float minimumFontScale{std::numeric_limits<Float>::quiet_NaN()};
 
   /*
    * (Android only) Leaves enough room for ascenders and descenders instead of
@@ -72,10 +71,6 @@ class ParagraphAttributes : public DebugStringConvertible {
   Float minimumFontSize{std::numeric_limits<Float>::quiet_NaN()};
   Float maximumFontSize{std::numeric_limits<Float>::quiet_NaN()};
 
-  WritingDirection writingDirection{};
-
-  bool allowFontScaling{true};
-  Float maxFontSizeMultiplier{std::numeric_limits<Float>::quiet_NaN()};
   bool operator==(const ParagraphAttributes &) const;
   bool operator!=(const ParagraphAttributes &) const;
 
@@ -104,8 +99,7 @@ struct hash<facebook::react::ParagraphAttributes> {
         attributes.minimumFontSize,
         attributes.maximumFontSize,
         attributes.includeFontPadding,
-        attributes.android_hyphenationFrequency,
-        attributes.minimumFontScale);
+        attributes.android_hyphenationFrequency);
   }
 };
 } // namespace std
