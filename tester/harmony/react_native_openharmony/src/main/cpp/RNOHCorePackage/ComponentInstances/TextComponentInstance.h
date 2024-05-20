@@ -2,9 +2,9 @@
 
 #include <react/renderer/components/text/ParagraphShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/arkui/SpanNode.h"
 #include "RNOH/arkui/StackNode.h"
 #include "RNOH/arkui/TextNode.h"
+#include "../../RNOH/TextMeasureRegisty.h"
 
 namespace rnoh {
 class TextComponentInstance
@@ -19,6 +19,7 @@ class TextComponentInstance
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
   bool m_hasCheckNesting = false;
+  int m_tag = -1;
 
  public:
   TextComponentInstance(Context context);
@@ -38,16 +39,6 @@ class TextComponentInstance
 
  private:
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);
-  void setFragment(
-      const facebook::react::AttributedString::Fragment& fragment,
-      std::shared_ptr<SpanNode> spanNode,
-      uint32_t index);
-  void setImageSpanSize(
-      const facebook::react::Size& imageSize,
-      std::shared_ptr<ImageSpanNode> imageSpanNode);
-  void setParagraphAttributes(
-      const facebook::react::ParagraphAttributes& paragraphAttributes);
-  std::string stringCapitalize(const std::string& strInput);
   void updateFragmentTouchTargets(
       facebook::react::ParagraphState const& newState);
 };
