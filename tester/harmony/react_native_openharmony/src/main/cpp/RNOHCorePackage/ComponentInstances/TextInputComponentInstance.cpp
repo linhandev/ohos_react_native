@@ -169,6 +169,10 @@ void TextInputComponentInstance::onPropsChanged(
   m_multiline = props->traits.multiline;
   CppComponentInstance::onPropsChanged(props);
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
+  if (!m_props) {
+    m_textInputNode.setInputFilter(".*");
+    m_textAreaNode.setInputFilter(".*");
+  }
   if (!m_props ||
       props->traits.showSoftInputOnFocus != m_props->traits.showSoftInputOnFocus){
     m_textAreaNode.setshowSoftInputOnFocus((int32_t)props->traits.showSoftInputOnFocus);
