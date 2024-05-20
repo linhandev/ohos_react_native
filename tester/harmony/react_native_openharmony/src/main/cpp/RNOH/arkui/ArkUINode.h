@@ -45,9 +45,6 @@ class ArkUINode {
 
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
-  virtual ArkUINode& setLayoutRect(
-    facebook::react::Point const& position, facebook::react::Size const& size,
-    facebook::react::Float pointScaleFactor);
   virtual ArkUINode& setHeight(float height);
   virtual ArkUINode& setWidth(float width);
   virtual ArkUINode& setBorderWidth(
@@ -106,7 +103,6 @@ class ArkUINode {
   // method for handling node events with ArkUI_NodeComponentEvent payload
   // type
   virtual void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs);
-  virtual void onCustomNodeEvent(ArkUI_NodeCustomEvent* event);
   // method for handling node events with ArkUI_StringAsyncEvent payload type
   virtual void onNodeEvent(
       ArkUI_NodeEventType eventType,

@@ -8,7 +8,6 @@
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/CustomComponentArkUINodeHandleFactory.h"
 #include "RNOH/FallbackComponentInstance.h"
-#include "RNOH/arkui/CustomNode.h"
 #include "RNOH/arkui/StackNode.h"
 #include "glog/logging.h"
 
@@ -61,7 +60,7 @@ class ComponentInstanceFactory {
     auto arkUINode = frameNodeHandle != nullptr
         ? std::make_unique<ArkUINode>(frameNodeHandle)
         // use Stack as a fallback when no frame node was created
-        : std::make_unique<CustomNode>();
+        : std::make_unique<StackNode>();
     return std::make_shared<FallbackComponentInstance>(
         ctx, std::move(arkUINode));
   }

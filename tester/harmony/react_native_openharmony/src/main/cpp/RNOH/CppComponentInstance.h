@@ -113,8 +113,8 @@ class CppComponentInstance : public ComponentInstance {
   }
 
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
-    this->getLocalRootArkUINode().setLayoutRect(
-      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
+    this->getLocalRootArkUINode().setPosition(layoutMetrics.frame.origin);
+    this->getLocalRootArkUINode().setSize(layoutMetrics.frame.size);
     m_layoutMetrics = layoutMetrics;
     markBoundingBoxAsDirty();
   }
