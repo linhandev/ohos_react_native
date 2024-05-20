@@ -44,5 +44,8 @@ class ImageNode : public ArkUINode {
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
   void setNodeDelegate(ImageNodeDelegate* imageNodeDelegate);
+  void registerNodeEvent(ArkUI_NodeEventType event);
+  void unregisterNodeEvent(ArkUI_NodeEventType event);
+  void reset();
 };
 } // namespace rnoh

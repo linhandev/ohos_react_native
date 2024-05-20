@@ -6,7 +6,24 @@
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.setStackNodeDelegate(this);
+  std::lock_guard<std::mutex> lock(mtx);
+  if (bin.size() > 0) {
+    m_stackNode = bin.front();
+    bin.pop_front();
+    ArkUINodeRegistry::getInstance().registerNode(m_stackNode);
+    m_stackNode->registerNodeEvent(NODE_ON_CLICK);
+  } else {
+    m_stackNode = new StackNode;
+  }
+  m_stackNode->setStackNodeDelegate(this);
+}
+
+ViewComponentInstance::~ViewComponentInstance() {
+  m_stackNode->reset();
+  m_stackNode->unregisterNodeEvent(NODE_ON_CLICK);
+  ArkUINodeRegistry::getInstance().unregisterNode(m_stackNode);
+  std::lock_guard<std::mutex> lock(mtx);
+  bin.push_back(m_stackNode);
 }
 
 void ViewComponentInstance::onChildInserted(
@@ -16,7 +33,7 @@ void ViewComponentInstance::onChildInserted(
         insertNodeWithRemoveClipping(childComponentInstance, index);
     } else {
         childComponentInstance->setIsClipped(false);
-        m_stackNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+        m_stackNode->insertChild(childComponentInstance->getLocalRootArkUINode(), index);
     }
 }
 
@@ -26,11 +43,11 @@ void ViewComponentInstance::onChildRemoved(
   CppComponentInstance::onChildRemoved(childComponentInstance);
     if (m_removeClippedSubviews) {
         if (!childComponentInstance->getIsClipped()) {
-            m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+            m_stackNode->removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
   }
     } else {
-        m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+        m_stackNode->removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
     } 
 }
@@ -63,7 +80,7 @@ void ViewComponentInstance::onClick() {
 
 StackNode& ViewComponentInstance::getLocalRootArkUINode()
 {
-    return m_stackNode;
+    return *m_stackNode;
 }
 
 void ViewComponentInstance::updateClippingIndex(bool isInsert, std::size_t index)
@@ -213,16 +230,16 @@ void ViewComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<Compone
     if (ClippingComponent::isIntersect(nodeRect) || 
         (index >= ClippingComponent::getStartIndex() && index <= ClippingComponent::getEndIndex() ))
     {
-        uint32_t totalCnt = NativeNodeApi::getInstance()->getTotalChildCount(m_stackNode.getArkUINodeHandle());
+        uint32_t totalCnt = NativeNodeApi::getInstance()->getTotalChildCount(m_stackNode->getArkUINodeHandle());
         if (index > totalCnt) {
-            m_stackNode.addChild(child->getLocalRootArkUINode());
+            m_stackNode->addChild(child->getLocalRootArkUINode());
         } else {
-            m_stackNode.insertChild(child->getLocalRootArkUINode(), index);
+            m_stackNode->insertChild(child->getLocalRootArkUINode(), index);
         }
         child->setIsClipped(false);
     } else {
         if (!child->getIsClipped()) {
-            m_stackNode.removeChild(child->getLocalRootArkUINode());
+            m_stackNode->removeChild(child->getLocalRootArkUINode());
         }
         child->setIsClipped(true);
     }
@@ -261,7 +278,7 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
                 findEnd = true;
             }
             if (!item->getIsClipped()) {
-                m_stackNode.removeChild(item->getLocalRootArkUINode());
+                m_stackNode->removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -274,7 +291,7 @@ void ViewComponentInstance::updateVisibleFirst(std::vector<ComponentInstance::Sh
     for (std::size_t i = start; i <= end; i++) {
         const auto& item = childNodes[i];
         if (item->getIsClipped()) {
-            m_stackNode.insertChild(item->getLocalRootArkUINode(), (i - start));
+            m_stackNode->insertChild(item->getLocalRootArkUINode(), (i - start));
             item->setIsClipped(false);
         }
     }
@@ -299,7 +316,7 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
                 ClippingComponent::setEndIndex(i);
             }
             if (item->getIsClipped()) {
-                m_stackNode.addChild(item->getLocalRootArkUINode());
+                m_stackNode->addChild(item->getLocalRootArkUINode());
                 item->setIsClipped(false);
                 isFindEnd = true;
             }
@@ -321,7 +338,7 @@ void ViewComponentInstance::updateVisibleDown(std::vector<ComponentInstance::Sha
             break;
         } else {
             if (!item->getIsClipped()) {
-                m_stackNode.removeChild(item->getLocalRootArkUINode());
+                m_stackNode->removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -342,7 +359,7 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
                 ClippingComponent::setStartIndex(i);
             }
             if (item->getIsClipped()) {          
-                m_stackNode.insertChild(item->getLocalRootArkUINode(), 0);
+                m_stackNode->insertChild(item->getLocalRootArkUINode(), 0);
                 item->setIsClipped(false);
                 isFindStart = true;
             }
@@ -367,7 +384,7 @@ void ViewComponentInstance::updateVisibleUp(std::vector<ComponentInstance::Share
             break;
         } else {
             if (!item->getIsClipped()) {
-                m_stackNode.removeChild(item->getLocalRootArkUINode());
+                m_stackNode->removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -413,7 +430,7 @@ void ViewComponentInstance::restoreRsTree()
     for (std::size_t i = 0; i < total; i++) {
         const auto& item = children[i];
         if (item->getIsClipped()) {          
-            m_stackNode.insertChild(item->getLocalRootArkUINode(), i);
+            m_stackNode->insertChild(item->getLocalRootArkUINode(), i);
             item->setIsClipped(false);
         }
     }

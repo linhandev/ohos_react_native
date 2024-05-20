@@ -4,11 +4,13 @@
 #include "RNOH/arkui/StackNode.h"
 
 namespace rnoh {
-class ViewComponentInstance
+static std::list<StackNode*> bin;
+static std::mutex mtx;
+class ViewComponentInstance 
     : public CppComponentInstance<facebook::react::ViewShadowNode>,
       public StackNodeDelegate {
  private:
-  StackNode m_stackNode;
+  StackNode *m_stackNode;
     void getChildViewRect(std::shared_ptr<ComponentInstance> const& child, facebook::react::Rect &rect);
     void updateVisibleFirst(std::vector<ComponentInstance::Shared> &childNodes);
     void updateVisibleDown(std::vector<ComponentInstance::Shared> &childNodes);
@@ -21,6 +23,7 @@ class ViewComponentInstance
     void restoreRsTree() override; 
  public:
   ViewComponentInstance(Context context);
+  ~ViewComponentInstance();
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,

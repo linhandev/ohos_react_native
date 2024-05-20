@@ -215,4 +215,88 @@ ImageNode& ImageNode::resetResizeMethod() {
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
 }
+void ImageNode::registerNodeEvent(ArkUI_NodeEventType event) {
+  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+    m_nodeHandle, event, 0, this));
+}
+
+void ImageNode::unregisterNodeEvent(ArkUI_NodeEventType event) {
+  NativeNodeApi::getInstance()->unregisterNodeEvent(
+    m_nodeHandle, event);
+}
+
+void ImageNode::reset() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_SRC));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_OBJECT_FIT));    
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_COLOR_FILTER));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BLUR));  
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_OBJECT_REPEAT));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_INTERPOLATION));  
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_DRAGGABLE));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_FOCUSABLE));  
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_IMAGE_ALT));  
+//  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+//    m_nodeHandle, NODE_POSITION));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_WIDTH));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_HEIGHT));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BORDER_WIDTH));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BORDER_COLOR));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BORDER_RADIUS));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BORDER_STYLE));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_CUSTOM_SHADOW));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_HIT_TEST_BEHAVIOR));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ACCESSIBILITY_DESCRIPTION));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ACCESSIBILITY_MODE));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ACCESSIBILITY_TEXT));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ACCESSIBILITY_GROUP));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ID));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_BACKGROUND_COLOR));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_TRANSFORM_CENTER));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_TRANSFORM));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_OPACITY));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_CLIP));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ALIGNMENT));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_OFFSET));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_ENABLED));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_FOCUS_STATUS));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_MARGIN));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_PADDING));
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    m_nodeHandle, NODE_VISIBILITY));
+}
 } // namespace rnoh
