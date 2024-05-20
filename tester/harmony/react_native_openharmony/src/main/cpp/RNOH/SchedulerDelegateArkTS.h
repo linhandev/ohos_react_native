@@ -15,7 +15,7 @@ class SchedulerDelegateArkTS : public facebook::react::SchedulerDelegate {
       MountingManager::Shared mountingManager,
       ArkTSChannel::Shared arkTsChannel)
       : mountingManager(std::move(mountingManager)),
-        m_arkTsChannel(arkTsChannel) {};
+        m_arkTsChannel(arkTsChannel){};
 
   ~SchedulerDelegateArkTS() = default;
 

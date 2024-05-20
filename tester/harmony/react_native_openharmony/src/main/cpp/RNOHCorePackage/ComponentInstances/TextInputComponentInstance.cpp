@@ -237,10 +237,6 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setCaretColor(facebook::react::blackColor());
     }
   }
-  if (!m_props || props->traits.editable != m_props->traits.editable) {
-    m_textAreaNode.setEnabled(props->traits.editable);
-    m_textInputNode.setEnabled(props->traits.editable);
-  }
   if (!m_props || props->traits.keyboardType != m_props->traits.keyboardType) {
     if(m_multiline){
       if(props->traits.keyboardType == facebook::react::KeyboardType::DecimalPad){
@@ -363,6 +359,10 @@ void TextInputComponentInstance::onPropsChanged(
   if (!m_props || props->blurOnSubmit != m_props->blurOnSubmit) {
     m_textInputNode.setBlurOnSubmit(props->blurOnSubmit);
     m_textAreaNode.setBlurOnSubmit(props->blurOnSubmit);
+  }
+  if (!m_props || props->traits.editable != m_props->traits.editable) {
+    m_textAreaNode.setEnabled(props->traits.editable);
+  m_textInputNode.setEnabled(props->traits.editable);
   }
 }
 
