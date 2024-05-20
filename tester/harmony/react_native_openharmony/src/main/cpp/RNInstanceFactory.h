@@ -44,7 +44,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
     bool shouldEnableDebugger,
-    bool shouldEnableBackgroundExecutor) {
+    bool shouldEnableBackgroundExecutor,
+    std::unordered_set<std::string> arkTsComponentNames) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->getFeatureFlagStatus("C_API_ARCH");
   std::shared_ptr<TaskExecutor> taskExecutor =
@@ -183,7 +184,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(schedulerDelegateArkTS),
-        mountingManager);
+        mountingManager,
+        arkTsComponentNames);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,
