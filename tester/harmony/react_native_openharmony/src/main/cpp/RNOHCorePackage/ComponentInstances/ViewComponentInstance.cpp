@@ -163,18 +163,27 @@ bool positionCompare(std::shared_ptr<ComponentInstance> lhs, std::shared_ptr<Com
         if (metrics1.frame.origin.x < metrics2.frame.origin.x) {
             return true;
         } else if (metrics1.frame.origin.x == metrics2.frame.origin.x) {
-            return metrics1.frame.origin.x + metrics1.frame.size.width >=
-                metrics2.frame.origin.x + metrics2.frame.size.width;
-        } else {
+            return metrics1.frame.origin.x + metrics1.frame.size.width >
+                   metrics2.frame.origin.x + metrics2.frame.size.width;
+        }
+        else
+        {
             return false;
         }
-    } else {
-        if (metrics1.frame.origin.y < metrics2.frame.origin.y) {
+    }
+    else
+    {
+        if (metrics1.frame.origin.y < metrics2.frame.origin.y)
+        {
             return true;
-        } else if (metrics1.frame.origin.y == metrics2.frame.origin.y) {
-            return metrics1.frame.origin.y + metrics1.frame.size.height >=
-                metrics2.frame.origin.y + metrics2.frame.size.height;
-        } else {
+        }
+        else if (metrics1.frame.origin.y == metrics2.frame.origin.y)
+        {
+            return metrics1.frame.origin.y + metrics1.frame.size.height >
+                   metrics2.frame.origin.y + metrics2.frame.size.height;
+        }
+        else
+        {
             return false;
         }
     }
@@ -187,7 +196,7 @@ void ViewComponentInstance::insertSortChild(std::shared_ptr<ComponentInstance> c
     }
     auto children = m_sortChildren;
     auto it = std::upper_bound(m_sortChildren.begin(), m_sortChildren.end(), child, positionCompare);
-    m_sortChildren.insert(it, child);
+    it = m_sortChildren.insert(it, child);
     index = it - m_sortChildren.begin();
 
     return;

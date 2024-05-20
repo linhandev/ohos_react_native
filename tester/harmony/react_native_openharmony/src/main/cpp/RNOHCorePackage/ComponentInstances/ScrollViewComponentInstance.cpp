@@ -78,6 +78,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
+  m_removeClippedSubviews = props->removeClippedSubviews;
   m_horizontal = isHorizontal(props);
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
