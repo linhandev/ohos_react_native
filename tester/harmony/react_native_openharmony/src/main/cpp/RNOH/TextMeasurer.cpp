@@ -1,9 +1,8 @@
-#include "TextMeasurer.h"
+#include "RNOH/TextMeasurer.h"
 #include "RNOH/ArkJS.h"
-#include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkUITypography.h"
 #include "RNOHCorePackage/ComponentInstances/TextConversions.h"
-#include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
+#include "TextMeasurer.h"
 
 namespace rnoh {
 
@@ -25,53 +24,13 @@ TextMeasurement TextMeasurer::measure(
       this->m_featureFlagRegistry->getFeatureFlagStatus(
           "ENABLE_NDK_TEXT_MEASURING");
   if (canUseOHOSTextMeasurer || isNDKTextMeasuringEnabled) {
-    // first deal textCase
-    float fontMultiplier = 1.0;
-    if (paragraphAttributes.allowFontScaling) {
-      fontMultiplier = m_fontScale;
-      if (!isnan(paragraphAttributes.maxFontSizeMultiplier)) {
-        fontMultiplier = std::min(m_fontScale, (float)paragraphAttributes.maxFontSizeMultiplier);
-      }
-    }
-    for (auto& fragment : attributedString.getFragments()) {
-      if (fragment.textAttributes.textTransform.has_value()) {
-        textCaseTransform(
-            fragment.string, fragment.textAttributes.textTransform.value());
-      }
-      fragment.textAttributes.fontSize *= fontMultiplier;
-    }
-    // calc typograph
-    facebook::react::TextMeasureCacheKey cacheKey{attributedString, paragraphAttributes, layoutConstraints};
-    // if (!attributedString.getFragments().empty()) {
-    //   auto& textMeasureRegistyInstance = TextMeasureRegisty::getTextMeasureRegisty();
-    //   if (textMeasureRegistyInstance.isTextTypographyExist(attributedString.getFragments()[0].parentShadowView.tag, cacheKey)) {
-    //     return textMeasureRegistyInstance.getTextMeasurement(attributedString.getFragments()[0].parentShadowView.tag);
-    //   }
-    // }
-    if (paragraphAttributes.adjustsFontSizeToFit) {
-      int maxFontSize = 0;
-      for (const auto& fragment : attributedString.getFragments()) {
-        maxFontSize = std::max(maxFontSize, (int)fragment.textAttributes.fontSize);
-      }
-      auto typography = findFitFontSize(maxFontSize, attributedString, paragraphAttributes, layoutConstraints);
-      auto height = typography.getHeight();
-      auto longestLineWidth = typography.getLongestLineWidth();
-      auto attachments = typography.getAttachments();
-      return {{.width = longestLineWidth + 0.5, .height = height}, attachments};
-    } else {
-      auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
-      auto typography = typographyBuilder.build();
-      auto height = typography.getHeight();
-      auto longestLineWidth = typography.getLongestLineWidth();
-      auto attachments = typography.getAttachments();
-      if (!attributedString.getFragments().empty()) {
-        auto textStyles = typographyBuilder.getTextStyles();
-        TextMeasureInfo textMeasureInfo(std::move(typographyBuilder), std::move(typography));
-        TextMeasureRegisty::getTextMeasureRegisty().setTextMeasureInfo(
-          attributedString.getFragments()[0].parentShadowView.tag, textMeasureInfo, cacheKey);
-      }
-      return {{.width = longestLineWidth + 0.5, .height = height}, attachments};
-    }
+    auto typography = measureTypography(
+        attributedString, paragraphAttributes, layoutConstraints);
+    auto height = typography.getHeight();
+    auto longestLineWidth = typography.getLongestLineWidth();
+    return {
+        {.width = longestLineWidth + 0.5, .height = height},
+        typography.getAttachments()};
   } else {
     TextMeasurement result = {{0, 0}, {}};
     m_taskExecutor->runSyncTask(
@@ -189,48 +148,38 @@ TextMeasurement TextMeasurer::measure(
   }
 }
 
-ArkUITypographyBuilder TextMeasurer::measureTypography(
+ArkUITypography TextMeasurer::measureTypography(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
-  OH_Drawing_TypographyStyle* typographyStyle = OH_Drawing_CreateTypographyStyle();
+  UniqueTypographyStyle typographyStyle(
+      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
 
-  if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_HEAD);
-  } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Middle) {
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_MIDDLE);
-  } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Tail) {
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_TAIL);
-  }
   if (paragraphAttributes.maximumNumberOfLines > 0) {
     OH_Drawing_SetTypographyTextMaxLines(
-        typographyStyle, paragraphAttributes.maximumNumberOfLines);
+        typographyStyle.get(), paragraphAttributes.maximumNumberOfLines);
   }
 
   OH_Drawing_SetTypographyTextWordBreakType(
-      typographyStyle,
+      typographyStyle.get(),
       TextConversions::getArkUIWordBreakStrategy(
           paragraphAttributes.textBreakStrategy));
-  if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::LeftToRight) {
-    OH_Drawing_SetTypographyTextDirection(typographyStyle, TEXT_DIRECTION_LTR);
-  } else if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::RightToLeft) {
-    OH_Drawing_SetTypographyTextDirection(typographyStyle, TEXT_DIRECTION_RTL);
-  }
-  
+
   if (!attributedString.getFragments().empty()) {
     auto textAlign =
         attributedString.getFragments()[0].textAttributes.alignment;
     if (textAlign.has_value()) {
       OH_Drawing_SetTypographyTextAlign(
-          typographyStyle, getOHDrawingTextAlign(textAlign.value()));
+          typographyStyle.get(), getOHDrawingTextAlign(textAlign.value()));
     }
   }
-  ArkUITypographyBuilder typographyBuilder(typographyStyle, m_scale);
+
+  ArkUITypographyBuilder typographyBuilder(typographyStyle.get());
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
-  typographyBuilder.setMaximumWidth(layoutConstraints.maximumSize.width * m_scale);
-  return typographyBuilder;
+  typographyBuilder.setMaximumWidth(layoutConstraints.maximumSize.width);
+  return typographyBuilder.build();
 }
 
 int32_t TextMeasurer::getOHDrawingTextAlign(
@@ -263,129 +212,10 @@ std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
     auto typography = measureTypography(
         attributedString,
         paragraphAttributes,
-        layoutConstraints).build();
+        layoutConstraints);
     std::vector<OH_Drawing_LineMetrics> data;
     typography.getLineMetrics(data);
     return data;
-}
-
-ArkUITypography TextMeasurer::findFitFontSize(int maxFontSize, 
-  facebook::react::AttributedString& attributedString,
-  facebook::react::ParagraphAttributes& paragraphAttributes,
-  facebook::react::LayoutConstraints& layoutConstraints) {
-  // init params
-  int minFontSize = 1;
-  if (!isnan(paragraphAttributes.minimumFontScale)) {
-    minFontSize = ceil(paragraphAttributes.minimumFontScale * maxFontSize);
-  }
-  int finalFontSize = minFontSize;
-  int initFontSize = maxFontSize;
-  auto backupAttributedString = attributedString;
-  // check if already fit
-  auto finalTypographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
-  auto finalTypography = finalTypographyBuilder.build();
-  if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
-     (paragraphAttributes.maximumNumberOfLines == 0 || !finalTypography.getExceedMaxLines())) {
-    return finalTypography;
-  }
-  // find fit fontSize
-  while(minFontSize <= maxFontSize) {
-    int curFontSize = ceil((minFontSize + maxFontSize) * 1.0 / 2);
-    float ratio = 1.0 * curFontSize / initFontSize;
-    for (int i = 0; i < attributedString.getFragments().size(); ++i) {
-      int newFontSize = ceil(backupAttributedString.getFragments()[i].textAttributes.fontSize * ratio);
-      attributedString.getFragments()[i].textAttributes.fontSize = newFontSize;
-    }
-    auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
-    auto typography = typographyBuilder.build();
-    if (typography.getHeight() <= layoutConstraints.maximumSize.height &&
-      (paragraphAttributes.maximumNumberOfLines == 0 || !typography.getExceedMaxLines())) {
-      finalFontSize = curFontSize;
-      finalTypography = std::move(typography);
-      finalTypographyBuilder = std::move(typographyBuilder);
-      minFontSize = curFontSize + 1;
-    } else {
-      maxFontSize = curFontSize - 1;
-    }
-  }
-  float ratio = 1.0 * finalFontSize / initFontSize;
-  for (int i = 0; i < attributedString.getFragments().size(); ++i) {
-    int newFontSize = ceil(
-        backupAttributedString.getFragments()[i].textAttributes.fontSize *
-        ratio);
-    attributedString.getFragments()[i].textAttributes.fontSize = newFontSize;
-  }
-  if (!attributedString.getFragments().empty()) {
-    auto textStyles = finalTypographyBuilder.getTextStyles();
-    facebook::react::TextMeasureCacheKey cacheKey{attributedString, paragraphAttributes, layoutConstraints};
-    TextMeasureInfo textMeasureInfo(std::move(finalTypographyBuilder), std::move(finalTypography));
-    TextMeasureRegisty::getTextMeasureRegisty().setTextMeasureInfo(
-      attributedString.getFragments()[0].parentShadowView.tag, textMeasureInfo, cacheKey);
-  }
-  return finalTypography;
-}
-
-std::string TextMeasurer::stringCapitalize(const std::string& strInput) {
-  if (strInput.empty()) {
-    return strInput;
-  }
-
-  std::string strRes;
-  std::string split = " ";
-  std::vector<std::string> subStringVector;
-  subStringVector.clear();
-
-  std::string strSrc = strInput + split;
-  auto pos = strSrc.find(split);
-  auto step = split.size();
-
-  while (pos != std::string::npos) {
-    std::string strTemp = strSrc.substr(0, pos);
-    subStringVector.push_back(strTemp);
-
-    strSrc = strSrc.substr(pos + step, strSrc.size());
-    pos = strSrc.find(split);
-  }
-
-  for (auto subString : subStringVector) {
-    if (std::isalpha(subString[0]) != 0) {
-      std::transform(
-          subString.begin(),
-          subString.end(),
-          subString.begin(),
-          [](unsigned char c) { return std::tolower(c); });
-      subString[0] = std::toupper(static_cast<unsigned char>(subString[0]));
-    }
-    if (!strRes.empty()) {
-      strRes += split;
-    }
-    strRes += subString;
-  }
-  return strRes;
-}
-
-void TextMeasurer::textCaseTransform(std::string& textContent, facebook::react::TextTransform type) {
-  switch (type) {
-    case facebook::react::TextTransform::Uppercase: {
-      transform(textContent.begin(), textContent.end(), textContent.begin(), ::toupper);
-      break;
-    }
-    case facebook::react::TextTransform::Lowercase: {
-      transform(textContent.begin(), textContent.end(), textContent.begin(), ::tolower);
-      break;
-    }
-    case facebook::react::TextTransform::Capitalize: {
-      textContent = stringCapitalize(textContent);
-      break;
-    }
-    default:
-      break;
-  }
-}
-
-void TextMeasurer::setScreenScale(float fontScale, float scale) {
-  m_fontScale = fontScale;
-  m_scale = scale;
 }
 
 } // namespace rnoh

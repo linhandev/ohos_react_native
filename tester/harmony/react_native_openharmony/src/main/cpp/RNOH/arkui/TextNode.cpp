@@ -295,9 +295,9 @@ TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   return *this;
 }
 
-TextNode& TextNode::setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[], int32_t size) {
+TextNode& TextNode::setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]) {
   ArkUI_AttributeItem item = {
-      .value = types, .size = size};
+      .value = types, .size = sizeof(types) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
   
@@ -322,19 +322,6 @@ TextNode& TextNode::setFontVariant(const std::string& fontVariants) {
   ArkUI_AttributeItem item = {.string = fontVariants.c_str()};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_FONT_FEATURE, &item));
-  return *this;
-}
-
-TextNode& TextNode::setTextContentWithStyledString(ArkUI_StyledString* styledString) {
-  ArkUI_AttributeItem item = {.object = styledString};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item));
-  return *this;
-}
-
-TextNode& TextNode::resetTextContentWithStyledString() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING));
   return *this;
 }
 
