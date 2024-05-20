@@ -124,31 +124,24 @@ export struct RNTextInput {
   createTextInputEvent(): TextInputEvent {
     const event: TextInputEvent = {
       text: this.value,
-      eventCount: ++this.nativeEventCount,
+      eventCount: this.nativeEventCount,
       selectionRange: {
         location: this.selection.start,
         length: this.selection.end - this.selection.start,
       }
     };
     return event;
+  }
+
+  createTextInputChangeEvent(): TextInputEvent {
+    this.nativeEventCount++
+    return this.createTextInputEvent()
   }
 
   createTextInputKeyEvent(key: string): TextInputKeyEvent {
     const event: TextInputKeyEvent = {
       key,
       eventCount: ++this.nativeEventCount,
-    };
-    return event;
-  }
-
-  createTextInputSelectionEvent(): TextInputEvent {
-    const event: TextInputEvent = {
-      text: this.value,
-      eventCount: this.nativeEventCount,
-      selectionRange: {
-        location: this.selection.start,
-        length: this.selection.end - this.selection.start,
-      }
     };
     return event;
   }
@@ -293,7 +286,7 @@ export struct RNTextInput {
   dispatchChangeEvent(): void {
     if (this.valueChanged) {
       this.valueChanged = false;
-      this.ctx.rnInstance.emitComponentEvent(this.descriptor.tag, RNOHEventEmitRequestHandlerName.TextInputChange, this.createTextInputEvent());
+      this.ctx.rnInstance.emitComponentEvent(this.descriptor.tag, RNOHEventEmitRequestHandlerName.TextInputChange, this.createTextInputChangeEvent());
     }
   }
 
@@ -307,7 +300,7 @@ export struct RNTextInput {
     this.dispatchKeyEvent({ start: currentSelectionStart, end: currentSelectionEnd });
     this.selection = { start: currentSelectionStart, end: currentSelectionEnd };
     this.dispatchChangeEvent();
-    this.ctx.rnInstance.emitComponentEvent(this.descriptor.tag, "onSelectionChange", this.createTextInputSelectionEvent());
+    this.ctx.rnInstance.emitComponentEvent(this.descriptor.tag, "onSelectionChange", this.createTextInputEvent());
   }
 
   build() {
