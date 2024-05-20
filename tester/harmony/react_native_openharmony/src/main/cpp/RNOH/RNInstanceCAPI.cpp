@@ -454,6 +454,10 @@ void RNInstanceCAPI::handleArkTSMessage(
   }
 }
 
+void RNInstanceCAPI::addArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
+  m_arkTSMessageHandlers.push_back(handler);
+}
+
 void RNInstanceCAPI::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
