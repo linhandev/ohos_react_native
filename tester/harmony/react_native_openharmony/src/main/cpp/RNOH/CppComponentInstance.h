@@ -2,6 +2,7 @@
  * Used only in C-API based Architecture.
  */
 #pragma once
+#include <RNOH/arkui/NativeNodeApi.h>
 #include <react/renderer/components/view/TouchEventEmitter.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/EventEmitter.h>
@@ -9,10 +10,37 @@
 #include <react/renderer/core/Props.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include <react/renderer/core/State.h>
+#include <react/renderer/components/view/primitives.h>
+#include <react/renderer/components/view/ViewProps.h>
 #include <vector>
+#include <map>
 #include "RNOH/ComponentInstance.h"
 
 namespace rnoh {
+  using BorderCurve = facebook::react::BorderCurve;
+  using BorderStyle = facebook::react::BorderStyle;
+  using BorderMetrics = facebook::react::BorderMetrics; 
+  using SharedColor = facebook::react::SharedColor;
+  using Float = facebook::react::Float;
+  using Size = facebook::react::Size;
+  static BorderMetrics ARKUI_DEFAULT_BORDER_METRICS = {
+    // BorderColors
+    {{}, {}, {}, {}},
+    // BorderWidths
+    {{0.0}, {0.0}, {0.0}, {0.0}},
+    // BorderRadii
+    {{0.0}, {0.0}, {0.0}, {0.0}},
+    // BorderCurves
+    {BorderCurve::Circular, BorderCurve::Circular, BorderCurve::Circular, BorderCurve::Circular},
+    // BorderStyles
+    {BorderStyle::Solid, BorderStyle::Solid, BorderStyle::Solid, BorderStyle::Solid}
+  };
+
+  static SharedColor ARKUI_DEFAULT_BACKGROUND_COLOR = {};
+  static SharedColor ARKUI_DEFAULT_SHADOW_COLOR = {};
+  static Size ARKUI_DEFAULT_SHADOW_OFFSET = {0, -3};
+  static Float ARKUI_DEFAULT_SHADOW_OPACITY = {};
+  static Float ARKUI_DEFAULT_SHADOW_RADIUS = {3};
 
 inline facebook::react::Rect transformRectAroundPoint(
     const facebook::react::Rect& rect,
@@ -183,102 +211,191 @@ class CppComponentInstance : public ComponentInstance {
     auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
     auto isTransformManagedByAnimated =
         getIgnoredPropKeys().count("transform") > 0;
-    if (!old || *(props->backgroundColor) != *(old->backgroundColor)) {
-      this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
+    facebook::react::Transform defaultTransform;
+        
+    if (old && *(props->backgroundColor) != *(old->backgroundColor)) {
+      this->getLocalRootArkUINode().setBackgroundColor(
+            props->backgroundColor);
+    } else if (!old && props->backgroundColor != ARKUI_DEFAULT_BACKGROUND_COLOR) {
+      this->getLocalRootArkUINode().setBackgroundColor(
+            props->backgroundColor);
+    } else {
+      // Do nothing here.
     }
-
+    
     facebook::react::BorderMetrics borderMetrics =
-        props->resolveBorderMetrics(this->m_layoutMetrics);
+      props->resolveBorderMetrics(this->m_layoutMetrics);
     facebook::react::BorderMetrics oldBorderMetrics;
-    if (!old || borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
-      this->getLocalRootArkUINode().setBorderWidth(borderMetrics.borderWidths);
+    
+    if (old && borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
+      this->getLocalRootArkUINode().setBorderWidth(
+        borderMetrics.borderWidths);
+    } else if (!old && borderMetrics.borderWidths != ARKUI_DEFAULT_BORDER_METRICS.borderWidths) {
+      this->getLocalRootArkUINode().setBorderWidth(
+          borderMetrics.borderWidths);
+    } else {
+      // Do nothing here.
     }
-    if (!old || borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
-      this->getLocalRootArkUINode().setBorderColor(borderMetrics.borderColors);
+    
+    if (old && borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
+      this->getLocalRootArkUINode().setBorderColor(
+        borderMetrics.borderColors);
+    } else if (!old && borderMetrics.borderColors != ARKUI_DEFAULT_BORDER_METRICS.borderColors) {
+      this->getLocalRootArkUINode().setBorderColor(
+        borderMetrics.borderColors);
+    } else {
+      // Do nothing here.
     }
-    if (!old || borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
-        !m_isRadiusSetValid) {
-      if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
-        m_isRadiusSetValid = true;
-      }
-      this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
+        
+    if (old && borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii) {
+      this->getLocalRootArkUINode().setBorderRadius(
+        borderMetrics.borderRadii);
+    } else if (!old && borderMetrics.borderRadii != ARKUI_DEFAULT_BORDER_METRICS.borderRadii) {
+      this->getLocalRootArkUINode().setBorderRadius(
+        borderMetrics.borderRadii);
+    } else {
+      // Do nothing here.
     }
-    if (!old || borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
-      this->getLocalRootArkUINode().setBorderStyle(borderMetrics.borderStyles);
+    
+    if (old && borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
+      this->getLocalRootArkUINode().setBorderStyle(
+        borderMetrics.borderStyles);
+    } else if (!old && borderMetrics.borderStyles != ARKUI_DEFAULT_BORDER_METRICS.borderStyles) {
+      this->getLocalRootArkUINode().setBorderStyle(
+        borderMetrics.borderStyles);
+    } else {
+      // Do nothing here.
     }
 
-    if (!old ||
-        props->shadowColor != old->shadowColor &&
-            props->shadowOffset != old->shadowOffset &&
-            props->shadowOpacity != old->shadowOpacity &&
-            props->shadowRadius != old->shadowRadius) {
-      this->getLocalRootArkUINode().setShadow(
+    if (!old) {
+      if (std::abs(static_cast<float>(props->shadowRadius) - 3.0f) < 1e-3 && 
+          std::abs(static_cast<float>(props->shadowOffset.width) - 0.0f) < 1e-3 && 
+          std::abs(static_cast<float>(props->shadowOffset.height) + 3.0f) < 1e-3 &&
+          static_cast<uint32_t>(props->shadowColor) == 0) {
+        // Do nothing here.
+      } else {
+        this->getLocalRootArkUINode().setShadow(
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
           props->shadowRadius);
+      }
+    } else if (props->shadowColor != old->shadowColor &&
+              props->shadowOffset != old->shadowOffset &&
+              props->shadowOpacity != old->shadowOpacity &&
+              props->shadowRadius != old->shadowRadius) {
+        this->getLocalRootArkUINode().setShadow(
+          props->shadowColor,
+          props->shadowOffset,
+          props->shadowOpacity,
+          props->shadowRadius); 
+    } else {
+        // Do nothing here.   
     }
 
-    if (!isTransformManagedByAnimated &&
-        (!old || props->transform != old->transform ||
+    if (!isTransformManagedByAnimated) {
+      if (!old) {
+        if (props->transform != defaultTransform || abs(m_oldPointScaleFactor - 0.0f) > 0.001f) {
+          m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+          this->getLocalRootArkUINode().setTransform(
+            props->transform, m_layoutMetrics.pointScaleFactor);
+          markBoundingBoxAsDirty();
+        }
+      } else if (props->transform != old->transform ||
          abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
-             0.001f)) {
-      m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
-      this->getLocalRootArkUINode().setTransform(
+             0.001f) {
+        m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+        this->getLocalRootArkUINode().setTransform(
           props->transform, m_layoutMetrics.pointScaleFactor);
-      markBoundingBoxAsDirty();
+        markBoundingBoxAsDirty();
+      }
     }
 
-    if (!old || props->pointerEvents != old->pointerEvents) {
+    if (!old) {
+      // 0 -- Default hit test mode
+      if (props->pointerEvents != facebook::react::PointerEventsMode::Auto) {
+        this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
+      }
+    } else if (props->pointerEvents != old->pointerEvents) {
       this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
+    } else {
+      // Do nothing here.
     }
-
-    if (!old || props->accessibilityHint != old->accessibilityHint) {
+        
+    if (!old) {
+      if (!props->accessibilityHint.empty()) {
+        this->getLocalRootArkUINode().setAccessibilityDescription(
+        props->accessibilityHint);
+      }
+    } else if (props->accessibilityHint != old->accessibilityHint) {
       this->getLocalRootArkUINode().setAccessibilityDescription(
           props->accessibilityHint);
+    } else {
+      // Do nothing here.
     }
 
-    if (!old ||
-        props->importantForAccessibility != old->importantForAccessibility) {
+    if (!old) {
+      if (static_cast<int32_t>(props->importantForAccessibility) != 0) {
+        this->getLocalRootArkUINode().setAccessibilityLevel(
+        props->importantForAccessibility);
+      }
+    } else if (props->importantForAccessibility != old->importantForAccessibility) {
       this->getLocalRootArkUINode().setAccessibilityLevel(
-          props->importantForAccessibility);
+        props->importantForAccessibility);
+    } else {
+       // Do nothing here.
     }
 
-    if (!old || props->accessibilityLabel != old->accessibilityLabel) {
-      this->getLocalRootArkUINode().setAccessibilityText(
+    if (!old) {
+      if (!props->accessibilityLabel.empty()) {
+        this->getLocalRootArkUINode().setAccessibilityText(
           props->accessibilityLabel);
+      }
+    } else if (props->accessibilityLabel != old->accessibilityLabel) {
+      this->getLocalRootArkUINode().setAccessibilityText(
+        props->accessibilityLabel);
+    } else {
+      // Do nothing here.
     }
 
-    if (!old || props->accessible != old->accessible) {
+    if (!old) {
+      if (static_cast<int32_t>(props->accessible) != 0) {
+        this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
+      }
+    } else if (props->accessible != old->accessible) {
       this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
-    }
-    if (!isOpacityManagedByAnimated && !isTransformManagedByAnimated &&
-        (!old || props->opacity != old->opacity ||
-         props->transform != old->transform ||
-         props->backfaceVisibility != old->backfaceVisibility)) {
-      this->setOpacity(props);
+    } else {
+      // Do nothing here.
     }
 
-    auto newOverflow = props->getClipsContentToBounds();
-    if (!old || (old->getClipsContentToBounds() != newOverflow)) {
-      m_isClipping = newOverflow;
-      this->getLocalRootArkUINode().setClip(newOverflow);
+    if (!isOpacityManagedByAnimated && !isTransformManagedByAnimated) {
+      if (!old) {
+        if ((abs(props->opacity - 1.0f) > 0.001f) || 
+          (props->transform != defaultTransform) ||
+          (props->backfaceVisibility != facebook::react::BackfaceVisibility::Auto)) {
+            this->setOpacity(props);
+        }
+      } else if ((props->opacity != old->opacity) ||
+        (props->transform != old->transform) ||
+        (props->backfaceVisibility != old->backfaceVisibility)) {
+          this->setOpacity(props);
+      }
+    }
+
+    auto clipContentToBounds = props->getClipsContentToBounds();
+    if (!old) {
+      // 0 -- Do not clip, 1 -- clip content
+      if (static_cast<uint32_t>(clipContentToBounds) != 0) {
+        m_isClipping = clipContentToBounds;
+        this->getLocalRootArkUINode().setClip(clipContentToBounds);
+        markBoundingBoxAsDirty();
+      }
+    } else if (old->getClipsContentToBounds() != clipContentToBounds) {
+      m_isClipping = clipContentToBounds;
+      this->getLocalRootArkUINode().setClip(clipContentToBounds);
       markBoundingBoxAsDirty();
-    }
-
-    auto rawProps = ViewRawProps::getFromDynamic(props->rawProps);
-    if (m_rawProps.needsOffscreenAlphaCompositing != rawProps.needsOffscreenAlphaCompositing) {
-      m_rawProps.needsOffscreenAlphaCompositing = rawProps.needsOffscreenAlphaCompositing;
-      if (m_rawProps.needsOffscreenAlphaCompositing.has_value()) {
-        this->getLocalRootArkUINode().setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing.value());
-      }
-    }
-
-    if (m_rawProps.shouldRasterizeIOS != rawProps.shouldRasterizeIOS) {
-      m_rawProps.shouldRasterizeIOS = rawProps.shouldRasterizeIOS;
-      if (m_rawProps.shouldRasterizeIOS.has_value()) {
-        this->getLocalRootArkUINode().setRenderGroup(m_rawProps.shouldRasterizeIOS.value());
-      }
+    } else {
+      // Do nothing here.
     }
 
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
