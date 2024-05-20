@@ -8,6 +8,24 @@ export class TimingTurboModule extends TurboModule {
     repeats: boolean
   }> = new Map();
 
+  isReady(): boolean {
+    return this.ctx.rnInstance.getLifecycleState() === LifecycleState.READY;
+  };
+
+  isPaused(): boolean {
+    return this.ctx.rnInstance.getLifecycleState() === LifecycleState.PAUSED;
+  };
+
+  createTimerInCpp(
+    id: number,
+    duration: number,
+    repeats: boolean
+  ):void {
+    this.ctx.rnInstance.subscribeToLifecycleEvents("FOREGROUND", () => {
+      this.ctx.rnInstance.postMessageToCpp("TimingCreateTimer", [id, duration,repeats]);
+    })
+  }
+
   createTimer(
     id: number,
     duration: number,

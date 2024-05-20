@@ -187,6 +187,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       folly::dynamic const& payload) override;
   void setBundlePath(std::string const& path) override;
   std::string getBundlePath() override;
+  void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
 
  protected:
   int m_id;

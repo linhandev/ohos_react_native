@@ -49,6 +49,10 @@ class RNInstance {
   virtual void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) = 0;
+  virtual void callFunction(
+      std::string&& module,
+      std::string&& method,
+      folly::dynamic&& params) = 0;
 };
 
 class RNInstanceInternal : public RNInstance,
@@ -90,10 +94,6 @@ class RNInstanceInternal : public RNInstance,
   virtual void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) = 0;
-  virtual void callFunction(
-      std::string&& module,
-      std::string&& method,
-      folly::dynamic&& params) = 0;
   virtual void emitComponentEvent(
       napi_env env,
       facebook::react::Tag tag,
