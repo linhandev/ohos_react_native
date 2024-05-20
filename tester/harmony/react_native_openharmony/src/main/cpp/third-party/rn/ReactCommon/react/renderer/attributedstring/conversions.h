@@ -859,6 +859,30 @@ inline ParagraphAttributes convertRawProp(
       "adjustsFontSizeToFit",
       sourceParagraphAttributes.adjustsFontSizeToFit,
       defaultParagraphAttributes.adjustsFontSizeToFit);
+  paragraphAttributes.minimumFontScale = convertRawProp(
+    context,
+    rawProps,
+    "minimumFontScale",
+    sourceParagraphAttributes.minimumFontScale,
+    defaultParagraphAttributes.minimumFontScale);
+  paragraphAttributes.writingDirection = convertRawProp(
+      context,
+      rawProps,
+      "writingDirection",
+      sourceParagraphAttributes.writingDirection,
+      defaultParagraphAttributes.writingDirection);
+  paragraphAttributes.allowFontScaling = convertRawProp(
+      context,
+      rawProps,
+      "allowFontScaling",
+      sourceParagraphAttributes.allowFontScaling,
+      defaultParagraphAttributes.allowFontScaling);
+  paragraphAttributes.maxFontSizeMultiplier = convertRawProp(
+      context,
+      rawProps,
+      "maxFontSizeMultiplier",
+      sourceParagraphAttributes.maxFontSizeMultiplier,
+      defaultParagraphAttributes.maxFontSizeMultiplier);
   paragraphAttributes.minimumFontSize = convertRawProp(
       context,
       rawProps,
