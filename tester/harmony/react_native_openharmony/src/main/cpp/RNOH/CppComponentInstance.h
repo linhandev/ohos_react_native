@@ -315,9 +315,13 @@ class CppComponentInstance : public ComponentInstance {
       // 0 -- Default hit test mode
       if (props->pointerEvents != facebook::react::PointerEventsMode::Auto) {
         this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
+        this->getLocalRootArkUINode().setEnabled(
+          props->pointerEvents != facebook::react::PointerEventsMode::None);
       }
     } else if (props->pointerEvents != old->pointerEvents) {
       this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
+      this->getLocalRootArkUINode().setEnabled(
+          props->pointerEvents != facebook::react::PointerEventsMode::None);
     } else {
       // Do nothing here.
     }
@@ -403,10 +407,10 @@ class CppComponentInstance : public ComponentInstance {
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
   };
 
-  virtual void onStateChanged(SharedConcreteState const& state) {};
+  virtual void onStateChanged(SharedConcreteState const& state){};
 
   virtual void onEventEmitterChanged(
-      SharedConcreteEventEmitter const& eventEmitter) {};
+      SharedConcreteEventEmitter const& eventEmitter){};
 
   void calculateBoundingBox() {
     auto newBoundingBox = getHitRect();

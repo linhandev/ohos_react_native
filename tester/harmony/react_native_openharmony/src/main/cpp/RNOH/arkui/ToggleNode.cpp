@@ -79,16 +79,6 @@ ToggleNode& ToggleNode::setThumbColor(
   return *this;
 }
 
-ToggleNode& ToggleNode::setDisable(bool disable) {
-  int32_t disableValue = !disable;
-  ArkUI_NumberValue preparedDisable[] = {{.i32 = disableValue}};
-  ArkUI_AttributeItem disableItem = {
-      preparedDisable, sizeof(preparedDisable) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_ENABLED, &disableItem));
-  return *this;
-}
-
 ToggleNode& ToggleNode::setFocusable(bool focusable) {
   int32_t focusableValue = focusable;
   ArkUI_NumberValue preparedFocusable[] = {{.i32 = focusableValue}};

@@ -185,7 +185,7 @@ class RNOHCorePackageComponentInstanceFactoryDelegate
 
 class RNOHCorePackage : public Package {
  public:
-  RNOHCorePackage(Package::Context ctx) : Package(ctx) {};
+  RNOHCorePackage(Package::Context ctx) : Package(ctx){};
 
   std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate()
       override {
