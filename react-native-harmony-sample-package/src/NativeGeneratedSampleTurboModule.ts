@@ -45,6 +45,11 @@ export interface Spec extends TurboModule {
   }; // codegen issue: members of SomeEnum1 are recognized as string, which is not the case + tuples are not supported
   getUnknown(arg: unknown): unknown; // codegen issue: unknowns are recognized as Object
   getRootTag(arg: RootTag): RootTag;
+  getNumber(arg: number): number;
+  getValue(x: number, y: string, z: Object): Object;
+  getValueWithCallback(callback: (value: string) => void): void;
+  getValueWithPromise(error: boolean): Promise<string>;
+  getUnsafeObject(arg: Object): Object;
 }
 
 export default TurboModuleRegistry.get<Spec>('GeneratedSampleTurboModule')!;
