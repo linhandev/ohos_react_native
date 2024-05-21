@@ -112,16 +112,16 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews, m_horizontal);
     m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   }
-
-  if (rawProps.nestedScrollEnabled.has_value() && !rawProps.nestedScrollEnabled.value()) {
-    if (m_rawProps.nestedScrollEnabled != rawProps.nestedScrollEnabled) {
-      m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
-      m_scrollNode.setNestedScrollEnabled(m_rawProps.nestedScrollEnabled.value());
-    }
-  } else {
-    m_scrollNode.setEnableScrollInteraction(
-      !m_isNativeResponderBlocked && props->scrollEnabled);
+    
+  if (rawProps.nestedScrollEnabled.has_value()) {
+     m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
   }
+  auto newEnableScrollInteraction = isEnableScrollInteraction(props && props->scrollEnabled);
+  if (newEnableScrollInteraction != m_enableScrollInteraction) {
+    m_enableScrollInteraction = newEnableScrollInteraction;
+    m_scrollNode.setEnableScrollInteraction(m_enableScrollInteraction);
+  }  
+    
   if (m_rawProps.endFillColor != rawProps.endFillColor) {
     m_rawProps.endFillColor = rawProps.endFillColor;
     if (m_rawProps.endFillColor.has_value()) {
@@ -171,18 +171,37 @@ void ScrollViewComponentInstance::handleCommand(
 void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
     bool isBlocked) {
   m_isNativeResponderBlocked = isBlocked;
-  if (isBlocked) {
-    m_scrollNode.setEnableScrollInteraction(false);
-  } else {
-    bool scrollEnabled = true;
-    if (m_rawProps.nestedScrollEnabled.has_value()) {
-      scrollEnabled &= m_rawProps.nestedScrollEnabled.value();
-    }
-    if (m_props) {
-      scrollEnabled &= m_props->scrollEnabled;
-    }
-    m_scrollNode.setEnableScrollInteraction(scrollEnabled);
+  auto newEnableScrollInteraction = isEnableScrollInteraction(m_props && m_props->scrollEnabled);
+  if (newEnableScrollInteraction != m_enableScrollInteraction) {
+    m_enableScrollInteraction = newEnableScrollInteraction;  
+    m_scrollNode.setEnableScrollInteraction(m_enableScrollInteraction);
   }
+}
+
+bool rnoh::ScrollViewComponentInstance::isEnableScrollInteraction(bool scrollEnabled) {
+  if (m_isNativeResponderBlocked) {
+        return false;
+  }  
+  if (!scrollEnabled) {
+       return false; 
+  }
+  if (m_rawProps.nestedScrollEnabled.has_value() && !m_rawProps.nestedScrollEnabled.value() && isNestedScroll()) {
+     return false;   
+  }
+    
+  return true;
+}
+
+bool rnoh::ScrollViewComponentInstance::isNestedScroll() {
+    auto parent = m_parent.lock();
+    while(parent) {
+        // TODO: how to judge a component is scrollable component.
+        if (parent->getComponentName() == this->getComponentName()) {
+            return true;
+        }
+        parent = parent->getParent().lock();
+    }
+    return false;
 }
 
 facebook::react::Point rnoh::ScrollViewComponentInstance::getCurrentOffset()
