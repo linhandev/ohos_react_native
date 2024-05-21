@@ -3,6 +3,10 @@ import { TM } from "@rnoh/react-native-openharmony/generated/ts"
 
 
 export class SampleTurboModule extends TurboModule implements TM.GeneratedSampleTurboModule.Spec, TM.GeneratedSampleTurboModule2.Spec {
+  getConstants(): Object {
+    return {const1: true, const2: 1228, const3: "something"}
+  }
+
   getUnionValue(arg: null | Object): Object {
     return arg ?? {}
   }
@@ -39,14 +43,44 @@ export class SampleTurboModule extends TurboModule implements TM.GeneratedSample
     return arg;
   }
 
-  getObject(arg: { x: { y: number } }): Object {
+  getNumber(arg: number): number {
+    console.log(`RNOH SampleTurboModule::getNumber(${arg})`);
+    return arg;
+  }
+
+  getObject(arg: Object): Object {
     console.log(`RNOH SampleTurboModule::getObject(${arg})`);
+    return arg;
+  }
+
+  getUnsafeObject(arg: Object): Object {
+    console.log(`RNOH SampleTurboModule::getUnsafeObject(${arg})`);
     return arg;
   }
 
   getArray(args: any[]): any[] {
     console.log(`RNOH SampleTurboModule::getArray(${args})`);
     return args;
+  }
+
+  getValue(x: number, y: string, z: Object): Object {
+    console.log(`RNOH SampleTurboModule::getValue(${x} ${y} ${z})`);
+    return {x: x, y: y, z:z};
+  }
+
+  getValueWithCallback(onComplete: (value: string) => void): void {
+    console.log(`RNOH SampleTurboModule::getValueWithCallback`);
+    setTimeout(() => {
+      onComplete?.('value from callback!');
+    }, 1000);
+  }
+
+  getValueWithPromise(error: boolean): Promise<string> {
+    console.log(`RNOH SampleTurboModule::getValueWithPromise(${error})`)
+    if (error) {
+      return Promise.reject('intentional promise rejection');
+    }
+    return Promise.resolve('result!');
   }
 
   registerFunction(onComplete: (value: string) => void): void {
