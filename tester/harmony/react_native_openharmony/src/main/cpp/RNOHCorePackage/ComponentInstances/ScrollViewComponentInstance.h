@@ -38,6 +38,7 @@ class ScrollViewComponentInstance
   float m_recentScrollFrameOffset = 0;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
   std::optional<ChildTagWithOffset> m_firstVisibleView = std::nullopt;
+  bool m_enableScrollInteraction = true;  
 
   // Mimics of implementation in ImageComponentInstance.cpp
   struct ScrollViewRawProps {
@@ -122,5 +123,7 @@ class ScrollViewComponentInstance
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
   facebook::react::Point getContentViewOffset() const;
+  bool isNestedScroll();
+  bool isEnableScrollInteraction(bool scrollEnabled);
 };
 } // namespace rnoh
