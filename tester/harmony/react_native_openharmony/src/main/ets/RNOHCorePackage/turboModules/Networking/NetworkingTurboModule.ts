@@ -166,6 +166,11 @@ export class NetworkingTurboModule extends TurboModule {
     return formData;
   }
 
+  async clearCookies(callback: (didDeleteAnyCookies: boolean) => void) {
+    const didDeleteAnyCookies = await this.ctx.rnInstance.httpClient.clearCookies();
+    callback(didDeleteAnyCookies);
+  }
+
   async sendRequest(query: Query, callback: (requestId: number) => void) {
     const httpClient = this.ctx.rnInstance.httpClient;
     const requestId = this.createId();
@@ -229,8 +234,10 @@ export class NetworkingTurboModule extends TurboModule {
         extraData: extraData,
         connectTimeout: query.timeout,
         readTimeout: query.timeout,
-        multiFormDataList: multiFormDataList
-      }, onProgress)
+        multiFormDataList: multiFormDataList,
+        onProgress: onProgress,
+        handleCookies: query.withCredentials,
+      },)
     this.requestCancellersById.set(requestId, cancel);
 
     promise.then(async (httpResponse) => {
