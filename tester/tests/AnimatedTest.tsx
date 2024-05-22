@@ -76,16 +76,7 @@ export function AnimatedTest() {
         itShould="move grey twice but half the total distance of red">
         <Modulo />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        skip={{
-          harmony: {
-            cAPI: 'perspective is not implemented on Harmony',
-            arkTS: 'perspective is not implemented on Harmony',
-          },
-          android: false,
-        }}
-        itShould="move red square closer">
+      <TestCase.Example tags={['C_API']} itShould="move red square closer">
         <Perspective />
       </TestCase.Example>
       <TestCase.Example

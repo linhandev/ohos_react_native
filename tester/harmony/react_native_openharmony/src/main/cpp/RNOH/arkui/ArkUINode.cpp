@@ -286,11 +286,11 @@ ArkUINode& ArkUINode::setBackgroundColor(
 ArkUINode& ArkUINode::setTransform(
     facebook::react::Transform const& transform,
     facebook::react::Float pointScaleFactor) {
-  ArkUI_NumberValue transformCenterValue[] = {0, 0, 0, 0.5f, 0.5f};
+  std::array<ArkUI_NumberValue, 6> transformCenterValue = {
+      0, 0, 0, 0.5f, 0.5f, 0.0f};
 
   ArkUI_AttributeItem transformCenterItem = {
-      transformCenterValue,
-      sizeof(transformCenterValue) / sizeof(ArkUI_NumberValue)};
+      transformCenterValue.data(), transformCenterValue.size()};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TRANSFORM_CENTER, &transformCenterItem));
 
@@ -300,6 +300,10 @@ ArkUINode& ArkUINode::setTransform(
   matrix[12] *= pointScaleFactor;
   matrix[13] *= pointScaleFactor;
   matrix[14] *= pointScaleFactor;
+
+  // NOTE: ArkUI perspective is in a different unit than React Native's,
+  // which we need to correct for
+  matrix[11] /= -pointScaleFactor;
 
   std::array<ArkUI_NumberValue, 16> transformValue;
   for (int i = 0; i < 16; i++) {
