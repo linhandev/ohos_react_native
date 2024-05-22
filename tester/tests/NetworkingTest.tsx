@@ -1,7 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React from 'react';
-import {TestCase} from '../components';
+import {Button, TestCase} from '../components';
+const RCTNetworking =
+  require('react-native/Libraries/Network/RCTNetworking').default;
 
 const FILE_URI = '/data/storage/el2/base/files/testFile.txt';
 
@@ -111,13 +113,12 @@ export const NetworkingTest = () => {
           itShould="correctly read response headers"
           fn={async ({expect}) => {
             const response = await fetch(
-              'https://httpbin.org/response-headers?Set-Cookie=theme%3Dlight&Set-Cookie=sessionToken%3Dabc123',
+              'https://httpbin.org/response-headers?first-header=first&second-header=second',
             );
-            const cookies = response.headers.get('set-cookie');
-            expect(cookies).to.be.oneOf([
-              'theme=light, sessionToken=abc123',
-              'theme=light,sessionToken=abc123',
-            ]);
+            const firstHeader = response.headers.get('first-header');
+            const secondHeader = response.headers.get('second-header');
+            expect(firstHeader).to.be.eq('first');
+            expect(secondHeader).to.be.eq('second');
           }}
         />
         <TestCase.Logical
@@ -147,15 +148,23 @@ export const NetworkingTest = () => {
 
             await new Promise<void>((resolve, reject) => {
               xhr.onprogress = function (this, ev) {
-                expect(ev.total).to.not.be.null.and.not.be.undefined;
-                expect(ev.loaded).to.not.be.null.and.not.be.undefined;
+                try {
+                  expect(ev.total).to.not.be.null.and.not.be.undefined;
+                  expect(ev.loaded).to.not.be.null.and.not.be.undefined;
+                } catch (error) {
+                  reject(error);
+                }
                 responseText = xhr.responseText;
               };
 
               xhr.onload = function () {
                 const response = JSON.parse(responseText);
-                expect(response.data).to.be.eq(longStr);
-                resolve();
+                try {
+                  expect(response.data).to.be.eq(longStr);
+                  resolve();
+                } catch (error) {
+                  reject(error);
+                }
               };
 
               xhr.onerror = function () {
@@ -165,6 +174,86 @@ export const NetworkingTest = () => {
               xhr.send(longStr);
             });
           }}
+        />
+        <TestCase.Logical
+          tags={['C_API']}
+          itShould="verify that cookies are saved and sent correctly (withCredentials)"
+          fn={async ({expect}) => {
+            await sendCookieRequest(
+              'https://httpbin.org/cookies/set?theme=light',
+              true,
+            );
+            await sendCookieRequest(
+              'https://httpbin.org/cookies/set?theme=dark&secondattribute=test',
+              true,
+            );
+
+            const thirdCookies = (await sendCookieRequest(
+              'https://httpbin.org/cookies',
+              true,
+            )) as Record<string, unknown>;
+            expect(thirdCookies.theme).to.equal('dark');
+            expect(thirdCookies.secondattribute).to.equal('test');
+
+            const fourthCookies = await sendCookieRequest(
+              'https://httpbin.org/cookies',
+              false,
+            );
+            expect(fourthCookies).to.be.empty;
+          }}
+        />
+        <TestCase.Manual
+          tags={['C_API']}
+          initialState={{cookies: {}}}
+          arrange={({setState}) => {
+            const requestSetCookies = async () => {
+              const xhr = new XMLHttpRequest();
+              xhr.open(
+                'GET',
+                'https://httpbin.org/cookies/set?testcookie=storedcookie',
+                true,
+              );
+              xhr.send();
+            };
+
+            const getCookies = async () => {
+              const xhr = new XMLHttpRequest();
+              xhr.open('GET', 'https://httpbin.org/cookies', true);
+              xhr.onloadend = function () {
+                const response = JSON.parse(xhr.responseText);
+                setState({cookies: response.cookies});
+              };
+              xhr.send();
+            };
+            const clearCookies = async () => {
+              RCTNetworking.clearCookies(() => {});
+            };
+
+            return (
+              <>
+                <View>
+                  <Text style={{fontSize: 16, marginBottom: 10}}>
+                    <Text style={{fontSize: 16, marginBottom: 10}}>
+                      1. Press "Clear cookies".{'\n'}
+                      2. Press "Set cookies".{'\n'}
+                      4. Close and reopen the app.{'\n'}
+                      5. Press "Get cookies".
+                    </Text>
+                  </Text>
+                  <Button onPress={requestSetCookies} label="Set cookies" />
+                  <Button onPress={getCookies} label="Get cookies" />
+                  <Button onPress={clearCookies} label="Clear cookies" />
+                </View>
+              </>
+            );
+          }}
+          assert={({state, expect}) => {
+            expect(
+              (state.cookies as {testcookie?: string}).testcookie,
+            ).to.equal('storedcookie');
+          }}
+          modal
+          itShould="store cookies in a persistant way"
         />
       </TestSuite>
       <TestSuite name="WebSocket">
@@ -302,6 +391,26 @@ function WebSocketSendingAndReceivingArrayBuffer() {
 
   return <WebSocketResultBlock status={status} data={data} />;
 }
+
+const sendCookieRequest = (
+  url: string,
+  withCredentials: boolean,
+): Promise<{cookies: Record<string, unknown>}> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.withCredentials = withCredentials;
+    xhr.onloadend = () => {
+      try {
+        const response = JSON.parse(xhr.responseText);
+        resolve(response.cookies);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    xhr.send();
+  });
+};
 
 function WebSocketSendingAndReceivingBlob() {
   const [status, setStatus] = React.useState('Loading...');
