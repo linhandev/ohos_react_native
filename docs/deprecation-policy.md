@@ -20,13 +20,13 @@ The purpose of this policy is to standardize the procedure for DEPRECATING SOFTW
 This package doesn't follow semantic versioning. RNOH version consists of three values: MAJOR.MINOR.PATCH. MAJOR and MINOR matches react-native's MAJOR and MINOR, which RNOH aims to be compatible with. PATCH number is increased with every RNOH release for targeted react-native version.
 
 ## Notifications
-EOL must be preceded with DEPRECATION, that should start:
-- for RN_APP_DEVELOPERs: at least 4 RELEASES from the planned EOL
-- for RN_LIBRARY_DEVELOPERs: at least 8 RELEASES from the planned EOL
+EOL must be preceded with DEPRECATION that should be introduced:
+- for RN_APP_DEVELOPERs: at least 4 RELEASES before the planned EOL
+- for RN_LIBRARY_DEVELOPERs: at least 8 RELEASES before the planned EOL
 
 EOL can't be introduced sooner than:
-- for RN_APP_DEVELOPERs: 1 month from the date of the release that introduces DEPRECATION
-- for RN_LIBRARY_DEVELOPERs: 3 months from the date of the release that introduces DEPRECATION
+- for RN_APP_DEVELOPERs: 1 month after the date of the release that introduces DEPRECATION
+- for RN_LIBRARY_DEVELOPERs: 3 months after the date of the release that introduces DEPRECATION
 
 Notification about DEPRECATION will be included:
 - in the CHANGELOG.md file included in this repository
