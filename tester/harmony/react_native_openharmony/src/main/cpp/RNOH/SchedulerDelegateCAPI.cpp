@@ -32,7 +32,10 @@ void SchedulerDelegateCAPI::schedulerDidSetIsJSResponder(
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
   while (componentInstance != nullptr) {
-    componentInstance->setNativeResponderBlocked(blockNativeResponder);
+    m_taskExecutor->runTask(
+        TaskThread::MAIN, [componentInstance, blockNativeResponder] {
+          componentInstance->setNativeResponderBlocked(blockNativeResponder);
+        });
     componentInstance = componentInstance->getParent().lock();
   }
 }
