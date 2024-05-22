@@ -138,8 +138,15 @@ void TextInputNode::setCaretHidden(bool hidden) {
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item));
   } else {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE));
+    ArkUI_NumberValue value = {.f32 = 2};  //The default width of the cursor in ArkUI is 2 vp
+    ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item));
+    
+    value = {.u32 = m_caretColorValue};
+    item = {&value, sizeof(ArkUI_NumberValue)};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
   }
 }
 
@@ -219,6 +226,7 @@ void TextInputNode::setFont(
 
 void TextInputNode::setCaretColor(facebook::react::SharedColor const& color) {
   uint32_t colorValue = *color;
+  m_caretColorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(

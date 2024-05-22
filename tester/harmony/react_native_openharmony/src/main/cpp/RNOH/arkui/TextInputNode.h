@@ -21,6 +21,8 @@ class TextInputNodeDelegate {
 };
 
 class TextInputNode : public TextInputNodeBase {
+ private:
+  uint32_t m_caretColorValue;
  protected:
   TextInputNodeDelegate* m_textInputNodeDelegate;
 
