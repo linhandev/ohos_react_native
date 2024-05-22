@@ -33,6 +33,9 @@ export interface HttpErrorResponse {
   error: Error
 }
 
-export type RequestOptions = http.HttpRequestOptions
+export type RequestOptions = http.HttpRequestOptions & {
+  handleCookies?: boolean,
+  onProgress?: (partialProgress: PartialProgress) => void
+}
 
 export type CancelRequestCallback = () => void
