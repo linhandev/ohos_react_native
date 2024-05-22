@@ -170,6 +170,23 @@ export function TextTest() {
           theme. 一 乙 二 十 丁 厂 七 卜 人 入 八 九 几 儿 了 力 乃 又
         </Text>
       </TestCase.Example>
+      <TestCase.Example
+        tags={['C_API']}
+        itShould="render <Text /> without content/text">
+        <View
+          style={{
+            width: '100%',
+            backgroundColor: 'pink',
+          }}>
+          <Text style={{fontSize: 20, backgroundColor: 'lightgreen'}}>
+            {''}
+          </Text>
+          <Text style={{fontSize: 20, backgroundColor: 'pink'}}>
+            {undefined}
+          </Text>
+          <Text style={{fontSize: 20, backgroundColor: 'lightblue'}} />
+        </View>
+      </TestCase.Example>
     </TestSuite>
   );
 }
