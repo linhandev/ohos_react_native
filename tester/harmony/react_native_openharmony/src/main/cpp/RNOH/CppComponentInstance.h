@@ -254,12 +254,8 @@ class CppComponentInstance : public ComponentInstance {
     if (!old || props->accessible != old->accessible) {
       this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
     }
-    if (!isOpacityManagedByAnimated && !isTransformManagedByAnimated &&
-        (!old || props->opacity != old->opacity ||
-         props->transform != old->transform ||
-         props->backfaceVisibility != old->backfaceVisibility)) {
-      this->setOpacity(props);
-    }
+
+    this->setOpacity(props);
 
     auto newOverflow = props->getClipsContentToBounds();
     if (!old || (old->getClipsContentToBounds() != newOverflow)) {
@@ -310,18 +306,31 @@ class CppComponentInstance : public ComponentInstance {
 
  private:
   void setOpacity(facebook::react::SharedViewProps const& props) {
+    auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
+    auto isTransformManagedByAnimated =
+        getIgnoredPropKeys().count("transform") > 0;
+    bool shouldSetOpacity = true;
+
+    if (isOpacityManagedByAnimated) {
+      shouldSetOpacity = false;
+    }
+
     auto opacity = props->opacity;
     float validOpacity = std::max(0.0f, std::min((float)opacity, 1.0f));
     facebook::react::Transform transform = props->transform;
-    if (props->backfaceVisibility ==
-        facebook::react::BackfaceVisibility::Hidden) {
+    if (!isTransformManagedByAnimated &&
+        props->backfaceVisibility ==
+            facebook::react::BackfaceVisibility::Hidden) {
       facebook::react::Vector vec{0, 0, 1, 0};
       auto resVec = transform * vec;
       if (resVec.z < 0.0) {
         validOpacity = 0.0;
+        shouldSetOpacity = true;
       }
     }
-    this->getLocalRootArkUINode().setOpacity(validOpacity);
+    if (shouldSetOpacity) {
+      this->getLocalRootArkUINode().setOpacity(validOpacity);
+    }
   }
 
  protected:
