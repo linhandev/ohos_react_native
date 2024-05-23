@@ -29,6 +29,7 @@ export function buildRNComponentForTag(ctx: RNComponentContext, tag: Tag) {
 }
 
 /**
+ * @api: RN_APP_DEVELOPER
  * The RNApp component renders a React Native application. It is recommended for use when the application consists of a single
  * surface. For applications with multiple surfaces, consider using RNSurface instead.
  */

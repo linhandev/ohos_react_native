@@ -1,6 +1,3 @@
-/**
- * Only used in C-API architecture.
- */
 import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI';
 import { Tag, Descriptor } from "./DescriptorBase"
 import { RNComponentContext, ComponentBuilderContext, ComponentBuilderContextImpl } from "./RNComponentContext"
@@ -8,7 +5,7 @@ import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
 
 /**
- * This is internal class instantiated by RNSurface.
+ * This is internal class used by RNSurface when C-API architecture is enabled.
  */
 export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
   private uiCtx: UIContext;

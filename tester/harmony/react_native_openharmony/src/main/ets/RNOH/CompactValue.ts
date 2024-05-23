@@ -1,5 +1,8 @@
 import { DimensionValue } from "./RNTypes"
 
+/**
+ * @api
+ */
 export class CompactValue {
   constructor(private rawValue: DimensionValue, private parentLength: number) {
   }
