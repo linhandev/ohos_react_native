@@ -352,7 +352,7 @@ void TextComponentInstance::updateFragmentTouchTargets(
   auto textMeasurer = static_cast<TextMeasurer*>(nativeTextLayoutManager);
   auto typography = textMeasurer->measureTypography(
       newState.attributedString,
-      newState.paragraphAttributes,
+      m_props->paragraphAttributes,
       {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size}).build();
   auto rects = typography.getRectsForFragments();
 
