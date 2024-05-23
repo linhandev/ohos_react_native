@@ -27,22 +27,41 @@ export class SafeAreaInsetsProvider {
   }
 
   async createSafeAreaInsets(): Promise<SafeAreaInsets> {
-    const win = await WindowUtils.getLastWindow(this.uiAbilityContext)
-    const [displayCutoutInfo, systemAvoidArea, cutoutAvoidArea] = await Promise.all([
-      display.getDefaultDisplaySync().getCutoutInfo(),
-      win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_SYSTEM),
-      win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_CUTOUT),
-    ])
-    const waterfallAvoidArea: WindowUtils.AvoidArea = {
-      visible: true,
-      leftRect: displayCutoutInfo.waterfallDisplayAreaRects.left,
-      rightRect: displayCutoutInfo.waterfallDisplayAreaRects.right,
-      topRect: displayCutoutInfo.waterfallDisplayAreaRects.top,
-      bottomRect: displayCutoutInfo.waterfallDisplayAreaRects.bottom
+    try{
+      const win = await WindowUtils.getLastWindow(this.uiAbilityContext)
+      const [displayCutoutInfo, systemAvoidArea, cutoutAvoidArea] = await Promise.all([
+        display.getDefaultDisplaySync().getCutoutInfo(),
+        win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_SYSTEM),
+        win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_CUTOUT),
+      ])
+      const waterfallAvoidArea: WindowUtils.AvoidArea = {
+        visible: true,
+        leftRect: displayCutoutInfo.waterfallDisplayAreaRects.left,
+        rightRect: displayCutoutInfo.waterfallDisplayAreaRects.right,
+        topRect: displayCutoutInfo.waterfallDisplayAreaRects.top,
+        bottomRect: displayCutoutInfo.waterfallDisplayAreaRects.bottom
+      }
+      const avoidAreas = [cutoutAvoidArea, waterfallAvoidArea, systemAvoidArea]
+      const insets = getSafeAreaInsetsFromAvoidAreas(avoidAreas, win.getWindowProperties().windowRect)
+      return mapProps(insets, (val) => px2vp(val))
+    } catch(BusinessError){
+      const win = await WindowUtils.getLastWindow(this.uiAbilityContext)
+      const [displayCutoutInfo, systemAvoidArea, cutoutAvoidArea] = await Promise.all([
+        display.getDefaultDisplaySync().getCutoutInfo(),
+        win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_SYSTEM),
+        win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_CUTOUT),
+      ])
+      const waterfallAvoidArea: WindowUtils.AvoidArea = {
+        visible: true,
+        leftRect: displayCutoutInfo.waterfallDisplayAreaRects.left,
+        rightRect: displayCutoutInfo.waterfallDisplayAreaRects.right,
+        topRect: displayCutoutInfo.waterfallDisplayAreaRects.top,
+        bottomRect: displayCutoutInfo.waterfallDisplayAreaRects.bottom
+      }
+      const avoidAreas = [cutoutAvoidArea, waterfallAvoidArea, systemAvoidArea]
+      const insets = getSafeAreaInsetsFromAvoidAreas(avoidAreas, win.getWindowProperties().windowRect)
+      return mapProps(insets, (val) => px2vp(val))
     }
-    const avoidAreas = [cutoutAvoidArea, waterfallAvoidArea, systemAvoidArea]
-    const insets = getSafeAreaInsetsFromAvoidAreas(avoidAreas, win.getWindowProperties().windowRect)
-    return mapProps(insets, (val) => px2vp(val))
   }
 
   private updateInsets(insets: SafeAreaInsets) {
