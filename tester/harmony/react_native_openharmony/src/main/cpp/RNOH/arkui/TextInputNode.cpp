@@ -268,6 +268,9 @@ void TextInputNode::setPasswordRules(std::string rules) {
 
 void TextInputNode::setUnderlineColorAndroid(
     facebook::react::SharedColor const& underlineColorAndroid) {
+  if (*underlineColorAndroid >> 24 == 0) {
+    return;
+  }
   ArkUI_NumberValue showValue = {.i32 = 1};
   ArkUI_AttributeItem showItem = {&showValue, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
