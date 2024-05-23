@@ -31,8 +31,7 @@ void SchedulerDelegateCAPI::schedulerDidSetIsJSResponder(
 
   m_taskExecutor->runTask(
       TaskThread::MAIN, [this, tag = shadowView.tag, blockNativeResponder] {
-        auto componentInstance =
-            m_componentInstanceRegistry->findByTag(tag);
+        auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
         while (componentInstance != nullptr) {
           componentInstance->setNativeResponderBlocked(blockNativeResponder);
           componentInstance = componentInstance->getParent().lock();
