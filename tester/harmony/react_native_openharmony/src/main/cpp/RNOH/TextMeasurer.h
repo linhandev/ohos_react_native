@@ -8,6 +8,7 @@
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
+#include "TextMeasureRegistry.h"
 
 namespace rnoh {
 class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
@@ -16,18 +17,20 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       napi_env env,
       napi_ref measureTextFnRef,
       std::shared_ptr<TaskExecutor> taskExecutor,
-      FeatureFlagRegistry::Shared featureFlagManager)
+      FeatureFlagRegistry::Shared featureFlagManager,
+      int id)
       : m_env(env),
         m_measureTextFnRef(measureTextFnRef),
         m_taskExecutor(taskExecutor),
-        m_featureFlagRegistry(featureFlagManager) {}
+        m_featureFlagRegistry(featureFlagManager),
+        m_rnInstanceId(id){}
 
   facebook::react::TextMeasurement measure(
       facebook::react::AttributedString attributedString,
       facebook::react::ParagraphAttributes paragraphAttributes,
       facebook::react::LayoutConstraints layoutConstraints) override;
 
-  ArkUITypography measureTypography(
+  ArkUITypographyBuilder measureTypography(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,
       facebook::react::LayoutConstraints const& layoutConstraints);
@@ -35,13 +38,28 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   std::vector<OH_Drawing_LineMetrics> getLineMetrics(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,
-      facebook::react::LayoutConstraints const& layoutConstraints) override;;
+      facebook::react::LayoutConstraints const& layoutConstraints) override;
+  
+  void setScreenScale(float m_fontScale, float m_scale);
  private:
+  
+  std::pair<ArkUITypographyBuilder, ArkUITypography> findFitFontSize(int maxFontSize,
+    facebook::react::AttributedString& attributedString,
+    facebook::react::ParagraphAttributes& paragraphAttributes,
+    facebook::react::LayoutConstraints& layoutConstraints);
+  
+  std::string stringCapitalize(const std::string& strInput);
+  void textCaseTransform(std::string& textContent, facebook::react::TextTransform type);
+  void releaseTypography(ArkUITypographyBuilder& builder, ArkUITypography& typography);
+  
   napi_env m_env;
   napi_ref m_measureTextFnRef;
   std::shared_ptr<TaskExecutor> m_taskExecutor;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   int32_t getOHDrawingTextAlign(
       const facebook::react::TextAlignment& textAlign);
+  float m_fontScale = 1.0;
+  float m_scale = 1.0;
+  int m_rnInstanceId = 0;
 };
 } // namespace rnoh
