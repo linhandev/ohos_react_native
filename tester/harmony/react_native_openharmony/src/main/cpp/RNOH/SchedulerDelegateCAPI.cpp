@@ -29,12 +29,15 @@ void SchedulerDelegateCAPI::schedulerDidSetIsJSResponder(
   m_schedulerDelegateArkTS->schedulerDidSetIsJSResponder(
       shadowView, isJSResponder, blockNativeResponder);
 
-  auto componentInstance =
-      m_componentInstanceRegistry->findByTag(shadowView.tag);
-  while (componentInstance != nullptr) {
-    componentInstance->setNativeResponderBlocked(blockNativeResponder);
-    componentInstance = componentInstance->getParent().lock();
-  }
+  m_taskExecutor->runTask(
+      TaskThread::MAIN, [this, tag = shadowView.tag, blockNativeResponder] {
+        auto componentInstance =
+            m_componentInstanceRegistry->findByTag(tag);
+        while (componentInstance != nullptr) {
+          componentInstance->setNativeResponderBlocked(blockNativeResponder);
+          componentInstance = componentInstance->getParent().lock();
+        }
+      });
 }
 
 void SchedulerDelegateCAPI::synchronouslyUpdateViewOnUIThread(
