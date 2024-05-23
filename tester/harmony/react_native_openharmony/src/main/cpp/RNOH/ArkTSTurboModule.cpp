@@ -18,7 +18,7 @@ using IntermediaryArg = ArkJS::IntermediaryArg;
 using IntermediaryCallback = ArkJS::IntermediaryCallback;
 
 IntermediaryCallback createIntermediaryCallback(
-    std::weak_ptr<facebook::react::CallbackWrapper>);
+    std::shared_ptr<react::CallbackWrapper>);
 const std::vector<facebook::jsi::Value> convertDynamicsToJSIValues(
     facebook::jsi::Runtime& rt,
     const std::vector<folly::dynamic>& dynamics);
@@ -184,9 +184,10 @@ ArkTSTurboModule::convertJSIValuesToIntermediaryValues(
     if (jsiArgs[argIdx].isObject()) {
       auto obj = jsiArgs[argIdx].getObject(runtime);
       if (obj.isFunction(runtime)) {
-        args[argIdx] =
-            createIntermediaryCallback(react::CallbackWrapper::createWeak(
-                std::move(obj.getFunction(runtime)), runtime, jsInvoker));
+        args[argIdx] = createIntermediaryCallback(
+            react::CallbackWrapper::createWeak(
+                std::move(obj.getFunction(runtime)), runtime, jsInvoker)
+                .lock());
         continue;
       }
     }
@@ -196,27 +197,15 @@ ArkTSTurboModule::convertJSIValuesToIntermediaryValues(
 }
 
 IntermediaryCallback createIntermediaryCallback(
-    std::weak_ptr<react::CallbackWrapper> weakCbCtx) {
-  return std::function(
-      [weakCbCtx =
-           std::move(weakCbCtx)](std::vector<folly::dynamic> cbArgs) -> void {
-        auto cbCtx = weakCbCtx.lock();
-        if (!cbCtx) {
-          return;
-        }
-        cbCtx->jsInvoker().invokeAsync([weakCbCtx2 = std::move(weakCbCtx),
-                                        callbackArgs = std::move(cbArgs)]() {
-          auto cbCtx2 = weakCbCtx2.lock();
-          if (!cbCtx2) {
-            return;
-          }
-          const auto jsArgs =
-              convertDynamicsToJSIValues(cbCtx2->runtime(), callbackArgs);
-          cbCtx2->callback().call(
-              cbCtx2->runtime(), jsArgs.data(), jsArgs.size());
-          cbCtx2->allowRelease();
-        });
-      });
+    std::shared_ptr<react::CallbackWrapper> cbCtx) {
+  return std::function([cbCtx](std::vector<folly::dynamic> cbArgs) -> void {
+    cbCtx->jsInvoker().invokeAsync([cbCtx, callbackArgs = std::move(cbArgs)]() {
+      const auto jsArgs =
+          convertDynamicsToJSIValues(cbCtx->runtime(), callbackArgs);
+      cbCtx->callback().call(cbCtx->runtime(), jsArgs.data(), jsArgs.size());
+      cbCtx->allowRelease();
+    });
+  });
 }
 
 const std::vector<jsi::Value> convertDynamicsToJSIValues(
