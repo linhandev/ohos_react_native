@@ -37,6 +37,7 @@
 #include "RNOHCorePackage/ComponentInstances/TextComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/TextInputComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ViewComponentInstance.h"
+#include "RNOHCorePackage/ComponentInstances/CustomNodeComponentInstance.h"
 #include "RNOHCorePackage/EventEmitRequestHandlers/ImageEventEmitRequestHandler.h"
 #include "RNOHCorePackage/EventEmitRequestHandlers/ModalEventEmitRequestHandler.h"
 #include "RNOHCorePackage/EventEmitRequestHandlers/PullToRefreshViewEventEmitRequestHandler.h"
@@ -150,8 +151,11 @@ class RNOHCorePackageComponentInstanceFactoryDelegate
   using ComponentInstanceFactoryDelegate::ComponentInstanceFactoryDelegate;
 
   ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
-    if (ctx.componentName == "RootView" || ctx.componentName == "View") {
+    if (ctx.componentName == "RootView") {
       return std::make_shared<ViewComponentInstance>(std::move(ctx));
+    }
+    if (ctx.componentName == "View") {
+      return std::make_shared<CustomNodeComponentInstance>(std::move(ctx));
     }
     if (ctx.componentName == "Paragraph") {
       return std::make_shared<TextComponentInstance>(std::move(ctx));
