@@ -341,10 +341,9 @@ class CppComponentInstance : public ComponentInstance {
     } else if (props->nativeId != "") {
       return props->nativeId;
     } else {
-      std::string id = ShadowNodeT::Name();
-      id += "@";
-      id += m_tag;
-      return id;
+      std::ostringstream id;
+      id << ShadowNodeT::Name() << "@" << m_tag;
+      return id.str();
     }
   }
 
