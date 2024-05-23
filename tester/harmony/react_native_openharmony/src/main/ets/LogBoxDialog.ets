@@ -1,7 +1,9 @@
 import { RNInstance, RNComponentContext, CustomComponentBuilder } from "./RNOH"
 import { RNSurface, SurfaceConfig2 } from "./RNSurface"
 
-
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 @CustomDialog
 export struct LogBoxDialog {
   public ctx!: RNComponentContext

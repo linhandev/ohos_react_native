@@ -8,6 +8,7 @@ interface ComponentManagerRegistryEntry {
 }
 
 /**
+ * @api
  * Stores ComponentManagers. Check ComponentManager documentation for more information.
  */
 export class ComponentManagerRegistry {
@@ -38,7 +39,7 @@ export class ComponentManagerRegistry {
   /**
    * @param tag
    * @param manager
-   * @deprecated Use findOrCreateComponentManager instead
+   * @deprecated Use findOrCreateComponentManager instead (latestRNOHVersion: 0.72.26)
    */
   public registerComponentManager(tag: Tag, manager: ComponentManager) {
     const componentManagers = this.componentManagersByTag.get(tag)

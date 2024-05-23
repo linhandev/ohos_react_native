@@ -8,7 +8,7 @@ import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
 
 /**
- * This is internal class instantiated by RNSurface.
+ * This is internal class used by RNSurface when C-API architecture is enabled.
  */
 export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
   private uiCtx: UIContext;
