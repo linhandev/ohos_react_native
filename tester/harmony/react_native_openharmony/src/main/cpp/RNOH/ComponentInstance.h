@@ -200,6 +200,7 @@ class ComponentInstance
   Dependencies::Shared m_deps;
   std::unordered_set<std::string> m_ignoredPropKeys;
   facebook::react::ShadowView m_shadowView;
+  int m_rnInstanceId = 0;
 };
 
 } // namespace rnoh

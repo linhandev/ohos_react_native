@@ -67,7 +67,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
 
   auto contextContainer = std::make_shared<facebook::react::ContextContainer>();
   auto textMeasurer = std::make_shared<TextMeasurer>(
-      env, measureTextFnRef, taskExecutor, featureFlagRegistry);
+      env, measureTextFnRef, taskExecutor, featureFlagRegistry, id);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
   PackageProvider packageProvider;

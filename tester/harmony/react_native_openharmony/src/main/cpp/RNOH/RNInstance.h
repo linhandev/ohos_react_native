@@ -53,6 +53,9 @@ class RNInstance {
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) = 0;
+  virtual int getId() {
+    return 0;
+  };
 };
 
 class RNInstanceInternal : public RNInstance,

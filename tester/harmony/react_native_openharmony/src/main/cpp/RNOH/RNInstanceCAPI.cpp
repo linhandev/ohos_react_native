@@ -11,8 +11,10 @@
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/ShadowViewRegistry.h"
+#include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
+#include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
 #include "SchedulerDelegateCAPI.h"
 #include "hermes/executor/HermesExecutorFactory.h"
 
@@ -36,6 +38,20 @@ void RNInstanceCAPI::start() {
           binder->createBindings(rt, turboModuleProvider);
         }
       });
+  auto turboModule = getTurboModule("DeviceInfo");
+  auto deviceInfoTurboModule =
+      std::dynamic_pointer_cast<rnoh::DeviceInfoTurboModule>(turboModule);
+  auto displayMetrics = deviceInfoTurboModule->callSync("getConstants", {});
+  if (displayMetrics.count("Dimensions") != 0) {
+    auto Dimensions = displayMetrics.at("Dimensions");
+    auto screenPhysicalPixels = Dimensions.at("screenPhysicalPixels");
+    float scale = screenPhysicalPixels.at("scale").asDouble();
+    float fontScale = screenPhysicalPixels.at("fontScale").asDouble();
+    auto textMeasurer = m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
+    if (textMeasurer) {
+      textMeasurer->setScreenScale(fontScale, scale);
+    }
+  }
 }
 
 void RNInstanceCAPI::initialize() {
