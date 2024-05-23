@@ -2,7 +2,9 @@ import { Edges, RNOHError, FatalRNOHError, SafeAreaInsetsProvider } from "./RNOH
 import { RNOHCoreContext } from './RNOH/RNOHCoreContext'
 import { DevToolsController } from './RNOH/DevToolsController'
 
-
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 @Component
 export struct RNOHErrorDialog {
   public controller!: CustomDialogController

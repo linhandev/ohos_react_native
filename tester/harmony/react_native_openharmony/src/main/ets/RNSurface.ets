@@ -34,6 +34,9 @@ export interface SurfaceConfig2 extends SurfaceConfig {
   initialProps: SurfaceProps,
 }
 
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 @Component
 export struct RNSurface {
   /**
