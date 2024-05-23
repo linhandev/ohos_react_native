@@ -11,27 +11,10 @@ const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  std::lock_guard<std::mutex> lock(mtxImage);
-  if (binImage.size() > 0) {
-    m_imageNode = binImage.front();
-    binImage.pop_front();
-    ArkUINodeRegistry::getInstance().registerNode(m_imageNode);
-    m_imageNode->registerNodeEvent(NODE_ON_CLICK);
-  } else {
-    m_imageNode = new ImageNode;
-  }
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);
   this->getLocalRootArkUINode().setDraggable(false);
-}
-
-ImageComponentInstance::~ImageComponentInstance() {
-  m_imageNode->reset();
-  m_imageNode->unregisterNodeEvent(NODE_ON_CLICK);
-  ArkUINodeRegistry::getInstance().unregisterNode(m_imageNode);
-  std::lock_guard<std::mutex> lock(mtxImage);
-  binImage.push_back(m_imageNode);
 }
 
 std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) {
@@ -178,7 +161,7 @@ void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
 }
 
 ImageNode& ImageComponentInstance::getLocalRootArkUINode() {
-  return *m_imageNode;
+  return m_imageNode;
 }
 
 void ImageComponentInstance::onComplete(float width, float height) {

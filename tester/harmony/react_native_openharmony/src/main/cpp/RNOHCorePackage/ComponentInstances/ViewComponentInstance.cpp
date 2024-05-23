@@ -6,24 +6,7 @@
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  std::lock_guard<std::mutex> lock(mtx);
-  if (bin.size() > 0) {
-    m_stackNode = bin.front();
-    bin.pop_front();
-    ArkUINodeRegistry::getInstance().registerNode(m_stackNode);
-    m_stackNode->registerNodeEvent(NODE_ON_CLICK);
-  } else {
-    m_stackNode = new StackNode;
-  }
-  m_stackNode->setStackNodeDelegate(this);
-}
-
-ViewComponentInstance::~ViewComponentInstance() {
-  m_stackNode->reset();
-  m_stackNode->unregisterNodeEvent(NODE_ON_CLICK);
-  ArkUINodeRegistry::getInstance().unregisterNode(m_stackNode);
-  std::lock_guard<std::mutex> lock(mtx);
-  bin.push_back(m_stackNode);
+  m_stackNode.setStackNodeDelegate(this);
 }
 
 void ViewComponentInstance::onChildInserted(
@@ -33,7 +16,7 @@ void ViewComponentInstance::onChildInserted(
         insertNodeWithRemoveClipping(childComponentInstance, index);
     } else {
         childComponentInstance->setIsClipped(false);
-        m_stackNode->insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+        m_stackNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
     }
 }
 
@@ -43,11 +26,11 @@ void ViewComponentInstance::onChildRemoved(
   CppComponentInstance::onChildRemoved(childComponentInstance);
     if (m_removeClippedSubviews) {
         if (!childComponentInstance->getIsClipped()) {
-            m_stackNode->removeChild(childComponentInstance->getLocalRootArkUINode());
+            m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
   }
     } else {
-        m_stackNode->removeChild(childComponentInstance->getLocalRootArkUINode());
+        m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
     } 
 }
@@ -80,7 +63,7 @@ void ViewComponentInstance::onClick() {
 
 StackNode& ViewComponentInstance::getLocalRootArkUINode()
 {
-    return *m_stackNode;
+    return m_stackNode;
 }
 
 } // namespace rnoh

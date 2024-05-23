@@ -27,9 +27,6 @@ class StackNode : public ArkUINode {
   void onClick();
   void setStackNodeDelegate(StackNodeDelegate* stackNodeDelegate);
   StackNode& setAlign(int32_t align);
-  void registerNodeEvent(ArkUI_NodeEventType event);
-  void unregisterNodeEvent(ArkUI_NodeEventType event);
-  void reset();
 };
 
 } // namespace rnoh

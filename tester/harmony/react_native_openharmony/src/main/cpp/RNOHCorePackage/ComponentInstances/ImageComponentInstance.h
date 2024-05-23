@@ -6,13 +6,11 @@
 #include "RNOH/arkui/ImageNode.h"
 
 namespace rnoh {
-static std::list<ImageNode*> binImage;
-static std::mutex mtxImage;
 class ImageComponentInstance
     : public CppComponentInstance<facebook::react::ImageShadowNode>,
       public ImageNodeDelegate {
  private:
-  ImageNode *m_imageNode;
+  ImageNode m_imageNode;
   struct ImageRawProps {
     std::optional<std::string> resizeMethod;
     std::optional<bool> focusable;
@@ -32,7 +30,6 @@ class ImageComponentInstance
 
  public:
   ImageComponentInstance(Context context);
-  ~ImageComponentInstance();
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;
 
