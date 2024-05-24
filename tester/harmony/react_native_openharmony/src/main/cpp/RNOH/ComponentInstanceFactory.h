@@ -61,9 +61,14 @@ class ComponentInstanceFactory {
     auto arkUINode = frameNodeHandle != nullptr
         ? std::make_unique<ArkUINode>(frameNodeHandle)
         // use Stack as a fallback when no frame node was created
-        : std::make_unique<CustomNode>();
-    return std::make_shared<FallbackComponentInstance>(
-        ctx, std::move(arkUINode));
+        : std::make_unique<StackNode>();
+    auto arkUIComponentInstance =
+        std::make_shared<FallbackComponentInstance>(
+          ctx, std::move(arkUINode));
+    auto rootComponentInstance =
+        this->create(tag, componentHandle, "RootView");
+    rootComponentInstance->insertChild(arkUIComponentInstance, 0);
+    return rootComponentInstance;
   }
 
   ComponentInstance::Shared create(
