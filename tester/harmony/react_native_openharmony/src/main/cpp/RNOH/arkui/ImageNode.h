@@ -19,6 +19,7 @@ class ImageNode : public ArkUINode {
  protected:
   ArkUI_NodeHandle m_childArkUINodeHandle;
   ImageNodeDelegate* m_imageNodeDelegate;
+  std::string m_uri;
 
  public:
   ImageNode();
@@ -44,5 +45,7 @@ class ImageNode : public ArkUINode {
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
   void setNodeDelegate(ImageNodeDelegate* imageNodeDelegate);
+
+  std::string getUri();
 };
 } // namespace rnoh

@@ -21,7 +21,6 @@ class ImageComponentInstance
   };
   ImageRawProps m_rawProps;
 
-  std::string m_uri;
   // used for find local cache of uri, if not find return uri
   std::string FindLocalCacheByUri(std::string const& uri);
 
