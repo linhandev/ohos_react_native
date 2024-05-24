@@ -525,6 +525,27 @@ export function ViewTest() {
         }}
       />
       <TestCase.Manual
+        tags={['C_API']}
+        itShould="pass on touching transparent view"
+        initialState={false}
+        arrange={({setState, reset}) => (
+          <>
+            <View
+              style={{
+                backgroundColor: 'transparent',
+                width: '100%',
+                height: 100,
+              }}
+              onTouchEnd={() => setState(true)}
+            />
+            <Button label="reset" onPress={reset} />
+          </>
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.be.true;
+        }}
+      />
+      <TestCase.Manual
         itShould="blue view should not allow clicks with non-touch input device"
         modal
         initialState={{first: false, second: false, third: false}}
