@@ -135,6 +135,7 @@ void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
   } else {
     m_scrollNode.setEnableScrollInteraction(m_props->scrollEnabled);
   }
+  m_scrollNode.markDirty();
 }
 
 facebook::react::Point rnoh::ScrollViewComponentInstance::getCurrentOffset()
