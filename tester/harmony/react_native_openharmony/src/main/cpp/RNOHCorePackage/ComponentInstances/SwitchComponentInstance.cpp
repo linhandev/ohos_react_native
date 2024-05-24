@@ -10,30 +10,30 @@ namespace rnoh {
 
 SwitchComponentInstance::SwitchComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_toggleNode.setToggleNodeDelegate(this);
+  getLocalRootArkUINode().setToggleNodeDelegate(this);
 }
 
 void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
   if (!m_props || props->onTintColor != m_props->onTintColor) {
-    m_toggleNode.setSelectedColor(props->onTintColor);
+    getLocalRootArkUINode().setSelectedColor(props->onTintColor);
   }
   if (!m_props || props->tintColor != m_props->tintColor) {
-    m_toggleNode.setUnselectedColor(props->tintColor);
+    getLocalRootArkUINode().setUnselectedColor(props->tintColor);
   }
   if (!m_props || props->thumbTintColor != m_props->thumbTintColor) {
-    m_toggleNode.setThumbColor(props->thumbTintColor);
+    getLocalRootArkUINode().setThumbColor(props->thumbTintColor);
   }
-  m_toggleNode.setEnabled(!props->disabled);
+  getLocalRootArkUINode().setEnabled(!props->disabled);
   if (props->rawProps.count("focusable") > 0) {
     if (!m_props ||
         props->rawProps["focusable"].asBool() !=
             m_props->rawProps["focusable"].asBool()) {
-      m_toggleNode.setFocusable(props->rawProps["focusable"].asBool());
+      getLocalRootArkUINode().setFocusable(props->rawProps["focusable"].asBool());
     }
   }
   if (!m_props || props->value != m_props->value) {
-    m_toggleNode.setValue(props->value);
+    getLocalRootArkUINode().setValue(props->value);
   }
 }
 

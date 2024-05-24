@@ -14,8 +14,8 @@ PullToRefreshViewComponentInstance::PullToRefreshViewComponentInstance(
       .setBackgroundColor(*facebook::react::clearColor())
       .setSize({REFRESH_INDICATOR_SIZE, REFRESH_INDICATOR_SIZE});
 
-  m_refreshNode.setRefreshNodeDelegate(this);
-  m_refreshNode.setRefreshContent(m_refreshIndicatorContainerNode);
+  getLocalRootArkUINode().setRefreshNodeDelegate(this);
+  getLocalRootArkUINode().setRefreshContent(m_refreshIndicatorContainerNode);
 }
 
 void PullToRefreshViewComponentInstance::createRefreshIndicatorTitle(
@@ -56,7 +56,7 @@ void PullToRefreshViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
-  m_refreshNode.insertChild(
+  getLocalRootArkUINode().insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
 }
 
@@ -67,7 +67,7 @@ RefreshNode& PullToRefreshViewComponentInstance::getLocalRootArkUINode() {
 void PullToRefreshViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_refreshNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
 }
 
 void PullToRefreshViewComponentInstance::onPropsChanged(
@@ -103,7 +103,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   }
 
   m_refreshIndicatorSpinnerNode.setOffset(0, -props->progressViewOffset);
-  m_refreshNode.setNativeRefreshing(props->refreshing);
+  getLocalRootArkUINode().setNativeRefreshing(props->refreshing);
 
   if (facebook::react::isColorMeaningful(props->tintColor)) {
     m_refreshIndicatorSpinnerNode.setColor(props->tintColor);
@@ -111,15 +111,15 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 
   if (props->rawProps.count("enabled") > 0) {
     if (props->rawProps["enabled"].isBool()) {
-      m_refreshNode.setEnabled(props->rawProps["enabled"].asBool());
+      getLocalRootArkUINode().setEnabled(props->rawProps["enabled"].asBool());
     } else {
-      m_refreshNode.setEnabled(true);
+      getLocalRootArkUINode().setEnabled(true);
     }
   }
 }
 
 void PullToRefreshViewComponentInstance::onRefresh() {
-  m_refreshNode.setNativeRefreshing(true);
+  getLocalRootArkUINode().setNativeRefreshing(true);
   m_eventEmitter->onRefresh({});
 }
 

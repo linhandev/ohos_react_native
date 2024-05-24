@@ -11,7 +11,7 @@ namespace rnoh {
 
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_scrollContainerNode.insertChild(m_scrollNode, 0);
+  getLocalRootArkUINode().insertChild(m_scrollNode, 0);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?
   m_scrollNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
@@ -44,7 +44,7 @@ void ScrollViewComponentInstance::onChildRemoved(
 
 void ScrollViewComponentInstance::setLayout(
     facebook::react::LayoutMetrics layoutMetrics) {
-  m_scrollContainerNode.setSize(layoutMetrics.frame.size);
+  getLocalRootArkUINode().setSize(layoutMetrics.frame.size);
   m_scrollNode.setSize(layoutMetrics.frame.size);
   m_layoutMetrics = layoutMetrics;
   if (m_containerSize != layoutMetrics.frame.size) {
