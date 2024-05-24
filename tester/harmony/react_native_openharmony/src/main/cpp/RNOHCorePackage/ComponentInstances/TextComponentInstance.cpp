@@ -15,21 +15,19 @@ const static float DEFAULT_LINE_SPACING = 0.15f;
 TextComponentInstance::TextComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   m_stackNode.insertChild(m_textNode, 0);
-  m_childNodes.clear();
 }
 
 TextComponentInstance::~TextComponentInstance() {
   for (auto const& item : m_childNodes) {
     m_textNode.removeChild(*item);
   }
-  m_childNodes.clear();
 }
 
 void TextComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   m_stackNode.insertChild(
-      childComponentInstance->getLocalRootArkUINode(), index);
+      childComponentInstance->getLocalRootArkUINode(), index + 1);
 }
 
 void TextComponentInstance::onChildRemoved(
@@ -395,15 +393,17 @@ class TextFragmentTouchTarget : public TouchTarget {
   TextFragmentTouchTarget(
       facebook::react::Tag tag,
       TouchTarget::Weak parentTouchTarget,
-      std::vector<facebook::react::Rect> rects,
       facebook::react::SharedTouchEventEmitter touchEventEmitter)
       : m_tag(tag),
         m_touchEventEmitter(std::move(touchEventEmitter)),
-        m_rects(std::move(rects)),
         m_parentTouchTarget(parentTouchTarget) {}
 
-  void setRects(std::vector<facebook::react::Rect> rects) {
-    m_rects = std::move(rects);
+  void clearRects() {
+    m_rects.clear();
+  }
+
+  void insertRects(std::vector<facebook::react::Rect> const& rects) {
+    m_rects.insert(m_rects.end(), rects.begin(), rects.end());
   }
 
   facebook::react::SharedTouchEventEmitter getTouchEventEmitter()
@@ -472,7 +472,7 @@ class TextFragmentTouchTarget : public TouchTarget {
  private:
   facebook::react::Tag m_tag;
   facebook::react::SharedTouchEventEmitter m_touchEventEmitter;
-  std::vector<facebook::react::Rect> m_rects;
+  std::vector<facebook::react::Rect> m_rects{};
   TouchTarget::Weak m_parentTouchTarget;
 };
 
@@ -490,17 +490,15 @@ TextComponentInstance::getTouchTargetChildren() {
 
   auto const& fragments = m_state->getData().attributedString.getFragments();
 
-  std::vector<TouchTarget::Shared> result;
   auto attachmentCount = 0;
+  std::vector<TouchTarget::Shared> result;
   for (auto const& fragment : fragments) {
-    if (fragment.isAttachment()) {
-      result.push_back(m_children.at(attachmentCount));
-      attachmentCount++;
-    } else {
+    if (!fragment.isAttachment()) {
       result.push_back(
           m_fragmentTouchTargetByTag.at(fragment.parentShadowView.tag));
     }
   }
+  result.insert(result.end(), m_children.begin(), m_children.end());
   return result;
 }
 
@@ -534,23 +532,34 @@ void TextComponentInstance::updateFragmentTouchTargets(
         std::dynamic_pointer_cast<const facebook::react::TouchEventEmitter>(
             fragment.parentShadowView.eventEmitter);
     auto tag = fragment.parentShadowView.tag;
-    if (m_fragmentTouchTargetByTag.count(tag) > 0) {
-      // update the existing touch target
-      auto fragmentTouchTarget =
-          std::static_pointer_cast<TextFragmentTouchTarget>(
-              m_fragmentTouchTargetByTag.at(tag));
-      fragmentTouchTarget->setRects(rects.at(index));
-      touchTargetByTag.try_emplace(tag, std::move(fragmentTouchTarget));
-    } else {
-      // create a new touch target
-      touchTargetByTag.try_emplace(
-          tag,
-          std::make_shared<TextFragmentTouchTarget>(
-              tag,
-              this->shared_from_this(),
-              rects.at(index),
-              std::move(eventEmitter)));
+    auto touchTargetEntry = touchTargetByTag.find(tag);
+
+    if (touchTargetEntry == touchTargetByTag.end()) {
+      // if no entry has been inserted yet into the new map
+      if (auto prevTouchTarget = m_fragmentTouchTargetByTag.find(tag);
+          prevTouchTarget != m_fragmentTouchTargetByTag.end()) {
+        // either reuse the existing touch target if there was a fragment with
+        // the same tag
+        auto fragmentTouchTarget =
+            std::static_pointer_cast<TextFragmentTouchTarget>(
+                prevTouchTarget->second);
+        fragmentTouchTarget->clearRects();
+        touchTargetEntry =
+            touchTargetByTag.try_emplace(tag, std::move(fragmentTouchTarget))
+                .first;
+      } else {
+        // or create a new one for a new fragment tag
+        auto newTouchTarget = std::make_shared<TextFragmentTouchTarget>(
+            tag, this->shared_from_this(), eventEmitter);
+        touchTargetEntry =
+            touchTargetByTag.try_emplace(tag, std::move(newTouchTarget)).first;
+      }
     }
+
+    auto fragmentTouchTarget =
+        std::static_pointer_cast<TextFragmentTouchTarget>(
+            touchTargetEntry->second);
+    fragmentTouchTarget->insertRects(rects.at(index));
     textFragmentCount++;
   }
   m_fragmentTouchTargetByTag = std::move(touchTargetByTag);
