@@ -2,15 +2,15 @@ import React from 'react';
 import GeneratedSampleNativeComponent, {
   OutgoingData,
   IncomingData,
-} from './GeneratedSampleNativeComponent';
+} from './specs/v1/GeneratedSampleNativeComponent';
 import { UIManager, findNodeHandle, processColor } from 'react-native';
 
-export type GeneratedSampleComponentRef = {
+export type GeneratedSampleComponentArkTSRef = {
   emitNativeEvent: (eventType: 'directEvent' | 'bubblingEvent') => void;
 };
 
-export const GeneratedSampleComponent = React.forwardRef<
-  GeneratedSampleComponentRef,
+export const GeneratedSampleComponentArkTS = React.forwardRef<
+  GeneratedSampleComponentArkTSRef,
   {
     children?: any;
     testProps: Omit<OutgoingData, 'colorTest'> & { colorTest: string };

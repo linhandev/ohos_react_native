@@ -1,11 +1,11 @@
-import { RNPackage, TurboModulesFactory } from '@rnoh/react-native-openharmony/ts';
-import type {
-  TurboModule,
-  TurboModuleContext,
-  DescriptorWrapperFactoryByDescriptorTypeCtx,
-  DescriptorWrapperFactoryByDescriptorType
+import {
+  RNPackage,
+  TurboModulesFactory,
+  DescriptorWrapperFactoryByDescriptorType,
+  DescriptorWrapperFactoryByDescriptorTypeCtx
 } from '@rnoh/react-native-openharmony/ts';
-import { TM, RNC } from "@rnoh/react-native-openharmony/generated/ts"
+import type { TurboModule, TurboModuleContext, } from '@rnoh/react-native-openharmony/ts';
+import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
 
 class SampleTurboModulesFactory extends TurboModulesFactory {
@@ -27,8 +27,6 @@ export class SamplePackage extends RNPackage {
   }
 
   createDescriptorWrapperFactoryByDescriptorType(ctx: DescriptorWrapperFactoryByDescriptorTypeCtx): DescriptorWrapperFactoryByDescriptorType {
-    return {
-      [RNC.GeneratedSampleView.NAME]: (ctx) => new RNC.GeneratedSampleView.DescriptorWrapper(ctx.descriptor)
-    }
+    return { [RNC.GeneratedSampleViewArkTS.NAME]: (ctx2) => new RNC.GeneratedSampleViewArkTS.DescriptorWrapper(ctx2.descriptor) }
   }
 }

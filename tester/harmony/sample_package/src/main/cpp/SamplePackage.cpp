@@ -1,14 +1,15 @@
 #include "SamplePackage.h"
+#include "GeneratedSampleViewComponentInstance.h"
 #include "NativeCxxModuleExampleCxxSpec.h"
 #include "PropsDisplayerComponentDescriptor.h"
 #include "RNOH/RNInstanceCAPI.h"
+#include "RNOH/generated/BaseReactNativeHarmonySamplePackagePackage.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentNapiBinder.h"
 #include "SampleTurboModuleSpec.h"
 #include "SampleViewComponentDescriptor.h"
 #include "SampleViewComponentInstance.h"
 
-using namespace rnoh;
 using namespace facebook;
 
 class SampleViewJSIBinder : public ViewComponentJSIBinder {
@@ -30,10 +31,18 @@ class SampleViewJSIBinder : public ViewComponentJSIBinder {
   }
 };
 
-class SampleTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
+class SampleTurboModuleFactoryDelegate
+    : public BaseReactNativeHarmonySamplePackagePackageTurboModuleFactoryDelegate {
+  using Super =
+      BaseReactNativeHarmonySamplePackagePackageTurboModuleFactoryDelegate;
+
  public:
   SharedTurboModule createTurboModule(Context ctx, const std::string& name)
       const override {
+    auto tm = Super::createTurboModule(ctx, name);
+    if (tm != nullptr) {
+      return tm;
+    }
     if (name == "SampleTurboModule") {
       return std::make_shared<NativeSampleTurboModuleSpecJSI>(ctx, name);
     }
@@ -51,12 +60,15 @@ SamplePackage::createTurboModuleFactoryDelegate() {
 
 std::vector<react::ComponentDescriptorProvider>
 SamplePackage::createComponentDescriptorProviders() {
-  return {
+  auto componentDescriptorProviders =
+      Super::createComponentDescriptorProviders();
+  componentDescriptorProviders.push_back(
       react::concreteComponentDescriptorProvider<
-          react::SampleViewComponentDescriptor>(),
+          react::SampleViewComponentDescriptor>());
+  componentDescriptorProviders.push_back(
       react::concreteComponentDescriptorProvider<
-          react::PropsDisplayerComponentDescriptor>(),
-  };
+          react::PropsDisplayerComponentDescriptor>());
+  return componentDescriptorProviders;
 }
 
 ComponentNapiBinderByString SamplePackage::createComponentNapiBinderByName() {
@@ -66,9 +78,9 @@ ComponentNapiBinderByString SamplePackage::createComponentNapiBinderByName() {
 };
 
 ComponentJSIBinderByString SamplePackage::createComponentJSIBinderByName() {
-  return {
-      {"SampleView", std::make_shared<SampleViewJSIBinder>()},
-  };
+  auto result = Super::createComponentJSIBinderByName();
+  result["SampleView"] = std::make_shared<SampleViewJSIBinder>();
+  return result;
 }
 
 class SampleArkTSMessageHandler : public ArkTSMessageHandler {
@@ -100,13 +112,15 @@ SamplePackage::createArkTSMessageHandlers() {
 }
 
 ComponentInstanceFactoryDelegate::Shared
-rnoh::SamplePackage::createComponentInstanceFactoryDelegate() {
+SamplePackage::createComponentInstanceFactoryDelegate() {
   class SampleComponentInstanceFactoryDelegate
       : public ComponentInstanceFactoryDelegate {
    public:
     ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
       if (ctx.componentName == "SampleView") {
         return std::make_shared<SampleViewComponentInstance>(ctx);
+      } else if (ctx.componentName == "GeneratedSampleView") {
+        return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
       }
       return nullptr;
     }

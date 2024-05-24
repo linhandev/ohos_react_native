@@ -1,19 +1,32 @@
 import { AbsolutePath } from '../../core';
-import type { SpecCodeGenerator } from '../core/Codegen';
-import { CodegenError } from '../core/CodegenError';
+import type { SpecCodeGenerator } from '../core';
 import {
   TurboModuleCppTemplate,
   TurboModuleHTemplate,
   TurboModuleInterfaceTS,
 } from '../templates';
-import { SpecSchema } from '../core/UberSchema';
-import { TypeAnnotationToTS, wrapWithQuotes } from '../core';
+import {
+  TypeAnnotationToTS,
+  wrapWithQuotes,
+  SpecSchema,
+  CodegenError,
+} from '../core';
+import { GlueCodeTurboModuleData } from './GlueCodeGenerator';
 
+/**
+ * Generates boilerplate code for Turbo Modules.
+ */
 export class NativeModuleCodeGenerator implements SpecCodeGenerator {
+  private glueCodeTurboModulesData: GlueCodeTurboModuleData[] = [];
   constructor(
     private cppOutputPath: AbsolutePath,
-    private etsOutputPath: AbsolutePath
+    private etsOutputPath: AbsolutePath,
+    private generatorVersion: number
   ) {}
+
+  getGlueCodeData() {
+    return this.glueCodeTurboModulesData;
+  }
 
   generate(schema: SpecSchema): Map<AbsolutePath, string> {
     const result = new Map<AbsolutePath, string>();
@@ -25,15 +38,22 @@ export class NativeModuleCodeGenerator implements SpecCodeGenerator {
     }
     const typeAnnotationToTS = new TypeAnnotationToTS();
     const turboModuleInterfaceTS = new TurboModuleInterfaceTS(
-      schema.moduleName
+      schema.moduleName,
+      this.generatorVersion
     );
-    const turboModuleH = new TurboModuleHTemplate(schema.moduleName).build();
+    const turboModuleH = new TurboModuleHTemplate(
+      schema.moduleName,
+      this.generatorVersion
+    ).build();
     result.set(
       this.cppOutputPath.copyWithNewSegment(`${schema.moduleName}.h`),
       turboModuleH
     );
 
-    const turboModuleCpp = new TurboModuleCppTemplate(schema.moduleName);
+    const turboModuleCpp = new TurboModuleCppTemplate(
+      schema.moduleName,
+      this.generatorVersion
+    );
 
     Object.entries(schema.aliasMap).map(([name, typeAnnotation]) => {
       turboModuleInterfaceTS.addAlias({
@@ -89,7 +109,7 @@ export class NativeModuleCodeGenerator implements SpecCodeGenerator {
       this.etsOutputPath.copyWithNewSegment(`${schema.moduleName}.ts`),
       turboModuleInterfaceTS.build()
     );
-
+    this.glueCodeTurboModulesData.push({ name: schema.moduleName });
     return result;
   }
 }

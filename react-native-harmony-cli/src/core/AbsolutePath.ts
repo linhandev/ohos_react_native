@@ -27,6 +27,13 @@ export class AbsolutePath implements ValueObject {
     return null;
   }
 
+  getDirectoryPath(): AbsolutePath {
+    const dirPath = pathUtils.extname(this.value)
+      ? pathUtils.dirname(this.value)
+      : this.value;
+    return new AbsolutePath(dirPath);
+  }
+
   relativeTo(absolutePath: AbsolutePath): RelativePath {
     return new RelativePath(
       pathUtils.relative(absolutePath.getValue(), this.value)
