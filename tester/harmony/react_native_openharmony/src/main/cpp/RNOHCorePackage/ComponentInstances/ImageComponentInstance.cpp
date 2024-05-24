@@ -22,6 +22,10 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
     return uri;
   }
 
+  if (!m_deps) {
+    return uri;
+  }
+
   auto rnInstance = m_deps->rnInstance.lock();
   if (!rnInstance) {
     return uri;
@@ -38,6 +42,10 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
   }
 
   auto cache = arkTsTurboModule->callSync("getCacheFilePath", {uri});
+  if (!cache.isString()) {
+    return uri;
+  }
+
   return cache.asString();
 }
 
