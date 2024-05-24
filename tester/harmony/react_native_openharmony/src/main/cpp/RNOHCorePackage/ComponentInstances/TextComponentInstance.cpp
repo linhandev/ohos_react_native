@@ -28,7 +28,7 @@ TextComponentInstance::~TextComponentInstance() {
     m_textNode.removeChild(*item);
   }
   m_childNodes.clear();
-   if (m_tag != -1) {
+   if (m_key != "") {
      m_textNode.resetTextContentWithStyledString();
      TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
      TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
@@ -199,7 +199,7 @@ void TextComponentInstance::onStateChanged(
     }
     TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
   } else {
-    m_tag = -1;
+    m_key = "";
   }
   this->setTextAttributes(fragments[0].textAttributes);
 }

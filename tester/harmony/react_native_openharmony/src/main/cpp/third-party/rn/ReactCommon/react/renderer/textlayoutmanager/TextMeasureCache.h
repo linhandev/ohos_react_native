@@ -117,17 +117,27 @@ inline size_t textAttributesHashLayoutWise(
   // `areTextAttributesEquivalentLayoutWise` mentions.
   return folly::hash::hash_combine(
       0,
+      textAttributes.foregroundColor,
+      textAttributes.backgroundColor,
       textAttributes.fontFamily,
-      textAttributes.fontSize,
-      textAttributes.fontSizeMultiplier,
       textAttributes.fontWeight,
       textAttributes.fontStyle,
       textAttributes.fontVariant,
       textAttributes.allowFontScaling,
       textAttributes.dynamicTypeRamp,
-      textAttributes.letterSpacing,
-      textAttributes.lineHeight,
-      textAttributes.alignment);
+      textAttributes.alignment,
+      textAttributes.baseWritingDirection,
+      textAttributes.lineBreakStrategy,
+      textAttributes.textDecorationColor,
+      textAttributes.textDecorationLineType,
+      textAttributes.textDecorationStyle,
+      textAttributes.textShadowOffset,
+      textAttributes.textShadowColor,
+      textAttributes.isHighlighted,
+      textAttributes.layoutDirection,
+      textAttributes.accessibilityRole,
+      textAttributes.textTransform
+      );
 }
 
 inline bool areAttributedStringFragmentsEquivalentLayoutWise(
