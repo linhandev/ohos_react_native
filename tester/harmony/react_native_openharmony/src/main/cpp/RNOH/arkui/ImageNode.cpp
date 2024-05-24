@@ -58,6 +58,7 @@ void ImageNode::onNodeEvent(
 }
 
 ImageNode& ImageNode::setSources(std::string const& uri, std::string prefix) {
+  m_uri = uri;
   ArkUI_AttributeItem item;
   std::string absolutePath = prefix == "" ? RAWFILE_PREFIX : prefix;
   if (uri.rfind(ASSET_PREFIX, 0) == 0) {
@@ -214,5 +215,9 @@ ImageNode& ImageNode::resetResizeMethod() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
+}
+
+std::string ImageNode::getUri() {
+  return m_uri;
 }
 } // namespace rnoh

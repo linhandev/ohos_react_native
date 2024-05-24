@@ -75,10 +75,9 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
   if (!m_props || m_props->sources != props->sources) {
-    m_uri = props->sources[0].uri;
     std::string uri = FindLocalCacheByUri(props->sources[0].uri);
     this->getLocalRootArkUINode().setSources(uri, getAbsolutePathPrefix(getBundlePath()));
-    if (!m_uri.empty()) {
+    if (!this->getLocalRootArkUINode().getUri().empty()) {
       onLoadStart();
     }
   }
@@ -155,7 +154,6 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto source = state->getData().getImageSource();
-  m_uri = source.uri;
   this->getLocalRootArkUINode().setSources(FindLocalCacheByUri(source.uri), getAbsolutePathPrefix(getBundlePath()));
   this->getLocalRootArkUINode().setBlur(state->getData().getBlurRadius());
 }
@@ -169,12 +167,13 @@ void ImageComponentInstance::onComplete(float width, float height) {
     return;
   }
 
+  std::string uri = this->getLocalRootArkUINode().getUri();
   m_eventEmitter->dispatchEvent("load", [=](facebook::jsi::Runtime& runtime) {
     auto payload = facebook::jsi::Object(runtime);
     auto source = facebook::jsi::Object(runtime);
     source.setProperty(runtime, "width", width);
     source.setProperty(runtime, "height", height);
-    source.setProperty(runtime, "uri", m_uri.c_str());
+    source.setProperty(runtime, "uri", uri);
     payload.setProperty(runtime, "source", source);
     return payload;
   });
