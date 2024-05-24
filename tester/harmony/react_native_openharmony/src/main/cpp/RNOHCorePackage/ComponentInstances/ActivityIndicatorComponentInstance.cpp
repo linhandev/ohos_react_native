@@ -16,10 +16,10 @@ void ActivityIndicatorComponentInstance::onPropsChanged(
   auto old = m_props;
   CppComponentInstance::onPropsChanged(props);
   if (!old || props->animating != old->animating) {
-    m_loadingProgressNode.setAnimating(props->animating);
+    getLocalRootArkUINode().setAnimating(props->animating);
   }
   if (props->color && (!old || *(props->color) != *(old->color))) {
-    m_loadingProgressNode.setColor(props->color);
+    getLocalRootArkUINode().setColor(props->color);
   }
 }
 

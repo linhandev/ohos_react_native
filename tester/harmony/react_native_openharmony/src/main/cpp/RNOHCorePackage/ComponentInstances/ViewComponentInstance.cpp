@@ -6,7 +6,7 @@
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.setStackNodeDelegate(this);
+  getLocalRootArkUINode().setStackNodeDelegate(this);
 }
 
 void ViewComponentInstance::onChildInserted(
@@ -16,7 +16,7 @@ void ViewComponentInstance::onChildInserted(
         insertNodeWithRemoveClipping(childComponentInstance, index);
     } else {
         childComponentInstance->setIsClipped(false);
-        m_stackNode.insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+        getLocalRootArkUINode().insertChild(childComponentInstance->getLocalRootArkUINode(), index);
     }
 }
 
@@ -26,11 +26,11 @@ void ViewComponentInstance::onChildRemoved(
   CppComponentInstance::onChildRemoved(childComponentInstance);
     if (m_removeClippedSubviews) {
         if (!childComponentInstance->getIsClipped()) {
-            m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+            getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
   }
     } else {
-        m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+        getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
     } 
 }

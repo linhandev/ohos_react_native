@@ -7,7 +7,7 @@ namespace rnoh {
 CustomNodeComponentInstance::CustomNodeComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   m_customNode = new CustomNode();
-  m_customNode->setCustomNodeDelegate(this);
+  getLocalRootArkUINode().setCustomNodeDelegate(this);
 }
 
 CustomNodeComponentInstance::~CustomNodeComponentInstance() {
@@ -23,7 +23,7 @@ void CustomNodeComponentInstance::onChildInserted(
         insertNodeWithRemoveClipping(childComponentInstance, index);
     } else {
         childComponentInstance->setIsClipped(false);
-        m_customNode->insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+        getLocalRootArkUINode().insertChild(childComponentInstance->getLocalRootArkUINode(), index);
     }
 }
 
@@ -33,11 +33,11 @@ void CustomNodeComponentInstance::onChildRemoved(
   CppComponentInstance::onChildRemoved(childComponentInstance);
     if (m_removeClippedSubviews) {
         if (!childComponentInstance->getIsClipped()) {
-            m_customNode->removeChild(childComponentInstance->getLocalRootArkUINode());
+            getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
   }
     } else {
-        m_customNode->removeChild(childComponentInstance->getLocalRootArkUINode());
+        getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
         childComponentInstance->setIsClipped(true);
     } 
 }
@@ -229,16 +229,16 @@ void CustomNodeComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<C
     if (ClippingComponent::isIntersect(nodeRect) || 
         (index >= ClippingComponent::getStartIndex() && index <= ClippingComponent::getEndIndex() ))
     {
-        uint32_t totalCnt = NativeNodeApi::getInstance()->getTotalChildCount(m_customNode->getArkUINodeHandle());
+        uint32_t totalCnt = NativeNodeApi::getInstance()->getTotalChildCount(getLocalRootArkUINode().getArkUINodeHandle());
         if (index > totalCnt) {
-            m_customNode->addChild(child->getLocalRootArkUINode());
+            getLocalRootArkUINode().addChild(child->getLocalRootArkUINode());
         } else {
-            m_customNode->insertChild(child->getLocalRootArkUINode(), index);
+            getLocalRootArkUINode().insertChild(child->getLocalRootArkUINode(), index);
         }
         child->setIsClipped(false);
     } else {
         if (!child->getIsClipped()) {
-            m_customNode->removeChild(child->getLocalRootArkUINode());
+            getLocalRootArkUINode().removeChild(child->getLocalRootArkUINode());
         }
         child->setIsClipped(true);
     }
@@ -277,7 +277,7 @@ void CustomNodeComponentInstance::updateVisibleFirst(std::vector<ComponentInstan
                 findEnd = true;
             }
             if (!item->getIsClipped()) {
-                m_customNode->removeChild(item->getLocalRootArkUINode());
+                getLocalRootArkUINode().removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -290,7 +290,7 @@ void CustomNodeComponentInstance::updateVisibleFirst(std::vector<ComponentInstan
     for (std::size_t i = start; i <= end; i++) {
         const auto& item = childNodes[i];
         if (item->getIsClipped()) {
-            m_customNode->insertChild(item->getLocalRootArkUINode(), (i - start));
+            getLocalRootArkUINode().insertChild(item->getLocalRootArkUINode(), (i - start));
             item->setIsClipped(false);
         }
     }
@@ -315,7 +315,7 @@ void CustomNodeComponentInstance::updateVisibleDown(std::vector<ComponentInstanc
                 ClippingComponent::setEndIndex(i);
             }
             if (item->getIsClipped()) {
-                m_customNode->addChild(item->getLocalRootArkUINode());
+                getLocalRootArkUINode().addChild(item->getLocalRootArkUINode());
                 item->setIsClipped(false);
                 isFindEnd = true;
             }
@@ -337,7 +337,7 @@ void CustomNodeComponentInstance::updateVisibleDown(std::vector<ComponentInstanc
             break;
         } else {
             if (!item->getIsClipped()) {
-                m_customNode->removeChild(item->getLocalRootArkUINode());
+                getLocalRootArkUINode().removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -358,7 +358,7 @@ void CustomNodeComponentInstance::updateVisibleUp(std::vector<ComponentInstance:
                 ClippingComponent::setStartIndex(i);
             }
             if (item->getIsClipped()) {          
-                m_customNode->insertChild(item->getLocalRootArkUINode(), 0);
+                getLocalRootArkUINode().insertChild(item->getLocalRootArkUINode(), 0);
                 item->setIsClipped(false);
                 isFindStart = true;
             }
@@ -383,7 +383,7 @@ void CustomNodeComponentInstance::updateVisibleUp(std::vector<ComponentInstance:
             break;
         } else {
             if (!item->getIsClipped()) {
-                m_customNode->removeChild(item->getLocalRootArkUINode());
+                getLocalRootArkUINode().removeChild(item->getLocalRootArkUINode());
                 item->setIsClipped(true);
             }
         }
@@ -429,7 +429,7 @@ void CustomNodeComponentInstance::restoreRsTree()
     for (std::size_t i = 0; i < total; i++) {
         const auto& item = children[i];
         if (item->getIsClipped()) {          
-            m_customNode->insertChild(item->getLocalRootArkUINode(), i);
+            getLocalRootArkUINode().insertChild(item->getLocalRootArkUINode(), i);
             item->setIsClipped(false);
         }
     }

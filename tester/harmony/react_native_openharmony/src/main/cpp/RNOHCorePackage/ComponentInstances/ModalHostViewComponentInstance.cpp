@@ -82,7 +82,7 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
       ArkTSMessageHub::Observer(m_deps->arkTSMessageHub),
       m_touchHandler(std::make_unique<ModalHostTouchHandler>(this)) {
-  m_virtualNode.setSize(facebook::react::Size{0, 0});
+  getLocalRootArkUINode().setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);
   m_rootStackNode.setPosition({0, 0});
 }
