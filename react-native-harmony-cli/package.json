@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony-cli",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "",
   "scripts": {
     "build": "tsc --outDir dist -p tsconfig.build.json",
@@ -40,6 +40,7 @@
     "@react-native/codegen": "0.74.0",
     "@tsconfig/recommended": "^1.0.2",
     "adm-zip": "^0.5.12",
+    "case": "^1.6.3",
     "chalk": "^4",
     "fs-extra": "^11.1.1",
     "glob": "^10.2.6",

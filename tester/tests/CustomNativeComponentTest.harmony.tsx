@@ -2,13 +2,19 @@ import {TestSuite} from '@rnoh/testerino';
 import {
   SampleComponent,
   SampleComponentRef,
-  GeneratedSampleComponent,
-  GeneratedSampleComponentRef,
+  GeneratedSampleComponentCAPI,
+  GeneratedSampleComponentCAPIRef,
+  GeneratedSampleComponentArkTSRef,
+  GeneratedSampleComponentArkTS,
 } from 'react-native-sample-package';
 import {useEffect, useState} from 'react';
 import React from 'react';
 import {Button, Effect, Ref, TestCase} from '../components';
-import {IncomingData} from 'react-native-harmony-sample-package/src/GeneratedSampleNativeComponent';
+import {IncomingData as GeneratedSampleNativeComponentArkTSCustomProps} from 'react-native-harmony-sample-package/src/specs/v1/GeneratedSampleNativeComponent';
+import {
+  IncomingData as GeneratedSampleNativeComponentCAPICustomProps,
+  SupportedCommandArgs as GeneratedSampleNativeComponentCAPICommandArgs,
+} from 'react-native-harmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
 import {View} from 'react-native';
 
 export function CustomNativeComponentTest() {
@@ -127,56 +133,169 @@ function Blinker({children}: any) {
 function GeneratedCustomComponentTest() {
   return (
     <TestSuite name="generated custom component">
-      <TestCase.Manual<IncomingData | undefined>
-        itShould="ensure equality between provided and received data"
-        initialState={undefined}
-        arrange={({setState}) => {
-          return (
-            <Ref<GeneratedSampleComponentRef>
-              render={ref => (
-                <GeneratedSampleComponent
-                  ref={ref}
-                  testProps={{
-                    booleanTest: true,
-                    intTest: 42,
-                    floatTest: 42.5,
-                    doubleTest: 42.5,
-                    stringTest: 'foobar',
-                    objectTest: {foo: {bar: 'baz'}},
-                    colorTest: 'red',
-                    arrayTest: ['foo', 'bar'],
-                    readOnlyArrayTest: ['foo', 'bar'],
-                    intEnumTest: 1,
-                  }}
-                  onDirectEvent={setState}>
-                  <Effect
-                    onMount={() => {
-                      ref.current?.emitNativeEvent('directEvent');
+      <TestSuite name="ArkTS">
+        <TestCase.Manual<
+          GeneratedSampleNativeComponentArkTSCustomProps | undefined
+        >
+          tags={['C_API']}
+          itShould="ensure equality between provided and received data"
+          initialState={undefined}
+          arrange={({setState}) => {
+            return (
+              <Ref<GeneratedSampleComponentArkTSRef>
+                render={ref => (
+                  <GeneratedSampleComponentArkTS
+                    ref={ref}
+                    testProps={{
+                      booleanTest: true,
+                      intTest: 42,
+                      floatTest: 42.5,
+                      doubleTest: 42.5,
+                      stringTest: 'foobar',
+                      objectTest: {foo: {bar: 'baz'}},
+                      colorTest: 'red',
+                      arrayTest: ['foo', 'bar'],
+                      readOnlyArrayTest: ['foo', 'bar'],
+                      intEnumTest: 1,
                     }}
-                  />
-                </GeneratedSampleComponent>
-              )}
-            />
-          );
-        }}
-        assert={({expect, state}) => {
-          expect(state?.booleanTest).to.be.true;
-          expect(state?.booleanWithDefaultTest).to.be.true;
-          expect(state?.intTest).to.be.eq(42);
-          expect(state?.intWithDefault).to.be.eq(42);
-          expect(state?.floatTest).closeTo(42.5, 0.001);
-          expect(state?.floatWithDefaultTest).closeTo(42.5, 0.001);
-          expect(state?.doubleTest).closeTo(42.5, 0.001);
-          expect(state?.doubleWithDefaultTest).closeTo(42.5, 0.001);
-          expect(state?.stringTest).to.be.eq('foobar');
-          expect(state?.stringWithDefaultTest).to.be.eq('foobar');
-          expect(state?.objectTest).to.deep.eq({foo: {bar: 'baz'}});
-          expect(state?.arrayTest).to.deep.eq(['foo', 'bar']);
-          expect(state?.readOnlyArrayTest).to.deep.eq(['foo', 'bar']);
-          expect(state?.stringEnumTest).to.be.eq('foo');
-          expect(state?.intEnumTest).to.be.eq(1);
-        }}
-      />
+                    onDirectEvent={setState}>
+                    <Effect
+                      onMount={() => {
+                        ref.current?.emitNativeEvent('directEvent');
+                      }}
+                    />
+                  </GeneratedSampleComponentArkTS>
+                )}
+              />
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state?.booleanTest).to.be.true;
+            expect(state?.booleanWithDefaultTest).to.be.true;
+            expect(state?.intTest).to.be.eq(42);
+            expect(state?.intWithDefault).to.be.eq(42);
+            expect(state?.floatTest).closeTo(42.5, 0.001);
+            expect(state?.floatWithDefaultTest).closeTo(42.5, 0.001);
+            expect(state?.doubleTest).closeTo(42.5, 0.001);
+            expect(state?.doubleWithDefaultTest).closeTo(42.5, 0.001);
+            expect(state?.stringTest).to.be.eq('foobar');
+            expect(state?.stringWithDefaultTest).to.be.eq('foobar');
+            expect(state?.objectTest).to.deep.eq({foo: {bar: 'baz'}});
+            expect(state?.arrayTest).to.deep.eq(['foo', 'bar']);
+            expect(state?.readOnlyArrayTest).to.deep.eq(['foo', 'bar']);
+            expect(state?.stringEnumTest).to.be.eq('foo');
+            expect(state?.intEnumTest).to.be.eq(1);
+          }}
+        />
+      </TestSuite>
+      <TestSuite name="C-API">
+        <TestCase.Manual<
+          GeneratedSampleNativeComponentCAPICustomProps | undefined
+        >
+          tags={['C_API']}
+          skip={{
+            android: true,
+            harmony: {arkTS: 'C-API only test', cAPI: false},
+          }}
+          itShould="receive props and emit them back via event"
+          initialState={undefined}
+          arrange={({setState}) => {
+            return (
+              <Ref<GeneratedSampleComponentCAPIRef>
+                render={ref => (
+                  <GeneratedSampleComponentCAPI
+                    ref={ref}
+                    testProps={{
+                      booleanTest: true,
+                      intTest: 42,
+                      floatTest: 42.5,
+                      doubleTest: 42.5,
+                      stringTest: 'foobar',
+                      colorTest: 'red',
+                      arrayTest: ['foo', 'bar'],
+                      readOnlyArrayTest: ['foo', 'bar'],
+                    }}
+                    onDirectEvent={setState}>
+                    <Effect
+                      onMount={() => {
+                        ref.current?.emitNativeEvent('directEvent');
+                      }}
+                    />
+                  </GeneratedSampleComponentCAPI>
+                )}
+              />
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state?.booleanTest).to.be.true;
+            expect(state?.booleanWithDefaultTest).to.be.true;
+            expect(state?.intTest).to.be.eq(42);
+            expect(state?.intWithDefault).to.be.eq(42);
+            expect(state?.floatTest).closeTo(42.5, 0.1);
+            expect(state?.floatWithDefaultTest).closeTo(42.5, 0.1);
+            expect(state?.doubleTest).closeTo(42.5, 0.1);
+            expect(state?.doubleWithDefaultTest).closeTo(42.5, 0.1);
+            expect(state?.stringTest).to.be.eq('foobar');
+            expect(state?.stringWithDefaultTest).to.be.eq('foobar');
+            expect(state?.arrayTest).to.deep.eq(['foo', 'bar']);
+            expect(state?.readOnlyArrayTest).to.deep.eq(['foo', 'bar']);
+            expect(state?.stringEnumTest).to.be.eq('foo');
+            expect(state?.colorTest).to.be.not.undefined;
+          }}
+        />
+        <TestCase.Manual<
+          GeneratedSampleNativeComponentCAPICommandArgs | undefined
+        >
+          tags={['C_API']}
+          skip={{
+            android: true,
+            harmony: {arkTS: 'C-API only test', cAPI: false},
+          }}
+          itShould="receive command args and emit them back via event"
+          initialState={undefined}
+          arrange={({setState}) => {
+            return (
+              <Ref<GeneratedSampleComponentCAPIRef>
+                render={ref => (
+                  <GeneratedSampleComponentCAPI
+                    ref={ref}
+                    hidden
+                    testProps={{
+                      booleanTest: true,
+                      intTest: 0,
+                      floatTest: 0.0,
+                      doubleTest: 0.0,
+                      stringTest: '',
+                      colorTest: 'blue',
+                      arrayTest: [],
+                      readOnlyArrayTest: [],
+                    }}
+                    onReceivedCommandArgs={setState}>
+                    <Effect
+                      onMount={() => {
+                        ref.current?.emitCommandArgs(
+                          42 /* intTest */,
+                          42.42 /* floatTest */,
+                          42.42 /* doubleTest */,
+                          'foobar' /* stringTest */,
+                          true /* booleanTest */,
+                        );
+                      }}
+                    />
+                  </GeneratedSampleComponentCAPI>
+                )}
+              />
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state?.intTest).to.be.eq(42);
+            expect(state?.floatTest).closeTo(42.5, 0.1);
+            expect(state?.doubleTest).closeTo(42.5, 0.1);
+            expect(state?.stringTest).eq('foobar');
+            expect(state?.booleanTest).to.be.true;
+          }}
+        />
+      </TestSuite>
     </TestSuite>
   );
 }

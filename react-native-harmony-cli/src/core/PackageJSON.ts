@@ -42,7 +42,7 @@ export class PackageJSON {
     return this.rawPackageJSON.version;
   }
 
-  maybeCreateCodegenConfig(): CodegenConfig | null {
+  getCodegenConfigs(): CodegenConfig[] {
     /**
      * Shared codegenConfig is not used on purpose. Android, iOS and other platforms shouldn't
      * generate code for harmony-specific packages. The shape of this codegenConfig is different
@@ -51,13 +51,25 @@ export class PackageJSON {
      */
     const rawCodegenConfig = this.rawPackageJSON.harmony?.codegenConfig;
     if (!rawCodegenConfig) {
-      return null;
+      return [];
     }
-    return CodegenConfig.fromRawCodegenConfig(
-      rawCodegenConfig,
-      this.packageRootPath,
-      this.projectRootPath,
-      this.name
-    );
+    if (Array.isArray(rawCodegenConfig)) {
+      return rawCodegenConfig.map((config) =>
+        CodegenConfig.fromRawCodegenConfig(
+          config,
+          this.packageRootPath,
+          this.projectRootPath,
+          this.name
+        )
+      );
+    }
+    return [
+      CodegenConfig.fromRawCodegenConfig(
+        rawCodegenConfig,
+        this.packageRootPath,
+        this.projectRootPath,
+        this.name
+      ),
+    ];
   }
 }

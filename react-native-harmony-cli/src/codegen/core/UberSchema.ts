@@ -29,31 +29,74 @@ type FindSpecSchemaByType<
   TSpecSchema = SpecSchema
 > = TSpecSchema extends { type: TType } ? TSpecSchema : never;
 
+/**
+ * Contains component and turbo module (NativeModule) schemas. The "Uber" word is used here to highlight that SpecSchemas don't extend this class.
+ */
 export class UberSchema implements ValueObject {
-  static async fromProjectRootPath(
-    projectRootPath: AbsolutePath
+  static fromCodegenConfig(codegenConfig: CodegenConfig): UberSchema {
+    try {
+      return new UberSchema(
+        createRawUberSchemaFromSpecFilePaths(codegenConfig.getSpecFilePaths())
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new CodegenError({
+          whatHappened: "Couldn't create the schema",
+          whatCanUserDo: {
+            default: [
+              `There's probably at least one spec file defined in your project or in a third-party package that breaks some code generation restrictions. Please check the message below. If it's ambiguous, debug the problem with divide and conquer strategy.\n\n${err.message}`,
+            ],
+          },
+        });
+      }
+      throw err;
+    }
+  }
+
+  static async fromProject(
+    projectRootPath: AbsolutePath,
+    onShouldAcceptCodegenConfig?: (
+      codegenVersion: number,
+      packageName: string
+    ) => boolean
   ): Promise<UberSchema> {
+    const onShouldAcceptCodegenConfig_ =
+      onShouldAcceptCodegenConfig ?? ((x: number) => true);
     const packageJSON = PackageJSON.fromProjectRootPath(
       projectRootPath,
       projectRootPath
     );
-    const codegenConfigs: CodegenConfig[] = [];
-    const appCodegenConfig = packageJSON.maybeCreateCodegenConfig();
-    if (appCodegenConfig) {
-      codegenConfigs.push(appCodegenConfig);
+    const acceptedCodegenConfigs: CodegenConfig[] = [];
+    const appCodegenConfigs = packageJSON.getCodegenConfigs();
+    for (const codegenConfig of appCodegenConfigs) {
+      if (
+        onShouldAcceptCodegenConfig_(
+          codegenConfig.getVersion(),
+          packageJSON.name
+        )
+      ) {
+        acceptedCodegenConfigs.push(codegenConfig);
+      }
     }
     await new ProjectDependenciesManager(projectRootPath).forEachAsync(
       (dependency) => {
-        const codegenConfig = dependency.maybeCreateCodegenConfig();
-        if (codegenConfig) {
-          codegenConfigs.push(codegenConfig);
+        const codegenConfigs = dependency.getCodegenConfigs();
+        for (const codegenConfig of codegenConfigs) {
+          if (
+            onShouldAcceptCodegenConfig_(
+              codegenConfig.getVersion(),
+              dependency.readPackageJSON().name
+            )
+          ) {
+            acceptedCodegenConfigs.push(codegenConfig);
+          }
         }
       }
     );
     try {
       return new UberSchema(
         createRawUberSchemaFromSpecFilePaths(
-          codegenConfigs.flatMap((codegenConfig) =>
+          acceptedCodegenConfigs.flatMap((codegenConfig) =>
             codegenConfig.getSpecFilePaths()
           )
         )

@@ -1,7 +1,7 @@
 import { RNC } from "@rnoh/react-native-openharmony/generated/ts"
 
 
-export function getDirectProps(descriptorWrapper: RNC.GeneratedSampleView.DescriptorWrapper ): Record<keyof RNC.GeneratedSampleView.DirectRawProps, any> {
+export function getDirectProps(descriptorWrapper: RNC.GeneratedSampleViewArkTS.DescriptorWrapper ): Record<keyof RNC.GeneratedSampleViewArkTS.DirectRawProps, any> {
   const props = descriptorWrapper.props
   return {
     booleanTest: props.booleanTest,

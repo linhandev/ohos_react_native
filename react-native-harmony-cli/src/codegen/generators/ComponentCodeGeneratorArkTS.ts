@@ -12,12 +12,19 @@ import {
   ComponentJSIBinderHTemplate,
   ComponentUtilsTSTemplate,
 } from '../templates';
+import { GlueCodeComponentDataV1 } from './GlueCodeGenerator';
 
-export class ComponentCodeGenerator implements SpecCodeGenerator {
+export class ComponentCodeGeneratorArkTS implements SpecCodeGenerator {
+  private glueCodeDataItems: GlueCodeComponentDataV1[] = [];
+
   constructor(
     private cppOutputPath: AbsolutePath,
     private tsOutputPath: AbsolutePath
   ) {}
+
+  getGlueCodeData(): GlueCodeComponentDataV1[] {
+    return this.glueCodeDataItems;
+  }
 
   generate(schema: SpecSchema): Map<AbsolutePath, string> {
     if (schema.type !== 'Component') {
@@ -32,7 +39,10 @@ export class ComponentCodeGenerator implements SpecCodeGenerator {
       const componentDescriptorHTemplate = new ComponentDescriptorHTemplate(
         name
       );
-      const componentJSIBinderHTemplate = new ComponentJSIBinderHTemplate(name);
+      const componentJSIBinderHTemplate = new ComponentJSIBinderHTemplate(
+        name,
+        1
+      );
       const componentUtilsTSTemplate = new ComponentUtilsTSTemplate(name);
 
       shape.props.forEach((prop) => {
@@ -50,7 +60,6 @@ export class ComponentCodeGenerator implements SpecCodeGenerator {
           isOptional: prop.optional,
         });
       });
-
       shape.commands.forEach((command) => {
         componentUtilsTSTemplate.addCommand({
           name: command.name,
@@ -79,7 +88,6 @@ export class ComponentCodeGenerator implements SpecCodeGenerator {
           eventHandlerName: event.name,
         });
       });
-
       result.set(
         this.cppOutputPath.copyWithNewSegment(`${name}ComponentDescriptor.h`),
         componentDescriptorHTemplate.build()
@@ -92,6 +100,12 @@ export class ComponentCodeGenerator implements SpecCodeGenerator {
         this.tsOutputPath.copyWithNewSegment(`${name}.ts`),
         componentUtilsTSTemplate.build()
       );
+      this.glueCodeDataItems.push({
+        name,
+        eventNames: shape.events.map((e) =>
+          createEventNameFromEventHandlerName(e.name)
+        ),
+      });
     });
     return result;
   }

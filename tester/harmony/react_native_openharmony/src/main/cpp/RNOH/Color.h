@@ -65,6 +65,13 @@ class Color {
         m_rgba.alpha * multiplier);
   }
 
+  std::string toRGBA() {
+    std::stringstream ss;
+    ss << "rgba(" << m_rgba.red << "," << m_rgba.green << "," << m_rgba.blue
+       << "," << m_rgba.alpha << ")";
+    return ss.str();
+  }
+
   friend std::ostream& operator<<(std::ostream& os, const Color& color) {
     os << "rgba(" << color.m_rgba.red << "," << color.m_rgba.green << ","
        << color.m_rgba.blue << "," << color.m_rgba.alpha << ")";

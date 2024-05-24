@@ -13,11 +13,20 @@
   "license": "ISC",
   "harmony": {
     "alias": "react-native-sample-package",
-    "codegenConfig": {
-      "specPaths": [
-        "./src"
-      ]
-    }
+    "codegenConfig": [
+      {
+        "version": 1,
+        "specPaths": [
+          "./src/specs/v1"
+        ]
+      },
+      {
+        "version": 2,
+        "specPaths": [
+          "./src/specs/v2"
+        ]
+      }
+    ]
   },
   "files": [
     "index.ts",
