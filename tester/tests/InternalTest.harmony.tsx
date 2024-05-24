@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../components';
-import SampleTurboModule2 from 'react-native-harmony-sample-package/src/NativeGeneratedSampleTurboModule2';
+import SampleTurboModule2 from 'react-native-harmony-sample-package/src/specs/v2/NativeGeneratedSampleTurboModule2';
 import {ScrollView, View} from 'react-native';
 
 export function InternalTest() {

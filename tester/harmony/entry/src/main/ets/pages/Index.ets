@@ -10,7 +10,7 @@ import {
   TraceJSBundleProviderDecorator,
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
-import { GeneratedSampleView, PropsDisplayer, SampleView } from 'rnoh-sample-package';
+import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-package';
 import font from '@ohos.font';
 import { createRNPackages } from '../RNPackagesFactory';
 
@@ -24,14 +24,14 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
         tag: ctx.tag,
       })
     }
-    if (ctx.componentName === GeneratedSampleView.NAME) {
-      GeneratedSampleView({
-        ctx: ctx.rnComponentContext,
-        tag: ctx.tag,
-      })
-    }
     if (ctx.componentName === PropsDisplayer.NAME) {
       PropsDisplayer({
+        ctx: ctx.rnComponentContext,
+        tag: ctx.tag
+      })
+    }
+    if (ctx.componentName === GeneratedSampleView.NAME) {
+      GeneratedSampleView({
         ctx: ctx.rnComponentContext,
         tag: ctx.tag
       })

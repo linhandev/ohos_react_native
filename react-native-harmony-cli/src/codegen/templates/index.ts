@@ -6,3 +6,4 @@ export * from './ComponentDescriptorHTemplate';
 export * from './ComponentUtilsTSTemplate';
 export * from './IndexTSTemplate';
 export * from './TurboModuleSpecTSTemplate';
+export * from './BaseComponentInstanceHTemplate';

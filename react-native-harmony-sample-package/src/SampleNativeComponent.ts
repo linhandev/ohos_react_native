@@ -3,9 +3,14 @@ import {
   ProcessedColorValue,
   requireNativeComponent,
   ViewProps,
-} from "react-native";
+} from 'react-native';
 
 /**
+ * NOTE: Using codegen and `codegenNativeComponent` is recommended. Check spec files. The following approaches can be used without codegen.
+ */
+
+/**
+ *
  * Importing custom native components:
  * NOTE: Those functions need to be in their own files, because hot reloading can trigger them more than once..
  *
@@ -17,7 +22,7 @@ export const SampleNativeComponent = requireNativeComponent<
     textColor: ProcessedColorValue;
     onSampleClick?: (event: NativeSyntheticEvent<{}>) => void;
   }
->("SampleView");
+>('SampleView');
 
 /**
  * 2) An alternative to JSI binders and `requireNativeComponent` is `registerViewConfig` function (Harmony-only API).
@@ -33,8 +38,4 @@ export const SampleNativeComponent = requireNativeComponent<
         },
       };
     });
- */
-
-/**
- * 3) Once code generation is supported, `codegenNativeComponent` will be recommended.
  */

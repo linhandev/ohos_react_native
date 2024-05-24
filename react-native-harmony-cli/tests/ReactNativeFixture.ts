@@ -58,6 +58,7 @@ export class ReactNativeFixture {
       )} --rnoh-module-path ${this.useCwd(
         args.rnohModulePath ?? './harmony/rnoh'
       )}
+      --no-safety-check
       `
     ).stdout;
   }

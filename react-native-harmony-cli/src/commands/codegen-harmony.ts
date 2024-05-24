@@ -1,18 +1,22 @@
 import fs from 'node:fs';
 import pathUtils from 'node:path';
+import Case from 'case';
 import { Command } from '@react-native-community/cli-types';
 import {
   AbsolutePath,
   DescriptiveError,
+  PackageJSON,
+  ProjectDependenciesManager,
   maybeMakeDirectories,
   maybeRemoveFilesInDirectory,
 } from '../core';
 import {
-  Codegen,
   UberSchema,
-  ComponentCodeGenerator,
-  NativeModuleCodeGenerator,
-  PackageCodeGenerator,
+  LibraryData,
+  UberGeneratorV1,
+  UberGeneratorV2,
+  GlueCodeGenerator,
+  CodegenError,
 } from '../codegen';
 import { Logger } from '../io';
 
@@ -41,27 +45,89 @@ export const commandCodegenHarmony: Command = {
       description: 'Enables logging details',
       default: false,
     },
+    {
+      name: '--no-safety-check [boolean]',
+      description:
+        'Skips the check that prevents file operations outside the current working directory. This command permanently deletes previously generated files. Files are generated in the path specified by cpp-output-path.',
+    },
   ],
   func: async (_argv, _config, args: any) => {
     const logger = new Logger();
     try {
+      const MAX_SUPPORTED_CODEGEN_VERSION = 2;
+      // prepare the input data
       validateArgs(args);
       const etsOutputPath = new AbsolutePath(
         args.rnohModulePath
       ).copyWithNewSegment('generated');
+      const enableSafetyCheck: boolean = args.safetyCheck;
       const cppOutputPath = new AbsolutePath(args.cppOutputPath);
       const projectRootPath = new AbsolutePath(args.projectRootPath);
-      const codegen = createCodegen(cppOutputPath, etsOutputPath);
-      const uberSchema = await UberSchema.fromProjectRootPath(
-        new AbsolutePath(args.projectRootPath)
+      const uberSchemaFromArkTSLibraries = await UberSchema.fromProject(
+        projectRootPath,
+        (codegenVersion, packageName) => {
+          throwErrorIfUnsupportedCodegenVersion(
+            codegenVersion,
+            MAX_SUPPORTED_CODEGEN_VERSION,
+            packageName
+          );
+          return codegenVersion === 1;
+        }
       );
-      const fileContentByPath = codegen.generate(uberSchema);
+      const cApiLibrariesData = await collectLibrariesData(
+        projectRootPath,
+        (codegenVersion, packageName) => {
+          throwErrorIfUnsupportedCodegenVersion(
+            codegenVersion,
+            MAX_SUPPORTED_CODEGEN_VERSION,
+            packageName
+          );
+          return codegenVersion === 2;
+        }
+      );
+
+      // instantiate objects
+      const uberGeneratorV1 = new UberGeneratorV1(cppOutputPath, etsOutputPath);
+      const uberGeneratorV2 = new UberGeneratorV2(cppOutputPath, etsOutputPath);
+      const glueCodeGenerator = new GlueCodeGenerator(
+        cppOutputPath,
+        etsOutputPath
+      );
+
+      // generate the code
+      const fileContentByPath = new Map<AbsolutePath, string>();
+      const appendToFileContentByPath = (
+        fileContent: string,
+        path: AbsolutePath
+      ) => {
+        fileContentByPath.set(path, fileContent);
+      };
+      uberGeneratorV1
+        .generate(uberSchemaFromArkTSLibraries)
+        .forEach(appendToFileContentByPath);
+      uberGeneratorV2
+        .generate(cApiLibrariesData)
+        .forEach(appendToFileContentByPath);
+      glueCodeGenerator
+        .generate({
+          v1: uberGeneratorV1.getGlueCodeData(),
+          v2: uberGeneratorV2.getGlueCodeData(),
+        })
+        .forEach(appendToFileContentByPath);
+
+      // output the results
       if (args.debug) {
+        const uberSchema = await UberSchema.fromProject(projectRootPath);
         logger.debug((styles) =>
           styles.gray(JSON.stringify(uberSchema.getValue(), null, 2))
         );
       }
-      saveCodegenResult(fileContentByPath, cppOutputPath, etsOutputPath);
+      saveCodegenResult(
+        fileContentByPath,
+        cppOutputPath,
+        etsOutputPath,
+        enableSafetyCheck
+      );
       logCodegenResult(logger, fileContentByPath, projectRootPath);
     } catch (err) {
       if (err instanceof DescriptiveError) {
@@ -86,38 +152,89 @@ function validateArgs(args: any) {
   }
 }
 
-function createCodegen(
-  cppOutputPath: AbsolutePath,
-  etsOutputPath: AbsolutePath
+async function collectLibrariesData(
+  projectRootPath: AbsolutePath,
+  onShouldAcceptCodegenConfig: (version: number, packageName: string) => boolean
+): Promise<LibraryData[]> {
+  const packageJSONs: PackageJSON[] = [
+    PackageJSON.fromProjectRootPath(projectRootPath, projectRootPath),
+  ];
+  await new ProjectDependenciesManager(projectRootPath).forEachAsync(
+    (dependency) => {
+      packageJSONs.push(dependency.readPackageJSON());
+    }
+  );
+  const results: LibraryData[] = [];
+  for (const packageJSON of packageJSONs) {
+    const codegenConfigs = packageJSON.getCodegenConfigs();
+    for (const codegenConfig of codegenConfigs) {
+      if (
+        codegenConfig &&
+        onShouldAcceptCodegenConfig(
+          codegenConfig.getVersion(),
+          packageJSON.name
+        )
+      ) {
+        results.push({
+          name: deriveCppDirectoryNameFromNpmPackageName(packageJSON.name),
+          uberSchema: UberSchema.fromCodegenConfig(codegenConfig),
+        });
+      }
+    }
+  }
+  return results;
+}
+
+function throwErrorIfUnsupportedCodegenVersion(
+  codegenVersion: number,
+  maxSupportedCodegenVersion: number,
+  packageName: string
 ) {
-  return new Codegen(new PackageCodeGenerator(cppOutputPath, etsOutputPath), {
-    Component: new ComponentCodeGenerator(
-      cppOutputPath,
-      etsOutputPath.copyWithNewSegment('components')
-    ),
-    NativeModule: new NativeModuleCodeGenerator(
-      cppOutputPath,
-      etsOutputPath.copyWithNewSegment('turboModules')
-    ),
-  });
+  if (codegenVersion > maxSupportedCodegenVersion) {
+    throw new CodegenError({
+      whatHappened: `Package "${packageName}" requires codegenVersion: ${codegenVersion}, which is not supported (maxSupportedCodegenVersion=${maxSupportedCodegenVersion}).`,
+      whatCanUserDo: {
+        rnAppDeveloper: [
+          `Try downgrading "${packageName}".`,
+          'Update the "@rnoh/react-native-harmony-cli" package.',
+        ],
+      },
+    });
+  }
 }
 
 function saveCodegenResult(
   fileContentByPath: Map<AbsolutePath, string>,
   cppOutputPath: AbsolutePath,
-  etsOutputPath: AbsolutePath
+  etsOutputPath: AbsolutePath,
+  enableSafetyCheck: boolean
 ) {
-  prepareDirectory(cppOutputPath);
-  prepareDirectory(etsOutputPath);
-  prepareDirectory(etsOutputPath.copyWithNewSegment('components'));
-  prepareDirectory(etsOutputPath.copyWithNewSegment('turboModules'));
+  prepareDirectory(cppOutputPath, enableSafetyCheck);
+  prepareDirectory(etsOutputPath, enableSafetyCheck);
+  prepareDirectory(
+    etsOutputPath.copyWithNewSegment('components'),
+    enableSafetyCheck
+  );
+  prepareDirectory(
+    etsOutputPath.copyWithNewSegment('turboModules'),
+    enableSafetyCheck
+  );
+  fileContentByPath.forEach((_fileContent, path) => {
+    prepareDirectory(path.getDirectoryPath(), enableSafetyCheck);
+  });
   fileContentByPath.forEach((fileContent, path) => {
     fs.writeFileSync(path.getValue(), fileContent);
   });
 }
 
-function prepareDirectory(path: AbsolutePath) {
+function prepareDirectory(path: AbsolutePath, enableSafetyCheck: boolean) {
   maybeMakeDirectories(path);
+  if (enableSafetyCheck && !path.getValue().startsWith(process.cwd())) {
+    throw new DescriptiveError({
+      whatHappened: `Tried to remove files in ${path.getValue()}\nand that path is outside current working directory`,
+      whatCanUserDo: { default: ['Run codegen from different location'] },
+    });
+  }
   maybeRemoveFilesInDirectory(path);
 }
 
@@ -140,4 +257,16 @@ function logCodegenResult(
     { prefix: true }
   );
   logger.info(() => '');
+}
+
+function deriveCppDirectoryNameFromNpmPackageName(
+  npmPackageName: string
+): string {
+  let result = npmPackageName;
+  if (npmPackageName.includes('/')) {
+    result.replace('@', '');
+    result = npmPackageName.replace('/', '__');
+  }
+  result = Case.snake(result);
+  return result;
 }

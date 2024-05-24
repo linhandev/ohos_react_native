@@ -5,6 +5,7 @@ import { DescriptiveError } from './DescriptiveError';
 
 export type RawCodegenConfig = {
   specPaths: string[];
+  version?: number;
 };
 
 export class CodegenConfig {
@@ -28,7 +29,7 @@ export class CodegenConfig {
           whatHappened: `No such file or directory: ${specPath.getValue()}`,
           whatCanUserDo: {
             default: [
-              `Please verify in "${packageName}/package.json::harmony::codegenConfig". If you are not the maintainer of this package, please report this problem to the package maintainer.`,
+              `Please verify "${packageName}/package.json::harmony::codegenConfig". If you are not the maintainer of this package, please report this problem to the package maintainer.`,
             ],
           },
         });
@@ -43,12 +44,19 @@ export class CodegenConfig {
         return [];
       }
     });
-    return new CodegenConfig(specFilePaths);
+    return new CodegenConfig(specFilePaths, rawCodegenConfig.version ?? 1);
   }
 
-  private constructor(private specFilePaths: AbsolutePath[]) {}
+  private constructor(
+    private specFilePaths: AbsolutePath[],
+    private version: number
+  ) {}
 
   getSpecFilePaths(): AbsolutePath[] {
     return this.specFilePaths;
+  }
+
+  getVersion(): number {
+    return this.version;
   }
 }

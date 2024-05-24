@@ -12,8 +12,8 @@ export class ProjectDependency {
     return this.packageRootPath;
   }
 
-  maybeCreateCodegenConfig() {
-    return this.readPackageJSON().maybeCreateCodegenConfig();
+  getCodegenConfigs() {
+    return this.readPackageJSON().getCodegenConfigs();
   }
 
   readPackageJSON() {
