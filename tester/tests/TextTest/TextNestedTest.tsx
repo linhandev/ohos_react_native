@@ -317,11 +317,12 @@ export function TextNestedTest() {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <Text>
-                {'In a long text you can '}
+                In a long text you can
                 <Text style={{color: 'red'}} onPress={() => setState(true)}>
-                  Press me
+                  {' '}
+                  Press me{' '}
                 </Text>
-                {' to pass'}
+                to pass
               </Text>
               <Button label="Reset" onPress={reset} />
             </View>
