@@ -176,6 +176,7 @@ void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
     m_enableScrollInteraction = newEnableScrollInteraction;  
     m_scrollNode.setEnableScrollInteraction(m_enableScrollInteraction);
   }
+  m_scrollNode.markDirty();
 }
 
 bool rnoh::ScrollViewComponentInstance::isEnableScrollInteraction(bool scrollEnabled) {
