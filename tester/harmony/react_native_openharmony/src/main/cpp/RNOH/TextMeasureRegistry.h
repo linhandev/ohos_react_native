@@ -42,14 +42,14 @@ public:
 
  private:
 
-  std::map<std::string, facebook::react::TextMeasureCacheKey> m_keyToCacheKey; // saved which cacheKey using by key
+  std::unordered_map<std::string, facebook::react::TextMeasureCacheKey> m_keyToCacheKey; // saved which cacheKey using by key
 
-  std::map<std::string, std::shared_ptr<TextMeasureInfo>> m_keyToMeasureInfo; // saved which measureInfo using by key
+  std::unordered_map<std::string, std::shared_ptr<TextMeasureInfo>> m_keyToMeasureInfo; // saved which measureInfo using by key
 
   mutable folly::EvictingCacheMap<facebook::react::TextMeasureCacheKey, std::shared_ptr<TextMeasureInfo>>
     m_textMeasureInfoCache{facebook::react::kSimpleThreadSafeCacheSizeCap}; // cached all measure result
 
-  std::map<std::string, std::shared_ptr<TextMeasureInfo>> m_oldTextMeasureInfo; // saved old measureInfo, will be deleted after set new info to CAPI
+  std::unordered_map<std::string, std::shared_ptr<TextMeasureInfo>> m_oldTextMeasureInfo; // saved old measureInfo, will be deleted after set new info to CAPI
 
   std::recursive_mutex m_mutex;
 };
