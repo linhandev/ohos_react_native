@@ -280,7 +280,7 @@ class ArkUITypographyBuilder final {
     m_textStyles.emplace_back(textStyle);
     OH_Drawing_DestroyTextShadow(shadow);
     OH_Drawing_BrushDestroy(brush);
-    m_fragmentLengths.push_back(utf8Length(fragment.string));
+    m_fragmentLengths.emplace_back(utf8Length(fragment.string));
   }
 
   void addAttachment(
