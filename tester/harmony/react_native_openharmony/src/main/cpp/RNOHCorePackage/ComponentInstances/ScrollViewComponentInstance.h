@@ -104,6 +104,7 @@ class ScrollViewComponentInstance
   void onScrollStart() override;
   void onScrollStop() override;
   float onScrollFrameBegin(float offset, int32_t scrollState) override;
+  void onAppear() override;
 
   void finalizeUpdates() override;
 

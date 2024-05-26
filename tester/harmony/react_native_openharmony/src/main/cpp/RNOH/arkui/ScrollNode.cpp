@@ -5,7 +5,8 @@ static constexpr std::array SCROLL_NODE_EVENT_TYPES{
     NODE_SCROLL_EVENT_ON_SCROLL,
     NODE_SCROLL_EVENT_ON_SCROLL_START,
     NODE_SCROLL_EVENT_ON_SCROLL_STOP,
-    NODE_SCROLL_EVENT_ON_SCROLL_FRAME_BEGIN};
+    NODE_SCROLL_EVENT_ON_SCROLL_FRAME_BEGIN,
+    NODE_EVENT_ON_APPEAR};
 
 namespace rnoh {
 ScrollNode::ScrollNode()
@@ -49,6 +50,10 @@ void ScrollNode::onNodeEvent(
       auto remainingOffset = m_scrollNodeDelegate->onScrollFrameBegin(
           eventArgs[0].f32, eventArgs[1].i32);
       eventArgs[0].f32 = remainingOffset;
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_APPEAR) {
+    if (m_scrollNodeDelegate != nullptr) {
+      m_scrollNodeDelegate->onAppear();
     }
   }
 }
