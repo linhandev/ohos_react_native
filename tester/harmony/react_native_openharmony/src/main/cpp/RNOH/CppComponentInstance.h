@@ -247,14 +247,12 @@ class CppComponentInstance : public ComponentInstance {
       // Do nothing here.
     }
         
-    if (old && borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii) {
-      this->getLocalRootArkUINode().setBorderRadius(
-        borderMetrics.borderRadii);
-    } else if (!old && borderMetrics.borderRadii != ARKUI_DEFAULT_BORDER_METRICS.borderRadii) {
-      this->getLocalRootArkUINode().setBorderRadius(
-        borderMetrics.borderRadii);
-    } else {
-      // Do nothing here.
+    if (!old || borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
+        !m_isRadiusSetValid) {
+      if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
+        m_isRadiusSetValid = true;
+      }
+      this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
     }
     
     if (old && borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
@@ -372,19 +370,7 @@ class CppComponentInstance : public ComponentInstance {
       // Do nothing here.
     }
 
-    if (!isOpacityManagedByAnimated && !isTransformManagedByAnimated) {
-      if (!old) {
-        if ((abs(props->opacity - 1.0f) > 0.001f) || 
-          (props->transform != defaultTransform) ||
-          (props->backfaceVisibility != facebook::react::BackfaceVisibility::Auto)) {
-            this->setOpacity(props);
-        }
-      } else if ((props->opacity != old->opacity) ||
-        (props->transform != old->transform) ||
-        (props->backfaceVisibility != old->backfaceVisibility)) {
-          this->setOpacity(props);
-      }
-    }
+    this->setOpacity(props);
 
     auto clipContentToBounds = props->getClipsContentToBounds();
     if (!old) {
