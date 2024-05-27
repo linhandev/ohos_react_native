@@ -46,7 +46,6 @@ export class DefaultHttpClient implements HttpClient {
   protected responseInterceptors: ResponseInterceptor[];
   protected requestInterceptors: RequestInterceptor[];
   protected baseRequestOptions: RequestOptions;
-  private nextId: number = 0
 
   constructor({ baseRequestOptions, responseInterceptors, requestInterceptors }: {
     baseRequestOptions?: RequestOptions
@@ -205,10 +204,5 @@ export class DefaultHttpClient implements HttpClient {
     const cancel = cleanup;
 
     return { cancel, promise };
-  }
-
-
-  public createId(): number {
-    return this.nextId++
   }
 }
