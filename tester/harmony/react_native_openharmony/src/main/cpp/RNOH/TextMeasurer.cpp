@@ -214,12 +214,16 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
   OH_Drawing_TypographyStyle* typographyStyle = OH_Drawing_CreateTypographyStyle();
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
     OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_HEAD);
   } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Middle) {
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
     OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_MIDDLE);
   } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Tail) {
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
     OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_TAIL);
   }
+  
   if (paragraphAttributes.maximumNumberOfLines > 0) {
     OH_Drawing_SetTypographyTextMaxLines(
         typographyStyle, paragraphAttributes.maximumNumberOfLines);
@@ -229,6 +233,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
       typographyStyle,
       TextConversions::getArkUIWordBreakStrategy(
           paragraphAttributes.textBreakStrategy));
+
   if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::LeftToRight) {
     OH_Drawing_SetTypographyTextDirection(typographyStyle, TEXT_DIRECTION_LTR);
   } else if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::RightToLeft) {

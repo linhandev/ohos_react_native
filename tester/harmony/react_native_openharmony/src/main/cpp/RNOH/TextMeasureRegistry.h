@@ -50,8 +50,6 @@ public:
     m_textMeasureInfoCache{facebook::react::kSimpleThreadSafeCacheSizeCap}; // cached all measure result
 
   std::unordered_map<std::string, std::shared_ptr<TextMeasureInfo>> m_oldTextMeasureInfo; // saved old measureInfo, will be deleted after set new info to CAPI
-
-  std::recursive_mutex m_mutex;
 };
 
 
