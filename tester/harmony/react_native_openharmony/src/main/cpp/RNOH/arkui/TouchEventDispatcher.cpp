@@ -214,8 +214,11 @@ void TouchEventDispatcher::dispatchTouchEvent(
     touches.erase(touch.value());
     targetTouches.erase(touch.value());
     m_touchTargetByTouchId.erase(touch.value().identifier);
-  } else if (action == UI_TOUCH_EVENT_ACTION_DOWN) {
+  } else {
+    // update touches and targetTouches with the new touch object
+    touches.erase(touch.value());
     touches.insert(touch.value());
+    targetTouches.erase(touch.value());
     targetTouches.insert(touch.value());
   }
 
