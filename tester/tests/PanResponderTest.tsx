@@ -15,20 +15,15 @@ export const PanResponderTest = () => {
   return (
     <TestSuite name="PanResponder">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="create PanResponder"
         fn={({expect}) => {
           expect(PanResponder.create({})).to.be.not.empty;
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="allow panning inside ScrollView">
+      <TestCase.Example modal itShould="allow panning inside ScrollView">
         <PanResponderInScrollView />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="allow panning inside ScrollView with refreshControl">
         <PanResponderInScrollViewWithRefresh />

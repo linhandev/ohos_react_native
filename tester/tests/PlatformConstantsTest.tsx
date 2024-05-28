@@ -6,28 +6,24 @@ export function PlatformConstantsTest() {
   return (
     <TestSuite name="PlatformConstants">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="use 'harmony' as platform name"
         fn={({expect}) => {
           expect(Platform.OS).to.be.eq('harmony');
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="specify platform version"
         fn={({expect}) => {
           expect(Platform.Version.toString().split('.').length - 1).to.be.eq(3);
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="not be running in tv mode"
         fn={({expect}) => {
           expect(Platform.isTV).to.be.false;
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="select Platform properly"
         fn={({expect}) => {
           expect(
@@ -41,7 +37,6 @@ export function PlatformConstantsTest() {
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="provide some RN version"
         fn={({expect}) => {
           expect(Platform.constants.reactNativeVersion).to.be.not.undefined;
@@ -54,14 +49,12 @@ export function PlatformConstantsTest() {
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="provide some value for isTesting"
         fn={({expect}) => {
           expect(typeof Platform.constants.isTesting).to.be.eq('boolean');
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="specify product model"
         fn={({expect}) => {
           if (Platform.OS === 'harmony') {

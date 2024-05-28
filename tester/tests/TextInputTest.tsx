@@ -28,13 +28,10 @@ const KEYBOARD_TYPES: KeyboardTypeOptions[] = [
 export function TextInputTest() {
   return (
     <TestSuite name="TextInput">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textinput and change the text component based on the values inputted">
+      <TestCase.Example itShould="render textinput and change the text component based on the values inputted">
         <TextInputWithText style={styles.textInput} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="not crash when invalid keyboardType is supplied">
         <TextInputWithText
@@ -42,39 +39,28 @@ export function TextInputTest() {
           keyboardType={'invalid_type' as KeyboardTypeOptions}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textinput with set content">
+      <TestCase.Example itShould="render textinput with set content">
         <TextInputWithTextContent style={styles.textInput} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render non-editable textInput">
+      <TestCase.Example itShould="render non-editable textInput">
         <TextInputWithText
           defaultValue="test"
           style={styles.textInput}
           editable={false}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textInput with Pacifico Regular font">
+      <TestCase.Example itShould="render textInput with Pacifico Regular font">
         <TextInputWithText
           style={[styles.textInput, {fontFamily: 'Pacifico-Regular'}]}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textInput with caret hidden">
+      <TestCase.Example itShould="render textInput with caret hidden">
         <TextInputWithText style={styles.textInput} caretHidden />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textInput with red caret">
+      <TestCase.Example itShould="render textInput with red caret">
         <TextInputWithText style={styles.textInput} cursorColor={'red'} />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="report content size changes (onContentSizeChange)"
         initialState={false}
         skip={{android: false, harmony: true}}
@@ -99,7 +85,6 @@ export function TextInputTest() {
       </TestCase.Example>
       <TestSuite name="focus/blur">
         <TestCase.Manual
-          tags={['C_API']}
           itShould="blur text on submit (singleline)"
           initialState={false}
           arrange={({setState}) => {
@@ -118,7 +103,6 @@ export function TextInputTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           itShould="blur text after switching to another textinput"
           initialState={false}
           arrange={({setState}) => {
@@ -153,7 +137,6 @@ export function TextInputTest() {
           />
         </TestCase.Example>
         <TestCase.Manual
-          tags={['C_API']}
           modal
           itShould="automatically focus textInput when displayed"
           initialState={false}
@@ -169,7 +152,6 @@ export function TextInputTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           itShould="focus textInput on click"
           initialState={false}
           arrange={({setState}) => (
@@ -183,7 +165,6 @@ export function TextInputTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           modal
           itShould="focus textInput when pressing the button"
           initialState={false}
@@ -204,48 +185,35 @@ export function TextInputTest() {
           underlineColorAndroid={'blue'}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textinput with red placeholder">
+      <TestCase.Example itShould="render textinput with red placeholder">
         <TextInputWithText
           style={styles.textInput}
           placeholder="Placeholder"
           placeholderTextColor={'red'}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textinput with default selection color">
+      <TestCase.Example itShould="render textinput with default selection color">
         <TextInputWithText style={styles.textInput} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render textinput with green selection color">
+      <TestCase.Example itShould="render textinput with green selection color">
         <TextInputWithText style={styles.textInput} selectionColor="green" />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="render multiline text input">
+      <TestCase.Example itShould="render multiline text input">
         <TextInputWithText style={styles.textInputBigger} multiline={true} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render multiline text input with common border">
+      <TestCase.Example itShould="render multiline text input with common border">
         <TextInputWithText style={styles.multilineInput} multiline={true} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render multiline text input with Pacifico Regular font">
+      <TestCase.Example itShould="render multiline text input with Pacifico Regular font">
         <TextInputWithText
           style={[styles.textInputBigger, {fontFamily: 'Pacifico-Regular'}]}
           multiline
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render text input with maximally 10 characters">
+      <TestCase.Example itShould="render text input with maximally 10 characters">
         <TextInputWithText style={styles.textInput} maxLength={10} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="toggle between rendering 10 and 5 characters">
         <StateKeeper
@@ -280,7 +248,6 @@ export function TextInputTest() {
         <AutoCapitalize />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="trigger onSubmitEditing event after submiting"
         initialState={false}
@@ -294,25 +261,16 @@ export function TextInputTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example
-        modal
-        tags={['C_API']}
-        itShould="toggle between different return keys">
+      <TestCase.Example modal itShould="toggle between different return keys">
         <ReturnKeyTypeView />
       </TestCase.Example>
-      <TestCase.Example
-        modal
-        tags={['C_API']}
-        itShould="toggle between different enter keys">
+      <TestCase.Example modal itShould="toggle between different enter keys">
         <EnterKeyHintExample />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render secure text input (text obscured)">
+      <TestCase.Example itShould="render secure text input (text obscured)">
         <TextInputWithText style={styles.textInput} secureTextEntry />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="trigger onKeyPress event after pressing key (press 'A' to pass)"
         initialState={''}
@@ -332,7 +290,6 @@ export function TextInputTest() {
       <TestCase.Manual
         modal
         skip={{android: false, harmony: {arkTS: true, cAPI: false}}}
-        tags={['C_API']}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/736
         itShould="trigger onKeyPress event after pressing backspace"
         initialState={''}
@@ -358,18 +315,14 @@ export function TextInputTest() {
         }}
       />
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="show text input with default value (defaultProps)">
         <DefaultProps />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show text input with default value (defaultValue)">
+      <TestCase.Example itShould="show text input with default value (defaultValue)">
         <TextInput style={styles.textInput} defaultValue="defaultText" />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="trigger onLayout event on mount"
         initialState={{}}
@@ -391,7 +344,6 @@ export function TextInputTest() {
         }}
       />
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="render textinputs with different keyboard types">
         <View>
@@ -404,7 +356,6 @@ export function TextInputTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="render multiline textinputs with different keyboard types">
         <View>
@@ -439,10 +390,7 @@ export function TextInputTest() {
           defaultValue="Not scaled big"
         />
       </TestCase.Example>
-      <TestCase.Example
-        itShould="show textInput with padding"
-        modal
-        tags={['C_API']}>
+      <TestCase.Example itShould="show textInput with padding" modal>
         <View style={{width: 300, height: 200}}>
           <TextInputWithText
             style={{
@@ -455,10 +403,7 @@ export function TextInputTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="show textInput multiline with padding"
-        modal
-        tags={['C_API']}>
+      <TestCase.Example itShould="show textInput multiline with padding" modal>
         <View style={{width: 300, height: 200}}>
           <TextInputWithText
             style={{
@@ -473,10 +418,7 @@ export function TextInputTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="render textinput with readonly">
+      <TestCase.Example modal itShould="render textinput with readonly">
         <TextInputWithText
           style={styles.textInput}
           defaultValue="readOnly"
@@ -485,7 +427,6 @@ export function TextInputTest() {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display bold, italic, large placeholder with a custom font">
         <TextInput
@@ -498,13 +439,10 @@ export function TextInputTest() {
           placeholder="placeholder"
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="render textinput with red text color">
+      <TestCase.Example modal itShould="render textinput with red text color">
         <TextInputWithText style={[styles.textInput, {color: 'red'}]} />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} modal itShould="clear text on focus">
+      <TestCase.Example modal itShould="clear text on focus">
         {/* iOS only */}
         <TextInputWithText
           style={styles.textInput}
@@ -513,7 +451,7 @@ export function TextInputTest() {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']} // Only "unless-editing" mode doesn't work on C_API
+        // Only "unless-editing" mode doesn't work on C_API
         modal
         itShould="use different clearButtonMode values">
         <TextInputWithText style={styles.textInput} clearButtonMode="always" />
@@ -539,20 +477,15 @@ export function TextInputTest() {
         {/* You cannot see inputs with */}
         <Text style={{marginBottom: 200}}>clearButtonMode="never"</Text>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="show selection start and end values">
+      <TestCase.Example modal itShould="show selection start and end values">
         <TextSelectionChangeTest />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="show textinput with 'Selection' substring selected">
         <SelectionTest />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="show controlled textinput with 'Selection' substring selected">
         <ControlledSelectionTest />
@@ -562,7 +495,7 @@ export function TextInputTest() {
         itShould="not show text context menu when long press">
         <ContextMenuHiddenTest />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} modal itShould="select text on focus">
+      <TestCase.Example modal itShould="select text on focus">
         <TextInput
           value="selectTextOnFocus"
           selectTextOnFocus
@@ -576,13 +509,11 @@ export function TextInputTest() {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="allow to change the text input value via props">
         <TextInputValueSetProgrammatically />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="should show transparent TextInput on a red background">
         <View style={{backgroundColor: 'red'}}>
@@ -593,7 +524,6 @@ export function TextInputTest() {
         </View>
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="trigger onEndEditing event after editing ends"
         initialState={false}
@@ -609,7 +539,6 @@ export function TextInputTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="trigger onChange event after changing value"
         initialState={false}
@@ -621,13 +550,11 @@ export function TextInputTest() {
         }}
       />
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="set cursorColor to red after pressing button (setNativeProps)">
         <SetNativePropsTest />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="select only Selection word (selectTextOnFocus && selection)">
         <TextInput
@@ -638,7 +565,6 @@ export function TextInputTest() {
         />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="not trigger onChange event after changing value through state"
         initialState={{text: '', onChangeFired: false}}
@@ -667,13 +593,11 @@ export function TextInputTest() {
         }}
       />
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="change the text input value programmatically on blur">
         <TextInputValueSetProgrammaticallyOnBlur />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="change the text input value programmatically when submitted">
         <TextInputValueSetProgrammaticallyWhenSubmitted />

@@ -6,7 +6,6 @@ export const PixelRatioTest = () => {
   return (
     <TestSuite name="PixelRatio">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="return plausible pixel ratio (greater than or equal  1, less than 4)"
         fn={({expect}) => {
           expect(PixelRatio.get())
@@ -15,7 +14,6 @@ export const PixelRatioTest = () => {
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="return plausible fontScale (greater than 0, less than 4)"
         fn={({expect}) => {
           expect(PixelRatio.getFontScale())
@@ -32,7 +30,6 @@ export const PixelRatioTest = () => {
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="round to nearest pixel correctly"
         fn={({expect}) => {
           const ratio = PixelRatio.get();
@@ -40,7 +37,7 @@ export const PixelRatioTest = () => {
           expect(PixelRatio.roundToNearestPixel(8.4)).to.be.equal(nearestPixel);
         }}
       />
-      <TestCase.Example tags={['C_API']} itShould="display PixelRatio results">
+      <TestCase.Example itShould="display PixelRatio results">
         <Text>
           {JSON.stringify(
             {

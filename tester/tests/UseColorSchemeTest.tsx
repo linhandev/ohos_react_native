@@ -9,14 +9,12 @@ export function UseColorSchemeTest() {
   return (
     <TestSuite name="useColorScheme">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="return sensible value"
         fn={({expect}) => {
           expect(colorScheme).to.oneOf(['light', 'dark', null]);
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="return equal value to Appearance.getColorScheme"
         fn={({expect}) => {
           expect(colorScheme).to.be.equal(colorSchemeFromAppearance);
