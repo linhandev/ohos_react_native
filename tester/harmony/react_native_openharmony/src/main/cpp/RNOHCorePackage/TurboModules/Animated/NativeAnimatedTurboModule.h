@@ -10,6 +10,7 @@
 #include "AnimatedNodesManager.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/NativeVsyncHandle.h"
+#include "RNOH/VSyncListener.h"
 
 namespace rnoh {
 
@@ -122,7 +123,8 @@ class NativeAnimatedTurboModule
   // until the first animated event is registered.
   void initializeEventListener();
 
-  NativeVsyncHandle m_vsyncHandle;
+  std::shared_ptr<VSyncListener> m_vsyncListener =
+      std::make_shared<VSyncListener>();
   AnimatedNodesManager m_animatedNodesManager;
   std::mutex m_nodesManagerLock;
   bool m_initializedEventListener = false;

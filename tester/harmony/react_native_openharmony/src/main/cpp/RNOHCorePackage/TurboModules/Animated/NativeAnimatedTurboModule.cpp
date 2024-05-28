@@ -244,18 +244,19 @@ jsi::Value removeAnimatedEventFromView(
   return facebook::jsi::Value::undefined();
 }
 
-static void scheduleUpdate(long long timestamp, void* data) {
-  auto self = static_cast<NativeAnimatedTurboModule*>(data);
-  self->runUpdates();
-}
-
 NativeAnimatedTurboModule::NativeAnimatedTurboModule(
     const ArkTSTurboModule::Context ctx,
     const std::string name)
     : rnoh::ArkTSTurboModule(ctx, name),
-      m_vsyncHandle("AnimatedTurboModule"),
       m_animatedNodesManager(
-          [this] { m_vsyncHandle.requestFrame(rnoh::scheduleUpdate, this); },
+          [this] {
+            m_vsyncListener->requestFrame(
+                [weakSelf = weak_from_this()](long long _timestamp) {
+                  if (auto self = weakSelf.lock()) {
+                    self->runUpdates();
+                  }
+                });
+          },
           [this](auto tag, auto props) {
             if (m_ctx.taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
               this->setNativeProps(tag, props);
@@ -459,7 +460,12 @@ void NativeAnimatedTurboModule::runUpdates() {
     this->m_animatedNodesManager.runUpdates(frameTime.count());
   } catch (std::exception& e) {
     LOG(ERROR) << "Error in animation update: " << e.what();
-    m_vsyncHandle.requestFrame(rnoh::scheduleUpdate, this);
+    m_vsyncListener->requestFrame(
+        [weakSelf = weak_from_this()](long long _timestamp) {
+          if (auto self = weakSelf.lock()) {
+            self->runUpdates();
+          }
+        });
   }
 }
 
