@@ -22,6 +22,9 @@ export class RNInstanceRegistry {
     options: RNInstanceOptions,
   ): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
+    if (options.enableBackgroundExecutor) {
+      this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated")
+    }
     const instance = new RNInstanceImpl(
       id,
       this.logger,
