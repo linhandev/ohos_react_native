@@ -85,7 +85,7 @@ Exceptions to the standard deprecation timeline may occur, especially when updat
 
 Please follow the format below when including the information about latest RNOH version:
 ```
-INFO_TO_THE_ACTOR (latestVersion: X.Y.Z)
+INFO_TO_THE_ACTOR (latestRNOHVersion: X.Y.Z)
 ```
 
 To include the information in the CHANGELOG.md, a PR that introduces DEPRECATION should include proper information according to the information included in the PR template.

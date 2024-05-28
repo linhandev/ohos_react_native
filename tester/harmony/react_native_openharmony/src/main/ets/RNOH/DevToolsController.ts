@@ -7,6 +7,9 @@ interface DevMenuItem {
   title: string
 }
 
+/**
+ * @api
+ */
 export class DevToolsController {
   public eventEmitter = new EventEmitter<{
     "RELOAD": [{ reason: string | undefined }],
@@ -75,6 +78,9 @@ export class DevToolsController {
     return this.lastError
   }
 
+  /**
+   * @internal
+   */
   setLastError(error: RNOHError): void {
     this.lastError = error;
   }
