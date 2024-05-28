@@ -19,8 +19,11 @@ function getInspectorDeviceUrl(bundleUrl: string) {
   return `http://${getServerHost(bundleUrl)}/inspector/device?name=${deviceName}&app=${appName}`;
 }
 
-// This is a port of the Android impl, at
-// ReactAndroid/src/main/java/com/facebook/react/devsupport/DevServerHelper.java
+/**
+ * @internal
+ * This is a port of the Android impl, at
+ * ReactAndroid/src/main/java/com/facebook/react/devsupport/DevServerHelper.java
+ */
 export class DevServerHelper {
   static DEBUGGER_MSG_DISABLE = "{ \"id\":1,\"method\":\"Debugger.disable\" }";
   static connectionByInspectorUrl = new Map<string, InspectorPackagerConnection>();

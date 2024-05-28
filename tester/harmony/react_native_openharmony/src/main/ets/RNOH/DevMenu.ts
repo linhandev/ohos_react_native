@@ -13,7 +13,9 @@ enum DialogButtonDirection {
   AUTO, HORIZONTAL, VERTICAL,
 }
 
-
+/**
+ * @api
+ */
 export class DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
