@@ -21,6 +21,9 @@ const defaultDisplayMetrics: DisplayMetrics = {
   },
 } as const;
 
+/**
+ * @internal
+ */
 export class DisplayMetricsManager {
   private displayMetrics: DisplayMetrics = defaultDisplayMetrics;
   private logger: RNOHLogger

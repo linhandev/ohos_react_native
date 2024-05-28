@@ -5,34 +5,61 @@ import type { RNOHLogger } from './RNOHLogger';
 
 type RootDescriptor = Descriptor<"RootView", any>
 
+/**
+ * @api
+ */
 type SubtreeListener = () => void;
 type SetNativeStateFn = (componentName: string, tag: Tag, state: unknown) => void
 
+/**
+ * @api
+ */
 export type DescriptorWrapperFactory = (ctx: { descriptor: Descriptor }) => DescriptorWrapper
 
+/**
+ * @api
+ */
 type DescriptorChangeListener = (descriptor: Descriptor, descriptorWrapper: DescriptorWrapper | null) => void
 
+/**
+ * @api
+ */
 type InsertMutation = {
   descriptorMutationType: "INSERT_CHILD",
   childIndex: number,
   childTag: Tag
 }
+
+/**
+ * @api
+ */
 type UpdateMutation = {
   descriptorMutationType: "UPDATE_CHILD",
   childIndex: number,
   childTag: Tag
 }
+
+/**
+ * @api
+ */
 type RemoveMutation = {
   descriptorMutationType: "REMOVE_CHILD",
   childIndex: number,
   childTag: Tag
 }
 
+/**
+ * @api
+ */
 export type DescriptorMutation = InsertMutation | UpdateMutation | RemoveMutation
 
+/**
+ * @api
+ */
 export type DescriptorMutationListener = (args: DescriptorMutation) => void
 
 /**
+ * @api
  * Stores (ComponentInstance)Descriptors. Check Descriptor doc comment for more info.
  */
 export class DescriptorRegistry {
@@ -97,6 +124,9 @@ export class DescriptorRegistry {
     }
   }
 
+  /**
+   * @internal
+   */
   public onDestroy() {
     const stopTracing = this.logger.clone("destroy").startTracing()
     this.cleanUpCallbacks.forEach(cb => cb())
@@ -150,7 +180,7 @@ export class DescriptorRegistry {
   }
 
   /**
-   * Called by NativeAnimatedTurboModule. This method needs to be encapsulated.
+   * @internal: Called by NativeAnimatedTurboModule. This method needs to be encapsulated.
    */
   public setAnimatedRawProps<TProps extends Object>(tag: Tag, newProps: TProps): void {
     this.logger.clone('setAnimatedRawProps').debug("")
@@ -185,6 +215,7 @@ export class DescriptorRegistry {
     this.callSubtreeListeners(new Set([tag]));
   }
 
+
   public setState<TState extends Object>(tag: Tag, state: TState): void {
     const stopTracing = this.logger.clone("setState").startTracing()
     let descriptor = this.getDescriptor<Descriptor<string, TState>>(tag);
@@ -196,6 +227,9 @@ export class DescriptorRegistry {
     stopTracing()
   }
 
+  /**
+   * @internal
+   */
   public applyMutations(mutations: Mutation[]) {
     this.logger.clone("applyMutations").debug()
     const updatedDescriptorTags = new Set(mutations.flatMap(mutation => {
@@ -390,6 +424,9 @@ export class DescriptorRegistry {
     return { ...descriptor, props }
   }
 
+  /**
+   * @internal
+   */
   public createRootDescriptor(tag: Tag) {
     const rootDescriptor: RootDescriptor = {
       isDynamicBinder: false,
@@ -415,6 +452,9 @@ export class DescriptorRegistry {
     this.saveDescriptor(rootDescriptor)
   }
 
+  /**
+   * @internal
+   */
   public deleteRootDescriptor(tag: Tag) {
     const descriptor = this.getDescriptor(tag);
     if (descriptor?.type !== "RootView") {
@@ -434,6 +474,9 @@ export class DescriptorRegistry {
     });
   }
 
+  /**
+   * @deprecated: Use other methods from this class instead. (latestRNOHVersion: 0.72.27)
+   */
   public getDescriptorByTagMap() {
     return this.descriptorByTag
   }
@@ -451,6 +494,9 @@ export class DescriptorRegistry {
   }
 }
 
+/**
+ * @api
+ */
 export class DescriptorRegistryStats {
   countByDescriptorType = new Map<string, number>()
 

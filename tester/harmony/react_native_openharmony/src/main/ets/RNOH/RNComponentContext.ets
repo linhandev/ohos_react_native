@@ -3,23 +3,30 @@ import { DescriptorWrapper, Tag } from "./DescriptorBase"
 import { RNInstanceImpl } from "./RNInstance"
 import { RNComponentDataSource } from './RNComponentDataSource'
 
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 export interface ComponentBuilderContext {
   /**
-   * @deprecated Use `rnComponentContext` instead.
+   * @deprecated Use `rnComponentContext` instead. (latestRNOHVersion: 0.72.27)
    */
   rnohContext: RNOHContext
   /**
-   * @deprecated: Use tag and componentName instead
+   * @deprecated: Use tag and componentName instead. (latestRNOHVersion: 0.72.27)
    */
   descriptor: DescriptorEssence
   tag: Tag
   componentName: string
   /**
-   * rnComponentContext will replace rnohContext in the future
+   * rnComponentContext will replace
    */
   rnComponentContext: RNComponentContext
 }
 
+/**
+ * @api
+ * @deprecated This will be removed with ComponentBuilderContext::descriptor (latestRNOHVersion: 0.72.27)
+ */
 interface DescriptorEssence {
   tag: Tag,
   type: string
