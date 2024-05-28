@@ -6,8 +6,7 @@ export function MomentumCallbacksTest() {
   return (
     <TestCase.Example
       itShould="display amount of on drag/momentum begin/end events (drag fails on C-API)"
-      modal
-      tags={['C_API']}>
+      modal>
       <MomentumTestCase />
     </TestCase.Example>
   );

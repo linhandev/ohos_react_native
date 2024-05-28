@@ -7,7 +7,6 @@ export const ToastAndroidTest = () => {
   return (
     <TestSuite name="ToastAndroid">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="have constants defined"
         fn={({expect}) => {
           expect(ToastAndroid.BOTTOM).to.not.be.undefined;
@@ -17,28 +16,22 @@ export const ToastAndroidTest = () => {
           expect(ToastAndroid.LONG).to.not.be.undefined;
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show Toast with message (show)">
+      <TestCase.Example itShould="show Toast with message (show)">
         <ToastExample options="basic" />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip={'`showWithGravity` fallbacks to `show` on Harmony and Android ^R'}
         itShould="show Toast with message (showWithGravity)">
         <ToastExample options="withGravity" />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip={
           '`showWithGravityAndOffset` fallbacks to `show` on Harmony and Android ^R'
         }
         itShould="show Toast with message (showWithGravityAndOffset)">
         <ToastExample options="withGravityAndOffset" />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show two toasts one short, one long">
+      <TestCase.Example itShould="show two toasts one short, one long">
         <ToastExample
           options="basic"
           message="I am a SHORT toast!"

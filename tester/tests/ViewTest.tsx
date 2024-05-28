@@ -20,15 +20,13 @@ export function ViewTest() {
           style={{width: 64, height: 64, backgroundColor: 'red'}}
         />
       </TestCase.Example>
-      <TestCase.Example modal tags={['C_API']} itShould="apply testId to view">
+      <TestCase.Example modal itShould="apply testId to view">
         <View
           testID="testId"
           style={{width: 64, height: 64, backgroundColor: 'red'}}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with transparent background on gray background">
+      <TestCase.Example itShould="render square with transparent background on gray background">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -40,9 +38,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with rounded corners with different radii (left/right)">
+      <TestCase.Example itShould="render square with rounded corners with different radii (left/right)">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -58,9 +54,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with rounded corners with different radii (start/end)">
+      <TestCase.Example itShould="render square with rounded corners with different radii (start/end)">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -76,9 +70,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render squares with borderTopStartRadius and borderTopEndRadius">
+      <TestCase.Example itShould="render squares with borderTopStartRadius and borderTopEndRadius">
         <View style={styles.squaresContainer}>
           <View style={[styles.square, {borderTopStartRadius: 24}]}>
             <Text style={styles.squareContent}>borderTopStartRadius</Text>
@@ -97,9 +89,7 @@ export function ViewTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render squares with borderBottomStartRadius + borderBottomEndRadius">
+      <TestCase.Example itShould="render squares with borderBottomStartRadius + borderBottomEndRadius">
         <View style={styles.squaresContainer}>
           <View style={[styles.square, {borderBottomStartRadius: 24}]}>
             <Text style={styles.squareContent}>borderBottomStartRadius</Text>
@@ -118,7 +108,7 @@ export function ViewTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="render circles">
+      <TestCase.Example itShould="render circles">
         <View style={styles.squaresContainer}>
           <View style={[styles.square, {borderRadius: 50}]} />
           <View
@@ -145,9 +135,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with borders with different widths">
+      <TestCase.Example itShould="render square with borders with different widths">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -162,9 +150,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render rectangle with borders with different widths and colors">
+      <TestCase.Example itShould="render rectangle with borders with different widths and colors">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -182,9 +168,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with borders with different colors">
+      <TestCase.Example itShould="render square with borders with different colors">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -199,9 +183,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render square with borders with different start/end colors">
+      <TestCase.Example itShould="render square with borders with different start/end colors">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View
             style={{
@@ -214,9 +196,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render squares with borders with different style">
+      <TestCase.Example itShould="render squares with borders with different style">
         <View
           style={{
             width: '100%',
@@ -255,7 +235,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="hide the overflow">
+      <TestCase.Example itShould="hide the overflow">
         <View
           style={{
             width: 64,
@@ -274,7 +254,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="not hide the overflow">
+      <TestCase.Example itShould="not hide the overflow">
         <View
           style={{
             width: 64,
@@ -292,9 +272,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="not show view with height 0 and overflow hidden">
+      <TestCase.Example itShould="not show view with height 0 and overflow hidden">
         <View
           style={{
             width: 64,
@@ -313,9 +291,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render blue rectangle (zIndex test)">
+      <TestCase.Example itShould="render blue rectangle (zIndex test)">
         <View>
           <View
             style={{
@@ -338,7 +314,6 @@ export function ViewTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="render square with elevation"
         skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/238
@@ -363,7 +338,6 @@ export function ViewTest() {
             cAPI: true,
           },
         }}
-        tags={['C_API']}
         itShould="show inner rectangle with the same color as the reference (needsOffscreenAlphaCompositing)"
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/322
       >
@@ -396,9 +370,7 @@ export function ViewTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show view with X moved by 500px right, Y scaled 2 times, rotated by 5deg">
+      <TestCase.Example itShould="show view with X moved by 500px right, Y scaled 2 times, rotated by 5deg">
         <View style={{width: '100%', height: 20}}>
           <View
             style={{
@@ -412,7 +384,6 @@ export function ViewTest() {
       </TestCase.Example>
       <TestSuite name="pointerEvents">
         <TestCase.Manual
-          tags={['C_API']}
           itShould="call inner and outer view when pressing inner"
           initialState={{inner: false, outer: false, outerContainer: false}}
           arrange={({setState, reset}) => {
@@ -433,7 +404,6 @@ export function ViewTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           itShould="call only outer when pressing inner view"
           initialState={{inner: false, outer: false, outerContainer: true}}
           arrange={({setState, reset}) => {
@@ -454,7 +424,6 @@ export function ViewTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           itShould="call inner and outer only when pressing inner view"
           initialState={{inner: false, outer: false, outerContainer: false}}
           arrange={({setState, reset}) => {
@@ -473,7 +442,6 @@ export function ViewTest() {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           itShould="not call inner or outer when pressing inner or outer views"
           initialState={{inner: false, outer: false, outerContainer: false}}
           arrange={({setState, reset}) => {
@@ -495,7 +463,6 @@ export function ViewTest() {
         />
       </TestSuite>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="pass on touching blue background"
         initialState={false}
         arrange={({setState}) => (
@@ -525,7 +492,6 @@ export function ViewTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="pass on touching transparent view"
         initialState={false}
         arrange={({setState, reset}) => (
@@ -596,9 +562,7 @@ export function ViewTest() {
           });
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render view with fixed width and aspectRatio 1">
+      <TestCase.Example itShould="render view with fixed width and aspectRatio 1">
         <View style={{width: '100%', height: 100}}>
           <View
             style={{
@@ -609,9 +573,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render views with set flex and aspectRatio 1">
+      <TestCase.Example itShould="render views with set flex and aspectRatio 1">
         <View style={{width: '100%', height: 100}}>
           <View
             style={{
@@ -631,9 +593,7 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show view rotated by 180deg(backfaceVisibility: visible)">
+      <TestCase.Example itShould="show view rotated by 180deg(backfaceVisibility: visible)">
         <View style={{width: '100%', height: 20}}>
           <View
             style={{
@@ -646,9 +606,7 @@ export function ViewTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="not show view rotated by 180deg(backfaceVisibility: hidden)">
+      <TestCase.Example itShould="not show view rotated by 180deg(backfaceVisibility: hidden)">
         <View style={{width: '100%', height: 20}}>
           <View
             style={{
@@ -661,9 +619,7 @@ export function ViewTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render light blue shadow shifted towards bottom and right">
+      <TestCase.Example itShould="render light blue shadow shifted towards bottom and right">
         <View
           style={{
             width: 64,
@@ -677,9 +633,7 @@ export function ViewTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="View Overflow type hidden test by exceeded text">
+      <TestCase.Example itShould="View Overflow type hidden test by exceeded text">
         <View
           style={{
             backgroundColor: 'rgba(0,255,0,1)',
@@ -696,9 +650,7 @@ export function ViewTest() {
           </Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="View Overflow type visible test by exceeded text">
+      <TestCase.Example itShould="View Overflow type visible test by exceeded text">
         <View
           style={{
             backgroundColor: 'rgba(0,255,0,1)',
@@ -951,13 +903,11 @@ export function ViewTest() {
         <ViewNextFocus />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="change backgroundColor to red after pressing a button (setNativeProps)">
         <SetNativePropsTest />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="Change the height of the View by using setNativeProps({height: h}), similarly for width, top, right, bottom, and left">
         <SetNativePropsOfHeight />

@@ -16,94 +16,66 @@ import {Button, TestCase} from '../components';
 export function AnimatedTest() {
   return (
     <TestSuite name="Animated">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="update the button label after a delay">
+      <TestCase.Example itShould="update the button label after a delay">
         <AnimatedEndCallbackTest />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="animate width">
+      <TestCase.Example itShould="animate width">
         <AnimatedRectangle />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move red square horizontally relatively to the scroll offset">
+      <TestCase.Example itShould="move red square horizontally relatively to the scroll offset">
         <AnimatedScrollViewTestCase />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="fade in and out when clicked">
+      <TestCase.Example itShould="fade in and out when clicked">
         <FadeInOut />
         <FadeInOut nativeDriver />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="rotate grey square after red square with 0.5 second delay">
+      <TestCase.Example itShould="rotate grey square after red square with 0.5 second delay">
         <Delay />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="rotate red square in a loop">
+      <TestCase.Example itShould="rotate red square in a loop">
         <Loop />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="rotate both squares in paralell">
+      <TestCase.Example itShould="rotate both squares in paralell">
         <Parallel />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="rotate button on press">
+      <TestCase.Example itShould="rotate button on press">
         <AnimatedPressableView />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="rotate squares with different stiffness/mass">
+      <TestCase.Example itShould="rotate squares with different stiffness/mass">
         <Spring />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move squares with different initial velocity and deceleration values">
+      <TestCase.Example itShould="move squares with different initial velocity and deceleration values">
         <Decay />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move square immediately after pressing button">
+      <TestCase.Example itShould="move square immediately after pressing button">
         <DiffClamp />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move grey square 2x further horizontally than red">
+      <TestCase.Example itShould="move grey square 2x further horizontally than red">
         <Multiply />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move grey twice but half the total distance of red">
+      <TestCase.Example itShould="move grey twice but half the total distance of red">
         <Modulo />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="move red square closer">
+      <TestCase.Example itShould="move red square closer">
         <Perspective />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move square both vertically and horizontally">
+      <TestCase.Example itShould="move square both vertically and horizontally">
         <ValueXY />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip="tracking value doesn't seem to work anywhere"
         itShould="(broken everywhere) move both squares, with blue square following the red with a spring">
         <TrackingValue />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="gradually change color from green to red when scrolling down (color interpolation)">
         <ColorInterpolationExample />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="stop updating current offset after detachching listener (fork/unfork event)">
+      <TestCase.Example itShould="stop updating current offset after detachching listener (fork/unfork event)">
         <AnimatedForkUnforkEventTest />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="move red square horizontally relatively to the scroll offset (attachNativeEvent)">
+      <TestCase.Example itShould="move red square horizontally relatively to the scroll offset (attachNativeEvent)">
         <AnimatedAttachNativeEventTest />
       </TestCase.Example>
     </TestSuite>

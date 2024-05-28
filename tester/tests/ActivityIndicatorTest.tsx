@@ -7,14 +7,10 @@ import {TestCase} from '../components';
 export function ActivityIndicatorTest() {
   return (
     <TestSuite name="ActivityIndicator">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display small, gray and animated loading indicator">
+      <TestCase.Example itShould="display small, gray and animated loading indicator">
         <ActivityIndicator style={{marginVertical: 16}} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="enable and disable loading every 500 ms">
+      <TestCase.Example itShould="enable and disable loading every 500 ms">
         <Interval
           ms={500}
           render={refreshKey => {
@@ -27,19 +23,13 @@ export function ActivityIndicatorTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display red loading indicator">
+      <TestCase.Example itShould="display red loading indicator">
         <ActivityIndicator style={{marginVertical: 16}} color={'red'} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display a large loading indicator">
+      <TestCase.Example itShould="display a large loading indicator">
         <ActivityIndicator style={{marginVertical: 16}} size="large" />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display a loading indicator with a size of 222 pixels">
+      <TestCase.Example itShould="display a loading indicator with a size of 222 pixels">
         <ActivityIndicator style={{marginVertical: 16}} size={222} />
       </TestCase.Example>
     </TestSuite>

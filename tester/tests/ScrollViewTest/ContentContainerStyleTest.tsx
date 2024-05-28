@@ -6,7 +6,6 @@ export function ContentContainerStyleTest() {
   return (
     <TestSuite name="contentContainerStyle">
       <TestCase
-        tags={['C_API']}
         modal
         itShould="render scrollview with content container with different border radii (topLeft, topRight, ...) (contentContainerStyle)">
         <View style={styles.wrapperView}>
@@ -30,7 +29,6 @@ export function ContentContainerStyleTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="render scroll view with contentContainer with different border widths (left, right, top, bottom) (contentContainerStyle)">
         <View style={styles.wrapperView}>
@@ -53,7 +51,6 @@ export function ContentContainerStyleTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="render scroll view contentContainer with different border colors (left, right, top, bottom) (contentContainerStyle)">
         <View style={styles.wrapperView}>

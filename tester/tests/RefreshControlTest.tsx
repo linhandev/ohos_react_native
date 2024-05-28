@@ -20,9 +20,7 @@ export const RefreshControlTest = () => {
 
   return (
     <TestSuite name="RefreshControl">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display refresh control every second">
+      <TestCase.Example itShould="display refresh control every second">
         <ScrollView
           style={{height: 128, backgroundColor: 'white'}}
           refreshControl={
@@ -34,7 +32,6 @@ export const RefreshControlTest = () => {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="display refresh control with tintColor"
         skip={{
           harmony: false,
@@ -53,13 +50,11 @@ export const RefreshControlTest = () => {
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         itShould="be refreshing for one second after pull to refresh">
         <PullToRefreshExample />
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         skip={{
           harmony: {
             cAPI: true,
@@ -72,24 +67,16 @@ export const RefreshControlTest = () => {
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         itShould="refresh with progressViewOffset = undefined">
         <PullToRefreshProgressViewOffset />
       </TestCase.Example>
-      <TestCase.Example
-        modal
-        tags={['C_API']}
-        itShould="refresh with progressViewOffset = 50">
+      <TestCase.Example modal itShould="refresh with progressViewOffset = 50">
         <PullToRefreshProgressViewOffset progressViewOffset={50} />
       </TestCase.Example>
-      <TestCase.Example
-        modal
-        tags={['C_API']}
-        itShould="refresh with progressViewOffset = 100">
+      <TestCase.Example modal itShould="refresh with progressViewOffset = 100">
         <PullToRefreshProgressViewOffset progressViewOffset={100} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip={{
           harmony: {
             cAPI: true,
@@ -102,7 +89,6 @@ export const RefreshControlTest = () => {
         <PullToRefreshInNestedScrollViews />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip={{
           harmony: {
             cAPI: true,
@@ -115,7 +101,6 @@ export const RefreshControlTest = () => {
         <PullToRefreshInNestedScrollViewsDifferentSource />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip={{
           harmony: {
             cAPI: true,
@@ -151,9 +136,7 @@ export const RefreshControlTest = () => {
         modal>
         <RefreshControlInsideFlatListWithStylesExample />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display background color for refresh control indicator">
+      <TestCase.Example itShould="display background color for refresh control indicator">
         <ScrollView
           style={{height: 128, backgroundColor: 'white'}}
           refreshControl={
@@ -166,7 +149,6 @@ export const RefreshControlTest = () => {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="display pink 'I am refreshing!' text below refresh control indicator"
         skip={{
           harmony: false,
@@ -186,13 +168,10 @@ export const RefreshControlTest = () => {
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         itShould="disable/enable pull to refresh on click">
         <PullToRefreshEnabledExample />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display a large refresh control indicator">
+      <TestCase.Example itShould="display a large refresh control indicator">
         <ScrollView
           style={{height: 128, backgroundColor: 'white'}}
           refreshControl={

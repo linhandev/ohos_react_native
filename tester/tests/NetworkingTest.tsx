@@ -22,7 +22,6 @@ export const NetworkingTest = () => {
     <TestSuite name="Networking">
       <TestSuite name="Fetch API">
         <TestCase.Logical
-          tags={['C_API']}
           itShould="download data"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -32,7 +31,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="download and parse JSON data"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -41,7 +39,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="download data to an ArrayBuffer"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -50,7 +47,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="download data to a blob"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -59,7 +55,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="correctly send requests with FormData"
           fn={async ({expect}) => {
             const formData = new FormData();
@@ -79,7 +74,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="correctly send a text file in FormData"
           fn={async ({expect}) => {
             try {
@@ -109,7 +103,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="correctly read response headers"
           fn={async ({expect}) => {
             const response = await fetch(
@@ -122,7 +115,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="fail on bad url"
           fn={async ({expect}) => {
             const received = await canFetch(
@@ -134,7 +126,6 @@ export const NetworkingTest = () => {
       </TestSuite>
       <TestSuite name="XmlHttpRequest">
         <TestCase.Logical
-          tags={['C_API']}
           itShould="verify if correct data is received in onprogress event"
           fn={async ({expect}) => {
             // emojis use 4 bytes so theres a higher chance of them getting cut when loading incrementally
@@ -176,7 +167,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          tags={['C_API']}
           itShould="verify that cookies are saved and sent correctly (withCredentials)"
           fn={async ({expect}) => {
             await sendCookieRequest(
@@ -203,7 +193,6 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Manual
-          tags={['C_API']}
           initialState={{cookies: {}}}
           arrange={({setState}) => {
             const requestSetCookies = async () => {
@@ -257,17 +246,15 @@ export const NetworkingTest = () => {
         />
       </TestSuite>
       <TestSuite name="WebSocket">
-        <TestCase.Example tags={['C_API']} itShould="connect to websockets">
+        <TestCase.Example itShould="connect to websockets">
           <WebSocketEcho />
         </TestCase.Example>
         <TestCase.Example
-          tags={['C_API']}
           modal
           itShould="send and receive arraybuffer through websocket and display 'Hello World from WebSocket!'">
           <WebSocketSendingAndReceivingArrayBuffer />
         </TestCase.Example>
         <TestCase.Example
-          tags={['C_API']}
           modal
           itShould="send and receive blob through websocket and display blob size">
           <WebSocketSendingAndReceivingBlob />

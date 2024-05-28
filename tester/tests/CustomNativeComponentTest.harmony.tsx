@@ -40,23 +40,18 @@ function ManualCustomComponentImplementationTest() {
 
   return (
     <TestSuite name="no codegen">
-      <TestCase.Example tags={['C_API']} itShould="render red rectangle">
+      <TestCase.Example itShould="render red rectangle">
         <SampleComponent backgroundColor="red" size={64} />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render green rectangle inside red rectangle">
+      <TestCase.Example itShould="render green rectangle inside red rectangle">
         <SampleComponent backgroundColor="red" size={64}>
           <SampleComponent backgroundColor="green" size={32} />
         </SampleComponent>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render red rectangle with black text">
+      <TestCase.Example itShould="render red rectangle with black text">
         <SampleComponent backgroundColor="red" size={64} textColor="black" />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="handle custom native event when clicked"
         initialState={false}
         arrange={({setState}) => (
@@ -70,13 +65,13 @@ function ManualCustomComponentImplementationTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example tags={['C_API']} itShould="change bgColor every second">
+      <TestCase.Example itShould="change bgColor every second">
         <SampleComponent
           backgroundColor={refreshKey % 2 === 0 ? 'red' : 'green'}
           size={64}
         />
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="show and hide red rectangle">
+      <TestCase.Example itShould="show and hide red rectangle">
         <View style={{height: 64}}>
           {refreshKey % 2 === 0 && (
             <SampleComponent
@@ -137,7 +132,6 @@ function GeneratedCustomComponentTest() {
         <TestCase.Manual<
           GeneratedSampleNativeComponentArkTSCustomProps | undefined
         >
-          tags={['C_API']}
           itShould="ensure equality between provided and received data"
           initialState={undefined}
           arrange={({setState}) => {
@@ -192,7 +186,6 @@ function GeneratedCustomComponentTest() {
         <TestCase.Manual<
           GeneratedSampleNativeComponentCAPICustomProps | undefined
         >
-          tags={['C_API']}
           skip={{
             android: true,
             harmony: {arkTS: 'C-API only test', cAPI: false},
@@ -246,7 +239,6 @@ function GeneratedCustomComponentTest() {
         <TestCase.Manual<
           GeneratedSampleNativeComponentCAPICommandArgs | undefined
         >
-          tags={['C_API']}
           skip={{
             android: true,
             harmony: {arkTS: 'C-API only test', cAPI: false},

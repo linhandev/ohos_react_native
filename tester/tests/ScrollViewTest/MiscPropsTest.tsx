@@ -12,18 +12,12 @@ import {Button, ObjectDisplayer, TestCase} from '../../components';
 export function MiscPropsTest() {
   return (
     <TestSuite name="misc props">
-      <TestCase.Example
-        itShould="scroll should be disabled"
-        tags={['C_API']}
-        modal>
+      <TestCase.Example itShould="scroll should be disabled" modal>
         <View style={styles.wrapperView}>
           <ScrollView {...COMMON_PROPS} scrollEnabled={false} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="display horizontal scroll view"
-        modal
-        tags={['C_API']}>
+      <TestCase.Example itShould="display horizontal scroll view" modal>
         <View
           style={{
             width: '100%',
@@ -35,13 +29,11 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display ScrollView with the third view at the top (contentOffset)">
         <ContentOffsetTestCase />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="scroll when contentOffset property is changed (contentOffset)">
         <ToggleContentOffsetTestCase />
@@ -65,7 +57,6 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display current contentHeight (onContentSizeChange)">
         <View style={{height: 500}}>
@@ -73,7 +64,6 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display onScroll native event throttled every second">
         <View style={{height: 500}}>
@@ -94,7 +84,6 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="the left scrollview should decelerate faster (stops earlier) than the right one (decelarationRate)">
         <View style={[styles.wrapperView, {flexDirection: 'row'}]}>
@@ -104,7 +93,6 @@ export function MiscPropsTest() {
       </TestCase.Example>
 
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="the left scrollview should bounce (briefly scroll beyond the content to show the view below and then come back to top/bottom accordingly)">
         <View style={[styles.wrapperView, {flexDirection: 'row'}]}>
@@ -113,7 +101,6 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="the left scrollview should bounce (briefly scroll beyond the content to show the view below and then come back to top/bottom accordingly) (alwaysBounceVertical)">
         <View style={[styles.wrapperView, {flexDirection: 'row'}]}>
@@ -134,7 +121,6 @@ export function MiscPropsTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="the top scrollview should bounce (briefly scroll beyond the content to show the view below and then come back to left/right accordingly) (alwaysBounceHorizontal)">
         <View style={[styles.wrapperView]}>

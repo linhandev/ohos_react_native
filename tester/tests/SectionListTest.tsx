@@ -58,10 +58,7 @@ const commonProps = {
 export const SectionListTest = () => {
   return (
     <TestSuite name="SectionList">
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="display items in the SectionList">
+      <TestCase.Example modal itShould="display items in the SectionList">
         <View style={styles.container}>
           <SectionList
             sections={DATA}
@@ -77,10 +74,7 @@ export const SectionListTest = () => {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="display an array of visible items">
+      <TestCase.Example modal itShould="display an array of visible items">
         <View style={styles.container}>
           <ObjectDisplayer
             renderContent={setObject => {
@@ -122,7 +116,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display nativeEvent when onMomentumScrollBegin">
         <View style={styles.container}>
@@ -141,7 +134,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display nativeEvent when onMomentumScrollEnd">
         <View style={styles.container}>
@@ -160,14 +152,12 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display event sent to by onScrollToIndexFailed when pressing the button before scrolling">
         <ScrollToIndexFailureTestCase />
       </TestCase.Example>
       {/* sticky headers seems to work on Android when App.tsx was replaced with content of this test */}
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="stick section headers (fails on Android when fabric is enabled)"
         skip={{android: true, harmony: false}}>
@@ -176,33 +166,23 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="support viewOffset when scrolling to location">
         <View style={styles.container}>
           <ScrollToLocationOffset />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="show vertical scroll indicator">
+      <TestCase.Example modal itShould="show vertical scroll indicator">
         <View style={styles.container}>
           <SectionList {...commonProps} showsVerticalScrollIndicator={true} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="hide vertical scroll indicator">
+      <TestCase.Example modal itShould="hide vertical scroll indicator">
         <View style={styles.container}>
           <SectionList {...commonProps} showsVerticalScrollIndicator={false} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="show horizontal scroll indicator">
+      <TestCase.Example modal itShould="show horizontal scroll indicator">
         <View style={styles.container}>
           <View style={{width: 200, height: '100%'}}>
             <SectionList
@@ -213,10 +193,7 @@ export const SectionListTest = () => {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="hide horizontal scroll indicator">
+      <TestCase.Example modal itShould="hide horizontal scroll indicator">
         <View style={styles.container}>
           <View style={{width: 200, height: '100%'}}>
             <SectionList
@@ -237,7 +214,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="render custom RefreshControl on pull to refresh">
         <View style={styles.container}>
@@ -264,7 +240,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="render standard RefreshControl on pull to refresh">
         <View style={styles.container}>
@@ -284,7 +259,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display onScroll native event throttled every second"
         skip={Platform.select({
@@ -307,7 +281,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="allow scrolling beneath the content due to large lengths returned in getItemLayout">
         <View style={styles.container}>
@@ -325,7 +298,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="display onEndReached event when scroll reached bottom and onStartReached event when scroll reached top">
         <View style={styles.container}>
@@ -347,7 +319,6 @@ export const SectionListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="click on 'Record interaction' button changes the first three items background color to blue">
         <View style={{height: 500}}>

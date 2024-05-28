@@ -9,7 +9,6 @@ export function StickyHeadersTest() {
       name="sticky headers" /* (sticky headers fail on Android when Fabric is enabled) */
     >
       <TestCase
-        tags={['C_API']}
         modal
         itShould="stick item 1 and 4 (stickyHeaderIndices)"
         skip={Platform.OS === 'android'}>
@@ -20,7 +19,6 @@ export function StickyHeadersTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         skip={Platform.OS === 'android'}
         itShould="hide sticked item 1 or 4 when scrolling down (stickyHeaderHiddenOnScroll)">
@@ -34,7 +32,6 @@ export function StickyHeadersTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         skip={Platform.OS === 'android'}
         itShould="stick item 13 and 20 to the bottom (invertStickyHeaders)"
@@ -50,7 +47,6 @@ export function StickyHeadersTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="display Text 'custom sticky header' in the place of components 1 and 4 (shouldn't stick) (StickyHeaderComponent)">
         <View style={styles.wrapperView}>

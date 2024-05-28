@@ -8,7 +8,6 @@ export function InternalTest() {
   return (
     <TestSuite name="Internal Tests">
       <TestCase.Logical
-        tags={['C_API']}
         itShould="pass the same value as the one provided (ArkTS -> C++ -> ArkTS communication test)"
         fn={async ({expect}) => {
           const result = await SampleTurboModule2.emitEventFromArkTS2Cpp({
@@ -20,8 +19,7 @@ export function InternalTest() {
       <TestCase.Example
         /** A = RN, B = react-native-gesture-handler */
         itShould="block scroll if it's blocked by A, then blocked B, and then unblocked by A"
-        skip={{android: true, harmony: {arkTS: true, cAPI: false}}}
-        tags={['C_API']}>
+        skip={{android: true, harmony: {arkTS: true, cAPI: false}}}>
         <BlockNativeResponderExample />
       </TestCase.Example>
     </TestSuite>

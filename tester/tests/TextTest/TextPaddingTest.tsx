@@ -5,9 +5,7 @@ import {PressCounter} from '../../components';
 export function TextPaddingTest() {
   return (
     <TestSuite name="padding">
-      <TestCase
-        tags={['C_API']}
-        itShould="preserve a gap of atleast 24 pixels from each container edge">
+      <TestCase itShould="preserve a gap of atleast 24 pixels from each container edge">
         <View style={{width: 300}}>
           <Text style={{padding: 24, borderWidth: 1}}>
             <Text style={{color: 'blue'}}>Fragment1</Text>
@@ -22,7 +20,6 @@ export function TextPaddingTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         skip={Platform.select({
           android: 'not supported',
           harmony: 'RN problem, also fails on Android',
@@ -34,7 +31,6 @@ export function TextPaddingTest() {
         </Text>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         skip // Inserting zero-width space in RNSimpleText that fixes this issue breaks wrapping. This problem needs to be fixed on ArkUI's side.
         itShould="insert ellipsis at same location">
         <View style={{width: 300}}>

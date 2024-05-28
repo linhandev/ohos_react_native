@@ -10,9 +10,7 @@ export function SwitchTest() {
 
   return (
     <TestSuite name="Switch">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Render a working switch and display it's state and SwitchChangeEvent details">
+      <TestCase.Example itShould="Render a working switch and display it's state and SwitchChangeEvent details">
         <View style={styles.container}>
           <Text style={{height: 30}}>
             Switch isEnabled: {isEnabled.toString()}
@@ -27,7 +25,7 @@ export function SwitchTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="Render a disabled switch">
+      <TestCase.Example itShould="Render a disabled switch">
         <View style={styles.container}>
           <Switch
             trackColor={{false: 'green', true: 'firebrick'}}
@@ -36,9 +34,7 @@ export function SwitchTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Render a disabled switch with true value">
+      <TestCase.Example itShould="Render a disabled switch with true value">
         <View style={styles.container}>
           <Switch
             trackColor={{false: 'green', true: 'firebrick'}}
