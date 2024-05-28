@@ -60,5 +60,10 @@ void RefreshNode::onNodeEvent(
       m_refreshNodeDelegate) {
     m_refreshNodeDelegate->onRefresh();
   }
+  if (eventType == ArkUI_NodeEventType::NODE_REFRESH_STATE_CHANGE &&
+      m_refreshNodeDelegate) {
+    auto state = static_cast<RefreshNodeDelegate::RefreshStatus>(eventArgs[0].i32);
+    m_refreshNodeDelegate->onRefreshStateChanged(state);
+  }
 }
 } // namespace rnoh

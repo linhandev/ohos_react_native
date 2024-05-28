@@ -475,6 +475,14 @@ ArkUINode& ArkUINode::setVisibility(ArkUI_Visibility visibility) {
   return *this;
 }
 
+ArkUINode& ArkUINode::setZIndex(float index) {
+  std::array<ArkUI_NumberValue, 1> values = {{{.f32 = index}}};
+  ArkUI_AttributeItem item = {values.data(), values.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_Z_INDEX, &item));
+  return *this;
+}
+
 ArkUINode& ArkUINode::setRenderGroup(bool flag) {
   ArkUI_NumberValue value[] = {{.i32 = (int32_t)flag}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
