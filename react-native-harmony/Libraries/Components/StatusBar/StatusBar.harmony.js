@@ -229,7 +229,7 @@ class StatusBar extends React.Component<Props> {
     // RNOH: patch - use NativeStatusBarManager harmony
     backgroundColor:
       NativeStatusBarManagerHarmony.getConstants().DEFAULT_BACKGROUND_COLOR ??
-      "#00000066",
+      "#00000000",
     barStyle: "default",
     translucent: false,
     hidden: false,
