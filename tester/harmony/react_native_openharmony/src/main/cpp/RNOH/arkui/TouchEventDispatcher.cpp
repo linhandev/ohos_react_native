@@ -79,6 +79,7 @@ std::optional<facebook::react::Touch> convertTouchPointToReactTouch(
       .screenPoint = screenPoint,
       .identifier = touchPoint.id,
       .target = target->getTouchTargetTag(),
+      .force = touchPoint.force,
       .timestamp = timestampSeconds};
 
   return touch;
@@ -110,6 +111,7 @@ TouchPoint getActiveTouchFromEvent(ArkUI_UIInputEvent* event) {
 #ifdef C_API_ARCH
   actionTouch = TouchPoint{
       .id = OH_ArkUI_PointerEvent_GetPointerId(event, 0),
+      .force = OH_ArkUI_PointerEvent_GetPressure(event, 0),
       .nodeX = int32_t(OH_ArkUI_PointerEvent_GetX(event)),
       .nodeY = int32_t(OH_ArkUI_PointerEvent_GetY(event)),
       .screenX = int32_t(OH_ArkUI_PointerEvent_GetDisplayX(event)),
@@ -126,6 +128,7 @@ std::vector<TouchPoint> getTouchesFromEvent(ArkUI_UIInputEvent* event) {
   for (auto idx = 0; idx < touchPointCount; idx++) {
     result.emplace_back(TouchPoint{
         .id = OH_ArkUI_PointerEvent_GetPointerId(event, idx),
+        .force = OH_ArkUI_PointerEvent_GetPressure(event, idx),
         .nodeX = int32_t(OH_ArkUI_PointerEvent_GetXByIndex(event, idx)),
         .nodeY = int32_t(OH_ArkUI_PointerEvent_GetYByIndex(event, idx)),
         .screenX =
@@ -326,6 +329,7 @@ void TouchEventDispatcher::cancelTouch(
       .screenPoint = screenPoint,
       .identifier = touchPoint.id,
       .target = target->getTouchTargetTag(),
+      .force = touchPoint.force,
       .timestamp = timestampSeconds};
 
   facebook::react::TouchEvent touchEvent{
