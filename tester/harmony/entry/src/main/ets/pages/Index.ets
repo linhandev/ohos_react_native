@@ -97,6 +97,7 @@ struct Index {
             enableNDKTextMeasuring: true,
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: false,
+            enablePartialSyncOfDescriptorRegistryInCAPI: true,
           },
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "app_name",

@@ -5,8 +5,10 @@
 #include <folly/dynamic.h>
 #include <react/renderer/core/ComponentDescriptor.h>
 #include <react/renderer/scheduler/SchedulerDelegate.h>
+#include <unordered_set>
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
+#include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/SchedulerDelegateArkTS.h"
 #include "RNOH/ShadowViewRegistry.h"
@@ -27,12 +29,14 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
       rnoh::SchedulerDelegateArkTS::Unique schedulerDelegateArkTS,
-      MountingManager::Shared mountingManager)
+      MountingManager::Shared mountingManager,
+      FeatureFlagRegistry::Shared featureFlagRegistry)
       : m_taskExecutor(taskExecutor),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_schedulerDelegateArkTS(std::move(schedulerDelegateArkTS)),
-        m_mountingManager(std::move(mountingManager)){};
+        m_mountingManager(std::move(mountingManager)),
+        m_featureFlagRegistry(std::move(featureFlagRegistry)){};
 
   ~SchedulerDelegateCAPI() {
     VLOG(1) << "~SchedulerDelegateCAPI";
@@ -59,7 +63,10 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
             facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
           // Did mount
           auto mutations = transaction.getMutations();
-          m_mountingManager->processMutations(mutations);
+          if (!m_featureFlagRegistry->isFeatureFlagOn(
+                  "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
+            m_mountingManager->processMutations(mutations);
+          }
           m_taskExecutor->runTask(TaskThread::MAIN, [this, mutations] {
             for (auto mutation : mutations) {
               try {
@@ -115,6 +122,8 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
   facebook::react::ContextContainer::Shared m_contextContainer;
   rnoh::SchedulerDelegateArkTS::Unique m_schedulerDelegateArkTS;
   MountingManager::Shared m_mountingManager;
+  FeatureFlagRegistry::Shared m_featureFlagRegistry;
+  std::unordered_set<std::string> m_cApiComponentNames;
 
   void updateComponentWithShadowView(
       ComponentInstance::Shared const& componentInstance,
@@ -137,6 +146,7 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
             << "; newTag: " << mutation.newChildShadowView.tag
             << "; oldTag: " << mutation.oldChildShadowView.tag
             << "; parentTag: " << mutation.parentShadowView.tag << ")";
+
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
@@ -145,15 +155,27 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         if (componentInstance != nullptr) {
           updateComponentWithShadowView(componentInstance, newChild);
           m_componentInstanceRegistry->insert(componentInstance);
+          m_cApiComponentNames.insert(newChild.componentName);
         } else {
           LOG(INFO) << "Couldn't create CppComponentInstance for: "
                     << newChild.componentName;
+          if (m_featureFlagRegistry->isFeatureFlagOn(
+                  "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
+            m_mountingManager->processMutationsSync({mutation});
+          }
         }
         break;
       }
       case facebook::react::ShadowViewMutation::Delete: {
         auto oldChild = mutation.oldChildShadowView;
         m_componentInstanceRegistry->deleteByTag(oldChild.tag);
+        if (m_cApiComponentNames.find(
+                mutation.oldChildShadowView.componentName) ==
+                m_cApiComponentNames.end() &&
+            m_featureFlagRegistry->isFeatureFlagOn(
+                "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
+          m_mountingManager->processMutationsSync({mutation});
+        }
         break;
       }
       case facebook::react::ShadowViewMutation::Insert: {
@@ -212,6 +234,13 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         if (componentInstance != nullptr) {
           updateComponentWithShadowView(
               componentInstance, mutation.newChildShadowView);
+          if (m_cApiComponentNames.find(
+                  mutation.newChildShadowView.componentName) ==
+                  m_cApiComponentNames.end() &&
+              m_featureFlagRegistry->isFeatureFlagOn(
+                  "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
+            m_mountingManager->processMutationsSync({mutation});
+          }
         }
         break;
       }

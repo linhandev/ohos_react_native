@@ -53,6 +53,8 @@ class MountingManager {
 
   void processMutations(facebook::react::ShadowViewMutationList mutations);
 
+  void processMutationsSync(facebook::react::ShadowViewMutationList mutations);
+
  private:
   TaskExecutor::Shared taskExecutor;
   ShadowViewRegistry::Shared shadowViewRegistry;

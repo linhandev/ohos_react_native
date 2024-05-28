@@ -92,6 +92,7 @@ export interface RNInstance {
    * Check DescriptorRegistry documentation for more information.
    */
   descriptorRegistry: DescriptorRegistry;
+
   /**
    * @architecture: C-API
    * Relays messages emitted from C++ by RNInstanceCAPI::postMessageToArkTS
@@ -101,16 +102,19 @@ export interface RNInstance {
    * @deprecated Use RNOHContext::componentCommandReceiver
    */
   commandDispatcher: CommandDispatcher;
+
   /**
    * Check ComponentManagerRegistry documentation for more information.
    */
   componentManagerRegistry: ComponentManagerRegistry;
+
   /**
    * Mindless copy of Android's `ReactInstanceManager::getLifecycleState` per specific request.
    * It probably behaves differently to Android because UIAbility is a different concept than Android's Activity despite
    * certain similarities.
    */
   getLifecycleState(): LifecycleState;
+
   /**
    * Allows subscribing to various events. Check LifecycleEventArgsByEventName type for more information.
    */
@@ -118,6 +122,7 @@ export interface RNInstance {
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void
   ) => () => void;
+
   /**
    * Similar to subscribeToLifecycleEvents but handles different set of events. It may be removed to unify subscribing to events.
    */
@@ -125,6 +130,7 @@ export interface RNInstance {
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void
   ) => () => void;
+
   /**
    * Asynchronously executes a JS function. It may be renamed in the future because "call" suggest synchronous communication.
    * @param moduleName — name of the JavaScript file
@@ -132,48 +138,59 @@ export interface RNInstance {
    * @param args - args that function should receive
    */
   callRNFunction(moduleName: string, functionName: string, args: unknown[]): void;
+
   /**
    * Sends device events (e.g. "appearanceChanged") to React Native.
    */
   emitDeviceEvent(eventName: string, payload: any): void;
+
   /**
    * Sends component events like "onScroll". That event is received by "EventEmitRequestHandler" on the C++ side. That handler
    * calls proper method on Component's EventEmitter.
    */
   emitComponentEvent(tag: Tag, eventName: string, payload: any): void;
+
   /**
    * Used by RNApp to avoid loading the same bundle twice.
    */
   getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined
+
   /**
    * Enables feature flag. It may be removed in the future because usually feature flags need to be provided when creating
    * RNInstance.
    */
   enableFeatureFlag(featureFlagName: FeatureFlagName): void
+
   /**
    * Checks if given feature flag is enabled.
    */
   isFeatureFlagEnabled(featureFlagName: FeatureFlagName): boolean
+
   /**
    * Reads JS Bundle and executes loaded code.
    */
   runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
+
   /**
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
   getTurboModule<T extends TurboModule>(name: string): T;
+
   /**
    * Used by RNSurface. It creates a surface somewhere in React Native.
    */
   createSurface(appKey: string): SurfaceHandle;
+
   /**
    * Sets (Right-To-Left) mode in all surfaces.
    */
   updateRTL(isRTL: boolean): void;
+
   /**
    * Sends state update request to ComponentNapiBinder.h::updateState to update the state on C++ side.
    */
   updateState(componentName: string, tag: Tag, state: unknown): void;
+
   /**
    * @returns RNInstance ID.
    */
@@ -198,15 +215,18 @@ export interface RNInstance {
    * @returns a function that cancels this this effect
    */
   blockComponentsGestures(targetComponentTag: Tag): (() => void)
+
   /**
    * @returns the first loaded JS Bundle URL. This method is used by SourceCodeTurboModule to generate proper stack traces.
    * Some apps split their bundles to improve the start up performance, hence the word "initial".
    */
   getInitialBundleUrl(): string | undefined
+
   /**
    * @returns current RNOH architecture name
    */
   getArchitecture(): "ARK_TS" | "C_API"
+
   /**
    * (Almost) all network request go through HttpClient which can be used to improve logging or unify request handling
    * in hybrid (JS+Native) applications.
@@ -262,6 +282,15 @@ export type RNInstanceOptions = {
    * Choose based on preference for stability or performance.
    */
   enableCAPIArchitecture?: boolean,
+
+  /**
+   * @architecture: C-API
+   * When enabled, RNOH will send mutations that affect only Descriptors of custom components implemented on the ArkUI side.
+   * If disabled, RNOH will send all mutations to DescriptorRegistry, even if a component is a CppComponentInstance.
+   * Enabling this feature flag may improve performance, but it may break some libraries built on top of the ArkTS architecture
+   * and that operate on the tree of descriptors.
+   */
+  enablePartialSyncOfDescriptorRegistryInCAPI?: boolean
   /**
    * Specifies the path for RN to locate assets. Necessary in production environments where assets are not hosted by the Metro server.
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
@@ -316,6 +345,7 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
     private shouldUseCApiArchitecture: boolean,
+    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     httpClientProvider: HttpClientProvider,
   ) {
@@ -397,6 +427,9 @@ export class RNInstanceImpl implements RNInstance {
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
+    }
+    if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
+      cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
     this.napiBridge.createReactNativeInstance(
       this.id,
@@ -503,7 +536,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
+                                                                                            listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
     return this.lifecycleEventEmitter.subscribe(type, listener)
   }
 

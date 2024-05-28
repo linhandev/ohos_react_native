@@ -23,8 +23,7 @@ TextMeasurement TextMeasurer::measure(
       isnan(fragments[0].textAttributes.letterSpacing) &&
       isnan(fragments[0].textAttributes.lineHeight);
   auto isNDKTextMeasuringEnabled =
-      this->m_featureFlagRegistry->getFeatureFlagStatus(
-          "ENABLE_NDK_TEXT_MEASURING");
+      this->m_featureFlagRegistry->isFeatureFlagOn("ENABLE_NDK_TEXT_MEASURING");
   if (canUseOHOSTextMeasurer || isNDKTextMeasuringEnabled) {
     auto typography = measureTypography(
         attributedString, paragraphAttributes, layoutConstraints);

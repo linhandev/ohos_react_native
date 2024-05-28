@@ -46,7 +46,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor) {
   auto shouldUseCAPIArchitecture =
-      featureFlagRegistry->getFeatureFlagStatus("C_API_ARCH");
+      featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
   std::shared_ptr<TaskExecutor> taskExecutor =
       std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
@@ -183,7 +183,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(schedulerDelegateArkTS),
-        mountingManager);
+        mountingManager,
+        featureFlagRegistry);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,

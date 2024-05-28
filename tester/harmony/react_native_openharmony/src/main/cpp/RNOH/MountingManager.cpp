@@ -77,7 +77,16 @@ void MountingManager::processMutations(
     facebook::react::ShadowViewMutationList mutations) {
   taskExecutor->runTask(
       TaskThread::MAIN,
-      [triggerUICallback = this->triggerUICallback, mutations = mutations] {
+      [triggerUICallback = this->triggerUICallback, mutations] {
+        triggerUICallback(mutations);
+      });
+}
+
+void MountingManager::processMutationsSync(
+    facebook::react::ShadowViewMutationList mutations) {
+  taskExecutor->runSyncTask(
+      TaskThread::MAIN,
+      [triggerUICallback = this->triggerUICallback, mutations] {
         triggerUICallback(mutations);
       });
 }
