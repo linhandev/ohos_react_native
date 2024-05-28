@@ -8,6 +8,7 @@
 namespace rnoh {
 struct TouchPoint {
   int32_t id;
+  float force;
   int32_t nodeX;
   int32_t nodeY;
   int32_t screenX;
