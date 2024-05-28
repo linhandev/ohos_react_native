@@ -242,7 +242,8 @@ export type RNInstanceOptions = {
   enableDebugger?: boolean,
   /**
    * UNSTABLE: Enables an additional BACKGROUND thread for layout calculations. This improves performance
-   * but increases the risk of deadlocks.
+   * but increases the risk of deadlocks and crashes. Usually crashes the app due to "Assertion failed: parser was already assigned" error.
+   * @deprecated: Do not enable this option. This feature causes too many problems to justify performance improvements (latestRNOHVersion: 0.72.27)
    */
   enableBackgroundExecutor?: boolean,
   /**
