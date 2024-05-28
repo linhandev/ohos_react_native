@@ -73,7 +73,7 @@ export class StatusBarTurboModule extends TurboModule {
   private constants?: StatusBarConstants = null;
   private eventEmitter = new EventEmitter<StatusBarEventNameByListenerArgs>()
   private _isStatusBarHidden = false;
-  private _currentColor = "#66000000";
+  private _currentColor = "#00000000";
 
   constructor(protected ctx: TurboModuleContext) {
     super(ctx);
@@ -87,7 +87,7 @@ export class StatusBarTurboModule extends TurboModule {
 
       const scaledStatusBarHeight = px2vp(statusBarHeight);
       this.constants = {
-        DEFAULT_BACKGROUND_COLOR: '#00000066',
+        DEFAULT_BACKGROUND_COLOR: '#00000000',
         HEIGHT: scaledStatusBarHeight,
       }
     } catch (exception) {
@@ -97,7 +97,7 @@ export class StatusBarTurboModule extends TurboModule {
 
   getConstants(): StatusBarConstants {
     return this.constants ?? {
-      DEFAULT_BACKGROUND_COLOR: "#00000066",
+      DEFAULT_BACKGROUND_COLOR: "#00000000",
       HEIGHT: 0,
     };
   }
