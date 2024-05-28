@@ -96,7 +96,6 @@ export function PlatformColorTest() {
   return (
     <TestSuite name="PlatformColor">
       <TestCase.Example
-        tags={['C_API']}
         itShould="display system colors from system resources"
         skip={{
           android: 'Works only for Open Harmony system colors',
@@ -105,7 +104,6 @@ export function PlatformColorTest() {
         <DisplayColors title="System Colors" colors={SYSTEM_COLORS} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="display system icons colors from system resources"
         skip={{
           android: 'Works only for Open Harmony system colors',
@@ -114,7 +112,6 @@ export function PlatformColorTest() {
         <DisplayColors title="Icons Colors" colors={ICONS_COLORS} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="display system text colors from system resources"
         skip={{
           android: 'Works only for Open Harmony system colors',
@@ -123,7 +120,6 @@ export function PlatformColorTest() {
         <DisplayColors title="Text Colors" colors={TEXT_COLORS} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="display system palette colors from system resources"
         skip={{
           android: 'Works only for Open Harmony system colors',
@@ -132,7 +128,6 @@ export function PlatformColorTest() {
         <DisplayColors title="System Palette Colors" colors={SYSTEM_PALETTES} />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="fallback to second color and display green box"
         skip={Platform.select({
           android: 'Works only for Open Harmony system colors',

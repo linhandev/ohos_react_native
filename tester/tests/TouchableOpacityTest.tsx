@@ -8,34 +8,28 @@ export const TouchableOpacityTest = () => {
   const [onLayoutTestText, setOnLayoutTestText] = useState('');
   return (
     <TestSuite name="TouchableOpacity">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="make the text less visible on press">
+      <TestCase.Example itShould="make the text less visible on press">
         <TouchableOpacity onPress={() => {}}>
           <PressMe />
         </TouchableOpacity>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="make the text slightly less visible on press (activeOpacity)">
+      <TestCase.Example itShould="make the text slightly less visible on press (activeOpacity)">
         <TouchableOpacity activeOpacity={0.5} onPress={() => {}}>
           <PressMe />
         </TouchableOpacity>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show number of presses on press">
+      <TestCase.Example itShould="show number of presses on press">
         <TouchableOpacity
           onPress={() => setPressCountOpacity(pressCountOpacity + 1)}>
           <PressMe endLabel={pressCountOpacity} />
         </TouchableOpacity>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="render disabled">
+      <TestCase.Example itShould="render disabled">
         <TouchableOpacity disabled>
           <PressMe endLabel={'disabled'} />
         </TouchableOpacity>
       </TestCase.Example>
-      <TestCase.Example tags={['C_API']} itShould="show layout data onLayout">
+      <TestCase.Example itShould="show layout data onLayout">
         <TouchableOpacity
           onLayout={event => {
             setOnLayoutTestText(JSON.stringify(event.nativeEvent.layout));

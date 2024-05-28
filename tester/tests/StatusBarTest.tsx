@@ -61,9 +61,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
         hidden={hidden}
         translucent={translucent}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="toggle status bar visibility">
+      <TestCase.Example itShould="toggle status bar visibility">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -72,9 +70,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
           <Text style={styles.buttonText}>{hidden ? 'hidden' : 'visible'}</Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="toggle status bar background color(red/green), with alpha 88">
+      <TestCase.Example itShould="toggle status bar background color(red/green), with alpha 88">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -83,9 +79,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
           <Text style={styles.buttonText}>{backgroundColor}</Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="toggle status bar style (light-content(default)/dark-content) ">
+      <TestCase.Example itShould="toggle status bar style (light-content(default)/dark-content) ">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -105,9 +99,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
           </Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="set status bar color to blue (StatusBar.setBackgroundColor)">
+      <TestCase.Example itShould="set status bar color to blue (StatusBar.setBackgroundColor)">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -116,9 +108,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
           <Text style={styles.buttonText}>Set blue</Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="set status bar dark style (light-content(default)/dark-content) (StatusBar.setBarStyle) ">
+      <TestCase.Example itShould="set status bar dark style (light-content(default)/dark-content) (StatusBar.setBarStyle) ">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -136,9 +126,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
           <Text style={styles.buttonText}>Set translucent</Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="set status bar color to purple with animation (StatusBar.setBackgroundColor)">
+      <TestCase.Example itShould="set status bar color to purple with animation (StatusBar.setBackgroundColor)">
         <View
           style={styles.button}
           onTouchEnd={() => {
@@ -148,7 +136,6 @@ function StatusBarView({animated}: {animated?: boolean}) {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip="This test is skipped because the API is not available in the current version of OpenHarmony"
         itShould="set status bar dark style with animation (light-content(default)/dark-content) (StatusBar.setBarStyle) ">
         <View
@@ -160,7 +147,6 @@ function StatusBarView({animated}: {animated?: boolean}) {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         skip="This test is skipped because the API is not available in the current version of OpenHarmony"
         itShould="set status bar color to hidden with animation (StatusBar.setHidden)">
         <View
@@ -172,15 +158,12 @@ function StatusBarView({animated}: {animated?: boolean}) {
         </View>
       </TestCase.Example>
       <TestCase.Logical
-        tags={['C_API']}
         itShould="return correct status bar height for device"
         fn={({expect}) => {
           expect(StatusBar.currentHeight).to.be.closeTo(38.8, 0.1);
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="set status bar color to green on push and return to previous style on pop">
+      <TestCase.Example itShould="set status bar color to green on push and return to previous style on pop">
         <Button
           label="push green"
           onPress={() => {

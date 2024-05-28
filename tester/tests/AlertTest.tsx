@@ -7,7 +7,6 @@ export function AlertTest() {
   return (
     <TestSuite name="Alert">
       <TestCase.Manual
-        tags={['C_API']}
         itShould="show simple alert on click"
         initialState={false}
         arrange={({setState, reset}) => (
@@ -28,7 +27,6 @@ export function AlertTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="display name of the button clicked in alert"
         initialState={false}
         arrange={({setState, reset}) => (
@@ -39,7 +37,6 @@ export function AlertTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="cancel alert on press outside its window"
         initialState={false}
         arrange={({setState, reset}) => (
@@ -60,9 +57,7 @@ export function AlertTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="show an alert with OK button (when a developer doesn't declare any buttons)">
+      <TestCase.Example itShould="show an alert with OK button (when a developer doesn't declare any buttons)">
         <Button
           label="show alert"
           onPress={() => {
@@ -71,7 +66,6 @@ export function AlertTest() {
         />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         initialState={false}
         itShould="pass after pressing the OK button in the Alert Box"
         arrange={({setState}) => {

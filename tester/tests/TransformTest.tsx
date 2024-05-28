@@ -5,9 +5,7 @@ import {TestCase} from '../components';
 export function TransformTest() {
   return (
     <TestSuite name="Transform">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Show boxes with different scaling">
+      <TestCase.Example itShould="Show boxes with different scaling">
         <View style={styles.wrapper}>
           <View style={styles.box}>
             <Text style={styles.text}>Original Object</Text>
@@ -41,9 +39,7 @@ export function TransformTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Show boxes with different rotations">
+      <TestCase.Example itShould="Show boxes with different rotations">
         <View style={styles.wrapper}>
           <View style={styles.box}>
             <Text style={styles.text}>Original Object</Text>
@@ -79,9 +75,7 @@ export function TransformTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Show boxes with different skews [fails]">
+      <TestCase.Example itShould="Show boxes with different skews [fails]">
         <View style={styles.wrapper}>
           <View style={styles.box}>
             <Text style={styles.text}>Original Object</Text>
@@ -116,9 +110,7 @@ export function TransformTest() {
           </View>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="Show boxes translated by 20 dp (half of box size)">
+      <TestCase.Example itShould="Show boxes translated by 20 dp (half of box size)">
         <View style={styles.wrapper}>
           <View style={styles.box}>
             <Text style={styles.text}>Original Object</Text>

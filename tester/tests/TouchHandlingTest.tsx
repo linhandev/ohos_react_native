@@ -31,7 +31,6 @@ export function TouchHandlingTest() {
   return (
     <TestSuite name="Touch Handling">
       <TestCase.Manual
-        tags={['C_API']}
         itShould="pass when pressed red rectangle"
         initialState={false}
         arrange={({setState}) => {
@@ -48,7 +47,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="pass when pressed red rectangle which is outside its green parent view"
         initialState={false}
         arrange={({setState}) => {
@@ -65,7 +63,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="register a touch after native transform animation"
         initialState={false}
         arrange={({setState}) => (
@@ -80,7 +77,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="handle press on rotated view"
         initialState={false}
         arrange={({setState}) => (
@@ -94,7 +90,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="handle press on scaled view"
         initialState={false}
         arrange={({setState}) => (
@@ -107,10 +102,7 @@ export function TouchHandlingTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example
-        modal
-        tags={['C_API']}
-        itShould="report transformed touch coordinates">
+      <TestCase.Example modal itShould="report transformed touch coordinates">
         <TouchCoordinatesTest
           transform={[
             {rotate: '45deg'},
@@ -123,7 +115,6 @@ export function TouchHandlingTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         itShould="report transformed touch coordinates (2)">
         <TouchCoordinatesTest
           transform={[
@@ -137,7 +128,6 @@ export function TouchHandlingTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        tags={['C_API']}
         itShould="toggle color on press but not on scroll start">
         <StateKeeper
           initialValue={'red'}
@@ -204,7 +194,6 @@ export function TouchHandlingTest() {
         <ScrollViewLockedIssue />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="pass after tapping cyan area but not red area (child's hitSlop)"
         initialState={false}
         arrange={({setState}) => {
@@ -245,7 +234,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="handle views with scale: 0 correctly"
         initialState={false}
         arrange={({setState, reset}) => {
@@ -295,13 +283,10 @@ export function TouchHandlingTest() {
           expect(state).to.be.true;
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="emit touch events with resonable timestamps (event.timeStamp is the UNIX time, nativeEvent.timestamp is the device uptime, both are in ms)">
+      <TestCase.Example itShould="emit touch events with resonable timestamps (event.timeStamp is the UNIX time, nativeEvent.timestamp is the device uptime, both are in ms)">
         <TimestampExample />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="report touches to transformed children that exceed parent"
         initialState={false}
         arrange={({setState}) => {
@@ -334,7 +319,6 @@ export function TouchHandlingTest() {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="take into account offset added by RefreshControl while refreshing - press 0 while refreshing to pass"
         initialState={undefined as number | undefined}
         arrange={({setState}) => {

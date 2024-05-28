@@ -12,7 +12,6 @@ export function CenterContentTest() {
   return (
     <TestSuite name="centerContent">
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="Content is not centered (centerContent is false)">
         <View style={styles.container}>
@@ -24,7 +23,6 @@ export function CenterContentTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="Content is centered (centerContent is true and the content is smaller than the scroll view)">
         <View style={styles.container}>
@@ -37,7 +35,6 @@ export function CenterContentTest() {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="Content is not centered (centerContent is true and the content is larger than the scroll view)">
         <View style={styles.container}>
@@ -57,7 +54,6 @@ export function CenterContentTest() {
         </View>
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         modal
         itShould="Handle touches in centered ScrollView"
         initialState={undefined as boolean | undefined}

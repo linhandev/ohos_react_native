@@ -11,42 +11,27 @@ import {Button, TestCase} from '../../components';
 export function ScrollBarsTest() {
   return (
     <TestSuite name="scroll indicators / scrollbar">
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="have persistent scrollbar">
+      <TestCase.Example modal itShould="have persistent scrollbar">
         <View style={styles.wrapperView}>
           <ScrollView persistentScrollbar={true} {...COMMON_PROPS} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="shows white vertical scroll indicator">
+      <TestCase.Example modal itShould="shows white vertical scroll indicator">
         <View style={styles.wrapperView}>
           <ScrollView {...COMMON_PROPS} indicatorStyle={'white'} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="show vertical scroll indicator">
+      <TestCase.Example modal itShould="show vertical scroll indicator">
         <View style={styles.wrapperView}>
           <ScrollView {...COMMON_PROPS} showsVerticalScrollIndicator={true} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="hide vertical scroll indicator">
+      <TestCase.Example modal itShould="hide vertical scroll indicator">
         <View style={styles.wrapperView}>
           <ScrollView showsVerticalScrollIndicator={false} {...COMMON_PROPS} />
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="show horizontal scroll indicator">
+      <TestCase.Example modal itShould="show horizontal scroll indicator">
         <View style={styles.wrapperView}>
           <ScrollView
             showsHorizontalScrollIndicator={true}
@@ -56,10 +41,7 @@ export function ScrollBarsTest() {
           </ScrollView>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="hide horizontal scroll indicator">
+      <TestCase.Example modal itShould="hide horizontal scroll indicator">
         <View style={styles.wrapperView}>
           <ScrollView
             showsHorizontalScrollIndicator={false}
@@ -69,10 +51,7 @@ export function ScrollBarsTest() {
           </ScrollView>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        modal
-        itShould="flash scroll indicators">
+      <TestCase.Example modal itShould="flash scroll indicators">
         <FlashIndicatorsTest />
       </TestCase.Example>
       <TestCase.Example

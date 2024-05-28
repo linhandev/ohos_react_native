@@ -39,9 +39,7 @@ export function ErrorHandlingTest() {
           extraData: {foo: 'bar'},
         }}
       />
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display exception thrown from turbomodule (CPP)">
+      <TestCase.Example itShould="display exception thrown from turbomodule (CPP)">
         <Button
           label="Throw Exception"
           onPress={() => {
@@ -49,9 +47,7 @@ export function ErrorHandlingTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="display exception thrown from turbomodule (ArkTS)">
+      <TestCase.Example itShould="display exception thrown from turbomodule (ArkTS)">
         <Button
           label="Throw Exception"
           onPress={() => {
@@ -59,9 +55,7 @@ export function ErrorHandlingTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="not display error when exception is caught">
+      <TestCase.Example itShould="not display error when exception is caught">
         <Button
           label="Throw Exception"
           onPress={() => {
@@ -90,7 +84,7 @@ function ErrorBoxTestCase({
   };
 }) {
   return (
-    <TestCase.Example tags={['C_API']} itShould={itShould}>
+    <TestCase.Example itShould={itShould}>
       <Button
         label="Show Error Box"
         onPress={() => {

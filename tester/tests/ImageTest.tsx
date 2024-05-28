@@ -21,9 +21,7 @@ const FILE_URI = 'file:///data/storage/el2/base/files/pravatar-131.jpg';
 export const ImageTest = () => {
   return (
     <TestSuite name="Image">
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="support loading local images">
+      <TestCase.Example itShould="support loading local images">
         <Image
           style={{borderRadius: 8, borderWidth: 1}}
           source={LOCAL_IMAGE_ASSET_ID}
@@ -50,7 +48,6 @@ export const ImageTest = () => {
         source={{uri: REMOTE_GIF_URL}}
       />
       <TestCase.Example
-        tags={['C_API']}
         itShould="display alt when the image doesn't load"
         skip={'screenReader is not available'}>
         <View style={{minHeight: 50}}>
@@ -97,7 +94,6 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Logical
-        tags={['C_API']}
         itShould="retrieve base64 image size"
         fn={({expect}) => {
           return new Promise((resolve, reject) => {
@@ -175,7 +171,6 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Example
-        tags={['C_API']}
         skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/246
         itShould="render circular image on a red rectangle (overlayColor)">
         <Image
@@ -184,7 +179,6 @@ export const ImageTest = () => {
         />
       </TestCase.Example>
       <TestCase.Manual
-        tags={['C_API']}
         itShould="call onLoadStart"
         initialState={'not called'}
         arrange={({setState}) => {
@@ -200,7 +194,6 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="call onLoad"
         initialState={{}}
         arrange={({setState, state}) => {
@@ -241,7 +234,6 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="call onError (local)"
         initialState={null}
         arrange={({setState, state}) => {
@@ -262,7 +254,6 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Manual
-        tags={['C_API']}
         itShould="call onError (remote)"
         initialState={null}
         arrange={({setState, state}) => {
@@ -285,45 +276,35 @@ export const ImageTest = () => {
       <TestSuite
         name="resizeMode" // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/245
       >
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="render small image in the center (center)">
+        <TestCase.Example itShould="render small image in the center (center)">
           <Image
             style={{width: '100%', height: 100}}
             source={LOCAL_IMAGE_ASSET_ID}
             resizeMode="center"
           />
         </TestCase.Example>
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="render image touching top and bottom edges in the center (contain)">
+        <TestCase.Example itShould="render image touching top and bottom edges in the center (contain)">
           <Image
             style={{width: '100%', height: 100}}
             source={LOCAL_IMAGE_ASSET_ID}
             resizeMode="contain"
           />
         </TestCase.Example>
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="fully cover test case area while preserving aspect ratio (cover)">
+        <TestCase.Example itShould="fully cover test case area while preserving aspect ratio (cover)">
           <Image
             style={{width: '100%', height: 100}}
             source={LOCAL_IMAGE_ASSET_ID}
             resizeMode="cover"
           />
         </TestCase.Example>
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="cover test case area by repeating image (repeat)">
+        <TestCase.Example itShould="cover test case area by repeating image (repeat)">
           <Image
             style={{width: '100%', height: 100}}
             source={LOCAL_IMAGE_ASSET_ID}
             resizeMode="repeat"
           />
         </TestCase.Example>
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="cover test case area by stretching (stretch)">
+        <TestCase.Example itShould="cover test case area by stretching (stretch)">
           <Image
             style={{width: '100%', height: 100}}
             source={LOCAL_IMAGE_ASSET_ID}
@@ -332,9 +313,7 @@ export const ImageTest = () => {
         </TestCase.Example>
       </TestSuite>
       <TestSuite name="blurRadius">
-        <TestCase.Example
-          tags={['C_API']}
-          itShould="blur images with various blur radius">
+        <TestCase.Example itShould="blur images with various blur radius">
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
             <Image
               style={{width: 64, height: 64, margin: 4}}
@@ -371,7 +350,6 @@ export const ImageTest = () => {
       </TestSuite>
       <TestSuite name="capInsets" >
         <TestCase.Example
-          tags={['C_API']}
           itShould="capInsets images with various cap insets">
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
             <Image
@@ -397,9 +375,7 @@ export const ImageTest = () => {
           </View>
         </TestCase.Example>
       </TestSuite>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="replace opaque pixels with the green color (tintColor)">
+      <TestCase.Example itShould="replace opaque pixels with the green color (tintColor)">
         <View
           style={{
             flex: 1,
@@ -426,9 +402,7 @@ export const ImageTest = () => {
       <TestCase.Example modal itShould="stop displaying on press">
         <SwitchSourceTest />
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="render top image in a bit lower quality (difference barely visible)">
+      <TestCase.Example itShould="render top image in a bit lower quality (difference barely visible)">
         <Image
           style={{width: 200, height: 200}}
           source={require('../assets/noise.png')}
@@ -516,13 +490,10 @@ export const ImageTest = () => {
           ))}
         </ScrollView>
       </TestCase.Example>
-      <TestCase.Example
-        tags={['C_API']}
-        itShould="allow scrolling by touching the image">
+      <TestCase.Example itShould="allow scrolling by touching the image">
         <ImagePointerEventsTest />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         itShould="Display placeholder image before loading image"
         modal>
         <Image
@@ -536,13 +507,11 @@ export const ImageTest = () => {
         />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould='Load images from different folders within assets directory (e.g. "assets/large-images", "assets/small-images")'>
         <LoadLocalImagesFromDifferentFolders />
       </TestCase.Example>
       <TestCase.Example
-        tags={['C_API']}
         modal
         itShould="Display custom loading indicator until image is ready to be displayed">
         <Image
