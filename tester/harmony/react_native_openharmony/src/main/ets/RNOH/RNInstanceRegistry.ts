@@ -3,7 +3,7 @@ import { RNInstanceImpl } from './RNInstance';
 import type { NapiBridge } from './NapiBridge';
 import type { RNOHContext } from './RNOHContext';
 import type { RNOHLogger } from './RNOHLogger';
-import type { DevToolsController } from "./DevToolsController"
+import type { DevToolsController } from './DevToolsController';
 import { HttpClientProvider } from './HttpClientProvider';
 
 export class RNInstanceRegistry {
@@ -40,6 +40,7 @@ export class RNInstanceRegistry {
       options.assetsDest,
       options.arkTsComponentNames,
       this.httpClientProvider,
+      options.backPressHandler
     )
     await instance.initialize(options.createRNPackages({}))
     this.instanceMap.set(id, instance)
