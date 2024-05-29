@@ -131,6 +131,7 @@ export class RemoteImageLoader {
 
   public async abortPrefetch(requestId: number): Promise<void> {
     if (!this.abortPrefetchByUrl.has(requestId)) {
+      console.info('abort prefetch success');
       return;
     }
 
