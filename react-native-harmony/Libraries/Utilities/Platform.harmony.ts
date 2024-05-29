@@ -1,4 +1,4 @@
-import { NativePlatformConstantsHarmony } from "./NativePlatformConstantsHarmony";
+import { NativePlatformConstantsHarmony } from "./NativePlatformConstants";
 import type { PlatformHarmonyStatic, PlatformHarmonyConstants, PlatformOSType } from "./Platform";
 
 const Platform = {
