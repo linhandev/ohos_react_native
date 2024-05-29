@@ -1,5 +1,6 @@
 #pragma once
 
+#include <arkui/native_event.h>
 #include <arkui/ui_input_event.h>
 #include <react/renderer/graphics/Point.h>
 #include <unordered_map>
