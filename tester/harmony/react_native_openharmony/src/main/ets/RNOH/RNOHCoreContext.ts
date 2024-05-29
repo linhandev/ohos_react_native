@@ -3,10 +3,10 @@ import { DevToolsController } from './DevToolsController'
 import { RNOHLogger } from './RNOHLogger'
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider'
 import { DisplayMetrics } from './types'
-import { RNInstanceRegistry } from "./RNInstanceRegistry"
-import { RNInstance, RNInstanceOptions, RNInstanceImpl } from "./RNInstance"
+import { RNInstanceRegistry } from './RNInstanceRegistry'
+import { RNInstance, RNInstanceImpl, RNInstanceOptions } from './RNInstance'
 import common from '@ohos.app.ability.common'
-import { RNOHError } from "./RNOHError"
+import { RNOHError } from './RNOHError'
 
 export type UIAbilityState = "FOREGROUND" | "BACKGROUND"
 
@@ -123,10 +123,4 @@ export class RNOHCoreContext {
     this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
   }
 
-  /**
-   * Invoked by React Native when the React application doesn't want to handle the device back press. This method may be relocated in the future.
-   */
-  public invokeDefaultBackPressHandler() {
-    this._defaultBackPressHandler();
-  }
 }
