@@ -283,13 +283,22 @@ std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
-    auto typography = measureTypography(
-        attributedString,
-        paragraphAttributes,
-        layoutConstraints).build();
     std::vector<OH_Drawing_LineMetrics> data;
+  if (!attributedString.getFragments().empty()) {
+    std::string key =
+      std::to_string(m_rnInstanceId) + "_" + std::to_string(attributedString.getFragments()[0].parentShadowView.tag) +
+      "_" + std::to_string(attributedString.getFragments()[0].parentShadowView.surfaceId);
+    auto measureInfo = TextMeasureRegistry::getTextMeasureRegistry().getTextMeasureInfoByKey(key);
+    if (measureInfo.has_value()) {
+      measureInfo.value()->typography.getLineMetrics(data);
+    }
+  } else {
+    auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
+    auto typography = typographyBuilder.build();
     typography.getLineMetrics(data);
-    return data;
+    releaseTypography(typographyBuilder, typography);
+  }
+  return data;
 }
 
 std::pair<ArkUITypographyBuilder, ArkUITypography> TextMeasurer::findFitFontSize(int maxFontSize, 

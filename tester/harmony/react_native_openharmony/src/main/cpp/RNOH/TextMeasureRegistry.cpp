@@ -44,6 +44,15 @@ std::optional<std::shared_ptr<TextMeasureInfo>> TextMeasureRegistry::getTextMeas
   return measureInfo;
 }
 
+std::optional<std::shared_ptr<TextMeasureInfo>> TextMeasureRegistry::getTextMeasureInfoByKey(const std::string& key) {
+  std::optional<std::shared_ptr<TextMeasureInfo>> measureInfo = std::nullopt;
+  auto itor = m_keyToMeasureInfo.find(key);
+  if (itor != m_keyToMeasureInfo.end()) {
+    measureInfo = itor->second;
+  }
+  return measureInfo;
+}
+
 void TextMeasureRegistry::eraseTextMeasureInfo(const std::string& key) {
   if (m_keyToMeasureInfo.find(key) != m_keyToMeasureInfo.end()) {
     m_keyToMeasureInfo.erase(key);

@@ -9,7 +9,7 @@
 
 #include <map>
 #include "RNOH/ArkUITypography.h"
-#include "TextMeasureCache.h"
+#include <react/renderer/textlayoutmanager/TextMeasureCache.h>
 #include <arkui/styled_string.h>
 
 struct TextMeasureInfo {
@@ -36,6 +36,7 @@ public:
   static TextMeasureRegistry& getTextMeasureRegistry();
   void setTextMeasureInfo(const std::string& key, std::shared_ptr<TextMeasureInfo> textMeasureInfo, facebook::react::TextMeasureCacheKey& cacheKey);
   ArkUI_StyledString* getTextStyledString(const std::string& key);
+  std::optional<std::shared_ptr<TextMeasureInfo>> getTextMeasureInfoByKey(const std::string& key);
   void eraseTextMeasureInfo(const std::string& key);
   void eraseOldTextMeasureInfo(const std::string& key);
   std::optional<std::shared_ptr<TextMeasureInfo>> getTextMeasureInfo(const facebook::react::TextMeasureCacheKey& cacheKey);

@@ -40,7 +40,7 @@ class ParagraphAttributes : public DebugStringConvertible {
    * In case if a text cannot fit given boundaries, defines a place where
    * an ellipsize should be placed.
    */
-  EllipsizeMode ellipsizeMode{};
+  EllipsizeMode ellipsizeMode{facebook::react::EllipsizeMode::Tail};
 
   /*
    * (Android only) Break strategy for breaking paragraphs into lines.
@@ -50,7 +50,7 @@ class ParagraphAttributes : public DebugStringConvertible {
   /*
    * Enables font size adjustment to fit constrained boundaries.
    */
-  bool adjustsFontSizeToFit{};
+  bool adjustsFontSizeToFit{false};
   Float minimumFontScale{std::numeric_limits<Float>::quiet_NaN()};
 
   /*
