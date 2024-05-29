@@ -11,9 +11,10 @@
 #include "RNOH/UIManagerModule.h"
 
 namespace rnoh {
-
 class Package {
  public:
+  using Shared = std::shared_ptr<Package>;
+
   struct Context : ComponentInstance::Context {
     ShadowViewRegistry::Shared shadowViewRegistry;
   };
@@ -41,10 +42,20 @@ class Package {
   };
 
   /**
-   * Used only in C-API based Architecture.
+   * @architecture: C-API
+   * @deprecated: Override `createComponentInstance` instead (latestRNOHVersion:
+   * 0.72.27)
    */
   virtual ComponentInstanceFactoryDelegate::Shared
   createComponentInstanceFactoryDelegate();
+
+  /**
+   * @architecture: C-API
+   */
+  virtual ComponentInstance::Shared createComponentInstance(
+      const ComponentInstance::Context& ctx) {
+    return nullptr;
+  };
 
  protected:
   Context m_ctx;
