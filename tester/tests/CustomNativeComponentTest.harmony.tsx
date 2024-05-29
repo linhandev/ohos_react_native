@@ -130,7 +130,9 @@ function GeneratedCustomComponentTest() {
     <TestSuite name="generated custom component">
       <TestSuite name="ArkTS">
         <TestCase.Manual<
-          GeneratedSampleNativeComponentArkTSCustomProps | undefined
+          | GeneratedSampleNativeComponentArkTSCustomProps
+          | undefined
+          | 'IN_PROGRESS'
         >
           itShould="ensure equality between provided and received data"
           initialState={undefined}
@@ -155,7 +157,10 @@ function GeneratedCustomComponentTest() {
                     onDirectEvent={setState}>
                     <Effect
                       onMount={() => {
-                        ref.current?.emitNativeEvent('directEvent');
+                        setState('IN_PROGRESS');
+                        setTimeout(() =>
+                          ref.current?.emitNativeEvent('directEvent'),
+                        );
                       }}
                     />
                   </GeneratedSampleComponentArkTS>
@@ -164,6 +169,10 @@ function GeneratedCustomComponentTest() {
             );
           }}
           assert={({expect, state}) => {
+            if (state === 'IN_PROGRESS') {
+              expect(true, 'Test in progress').to.be.false;
+              return;
+            }
             expect(state?.booleanTest).to.be.true;
             expect(state?.booleanWithDefaultTest).to.be.true;
             expect(state?.intTest).to.be.eq(42);
@@ -184,7 +193,9 @@ function GeneratedCustomComponentTest() {
       </TestSuite>
       <TestSuite name="C-API">
         <TestCase.Manual<
-          GeneratedSampleNativeComponentCAPICustomProps | undefined
+          | GeneratedSampleNativeComponentCAPICustomProps
+          | undefined
+          | 'IN_PROGRESS'
         >
           skip={{
             android: true,
@@ -211,7 +222,10 @@ function GeneratedCustomComponentTest() {
                     onDirectEvent={setState}>
                     <Effect
                       onMount={() => {
-                        ref.current?.emitNativeEvent('directEvent');
+                        setState('IN_PROGRESS');
+                        setTimeout(() =>
+                          ref.current?.emitNativeEvent('directEvent'),
+                        );
                       }}
                     />
                   </GeneratedSampleComponentCAPI>
@@ -220,6 +234,10 @@ function GeneratedCustomComponentTest() {
             );
           }}
           assert={({expect, state}) => {
+            if (state === 'IN_PROGRESS') {
+              expect(true, 'Test in progress').to.be.false;
+              return;
+            }
             expect(state?.booleanTest).to.be.true;
             expect(state?.booleanWithDefaultTest).to.be.true;
             expect(state?.intTest).to.be.eq(42);
@@ -237,7 +255,9 @@ function GeneratedCustomComponentTest() {
           }}
         />
         <TestCase.Manual<
-          GeneratedSampleNativeComponentCAPICommandArgs | undefined
+          | GeneratedSampleNativeComponentCAPICommandArgs
+          | undefined
+          | 'IN_PROGRESS'
         >
           skip={{
             android: true,
@@ -265,13 +285,16 @@ function GeneratedCustomComponentTest() {
                     onReceivedCommandArgs={setState}>
                     <Effect
                       onMount={() => {
-                        ref.current?.emitCommandArgs(
-                          42 /* intTest */,
-                          42.42 /* floatTest */,
-                          42.42 /* doubleTest */,
-                          'foobar' /* stringTest */,
-                          true /* booleanTest */,
-                        );
+                        setState('IN_PROGRESS');
+                        setTimeout(() => {
+                          ref.current?.emitCommandArgs(
+                            42 /* intTest */,
+                            42.42 /* floatTest */,
+                            42.42 /* doubleTest */,
+                            'foobar' /* stringTest */,
+                            true /* booleanTest */,
+                          );
+                        });
                       }}
                     />
                   </GeneratedSampleComponentCAPI>
@@ -280,6 +303,10 @@ function GeneratedCustomComponentTest() {
             );
           }}
           assert={({expect, state}) => {
+            if (state === 'IN_PROGRESS') {
+              expect(true, 'Test in progress').to.be.false;
+              return;
+            }
             expect(state?.intTest).to.be.eq(42);
             expect(state?.floatTest).closeTo(42.5, 0.1);
             expect(state?.doubleTest).closeTo(42.5, 0.1);
