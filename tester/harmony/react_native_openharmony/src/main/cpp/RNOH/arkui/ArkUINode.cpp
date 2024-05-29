@@ -80,10 +80,10 @@ ArkUINode& ArkUINode::setLayoutRect(
   facebook::react::Point const& position, facebook::react::Size const& size,
   facebook::react::Float pointScaleFactor) {
   ArkUI_NumberValue value[] = {
-    {.i32 = static_cast<int32_t>(position.x * pointScaleFactor)},
-    {.i32 = static_cast<int32_t>(position.y * pointScaleFactor)},
-    {.i32 = static_cast<int32_t>((size.width > 0 ? size.width : 0.01) * pointScaleFactor)},
-    {.i32 = static_cast<int32_t>((size.height > 0 ? size.height : 0.01) * pointScaleFactor)}
+    {.i32 = static_cast<int32_t>(position.x * pointScaleFactor + 0.5)},
+    {.i32 = static_cast<int32_t>(position.y * pointScaleFactor + 0.5)},
+    {.i32 = static_cast<int32_t>(size.width * pointScaleFactor + 0.5)},
+    {.i32 = static_cast<int32_t>(size.height * pointScaleFactor + 0.5)}
   };
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
