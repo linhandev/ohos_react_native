@@ -414,10 +414,7 @@ void ScrollViewComponentInstance::finalizeUpdates() {
 
   // when parent isn't refresh node, set the position
   auto parent = this->getParent().lock();
-  bool isRefresh =
-      std::dynamic_pointer_cast<const PullToRefreshViewComponentInstance>(
-          this->getParent().lock()) != nullptr;
-  if (parent && !isRefresh) {
+  if (parent && !parent->isRefreshControlComponentInstance()) {
     this->getLocalRootArkUINode().setLayoutRect(
       m_layoutMetrics.frame.origin, m_layoutMetrics.frame.size, m_layoutMetrics.pointScaleFactor);
   }

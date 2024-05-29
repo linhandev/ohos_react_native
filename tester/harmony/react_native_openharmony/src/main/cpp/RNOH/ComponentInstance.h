@@ -170,6 +170,10 @@ class ComponentInstance
     return m_ignoredPropKeys;
   }
 
+  virtual bool isRefreshControlComponentInstance() const {
+    return false;
+  }
+
  protected:
   virtual void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,

@@ -47,5 +47,9 @@ class PullToRefreshViewComponentInstance
   void onRefresh() override;
   void onRefreshStateChanged(RefreshStatus state) override;
   facebook::react::Point getCurrentOffset() const override;
+
+  bool isRefreshControlComponentInstance() const override {
+    return true;
+  }
 };
 } // namespace rnoh
