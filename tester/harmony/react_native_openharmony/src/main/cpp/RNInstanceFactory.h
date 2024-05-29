@@ -33,6 +33,19 @@
 
 using namespace rnoh;
 
+class PackageToComponentInstanceFactoryDelegateAdapter
+    : public ComponentInstanceFactoryDelegate {
+  Package::Shared m_package;
+
+ public:
+  PackageToComponentInstanceFactoryDelegateAdapter(Package::Shared package)
+      : m_package(std::move(package)) {}
+
+  ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
+    return m_package->createComponentInstance(std::move(ctx));
+  };
+};
+
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
@@ -76,7 +89,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       packages.begin(),
       std::make_shared<RNOHCorePackage>(
           Package::Context{.shadowViewRegistry = shadowViewRegistry}));
-
   auto componentDescriptorProviderRegistry =
       std::make_shared<facebook::react::ComponentDescriptorProviderRegistry>();
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>
@@ -125,6 +137,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       componentInstanceFactoryDelegates.push_back(
           std::move(componentInstanceFactoryDelegate));
     }
+    componentInstanceFactoryDelegates.push_back(
+        std::make_shared<PackageToComponentInstanceFactoryDelegateAdapter>(
+            package));
     for (auto const& arkTSMessageHandler :
          package->createArkTSMessageHandlers()) {
       arkTSMessageHandlers.push_back(arkTSMessageHandler);

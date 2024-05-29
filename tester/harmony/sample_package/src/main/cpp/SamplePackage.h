@@ -22,6 +22,9 @@ class SamplePackage : public BaseReactNativeHarmonySamplePackagePackage {
   std::vector<ArkTSMessageHandler::Shared> createArkTSMessageHandlers()
       override;
 
+  ComponentInstance::Shared createComponentInstance(
+      const ComponentInstance::Context& ctx) override;
+
   ComponentInstanceFactoryDelegate::Shared
   createComponentInstanceFactoryDelegate() override;
 };

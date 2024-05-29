@@ -145,12 +145,17 @@ class RNOHCoreTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
   };
 };
 
-class RNOHCorePackageComponentInstanceFactoryDelegate
-    : public ComponentInstanceFactoryDelegate {
+class RNOHCorePackage : public Package {
  public:
-  using ComponentInstanceFactoryDelegate::ComponentInstanceFactoryDelegate;
+  RNOHCorePackage(Package::Context ctx) : Package(ctx){};
 
-  ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
+  std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate()
+      override {
+    return std::make_unique<RNOHCoreTurboModuleFactoryDelegate>();
+  }
+
+  ComponentInstance::Shared createComponentInstance(
+      const ComponentInstance::Context& ctx) override {
     if (ctx.componentName == "RootView") {
       return std::make_shared<ViewComponentInstance>(std::move(ctx));
     }
@@ -184,21 +189,6 @@ class RNOHCorePackageComponentInstanceFactoryDelegate
           std::move(ctx));
     }
     return nullptr;
-  }
-};
-
-class RNOHCorePackage : public Package {
- public:
-  RNOHCorePackage(Package::Context ctx) : Package(ctx){};
-
-  std::unique_ptr<TurboModuleFactoryDelegate> createTurboModuleFactoryDelegate()
-      override {
-    return std::make_unique<RNOHCoreTurboModuleFactoryDelegate>();
-  }
-
-  ComponentInstanceFactoryDelegate::Shared
-  createComponentInstanceFactoryDelegate() override {
-    return std::make_shared<RNOHCorePackageComponentInstanceFactoryDelegate>();
   }
 
   std::vector<facebook::react::ComponentDescriptorProvider>

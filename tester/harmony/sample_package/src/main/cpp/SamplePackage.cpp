@@ -111,6 +111,10 @@ SamplePackage::createArkTSMessageHandlers() {
   return {std::make_shared<SampleArkTSMessageHandler>()};
 }
 
+/**
+ * Deprecated approach. Use `createComponentInstance`. We keep this approach
+ * here for testing purposes.
+ */
 ComponentInstanceFactoryDelegate::Shared
 SamplePackage::createComponentInstanceFactoryDelegate() {
   class SampleComponentInstanceFactoryDelegate
@@ -119,11 +123,17 @@ SamplePackage::createComponentInstanceFactoryDelegate() {
     ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
       if (ctx.componentName == "SampleView") {
         return std::make_shared<SampleViewComponentInstance>(ctx);
-      } else if (ctx.componentName == "GeneratedSampleView") {
-        return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
       }
       return nullptr;
     }
   };
   return std::make_shared<SampleComponentInstanceFactoryDelegate>();
+};
+
+ComponentInstance::Shared SamplePackage::createComponentInstance(
+    const ComponentInstance::Context& ctx) {
+  if (ctx.componentName == "GeneratedSampleView") {
+    return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
+  }
+  return nullptr;
 };
