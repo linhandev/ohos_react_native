@@ -6,8 +6,8 @@
 
 namespace rnoh {
 
-const std::string BUNDLE_HARMONY_JS = "bundle.harmony.js";
 const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
+const std::string INVALID_PATH_PREFIX = "invalidpathprefix/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
@@ -50,20 +50,33 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
 }
 
 std::string ImageComponentInstance::getBundlePath() {
+  if (!m_deps) {
+    return INVALID_PATH_PREFIX;
+  }
+
   auto rnInstance = m_deps->rnInstance.lock();
   if (!rnInstance) {
-    return BUNDLE_HARMONY_JS;
+    return INVALID_PATH_PREFIX;
   }
 
   auto internalInstance = std::dynamic_pointer_cast<RNInstanceInternal>(rnInstance);
   if (!internalInstance) {
-    return BUNDLE_HARMONY_JS;
+    return INVALID_PATH_PREFIX;
   }
 
-  return internalInstance->getBundlePath();
+  std::string bundlePath = internalInstance->getBundlePath();
+  if (bundlePath.empty()) {
+    return INVALID_PATH_PREFIX;
+  }
+
+  return bundlePath;
 }
 
 std::string ImageComponentInstance::getAbsolutePathPrefix(std::string const& bundlePath) {
+  if (bundlePath == INVALID_PATH_PREFIX) {
+    return INVALID_PATH_PREFIX;
+  }
+
   if (bundlePath.find('/', 0) != 0) {
     return RAWFILE_PREFIX;
   }
