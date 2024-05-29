@@ -6,7 +6,7 @@ import { SurfaceHandle } from './SurfaceHandle'
 import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
-import type { NapiBridge, CppFeatureFlag } from './NapiBridge'
+import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
 import type { RNOHContext } from './RNOHContext'
 import { RNOHCorePackage } from '../RNOHCorePackage/ts'
 import type { JSBundleProvider } from './JSBundleProvider'
@@ -18,7 +18,7 @@ import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
 import window from '@ohos.window'
-import { DevServerHelper } from './DevServerHelper';
+import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 
@@ -297,6 +297,10 @@ export type RNInstanceOptions = {
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
    */
   assetsDest?: string,
+  /**
+   * Specifies the custom backpress handler to be used when RN application does not handle the event itself
+   */
+  backPressHandler?: () => void;
 }
 
 /**
@@ -319,6 +323,7 @@ export class RNInstanceImpl implements RNInstance {
   public stageEventEmitter = new EventEmitter<StageChangeEventArgsByEventName>();
   public cppEventEmitter = new EventEmitter<Record<string, unknown[]>>()
   public httpClient: HttpClient;
+  public backPressHandler: () => void | undefined;
   private componentNameByDescriptorType = new Map<string, string>()
   private logger: RNOHLogger
   private surfaceHandles: Set<SurfaceHandle> = new Set()
@@ -349,10 +354,12 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     httpClientProvider: HttpClientProvider,
+    backPressHandler: () => void,
   ) {
     this.httpClient = httpClientProvider.getInstance(this)
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
+    this.backPressHandler = backPressHandler;
     if (this.shouldUseNDKToMeasureText) {
       this.enableFeatureFlag("NDK_TEXT_MEASUREMENTS")
     }

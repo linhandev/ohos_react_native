@@ -52,6 +52,17 @@ export class RNOHContext extends RNOHCoreContext {
     return this.rnInstance.httpClient;
   }
 
+  /**
+   * Invoked by React Native when the React application doesn't want to handle the device back press. This method may be relocated in the future.
+   */
+  public invokeDefaultBackPressHandler() {
+    if (this.rnInstanceImpl.backPressHandler) {
+      this.rnInstanceImpl.backPressHandler();
+    } else {
+      this._defaultBackPressHandler();
+    }
+  }
+
   protected constructor(
     /**
      * Current React Native (not React Native OpenHarmony) version
