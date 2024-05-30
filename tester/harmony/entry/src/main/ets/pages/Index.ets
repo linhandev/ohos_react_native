@@ -14,7 +14,7 @@ import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-pac
 import font from '@ohos.font';
 import { createRNPackages } from '../RNPackagesFactory';
 
-const arkTsComponentNames: Array<string> = ["SampleView", "GeneratedSampleView", "PropsDisplayer"];
+const arkTsComponentNames: Array<string> = [SampleView.NAME, GeneratedSampleView.NAME, PropsDisplayer.NAME];
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
   // There seems to be a problem with the placement of ArkTS components in mixed mode. Nested Stack temporarily avoided.
