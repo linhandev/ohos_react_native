@@ -5,7 +5,7 @@ import { TurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
-import { CancelRequestCallback, HttpErrorResponse, PartialProgress } from '../../../HttpClient/types';
+import { CancelRequestCallback, HttpErrorResponse, ReceivingProgress, SendingProgress } from '../../../HttpClient/types';
 
 type ResponseType =
 | 'base64'
@@ -207,35 +207,41 @@ export class NetworkingTurboModule extends TurboModule {
     } else {
       extraData = this.encodeBody(query.data);
     }
-    let onProgress: (partialProgress: PartialProgress) => void | null = null;
+    let onReceiveProgress: (receiveProgress: ReceivingProgress) => void | null = null;
 
     if (query.incrementalUpdates) {
       if (query.responseType === 'text') {
         const textDecoder = util.TextDecoder.create('utf-8');
-        onProgress = (partialProgress: PartialProgress) => {
-          const uintArray = new Uint8Array(partialProgress.bitsReceived);
+        onReceiveProgress = (receiveProgress: ReceivingProgress) => {
+          const uintArray = new Uint8Array(receiveProgress.bitsReceived);
           const decodedStr = textDecoder.decodeWithStream(uintArray,
             { stream: true }); //we want to carry over bytes from incomplete characters
           this.networkEventDispatcher.dispatchDidReceiveNetworkIncrementalData(requestId, decodedStr,
-            partialProgress.lengthReceived, partialProgress.totalLength)
+            receiveProgress.lengthReceived, receiveProgress.totalLength)
         }
       } else {
-        onProgress = (partialProgress: PartialProgress) => {
+        onReceiveProgress = (partialProgress: ReceivingProgress) => {
           this.networkEventDispatcher.dispatchDidReceiveNetworkDataProgress(requestId, partialProgress.lengthReceived,
             partialProgress.totalLength)
         }
       }
     }
 
+    let onSendProgress = (sendProgress: SendingProgress) => {
+      this.networkEventDispatcher.dispatchDidSendNetworkData(requestId, sendProgress.lengthSent,
+        sendProgress.totalLength)
+    };
+
+
     const { cancel, promise } = httpClient.sendRequest(query.url,
       {
         method: this.REQUEST_METHOD_BY_NAME[query.method],
         header: query.headers,
         extraData: extraData,
-        connectTimeout: query.timeout,
-        readTimeout: query.timeout,
+        timeout: query.timeout,
         multiFormDataList: multiFormDataList,
-        onProgress: onProgress,
+        onReceiveProgress: onReceiveProgress,
+        onSendProgress: onSendProgress,
         handleCookies: query.withCredentials,
       },)
     this.requestCancellersById.set(requestId, cancel);
@@ -261,7 +267,7 @@ export class NetworkingTurboModule extends TurboModule {
       this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, errorResponse.statusCode || 0, {},
         query.url)
       this.networkEventDispatcher.dispatchDidCompleteNetworkResponseWithError(requestId,
-        errorResponse.error.toString());
+        errorResponse.error.toString(), errorResponse.timeout ?? false);
       if (this.requestCancellersById[requestId]) {
         this.requestCancellersById.delete(requestId);
       }
