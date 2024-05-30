@@ -95,8 +95,10 @@ export class DefaultHttpClient implements HttpClient {
     promise: Promise<HttpResponse>
   } {
     const httpRequest = http.createHttp();
+    let timeoutId: number = null;
     const cleanup = () => {
       httpRequest.destroy();
+      clearTimeout(timeoutId);
     }
     const promise: Promise<HttpResponse> = new Promise((resolve, reject) => {
 
@@ -121,10 +123,18 @@ export class DefaultHttpClient implements HttpClient {
             }
           }
           resolve(response);
+          cleanup();
         }
       }
 
       let finalRequestOptions: RequestOptions = mergeObjects(this.baseRequestOptions, requestOptions);
+      if (finalRequestOptions.timeout) {
+        timeoutId = setTimeout(() => {
+          httpRequest.destroy();
+          reject({ timeout: true, statusCode: 0, error: Error('Request timeout.') })
+        }, finalRequestOptions.timeout)
+      }
+
       for (const interceptor of this.requestInterceptors) {
         if (interceptor.shouldIntercept(url, finalRequestOptions)) {
           ({ url, requestOptions } = interceptor.intercept(url, finalRequestOptions))
@@ -152,12 +162,23 @@ export class DefaultHttpClient implements HttpClient {
       httpRequest.on('dataReceive', (chunk) => {
         dataChunks.push(chunk);
         currentLength += chunk.byteLength;
-        if (requestOptions.onProgress) {
-          requestOptions.onProgress({
+        if (requestOptions.onReceiveProgress) {
+          requestOptions.onReceiveProgress({
             totalLength: totalLength,
             lengthReceived: currentLength,
             bitsReceived: chunk,
           })
+        }
+      })
+
+      httpRequest.on('dataSendProgress', (progress) => {
+        if (requestOptions.onSendProgress) {
+          requestOptions.onSendProgress(
+            {
+              totalLength: progress.totalSize,
+              lengthSent: progress.sendSize
+            }
+          )
         }
       })
 
