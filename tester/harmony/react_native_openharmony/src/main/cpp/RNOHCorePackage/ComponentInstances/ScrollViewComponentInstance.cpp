@@ -661,12 +661,4 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
       {lastChild->getTag(), position});
 }
 
-void ScrollViewComponentInstance::onAppear() {
-  if (m_props) {
-    m_scrollNode.scrollTo(
-        m_props->contentOffset.x, m_props->contentOffset.y, false);
-    updateStateWithContentOffset(m_props->contentOffset);
-  }
-}
-
 } // namespace rnoh
