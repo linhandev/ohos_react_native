@@ -277,6 +277,10 @@ export type RNInstanceOptions = {
    * Specifies the custom backpress handler to be used when RN application does not handle the event itself
    */
   backPressHandler?: () => void;
+  /**
+   If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
+   */
+  httpClient?: HttpClient
 }
 
 /**
@@ -330,9 +334,10 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private arkTsComponentNames: Array<string>,
     httpClientProvider: HttpClientProvider,
+    httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
   ) {
-    this.httpClient = httpClientProvider.getInstance(this)
+    this.httpClient = httpClient ?? httpClientProvider.getInstance(this)
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
     this.backPressHandler = backPressHandler;
