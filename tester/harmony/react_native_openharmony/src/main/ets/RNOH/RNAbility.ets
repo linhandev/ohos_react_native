@@ -7,6 +7,7 @@ import Want from '@ohos.app.ability.Want';
 import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
+import { HttpClient, DefaultHttpClient } from "../HttpClient"
 
 /**
  Application developers are expected to extend this class. RNAbility aims to move much of the code to the RNOH side in order to improve stability.
@@ -79,9 +80,17 @@ export abstract class RNAbility extends UIAbility {
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
         host: "localhost",
         port: 8081
-      } : undefined
+      } : undefined,
+      defaultHttpClient: this.onCreateDefaultHttpClient()
     })
     AppStorage.setOrCreate('RNOHCoreContext', this.rnInstancesCoordinator.getRNOHCoreContext())
+  }
+
+  /**
+   * @returns HttpClient shared by RNInstances
+   */
+  protected onCreateDefaultHttpClient(): undefined | HttpClient {
+    return new DefaultHttpClient();
   }
 
   onDestroy() {

@@ -20,7 +20,6 @@ export interface HttpClient {
   },
 
   clearCookies(): Promise<boolean>;
-
 }
 
 function mergeObjects<T>(baseObject: Partial<T>, overridingObject: Partial<T>): T {
