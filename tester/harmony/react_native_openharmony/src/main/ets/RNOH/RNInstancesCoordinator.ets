@@ -13,6 +13,7 @@ import { JSPackagerClientConfig } from "./JSPackagerClient"
 import { RNOHError } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
+import type { HttpClient } from "../HttpClient/ts"
 
 /**
  * This interface allows providing dependencies in any order.
@@ -34,7 +35,9 @@ export type BuildMode = "DEBUG" | "RELEASE"
 export interface RNInstancesCoordinatorOptions {
   launchURI?: string
   onGetPackagerClientConfig?: (buildMode: BuildMode) => JSPackagerClientConfig | undefined
+  /** @deprecated: Use `defaultHttpClient` instead (latestRNOHVersion: 0.72.27) */
   httpClientProvider?: HttpClientProvider
+  defaultHttpClient?: HttpClient
 }
 
 const RNOH_BANNER = '\n\n\n' +
@@ -139,6 +142,7 @@ export class RNInstancesCoordinator {
       this.devToolsController,
       (rnInstance) => RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
+      options?.defaultHttpClient,
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,

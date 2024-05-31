@@ -5,6 +5,7 @@ import type { RNOHContext } from './RNOHContext';
 import type { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from './DevToolsController';
 import { HttpClientProvider } from './HttpClientProvider';
+import { HttpClient } from "../HttpClient/ts"
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
@@ -15,6 +16,7 @@ export class RNInstanceRegistry {
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
     private httpClientProvider: HttpClientProvider,
+    private defaultHttpClient: HttpClient | undefined // TODO: remove "undefined" when HttpClientProvider is removed
   ) {
   }
 
@@ -40,6 +42,7 @@ export class RNInstanceRegistry {
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest,
       this.httpClientProvider,
+      options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler
     )
     await instance.initialize(options.createRNPackages({}))
