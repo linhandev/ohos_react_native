@@ -40,6 +40,7 @@ class ArkUINode {
 
   ArkUI_NodeHandle getArkUINodeHandle();
   ArkUINode(ArkUI_NodeHandle nodeHandle);
+  ArkUINode(ArkUI_NodeHandle nodeHandle, napi_ref ref, napi_env);
 
   void markDirty();
 
@@ -129,5 +130,7 @@ class ArkUINode {
       ArkUI_NodeAttributeType attribute) const;
 
   ArkUI_NodeHandle m_nodeHandle;
+  napi_ref m_ref = nullptr;
+  napi_env m_env = nullptr;
 };
 } // namespace rnoh
