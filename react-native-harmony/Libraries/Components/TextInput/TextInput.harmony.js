@@ -1586,7 +1586,7 @@ const ExportedForwardRef: React.AbstractComponent<
   {
     allowFontScaling = true,
     rejectResponderTermination = true,
-    underlineColorAndroid = 'transparent',
+    underlineColorAndroid = '#555',
     autoComplete,
     textContentType,
     readOnly,

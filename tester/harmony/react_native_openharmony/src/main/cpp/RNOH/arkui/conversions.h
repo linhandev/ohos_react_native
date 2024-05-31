@@ -44,7 +44,7 @@ inline uint32_t convertColorToTranslucent(
   uint32_t red = static_cast<uint32_t>(colorComponents.red * 255) & 0xFF;
   uint32_t green = static_cast<uint32_t>(colorComponents.green * 255) & 0xFF;
   uint32_t blue = static_cast<uint32_t>(colorComponents.blue * 255) & 0xFF;
-  uint32_t alpha = 0x55;
+  uint32_t alpha = static_cast<uint32_t>(colorComponents.alpha * 255) & 0xFF;
   auto colorValue = (alpha << 24) | (red << 16) | (green << 8) | blue;
   return colorValue;
 }
