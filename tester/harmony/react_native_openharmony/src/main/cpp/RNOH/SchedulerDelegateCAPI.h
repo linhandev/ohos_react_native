@@ -274,6 +274,8 @@ facebook::react::ShadowViewMutationList getValidMutations(
                   mutation.newChildShadowView.componentName);
           if (newChildComponentInstance != nullptr) {
             m_componentInstanceRegistry->insert(newChildComponentInstance);
+            newChildComponentInstance->setLayout(
+                mutation.newChildShadowView.layoutMetrics);
           } else {
             LOG(FATAL) << "Couldn't create ArkTSComponentInstance for: "
                        << mutation.newChildShadowView.componentName;
