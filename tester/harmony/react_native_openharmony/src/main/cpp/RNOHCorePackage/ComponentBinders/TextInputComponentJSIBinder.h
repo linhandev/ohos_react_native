@@ -50,6 +50,8 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
         rt, "topSelectionChange", createDirectEvent(rt, "onSelectionChange"));
     events.setProperty(
         rt, "topContentSizeChange", createDirectEvent(rt, "onContentSizeChange"));
+    events.setProperty(
+        rt, "topScroll", createDirectEvent(rt, "onScroll"));
     return events;
   }
 };
