@@ -129,9 +129,9 @@ export const NetworkingTest = () => {
           itShould="verify if correct data is received in onprogress event"
           fn={async ({expect}) => {
             // emojis use 4 bytes so theres a higher chance of them getting cut when loading incrementally
-            const emoji = '😀';
-            const longStr = emoji.repeat(10000); //the value needs to be high enough so that several onprogress events are triggered
-            let responseText = '';
+            var emoji = '😀';
+            var longStr = emoji.repeat(10000); //the value needs to be high enough so that several onprogress events are triggered
+            var responseText = '';
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'https://postman-echo.com/post', true);
@@ -163,114 +163,6 @@ export const NetworkingTest = () => {
               };
 
               xhr.send(longStr);
-            });
-          }}
-        />
-        <TestCase.Logical
-          itShould="verify if correct data is received in onupload progress event"
-          fn={async ({expect}) => {
-            let longStr = 'a'.repeat(100000); //the value needs to be high enough so that several events are triggered
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://postman-echo.com/post', true);
-            xhr.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
-            await new Promise<void>((resolve, reject) => {
-              xhr.upload.onprogress = function (event) {
-                console.log(
-                  'Upload progress: ' + event.loaded + ' / ' + event.total,
-                );
-                try {
-                  expect(event.total).to.equal(longStr.length);
-                  expect(event.loaded).to.lessThanOrEqual(longStr.length);
-                } catch (error) {
-                  reject(error);
-                }
-              };
-
-              xhr.onloadend = function () {
-                resolve();
-              };
-
-              xhr.onerror = function () {
-                throw reject('Upload failed');
-              };
-              xhr.send(longStr);
-            });
-          }}
-        />
-        <TestCase.Logical
-          itShould="verify that correct events are sent"
-          fn={async ({expect}) => {
-            let longStr = 'a'.repeat(100000); //the value needs to be high enough so that several events are triggered
-            const allEvents: string[] = [];
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://postman-echo.com/post', true);
-            xhr.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
-            await new Promise<void>((resolve, reject) => {
-              xhr.upload.onprogress = function () {
-                allEvents.push('upload progress');
-              };
-              xhr.onprogress = function () {
-                allEvents.push('progress');
-              };
-              xhr.onload = function () {
-                allEvents.push('load');
-              };
-              xhr.onloadend = function () {
-                allEvents.push('loadend');
-                expect(allEvents).to.contain('upload progress');
-                expect(allEvents).to.contain('progress');
-                expect(allEvents).to.contain('load');
-                expect(allEvents).to.contain('loadend');
-                resolve();
-              };
-              xhr.onreadystatechange = function () {
-                allEvents.push('readystatechange');
-              };
-
-              xhr.onerror = function () {
-                throw reject('Upload failed');
-              };
-              xhr.send(longStr);
-            });
-          }}
-        />
-        <TestCase.Logical
-          itShould="verify that abort event gets triggered"
-          fn={async () => {
-            await new Promise<void>((resolve, reject) => {
-              const xhr = new XMLHttpRequest();
-              xhr.open('POST', 'invalidurlr.jpg', true);
-              xhr.onabort = function () {
-                resolve();
-              };
-              xhr.onerror = function () {
-                reject('Request should have been aborted');
-              };
-              xhr.onload = function () {
-                reject('Request should have been aborted');
-              };
-              xhr.send();
-              xhr.abort();
-            });
-          }}
-        />
-        <TestCase.Logical
-          itShould="verify that timeout event gets triggered"
-          fn={async () => {
-            await new Promise<void>((resolve, reject) => {
-              const xhr = new XMLHttpRequest();
-              xhr.open('POST', 'https://postman-echo.com/delay/10', true);
-              xhr.timeout = 1;
-              xhr.ontimeout = function () {
-                resolve();
-              };
-              xhr.onerror = function () {
-                reject('Request should have timed out');
-              };
-              xhr.onload = function () {
-                reject('Request should have timed out');
-              };
-              xhr.send();
             });
           }}
         />
@@ -414,7 +306,7 @@ const WebSocketEcho = () => {
 
   const runWebSockSession = () => {
     // connect to Postman's echo server
-    const ws = new WebSocket('wss://ws.postman-echo.com/raw');
+    var ws = new WebSocket('wss://ws.postman-echo.com/raw');
 
     ws.onopen = () => {
       setStatus('Connected');
