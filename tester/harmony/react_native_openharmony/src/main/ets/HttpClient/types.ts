@@ -16,15 +16,10 @@ export interface ResponseInterceptor {
 
 }
 
-export interface ReceiveProgress {
+export interface PartialProgress {
   totalLength: number,
   lengthReceived: number,
   bitsReceived: ArrayBuffer
-}
-
-export interface SendProgress {
-  totalLength: number,
-  lengthSent: number,
 }
 
 export interface HttpResponse {
@@ -36,14 +31,11 @@ export interface HttpResponse {
 export interface HttpErrorResponse {
   statusCode: number,
   error: Error
-  timeout?: boolean
 }
 
 export type RequestOptions = http.HttpRequestOptions & {
   handleCookies?: boolean,
-  timeout?: number //in ms, maximal time the whole request can take
-  onReceiveProgress?: (receiveProgress: ReceiveProgress) => void,
-  onSendProgress?: (sendProgress: SendProgress) => void
+  onProgress?: (partialProgress: PartialProgress) => void
 }
 
 export type CancelRequestCallback = () => void

@@ -16,12 +16,8 @@ export class NetworkEventsDispatcher {
     this.sendEvent("didCompleteNetworkResponse", [requestId, ""])
   }
 
-  dispatchDidCompleteNetworkResponseWithError(requestId: number, error: string, timeout: boolean) {
-    this.sendEvent("didCompleteNetworkResponse", [requestId, error, timeout])
-  }
-
-  dispatchDidSendNetworkData(requestId: number, progress: number, total: number) {
-    this.sendEvent("didSendNetworkData", [requestId, progress, total])
+  dispatchDidCompleteNetworkResponseWithError(requestId: number, error: string) {
+    this.sendEvent("didCompleteNetworkResponse", [requestId, error])
   }
 
   dispatchDidReceiveNetworkDataProgress(requestId: number, progress: number, total: number) {
