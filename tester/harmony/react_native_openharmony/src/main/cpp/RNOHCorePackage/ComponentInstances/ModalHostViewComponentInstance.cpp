@@ -87,6 +87,14 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
   m_rootStackNode.setPosition({0, 0});
 }
 
+void ModalHostViewComponentInstance::setLayout(facebook::react::LayoutMetrics layoutMetrics) {
+  CppComponentInstance::setLayout(layoutMetrics);
+  int32_t width = static_cast<int32_t>(layoutMetrics.frame.size.width * layoutMetrics.pointScaleFactor + 0.5);
+  int32_t height = static_cast<int32_t>(layoutMetrics.frame.size.height * layoutMetrics.pointScaleFactor + 0.5);
+  m_rootStackNode.saveSize(width, height);
+  m_rootStackNode.setSize(layoutMetrics.frame.size);
+}
+
 void ModalHostViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   using AnimationType = facebook::react::ModalHostViewAnimationType;
