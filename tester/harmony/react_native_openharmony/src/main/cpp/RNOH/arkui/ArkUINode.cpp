@@ -92,10 +92,24 @@ ArkUINode& ArkUINode::setLayoutRect(
     {.i32 = static_cast<int32_t>(size.width * pointScaleFactor + 0.5)},
     {.i32 = static_cast<int32_t>(size.height * pointScaleFactor + 0.5)}
   };
+  saveSize(value[2].i32, value[3].i32);
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_LAYOUT_RECT, &item));  
   return *this;
+}
+
+void ArkUINode::saveSize(int32_t width, int32_t height) {
+  m_width = width;
+  m_height = height;
+}
+
+int32_t ArkUINode::getSavedWidth() {
+  return m_width;
+}
+
+int32_t ArkUINode::getSavedHeight() {
+  return m_height;
 }
 
 ArkUINode& ArkUINode::setWidth(float width) {

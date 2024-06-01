@@ -43,13 +43,15 @@ CustomNode::CustomNode()
 }
 
 void CustomNode::onMeasure(ArkUI_NodeCustomEventType eventType) {
-    auto rect = NativeNodeApi::getInstance()->getAttribute(m_nodeHandle, NODE_LAYOUT_RECT);
-    if (!rect) {
-        LOG(ERROR)<<"Custom Node Get layout Rect para error";
-        return;
-    }
-    int32_t width = rect->value[2].i32;
-    int32_t height = rect->value[3].i32;
+    // auto rect = NativeNodeApi::getInstance()->getAttribute(m_nodeHandle, NODE_LAYOUT_RECT);
+    // if (!rect) {
+    //     LOG(ERROR)<<"Custom Node Get layout Rect para error";
+    //     return;
+    // }
+    // int32_t width = rect->value[2].i32;
+    // int32_t height = rect->value[3].i32;
+    int32_t width = getSavedWidth();
+    int32_t height = getSavedHeight();
     maybeThrow(NativeNodeApi::getInstance()->setMeasuredSize(m_nodeHandle, width, height));
 }
 

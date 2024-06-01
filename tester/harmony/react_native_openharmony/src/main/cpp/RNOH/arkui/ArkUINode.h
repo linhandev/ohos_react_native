@@ -43,6 +43,9 @@ class ArkUINode {
   ArkUINode(ArkUI_NodeHandle nodeHandle, napi_ref ref, napi_env);
 
   void markDirty();
+  void saveSize(int32_t width, int32_t height);
+  int32_t getSavedWidth();
+  int32_t getSavedHeight();
 
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
@@ -132,5 +135,9 @@ class ArkUINode {
   ArkUI_NodeHandle m_nodeHandle;
   napi_ref m_ref = nullptr;
   napi_env m_env = nullptr;
+
+ private:
+  int32_t m_width = 0;
+  int32_t m_height = 0;
 };
 } // namespace rnoh

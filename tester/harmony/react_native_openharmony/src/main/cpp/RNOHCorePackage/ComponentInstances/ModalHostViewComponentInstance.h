@@ -17,7 +17,7 @@ class ModalHostViewComponentInstance
   using ScreenOrientation = facebook::react::ModalHostViewEventEmitter::
       OnOrientationChangeOrientation;
   CustomNode m_virtualNode;
-  StackNode m_rootStackNode;
+  CustomNode m_rootStackNode;
   ArkUIDialogHandler m_dialogHandler;
   std::unique_ptr<TouchEventHandler> m_touchHandler;
   std::shared_ptr<ArkTSMessageHandler> m_displaySizeChangeHandler;
@@ -35,6 +35,7 @@ class ModalHostViewComponentInstance
 
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;
+  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
