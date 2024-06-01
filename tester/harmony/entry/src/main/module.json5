@@ -24,6 +24,10 @@
       {
         "name": "OPTLazyForEach",
         "value": "true",
+      },
+      {
+        "name": "half_leading",
+        "value": "true",
       }
     ],
     "abilities": [
