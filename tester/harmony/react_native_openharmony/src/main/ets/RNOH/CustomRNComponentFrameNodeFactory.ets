@@ -1,7 +1,7 @@
 /**
  * Only used in C-API architecture.
  */
-import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI';
+import { BuilderNode, FrameNode, UIContext, ComponentContent } from '@kit.ArkUI';
 import { Tag, Descriptor } from "./DescriptorBase"
 import { RNComponentContext, ComponentBuilderContext, ComponentBuilderContextImpl } from "./RNComponentContext"
 import type { FrameNodeFactory } from "./RNInstance"
@@ -22,7 +22,7 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     this.logger = logger.clone("CustomRNComponentFrameNodeFactory")
   }
 
-  create(tag: Tag, componentName: string): FrameNode {
+  create(tag: Tag, componentName: string): ComponentContent<ComponentBuilderContext> {
     const logger = this.logger.clone("create")
     const stopTracing = logger.startTracing()
     if (this.componentContext === undefined) {
@@ -36,13 +36,11 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
       componentName,
       this.componentContext!.descriptorRegistry.getDescriptor<Descriptor>(tag),
     );
-    const builderNode = new BuilderNode<[ComponentBuilderContext]>(this.uiCtx);
-    builderNode.build(this.componentContext!.wrappedCustomRNComponentBuilder, builderCtx);
-    const frameNode = builderNode.getFrameNode();
-    if (frameNode === null) {
+    const builderNode = new ComponentContent<ComponentBuilderContext>(this.uiCtx,this.componentContext!.wrappedCustomRNComponentBuilder, builderCtx);
+    if (builderNode === null) {
       this.componentContext!.logger.fatal(`Couldn't create frameNode for: ${componentName}`);
     }
     stopTracing();
-    return frameNode!;
+    return builderNode!;
   }
 }
