@@ -248,7 +248,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
           typographyStyle, getOHDrawingTextAlign(textAlign.value()));
     }
   }
-  ArkUITypographyBuilder typographyBuilder(typographyStyle, m_scale);
+  ArkUITypographyBuilder typographyBuilder(typographyStyle, m_scale, m_halfleading);
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
@@ -410,9 +410,10 @@ void TextMeasurer::textCaseTransform(std::string& textContent, facebook::react::
   }
 }
 
-void TextMeasurer::setScreenScale(float fontScale, float scale) {
+void TextMeasurer::setTextMeasureParams(float fontScale, float scale, bool halfleading) {
   m_fontScale = fontScale;
   m_scale = scale;
+  m_halfleading = halfleading;
 }
 
 void TextMeasurer::releaseTypography(ArkUITypographyBuilder& builder, ArkUITypography& typography) {

@@ -1,6 +1,7 @@
 import type { TurboModuleContext } from '../../RNOH/TurboModule';
 import { TurboModule } from '../../RNOH/TurboModule';
 import { DisplayMetrics } from '../../RNOH/types';
+import { bundleManager } from '@kit.AbilityKit';
 
 export class DeviceInfoTurboModule extends TurboModule {
   public static readonly NAME = 'DeviceInfo';
@@ -33,6 +34,21 @@ export class DeviceInfoTurboModule extends TurboModule {
     this.cleanUpCallbacks.forEach(cb => cb())
   }
 
+  getHalfLeading(){
+    let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA |
+    bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION;
+    let mataDataArrary = bundleManager.getBundleInfoForSelfSync(bundleFlags).appInfo.metadataArray;
+    let mataHalfLeading = "false";
+    mataDataArrary.forEach(item => {
+      item.metadata.forEach(matedata => {
+        if(matedata.name == "half_leading"){
+          mataHalfLeading = matedata.value;
+          return;
+        }
+      });
+    });
+    return mataHalfLeading;
+ }
   getConstants() {
     if (!this.displayMetrics) {
       this.ctx.logger.error("DeviceInfoTurboModule::getConstants: JS Display Metrics not set");

@@ -127,12 +127,12 @@ class ArkUITypography final {
 
 class ArkUITypographyBuilder final {
  public:
-  ArkUITypographyBuilder(OH_Drawing_TypographyStyle* typographyStyle, float scale)
+  ArkUITypographyBuilder(OH_Drawing_TypographyStyle* typographyStyle, float scale, bool halfleading)
       : m_typographyHandler(
             OH_ArkUI_StyledString_Create(
                 typographyStyle,
-                OH_Drawing_CreateFontCollection())), 
-      m_scale(scale){
+                OH_Drawing_CreateFontCollection())),
+      m_scale(scale), m_halfleading(halfleading){
         m_typographyStyle = typographyStyle;
       }
 
@@ -176,6 +176,7 @@ class ArkUITypographyBuilder final {
 
  private:
   float m_scale = 1.0;
+  bool m_halfleading = false;
   std::vector<OH_Drawing_TextStyle*> m_textStyles;
   std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
   OH_Drawing_TypographyStyle* m_typographyStyle = nullptr;
@@ -193,7 +194,7 @@ class ArkUITypographyBuilder final {
   void addTextFragment(
       const facebook::react::AttributedString::Fragment& fragment) {
     auto textStyle = OH_Drawing_CreateTextStyle();
-    
+    OH_Drawing_SetTextStyleHalfLeading(textStyle, m_halfleading);
     // fontSize
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {

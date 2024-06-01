@@ -42,6 +42,7 @@ void RNInstanceCAPI::start() {
   auto deviceInfoTurboModule =
       std::dynamic_pointer_cast<rnoh::DeviceInfoTurboModule>(turboModule);
   auto displayMetrics = deviceInfoTurboModule->callSync("getConstants", {});
+  auto m_halfleading = deviceInfoTurboModule->callSync("getHalfLeading", {});
   if (displayMetrics.count("Dimensions") != 0) {
     auto Dimensions = displayMetrics.at("Dimensions");
     auto screenPhysicalPixels = Dimensions.at("screenPhysicalPixels");
@@ -49,7 +50,7 @@ void RNInstanceCAPI::start() {
     float fontScale = screenPhysicalPixels.at("fontScale").asDouble();
     auto textMeasurer = m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
     if (textMeasurer) {
-      textMeasurer->setScreenScale(fontScale, scale);
+      textMeasurer->setTextMeasureParams(fontScale, scale, m_halfleading.asBool());
     }
   }
 }

@@ -40,7 +40,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes const& paragraphAttributes,
       facebook::react::LayoutConstraints const& layoutConstraints) override;
   
-  void setScreenScale(float m_fontScale, float m_scale);
+  void setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfleading);
  private:
   
   std::pair<ArkUITypographyBuilder, ArkUITypography> findFitFontSize(int maxFontSize,
@@ -61,5 +61,6 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   float m_fontScale = 1.0;
   float m_scale = 1.0;
   int m_rnInstanceId = 0;
+  bool m_halfleading = false;
 };
 } // namespace rnoh
