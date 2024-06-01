@@ -107,7 +107,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 
   m_refreshIndicatorContainerNode.setOffset(0, props->progressViewOffset);
   getLocalRootArkUINode().setNativeRefreshing(props->refreshing);
-
+  m_refreshing = props->refreshing;
   if (facebook::react::isColorMeaningful(props->tintColor)) {
     m_refreshIndicatorSpinnerNode.setColor(props->tintColor);
   }
@@ -123,7 +123,11 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 
 void PullToRefreshViewComponentInstance::onRefresh() {
   getLocalRootArkUINode().setNativeRefreshing(true);
+  m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
   m_eventEmitter->onRefresh({});
+  if (m_refreshing == false) {
+    getLocalRootArkUINode().setNativeRefreshing(false);
+  }
 }
 
 void PullToRefreshViewComponentInstance::onRefreshStateChanged(RefreshStatus state) {
