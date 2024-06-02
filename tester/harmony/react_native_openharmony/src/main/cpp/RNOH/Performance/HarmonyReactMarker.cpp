@@ -29,22 +29,23 @@ int32_t getMessageId(const std::string& message) {
 };
 
 void HarmonyReactMarker::logMarker(const std::string& marker) {
-  OH_HiTrace_StartTrace(makeMessage(marker, "").c_str());
+  auto message = makeMessage(marker, "");
+  OH_HiTrace_StartTrace(message.c_str());
   OH_HiTrace_FinishTrace();
 }
 
 void HarmonyReactMarker::logMarkerStart(
     const std::string& marker,
     const std::string& tag) {
-  auto message = makeMessage(marker, tag).c_str();
-  OH_HiTrace_StartAsyncTrace(message, getMessageId(message));
+  auto message = makeMessage(marker, tag);
+  OH_HiTrace_StartAsyncTrace(message.c_str(), getMessageId(message.c_str()));
 }
 
 void HarmonyReactMarker::logMarkerFinish(
     const std::string& marker,
     const std::string& tag) {
-  auto message = makeMessage(marker, tag).c_str();
-  OH_HiTrace_FinishAsyncTrace(message, getMessageId(message));
+  auto message = makeMessage(marker, tag);
+  OH_HiTrace_FinishAsyncTrace(message.c_str(), getMessageId(message.c_str()));
 }
 
 void HarmonyReactMarker::logPerfMarker(
