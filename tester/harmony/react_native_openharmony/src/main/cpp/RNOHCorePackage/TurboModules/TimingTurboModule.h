@@ -7,8 +7,10 @@
 #include "uv/EventLoop.h"
 #include "uv/Timer.h"
 #include <functional>
+#include "RNOH/RNInstanceCAPI.h"
 namespace rnoh {
-class JSI_EXPORT TimingTurboModule : public ArkTSTurboModule {
+class TimingArkTSMessageHandler;
+class JSI_EXPORT TimingTurboModule : public ArkTSTurboModule, public std::enable_shared_from_this<TimingTurboModule> {
  public:
   TimingTurboModule(
       const ArkTSTurboModule::Context ctx,
@@ -27,7 +29,8 @@ class JSI_EXPORT TimingTurboModule : public ArkTSTurboModule {
  private:
   void initLoop();
   std::map<double, uv::Timer*> nativeTimerMap;
-  uv::EventLoop* loop;
+  std::shared_ptr<uv::EventLoop> loop;
+  std::shared_ptr<TimingArkTSMessageHandler> messageHandler;
 };
 
 } // namespace rnoh

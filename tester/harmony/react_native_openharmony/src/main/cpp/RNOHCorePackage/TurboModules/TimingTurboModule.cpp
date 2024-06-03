@@ -1,9 +1,9 @@
 #include "TimingTurboModule.h"
 #include <thread>
 #include "RNOH/RNInstance.h"
-#include "RNOH/RNInstanceCAPI.h"
 #include <chrono>
 #include <functional>
+#include <glog/logging.h>
 
 namespace rnoh {
 
@@ -11,18 +11,20 @@ using namespace facebook;
 
 class TimingArkTSMessageHandler: public ArkTSMessageHandler {
   public:
-  TimingArkTSMessageHandler(TimingTurboModule* turboModule)
-      : m_turboModule(turboModule) {}
+  TimingArkTSMessageHandler(std::weak_ptr<TimingTurboModule> weakTurboModule)
+      : m_weakTurboModule(weakTurboModule) {}
   void handleArkTSMessage(const Context& ctx) override
   {
     if (ctx.messageName == "TimingCreateTimer") {
-      m_turboModule->createTimer(ctx.messagePayload[0].asDouble(),
-                                 ctx.messagePayload[1].asDouble(),
-                                 0,
-                                 ctx.messagePayload[2].asBool());
+      if (auto turboModule = m_weakTurboModule.lock(); turboModule!= nullptr) {
+        turboModule->createTimer(ctx.messagePayload[0].asDouble(),
+                                  ctx.messagePayload[1].asDouble(),
+                                  0,
+                                  ctx.messagePayload[2].asBool());
+      }
     }
   }
-  TimingTurboModule* m_turboModule;
+  std::weak_ptr<TimingTurboModule> m_weakTurboModule;
 };
 
 static jsi::Value __hostFunction_TimingTurboModule_createTimer(
@@ -65,11 +67,6 @@ TimingTurboModule::TimingTurboModule(
     const std::string name)
     : ArkTSTurboModule(ctx, name) {
   initLoop();
-  if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
-    auto instanceCAPI = dynamic_cast<RNInstanceCAPI*>(instance.get());
-    auto messageHandler = std::make_shared<TimingArkTSMessageHandler>(this);
-    instanceCAPI->addArkTSMessageHandler(messageHandler);
-  }
   methodMap_ = {
       {"createTimer", {4, __hostFunction_TimingTurboModule_createTimer}},
       {"deleteTimer", {1, __hostFunction_TimingTurboModule_deleteTimer}},
@@ -88,8 +85,8 @@ folly::dynamic getObject(double callbackID) {
 }
 
 void TimingTurboModule::initLoop() {
-  loop = new uv::EventLoop();
-  std::thread([&]() {
+  loop = std::make_shared<uv::EventLoop>();
+  std::thread([loop=this->loop]() {
     loop->run();
   }).detach();
 }
@@ -99,59 +96,76 @@ void TimingTurboModule::createTimer(
     double duration,
     double jsSchedulingTime,
     bool repeat) {
-  auto isReady = [&]()->bool{
-      return this->call(*runtime, "isReady", nullptr, 0).getBool();};
-  auto isPaused = [&]()->bool{
-      return this->call(*runtime, "isPaused", nullptr, 0).getBool();};
-  auto callback = [=](){
-      facebook::jsi::Value testargs[4] ={
-        facebook::jsi::Value(id),
-        facebook::jsi::Value(duration),
-        facebook::jsi::Value(repeat)};
-      this->call(*runtime, "createTimerInCpp", testargs, 3);};
+  auto wptr = this->weak_from_this();
+
   if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
-    auto triggerTimer = [=](uv::Timer* timer) {
-      if (isReady()) {
-        instance->callFunction(
-          "JSTimers", "callTimers", std::move(getObject(id)));
-        if (!repeat) {
-          this->deleteTimer(id);
-        }
-      } else if (isPaused()) {
-        this->deleteTimer(id);
-        callback();
-      }
-    };
-
-    loop->runInThisLoopEn([=]()
-    {
-      std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-      std::chrono::milliseconds milliseconds =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
-      uint64_t delay = milliseconds.count() - static_cast<uint64_t>(jsSchedulingTime);
-
-      uint64_t timeout = static_cast<uint64_t>(duration)
-       > delay ?(static_cast<uint64_t>(duration) - delay) : 0;
-      uint64_t interval = repeat? static_cast<uint64_t>(duration) : 0;
-
-      uv::Timer * timer = new uv::Timer(loop, timeout, interval, triggerTimer);
-      nativeTimerMap[id] = timer;
-      timer->start();
-    });
+    if (messageHandler == nullptr) {
+      auto rnInstance = dynamic_cast<RNInstanceCAPI*>(instance.get());
+      messageHandler = std::make_shared<TimingArkTSMessageHandler>(wptr);
+      rnInstance->addArkTSMessageHandler(messageHandler);
+    }
   }
+
+  auto triggerTimer = [wptr, id, duration, repeat](uv::Timer* timer) {
+    auto timingPtr = wptr.lock();
+    if (timingPtr == nullptr) {
+      return;
+    }
+    if (timingPtr->call(*timingPtr->runtime, "isReady", nullptr, 0).getBool()) {
+      if (auto instance = timingPtr->m_ctx.instance.lock(); instance != nullptr) {
+        instance->callFunction(
+        "JSTimers", "callTimers", std::move(getObject(id)));
+      }
+      if (!repeat) {
+        timingPtr->deleteTimer(id);
+      }
+    } else if (timingPtr->call(*timingPtr->runtime, "isPaused", nullptr, 0).getBool()) {
+      timingPtr->deleteTimer(id);
+      facebook::jsi::Value testargs[4] ={
+      facebook::jsi::Value(id),
+      facebook::jsi::Value(duration),
+      facebook::jsi::Value(repeat)};
+      timingPtr->call(*timingPtr->runtime, "createTimerInCpp", testargs, 3);
+    }
+  };
+
+  loop->runInThisLoopEn([wptr, id, duration, repeat, triggerTimer, jsSchedulingTime]()
+  {
+    auto timingPtr = wptr.lock();
+    if (timingPtr == nullptr) {
+      return;
+    }
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::chrono::milliseconds milliseconds =
+      std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+    uint64_t delay = milliseconds.count() - static_cast<uint64_t>(jsSchedulingTime);
+
+    uint64_t timeout = static_cast<uint64_t>(duration)
+      > delay ?(static_cast<uint64_t>(duration) - delay) : 0;
+    uint64_t interval = repeat? static_cast<uint64_t>(duration) : 0;
+
+    uv::Timer * timer = new uv::Timer(timingPtr->loop.get(), timeout, interval, triggerTimer);
+    timingPtr->nativeTimerMap[id] = timer;
+    timer->start();
+  });
 }
 
 void TimingTurboModule::deleteTimer(double id) {
-  loop->runInThisLoopEn([=]() {
-    auto it = nativeTimerMap.find(id);
-    if (it != nativeTimerMap.end()) {
+  auto wptr = this->weak_from_this();
+  loop->runInThisLoopEn([wptr, id]() {
+    auto timingPtr = wptr.lock();
+    if (timingPtr == nullptr) {
+      return;
+    }
+    auto it = timingPtr->nativeTimerMap.find(id);
+    if (it != timingPtr->nativeTimerMap.end()) {
       auto timer = it->second;
       timer->stop();
       timer->close([](uv::Timer* t)
       {
         delete t;
       });
-      nativeTimerMap.erase(it);
+      timingPtr->nativeTimerMap.erase(it);
     }
   });
 }
@@ -163,17 +177,20 @@ void TimingTurboModule::setSendIdleEvents(bool enabled) {
 }
 
 TimingTurboModule::~TimingTurboModule() {
-  for (auto it = nativeTimerMap.begin(); it != nativeTimerMap.end(); ++it) {
-    auto timer = it->second;
-    timer->stop();
-    timer->close([](uv::Timer* t)
-    {
-      delete t;
-    });
+  if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
+    auto rnInstance = dynamic_cast<RNInstanceCAPI*>(instance.get());
+    rnInstance->removeArkTSMessageHandler(messageHandler);
   }
-  nativeTimerMap.clear();
-  delete loop;
-  loop = nullptr;
+  loop->runInThisLoopEn([timeMap=this->nativeTimerMap]() {
+    for (auto it = timeMap.begin(); it != timeMap.end(); ++it) {
+      auto timer = it->second;
+      timer->stop();
+      timer->close([](uv::Timer* t)
+      {
+        delete t;
+      });
+    }
+  });
 }
 
 } // namespace rnoh

@@ -187,6 +187,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void setBundlePath(std::string const& path) override;
   std::string getBundlePath() override;
   void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   int getId() override { return m_id; }
  protected:
   int m_id;
