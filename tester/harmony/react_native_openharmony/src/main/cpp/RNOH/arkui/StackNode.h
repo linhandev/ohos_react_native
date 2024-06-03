@@ -9,6 +9,7 @@ class StackNodeDelegate {
   virtual void onClick() {};
   virtual void onHoverIn() {};
   virtual void onHoverOut() {};
+  virtual void onAreaChange() {};
 };
 
 class StackNode : public ArkUINode {
