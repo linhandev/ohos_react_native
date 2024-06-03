@@ -73,6 +73,12 @@ CustomNode& CustomNodeComponentInstance::getLocalRootArkUINode()
   return *m_customNode;
 }
 
+void CustomNodeComponentInstance::onChildLayoutChange(std::shared_ptr<ComponentInstance> child)
+{
+    auto childNodes = getChildren();
+    updateVisibleFirst(childNodes);
+}
+
 void CustomNodeComponentInstance::updateClippingIndex(bool isInsert, std::size_t index)
 {
     if (!m_removeClippedSubviews) {
@@ -403,19 +409,13 @@ void CustomNodeComponentInstance::updateVisible(bool isFirst)
     }
     uint32_t start = ClippingComponent::getStartIndex();
     uint32_t end = ClippingComponent::getEndIndex();
-    std::vector<ComponentInstance::Shared> childNodes = ClippingComponent::getSortChildren();
+    auto childNodes = getChildren();
     if (isFirst || (start == 0 && end== 0) || (start > end) || start >= childNodes.size() || end >= childNodes.size()) {
         updateVisibleFirst(childNodes);
         return;
     }
 
-    if (shiftDirect == ClippingMoveDirect::MOVE_DOWN || shiftDirect == ClippingMoveDirect::MOVE_RIGHT) {
-        updateVisibleDown(childNodes);
-    } else if(shiftDirect == ClippingMoveDirect::MOVE_UP || shiftDirect == ClippingMoveDirect::MOVE_LEFT) {
-        updateVisibleUp(childNodes);
-    } else {
-        updateVisibleFirst(childNodes);
-    }
+    updateVisibleFirst(childNodes);
 }
 
 void CustomNodeComponentInstance::restoreRsTree()
@@ -424,7 +424,7 @@ void CustomNodeComponentInstance::restoreRsTree()
         return;
     }
 
-    auto children = ClippingComponent::getSortChildren();
+    auto children = getChildren();
     uint32_t total = children.size();
     for (std::size_t i = 0; i < total; i++) {
         const auto& item = children[i];

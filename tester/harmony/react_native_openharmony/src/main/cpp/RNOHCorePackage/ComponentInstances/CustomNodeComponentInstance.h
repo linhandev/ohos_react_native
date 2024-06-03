@@ -28,7 +28,7 @@ class CustomNodeComponentInstance
       std::size_t index) override;
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
-
+  void onChildLayoutChange(std::shared_ptr<ComponentInstance> child) override;
   void onClick() override;
   void onHoverIn() override;
   void onHoverOut() override;

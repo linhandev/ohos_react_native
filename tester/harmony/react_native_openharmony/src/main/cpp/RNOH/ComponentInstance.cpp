@@ -18,8 +18,6 @@ void ComponentInstance::insertChild(
   auto it = m_children.begin() + index;
   std::size_t newIndex = index;
   childComponentInstance->setParent(shared_from_this());
-  insertSortChild(childComponentInstance, newIndex);
-  updateClippingIndex(true, newIndex);
 
   onChildInserted(childComponentInstance, newIndex);
   childComponentInstance->setIndex(index);
@@ -32,8 +30,6 @@ void ComponentInstance::removeChild(
       std::find(m_children.begin(), m_children.end(), childComponentInstance);
   if (it != m_children.end()) {
     std::size_t index = it - m_children.begin();
-    removeSortChild(childComponentInstance, index);
-    updateClippingIndex(false, index);
 
     auto childComponentInstance = std::move(*it);
     m_children.erase(it);
