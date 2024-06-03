@@ -155,6 +155,8 @@ ArkUITypography TextMeasurer::measureTypography(
     LayoutConstraints const& layoutConstraints) {
   UniqueTypographyStyle typographyStyle(
       OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
+  UniqueFontCollection fontCollection(
+      OH_Drawing_CreateFontCollection(), OH_Drawing_DestroyFontCollection);
 
   if (paragraphAttributes.maximumNumberOfLines > 0) {
     OH_Drawing_SetTypographyTextMaxLines(
@@ -175,7 +177,8 @@ ArkUITypography TextMeasurer::measureTypography(
     }
   }
 
-  ArkUITypographyBuilder typographyBuilder(typographyStyle.get());
+  ArkUITypographyBuilder typographyBuilder(
+      typographyStyle.get(), fontCollection.get());
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }

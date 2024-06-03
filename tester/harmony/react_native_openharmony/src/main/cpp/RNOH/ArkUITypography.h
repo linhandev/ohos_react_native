@@ -10,6 +10,9 @@ namespace rnoh {
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
+using UniqueFontCollection = std::unique_ptr<
+    OH_Drawing_FontCollection,
+    decltype(&OH_Drawing_DestroyFontCollection)>;
 
 class ArkUITypography final {
  public:
@@ -103,11 +106,11 @@ class ArkUITypography final {
 
 class ArkUITypographyBuilder final {
  public:
-  ArkUITypographyBuilder(OH_Drawing_TypographyStyle* typographyStyle)
+  ArkUITypographyBuilder(
+      OH_Drawing_TypographyStyle* typographyStyle,
+      OH_Drawing_FontCollection* fontCollection)
       : m_typographyHandler(
-            OH_Drawing_CreateTypographyHandler(
-                typographyStyle,
-                OH_Drawing_CreateFontCollection()),
+            OH_Drawing_CreateTypographyHandler(typographyStyle, fontCollection),
             OH_Drawing_DestroyTypographyHandler) {}
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
