@@ -67,5 +67,6 @@ class ParagraphLayoutManager {
   TextMeasurement mutable cachedTextMeasurement_{};
 
   size_t mutable hash_{};
+  bool mutable isCacheChanged = true;
 };
 } // namespace facebook::react

@@ -17,27 +17,31 @@ TextMeasurement ParagraphLayoutManager::measure(
     LayoutConstraints layoutConstraints) const {
   bool cacheLastTextMeasurement = CoreFeatures::cacheLastTextMeasurement;
   if (cacheLastTextMeasurement &&
-      (layoutConstraints.maximumSize.width == availableWidth_ ||
-       layoutConstraints.maximumSize.width ==
-           cachedTextMeasurement_.size.width)) {
+    // Value 0.5f is too small to judge, so 0.8f is a better number.
+      (std::abs(layoutConstraints.maximumSize.width - availableWidth_) <= 0.8f) ||
+       (std::abs(layoutConstraints.maximumSize.width -
+           cachedTextMeasurement_.size.width) <= 0.8f)) {
     /* Yoga has requested measurement for this size before. Let's use cached
      * value. `TextLayoutManager` might not have cached this because it could be
      * using different width to generate cache key. This happens because Yoga
      * switches between available width and exact width but since we already
      * know exact width, it is wasteful to calculate it again.
      */
-    return cachedTextMeasurement_;
+    isCacheChanged = false;
+  } else {
+    isCacheChanged = true;
   }
   if (CoreFeatures::cacheNSTextStorage) {
     size_t newHash = folly::hash::hash_combine(
         0,
         textAttributedStringHashLayoutWise(attributedString),
         paragraphAttributes);
-
-    if (!hostTextStorage_ || newHash != hash_) {
-      hostTextStorage_ = textLayoutManager_->getHostTextStorage(
-          attributedString, paragraphAttributes, layoutConstraints);
+    if (hash_ == 0 || newHash != hash_) {
       hash_ = newHash;
+    } else {
+      if (isCacheChanged == false) {
+        return cachedTextMeasurement_;
+      }
     }
   }
 
