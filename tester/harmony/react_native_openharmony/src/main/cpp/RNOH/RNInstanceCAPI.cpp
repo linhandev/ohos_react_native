@@ -471,6 +471,14 @@ void RNInstanceCAPI::addArkTSMessageHandler(ArkTSMessageHandler::Shared handler)
   m_arkTSMessageHandlers.push_back(handler);
 }
 
+void RNInstanceCAPI::removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
+  for (auto it = m_arkTSMessageHandlers.begin(); it != m_arkTSMessageHandlers.end();it++) {
+    if (*it == handler) {
+      m_arkTSMessageHandlers.erase(it);
+    }
+  }
+}
+
 void RNInstanceCAPI::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {

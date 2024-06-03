@@ -21,23 +21,17 @@ Timer::~Timer()
 
 void Timer::start()
 {
-	_loop->runInThisLoop([=]
-	{
-		if (false == bStarted) {
-			bStarted = true;
-			uv_timer_start(&uvHandle, Timer::uvOnTimer, timeout, repeat);
-		}
-	});
+	if (false == bStarted) {
+		bStarted = true;
+		uv_timer_start(&uvHandle, Timer::uvOnTimer, timeout, repeat);
+	}
 }
 void Timer::stop()
 {
-	_loop->runInThisLoop([=]
-	{
-		if (uv_is_active((uv_handle_t*)&uvHandle)) {
-			uv_timer_stop(&uvHandle);
-		}
-		bStarted = false;
-	});
+	if (uv_is_active((uv_handle_t*)&uvHandle)) {
+		uv_timer_stop(&uvHandle);
+	}
+	bStarted = false;
 }
 
 void Timer::uvOnTimer(uv_timer_t * handle)
@@ -58,20 +52,17 @@ void Timer::close(TimerClosedCallback callback)
     cbClosed = callback;
 	stop();
 
-	_loop->runInThisLoop([=]
-	{
-		if (uv_is_closing((uv_handle_t*)&uvHandle) == 0) {
-			uv_close((uv_handle_t*)&uvHandle,
-				[](uv_handle_t* handle)
-			{
-				auto ptr = static_cast<Timer*>(handle->data);
-				ptr->onClosed();
-			});
-		}
-		else {
-			onClosed();
-		}
-	});
+	if (uv_is_closing((uv_handle_t*)&uvHandle) == 0) {
+		uv_close((uv_handle_t*)&uvHandle,
+			[](uv_handle_t* handle)
+		{
+			auto ptr = static_cast<Timer*>(handle->data);
+			ptr->onClosed();
+		});
+	}
+	else {
+		onClosed();
+	}
 }
 
 void Timer::onClosed()
