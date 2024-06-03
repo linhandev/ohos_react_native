@@ -161,4 +161,9 @@ void ClippingComponent::restoreRsTree()
 {
     return;
 }
+
+void ClippingComponent::onChildLayoutChange(std::shared_ptr<ComponentInstance> child)
+{
+    return;
+}
 } // namespace rnoh

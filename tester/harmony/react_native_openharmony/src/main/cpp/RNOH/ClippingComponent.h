@@ -54,6 +54,7 @@ class ClippingComponent
         bool getIsClipped();
         void updateContentOffset(facebook::react::Point contentOffset, facebook::react::Size containerSize);
         virtual void updateVisible(bool isFrist);  
+        virtual void onChildLayoutChange(std::shared_ptr<ComponentInstance> child);
 };
 
 } // namespace rnoh

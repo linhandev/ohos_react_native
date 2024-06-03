@@ -115,7 +115,14 @@ class CppComponentInstance : public ComponentInstance {
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
     this->getLocalRootArkUINode().setLayoutRect(
       layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
+    bool changeFlag =  (layoutMetrics != m_layoutMetrics);
     m_layoutMetrics = layoutMetrics;
+    if (changeFlag) {
+      auto parent =  getParent().lock();
+      if (parent != nullptr) {
+        parent->onChildLayoutChange(shared_from_this());
+      }
+    }
     markBoundingBoxAsDirty();
   }
 
