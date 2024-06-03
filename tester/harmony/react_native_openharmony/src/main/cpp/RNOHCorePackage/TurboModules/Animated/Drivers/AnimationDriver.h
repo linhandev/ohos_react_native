@@ -18,7 +18,11 @@ class AnimationDriver {
       facebook::react::Tag animatedNode,
       AnimatedNodesManager& nodesManager,
       AnimationEndCallback&& endCallback);
-  virtual ~AnimationDriver() = default;
+  virtual ~AnimationDriver() {
+    if (endCallback_) {
+      endCallback_(false);
+    }
+  };
 
   virtual void runAnimationStep(uint64_t frameTimeNanos) = 0;
   virtual void resetConfig(folly::dynamic const& config);

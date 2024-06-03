@@ -233,7 +233,6 @@ void AnimatedNodesManager::stopAnimation(facebook::react::Tag animationId) {
   if (auto it = m_animationById.find(animationId);
       it != m_animationById.end()) {
     if (it->second->getId() == animationId) {
-      it->second->endCallback_(false);
       m_animationById.erase(animationId);
     }
   }
@@ -257,6 +256,7 @@ void AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
 
   for (auto animationId : finishedAnimations) {
     m_animationById.at(animationId)->endCallback_(true);
+    m_animationById.at(animationId)->endCallback_ = nullptr;
     m_animationById.erase(animationId);
   }
 
