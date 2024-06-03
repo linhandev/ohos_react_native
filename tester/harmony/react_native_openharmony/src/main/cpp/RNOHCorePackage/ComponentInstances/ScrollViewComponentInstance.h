@@ -83,8 +83,9 @@ class ScrollViewComponentInstance
   void onStateChanged(SharedConcreteState const& state) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
 
-  void handleCommand(std::string const& commandName, folly::dynamic const& args)
-      override;
+  void onCommandReceived(
+      std::string const& commandName,
+      folly::dynamic const& args) override;
 
   // ScrollNodeDelegate implementation
   void onScroll() override;
@@ -93,7 +94,7 @@ class ScrollViewComponentInstance
   float onScrollFrameBegin(float offset, int32_t scrollState) override;
   void onAppear() override;
 
-  void finalizeUpdates() override;
+  void onFinalizeUpdates() override;
 
   // TouchTarget implementation
   facebook::react::Point getCurrentOffset() const override;

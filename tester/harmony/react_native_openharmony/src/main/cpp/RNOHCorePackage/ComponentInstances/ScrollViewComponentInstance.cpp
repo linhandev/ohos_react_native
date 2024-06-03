@@ -116,7 +116,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       0.f);
 }
 
-void ScrollViewComponentInstance::handleCommand(
+void ScrollViewComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
@@ -338,8 +338,8 @@ bool ScrollViewComponentInstance::scrollMovedBySignificantOffset(
       std::abs(newOffset.y - m_currentOffset.y) >= 0.01;
 }
 
-void ScrollViewComponentInstance::finalizeUpdates() {
-  ComponentInstance::finalizeUpdates();
+void ScrollViewComponentInstance::onFinalizeUpdates() {
+  ComponentInstance::onFinalizeUpdates();
 
   // when parent isn't refresh node, set the position
   auto parent = this->getParent().lock();

@@ -18,8 +18,9 @@ class SampleViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
-  void handleCommand(std::string const& commandName, folly::dynamic const& args)
-      override;
+  void onCommandReceived(
+      std::string const& commandName,
+      folly::dynamic const& args) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 

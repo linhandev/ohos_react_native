@@ -1,5 +1,5 @@
 /**
- * Used only in C-API based Architecture.
+ * @architecture: C-API
  */
 #pragma once
 #include <react/renderer/components/view/ViewProps.h>
@@ -17,6 +17,11 @@
 
 namespace rnoh {
 
+class SchedulerDelegateCAPI;
+
+/**
+ * @api
+ */
 class ComponentInstance
     : public TouchTarget,
       public std::enable_shared_from_this<ComponentInstance> {
@@ -29,6 +34,8 @@ class ComponentInstance
   using ComponentHandle = facebook::react::ComponentHandle;
 
  public:
+  friend SchedulerDelegateCAPI;
+
   struct Dependencies {
     using Shared = std::shared_ptr<const Dependencies>;
 
@@ -73,29 +80,65 @@ class ComponentInstance
     return m_componentHandle;
   }
 
+  /**
+   * @internal
+   */
   void insertChild(
       ComponentInstance::Shared childComponentInstance,
       std::size_t index);
 
+  /**
+   * @internal
+   */
   void removeChild(ComponentInstance::Shared childComponentInstance);
 
   virtual facebook::react::Props::Shared getProps() const = 0;
 
+  /**
+   * TODO: change to protected — those methods are intended to be called
+   * only by SchedulerDelegateCAPI which is a friend of this class
+   * (latestRNOHVersion: 0.72.27)
+   */
+ public:
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
   virtual void setProps(facebook::react::Props::Shared props){};
-
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
   virtual void setState(facebook::react::State::Shared state){};
-
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
   virtual void setLayout(facebook::react::LayoutMetrics layoutMetrics){};
-
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
   virtual void setEventEmitter(
       facebook::react::SharedEventEmitter eventEmitter){};
-
-  virtual void finalizeUpdates() {}
-
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
   virtual void handleCommand(
       std::string const& commandName,
-      folly::dynamic const& args) {}
+      folly::dynamic const& args) {
+    this->onCommandReceived(commandName, args);
+  }
+  /**
+   * @deprecated This is internal method. Do not use it, it will be private in
+   * the future (latestRNOHVersion: 0.72.27)
+   */
+  virtual void finalizeUpdates() {
+    this->onFinalizeUpdates();
+  }
 
+ public:
   virtual std::vector<ComponentInstance::Shared> const& getChildren() const {
     return m_children;
   }
@@ -104,6 +147,9 @@ class ComponentInstance
     return m_parent;
   }
 
+  /**
+   * @internal
+   */
   virtual void setParent(ComponentInstance::Shared parent) {
     m_parent = parent;
   }
@@ -136,10 +182,16 @@ class ComponentInstance
     return std::vector<TouchTarget::Shared>(children.begin(), children.end());
   }
 
+  /**
+   * @internal
+   */
   void setIgnoredPropKeys(std::unordered_set<std::string> propKeys) {
     m_ignoredPropKeys = std::move(propKeys);
   }
 
+  /**
+   * @internal
+   */
   std::unordered_set<std::string> const& getIgnoredPropKeys() const {
     return m_ignoredPropKeys;
   }
@@ -151,6 +203,12 @@ class ComponentInstance
 
   virtual void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) {}
+
+  virtual void onFinalizeUpdates() {}
+
+  virtual void onCommandReceived(
+      std::string const& commandName,
+      folly::dynamic const& args) {}
 
   /**
    * Override this method if your component has scrollable functionality.

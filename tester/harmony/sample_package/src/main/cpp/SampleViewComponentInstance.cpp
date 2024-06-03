@@ -36,7 +36,7 @@ void SampleViewComponentInstance::onPropsChanged(
   DLOG(INFO) << "SampleView props changed";
 }
 
-void SampleViewComponentInstance::handleCommand(
+void SampleViewComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
   if (commandName == "toggleFontSize") {
@@ -45,7 +45,7 @@ void SampleViewComponentInstance::handleCommand(
     return;
   }
 
-  CppComponentInstance::handleCommand(commandName, args);
+  CppComponentInstance::onCommandReceived(commandName, args);
 }
 
 ArkUINode& SampleViewComponentInstance::getLocalRootArkUINode() {

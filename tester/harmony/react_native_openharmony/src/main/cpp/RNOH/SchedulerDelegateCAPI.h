@@ -1,5 +1,5 @@
 /**
- * Used only in C-API based Architecture.
+ * @architecture: C-API
  */
 #pragma once
 #include <folly/dynamic.h>

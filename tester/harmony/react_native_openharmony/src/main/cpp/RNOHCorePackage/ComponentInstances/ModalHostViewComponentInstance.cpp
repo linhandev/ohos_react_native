@@ -133,7 +133,7 @@ void ModalHostViewComponentInstance::onChildRemoved(
   m_rootStackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
 };
 
-void ModalHostViewComponentInstance::finalizeUpdates() {
+void ModalHostViewComponentInstance::onFinalizeUpdates() {
   // only show modal after the screen size has been set and processed by RN
   auto isScreenSizeSet = m_state && m_state->getData().screenSize.height != 0 &&
       m_state->getData().screenSize.width != 0;
@@ -141,7 +141,7 @@ void ModalHostViewComponentInstance::finalizeUpdates() {
   if (shouldShowDialog) {
     showDialog();
   }
-  CppComponentInstance::finalizeUpdates();
+  CppComponentInstance::onFinalizeUpdates();
 }
 
 void ModalHostViewComponentInstance::showDialog() {
