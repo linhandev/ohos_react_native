@@ -370,9 +370,9 @@ void TextInputComponentInstance::onPropsChanged(
   }
 }
 
-void TextInputComponentInstance::setLayout(
-    facebook::react::LayoutMetrics layoutMetrics) {
-  CppComponentInstance::setLayout(layoutMetrics);
+void TextInputComponentInstance::onLayoutChanged(
+    facebook::react::LayoutMetrics const& layoutMetrics) {
+  CppComponentInstance::onLayoutChanged(layoutMetrics);
   if (m_multiline) {
     m_textInputNode.setLayoutRect(
       layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
@@ -382,7 +382,7 @@ void TextInputComponentInstance::setLayout(
   }
 }
 
-void TextInputComponentInstance::handleCommand(
+void TextInputComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
   if (commandName == "focus") {
