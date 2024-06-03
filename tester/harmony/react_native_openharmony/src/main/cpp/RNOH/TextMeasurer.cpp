@@ -220,6 +220,8 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
   OH_Drawing_TypographyStyle* typographyStyle = OH_Drawing_CreateTypographyStyle();
+  UniqueFontCollection fontCollection(
+      OH_Drawing_CreateFontCollection(), OH_Drawing_DestroyFontCollection);
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
     OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
@@ -256,7 +258,8 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
           typographyStyle, getOHDrawingTextAlign(textAlign.value()));
     }
   }
-  ArkUITypographyBuilder typographyBuilder(typographyStyle, m_scale, m_halfleading);
+  ArkUITypographyBuilder typographyBuilder(
+      typographyStyle.get(), fontCollection, m_scale, m_halfleading);
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
