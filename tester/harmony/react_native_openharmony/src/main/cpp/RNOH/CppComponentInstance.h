@@ -46,6 +46,10 @@ inline facebook::react::Rect transformRectAroundPoint(
     const facebook::react::Rect& rect,
     const facebook::react::Point& point,
     const facebook::react::Transform& transform);
+
+/**
+ * @api
+ */
 template <typename ShadowNodeT>
 class CppComponentInstance : public ComponentInstance {
   static_assert(
@@ -75,6 +79,20 @@ class CppComponentInstance : public ComponentInstance {
     return m_props;
   }
 
+  SharedConcreteState const& getState() const {
+    return m_state;
+  }
+
+  SharedConcreteEventEmitter const& getEventEmitter() const {
+    return m_eventEmitter;
+  }
+
+  /**
+   * TODO: change to private — those methods are intended to be called
+   * only by SchedulerDelegateCAPI which is a friend of this class
+   * (latestRNOHVersion: 0.72.27)
+   */
+ public:
   void setProps(facebook::react::Props::Shared props) final {
     auto newProps = std::dynamic_pointer_cast<const ConcreteProps>(props);
     if (!newProps) {
@@ -82,10 +100,6 @@ class CppComponentInstance : public ComponentInstance {
     }
     this->onPropsChanged(newProps);
     m_props = newProps;
-  }
-
-  SharedConcreteState const& getState() const {
-    return m_state;
   }
 
   void setState(facebook::react::State::Shared state) final {
@@ -96,10 +110,6 @@ class CppComponentInstance : public ComponentInstance {
 
     this->onStateChanged(newState);
     m_state = newState;
-  }
-
-  SharedConcreteEventEmitter const& getEventEmitter() const {
-    return m_eventEmitter;
   }
 
   void setEventEmitter(facebook::react::SharedEventEmitter eventEmitter) final {
@@ -113,8 +123,7 @@ class CppComponentInstance : public ComponentInstance {
   }
 
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
-    this->getLocalRootArkUINode().setLayoutRect(
-      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
+    this->onLayoutChanged(layoutMetrics);
     bool changeFlag =  (layoutMetrics != m_layoutMetrics);
     m_layoutMetrics = layoutMetrics;
     if (changeFlag) {
@@ -123,9 +132,9 @@ class CppComponentInstance : public ComponentInstance {
         parent->onChildLayoutChange(shared_from_this());
       }
     }
-    markBoundingBoxAsDirty();
   }
 
+ public:
   // TouchTarget implementation
   facebook::react::LayoutMetrics getLayoutMetrics() const override {
     return m_layoutMetrics;
@@ -210,12 +219,18 @@ class CppComponentInstance : public ComponentInstance {
   };
 
  protected:
+  virtual void onLayoutChanged(
+      facebook::react::LayoutMetrics const& layoutMetrics) {
+    this->getLocalRootArkUINode().setLayoutRect(
+      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
+    markBoundingBoxAsDirty();
+  }
+
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
     auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
         concreteProps);
     auto old =
         std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
-    auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
     auto isTransformManagedByAnimated =
         getIgnoredPropKeys().count("transform") > 0;
     facebook::react::Transform defaultTransform;
@@ -232,7 +247,6 @@ class CppComponentInstance : public ComponentInstance {
     
     facebook::react::BorderMetrics borderMetrics =
       props->resolveBorderMetrics(this->m_layoutMetrics);
-    facebook::react::BorderMetrics oldBorderMetrics;
     
     if (old && borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
       this->getLocalRootArkUINode().setBorderWidth(

@@ -52,10 +52,12 @@ class TextInputComponentInstance
 
   void onStateChanged(SharedConcreteState const& state) override;
 
-  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;
+  void onLayoutChanged(
+      facebook::react::LayoutMetrics const& layoutMetrics) override;
 
-  void handleCommand(std::string const& commandName, folly::dynamic const& args)
-      override;
+  void onCommandReceived(
+      std::string const& commandName,
+      folly::dynamic const& args) override;
 
   void onChange(std::string text) override;
 

@@ -43,7 +43,7 @@ class ModalHostViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
 
-  void finalizeUpdates() override;
+  void onFinalizeUpdates() override;
 
   void showDialog();
 
