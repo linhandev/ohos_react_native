@@ -51,6 +51,8 @@ void HarmonyReactMarker::logMarkerFinish(
 void HarmonyReactMarker::logPerfMarker(
     const ReactMarker::ReactMarkerId markerId,
     const char* tag) {
+  // Block performance marker for better performance
+  return;
   switch (markerId) {
     case ReactMarker::RUN_JS_BUNDLE_START:
       HarmonyReactMarker::logMarkerStart("RUN_JS_BUNDLE", tag);
