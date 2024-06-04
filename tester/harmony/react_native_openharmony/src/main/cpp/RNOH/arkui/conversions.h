@@ -38,13 +38,24 @@ inline ArkUI_TextAreaType convertTextAreaInputType(
   }
 }
 
-inline uint32_t convertColorToTranslucent(
+inline uint32_t convertColorToTranslucentUnderline(
     facebook::react::SharedColor const& color) {
   auto colorComponents = colorComponentsFromColor(color);
   uint32_t red = static_cast<uint32_t>(colorComponents.red * 255) & 0xFF;
   uint32_t green = static_cast<uint32_t>(colorComponents.green * 255) & 0xFF;
   uint32_t blue = static_cast<uint32_t>(colorComponents.blue * 255) & 0xFF;
   uint32_t alpha = static_cast<uint32_t>(colorComponents.alpha * 255) & 0xFF;
+  auto colorValue = (alpha << 24) | (red << 16) | (green << 8) | blue;
+  return colorValue;
+}
+
+inline uint32_t convertColorToTranslucentSelection(
+    facebook::react::SharedColor const& color) {
+  auto colorComponents = colorComponentsFromColor(color);
+  uint32_t red = static_cast<uint32_t>(colorComponents.red * 255) & 0xFF;
+  uint32_t green = static_cast<uint32_t>(colorComponents.green * 255) & 0xFF;
+  uint32_t blue = static_cast<uint32_t>(colorComponents.blue * 255) & 0xFF;
+  uint32_t alpha = 0x55;
   auto colorValue = (alpha << 24) | (red << 16) | (green << 8) | blue;
   return colorValue;
 }
