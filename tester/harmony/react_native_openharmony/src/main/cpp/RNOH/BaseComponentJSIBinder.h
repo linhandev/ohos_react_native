@@ -31,6 +31,7 @@ class BaseComponentJSIBinder : public ComponentJSIBinder {
     nativeProps.setProperty(rt, "top", true);
     nativeProps.setProperty(rt, "width", true);
     nativeProps.setProperty(rt, "opacity", true);
+    nativeProps.setProperty(rt, "backgroundColor", "Color");
     nativeProps.setProperty(rt, "pointerEvents", "string");
     nativeProps.setProperty(rt, "collapsable", "boolean");
     nativeProps.setProperty(rt, "focusable", "boolean");
