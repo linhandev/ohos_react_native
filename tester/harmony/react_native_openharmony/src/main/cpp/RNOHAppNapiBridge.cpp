@@ -95,7 +95,7 @@ static napi_value createReactNativeInstance(
     DLOG(INFO) << "createReactNativeInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJs.getCallbackArgs(info, 10);
+    auto args = arkJs.getCallbackArgs(info, 11);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto arkTsTurboModuleProviderRef = arkJs.createReference(args[1]);
     auto mutationsListenerRef = arkJs.createReference(args[2]);
@@ -111,6 +111,7 @@ static napi_value createReactNativeInstance(
           arkJs.getBoolean(featureFlagNameAndStatus.second));
     }
     auto frameNodeFactoryRef = arkJs.createReference(args[9]);
+    auto jsResourceManager = args[10];
     auto rnInstance = createRNInstance(
         instanceId,
         env,
@@ -156,6 +157,7 @@ static napi_value createReactNativeInstance(
         eventDispatcherRef,
         featureFlagRegistry,
         uiTicker,
+        jsResourceManager,
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
 

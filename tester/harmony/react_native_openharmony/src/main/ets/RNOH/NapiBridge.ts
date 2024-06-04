@@ -10,6 +10,7 @@ import { RNOHLogger } from "./RNOHLogger"
 import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
+import ohosResourceManager from '@ohos.resourceManager';
 
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY"
@@ -55,7 +56,8 @@ export class NapiBridge {
                             onCppMessage: (type: string, payload: any) => void,
                             shouldEnableDebugger: boolean,
                             shouldEnableBackgroundExecutor: boolean,
-                            cppFeatureFlags: CppFeatureFlag[]
+                            cppFeatureFlags: CppFeatureFlag[],
+                            resourceManager: ohosResourceManager.ResourceManager
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -82,6 +84,7 @@ export class NapiBridge {
       shouldEnableBackgroundExecutor,
       cppFeatureFlagStatusByName,
       frameNodeFactoryRef,
+      resourceManager,
     );
   }
 

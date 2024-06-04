@@ -143,6 +143,7 @@ export class RNInstancesCoordinator {
       (rnInstance) => RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
       options?.defaultHttpClient,
+      this.uiAbilityContext.resourceManager
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,

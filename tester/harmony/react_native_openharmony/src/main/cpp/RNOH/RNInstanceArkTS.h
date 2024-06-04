@@ -170,6 +170,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) override;
+  NativeResourceManager const* getNativeResourceManager() const override;
 
   std::shared_ptr<TaskExecutor> taskExecutor;
 

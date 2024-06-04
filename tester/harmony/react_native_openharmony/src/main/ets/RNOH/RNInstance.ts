@@ -21,6 +21,7 @@ import window from '@ohos.window'
 import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
+import resourceManager from '@ohos.resourceManager'
 
 export type SurfaceContext = {
   width: number
@@ -357,6 +358,7 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseCApiArchitecture: boolean,
     private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
+    private resourceManager: resourceManager.ResourceManager,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -473,6 +475,7 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableDebugger,
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
+      this.resourceManager,
     )
     stopTracing()
   }
@@ -549,7 +552,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-                                                                                            listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
+    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
     return this.lifecycleEventEmitter.subscribe(type, listener)
   }
 

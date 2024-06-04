@@ -56,6 +56,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_ref napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
+    napi_value jsResourceManager,
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor) {
   auto shouldUseCAPIArchitecture =
@@ -200,6 +201,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::move(schedulerDelegateArkTS),
         mountingManager,
         featureFlagRegistry);
+    auto nativeResourceManager = UniqueNativeResourceManager(
+        OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
+        OH_ResourceManager_ReleaseNativeResourceManager);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,
@@ -216,6 +220,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::move(arkTSChannel),
         componentInstanceRegistry,
         componentInstanceFactory,
+        std::move(nativeResourceManager),
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
     componentInstanceDependencies->rnInstance = rnInstance;

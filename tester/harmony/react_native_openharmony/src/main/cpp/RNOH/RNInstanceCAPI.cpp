@@ -7,6 +7,7 @@
 #include <react/renderer/scheduler/Scheduler.h>
 #include "NativeLogger.h"
 #include "RNInstanceArkTS.h"
+#include "RNOH/Assert.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
@@ -442,4 +443,10 @@ void RNInstanceCAPI::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
   m_arkTSChannel->postMessage(name, payload);
-};
+}
+
+NativeResourceManager const* rnoh::RNInstanceCAPI::getNativeResourceManager()
+    const {
+  RNOH_ASSERT(m_nativeResourceManager != nullptr);
+  return m_nativeResourceManager.get();
+}

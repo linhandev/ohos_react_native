@@ -12,6 +12,7 @@
 #include <cxxreact/ModuleRegistry.h>
 #include <cxxreact/NativeModule.h>
 #include <folly/dynamic.h>
+#include <rawfile/raw_file_manager.h>
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 #include <react/renderer/scheduler/Scheduler.h>
@@ -40,6 +41,10 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
+using UniqueNativeResourceManager = std::unique_ptr<
+    NativeResourceManager,
+    decltype(&OH_ResourceManager_ReleaseNativeResourceManager)>;
+
 class RNInstanceCAPI : public RNInstanceInternal,
                        public facebook::react::LayoutAnimationStatusDelegate {
  public:
@@ -60,6 +65,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       ArkTSChannel::Shared arkTSChannel,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
+      UniqueNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : RNInstanceInternal(),
@@ -83,7 +89,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_componentInstanceRegistry(componentInstanceRegistry),
         m_componentInstanceFactory(componentInstanceFactory),
         m_arkTSChannel(std::move(arkTSChannel)),
-        m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)) {
+        m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
+        m_nativeResourceManager(std::move(nativeResourceManager)) {
     this->unsubscribeUITickListener =
         this->m_uiTicker->subscribe(m_id, [this]() {
           this->taskExecutor->runTask(
@@ -186,6 +193,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
       const std::string& name,
       folly::dynamic const& payload) override;
 
+  NativeResourceManager const* getNativeResourceManager() const override;
+
  protected:
   int m_id;
   facebook::react::ContextContainer::Shared m_contextContainer;
@@ -218,6 +227,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   std::shared_ptr<facebook::react::Instance> instance;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
+  UniqueNativeResourceManager m_nativeResourceManager;
 
   void initialize();
   void initializeScheduler(
