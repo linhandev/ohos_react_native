@@ -1,6 +1,7 @@
 #include "TextInputNode.h"
 #include "NativeNodeApi.h"
 #include "RNOH/arkui/conversions.h"
+#include "conversions.h"
 
 static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_PASTE,
@@ -124,7 +125,7 @@ void TextInputNode::setTextContent(std::string const& textContent) {
 void TextInputNode::setSelectedBackgroundColor(
     facebook::react::SharedColor const& color) {
   ArkUI_NumberValue selectedBackgroundColor = {
-      .u32 = rnoh::convertColorToTranslucent(color)};
+      .u32 = rnoh::convertColorToTranslucentUnderline(color)};
   ArkUI_AttributeItem colorItem = {
       &selectedBackgroundColor, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -276,10 +277,10 @@ void TextInputNode::setUnderlineColorAndroid(
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
   ArkUI_NumberValue value[] = {
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)}};
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)}};
 
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
