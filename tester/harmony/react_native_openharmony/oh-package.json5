@@ -10,4 +10,5 @@
   type: 'module',
   version: '0.72.27',
   dependencies: {},
+  main: 'index.ets'
 }
