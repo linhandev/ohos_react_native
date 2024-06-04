@@ -229,6 +229,10 @@ void CustomNodeComponentInstance::insertNodeWithRemoveClipping(std::shared_ptr<C
     if (!m_removeClippedSubviews) {
         return;
     }
+    auto props = std::dynamic_pointer_cast<facebook::react::ViewProps>(child);
+    if (props && props->transform == facebook::react::Transform::Identity()) {
+        return;
+    }
 
     facebook::react::Rect nodeRect;
     CustomNodeComponentInstance::getChildViewRect(child, nodeRect);
