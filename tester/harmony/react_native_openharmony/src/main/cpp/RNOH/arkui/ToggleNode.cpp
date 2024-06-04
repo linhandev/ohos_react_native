@@ -72,6 +72,13 @@ ToggleNode& ToggleNode::setFocusable(bool focusable) {
   return *this;
 }
 
+bool ToggleNode::getValue() {
+  auto attribute = NativeNodeApi::getInstance()->getAttribute(
+      m_nodeHandle, NODE_TOGGLE_VALUE);
+  auto value = attribute->value[0].i32;
+  return value != 0;
+}
+
 ToggleNode& ToggleNode::setValue(bool value) {
   int32_t valueValue = value;
   ArkUI_NumberValue preparedValue[] = {{.i32 = valueValue}};

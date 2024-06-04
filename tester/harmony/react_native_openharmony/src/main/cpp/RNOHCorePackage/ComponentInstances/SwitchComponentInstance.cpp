@@ -29,7 +29,7 @@ void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
       m_toggleNode.setFocusable(props->rawProps["focusable"].asBool());
     }
   }
-  if (!m_props || props->value != m_props->value) {
+  if (props->value != m_toggleNode.getValue()) {
     m_toggleNode.setValue(props->value);
   }
 }
@@ -39,6 +39,11 @@ ToggleNode& SwitchComponentInstance::getLocalRootArkUINode() {
 }
 
 void SwitchComponentInstance::onValueChange(int32_t& value) {
+  if (m_props == nullptr || m_props->value == value) {
+    // NOTE: when the value is changed via props,
+    // we should not send the event back
+    return;
+  }
   if (m_eventEmitter != nullptr) {
     auto onValueChange = facebook::react::SwitchEventEmitter::OnChange();
     int32_t tag = CppComponentInstance::getTag();
@@ -46,6 +51,7 @@ void SwitchComponentInstance::onValueChange(int32_t& value) {
     onValueChange.target = tag;
     m_eventEmitter->onChange(onValueChange);
   }
+  m_toggleNode.setValue(m_props->value);
 }
 
 } // namespace rnoh

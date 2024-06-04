@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {View, Switch, StyleSheet, Text} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import {TestCase} from '../components';
+import {Button, TestCase} from '../components';
 
 export function SwitchTest() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [event, setEvent] = useState('');
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   return (
     <TestSuite name="Switch">
@@ -19,11 +18,17 @@ export function SwitchTest() {
           <Switch
             trackColor={{false: 'green', true: 'firebrick'}}
             thumbColor={'beige'}
-            onValueChange={toggleSwitch}
+            onValueChange={setIsEnabled}
             value={isEnabled}
             onChange={e => setEvent(JSON.stringify(e.nativeEvent))}
           />
         </View>
+      </TestCase.Example>
+      <TestCase.Example itShould="Not override value set by prop when clicked">
+        <ValuePropExample />
+      </TestCase.Example>
+      <TestCase.Example itShould="Not send an event when switch value changes via props">
+        <ValueEventExample />
       </TestCase.Example>
       <TestCase.Example itShould="Render a disabled switch">
         <View style={styles.container}>
@@ -47,6 +52,36 @@ export function SwitchTest() {
     </TestSuite>
   );
 }
+
+const ValuePropExample = () => {
+  const [value, setValue] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      <Switch value={value} />
+      <Button onPress={() => setValue(!value)} label="Toggle" />
+    </View>
+  );
+};
+
+const ValueEventExample = () => {
+  const [value, setValue] = useState(false);
+  const [eventCount, setEventCount] = useState(0);
+
+  return (
+    <View style={styles.container}>
+      <Text>Event count: {eventCount}</Text>
+      <Switch
+        value={value}
+        onValueChange={v => {
+          setEventCount(c => c + 1);
+          setValue(v);
+        }}
+      />
+      <Button onPress={() => setValue(!value)} label="Toggle" />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
