@@ -232,10 +232,10 @@ void TextAreaNode::setUnderlineColorAndroid(
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
   ArkUI_NumberValue value[] = {
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)},
-      {.u32 = rnoh::convertColorToTranslucent(underlineColorAndroid)}};
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)},
+      {.u32 = rnoh::convertColorToTranslucentUnderline(underlineColorAndroid)}};
 
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
