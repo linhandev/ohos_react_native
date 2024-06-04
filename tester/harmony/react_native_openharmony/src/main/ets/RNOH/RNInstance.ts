@@ -21,6 +21,7 @@ import window from '@ohos.window'
 import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
+import resourceManager from '@ohos.resourceManager'
 
 export type SurfaceContext = {
   width: number
@@ -332,6 +333,7 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseImageLoader: boolean,
     private shouldUseCApiArchitecture: boolean,
     private assetsDest: string,
+    private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
@@ -446,6 +448,7 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableDebugger,
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
+      this.resourceManager,
       this.arkTsComponentNames,
     )
     stopTracing()

@@ -1,6 +1,7 @@
 #pragma once
 #include <js_native_api.h>
 #include <js_native_api_types.h>
+#include <rawfile/raw_file_manager.h>
 #include <atomic>
 #include <functional>
 #include <memory>
@@ -43,6 +44,7 @@ class RNInstance {
     auto turboModule = getTurboModule(name);
     return std::dynamic_pointer_cast<T>(turboModule);
   }
+  virtual NativeResourceManager const* getNativeResourceManager() const = 0;
   virtual void synchronouslyUpdateViewOnUIThread(
       facebook::react::Tag tag,
       folly::dynamic props) = 0;

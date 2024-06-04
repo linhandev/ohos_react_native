@@ -5,7 +5,8 @@ import type { RNOHContext } from './RNOHContext';
 import type { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from './DevToolsController';
 import { HttpClientProvider } from './HttpClientProvider';
-import { HttpClient } from "../HttpClient/ts"
+import { HttpClient } from '../HttpClient/ts';
+import resourceManager from '@ohos.resourceManager';
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
@@ -16,16 +17,15 @@ export class RNInstanceRegistry {
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
     private httpClientProvider: HttpClientProvider,
-    private defaultHttpClient: HttpClient | undefined // TODO: remove "undefined" when HttpClientProvider is removed
+    private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
+    private resourceManager: resourceManager.ResourceManager,
   ) {
   }
 
-  public async createInstance(
-    options: RNInstanceOptions,
-  ): Promise<RNInstance> {
+  public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
     if (options.enableBackgroundExecutor) {
-      this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated")
+      this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated");
     }
     const instance = new RNInstanceImpl(
       id,
@@ -40,13 +40,14 @@ export class RNInstanceRegistry {
       options.enableImageLoader ?? false,
       options.enableCAPIArchitecture ?? false,
       options.assetsDest,
+      this.resourceManager,
       options.arkTsComponentNames,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
-      options.backPressHandler
-    )
-    await instance.initialize(options.createRNPackages({}))
-    this.instanceMap.set(id, instance)
+      options.backPressHandler,
+    );
+    await instance.initialize(options.createRNPackages({}));
+    this.instanceMap.set(id, instance);
     return instance;
   }
 
@@ -63,10 +64,10 @@ export class RNInstanceRegistry {
   }
 
   public forEach(cb: (rnInstance: RNInstanceImpl) => void) {
-    this.instanceMap.forEach(cb)
+    this.instanceMap.forEach(cb);
   }
 
   private getDefaultProps(): Record<string, any> {
-    return { concurrentRoot: true }
+    return { concurrentRoot: true };
   }
 }

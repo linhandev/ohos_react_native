@@ -504,6 +504,7 @@ target_link_libraries(rnoh PUBLIC
     libace_napi.z.so
     libace_ndk.z.so
     libhilog_ndk.z.so
+    librawfile.z.so
     libnative_vsync.so
     libnative_drawing.so
     uv
