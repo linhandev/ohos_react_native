@@ -160,7 +160,7 @@ export class StatusBarTurboModule extends TurboModule {
     const skipAnimation = !withAnimation || withAnimation === 'none'
     try {
       const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
-      await windowInstance.setSpecificSystemBarEnabled('status', !hidden, !skipAnimation);
+      await windowInstance.setSpecificSystemBarEnabled('status', !hidden);
       this._isStatusBarHidden = hidden
       this.eventEmitter.emit("SYSTEM_BAR_VISIBILITY_CHANGE", { hidden })
       this.ctx.logger.info('Succeeded in setting the system bar to be hidden.');

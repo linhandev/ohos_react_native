@@ -9,6 +9,7 @@
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
+#include "RNOH/RNOHError.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
@@ -439,4 +440,10 @@ void RNInstanceArkTS::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
   m_arkTSChannel->postMessage(name, payload);
-};
+}
+
+NativeResourceManager const* rnoh::RNInstanceArkTS::getNativeResourceManager()
+    const {
+  throw RNOHError(
+      "NativeResourceManager is not supported in ArkTS architecture");
+}
