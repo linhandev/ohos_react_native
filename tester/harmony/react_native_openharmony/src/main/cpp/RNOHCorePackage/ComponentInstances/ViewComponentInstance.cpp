@@ -1,4 +1,5 @@
 #include "ViewComponentInstance.h"
+#include "conversions.h"
 
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
@@ -10,15 +11,78 @@ void ViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
-  m_stackNode.insertChild(
-      childComponentInstance->getLocalRootArkUINode(), index);
+  if (m_props && m_props->removeClippedSubviews && !m_parent.expired()) {
+    updateClippedSubviews(true);
+  } else {
+    m_stackNode.insertChild(
+        childComponentInstance->getLocalRootArkUINode(), index);
+  }
 }
 
 void ViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
   m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  updateClippedSubviews(true);
 };
+
+void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
+  CppComponentInstance::onPropsChanged(props);
+
+  updateClippedSubviews(true);
+}
+
+bool ViewComponentInstance::isViewClipped(
+    const ComponentInstance::Shared& child,
+    facebook::react::Point currentOffset,
+    facebook::react::LayoutMetrics parentLayoutMetrics) {
+  auto scrollRectOrigin =
+      facebook::react::Point{currentOffset.x, currentOffset.y};
+  auto scrollRect =
+      facebook::react::Rect{scrollRectOrigin, parentLayoutMetrics.frame.size};
+
+  return !rnoh::rectIntersects(scrollRect, child->getLayoutMetrics().frame);
+}
+
+void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
+  auto parent = m_parent.lock();
+  if ((m_props && !m_props->removeClippedSubviews) || !parent) {
+    return;
+  }
+
+  auto currentOffset = parent->getCurrentOffset();
+  auto scrollDiff = currentOffset - m_currentOffset;
+  m_currentOffset = currentOffset;
+
+  auto parentLayoutMetrics = parent->getLayoutMetrics();
+
+  bool remakeVector = false;
+  if (childrenChange || m_childrenClippedState.empty() ||
+      (scrollDiff.x == 0 && scrollDiff.y == 0)) {
+    m_childrenClippedState.clear();
+    remakeVector = true;
+  }
+
+  for (const auto& child : m_children) {
+    bool childClipped =
+        isViewClipped(child, currentOffset, parentLayoutMetrics);
+
+    if (remakeVector) {
+      m_stackNode.removeChild(child->getLocalRootArkUINode());
+      m_childrenClippedState.push_back(childClipped);
+
+      if (!childClipped) {
+        m_stackNode.insertChild(child->getLocalRootArkUINode(), -1);
+      }
+    }
+  }
+}
+
+void ViewComponentInstance::onFinalizeUpdates() {
+  ComponentInstance::onFinalizeUpdates();
+
+  updateClippedSubviews(true);
+}
 
 void ViewComponentInstance::onClick() {
   if (m_eventEmitter != nullptr) {

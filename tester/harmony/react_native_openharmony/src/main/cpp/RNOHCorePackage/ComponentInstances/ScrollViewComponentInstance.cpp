@@ -5,6 +5,7 @@
 #include <cmath>
 #include <optional>
 #include "PullToRefreshViewComponentInstance.h"
+#include "ViewComponentInstance.h"
 #include "conversions.h"
 
 namespace rnoh {
@@ -27,6 +28,7 @@ void ScrollViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
+
   m_contentContainerNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
 }
@@ -34,6 +36,7 @@ void ScrollViewComponentInstance::onChildInserted(
 void ScrollViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
+
   m_contentContainerNode.removeChild(
       childComponentInstance->getLocalRootArkUINode());
 }
@@ -62,6 +65,7 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
 void rnoh::ScrollViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
+
   if (props->rawProps.count("persistentScrollbar") > 0) {
     m_persistentScrollbar = props->rawProps["persistentScrollbar"].asBool();
   }
@@ -114,6 +118,14 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       -borderMetrics.borderWidths.top,
       0.f,
       0.f);
+
+  if (!m_children.empty() && m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews(true);
+    }
+  }
 }
 
 void ScrollViewComponentInstance::onCommandReceived(
@@ -197,6 +209,14 @@ void ScrollViewComponentInstance::onScroll() {
     m_eventEmitter->onScroll(scrollViewMetrics);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
+
+    if (!m_children.empty() && m_children[0] != nullptr) {
+      auto contentContainer =
+          std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
+      if (contentContainer != nullptr) {
+        contentContainer->updateClippedSubviews(true);
+      }
+    }
   };
 }
 
@@ -212,6 +232,7 @@ void ScrollViewComponentInstance::onScrollStop() {
   } else if (m_scrollState == ScrollState::SCROLL) {
     emitOnScrollEndDragEvent();
   }
+
   m_scrollState = ScrollState::IDLE;
   if (!isContentSmallerThanContainer() && !m_allowScrollPropagation &&
       isAtEnd(m_currentOffset)) {
@@ -354,6 +375,14 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
         m_props->maintainVisibleContentPosition.value());
     m_firstVisibleView = getFirstVisibleView(
         m_props->maintainVisibleContentPosition.value().minIndexForVisible);
+  }
+
+  if (!m_children.empty() && m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews(true);
+    }
   }
 }
 
