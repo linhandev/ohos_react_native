@@ -42,6 +42,22 @@ export function LinkingTest() {
           expect(await Linking.canOpenURL('wrong://host')).to.be.false;
         }}
       />
+      <TestCase.Logical
+        itShould="receive linking events"
+        fn={async ({expect}) => {
+          const linkingEvent = await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject('Linking event timed out');
+            }, 2000);
+            Linking.addEventListener('url', ({url}) => {
+              resolve(url);
+              clearTimeout(timeout);
+            });
+            Linking.openURL('rntester://rnoh-test-linking');
+          });
+          expect(linkingEvent).to.equal('rntester://rnoh-test-linking');
+        }}
+      />
       <TestCase.Example itShould="open phone dialing on press">
         <Button
           onPress={() => Linking.openURL('tel:1234567890')}

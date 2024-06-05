@@ -14,6 +14,7 @@ import { RNOHError } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
 import type { HttpClient } from "../HttpClient/ts"
+import { AbilityConstant, Want } from '@kit.AbilityKit';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -57,7 +58,8 @@ type AppState = "FOREGROUND" | "BACKGROUND"
 export class RNInstancesCoordinator {
   private static isInitialized = false
 
-  static create(dependencies: RNInstancesCoordinatorDependencies, options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
+  static create(dependencies: RNInstancesCoordinatorDependencies,
+    options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
     if (RNInstancesCoordinator.isInitialized) {
       dependencies.logger.fatal(new RNOHError({
         whatHappened: "RNInstancesCoordinator was already created",
@@ -114,16 +116,17 @@ export class RNInstancesCoordinator {
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
   private defaultBackPressHandler: () => void
+
   private constructor(napiBridge: NapiBridge,
-                      logger: RNOHLogger,
-                      displayMetricsManager: DisplayMetricsManager,
-                      isDebugModeEnabled: boolean,
-                      uiAbilityContext: common.UIAbilityContext,
-                      devToolsController: DevToolsController,
-                      devMenu: DevMenu,
-                      jsPackagerClient: JSPackagerClient,
-                      defaultBackPressHandler: () => void,
-                      options?: RNInstancesCoordinatorOptions) {
+    logger: RNOHLogger,
+    displayMetricsManager: DisplayMetricsManager,
+    isDebugModeEnabled: boolean,
+    uiAbilityContext: common.UIAbilityContext,
+    devToolsController: DevToolsController,
+    devMenu: DevMenu,
+    jsPackagerClient: JSPackagerClient,
+    defaultBackPressHandler: () => void,
+    options?: RNInstancesCoordinatorOptions) {
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
     this.napiBridge = napiBridge
@@ -206,5 +209,11 @@ export class RNInstancesCoordinator {
     const MEMORY_LEVEL_NAMES = ["MEMORY_LEVEL_MODERATE", "MEMORY_LEVEL_LOW", "MEMORY_LEVEL_CRITICAL"]
     this.logger.debug("Received memory level event: " + MEMORY_LEVEL_NAMES[memoryLevel])
     this.napiBridge.onMemoryLevel(memoryLevel);
+  }
+
+  public onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam) {
+    this.rnInstanceRegistry?.forEach((rnInstance) => {
+      rnInstance.onNewWant(want.uri);
+    })
   }
 }

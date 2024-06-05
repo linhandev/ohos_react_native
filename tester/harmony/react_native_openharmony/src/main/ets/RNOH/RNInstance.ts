@@ -690,6 +690,10 @@ export class RNInstanceImpl implements RNInstance {
     this.lifecycleEventEmitter.emit("BACKGROUND")
   }
 
+  public onNewWant(url: string) {
+    this.emitDeviceEvent("url", { url: url })
+  }
+
   public onConfigurationUpdate(...args: Parameters<UIAbility["onConfigurationUpdate"]>) {
     this.lifecycleEventEmitter.emit("CONFIGURATION_UPDATE", ...args)
   }

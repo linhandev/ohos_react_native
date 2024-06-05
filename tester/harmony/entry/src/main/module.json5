@@ -43,6 +43,12 @@
             ],
             "actions": [
               "action.system.home"
+            ],
+            "uris": [
+              {
+                "scheme": "rntester",
+                "host": "rnoh-test-linking"
+              },
             ]
           }
         ]

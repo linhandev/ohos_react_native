@@ -151,4 +151,8 @@ export abstract class RNAbility extends UIAbility {
   onBackground() {
     this.rnInstancesCoordinator?.onBackground();
   }
+
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    this.rnInstancesCoordinator?.onNewWant(want, launchParam);
+  }
 }
