@@ -303,9 +303,15 @@ export type RNInstanceOptions = {
    */
   backPressHandler?: () => void;
   /**
-   If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
+   * If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
    */
   httpClient?: HttpClient
+  /**
+   * Disables advanced React 18 features, such as Automatic Batching.
+   * Setting this to `true` will revert to the behavior of React 17,
+   * where state updates are processed synchronously and separately.
+   */
+  disableConcurrentRoot?: boolean;
 }
 
 /**

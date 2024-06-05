@@ -31,7 +31,7 @@ export class RNInstanceRegistry {
       id,
       this.logger,
       this.napiBridge,
-      this.getDefaultProps(),
+      { concurrentRoot: options.disableConcurrentRoot !== undefined ? !options.disableConcurrentRoot : true },
       this.devToolsController,
       this.createRNOHContext,
       options.enableDebugger ?? false,
@@ -65,9 +65,5 @@ export class RNInstanceRegistry {
 
   public forEach(cb: (rnInstance: RNInstanceImpl) => void) {
     this.instanceMap.forEach(cb);
-  }
-
-  private getDefaultProps(): Record<string, any> {
-    return { concurrentRoot: true };
   }
 }
