@@ -125,7 +125,7 @@ void TextInputNode::setTextContent(std::string const& textContent) {
 void TextInputNode::setSelectedBackgroundColor(
     facebook::react::SharedColor const& color) {
   ArkUI_NumberValue selectedBackgroundColor = {
-      .u32 = rnoh::convertColorToTranslucentUnderline(color)};
+      .u32 = rnoh::convertColorToTranslucentSelection(color)};
   ArkUI_AttributeItem colorItem = {
       &selectedBackgroundColor, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
