@@ -2,6 +2,7 @@ import type { ComponentBuilderContext, RNOHCoreContext } from 'rnoh';
 import { RNApp, RNAbility, AnyJSBundleProvider, MetroJSBundleProvider, ResourceJSBundleProvider, } from 'rnoh'
 import { SampleView, PropsDisplayer, GeneratedSampleView } from "rnoh-sample-package"
 import { createRNPackages } from '../RNPackagesFactory'
+import router from '@ohos.router';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -39,7 +40,7 @@ struct ReactApplicationPage {
 
   onBackPress(): boolean {
     this.rnohCoreContext?.dispatchBackPress();
-    return false;
+    return true;
   }
 
   build() {
@@ -50,13 +51,17 @@ struct ReactApplicationPage {
           enableNDKTextMeasuring: true,
           enableBackgroundExecutor: false,
           enableCAPIArchitecture: true,
+          backPressHandler: () => {
+            router.back();
+          }
         },
         appKey: "app_name",
         wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
         onSetUp: (rnInstance) => {
           rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
         },
-        jsBundleProvider: new AnyJSBundleProvider([new MetroJSBundleProvider(), new ResourceJSBundleProvider(this.rnohCoreContext!.uiAbilityContext.resourceManager)]),
+        jsBundleProvider: new AnyJSBundleProvider([new MetroJSBundleProvider(),
+          new ResourceJSBundleProvider(this.rnohCoreContext!.uiAbilityContext.resourceManager)]),
       })
     }
     .height('100%')

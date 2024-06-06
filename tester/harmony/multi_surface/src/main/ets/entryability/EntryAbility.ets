@@ -5,10 +5,10 @@ import {
   RNInstance,
   RNOHCoreContext,
   SurfaceHandle,
-  Tag
 } from 'rnoh/ts';
 import { RNAbility } from 'rnoh';
 import { createRNPackages } from '../RNPackagesFactory';
+import router from '@ohos.router';
 
 
 export default class EntryAbility extends RNAbility {
@@ -16,9 +16,12 @@ export default class EntryAbility extends RNAbility {
     super.onPrepareRNInstance(rnohCoreContext)
     const rnInstance: RNInstance = await rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages,
-      enableCAPIArchitecture: true
+      enableCAPIArchitecture: true,
+      backPressHandler: () => {
+      }
     })
-    rnInstance.runJSBundle(new AnyJSBundleProvider([new MetroJSBundleProvider(), new ResourceJSBundleProvider(this.context.resourceManager, 'bundle.harmony.js')]))
+    rnInstance.runJSBundle(new AnyJSBundleProvider([new MetroJSBundleProvider(),
+      new ResourceJSBundleProvider(this.context.resourceManager, 'bundle.harmony.js')]))
     AppStorage.setOrCreate("AppRNInstance", rnInstance);
 
     const surfaceByAppKey: Record<string, SurfaceHandle> = {};
