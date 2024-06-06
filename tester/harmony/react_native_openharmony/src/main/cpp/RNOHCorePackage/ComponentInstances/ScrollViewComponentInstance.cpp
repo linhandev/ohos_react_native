@@ -354,8 +354,11 @@ ScrollViewComponentInstance::getFrictionFromDecelerationRate(
 }
 
 void ScrollViewComponentInstance::scrollToEnd(bool animated) {
-  auto horizontal = m_props->alwaysBounceHorizontal ||
+  bool horizontal = false;
+  if(m_props){
+        horizontal = m_props->alwaysBounceHorizontal ||
       m_contentSize.width > m_containerSize.width;
+  }
   auto x = horizontal ? m_contentSize.width : 0.0;
   auto y = horizontal ? 0.0 : m_contentSize.height;
   m_scrollNode.scrollTo(x, y, animated);
