@@ -56,7 +56,7 @@ napi_value ArkJS::call(
     const napi_value* args,
     int argsCount,
     napi_value thisObject) {
-  napi_value result;
+  napi_value result = nullptr;
   auto status =
       napi_call_function(m_env, thisObject, callback, argsCount, args, &result);
   this->maybeRethrowAsCpp(status);
