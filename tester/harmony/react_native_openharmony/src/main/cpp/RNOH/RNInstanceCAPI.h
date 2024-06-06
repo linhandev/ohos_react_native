@@ -18,6 +18,7 @@
 #include <react/renderer/scheduler/Scheduler.h>
 #include <react/renderer/uimanager/LayoutAnimationStatusDelegate.h>
 
+#include "ArkTSMessageHub.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/EventDispatcher.h"
 #include "RNOH/EventEmitRequestHandler.h"
@@ -63,6 +64,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       std::shared_ptr<facebook::react::SchedulerDelegate> schedulerDelegate,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       ArkTSChannel::Shared arkTSChannel,
+      ArkTSMessageHub::Shared arkTSMessageHub,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
       UniqueNativeResourceManager nativeResourceManager,
@@ -86,6 +88,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_schedulerDelegate(std::move(schedulerDelegate)),
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
+        m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(componentInstanceRegistry),
         m_componentInstanceFactory(componentInstanceFactory),
         m_arkTSChannel(std::move(arkTSChannel)),
@@ -232,6 +235,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ArkTSChannel::Shared m_arkTSChannel;
   UniqueNativeResourceManager m_nativeResourceManager;
   std::string m_bundlePath;
+  ArkTSMessageHub::Shared m_arkTSMessageHub;
 
   void initialize();
   void initializeScheduler(

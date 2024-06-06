@@ -228,9 +228,20 @@ export interface RNInstance {
 
   /**
    * @architecture: C-API
-   * Internal method.
+   * @internal
    */
   setFrameNodeFactory(frameNodeFactory: FrameNodeFactory | null): void
+
+  /**
+   * @architecture: C-API
+   * Native apps can place RNSurface inside a Scroll component. When that Scroll
+   * is being scrolled, RN shouldn't recognize swipe gestures as clicks. To
+   * achieve this, RN needs to receive a CANCEL event. At the time of creating
+   * this method, the platform didn't send the CANCEL touch event, so RNOH
+   * provides a way for RN developers to cancel those events manually. They can
+   * register an appropriate onScroll callback and call this method.
+   */
+  cancelTouches(): void
 }
 
 export type RNInstanceOptions = {
@@ -547,7 +558,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
+                                                                                            listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
     return this.lifecycleEventEmitter.subscribe(type, listener)
   }
 
@@ -739,6 +750,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public setFrameNodeFactory(frameNodeFactory: FrameNodeFactory | null) {
     this.frameNodeFactoryRef.frameNodeFactory = frameNodeFactory
+  }
+
+  public cancelTouches() {
+    this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
   }
 }
 

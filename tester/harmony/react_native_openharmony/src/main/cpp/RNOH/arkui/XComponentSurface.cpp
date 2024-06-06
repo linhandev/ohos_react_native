@@ -3,6 +3,7 @@
 #include <react/renderer/components/root/RootComponentDescriptor.h>
 #include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
+#include "RNOH/Assert.h"
 #include "TouchEventDispatcher.h"
 
 namespace rnoh {
@@ -38,14 +39,21 @@ void maybeDetachRootNode(
   }
 }
 
-class SurfaceTouchEventHandler : public TouchEventHandler {
+class SurfaceTouchEventHandler : public TouchEventHandler,
+                                 public ArkTSMessageHub::Observer {
  private:
   ComponentInstance::Shared m_rootView;
   TouchEventDispatcher m_touchEventDispatcher;
+  int m_rnInstanceId;
 
  public:
-  SurfaceTouchEventHandler(ComponentInstance::Shared rootView)
-      : m_rootView(std::move(rootView)) {
+  SurfaceTouchEventHandler(
+      ComponentInstance::Shared rootView,
+      ArkTSMessageHub::Shared arkTSMessageHub,
+      int rnInstanceId)
+      : ArkTSMessageHub::Observer(arkTSMessageHub),
+        m_rootView(std::move(rootView)),
+        m_rnInstanceId(rnInstanceId) {
     ArkUINodeRegistry::getInstance().registerTouchHandler(
         &m_rootView->getLocalRootArkUINode(), this);
     NativeNodeApi::getInstance()->registerNodeEvent(
@@ -54,7 +62,6 @@ class SurfaceTouchEventHandler : public TouchEventHandler {
         NODE_TOUCH_EVENT,
         this);
   }
-
   SurfaceTouchEventHandler(SurfaceTouchEventHandler const& other) = delete;
   SurfaceTouchEventHandler& operator=(SurfaceTouchEventHandler const& other) =
       delete;
@@ -74,13 +81,23 @@ class SurfaceTouchEventHandler : public TouchEventHandler {
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
+
+  void onMessageReceived(ArkTSMessage const& message) {
+    LOG(INFO) << "onMessageReceived: " << message.name;
+    if (message.name == "CANCEL_TOUCHES" &&
+        message.payload["rnInstanceId"].asInt() == m_rnInstanceId) {
+      m_touchEventDispatcher.cancelActiveTouches();
+    }
+  }
 };
 
 XComponentSurface::XComponentSurface(
     std::shared_ptr<Scheduler> scheduler,
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
     ComponentInstanceFactory::Shared const& componentInstanceFactory,
+    ArkTSMessageHub::Shared arkTSMessageHub,
     SurfaceId surfaceId,
+    int rnInstanceId,
     std::string const& appKey)
     : m_surfaceId(surfaceId),
       m_scheduler(std::move(scheduler)),
@@ -97,7 +114,9 @@ XComponentSurface::XComponentSurface(
     return;
   }
   m_componentInstanceRegistry->insert(m_rootView);
-  m_touchEventHandler = std::make_unique<SurfaceTouchEventHandler>(m_rootView);
+  RNOH_ASSERT(arkTSMessageHub != nullptr);
+  m_touchEventHandler = std::make_unique<SurfaceTouchEventHandler>(
+      m_rootView, std::move(arkTSMessageHub), rnInstanceId);
 }
 
 XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept

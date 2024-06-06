@@ -17,7 +17,9 @@ class XComponentSurface {
       std::shared_ptr<facebook::react::Scheduler> scheduler,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared const& componentInstanceFactory,
+      ArkTSMessageHub::Shared arkTSMessageHub,
       facebook::react::SurfaceId surfaceId,
+      int rnInstanceId,
       std::string const& appKey);
 
   XComponentSurface(XComponentSurface const& other) = delete;
