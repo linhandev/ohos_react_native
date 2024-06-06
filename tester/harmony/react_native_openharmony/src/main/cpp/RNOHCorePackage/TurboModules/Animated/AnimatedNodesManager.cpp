@@ -126,12 +126,15 @@ void AnimatedNodesManager::removeAnimatedEventFromView(
     facebook::react::Tag viewTag,
     std::string const& eventName,
     facebook::react::Tag animatedValueTag) {
-  m_eventDrivers.erase(std::remove_if(
+    if(!m_eventDrivers.empty()){
+         m_eventDrivers.erase(std::remove_if(
       m_eventDrivers.begin(), m_eventDrivers.end(), [&](auto& driver) {
         return driver->getViewTag() == viewTag &&
             driver->getEventName() == eventName &&
             driver->getNodeTag() == animatedValueTag;
       }));
+    }
+ 
 }
 
 void AnimatedNodesManager::startListeningToAnimatedNodeValue(
