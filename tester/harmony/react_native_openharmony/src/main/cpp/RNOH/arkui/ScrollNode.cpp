@@ -140,8 +140,8 @@ void ScrollNode::scrollTo(float x, float y, bool animated) {
   ArkUI_NumberValue value[] = {
       {.f32 = x},
       {.f32 = y},
-      {.i32 = animated ? 1000 : 0},
-      {.i32 = ArkUI_AnimationCurve::ARKUI_CURVE_SMOOTH},
+      {.i32 = animated ? 250 : 0},
+      {.i32 = ArkUI_AnimationCurve::ARKUI_CURVE_LINEAR},
       {.i32 = 0}};
   item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
