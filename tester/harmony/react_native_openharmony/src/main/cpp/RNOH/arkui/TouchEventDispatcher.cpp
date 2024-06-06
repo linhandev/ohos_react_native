@@ -238,19 +238,22 @@ void TouchEventDispatcher::dispatchTouchEvent(
   }
 
   m_previousEvent = touchEvent;
-
   switch (action) {
     case UI_TOUCH_EVENT_ACTION_DOWN:
+      VLOG(2) << "TOUCH::DOWN";
       eventTarget->getTouchEventEmitter()->onTouchStart(touchEvent);
       break;
     case UI_TOUCH_EVENT_ACTION_MOVE:
+      VLOG(2) << "TOUCH::MOVE";
       eventTarget->getTouchEventEmitter()->onTouchMove(touchEvent);
       break;
     case UI_TOUCH_EVENT_ACTION_UP:
+      VLOG(2) << "TOUCH::UP";
       eventTarget->getTouchEventEmitter()->onTouchEnd(touchEvent);
       break;
     case UI_TOUCH_EVENT_ACTION_CANCEL:
     default:
+      DLOG(INFO) << "TOUCH::CANCEL";
       eventTarget->getTouchEventEmitter()->onTouchCancel(touchEvent);
       break;
   }
@@ -302,13 +305,15 @@ bool TouchEventDispatcher::maybeCancelPreviousTouchEvent(
   touchCancelEvent.changedTouches = {};
   touchCancelEvent.touches = {};
   for (auto touch : m_previousEvent.touches) {
-    touch.timestamp = timestampInSecs;
+    if (timestampInSecs > 0) {
+      touch.timestamp = timestampInSecs;
+    }
     touchCancelEvent.changedTouches.insert(touch);
   }
 
   // emit cancel event
-  DLOG(INFO) << "Cancelling previous touch event";
   m_previousEvent = touchCancelEvent;
+  DLOG(INFO) << "TOUCH::CANCEL";
   touchTarget->getTouchEventEmitter()->onTouchCancel(touchCancelEvent);
   return true;
 }
@@ -340,6 +345,24 @@ void TouchEventDispatcher::cancelTouch(
   m_previousEvent = touchEvent;
   target->getTouchEventEmitter()->onTouchCancel(touchEvent);
   m_touchTargetByTouchId.erase(touchPoint.id);
+}
+
+void TouchEventDispatcher::cancelActiveTouches() {
+  for (auto touch : m_previousEvent.changedTouches) {
+    if (m_touchTargetByTouchId.find(touch.identifier) ==
+        m_touchTargetByTouchId.end()) {
+      continue;
+    }
+    auto touchIdAndTouchTarget = m_touchTargetByTouchId.find(touch.identifier);
+    auto touchTarget = touchIdAndTouchTarget->second.lock();
+    if (touchTarget) {
+      if (m_previousEvent.changedTouches.size() > 0) {
+        DLOG(INFO) << "TOUCH::CANCEL";
+        m_touchTargetByTouchId.erase(touchIdAndTouchTarget->first);
+        touchTarget->getTouchEventEmitter()->onTouchCancel(m_previousEvent);
+      }
+    }
+  }
 }
 
 } // namespace rnoh

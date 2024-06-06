@@ -188,7 +188,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     auto componentInstanceDependencies =
         std::make_shared<ComponentInstance::Dependencies>();
     componentInstanceDependencies->arkTSChannel = arkTSChannel;
-    componentInstanceDependencies->arkTSMessageHub = std::move(arkTSMessageHub);
+    componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
     auto customComponentArkUINodeFactory =
         std::make_shared<CustomComponentArkUINodeHandleFactory>(
             env, frameNodeFactoryRef, taskExecutor);
@@ -228,6 +228,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::move(schedulerDelegateCAPI),
         std::move(arkTSMessageHandlers),
         std::move(arkTSChannel),
+        arkTSMessageHub,
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(nativeResourceManager),
