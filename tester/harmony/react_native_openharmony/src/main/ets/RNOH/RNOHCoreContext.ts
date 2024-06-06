@@ -64,6 +64,12 @@ export class RNOHCoreContext {
       safeAreaInsetsProvider,
       isDebugModeEnabled,
       launchUri,
+      // cancelTouches
+      () => {
+        rnInstanceRegistry.forEach((rnInstance) => {
+          rnInstance.cancelTouches()
+        })
+      },
       defaultBackPressHandler
     )
   }
@@ -110,17 +116,18 @@ export class RNOHCoreContext {
      * ArkUI::Want::uri.
      */
     public launchUri: string | undefined,
-
+    /**
+     * @architecture: C-API
+     * Calls RNInstance::cancelTouches for all RNInstances.
+     */
+    public cancelTouches: () => void,
     public _defaultBackPressHandler: () => void
   ) {
   }
 
-  /**
-   *
-   */
+
   public reportRNOHError(rnohError: RNOHError) {
     this.devToolsController.setLastError(rnohError)
     this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
   }
-
 }
