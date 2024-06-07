@@ -95,7 +95,7 @@ static napi_value createReactNativeInstance(
     DLOG(INFO) << "createReactNativeInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJs.getCallbackArgs(info, 12);
+    auto args = arkJs.getCallbackArgs(info, 13);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto arkTsTurboModuleProviderRef = arkJs.createReference(args[1]);
     auto mutationsListenerRef = arkJs.createReference(args[2]);
@@ -113,10 +113,18 @@ static napi_value createReactNativeInstance(
     auto frameNodeFactoryRef = arkJs.createReference(args[9]);
     auto jsResourceManager = args[10];
     auto arkTsComponentNamesDynamic = arkJs.getDynamic(args[11]);
-    std::unordered_set<std::string> arkTsComponentNames = {};   
+    std::unordered_set<std::string> arkTsComponentNames = {};
     for (size_t i = 0; i < arkTsComponentNamesDynamic.size(); ++i) {
         arkTsComponentNames.emplace(arkTsComponentNamesDynamic[i].asString());
-    }    
+    }
+    auto fontOptionsDynamic = arkJs.getDynamic(args[12]);
+    std::unordered_map<std::string, std::string> fontFamilySrcByName;
+    for (size_t i = 0; i < fontOptionsDynamic.size(); ++i) {
+      fontFamilySrcByName.emplace(
+            fontOptionsDynamic[i]["familyName"].asString(),
+            fontOptionsDynamic[i]["familySrc"].asString()
+            );
+    }
     auto rnInstance = createRNInstance(
         instanceId,
         env,
@@ -165,7 +173,8 @@ static napi_value createReactNativeInstance(
         jsResourceManager,
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor,
-        arkTsComponentNames);
+        arkTsComponentNames,
+        fontFamilySrcByName);
 
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
     if (rnInstanceById.find(instanceId) != rnInstanceById.end()) {

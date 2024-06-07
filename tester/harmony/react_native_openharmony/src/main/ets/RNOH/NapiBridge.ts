@@ -9,7 +9,7 @@ import type { DisplayMode } from './CppBridgeUtils'
 import { RNOHLogger } from "./RNOHLogger"
 import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
-import type { FrameNodeFactory } from "./RNInstance"
+import type { FontOptions, FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
 
 
@@ -62,7 +62,8 @@ export class NapiBridge {
                             shouldEnableBackgroundExecutor: boolean,
                             cppFeatureFlags: CppFeatureFlag[],
                             resourceManager: ohosResourceManager.ResourceManager,
-                            arkTsComponentNames: Array<string>
+                            arkTsComponentNames: Array<string>,
+                            fontOptions: FontOptions[]
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -91,6 +92,7 @@ export class NapiBridge {
       frameNodeFactoryRef,
       resourceManager,
       arkTsComponentNames,
+      fontOptions,
     );
   }
 

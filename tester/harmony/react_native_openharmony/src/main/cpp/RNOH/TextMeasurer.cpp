@@ -1,4 +1,7 @@
 #include "TextMeasurer.h"
+#include <native_drawing/drawing_register_font.h>
+#include "RNInstance.h"
+#include "RNInstanceCAPI.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkUITypography.h"
@@ -220,8 +223,6 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
   OH_Drawing_TypographyStyle* typographyStyle = OH_Drawing_CreateTypographyStyle();
-  UniqueFontCollection fontCollection(
-      OH_Drawing_CreateFontCollection(), OH_Drawing_DestroyFontCollection);
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
     OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
@@ -259,7 +260,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), fontCollection, m_scale, m_halfleading);
+      typographyStyle, m_fontCollection.get(), m_scale, m_halfleading);
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
@@ -438,4 +439,20 @@ void TextMeasurer::releaseTypography(ArkUITypographyBuilder& builder, ArkUITypog
   OH_Drawing_DestroyTypographyStyle(builder.getTextTypographyStyle());
 }
 
+void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, const std::string familyName, const std::string familySrc) {
+  const std::string fontPath = "assets" + familySrc;
+  auto file = OH_ResourceManager_OpenRawFile(
+      nativeResourceManager, fontPath.c_str());
+  auto length = OH_ResourceManager_GetRawFileSize(file);
+  auto buffer = malloc(length);
+  OH_ResourceManager_ReadRawFile(file, buffer, length);
+  OH_ResourceManager_CloseRawFile(file);
+  OH_Drawing_RegisterFontBuffer(
+        m_fontCollection.get(),
+        familyName.c_str(),
+        (uint8_t*)buffer,
+        length
+     );
+  free(buffer);
+}
 } // namespace rnoh

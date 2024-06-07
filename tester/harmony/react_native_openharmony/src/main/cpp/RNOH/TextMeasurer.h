@@ -5,6 +5,7 @@
 #include <native_drawing/drawing_text_typography.h>
 #include <string>
 #include "ArkUITypography.h"
+#include "RNInstanceCAPI.h"
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
@@ -23,7 +24,8 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
         m_measureTextFnRef(measureTextFnRef),
         m_taskExecutor(taskExecutor),
         m_featureFlagRegistry(featureFlagManager),
-        m_rnInstanceId(id){}
+        m_rnInstanceId(id),
+        m_fontCollection(OH_Drawing_CreateSharedFontCollection(), OH_Drawing_DestroyFontCollection){}
 
   facebook::react::TextMeasurement measure(
       facebook::react::AttributedString attributedString,
@@ -41,6 +43,11 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::LayoutConstraints const& layoutConstraints) override;
   
   void setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfleading);
+  void registerFont(
+      NativeResourceManager* nativeResourceManager,
+      const std::string familyName,
+      const std::string familySrc);
+
  private:
   
   std::pair<ArkUITypographyBuilder, ArkUITypography> findFitFontSize(int maxFontSize,
@@ -62,5 +69,6 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   float m_scale = 1.0;
   int m_rnInstanceId = 0;
   bool m_halfleading = false;
+  UniqueFontCollection m_fontCollection;
 };
 } // namespace rnoh
