@@ -125,9 +125,34 @@ void PullToRefreshViewComponentInstance::onRefresh() {
   getLocalRootArkUINode().setNativeRefreshing(true);
   m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
   m_eventEmitter->onRefresh({});
-  if (m_refreshing == false) {
-    getLocalRootArkUINode().setNativeRefreshing(false);
+
+  auto instance =
+      std::static_pointer_cast<RNInstanceInternal>(m_deps->rnInstance.lock());
+  if (!instance) {
+    return;
   }
+  instance->getTaskExecutor()->runTask(
+      TaskThread::JS,
+      [wptr = this->weak_from_this(), wInstance = instance->weak_from_this()] {
+        auto ptr = std::static_pointer_cast<PullToRefreshViewComponentInstance>(
+            wptr.lock());
+        
+        auto instance =
+            std::static_pointer_cast<RNInstanceInternal>(wInstance.lock());
+
+        if (!ptr || !instance || ptr->m_refreshing) {
+          return;
+        }
+        instance->getTaskExecutor()->runTask(
+            TaskThread::MAIN, [wptr]() mutable {
+              auto ptr =
+                  std::static_pointer_cast<PullToRefreshViewComponentInstance>(
+                      wptr.lock());
+              if (ptr && !ptr->m_refreshing) {
+                ptr->getLocalRootArkUINode().setNativeRefreshing(false);
+              }
+            });
+      });
 }
 
 void PullToRefreshViewComponentInstance::onRefreshStateChanged(RefreshStatus state) {
