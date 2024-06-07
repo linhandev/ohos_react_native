@@ -8,6 +8,7 @@ import {
   ResponseInterceptor
 } from './types';
 import { webview } from '@kit.ArkWeb';
+import type { RNOHLogger } from '../RNOH/RNOHLogger';
 
 export interface HttpClient {
   addResponseInterceptor(interceptor: ResponseInterceptor);
@@ -45,6 +46,7 @@ export class DefaultHttpClient implements HttpClient {
   protected responseInterceptors: ResponseInterceptor[];
   protected requestInterceptors: RequestInterceptor[];
   protected baseRequestOptions: RequestOptions;
+  private logger: RNOHLogger;
 
   constructor({ baseRequestOptions, responseInterceptors, requestInterceptors }: {
     baseRequestOptions?: RequestOptions
@@ -68,8 +70,12 @@ export class DefaultHttpClient implements HttpClient {
       return;
     }
     //each cookie has to be set separately because of a bug which happens when setting multiple cookies at once
-    for (const cookie of cookieHeaders) {
-      webview.WebCookieManager.configCookieSync(url, cookie)
+    try {
+      for (const cookie of cookieHeaders) {
+        webview.WebCookieManager.configCookieSync(url, cookie)
+      }
+    } catch(err) {
+      this.logger.clone("ConfigCookieSync Error!").error();
     }
     webview.WebCookieManager.saveCookieAsync();
   }
