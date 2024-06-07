@@ -60,7 +60,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor,
-    std::unordered_set<std::string> arkTsComponentNames) {
+    std::unordered_set<std::string> arkTsComponentNames,
+    std::unordered_map<std::string, std::string> fontFamilySrcByName
+    ) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->getFeatureFlagStatus("C_API_ARCH");
   std::shared_ptr<TaskExecutor> taskExecutor =
@@ -208,6 +210,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     auto nativeResourceManager = UniqueNativeResourceManager(
         OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
         OH_ResourceManager_ReleaseNativeResourceManager);
+    for (auto& [familyName, familySrc] : fontFamilySrcByName) {
+      textMeasurer->registerFont(nativeResourceManager.get(), familyName, familySrc);
+    }  
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,

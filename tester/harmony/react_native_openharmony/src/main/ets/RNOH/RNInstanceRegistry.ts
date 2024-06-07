@@ -42,6 +42,7 @@ export class RNInstanceRegistry {
       options.assetsDest,
       this.resourceManager,
       options.arkTsComponentNames,
+      options.fontOptions,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,

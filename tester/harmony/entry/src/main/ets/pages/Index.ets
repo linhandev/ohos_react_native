@@ -99,6 +99,7 @@ struct Index {
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: false,
             arkTsComponentNames: arkTsComponentNames,
+            fontOptions: fonts
           },
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "app_name",
