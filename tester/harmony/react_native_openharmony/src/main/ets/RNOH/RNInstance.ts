@@ -285,7 +285,7 @@ export type RNInstanceOptions = {
   /**
    * config the fonts to be use
    */
-  fontOptions: font.FontOptions[]
+  fontOptions?: font.FontOptions[]
 }
 
 /**

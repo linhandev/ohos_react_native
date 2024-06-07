@@ -27,6 +27,9 @@ export class RNInstanceRegistry {
     if (options.enableBackgroundExecutor) {
       this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated");
     }
+    if (options.enableCAPIArchitecture && !options.fontOptions) {
+      this.logger.warn("No custom fonts registered");
+    }
     const instance = new RNInstanceImpl(
       id,
       this.logger,
