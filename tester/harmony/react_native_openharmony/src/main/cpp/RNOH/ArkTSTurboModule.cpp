@@ -48,7 +48,8 @@ jsi::Value ArkTSTurboModule::call(
 folly::dynamic ArkTSTurboModule::callSync(
     const std::string& methodName,
     std::vector<IntermediaryArg> args) {
-  facebook::react::SystraceSection s("ArkTSTurboModule::callSync module name: ", name_);
+  facebook::react::SystraceSection s(
+    "ArkTSTurboModule::callSync moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -74,6 +75,8 @@ void rnoh::ArkTSTurboModule::scheduleCall(
     const std::string& methodName,
     const facebook::jsi::Value* jsiArgs,
     size_t argsCount) {
+  facebook::react::SystraceSection s(
+    "ArkTSTurboModule::scheduleCall moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -110,7 +113,7 @@ jsi::Value ArkTSTurboModule::callAsync(
     const jsi::Value* jsiArgs,
     size_t argsCount) {
   facebook::react::SystraceSection s(
-      "ArkTSTurboModule::callAsync module name: ", name_);
+      "ArkTSTurboModule::callAsync moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
