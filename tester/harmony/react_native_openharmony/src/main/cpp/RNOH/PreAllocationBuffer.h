@@ -65,8 +65,8 @@ namespace rnoh
         return false;
       }
       long long nanoseconds = (long long)tp.tv_sec * 1000000000 + tp.tv_nsec;
-      long timeLeftInFrame = 16 - ((nanoseconds - timestamp) / 1000000);
-      return timeLeftInFrame < 8;
+      long timeLeftInFrame = 8 - ((nanoseconds - timestamp) / 1000000);
+      return timeLeftInFrame < 4;
     }
 
     void setPreAllocDelegate(std::function<void(
