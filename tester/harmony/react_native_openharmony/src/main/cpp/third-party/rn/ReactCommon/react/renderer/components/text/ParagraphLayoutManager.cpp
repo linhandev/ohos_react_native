@@ -18,9 +18,9 @@ TextMeasurement ParagraphLayoutManager::measure(
   bool cacheLastTextMeasurement = CoreFeatures::cacheLastTextMeasurement;
   if (cacheLastTextMeasurement &&
     // Value 0.5f is too small to judge, so 0.8f is a better number.
-      (std::abs(layoutConstraints.maximumSize.width - availableWidth_) <= 0.8f) ||
+      ((std::abs(layoutConstraints.maximumSize.width - availableWidth_) <= 0.8f) ||
        (std::abs(layoutConstraints.maximumSize.width -
-           cachedTextMeasurement_.size.width) <= 0.8f)) {
+           cachedTextMeasurement_.size.width) <= 0.8f))) {
     /* Yoga has requested measurement for this size before. Let's use cached
      * value. `TextLayoutManager` might not have cached this because it could be
      * using different width to generate cache key. This happens because Yoga
@@ -75,6 +75,12 @@ LinesMeasurements ParagraphLayoutManager::measureLines(
 void ParagraphLayoutManager::setTextLayoutManager(
     std::shared_ptr<TextLayoutManager const> textLayoutManager) const {
   textLayoutManager_ = std::move(textLayoutManager);
+}
+
+void ParagraphLayoutManager::resetCache() const {
+  // Reset compare parameters
+  hash_ = 0;
+  availableWidth_ = 0.0f;
 }
 
 std::shared_ptr<TextLayoutManager const>

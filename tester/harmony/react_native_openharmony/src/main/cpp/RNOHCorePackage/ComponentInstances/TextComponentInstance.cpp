@@ -26,11 +26,14 @@ TextComponentInstance::~TextComponentInstance() {
   for (auto const& item : m_childNodes) {
     m_textNode.removeChild(*item);
   }
-   if (m_key != "") {
-     m_textNode.resetTextContentWithStyledString();
-     TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
-     TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
-   }
+  if (m_key != "") {
+    m_textNode.resetTextContentWithStyledString();
+    TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
+    TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
+  }
+  if (m_state != nullptr) {
+    m_state->getData().paragraphLayoutManager.resetCache();
+  }
 }
 
 void TextComponentInstance::onChildInserted(
