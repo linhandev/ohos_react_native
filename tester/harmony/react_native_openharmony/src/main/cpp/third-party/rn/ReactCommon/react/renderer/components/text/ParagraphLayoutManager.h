@@ -50,6 +50,11 @@ class ParagraphLayoutManager {
    */
   std::shared_ptr<void> getHostTextStorage() const;
 
+  /*
+   * Reset cache compare parameters, it can be call when caller destructed.
+   */
+  void resetCache() const;
+
  private:
   std::shared_ptr<TextLayoutManager const> mutable textLayoutManager_{};
   std::shared_ptr<void> mutable hostTextStorage_{};
