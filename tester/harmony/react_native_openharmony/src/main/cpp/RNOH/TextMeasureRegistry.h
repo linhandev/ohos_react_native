@@ -17,16 +17,7 @@ struct TextMeasureInfo {
   TextMeasureInfo(rnoh::ArkUITypographyBuilder builder,
     rnoh::ArkUITypography tmpTypography) : 
     builder(std::move(builder)),
-    typography(tmpTypography) {}
-  ~TextMeasureInfo() {
-    for (auto& textStyle : this->builder.getTextStyles()) {
-      OH_Drawing_DestroyTextStyle(textStyle);
-      textStyle = nullptr;
-    }
-    OH_Drawing_DestroyTypography(this->typography.getTypography());
-    OH_ArkUI_StyledString_Destroy(this->builder.getTextStyleString());
-    OH_Drawing_DestroyTypographyStyle(this->builder.getTextTypographyStyle());
-  }
+    typography(std::move(tmpTypography)) {}
   rnoh::ArkUITypographyBuilder builder;
   rnoh::ArkUITypography typography;
 };

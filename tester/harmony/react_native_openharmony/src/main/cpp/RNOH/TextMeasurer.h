@@ -57,7 +57,6 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   
   std::string stringCapitalize(const std::string& strInput);
   void textCaseTransform(std::string& textContent, facebook::react::TextTransform type);
-  void releaseTypography(ArkUITypographyBuilder& builder, ArkUITypography& typography);
   
   napi_env m_env;
   napi_ref m_measureTextFnRef;

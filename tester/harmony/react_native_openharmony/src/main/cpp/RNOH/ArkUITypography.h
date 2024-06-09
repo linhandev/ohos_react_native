@@ -24,7 +24,7 @@ class ArkUITypography final {
     facebook::react::TextMeasurement::Attachments result;
     result.reserve(m_attachmentCount);
     auto placeholderRects =
-        OH_Drawing_TypographyGetRectsForPlaceholders(m_typography);
+        OH_Drawing_TypographyGetRectsForPlaceholders(m_typography.get());
     // calculate attachment sizes and positions
     for (auto i = 0; i < m_attachmentCount; i++) {
       facebook::react::TextMeasurement::Attachment attachment;
@@ -48,15 +48,15 @@ class ArkUITypography final {
   }
 
   facebook::react::Float getHeight() const {
-    return OH_Drawing_TypographyGetHeight(m_typography) / m_scale;
+    return OH_Drawing_TypographyGetHeight(m_typography.get()) / m_scale;
   }
 
   facebook::react::Float getLongestLineWidth() const {
-    return OH_Drawing_TypographyGetLongestLine(m_typography) / m_scale;
+    return OH_Drawing_TypographyGetLongestLine(m_typography.get()) / m_scale;
   }
 
   bool getExceedMaxLines() const {
-    return OH_Drawing_TypographyDidExceedMaxLines(m_typography);
+    return OH_Drawing_TypographyDidExceedMaxLines(m_typography.get());
   }
 
   using Rects = std::vector<facebook::react::Rect>;
@@ -68,7 +68,7 @@ class ArkUITypography final {
     for (size_t i = 0; i < m_fragmentLengths.size(); i++) {
       auto fragmentEnd = fragmentBegin + m_fragmentLengths[i];
       auto textBoxes = OH_Drawing_TypographyGetRectsForRange(
-          m_typography,
+          m_typography.get(),
           fragmentBegin,
           fragmentEnd,
           RECT_HEIGHT_STYLE_MAX,
@@ -93,16 +93,12 @@ class ArkUITypography final {
   }
   
   void getLineMetrics(std::vector<OH_Drawing_LineMetrics>& data) const {
-    auto count = OH_Drawing_TypographyGetLineCount(m_typography);
+    auto count = OH_Drawing_TypographyGetLineCount(m_typography.get());
     for (int i = 0; i < count; i++) {
       OH_Drawing_LineMetrics metrics;
-      OH_Drawing_TypographyGetLineMetricsAt(m_typography, i, &metrics);
+      OH_Drawing_TypographyGetLineMetricsAt(m_typography.get(), i, &metrics);
       data.push_back(metrics);
     }
-  }
-  
-  OH_Drawing_Typography* getTypography() {
-    return m_typography;
   }
 
  private:
@@ -113,14 +109,17 @@ class ArkUITypography final {
       facebook::react::Float maxWidth,
       float scale)
       : m_typography(
-            OH_ArkUI_StyledString_CreateTypography(typographyHandler)),
+            OH_ArkUI_StyledString_CreateTypography(typographyHandler),
+            OH_Drawing_DestroyTypography),
         m_attachmentCount(attachmentCount),
         m_fragmentLengths(std::move(fragmentLengths)),
         m_scale(scale) {
-    OH_Drawing_TypographyLayout(m_typography, maxWidth);
+    OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
   }
-  
-  OH_Drawing_Typography* m_typography = nullptr;
+
+  std::
+      unique_ptr<OH_Drawing_Typography, decltype(&OH_Drawing_DestroyTypography)>
+          m_typography;
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
 
@@ -135,10 +134,9 @@ class ArkUITypographyBuilder final {
       OH_Drawing_FontCollection* fontCollection,
       float scale,
       bool halfleading)
-      : m_typographyHandler(OH_ArkUI_StyledString_Create(typographyStyle,fontCollection)),
+      : m_styledString(OH_ArkUI_StyledString_Create(typographyStyle, fontCollection), OH_ArkUI_StyledString_Destroy),
         m_scale(scale),
-        m_halfleading(halfleading),
-        m_typographyStyle(typographyStyle) {}
+        m_halfleading(halfleading) {}
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
     if (!isnan(maximumWidth) && maximumWidth > 0) {
@@ -159,7 +157,7 @@ class ArkUITypographyBuilder final {
 
   ArkUITypography build() const {
     return ArkUITypography(
-        m_typographyHandler,
+        m_styledString.get(),
         m_attachmentCount,
         m_fragmentLengths,
         m_maximumWidth,
@@ -167,23 +165,13 @@ class ArkUITypographyBuilder final {
   }
 
   ArkUI_StyledString* getTextStyleString() {
-    return m_typographyHandler;
-  }
-  
-  OH_Drawing_TypographyStyle* getTextTypographyStyle() {
-    return m_typographyStyle;
-  }
-
-  std::vector<OH_Drawing_TextStyle*> getTextStyles() {
-    return std::move(m_textStyles);
+    return m_styledString.get();
   }
 
  private:
-  float m_scale = 1.0;
-  bool m_halfleading = false;
-  std::vector<OH_Drawing_TextStyle*> m_textStyles;
+  float m_scale;
+  bool m_halfleading;
   std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
-  OH_Drawing_TypographyStyle* m_typographyStyle = nullptr;
   
   size_t utf8Length(const std::string& str) {
     size_t length = 0;
@@ -197,24 +185,27 @@ class ArkUITypographyBuilder final {
   
   void addTextFragment(
       const facebook::react::AttributedString::Fragment& fragment) {
-    auto textStyle = OH_Drawing_CreateTextStyle();
-    OH_Drawing_SetTextStyleHalfLeading(textStyle, m_halfleading);
+    std::
+        unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>
+            textStyle(
+                OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
+    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading);
     // fontSize
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {
       // set fontSize to default for negative values(same as iOS)
       fontSize = 14;
     }
-    OH_Drawing_SetTextStyleFontSize(textStyle, fontSize * m_scale);
+    OH_Drawing_SetTextStyleFontSize(textStyle.get(), fontSize * m_scale);
     
     // fontStyle
     if (fragment.textAttributes.fontStyle.has_value()) {
-      OH_Drawing_SetTextStyleFontStyle(textStyle, (int)fragment.textAttributes.fontStyle.value());
+      OH_Drawing_SetTextStyleFontStyle(textStyle.get(), (int)fragment.textAttributes.fontStyle.value());
     }
     
     // fontColor
     if (fragment.textAttributes.foregroundColor) {
-      OH_Drawing_SetTextStyleColor(textStyle, (uint32_t)(*fragment.textAttributes.foregroundColor));
+      OH_Drawing_SetTextStyleColor(textStyle.get(), (uint32_t)(*fragment.textAttributes.foregroundColor));
     }
     
     // textDecoration
@@ -239,52 +230,55 @@ class ArkUITypographyBuilder final {
     if (fragment.textAttributes.textDecorationStyle.has_value()) {
       textDecorationStyle = (int32_t)fragment.textAttributes.textDecorationStyle.value();
     }
-    OH_Drawing_SetTextStyleDecoration(textStyle, textDecorationType);
-    OH_Drawing_SetTextStyleDecorationColor(textStyle, textDecorationColor);
-    OH_Drawing_SetTextStyleDecorationStyle(textStyle, textDecorationStyle);
+    OH_Drawing_SetTextStyleDecoration(textStyle.get(), textDecorationType);
+    OH_Drawing_SetTextStyleDecorationColor(textStyle.get(), textDecorationColor);
+    OH_Drawing_SetTextStyleDecorationStyle(textStyle.get(), textDecorationStyle);
     
     // backgroundColor
-    OH_Drawing_Brush* brush = OH_Drawing_BrushCreate();
+    std::unique_ptr<
+        OH_Drawing_Brush,
+        decltype(&OH_Drawing_BrushDestroy)>
+        brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
     if (fragment.textAttributes.isHighlighted.has_value() && fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush, (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle, brush);
+      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
+      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     } else if (fragment.textAttributes.backgroundColor) {
-      OH_Drawing_BrushSetColor(brush, (uint32_t)(*fragment.textAttributes.backgroundColor));
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle, brush);
+      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
+      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     }
     
     // shadow
-    OH_Drawing_TextShadow* shadow = OH_Drawing_CreateTextShadow();
-    
+    std::unique_ptr<
+        OH_Drawing_TextShadow,
+        decltype(&OH_Drawing_DestroyTextShadow)>
+        shadow(OH_Drawing_CreateTextShadow(), OH_Drawing_DestroyTextShadow);
+
     // new NDK for setting letterSpacing
     if (!isnan(fragment.textAttributes.letterSpacing)) {
-      OH_Drawing_SetTextStyleLetterSpacing(textStyle, fragment.textAttributes.letterSpacing);
+      OH_Drawing_SetTextStyleLetterSpacing(textStyle.get(), fragment.textAttributes.letterSpacing);
     }
     if (!isnan(fragment.textAttributes.lineHeight) &&
         fragment.textAttributes.lineHeight > 0) {
       // fontSize * fontHeight = lineHeight, no direct ndk for setting
       // lineHeight so do it in this weird way
       double fontHeight = fragment.textAttributes.lineHeight / fontSize;
-      OH_Drawing_SetTextStyleFontHeight(textStyle, fontHeight);
+      OH_Drawing_SetTextStyleFontHeight(textStyle.get(), fontHeight);
     }
     if (fragment.textAttributes.fontWeight.has_value()) {
       OH_Drawing_SetTextStyleFontWeight(
-          textStyle,
+          textStyle.get(),
           mapValueToFontWeight(
               int(fragment.textAttributes.fontWeight.value())));
     }
     if (!fragment.textAttributes.fontFamily.empty()) {
       const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle, 1, fontFamilies);
+      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
     }
     // push text and corresponding textStyle to handler
     OH_ArkUI_StyledString_PushTextStyle(
-        m_typographyHandler, textStyle);
+        m_styledString.get(), textStyle.get());
     OH_ArkUI_StyledString_AddText(
-        m_typographyHandler, fragment.string.c_str());
-    m_textStyles.emplace_back(textStyle);
-    OH_Drawing_DestroyTextShadow(shadow);
-    OH_Drawing_BrushDestroy(brush);
+        m_styledString.get(), fragment.string.c_str());
     m_fragmentLengths.emplace_back(utf8Length(fragment.string));
   }
 
@@ -301,7 +295,7 @@ class ArkUITypographyBuilder final {
     };
     // push placeholder to handler
     OH_ArkUI_StyledString_AddPlaceholder(
-        m_typographyHandler, &inlineView);
+        m_styledString.get(), &inlineView);
     m_placeholderSpan.emplace_back(inlineView);
     m_attachmentCount++;
   }
@@ -331,7 +325,12 @@ class ArkUITypographyBuilder final {
     }
   }
 
-  ArkUI_StyledString* m_typographyHandler = nullptr;
+
+
+  std::unique_ptr<
+    ArkUI_StyledString,
+    decltype(&OH_ArkUI_StyledString_Destroy)>
+    m_styledString;
   size_t m_attachmentCount = 0;
   std::vector<size_t> m_fragmentLengths{};
   facebook::react::Float m_maximumWidth =

@@ -65,8 +65,8 @@ TextMeasurement TextMeasurer::measure(
         maxFontSize = std::max(maxFontSize, (int)fragment.textAttributes.fontSize);
       }
       std::pair<ArkUITypographyBuilder, ArkUITypography> measureRes = findFitFontSize(maxFontSize, attributedString, paragraphAttributes, layoutConstraints);
-      auto typographyBuilder = measureRes.first;
-      auto typography = measureRes.second;
+      auto typographyBuilder = std::move(measureRes.first);
+      auto typography = std::move(measureRes.second);
       auto height = typography.getHeight();
       auto longestLineWidth = typography.getLongestLineWidth();
       auto attachments = typography.getAttachments();
@@ -84,7 +84,6 @@ TextMeasurement TextMeasurer::measure(
       auto height = typography.getHeight();
       auto longestLineWidth = typography.getLongestLineWidth();
       if (longestLineWidth < layoutConstraints.maximumSize.width) {
-          releaseTypography(typographyBuilder, typography);
           layoutConstraints.maximumSize.width = longestLineWidth;
           typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
           typography = typographyBuilder.build();
@@ -222,33 +221,34 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
-  OH_Drawing_TypographyStyle* typographyStyle = OH_Drawing_CreateTypographyStyle();
+  UniqueTypographyStyle typographyStyle(
+      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
-    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_HEAD);
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle.get(), "...");
+    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle.get(), ELLIPSIS_MODAL_HEAD);
   } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Middle) {
-    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_MIDDLE);
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle.get(), "...");
+    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle.get(), ELLIPSIS_MODAL_MIDDLE);
   } else if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Tail) {
-    OH_Drawing_SetTypographyTextEllipsis(typographyStyle, "...");
-    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle, ELLIPSIS_MODAL_TAIL);
+    OH_Drawing_SetTypographyTextEllipsis(typographyStyle.get(), "...");
+    OH_Drawing_SetTypographyTextEllipsisModal(typographyStyle.get(), ELLIPSIS_MODAL_TAIL);
   }
   
   if (paragraphAttributes.maximumNumberOfLines > 0) {
     OH_Drawing_SetTypographyTextMaxLines(
-        typographyStyle, paragraphAttributes.maximumNumberOfLines);
+        typographyStyle.get(), paragraphAttributes.maximumNumberOfLines);
   }
 
   OH_Drawing_SetTypographyTextWordBreakType(
-      typographyStyle,
+      typographyStyle.get(),
       TextConversions::getArkUIWordBreakStrategy(
           paragraphAttributes.textBreakStrategy));
 
   if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::LeftToRight) {
-    OH_Drawing_SetTypographyTextDirection(typographyStyle, TEXT_DIRECTION_LTR);
+    OH_Drawing_SetTypographyTextDirection(typographyStyle.get(), TEXT_DIRECTION_LTR);
   } else if (paragraphAttributes.writingDirection == facebook::react::WritingDirection::RightToLeft) {
-    OH_Drawing_SetTypographyTextDirection(typographyStyle, TEXT_DIRECTION_RTL);
+    OH_Drawing_SetTypographyTextDirection(typographyStyle.get(), TEXT_DIRECTION_RTL);
   }
   
   if (!attributedString.getFragments().empty()) {
@@ -256,11 +256,11 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
         attributedString.getFragments()[0].textAttributes.alignment;
     if (textAlign.has_value()) {
       OH_Drawing_SetTypographyTextAlign(
-          typographyStyle, getOHDrawingTextAlign(textAlign.value()));
+          typographyStyle.get(), getOHDrawingTextAlign(textAlign.value()));
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle, m_fontCollection.get(), m_scale, m_halfleading);
+      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading);
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
@@ -308,7 +308,6 @@ std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
     auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
     auto typography = typographyBuilder.build();
     typography.getLineMetrics(data);
-    releaseTypography(typographyBuilder, typography);
   }
   return data;
 }
@@ -330,7 +329,7 @@ std::pair<ArkUITypographyBuilder, ArkUITypography> TextMeasurer::findFitFontSize
   auto finalTypography = finalTypographyBuilder.build();
   if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
      (paragraphAttributes.maximumNumberOfLines == 0 || !finalTypography.getExceedMaxLines())) {
-    return std::make_pair(finalTypographyBuilder, finalTypography);
+    return std::make_pair(std::move(finalTypographyBuilder), std::move(finalTypography));
   }
   // find fit fontSize
   while(minFontSize <= maxFontSize) {
@@ -344,13 +343,11 @@ std::pair<ArkUITypographyBuilder, ArkUITypography> TextMeasurer::findFitFontSize
     auto typography = typographyBuilder.build();
     if (typography.getHeight() <= layoutConstraints.maximumSize.height &&
       (paragraphAttributes.maximumNumberOfLines == 0 || !typography.getExceedMaxLines())) {
-      releaseTypography(finalTypographyBuilder, finalTypography);
       finalFontSize = curFontSize;
       finalTypography = std::move(typography);
       finalTypographyBuilder = std::move(typographyBuilder);
       minFontSize = curFontSize + 1;
     } else {
-      releaseTypography(typographyBuilder, typography);
       maxFontSize = curFontSize - 1;
     }
   }
@@ -361,7 +358,7 @@ std::pair<ArkUITypographyBuilder, ArkUITypography> TextMeasurer::findFitFontSize
         ratio);
     attributedString.getFragments()[i].textAttributes.fontSize = newFontSize;
   }
-  return std::make_pair(finalTypographyBuilder, finalTypography);
+  return std::make_pair(std::move(finalTypographyBuilder), std::move(finalTypography));
 }
 
 std::string TextMeasurer::stringCapitalize(const std::string& strInput) {
@@ -426,17 +423,6 @@ void TextMeasurer::setTextMeasureParams(float fontScale, float scale, bool halfl
   m_fontScale = fontScale;
   m_scale = scale;
   m_halfleading = halfleading;
-}
-
-void TextMeasurer::releaseTypography(ArkUITypographyBuilder& builder, ArkUITypography& typography) {
-  // release last typography
-  for (auto& textStyle : builder.getTextStyles()) {
-    OH_Drawing_DestroyTextStyle(textStyle);
-    textStyle = nullptr;
-  }
-  OH_Drawing_DestroyTypography(typography.getTypography());
-  OH_ArkUI_StyledString_Destroy(builder.getTextStyleString());
-  OH_Drawing_DestroyTypographyStyle(builder.getTextTypographyStyle());
 }
 
 void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, const std::string familyName, const std::string familySrc) {
