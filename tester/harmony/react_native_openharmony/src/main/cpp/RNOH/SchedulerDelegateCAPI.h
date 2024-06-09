@@ -43,11 +43,6 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
         [this](
             facebook::react::Tag tag,facebook::react::ComponentHandle componentHandle,std::string componentName) {
           auto componentInstance = m_componentInstanceFactory->create(tag, componentHandle, componentName);
-          if (componentInstance == nullptr) {
-            componentInstance =
-              m_componentInstanceFactory->createArkTSComponent(
-                  tag, componentHandle, componentName);
-          }
           if (componentInstance != nullptr) {
             m_componentInstanceRegistry->insert(componentInstance);
           } else {
