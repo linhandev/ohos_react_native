@@ -203,6 +203,11 @@ void TextComponentInstance::onStateChanged(
     if (styledString != nullptr) {
       VLOG(3) << "[text-debug] setTextContentWithStyledString";
       m_textNode.setTextContentWithStyledString(styledString);
+      std::string textContent;
+      for (auto& fragment: fragments) {
+        textContent += fragment.string;
+      }
+      m_textNode.setTextContent(textContent);
     }
     TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
   } else {
