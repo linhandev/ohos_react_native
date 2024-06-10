@@ -156,7 +156,14 @@ void TextComponentInstance::onPropsChanged(
         m_textNode.setTextDataDetectorType(false, types);
       }
     }
-
+    
+    // writingDirection
+    if (textProps->rawProps.count("writingDirection") != 0) {
+      int32_t writingDirection = TextConversions::getArkUIDirection(textProps->rawProps["writingDirection"].asString());
+      VLOG(3) << "[text-debug] writingDirection=" << writingDirection;
+      m_textNode.setWritingDirection(writingDirection);
+    }
+    
     // fontVariant
     if (textProps->rawProps.count("fontVariant") != 0) {
       std::string fontVariants;
@@ -375,20 +382,20 @@ void TextComponentInstance::updateFragmentTouchTargets(
           prevTouchTarget != m_fragmentTouchTargetByTag.end()) {
         // either reuse the existing touch target if there was a fragment with
         // the same tag
-        auto fragmentTouchTarget =
-            std::static_pointer_cast<TextFragmentTouchTarget>(
+      auto fragmentTouchTarget =
+          std::static_pointer_cast<TextFragmentTouchTarget>(
                 prevTouchTarget->second);
         fragmentTouchTarget->clearRects();
         touchTargetEntry =
             touchTargetByTag.try_emplace(tag, std::move(fragmentTouchTarget))
                 .first;
-      } else {
+    } else {
         // or create a new one for a new fragment tag
         auto newTouchTarget = std::make_shared<TextFragmentTouchTarget>(
             tag, this->shared_from_this(), eventEmitter);
         touchTargetEntry =
             touchTargetByTag.try_emplace(tag, std::move(newTouchTarget)).first;
-      }
+    }
     }
 
     auto fragmentTouchTarget =
