@@ -82,7 +82,7 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
 
-  void onMessageReceived(ArkTSMessage const& message) {
+  void onMessageReceived(ArkTSMessage const& message) override {
     LOG(INFO) << "onMessageReceived: " << message.name;
     if (message.name == "CANCEL_TOUCHES" &&
         message.payload["rnInstanceId"].asInt() == m_rnInstanceId) {

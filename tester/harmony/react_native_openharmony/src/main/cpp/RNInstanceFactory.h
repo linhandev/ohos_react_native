@@ -230,8 +230,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
            "run Build > Clean Project?";
 #endif
   }
-  auto schedulerDelegateArkTS =
-      std::make_unique<rnoh::SchedulerDelegate>(mountingManager, taskExecutor);
   return std::make_shared<RNInstanceArkTS>(
       id,
       contextContainer,
@@ -244,7 +242,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       uiTicker,
       shadowViewRegistry,
       arkTSChannel,
-      std::move(schedulerDelegateArkTS),
       std::move(mountingManager),
       std::move(arkTSMessageHandlers),
       shouldEnableDebugger,

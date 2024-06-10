@@ -16,6 +16,7 @@
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
+#include "RNOH/RNInstanceInternal.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"

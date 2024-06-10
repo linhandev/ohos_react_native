@@ -50,7 +50,7 @@ struct ReactApplicationPage {
           createRNPackages,
           enableNDKTextMeasuring: true,
           enableBackgroundExecutor: false,
-          enableCAPIArchitecture: false,
+          enableCAPIArchitecture: true,
           backPressHandler: () => {
             router.back();
           }
