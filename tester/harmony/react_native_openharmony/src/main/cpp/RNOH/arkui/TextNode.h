@@ -77,7 +77,7 @@ class TextNode : public ArkUINode {
   TextNode& setPadding(float top, float right, float bottom, float left);
   TextNode& setWordBreak(ArkUI_WordBreak wordBreak);
   TextNode& setSelectedBackgroundColor(uint32_t color);
-  TextNode& setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[], int32_t size);
+  TextNode& setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]);
   TextNode& setWritingDirection(int32_t direction);
   TextNode& setFontVariant(const std::string& fontVariants);
   TextNode& setTextContentWithStyledString(ArkUI_StyledString* styledString);
