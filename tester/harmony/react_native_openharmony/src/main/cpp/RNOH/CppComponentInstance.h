@@ -61,7 +61,7 @@ class CppComponentInstance : public ComponentInstance {
 
   /**
    * TODO: change to private — those methods are intended to be called
-   * only by SchedulerDelegateCAPI which is a friend of this class
+   * only by MountingManagerCAPI which is a friend of this class
    * (latestRNOHVersion: 0.72.27)
    */
  public:

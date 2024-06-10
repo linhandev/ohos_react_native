@@ -22,8 +22,8 @@
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/GlobalJSIBinder.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/MountingManager.h"
 #include "RNOH/RNInstance.h"
-#include "RNOH/SchedulerDelegateArkTS.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TurboModuleFactory.h"
@@ -31,9 +31,6 @@
 #include "RNOH/UITicker.h"
 
 namespace rnoh {
-using MutationsListener = std::function<void(
-    MutationsToNapiConverter const&,
-    facebook::react::ShadowViewMutationList const& mutations)>;
 
 class RNInstanceArkTS : public RNInstanceInternal,
                         public facebook::react::LayoutAnimationStatusDelegate {
@@ -52,6 +49,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
       ShadowViewRegistry::Shared shadowViewRegistry,
       ArkTSChannel::Shared arkTSChannel,
       std::unique_ptr<facebook::react::SchedulerDelegate> schedulerDelegate,
+      MountingManager::Shared mountingManager,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
@@ -71,6 +69,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
         m_shouldRelayUITick(false),
         m_uiTicker(uiTicker),
         m_schedulerDelegate(std::move(schedulerDelegate)),
+        m_mountingManager(std::move(mountingManager)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_arkTSChannel(std::move(arkTSChannel)),
@@ -183,6 +182,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
       surfaceHandlers;
   std::shared_ptr<facebook::react::Scheduler> scheduler;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate;
+  MountingManager::Shared m_mountingManager;
   std::shared_ptr<facebook::react::Instance> instance;
   TurboModuleProvider::Shared m_turboModuleProvider;
   std::shared_ptr<facebook::react::ComponentDescriptorProviderRegistry>

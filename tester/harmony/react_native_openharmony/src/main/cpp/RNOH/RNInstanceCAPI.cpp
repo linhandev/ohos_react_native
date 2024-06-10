@@ -10,11 +10,12 @@
 #include "RNOH/Assert.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/Performance/NativeTracing.h"
+#include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
-#include "SchedulerDelegateCAPI.h"
 #include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
@@ -108,6 +109,8 @@ void RNInstanceCAPI::initializeScheduler(
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       this->instance->getRuntimeExecutor(), m_contextContainer, this);
+  m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
+      m_mountingManager, taskExecutor);
   this->scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
   turboModuleProvider->setScheduler(this->scheduler);
@@ -215,15 +218,7 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
     folly::dynamic props) {
   DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
-
-  auto schedulerDelegateCapi =
-      dynamic_cast<SchedulerDelegateCAPI*>(m_schedulerDelegate.get());
-  if (schedulerDelegateCapi == nullptr) {
-    LOG(ERROR)
-        << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: scheduler delegate for this instance is not "
-           "set up correctly";
-    return;
-  }
+  RNOH_ASSERT(taskExecutor->getCurrentTaskThread() == TaskThread::MAIN);
 
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
   if (componentInstance == nullptr) {
@@ -244,8 +239,7 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     return;
   }
 
-  schedulerDelegateCapi->synchronouslyUpdateViewOnUIThread(
-      tag, std::move(props), *componentDescriptor);
+  m_mountingManager->updateView(tag, std::move(props), *componentDescriptor);
 }
 
 facebook::react::ContextContainer const&
@@ -258,8 +252,6 @@ void RNInstanceCAPI::callFunction(
     std::string&& module,
     std::string&& method,
     folly::dynamic&& params) {
-  //     DLOG(INFO) << "RNInstanceCAPI::callFunction"; // commented out, it's
-  //     too verbose
   this->taskExecutor->runTask(
       TaskThread::JS,
       [weakInstance = std::weak_ptr(this->instance),

@@ -383,7 +383,7 @@ target_compile_options(hermes_inspector PRIVATE ${folly_compile_options})
 add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/RNInstanceArkTS.cpp"
     "${RNOH_CPP_DIR}/RNOH/RNInstanceCAPI.cpp"
-    "${RNOH_CPP_DIR}/RNOH/SchedulerDelegateCAPI.cpp"
+    "${RNOH_CPP_DIR}/RNOH/SchedulerDelegate.cpp"
     "${RNOH_CPP_DIR}/RNOH/BlobCollector.cpp"
     "${RNOH_CPP_DIR}/RNOH/MessageQueueThread.cpp"
     "${RNOH_CPP_DIR}/RNOH/MutationsToNapiConverter.cpp"
@@ -392,7 +392,8 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/ArkJS.cpp"
     "${RNOH_CPP_DIR}/RNOH/ArkTSBridge.cpp"
     "${RNOH_CPP_DIR}/RNOH/Inspector.cpp"
-    "${RNOH_CPP_DIR}/RNOH/MountingManager.cpp"
+    "${RNOH_CPP_DIR}/RNOH/MountingManagerArkTS.cpp"
+    "${RNOH_CPP_DIR}/RNOH/MountingManagerCAPI.cpp"
     "${RNOH_CPP_DIR}/RNOH/ShadowViewRegistry.cpp"
     "${RNOH_CPP_DIR}/RNOH/TurboModuleProvider.cpp"
     "${RNOH_CPP_DIR}/RNOH/TurboModuleFactory.cpp"

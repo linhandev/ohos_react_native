@@ -24,8 +24,8 @@
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/GlobalJSIBinder.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/MountingManager.h"
 #include "RNOH/RNInstance.h"
-#include "RNOH/SchedulerDelegateArkTS.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TurboModuleFactory.h"
@@ -61,7 +61,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       GlobalJSIBinders globalJSIBinders,
       UITicker::Shared uiTicker,
       ShadowViewRegistry::Shared shadowViewRegistry,
-      std::unique_ptr<facebook::react::SchedulerDelegate> schedulerDelegate,
+      MountingManager::Shared mountingManager,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       ArkTSChannel::Shared arkTSChannel,
       ArkTSMessageHub::Shared arkTSMessageHub,
@@ -85,7 +85,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_globalJSIBinders(globalJSIBinders),
         m_shouldRelayUITick(false),
         m_uiTicker(uiTicker),
-        m_schedulerDelegate(std::move(schedulerDelegate)),
+        m_mountingManager(std::move(mountingManager)),
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
@@ -225,7 +225,9 @@ class RNInstanceCAPI : public RNInstanceInternal,
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
-  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate;
+  MountingManager::Shared m_mountingManager;
+  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =
+      nullptr;
   std::shared_ptr<facebook::react::Scheduler> scheduler;
   std::shared_ptr<facebook::react::Instance> instance;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
