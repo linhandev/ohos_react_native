@@ -159,11 +159,10 @@ void TextComponentInstance::onPropsChanged(
 
     // fontVariant
     if (textProps->rawProps.count("fontVariant") != 0) {
-      std::stringstream ss;
+      std::string fontVariants;
       for(const auto& fontVariant : textProps->rawProps["fontVariant"]) {
-        ss << TextConversions::getArkUIFontVariant(fontVariant.asString());
+        fontVariants += TextConversions::getArkUIFontVariant(fontVariant.asString());
       }
-      std::string fontVariants = ss.str();
       if(!fontVariants.empty()) {
         fontVariants = fontVariants.substr(0, fontVariants.length() - 1);
         VLOG(3) << "[text-debug] fontVariant=" << fontVariants;
