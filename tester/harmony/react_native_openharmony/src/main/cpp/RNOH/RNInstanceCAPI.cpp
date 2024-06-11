@@ -1,26 +1,23 @@
 #include "RNInstanceCAPI.h"
 
-#include <cxxreact/JSBundleType.h>
-#include <jsireact/JSIExecutor.h>
-#include <react/renderer/animations/LayoutAnimationDriver.h>
-#include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
-#include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
-#include <react/renderer/scheduler/Scheduler.h>
-#include "NativeLogger.h"
-#include "RNInstanceArkTS.h"
 #include "RNOH/Assert.h"
-#include "RNOH/EventBeat.h"
-#include "RNOH/MessageQueueThread.h"
-#include "RNOH/MountingManagerCAPI.h"
-#include "RNOH/Performance/NativeTracing.h"
-#include "RNOH/SchedulerDelegate.h"
-#include "RNOH/ShadowViewRegistry.h"
-#include "RNOH/TurboModuleFactory.h"
-#include "RNOH/TurboModuleProvider.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
-using namespace rnoh;
+namespace rnoh {
+
+rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
+  DLOG(INFO) << "~RNInstanceCAPI::start";
+  if (m_unsubscribeUITickListener != nullptr) {
+    m_unsubscribeUITickListener();
+  }
+  // clear non-thread-safe objects on the main thread
+  // by moving them into a task
+  m_taskExecutor->runTask(
+      TaskThread::MAIN,
+      [mountingManager = std::move(m_mountingManager),
+       componentInstanceRegistry = std::move(m_componentInstanceRegistry)] {});
+  DLOG(INFO) << "~RNInstanceCAPI::stop";
+}
 
 void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
@@ -198,3 +195,4 @@ rnoh::RNInstanceCAPI::createTurboModuleProvider() {
   turboModuleProvider->installJSBindings(m_reactInstance->getRuntimeExecutor());
   return turboModuleProvider;
 }
+} // namespace rnoh

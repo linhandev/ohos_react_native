@@ -64,13 +64,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
         m_arkTSChannel(std::move(arkTSChannel)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {}
 
-  ~RNInstanceCAPI() {
-    DLOG(INFO) << "~RNInstanceCAPI::start";
-    if (m_unsubscribeUITickListener != nullptr) {
-      m_unsubscribeUITickListener();
-    }
-    DLOG(INFO) << "~RNInstanceCAPI::stop";
-  }
+  ~RNInstanceCAPI() noexcept override;
 
   void createSurface(
       facebook::react::Tag surfaceId,
