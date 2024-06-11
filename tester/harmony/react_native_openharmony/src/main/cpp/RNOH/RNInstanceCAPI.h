@@ -60,7 +60,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       GlobalJSIBinders globalJSIBinders,
       UITicker::Shared uiTicker,
       ShadowViewRegistry::Shared shadowViewRegistry,
-      std::unique_ptr<facebook::react::SchedulerDelegate> schedulerDelegate,
+      std::shared_ptr<facebook::react::SchedulerDelegate> schedulerDelegate,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       ArkTSChannel::Shared arkTSChannel,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
@@ -225,7 +225,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
-  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate;
+  std::shared_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate;
   std::shared_ptr<facebook::react::Scheduler> scheduler;
   std::shared_ptr<facebook::react::Instance> instance;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;

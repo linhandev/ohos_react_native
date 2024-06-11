@@ -13,6 +13,7 @@
 #include "RNOH/SchedulerDelegateArkTS.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
+#include "RNOH/FeatureFlagRegistry.h"
 
 namespace facebook {
 namespace react {
@@ -22,7 +23,9 @@ class Scheduler;
 
 namespace rnoh {
 
-class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
+class SchedulerDelegateCAPI
+    : public facebook::react::SchedulerDelegate,
+      public std::enable_shared_from_this<SchedulerDelegateCAPI> {
  public:
   SchedulerDelegateCAPI(
       TaskExecutor::Shared taskExecutor,
@@ -31,15 +34,17 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
       rnoh::SchedulerDelegateArkTS::Unique schedulerDelegateArkTS,
       MountingManager::Shared mountingManager,
       std::unordered_set<std::string> arkTsComponentNames,
-      PreAllocationBuffer::Shared preAllocationBuffer)
+      PreAllocationBuffer::Shared preAllocationBuffer,
+      FeatureFlagRegistry::Shared featureFlagRegistry)
       : m_taskExecutor(taskExecutor),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_schedulerDelegateArkTS(std::move(schedulerDelegateArkTS)),
         m_mountingManager(std::move(mountingManager)),
         m_arkTsComponentNames(std::move(arkTsComponentNames)) ,
-        m_preAllocationBuffer(std::move(preAllocationBuffer)) {
-    m_preAllocationBuffer->setPreAllocDelegate(
+        m_preAllocationBuffer(std::move(preAllocationBuffer)),
+        m_featureFlagRegistry(std::move(featureFlagRegistry)) {
+        m_preAllocationBuffer->setPreAllocDelegate(
         [this](
             facebook::react::Tag tag,facebook::react::ComponentHandle componentHandle,std::string componentName) {
           auto componentInstance = m_componentInstanceFactory->create(tag, componentHandle, componentName);
@@ -60,38 +65,61 @@ class SchedulerDelegateCAPI : public facebook::react::SchedulerDelegate {
       facebook::react::MountingCoordinator::Shared mountingCoordinator)
       override {
     mountingCoordinator->getTelemetryController().pullTransaction(
-        [this](
-            facebook::react::MountingTransaction const& transaction,
-            facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
+         [](facebook::react::MountingTransaction const& transaction,
+           facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
           // Will mount
         },
-        [this](
+        [weakSelf = weak_from_this()](
             facebook::react::MountingTransaction const& transaction,
             facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
           // Mounting
-          m_mountingManager->performMountInstructions(
+          auto self = weakSelf.lock();
+          if (!self) {
+            return;
+          }
+          self->m_mountingManager->performMountInstructions(
               transaction.getMutations(), transaction.getSurfaceId());
         },
-        [this](
+       [weakSelf = weak_from_this()](
             facebook::react::MountingTransaction const& transaction,
             facebook::react::SurfaceTelemetry const& surfaceTelemetry) {
           // Did mount
-          auto mutations = transaction.getMutations();
-          auto validMutations = getValidMutations(mutations);
-          if (!validMutations.empty()) {
-              m_mountingManager->processMutations(validMutations);
+//           auto mutations = transaction.getMutations();
+//          auto validMutations = getValidMutations(mutations);
+//           if (!validMutations.empty()) {
+//               m_mountingManager->processMutations(validMutations);
+//           }
+            auto self = weakSelf.lock();
+          if (!self) {
+            return;
           }
-          m_taskExecutor->runTask(TaskThread::MAIN, [this, mutations] {
-            for (auto mutation : mutations) {
-              try {
-                this->handleMutation(mutation);
-              } catch (std::runtime_error& e) {
-                LOG(ERROR) << "Mutation "
-                           << this->getMutationNameFromType(mutation.type)
-                           << " failed: " << e.what();
-              }
+            
+             auto mutations = transaction.getMutations();
+         auto validMutations = self->getValidMutations(mutations);
+            
+          if (!self->m_featureFlagRegistry->isFeatureFlagOn(
+            "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")){
+             if (!validMutations.empty()) {
+              self->m_mountingManager->processMutations(validMutations);
             }
-            finalizeMutationUpdates(mutations); });
+          }
+          self->m_taskExecutor->runTask(
+              TaskThread::MAIN, [weakSelf, mutations] {
+                auto self = weakSelf.lock();
+                if (!self) {
+                  return;
+                }
+                for (auto mutation : mutations) {
+                  try {
+                    self->handleMutation(mutation);
+                  } catch (std::runtime_error& e) {
+                    LOG(ERROR) << "Mutation "
+                               << self->getMutationNameFromType(mutation.type)
+                               << " failed: " << e.what();
+                  }
+                }
+                self->finalizeMutationUpdates(mutations);
+              });
         });
   }
     
@@ -179,8 +207,17 @@ facebook::react::ShadowViewMutationList getValidMutations(
     m_schedulerDelegateArkTS->schedulerDidDispatchCommand(
         shadowView, commandName, args);
     m_taskExecutor->runTask(
-        TaskThread::MAIN, [this, tag = shadowView.tag, commandName, args] {
-          auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
+       TaskThread::MAIN,
+        [weakComponentInstanceRegistry =
+             std::weak_ptr(m_componentInstanceRegistry),
+         tag = shadowView.tag,
+         commandName,
+         args] {
+          auto componentInstanceRegistry = weakComponentInstanceRegistry.lock();
+          if (!componentInstanceRegistry) {
+            return;
+          }
+          auto componentInstance = componentInstanceRegistry->findByTag(tag);
           if (componentInstance != nullptr) {
             componentInstance->handleCommand(commandName, args);
           }
@@ -210,6 +247,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
   MountingManager::Shared m_mountingManager;
   std::unordered_set<std::string> m_arkTsComponentNames;
   PreAllocationBuffer::Shared m_preAllocationBuffer;
+  FeatureFlagRegistry::Shared m_featureFlagRegistry;
 
   void updateComponentWithShadowView(
       ComponentInstance::Shared const& componentInstance,

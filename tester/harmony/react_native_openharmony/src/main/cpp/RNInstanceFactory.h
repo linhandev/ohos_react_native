@@ -199,14 +199,15 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
     auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>();
-    auto schedulerDelegateCAPI = std::make_unique<SchedulerDelegateCAPI>(
+    auto schedulerDelegateCAPI = std::make_shared<SchedulerDelegateCAPI>(
         taskExecutor,
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(schedulerDelegateArkTS),
         mountingManager,
         arkTsComponentNames,
-		preAllocationBuffer);
+		preAllocationBuffer,
+        featureFlagRegistry);
     auto nativeResourceManager = UniqueNativeResourceManager(
         OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
         OH_ResourceManager_ReleaseNativeResourceManager);

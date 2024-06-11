@@ -97,7 +97,8 @@ struct Index {
             createRNPackages,
             enableNDKTextMeasuring: true,
             enableBackgroundExecutor: false,
-            enableCAPIArchitecture: false,
+            enableCAPIArchitecture: true,
+            enablePartialSyncOfDescriptorRegistryInCAPI: true,
             arkTsComponentNames: arkTsComponentNames,
             fontOptions: fonts
           },
