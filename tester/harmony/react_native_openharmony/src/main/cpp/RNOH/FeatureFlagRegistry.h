@@ -24,4 +24,14 @@ class FeatureFlagRegistry {
     }
     return false;
   }
+    
+    bool isFeatureFlagOn(const std::string& name) const {
+    std::lock_guard<std::mutex> lock(mtx);
+        auto it = flagStatusByName.find(name);
+        if (it != flagStatusByName.end()) {
+        return it->second;
+     }
+    return false;
+  }
+
 };

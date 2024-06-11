@@ -13,7 +13,7 @@ import type { FontOptions, FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
 
 
-export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH"
+export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH"| "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY"
 
 
 export interface ArkTSBridgeHandler {
