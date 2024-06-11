@@ -382,6 +382,50 @@ export function ViewTest() {
           </View>
         </View>
       </TestCase.Example>
+      <TestSuite name="Hover">
+        <TestCase.Manual
+          initialState={{onPointerEnter: false}}
+          tags={['dev']}
+          arrange={({setState, reset}) => {
+            return (
+              <>
+                <Button onPress={() => reset()} label="Reset" />
+                <View
+                  onPointerEnter={() => setState({onPointerEnter: true})}
+                  style={{height: 100, width: 100, backgroundColor: 'red'}}
+                />
+              </>
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state).to.be.deep.eq({
+              onPointerEnter: true,
+            });
+          }}
+          itShould="Trigger onPointerEnter when the mouse pointer is moved over the component"
+        />
+        <TestCase.Manual
+          initialState={{onPointerLeave: false}}
+          tags={['dev']}
+          arrange={({setState, reset}) => {
+            return (
+              <>
+                <Button onPress={() => reset()} label="Reset" />
+                <View
+                  onPointerLeave={() => setState({onPointerLeave: true})}
+                  style={{height: 100, width: 100, backgroundColor: 'red'}}
+                />
+              </>
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state).to.be.deep.eq({
+              onPointerLeave: true,
+            });
+          }}
+          itShould="Trigger onPointerLeave when the mouse pointer is moved away from the component."
+        />
+      </TestSuite>
       <TestSuite name="pointerEvents">
         <TestCase.Manual
           itShould="call inner and outer view when pressing inner"

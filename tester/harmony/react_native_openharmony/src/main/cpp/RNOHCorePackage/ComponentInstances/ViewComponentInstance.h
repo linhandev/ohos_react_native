@@ -33,6 +33,8 @@ class ViewComponentInstance
   void onFinalizeUpdates() override;
 
   void onClick() override;
+  void onHoverIn() override;
+  void onHoverOut() override;
   StackNode& getLocalRootArkUINode() override;
 };
 } // namespace rnoh
