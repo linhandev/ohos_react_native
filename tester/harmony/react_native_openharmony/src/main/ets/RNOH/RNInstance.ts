@@ -445,7 +445,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
     const fontOptions: FontOptions[] = []
-    for (const fontOption of this.fontOptions) {
+    for (const fontOption of this.fontOptions ?? []) {
       fontOptions.push({
         familyName: fontOption.familyName as string,
         familySrc: fontOption.familySrc as string
