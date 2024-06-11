@@ -422,7 +422,7 @@ export class RNInstanceImpl implements RNInstance {
       surfaceHandle.destroy()
     }
     if (this.isFeatureFlagEnabled("ENABLE_RN_INSTANCE_CLEAN_UP")) {
-      this.napiBridge.destroyReactNativeInstance(this.id)
+      this.napiBridge.onDestroyRNInstance(this.id)
     }
     this.turboModuleProvider.onDestroy()
     stopTracing()
@@ -463,7 +463,7 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
-    this.napiBridge.createReactNativeInstance(
+    this.napiBridge.onCreateRNInstance(
       this.id,
       this.turboModuleProvider,
       this.frameNodeFactoryRef,

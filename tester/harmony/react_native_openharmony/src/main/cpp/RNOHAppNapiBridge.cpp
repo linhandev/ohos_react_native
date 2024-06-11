@@ -17,6 +17,7 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/RNInstanceInternal.h"
+#include "RNOH/Result.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"
@@ -27,73 +28,82 @@ std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>> rnInstanceById;
 auto uiTicker = std::make_shared<UITicker>();
 static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
-static napi_value onInit(napi_env env, napi_callback_info info) {
-  HarmonyReactMarker::setLogPerfMarkerIfNeeded();
-  LogSink::initializeLogging();
-  auto logVerbosityLevel = 0;
-#ifdef LOG_VERBOSITY_LEVEL
-  FLAGS_v = LOG_VERBOSITY_LEVEL;
-  logVerbosityLevel = LOG_VERBOSITY_LEVEL;
-#endif
-  DLOG(INFO) << "onInit (LOG_VERBOSITY_LEVEL=" << logVerbosityLevel << ")";
+napi_value invoke(napi_env env, std::function<napi_value()> operation) {
   ArkJS arkJs(env);
-  auto args = arkJs.getCallbackArgs(info, 1);
-  auto shouldClearRNInstances = arkJs.getBoolean(args[0]);
-  if (shouldClearRNInstances) {
-    /**
-     * This CPP code can survive closing an app. The app can be closed before
-     * removing all RNInstances. As a workaround, all rnInstances are removed on
-     * the start.
-     */
-    cleanupRunner->runAsyncTask([] {
-      decltype(rnInstanceById) instances;
-      {
-        std::lock_guard<std::mutex> lock(rnInstanceByIdMutex);
-        std::swap(rnInstanceById, instances);
-      }
-      instances.clear();
-    });
+  try {
+    return arkJs.createResult(Ok<napi_value>(operation()));
+  } catch (...) {
+    return arkJs.createResult(Err<napi_value>(std::current_exception()));
   }
-  auto isDebugModeEnabled = false;
-#ifdef REACT_NATIVE_DEBUG
-  isDebugModeEnabled = true;
-#endif
-  return arkJs.createObjectBuilder()
-      .addProperty("isDebugModeEnabled", isDebugModeEnabled)
-      .build();
 }
 
 napi_value initializeArkTSBridge(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  auto args = arkJs.getCallbackArgs(info, 1);
-  auto bridgeHandlerRef = arkJs.createReference(args[0]);
-  ArkTSBridge::initializeInstance(env, bridgeHandlerRef);
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
+    auto args = arkJs.getCallbackArgs(info, 1);
+    auto bridgeHandlerRef = arkJs.createReference(args[0]);
+    ArkTSBridge::initializeInstance(env, bridgeHandlerRef);
 #ifdef C_API_ARCH
-  ArkUINodeRegistry::initialize(ArkTSBridge::getInstance());
+    ArkUINodeRegistry::initialize(ArkTSBridge::getInstance());
 #endif
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
+}
+
+static napi_value onInit(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    HarmonyReactMarker::setLogPerfMarkerIfNeeded();
+    LogSink::initializeLogging();
+    auto logVerbosityLevel = 0;
+#ifdef LOG_VERBOSITY_LEVEL
+    FLAGS_v = LOG_VERBOSITY_LEVEL;
+    logVerbosityLevel = LOG_VERBOSITY_LEVEL;
+#endif
+    DLOG(INFO) << "onInit (LOG_VERBOSITY_LEVEL=" << logVerbosityLevel << ")";
+    ArkJS arkJs(env);
+    auto args = arkJs.getCallbackArgs(info, 1);
+    auto shouldClearRNInstances = arkJs.getBoolean(args[0]);
+    if (shouldClearRNInstances) {
+      /**
+       * This CPP code can survive closing an app. The app can be closed before
+       * removing all RNInstances. As a workaround, all rnInstances are removed
+       * on the start.
+       */
+      cleanupRunner->runAsyncTask([] {
+        decltype(rnInstanceById) instances;
+        {
+          std::lock_guard<std::mutex> lock(rnInstanceByIdMutex);
+          std::swap(rnInstanceById, instances);
+        }
+        instances.clear();
+      });
+    }
+    auto isDebugModeEnabled = false;
+#ifdef REACT_NATIVE_DEBUG
+    isDebugModeEnabled = true;
+#endif
+    return arkJs.createObjectBuilder()
+        .addProperty("isDebugModeEnabled", isDebugModeEnabled)
+        .build();
+  });
 }
 
 static napi_value getNextRNInstanceId(
     napi_env env,
     napi_callback_info /*info*/) {
-  try {
-    static std::atomic_size_t nextId = 0;
+  ArkJS arkJs(env);
+  static std::atomic_size_t nextId = 0;
+  return invoke(env, [&] {
     auto id = nextId++;
     DLOG(INFO) << "getNextRNInstanceId: " << id;
-    return ArkJS(env).createInt(id);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-    return ArkJS(env).createInt(-1);
-  }
+    return arkJs.createInt(id);
+  });
 }
 
-static napi_value createReactNativeInstance(
-    napi_env env,
-    napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
-    DLOG(INFO) << "createReactNativeInstance";
+static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
+    DLOG(INFO) << "onCreateRNInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
     auto args = arkJs.getCallbackArgs(info, 11);
@@ -170,18 +180,14 @@ static napi_value createReactNativeInstance(
     auto [it, _inserted] =
         rnInstanceById.emplace(instanceId, std::move(rnInstance));
     it->second->start();
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
-static napi_value destroyReactNativeInstance(
-    napi_env env,
-    napi_callback_info info) {
-  DLOG(INFO) << "destroyReactNativeInstance";
-  ArkJS arkJs(env);
-  try {
+static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    DLOG(INFO) << "onDestroyRNInstance";
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 1);
     size_t rnInstanceId = arkJs.getDouble(args[0]);
     cleanupRunner->runAsyncTask([rnInstanceId] {
@@ -195,16 +201,14 @@ static napi_value destroyReactNativeInstance(
         }
       }
     });
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value loadScript(napi_env env, napi_callback_info info) {
-  DLOG(INFO) << "loadScript";
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    DLOG(INFO) << "loadScript";
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -227,18 +231,16 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
                 arkJs.deleteReference(onFinishRef);
               });
         });
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value updateSurfaceConstraints(
     napi_env env,
     napi_callback_info info) {
-  DLOG(INFO) << "updateSurfaceConstraints\n";
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    DLOG(INFO) << "updateSurfaceConstraints";
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 8);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -255,16 +257,13 @@ static napi_value updateSurfaceConstraints(
         arkJs.getDouble(args[5]),
         arkJs.getDouble(args[6]),
         arkJs.getBoolean(args[7]));
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value createSurface(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -277,15 +276,13 @@ static napi_value createSurface(napi_env env, napi_callback_info info) {
     DLOG(INFO) << "createSurface: surfaceId=" << surfaceId;
     auto appKey = arkJs.getString(args[2]);
     rnInstance->createSurface(surfaceId, appKey);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value startSurface(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 9);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -305,15 +302,13 @@ static napi_value startSurface(napi_env env, napi_callback_info info) {
         arkJs.getDouble(args[6]),
         arkJs.getBoolean(args[7]),
         arkJs.getDynamic(args[8]));
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value stopSurface(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -325,15 +320,13 @@ static napi_value stopSurface(napi_env env, napi_callback_info info) {
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "stopSurface: surfaceId=" << surfaceId << "\n";
     rnInstance->stopSurface(surfaceId);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value destroySurface(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     size_t instanceId = arkJs.getDouble(args[0]);
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
@@ -345,15 +338,13 @@ static napi_value destroySurface(napi_env env, napi_callback_info info) {
     }
     auto& rnInstance = it->second;
     rnInstance->destroySurface(surfaceId);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value setSurfaceDisplayMode(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -367,15 +358,13 @@ static napi_value setSurfaceDisplayMode(napi_env env, napi_callback_info info) {
     rnInstance->setSurfaceDisplayMode(
         surfaceId,
         static_cast<facebook::react::DisplayMode>(arkJs.getDouble(args[2])));
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value emitComponentEvent(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 5);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -386,15 +375,13 @@ static napi_value emitComponentEvent(napi_env env, napi_callback_info info) {
     auto& rnInstance = it->second;
     rnInstance->emitComponentEvent(
         env, arkJs.getDouble(args[1]), arkJs.getString(args[2]), args[3]);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value callRNFunction(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -408,15 +395,13 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
     auto argsDynamic = arkJs.getDynamic(args[3]);
     rnInstance->callFunction(
         std::move(moduleString), std::move(nameString), std::move(argsDynamic));
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value onMemoryLevel(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 1);
     auto memoryLevel = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -425,16 +410,13 @@ static napi_value onMemoryLevel(napi_env env, napi_callback_info info) {
         instance->onMemoryLevel(static_cast<size_t>(memoryLevel));
       }
     }
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value updateState(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
@@ -448,16 +430,13 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
     auto state = args[3];
     rnInstance->updateState(
         env, componentName, static_cast<facebook::react::Tag>(tag), state);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-
-  return arkJs.getUndefined();
+    return arkJs.getNull();
+  });
 }
 
 static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
-  ArkJS arkJs(env);
-  try {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     auto messageName = arkJs.getString(args[0]);
     auto wrappedPayload = arkJs.getDynamic(args[1]);
@@ -470,11 +449,7 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
     }
     auto& rnInstance = it->second;
     rnInstance->handleArkTSMessage(messageName, messagePayload);
-  } catch (...) {
-    ArkTSBridge::getInstance()->handleError(std::current_exception());
-  }
-
-  return arkJs.getUndefined();
+  });
 }
 
 static void registerNativeXComponent(napi_env env, napi_value exports) {
@@ -551,17 +526,17 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        napi_default,
        nullptr},
-      {"createReactNativeInstance",
+      {"onCreateRNInstance",
        nullptr,
-       createReactNativeInstance,
+       onCreateRNInstance,
        nullptr,
        nullptr,
        nullptr,
        napi_default,
        nullptr},
-      {"destroyReactNativeInstance",
+      {"onDestroyRNInstance",
        nullptr,
-       destroyReactNativeInstance,
+       onDestroyRNInstance,
        nullptr,
        nullptr,
        nullptr,

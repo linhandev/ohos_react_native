@@ -12,6 +12,7 @@
 #include <variant>
 #include <vector>
 #include "RNOH/RNOHError.h"
+#include "RNOH/Result.h"
 #include "napi/native_api.h"
 
 class RNOHNapiObjectBuilder;
@@ -76,6 +77,8 @@ class ArkJS {
   napi_value createFromJSError(facebook::jsi::JSError const&);
 
   napi_value createFromRNOHError(rnoh::RNOHError const&);
+
+  napi_value createResult(rnoh::Result<napi_value> const&);
 
   RNOHNapiObjectBuilder createObjectBuilder();
 
