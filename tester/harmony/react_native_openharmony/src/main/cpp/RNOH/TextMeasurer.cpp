@@ -221,11 +221,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
-  //  UniqueTypographyStyle typographyStyle(
-  //      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
-  //  Revert this after API rectification
-
-  std::shared_ptr<OH_Drawing_TypographyStyle> typographyStyle(
+  UniqueTypographyStyle typographyStyle(
       OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
@@ -264,7 +260,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading, typographyStyle); //  Revert this after API rectification
+      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading);
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
