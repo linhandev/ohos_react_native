@@ -449,6 +449,7 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
     }
     auto& rnInstance = it->second;
     rnInstance->handleArkTSMessage(messageName, messagePayload);
+    return arkJs.getNull();
   });
 }
 
