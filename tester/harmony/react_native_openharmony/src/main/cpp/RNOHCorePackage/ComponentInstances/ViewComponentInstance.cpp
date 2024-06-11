@@ -29,7 +29,7 @@ void ViewComponentInstance::onChildRemoved(
 void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
-  updateClippedSubviews(true);
+  updateClippedSubviews();
 }
 
 bool ViewComponentInstance::isViewClipped(
@@ -51,18 +51,17 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
   }
 
   auto currentOffset = parent->getCurrentOffset();
-  auto scrollDiff = currentOffset - m_currentOffset;
-  m_currentOffset = currentOffset;
 
   auto parentLayoutMetrics = parent->getLayoutMetrics();
 
   bool remakeVector = false;
-  if (childrenChange || m_childrenClippedState.empty() ||
-      (scrollDiff.x == 0 && scrollDiff.y == 0)) {
+  if (childrenChange || m_childrenClippedState.empty()) {
     m_childrenClippedState.clear();
     remakeVector = true;
   }
 
+  size_t i = 0;
+  size_t nextChildIndex = 0;
   for (const auto& child : m_children) {
     bool childClipped =
         isViewClipped(child, currentOffset, parentLayoutMetrics);
@@ -75,13 +74,27 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
         m_stackNode.insertChild(child->getLocalRootArkUINode(), -1);
       }
     }
+
+    if (m_childrenClippedState[i] != childClipped) {
+      m_childrenClippedState[i] = childClipped;
+
+      if (childClipped) {
+        m_stackNode.removeChild(child->getLocalRootArkUINode());
+      } else {
+        m_stackNode.insertChild(child->getLocalRootArkUINode(), nextChildIndex);
+        nextChildIndex++;
+      }
+    } else if (!childClipped) {
+      nextChildIndex++;
+    }
+    i++;
   }
 }
 
 void ViewComponentInstance::onFinalizeUpdates() {
   ComponentInstance::onFinalizeUpdates();
 
-  updateClippedSubviews(true);
+  updateClippedSubviews();
 }
 
 void ViewComponentInstance::onClick() {

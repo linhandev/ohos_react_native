@@ -11,7 +11,6 @@ class ViewComponentInstance
   facebook::react::Size m_contentSize;
   StackNode m_stackNode;
   std::vector<bool> m_childrenClippedState;
-  facebook::react::Point m_currentOffset = {0, 0};
 
   bool isViewClipped(
       const ComponentInstance::Shared& child,

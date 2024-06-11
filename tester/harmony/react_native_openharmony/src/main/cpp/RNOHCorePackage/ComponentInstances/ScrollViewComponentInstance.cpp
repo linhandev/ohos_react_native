@@ -123,7 +123,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     auto contentContainer =
         std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
     if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews(true);
+      contentContainer->updateClippedSubviews();
     }
   }
 }
@@ -214,7 +214,7 @@ void ScrollViewComponentInstance::onScroll() {
       auto contentContainer =
           std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
       if (contentContainer != nullptr) {
-        contentContainer->updateClippedSubviews(true);
+        contentContainer->updateClippedSubviews();
       }
     }
   };
@@ -384,7 +384,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     auto contentContainer =
         std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
     if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews(true);
+      contentContainer->updateClippedSubviews();
     }
   }
 }
