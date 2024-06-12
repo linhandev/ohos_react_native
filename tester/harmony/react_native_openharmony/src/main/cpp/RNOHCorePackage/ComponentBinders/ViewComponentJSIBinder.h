@@ -74,10 +74,6 @@ class ViewComponentJSIBinder : public BaseComponentJSIBinder {
     facebook::jsi::Object events =
         BaseComponentJSIBinder::createDirectEventTypes(rt);
     events.setProperty(rt, "topClick", createDirectEvent(rt, "onClick"));
-    events.setProperty(
-        rt, "topPointerEnter", createDirectEvent(rt, "onPointerEnter"));
-    events.setProperty(
-        rt, "topPointerLeave", createDirectEvent(rt, "onPointerLeave"));
     return events;
   }
 };

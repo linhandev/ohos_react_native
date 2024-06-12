@@ -26,22 +26,6 @@ void ViewComponentInstance::onChildRemoved(
   updateClippedSubviews(true);
 };
 
-void ViewComponentInstance::onHoverIn() {
-  m_eventEmitter->dispatchEvent(
-      "pointerEnter", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        return payload;
-      });
-}
-
-void ViewComponentInstance::onHoverOut() {
-  m_eventEmitter->dispatchEvent(
-      "pointerLeave", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        return payload;
-      });
-}
-
 void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
