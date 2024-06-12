@@ -12,7 +12,6 @@ namespace rnoh {
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   getLocalRootArkUINode().insertChild(m_scrollNode, 0);
-  m_contentContainerNode.setStackNodeDelegate(this);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?
   m_scrollNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
@@ -313,13 +312,6 @@ float ScrollViewComponentInstance::onScrollFrameBegin(
   }
   m_scrollState = newScrollState;
   return offset;
-}
-
-void ScrollViewComponentInstance::onAreaChange() {
-  if (!scrollMovedBySignificantOffset(getScrollViewMetrics().contentOffset)) {
-    return;
-  }
-  onScroll();
 }
 
 void ScrollViewComponentInstance::emitOnScrollEndDragEvent() {
