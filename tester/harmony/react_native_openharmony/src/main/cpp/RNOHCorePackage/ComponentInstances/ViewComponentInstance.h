@@ -15,7 +15,7 @@ class ViewComponentInstance
   bool isViewClipped(
       const ComponentInstance::Shared& child,
       facebook::react::Point currentOffset,
-      facebook::react::LayoutMetrics parentLayoutMetrics);
+      facebook::react::Rect parentBoundingBox);
 
  public:
   ViewComponentInstance(Context context);

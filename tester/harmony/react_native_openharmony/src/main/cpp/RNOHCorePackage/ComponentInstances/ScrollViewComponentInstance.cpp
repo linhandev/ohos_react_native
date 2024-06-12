@@ -196,9 +196,11 @@ void ScrollViewComponentInstance::onScroll() {
   auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
                  std::chrono::steady_clock::now().time_since_epoch())
                  .count();
+  auto movedBySignificantOffset =
+      scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset);
   if (m_allowNextScrollEvent ||
       (m_scrollEventThrottle < now - m_lastScrollDispatchTime &&
-       scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset))) {
+       movedBySignificantOffset)) {
     m_lastScrollDispatchTime = now;
     VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
             << ", " << scrollViewMetrics.contentOffset.y
@@ -209,15 +211,16 @@ void ScrollViewComponentInstance::onScroll() {
     m_eventEmitter->onScroll(scrollViewMetrics);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
-
-    if (!m_children.empty() && m_children[0] != nullptr) {
-      auto contentContainer =
-          std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
-      if (contentContainer != nullptr) {
-        contentContainer->updateClippedSubviews();
-      }
-    }
   };
+
+  if (movedBySignificantOffset && !m_children.empty() &&
+      m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews();
+    }
+  }
 }
 
 void ScrollViewComponentInstance::onScrollStart() {

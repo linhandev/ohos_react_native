@@ -35,11 +35,11 @@ void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 bool ViewComponentInstance::isViewClipped(
     const ComponentInstance::Shared& child,
     facebook::react::Point currentOffset,
-    facebook::react::LayoutMetrics parentLayoutMetrics) {
+    facebook::react::Rect parentBoundingBox) {
   auto scrollRectOrigin =
       facebook::react::Point{currentOffset.x, currentOffset.y};
   auto scrollRect =
-      facebook::react::Rect{scrollRectOrigin, parentLayoutMetrics.frame.size};
+      facebook::react::Rect{scrollRectOrigin, parentBoundingBox.size};
 
   return !rnoh::rectIntersects(scrollRect, child->getLayoutMetrics().frame);
 }
@@ -52,7 +52,7 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
 
   auto currentOffset = parent->getCurrentOffset();
 
-  auto parentLayoutMetrics = parent->getLayoutMetrics();
+  auto parentBoundingBox = parent->getBoundingBox();
 
   bool remakeVector = false;
   if (childrenChange || m_childrenClippedState.empty()) {
@@ -63,8 +63,7 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
   size_t i = 0;
   size_t nextChildIndex = 0;
   for (const auto& child : m_children) {
-    bool childClipped =
-        isViewClipped(child, currentOffset, parentLayoutMetrics);
+    bool childClipped = isViewClipped(child, currentOffset, parentBoundingBox);
 
     if (remakeVector) {
       m_stackNode.removeChild(child->getLocalRootArkUINode());
