@@ -266,6 +266,7 @@ void ScrollViewComponentInstance::onScroll() {
       m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
     }
     m_eventEmitter->onScroll(scrollViewMetrics);
+    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
   };
