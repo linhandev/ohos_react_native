@@ -52,6 +52,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   void defaultSetPadding();
 
+  void setLineHeight(float lineHeight);
+
   std::string getTextContent() override;
 };
 

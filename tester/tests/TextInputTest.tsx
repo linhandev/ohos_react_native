@@ -517,6 +517,37 @@ export function TextInputTest() {
           />
         </View>
       </TestCase.Example>
+      <TestSuite name="style">
+        {createSingleAndMultilineTest(
+          'display light cyan background text input with larger line height than the reddish text input',
+          (name, multiline) => {
+            return (
+              <TestCase.Example
+                itShould={name}
+                skip={{
+                  android: false,
+                  harmony: {
+                    arkTS: true,
+                    cAPI: multiline
+                      ? "text should be vertically aligned (to match Android); spacing between wrapped lines isn't correct — those issues seem like a platform issue"
+                      : false,
+                  },
+                }}>
+                <TextInput
+                  multiline={multiline}
+                  defaultValue="lineHeight: 128"
+                  style={{lineHeight: 128, backgroundColor: 'lightcyan'}}
+                />
+                <TextInput
+                  defaultValue="lineHeight: undefined"
+                  multiline={multiline}
+                  style={{backgroundColor: 'mistyrose'}}
+                />
+              </TestCase.Example>
+            );
+          },
+        )}
+      </TestSuite>
       <TestCase.Manual
         modal
         itShould="trigger onEndEditing event after editing ends"
@@ -599,6 +630,18 @@ export function TextInputTest() {
     </TestSuite>
   );
 }
+
+const createSingleAndMultilineTest = (
+  name: string,
+  render: (name: string, multiline: boolean) => JSX.Element,
+) => {
+  return (
+    <>
+      {render(name, false)}
+      {render(`${name} (multiline)`, true)}
+    </>
+  );
+};
 
 const SetNativePropsTest = () => {
   const ref = useRef<TextInput>(null);

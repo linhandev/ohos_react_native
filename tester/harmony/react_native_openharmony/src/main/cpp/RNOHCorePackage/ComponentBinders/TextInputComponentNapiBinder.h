@@ -29,6 +29,7 @@ class TextInputComponentNapiBinder : public ViewComponentNapiBinder {
               .addProperty("fontColor", props->textAttributes.foregroundColor)
               .addProperty("fontFamily", props->textAttributes.fontFamily)
               .addProperty("fontSize", props->textAttributes.fontSize)
+              .addProperty("lineHeight", props->textAttributes.lineHeight)
               .addProperty("multiline", props->traits.multiline)
               .addProperty("placeholder", props->placeholder)
               .addProperty("placeholderTextColor", props->placeholderTextColor)

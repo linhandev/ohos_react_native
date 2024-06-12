@@ -63,6 +63,8 @@ class TextInputNode : public TextInputNodeBase {
 
   void resetSelectedBackgroundColor();
 
+  void setLineHeight(float lineHeight);
+
   std::string getTextContent() override;
 };
 

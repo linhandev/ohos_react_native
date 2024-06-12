@@ -196,6 +196,13 @@ void TextInputNode::setFont(
       m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER_FONT, &item));
 }
 
+void TextInputNode::setLineHeight(float lineHeight) {
+  ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
+  ArkUI_AttributeItem item = {.value = value, .size = 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
+}
+
 void TextInputNode::setCaretColor(facebook::react::SharedColor const& color) {
   uint32_t colorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
