@@ -14,8 +14,6 @@ StackNode::StackNode()
       m_nodeHandle, NODE_ON_CLICK, 0, this));
   maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
       m_nodeHandle, NODE_ON_HOVER, 0, this));
-  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
-      m_nodeHandle, NODE_EVENT_ON_AREA_CHANGE, 0, this));
 }
 
 void StackNode::insertChild(ArkUINode& child, std::size_t index) {
@@ -52,11 +50,6 @@ void StackNode::onNodeEvent(
       }
     }
   }
-  if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_AREA_CHANGE) {
-    if (m_stackNodeDelegate != nullptr) {
-      m_stackNodeDelegate->onAreaChange();
-    }
-  }
 }
 
 void StackNode::onClick() {
@@ -70,8 +63,6 @@ StackNode::~StackNode() {
       m_nodeHandle, NODE_ON_CLICK);
   NativeNodeApi::getInstance()->unregisterNodeEvent(
       m_nodeHandle, NODE_ON_HOVER);
-  NativeNodeApi::getInstance()->unregisterNodeEvent(
-      m_nodeHandle, NODE_EVENT_ON_AREA_CHANGE);
 }
 
 StackNode& StackNode::setAlign(int32_t align) {

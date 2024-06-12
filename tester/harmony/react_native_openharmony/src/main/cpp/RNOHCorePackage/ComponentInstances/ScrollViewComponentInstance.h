@@ -10,7 +10,7 @@ namespace rnoh {
 
 class ScrollViewComponentInstance
     : public CppComponentInstance<facebook::react::ScrollViewShadowNode>,
-      public ScrollNodeDelegate, StackNodeDelegate {
+      public ScrollNodeDelegate {
  private:
   enum ScrollState : int32_t { IDLE, SCROLL, FLING };
   struct ChildTagWithOffset {
@@ -105,7 +105,6 @@ class ScrollViewComponentInstance
   void onScrollStart() override;
   void onScrollStop() override;
   float onScrollFrameBegin(float offset, int32_t scrollState) override;
-  void onAreaChange() override;
 
   void onFinalizeUpdates() override;
 
