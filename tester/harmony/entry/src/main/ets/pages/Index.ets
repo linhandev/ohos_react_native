@@ -98,7 +98,6 @@ struct Index {
             enableNDKTextMeasuring: true,
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
-            enablePartialSyncOfDescriptorRegistryInCAPI: true,
             arkTsComponentNames: arkTsComponentNames,
             fontOptions: fonts
           },

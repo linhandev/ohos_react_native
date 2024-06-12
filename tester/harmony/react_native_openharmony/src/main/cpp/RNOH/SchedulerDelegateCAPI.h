@@ -97,12 +97,10 @@ class SchedulerDelegateCAPI
              auto mutations = transaction.getMutations();
          auto validMutations = self->getValidMutations(mutations);
             
-          if (!self->m_featureFlagRegistry->isFeatureFlagOn(
-            "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")){
-             if (!validMutations.empty()) {
-              self->m_mountingManager->processMutations(validMutations);
-            }
-          }
+
+         if (!validMutations.empty()) {
+            self->m_mountingManager->processMutations(validMutations);
+         }
           self->m_taskExecutor->runTask(
               TaskThread::MAIN, [weakSelf, mutations] {
                 auto self = weakSelf.lock();

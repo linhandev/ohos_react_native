@@ -42,7 +42,6 @@ export class RNInstanceRegistry {
       options.enableNDKTextMeasuring ?? false,
       options.enableImageLoader ?? false,
       options.enableCAPIArchitecture ?? false,
-      options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest,
       this.resourceManager,
       options.arkTsComponentNames,
