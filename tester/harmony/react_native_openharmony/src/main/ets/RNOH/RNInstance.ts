@@ -266,14 +266,6 @@ export type RNInstanceOptions = {
    */
   enableCAPIArchitecture?: boolean,
   /**
-   * @architecture: C-API
-   * When enabled, RNOH will send mutations that affect only Descriptors of custom components implemented on the ArkUI side.
-   * If disabled, RNOH will send all mutations to DescriptorRegistry, even if a component is a CppComponentInstance.
-   * Enabling this feature flag may improve performance, but it may break some libraries built on top of the ArkTS architecture
-   * and that operate on the tree of descriptors.
-   */
-  enablePartialSyncOfDescriptorRegistryInCAPI?: boolean,
-  /**
    * Specifies the path for RN to locate assets. Necessary in production environments where assets are not hosted by the Metro server.
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
    */
@@ -352,7 +344,6 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
     private shouldUseCApiArchitecture: boolean,
-    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
@@ -440,9 +431,6 @@ export class RNInstanceImpl implements RNInstance {
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
-    }
-    if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
-      cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
     const fontOptions: FontOptions[] = []
     for (const fontOption of this.fontOptions ?? []) {
