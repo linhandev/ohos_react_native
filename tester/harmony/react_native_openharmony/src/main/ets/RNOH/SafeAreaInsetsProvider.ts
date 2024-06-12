@@ -27,22 +27,34 @@ export class SafeAreaInsetsProvider {
   }
 
   async createSafeAreaInsets(): Promise<SafeAreaInsets> {
-    const win = await WindowUtils.getLastWindow(this.uiAbilityContext)
-    const [displayCutoutInfo, systemAvoidArea, cutoutAvoidArea] = await Promise.all([
-      display.getDefaultDisplaySync().getCutoutInfo(),
-      win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_SYSTEM),
-      win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_CUTOUT),
-    ])
-    const waterfallAvoidArea: WindowUtils.AvoidArea = {
-      visible: true,
-      leftRect: displayCutoutInfo.waterfallDisplayAreaRects.left,
-      rightRect: displayCutoutInfo.waterfallDisplayAreaRects.right,
-      topRect: displayCutoutInfo.waterfallDisplayAreaRects.top,
-      bottomRect: displayCutoutInfo.waterfallDisplayAreaRects.bottom
+    const retrieveSafeAreaInsets = async () => {
+      const win = await WindowUtils.getLastWindow(this.uiAbilityContext)
+        const [displayCutoutInfo, systemAvoidArea, cutoutAvoidArea] = await Promise.all([
+          display.getDefaultDisplaySync().getCutoutInfo(),
+          win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_SYSTEM),
+          win.getWindowAvoidArea(WindowUtils.AvoidAreaType.TYPE_CUTOUT),
+        ])
+        const waterfallAvoidArea: WindowUtils.AvoidArea = {
+          visible: true,
+          leftRect: displayCutoutInfo.waterfallDisplayAreaRects.left,
+          rightRect: displayCutoutInfo.waterfallDisplayAreaRects.right,
+          topRect: displayCutoutInfo.waterfallDisplayAreaRects.top,
+          bottomRect: displayCutoutInfo.waterfallDisplayAreaRects.bottom
+        }
+        const avoidAreas = [cutoutAvoidArea, waterfallAvoidArea, systemAvoidArea]
+        const insets = getSafeAreaInsetsFromAvoidAreas(avoidAreas, win.getWindowProperties().windowRect)
+        return mapProps(insets, (val) => px2vp(val))
     }
-    const avoidAreas = [cutoutAvoidArea, waterfallAvoidArea, systemAvoidArea]
-    const insets = getSafeAreaInsetsFromAvoidAreas(avoidAreas, win.getWindowProperties().windowRect)
-    return mapProps(insets, (val) => px2vp(val))
+
+    /**
+     * SafeAreaView sometimes fails to obtain the width of the screen borders due to getLastWindow API throwing a BusinessError.
+     * Retrying isn't a perfect solution but it resolves the issue for now.
+     */
+    try {
+      return await retrieveSafeAreaInsets();
+    } catch (BusinessError) {
+      return await retrieveSafeAreaInsets();
+    }
   }
 
   private updateInsets(insets: SafeAreaInsets) {
