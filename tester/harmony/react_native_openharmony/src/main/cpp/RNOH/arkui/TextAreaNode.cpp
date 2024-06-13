@@ -17,15 +17,14 @@ TextAreaNode::TextAreaNode()
     : TextInputNodeBase(ArkUI_NodeType::ARKUI_NODE_TEXT_AREA),
       m_textAreaNodeDelegate(nullptr) {
   for (auto eventType : TEXT_AREA_NODE_EVENT_TYPES) {
-    maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
-        m_nodeHandle, eventType, eventType, this));
+    registerNodeEvent(eventType);
     // NODE_TEXT_AREA_ENABLE_KEYBOARD_ON_FOCUS missing in C-API
   }
 }
 
 TextAreaNode::~TextAreaNode() {
   for (auto eventType : TEXT_AREA_NODE_EVENT_TYPES) {
-    NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
+    unregisterNodeEvent(eventType);
   }
 }
 

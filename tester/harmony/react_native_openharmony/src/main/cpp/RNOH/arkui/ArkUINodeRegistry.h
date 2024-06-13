@@ -11,21 +11,27 @@ class ArkUINode;
 
 using EventArgs = ArkUI_NumberValue[MAX_COMPONENT_EVENT_ARG_NUM];
 
+/**
+ * @api
+ * @deprecated Use UIInputEventHandler instead (latestRNOHVersion: 0.72.27).
+ */
 class TouchEventHandler {
  public:
   virtual void onTouchEvent(ArkUI_UIInputEvent* event) = 0;
   virtual ~TouchEventHandler() = default;
 };
 
+/**
+ * @api
+ * @deprecated Use UIInputEventHandler instead for touch events, node events
+ * should be handled by `ArkUINode`s automatically (latestRNOHVersion: 0.72.27).
+ */
 class ArkUINodeRegistry {
   static std::unique_ptr<ArkUINodeRegistry> instance;
 
  public:
   static void initialize(ArkTSBridge::Shared arkTSBridge);
   static ArkUINodeRegistry& getInstance();
-
-  void registerNode(ArkUINode* node);
-  void unregisterNode(ArkUINode* node);
 
   void registerTouchHandler(
       ArkUINode* node,
@@ -37,7 +43,6 @@ class ArkUINodeRegistry {
 
   void receiveEvent(ArkUI_NodeEvent* event);
 
-  std::unordered_map<ArkUI_NodeHandle, ArkUINode*> m_nodeByHandle;
   std::unordered_map<ArkUI_NodeHandle, TouchEventHandler*>
       m_touchHandlerByNodeHandle;
   ArkTSBridge::Shared m_arkTSBridge;

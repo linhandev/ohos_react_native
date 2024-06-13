@@ -1,10 +1,10 @@
 #include "XComponentSurface.h"
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
-#include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
 #include "TouchEventDispatcher.h"
+#include "UIInputEventHandler.h"
 
 namespace rnoh {
 
@@ -39,7 +39,7 @@ void maybeDetachRootNode(
   }
 }
 
-class SurfaceTouchEventHandler : public TouchEventHandler,
+class SurfaceTouchEventHandler : public UIInputEventHandler,
                                  public ArkTSMessageHub::Observer {
  private:
   ComponentInstance::Shared m_rootView;
@@ -51,17 +51,10 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
       ComponentInstance::Shared rootView,
       ArkTSMessageHub::Shared arkTSMessageHub,
       int rnInstanceId)
-      : ArkTSMessageHub::Observer(arkTSMessageHub),
+      : UIInputEventHandler(rootView->getLocalRootArkUINode()),
+        ArkTSMessageHub::Observer(arkTSMessageHub),
         m_rootView(std::move(rootView)),
-        m_rnInstanceId(rnInstanceId) {
-    ArkUINodeRegistry::getInstance().registerTouchHandler(
-        &m_rootView->getLocalRootArkUINode(), this);
-    NativeNodeApi::getInstance()->registerNodeEvent(
-        m_rootView->getLocalRootArkUINode().getArkUINodeHandle(),
-        NODE_TOUCH_EVENT,
-        NODE_TOUCH_EVENT,
-        this);
-  }
+        m_rnInstanceId(rnInstanceId) {}
   SurfaceTouchEventHandler(SurfaceTouchEventHandler const& other) = delete;
   SurfaceTouchEventHandler& operator=(SurfaceTouchEventHandler const& other) =
       delete;
@@ -70,13 +63,7 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
   SurfaceTouchEventHandler& operator=(
       SurfaceTouchEventHandler&& other) noexcept = delete;
 
-  ~SurfaceTouchEventHandler() override {
-    NativeNodeApi::getInstance()->unregisterNodeEvent(
-        m_rootView->getLocalRootArkUINode().getArkUINodeHandle(),
-        NODE_TOUCH_EVENT);
-    ArkUINodeRegistry::getInstance().unregisterTouchHandler(
-        &m_rootView->getLocalRootArkUINode());
-  }
+  ~SurfaceTouchEventHandler() override = default;
 
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
