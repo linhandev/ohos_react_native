@@ -230,6 +230,10 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       }
       break;
     }
+    case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
+      RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
+      break;
+    }
   }
 }
 
@@ -261,6 +265,10 @@ void MountingManagerCAPI::finalizeMutationUpdates(
       case facebook::react::ShadowViewMutation::Update: {
         componentInstance = m_componentInstanceRegistry->findByTag(
             mutation.newChildShadowView.tag);
+        break;
+      }
+      case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
+        RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
         break;
       }
     }

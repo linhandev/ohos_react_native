@@ -83,6 +83,7 @@ ArkUINode& ArkUINode::setWidth(float width) {
 
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_WIDTH, &widthItem));
+  return *this;
 }
 
 ArkUINode& ArkUINode::setBorderWidth(
@@ -186,7 +187,7 @@ ArkUINode& ArkUINode::setShadow(
   if (shadowColor) {
     shadowColorValue = *shadowColor;
   }
-  uint32_t alpha = static_cast<uint32_t>(
+  auto alpha = static_cast<uint32_t>(
       (float)((shadowColorValue >> 24) & (0xff)) * shadowOpacity);
   shadowColorValue = (alpha << 24) + (shadowColorValue & 0xffffff);
   ArkUI_NumberValue shadowValue[] = {
@@ -333,7 +334,7 @@ ArkUINode& ArkUINode::setOpacity(facebook::react::Float opacity) {
 }
 
 ArkUINode& ArkUINode::setClip(bool clip) {
-  uint32_t isClip = static_cast<uint32_t>(clip);
+  auto isClip = static_cast<uint32_t>(clip);
   ArkUI_NumberValue clipValue[] = {{.u32 = isClip}};
   ArkUI_AttributeItem clipItem = {
       clipValue, sizeof(clipValue) / sizeof(ArkUI_NumberValue)};

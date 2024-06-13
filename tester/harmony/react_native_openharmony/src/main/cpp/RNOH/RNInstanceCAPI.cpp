@@ -5,7 +5,7 @@
 using namespace facebook;
 namespace rnoh {
 
-rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
+RNInstanceCAPI::~RNInstanceCAPI() noexcept {
   DLOG(INFO) << "~RNInstanceCAPI::start";
   if (m_unsubscribeUITickListener != nullptr) {
     m_unsubscribeUITickListener();
@@ -19,7 +19,7 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
 
-void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
+void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
     folly::dynamic props) {
   DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
@@ -176,14 +176,13 @@ RNInstanceCAPI::findComponentInstanceTagById(const std::string& id) {
   return m_componentInstanceRegistry->findTagById(id);
 }
 
-NativeResourceManager const* rnoh::RNInstanceCAPI::getNativeResourceManager()
-    const {
+NativeResourceManager const* RNInstanceCAPI::getNativeResourceManager() const {
   RNOH_ASSERT(m_nativeResourceManager != nullptr);
   return m_nativeResourceManager.get();
 }
 
 std::shared_ptr<TurboModuleProvider>
-rnoh::RNInstanceCAPI::createTurboModuleProvider() {
+RNInstanceCAPI::createTurboModuleProvider() {
   DLOG(INFO) << "RNInstanceCAPI::createTurboModuleProvider";
   auto sharedInstance = shared_from_this();
   auto turboModuleProvider = std::make_shared<TurboModuleProvider>(

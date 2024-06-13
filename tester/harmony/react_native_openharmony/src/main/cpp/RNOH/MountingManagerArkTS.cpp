@@ -40,6 +40,9 @@ void MountingManagerArkTS::doMount(MutationList const& mutations) {
         shadowViewRegistry->setShadowView(newChild.tag, newChild);
         break;
       }
+      case react::ShadowViewMutation::RemoveDeleteTree: {
+        break;
+      }
     }
   }
 }
@@ -67,9 +70,9 @@ void MountingManagerArkTS::setIsJsResponder(
 }
 
 void MountingManagerArkTS::updateView(
-    facebook::react::Tag tag,
-    folly::dynamic props,
-    facebook::react::ComponentDescriptor const& componentDescriptor) {
+    facebook::react::Tag /*tag*/,
+    folly::dynamic /*props*/,
+    facebook::react::ComponentDescriptor const& /*componentDescriptor*/) {
   throw RNOHError("updateView is not implemented in ArkTS architecture.");
 }
 

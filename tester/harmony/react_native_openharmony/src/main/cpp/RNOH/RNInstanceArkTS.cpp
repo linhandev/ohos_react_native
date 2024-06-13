@@ -39,7 +39,9 @@ void RNInstanceArkTS::startSurface(
       auto surfaceHandler = it->second;
       surfaceHandler->setProps(std::move(initialProps));
       auto layoutConstraints = surfaceHandler->getLayoutConstraints();
-      layoutConstraints.layoutDirection = react::LayoutDirection::LeftToRight;
+      layoutConstraints.layoutDirection = isRTL
+          ? react::LayoutDirection::RightToLeft
+          : react::LayoutDirection::LeftToRight;
       layoutConstraints.minimumSize =
           layoutConstraints.maximumSize = {.width = width, .height = height};
       auto layoutContext = surfaceHandler->getLayoutContext();
@@ -163,8 +165,8 @@ void RNInstanceArkTS::updateSurfaceConstraints(
 }
 
 void RNInstanceArkTS::synchronouslyUpdateViewOnUIThread(
-    facebook::react::Tag tag,
-    folly::dynamic props) {
+    facebook::react::Tag /*tag*/,
+    folly::dynamic /*props*/) {
   LOG(WARNING)
       << "RNInstance::synchronouslyUpdateViewOnUIThread is not supported in ArkTS architecture";
 };

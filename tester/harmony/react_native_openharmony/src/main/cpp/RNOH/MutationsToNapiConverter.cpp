@@ -46,6 +46,10 @@ napi_value MutationsToNapiConverter::convert(
         objBuilder.addProperty("tag", mutation.oldChildShadowView.tag);
         break;
       }
+      case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
+        RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
+        break;
+      }
     }
     napiMutations.push_back(objBuilder.build());
   }

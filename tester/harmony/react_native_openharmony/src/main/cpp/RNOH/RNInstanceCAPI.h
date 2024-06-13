@@ -61,7 +61,6 @@ class RNInstanceCAPI : public RNInstanceInternal {
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
-        m_arkTSChannel(std::move(arkTSChannel)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {}
 
   ~RNInstanceCAPI() noexcept override;
@@ -117,7 +116,6 @@ class RNInstanceCAPI : public RNInstanceInternal {
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
-  ArkTSChannel::Shared m_arkTSChannel;
   UniqueNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
 };
