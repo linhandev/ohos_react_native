@@ -15,13 +15,14 @@ ScrollNode::ScrollNode()
       m_childArkUINodeHandle(nullptr),
       m_scrollNodeDelegate(nullptr) {
   for (auto eventType : SCROLL_NODE_EVENT_TYPES) {
-    registerNodeEvent(eventType);
+    maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+        m_nodeHandle, eventType, eventType, this));
   }
 }
 
 ScrollNode::~ScrollNode() {
   for (auto eventType : SCROLL_NODE_EVENT_TYPES) {
-    unregisterNodeEvent(eventType);
+    NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
   }
 }
 

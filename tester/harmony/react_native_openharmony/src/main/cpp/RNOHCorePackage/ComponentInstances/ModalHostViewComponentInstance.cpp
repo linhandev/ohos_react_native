@@ -1,18 +1,18 @@
 #include "ModalHostViewComponentInstance.h"
 
+#include <RNOH/Assert.h>
+#include <RNOH/arkui/NativeNodeApi.h>
+#include <RNOH/arkui/TouchEventDispatcher.h>
 #include <glog/logging.h>
 #include <react/renderer/components/rncore/Props.h>
 #include "RNOH/ArkTSBridge.h"
-#include "RNOH/Assert.h"
-#include "RNOH/arkui/NativeNodeApi.h"
-#include "RNOH/arkui/TouchEventDispatcher.h"
-#include "RNOH/arkui/UIInputEventHandler.h"
+#include "RNOH/arkui/ArkUINodeRegistry.h"
 
 namespace rnoh {
 
 static constexpr int32_t ANIMATION_DURATION = 300;
 
-class ModalHostTouchHandler : public UIInputEventHandler {
+class ModalHostTouchHandler : public TouchEventHandler {
  private:
   ModalHostViewComponentInstance* m_rootView;
   TouchEventDispatcher m_touchEventDispatcher;
@@ -24,7 +24,22 @@ class ModalHostTouchHandler : public UIInputEventHandler {
   ModalHostTouchHandler& operator=(ModalHostTouchHandler&& other) = delete;
 
   ModalHostTouchHandler(ModalHostViewComponentInstance* rootView)
-      : UIInputEventHandler(rootView->m_rootStackNode), m_rootView(rootView) {}
+      : m_rootView(rootView) {
+    auto* rootNode = &rootView->m_rootStackNode;
+    ArkUINodeRegistry::getInstance().registerTouchHandler(rootNode, this);
+    NativeNodeApi::getInstance()->registerNodeEvent(
+        rootNode->getArkUINodeHandle(),
+        NODE_TOUCH_EVENT,
+        NODE_TOUCH_EVENT,
+        this);
+  }
+
+  ~ModalHostTouchHandler() override {
+    auto* rootNode = &m_rootView->m_rootStackNode;
+    NativeNodeApi::getInstance()->unregisterNodeEvent(
+        rootNode->getArkUINodeHandle(), NODE_TOUCH_EVENT);
+    ArkUINodeRegistry::getInstance().unregisterTouchHandler(rootNode);
+  }
 
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     m_touchEventDispatcher.dispatchTouchEvent(

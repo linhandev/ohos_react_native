@@ -18,13 +18,14 @@ ImageNode::ImageNode()
       m_childArkUINodeHandle(nullptr),
       m_imageNodeDelegate(nullptr) {
   for (auto eventType : IMAGE_NODE_EVENT_TYPES) {
-    registerNodeEvent(eventType);
+    maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+        m_nodeHandle, eventType, eventType, this));
   }
 }
 
 ImageNode::~ImageNode() {
   for (auto eventType : IMAGE_NODE_EVENT_TYPES) {
-    unregisterNodeEvent(eventType);
+    NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
   }
 }
 

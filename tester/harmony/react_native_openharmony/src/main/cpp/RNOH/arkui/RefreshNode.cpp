@@ -9,13 +9,14 @@ RefreshNode::RefreshNode()
     : ArkUINode(NativeNodeApi::getInstance()->createNode(
           ArkUI_NodeType::ARKUI_NODE_REFRESH)) {
   for (auto eventType : REFRESH_NODE_EVENT_TYPES) {
-    registerNodeEvent(eventType);
+    maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+        m_nodeHandle, eventType, eventType, this));
   }
 }
 
 RefreshNode::~RefreshNode() {
   for (auto eventType : REFRESH_NODE_EVENT_TYPES) {
-    unregisterNodeEvent(eventType);
+    NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
   }
 }
 

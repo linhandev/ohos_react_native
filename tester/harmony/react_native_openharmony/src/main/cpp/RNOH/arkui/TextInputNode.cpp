@@ -17,7 +17,8 @@ TextInputNode::TextInputNode()
     : TextInputNodeBase(ArkUI_NodeType::ARKUI_NODE_TEXT_INPUT),
       m_textInputNodeDelegate(nullptr) {
   for (auto eventType : TEXT_INPUT_NODE_EVENT_TYPES) {
-    registerNodeEvent(eventType);
+    maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+        m_nodeHandle, eventType, eventType, this));
   }
 
   ArkUI_NumberValue value = {.i32 = 1};
@@ -28,7 +29,7 @@ TextInputNode::TextInputNode()
 
 TextInputNode::~TextInputNode() {
   for (auto eventType : TEXT_INPUT_NODE_EVENT_TYPES) {
-    unregisterNodeEvent(eventType);
+    NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
   }
 }
 

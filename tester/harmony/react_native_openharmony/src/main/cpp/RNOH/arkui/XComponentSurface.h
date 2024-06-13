@@ -4,10 +4,10 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include <react/renderer/scheduler/SurfaceHandler.h>
+#include "ArkUINodeRegistry.h"
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
-#include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
 
@@ -60,7 +60,7 @@ class XComponentSurface {
   ComponentInstance::Shared m_rootView;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   facebook::react::SurfaceHandler m_surfaceHandler;
-  std::unique_ptr<UIInputEventHandler> m_touchEventHandler;
+  std::unique_ptr<TouchEventHandler> m_touchEventHandler;
 };
 
 } // namespace rnoh

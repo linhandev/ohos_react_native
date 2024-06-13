@@ -19,6 +19,26 @@ ArkUINodeRegistry& ArkUINodeRegistry::getInstance() {
   return *instance;
 }
 
+void ArkUINodeRegistry::registerNode(ArkUINode* node) {
+  auto [_it, inserted] =
+      m_nodeByHandle.emplace(node->getArkUINodeHandle(), node);
+  if (!inserted) {
+    LOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
+                 << " was already registered";
+  }
+}
+
+void ArkUINodeRegistry::unregisterNode(ArkUINode* node) {
+  auto it = m_nodeByHandle.find(node->getArkUINodeHandle());
+  if (it == m_nodeByHandle.end()) {
+    LOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
+                 << " not found";
+    return;
+  }
+
+  m_nodeByHandle.erase(it);
+}
+
 void ArkUINodeRegistry::registerTouchHandler(
     ArkUINode* node,
     TouchEventHandler* touchEventHandler) {
@@ -61,6 +81,8 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
     if (eventType == ArkUI_NodeEventType::NODE_TOUCH_EVENT) {
       auto it = m_touchHandlerByNodeHandle.find(node);
       if (it == m_touchHandlerByNodeHandle.end()) {
+        LOG(WARNING) << "Touch event for node with handle: " << node
+                     << " not found";
         return;
       }
 
@@ -74,6 +96,24 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
       it->second->onTouchEvent(inputEvent);
       return;
     }
+
+    auto it = m_nodeByHandle.find(node);
+    if (it == m_nodeByHandle.end()) {
+      LOG(WARNING) << "Node with handle: " << node << " not found";
+      return;
+    }
+
+    auto componentEvent = OH_ArkUI_NodeEvent_GetNodeComponentEvent(event);
+    if (componentEvent != nullptr) {
+      it->second->onNodeEvent(eventType, componentEvent->data);
+      return;
+    }
+    auto eventString = OH_ArkUI_NodeEvent_GetStringAsyncEvent(event);
+    if (eventString != nullptr) {
+      it->second->onNodeEvent(eventType, std::string_view(eventString->pStr));
+      return;
+    }
+
   } catch (std::exception& e) {
     m_arkTSBridge->handleError(std::current_exception());
   }

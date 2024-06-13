@@ -12,6 +12,7 @@
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
 #include <stdexcept>
+#include "ArkUINodeRegistry.h"
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
 
@@ -31,10 +32,8 @@ class ArkUINode {
   ArkUINode(const ArkUINode& other) = delete;
   ArkUINode& operator=(const ArkUINode& other) = delete;
 
-  ArkUINode& operator=(ArkUINode&& other) = delete;
-  ArkUINode(ArkUINode&& other) = delete;
-
-  using EventArgs = ArkUI_NumberValue[MAX_COMPONENT_EVENT_ARG_NUM];
+  ArkUINode& operator=(ArkUINode&& other) noexcept;
+  ArkUINode(ArkUINode&& other) noexcept;
 
  public:
   using Alignment = ArkUI_Alignment;
@@ -108,7 +107,7 @@ class ArkUINode {
       ArkUI_NodeEventType eventType,
       std::string_view eventString);
 
-  virtual ~ArkUINode() noexcept;
+  virtual ~ArkUINode();
 
  protected:
   void maybeThrow(int32_t status) {
@@ -120,9 +119,6 @@ class ArkUINode {
       throw std::runtime_error(std::move(message));
     }
   }
-
-  void registerNodeEvent(ArkUI_NodeEventType eventType);
-  void unregisterNodeEvent(ArkUI_NodeEventType eventType);
 
   ArkUI_NodeHandle m_nodeHandle;
 };

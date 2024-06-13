@@ -8,11 +8,13 @@ ToggleNode::ToggleNode()
           ArkUI_NodeType::ARKUI_NODE_TOGGLE)),
       m_childArkUINodeHandle(nullptr),
       m_toggleNodeDelegate(nullptr) {
-  registerNodeEvent(NODE_TOGGLE_ON_CHANGE);
+  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+      m_nodeHandle, NODE_TOGGLE_ON_CHANGE, NODE_TOGGLE_ON_CHANGE, this));
 }
 
 ToggleNode::~ToggleNode() {
-  unregisterNodeEvent(NODE_TOGGLE_ON_CHANGE);
+  NativeNodeApi::getInstance()->unregisterNodeEvent(
+      m_nodeHandle, NODE_TOGGLE_ON_CHANGE);
 }
 
 void ToggleNode::onNodeEvent(
