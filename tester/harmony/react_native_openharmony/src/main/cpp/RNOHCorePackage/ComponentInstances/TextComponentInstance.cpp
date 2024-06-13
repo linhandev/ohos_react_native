@@ -77,6 +77,10 @@ void TextComponentInstance::onPropsChanged(
     // stack align
     facebook::react::TextAlignment alignHorizon =
         facebook::react::TextAlignment::Left;
+    if (textProps->rawProps.count("writingDirection") != 0 && textProps->rawProps["writingDirection"] == "rtl") {
+      alignHorizon =
+          facebook::react::TextAlignment::Right;
+    }
     std::string alignVertical = "top";
     if (textProps->rawProps.count("textAlignVertical") != 0) {
       alignVertical = textProps->rawProps["textAlignVertical"].asString();
@@ -427,19 +431,23 @@ void TextComponentInstance::setShadowView(facebook::react::ShadowView const& sha
   if (!textState) {
     return;
   }
-  bool isNesting = false;
-  auto const& fragments = textState->getData().attributedString.getFragments();
-  for (const auto& fragment : fragments) {
-    if (fragment.isAttachment()) {
-      isNesting = true;
-      break;
+  // Wrapped by a StackNode if WritingDirection is rtl or there's a Attachment Fragment
+  bool isNesting = textState->getData().paragraphAttributes.writingDirection ==
+      facebook::react::WritingDirection::RightToLeft;
+  if (!isNesting) {
+    auto const& fragments = textState->getData().attributedString.getFragments();
+    for (const auto& fragment : fragments) {
+      if (fragment.isAttachment()) {
+        isNesting = true;
+        break;
+      }
     }
   }
   if (isNesting) {
-    LOG(INFO) << "new StackNode, tag=" << getTag();
+    // LOG(INFO) << "new StackNode, tag=" << getTag();
     m_stackNodePtr = new StackNode();
     if (m_stackNodePtr == nullptr) {
-      LOG(INFO) << "new StackNode error";
+      // LOG(INFO) << "new StackNode error";
       return;
     }
     m_stackNodePtr->insertChild(m_textNode, 0);
