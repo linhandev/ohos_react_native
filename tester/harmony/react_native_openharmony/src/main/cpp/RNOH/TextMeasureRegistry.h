@@ -11,6 +11,7 @@
 #include "RNOH/ArkUITypography.h"
 #include <react/renderer/textlayoutmanager/TextMeasureCache.h>
 #include <arkui/styled_string.h>
+#include <mutex>
 
 struct TextMeasureInfo {
   TextMeasureInfo();
@@ -39,6 +40,7 @@ public:
 
   mutable folly::EvictingCacheMap<facebook::react::TextMeasureCacheKey, std::shared_ptr<TextMeasureInfo>>
     m_textMeasureInfoCache{facebook::react::kSimpleThreadSafeCacheSizeCap}; // cached all measure result
+  std::mutex m_mutex;
 };
 
 
