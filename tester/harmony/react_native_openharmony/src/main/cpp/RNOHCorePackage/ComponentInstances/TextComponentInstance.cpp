@@ -28,7 +28,6 @@ TextComponentInstance::~TextComponentInstance() {
   }
   if (m_key != "") {
     m_textNode.resetTextContentWithStyledString();
-    TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
     TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
   }
   if (m_state != nullptr) {
@@ -213,7 +212,6 @@ void TextComponentInstance::onStateChanged(
       }
       m_textNode.setTextContent(textContent);
     }
-    TextMeasureRegistry::getTextMeasureRegistry().eraseOldTextMeasureInfo(m_key);
   } else {
     m_key = "";
   }
