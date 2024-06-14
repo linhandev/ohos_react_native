@@ -1,5 +1,4 @@
 #include "ArkUINode.h"
-#include <bits/alltypes.h>
 #include <algorithm>
 #include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
@@ -266,6 +265,13 @@ ArkUINode& ArkUINode::setId(std::string const& id) {
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_ID, &idItem));
   return *this;
+}
+
+std::string ArkUINode::getId() const {
+  auto idItem =
+      NativeNodeApi::getInstance()->getAttribute(m_nodeHandle, NODE_ID);
+  RNOH_ASSERT(idItem != nullptr);
+  return idItem->string;
 }
 
 ArkUINode& ArkUINode::setBackgroundColor(

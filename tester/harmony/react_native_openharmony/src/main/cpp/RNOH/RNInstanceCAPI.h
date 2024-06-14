@@ -107,6 +107,9 @@ class RNInstanceCAPI : public RNInstanceInternal {
   std::optional<facebook::react::Tag> findComponentInstanceTagById(
       const std::string& id);
 
+  std::optional<std::string> getNativeNodeIdByTag(
+      facebook::react::Tag tag) const;
+
   NativeResourceManager const* getNativeResourceManager() const override;
 
  protected:

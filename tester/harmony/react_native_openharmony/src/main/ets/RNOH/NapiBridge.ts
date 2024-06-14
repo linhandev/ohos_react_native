@@ -68,13 +68,16 @@ export class NapiBridge {
 
   private unwrapError(result: Result<unknown>): RNOHError {
     if (!result.err) {
-      throw new RNOHError({whatHappened: "Called unwrapError on result which doesn't have error", howCanItBeFixed: []})
+      throw new RNOHError({
+        whatHappened: "Called unwrapError on result which doesn't have error",
+        howCanItBeFixed: []
+      })
     }
     return new RNOHError({
-        whatHappened: result.err.message,
-        howCanItBeFixed: (result.err.suggestions ?? []),
-        customStack: (result.err.stacktrace ?? []).join("\n"),
-      })
+      whatHappened: result.err.message,
+      howCanItBeFixed: (result.err.suggestions ?? []),
+      customStack: (result.err.stacktrace ?? []).join("\n"),
+    })
   }
 
   onInit(shouldCleanUpRNInstances: boolean) {
@@ -96,17 +99,17 @@ export class NapiBridge {
 
 
   onCreateRNInstance(instanceId: number,
-                     turboModuleProvider: TurboModuleProvider,
-                     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
-                     mutationsListener: (mutations: Mutation[]) => void,
-                     componentCommandsListener: (tag: Tag,
-                                                        commandName: string,
-                                                        args: unknown) => void,
-                     onCppMessage: (type: string, payload: any) => void,
-                     shouldEnableDebugger: boolean,
-                     shouldEnableBackgroundExecutor: boolean,
-                     cppFeatureFlags: CppFeatureFlag[],
-                     resourceManager: ohosResourceManager.ResourceManager
+    turboModuleProvider: TurboModuleProvider,
+    frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
+    mutationsListener: (mutations: Mutation[]) => void,
+    componentCommandsListener: (tag: Tag,
+      commandName: string,
+      args: unknown) => void,
+    onCppMessage: (type: string, payload: any) => void,
+    shouldEnableDebugger: boolean,
+    shouldEnableBackgroundExecutor: boolean,
+    cppFeatureFlags: CppFeatureFlag[],
+    resourceManager: ohosResourceManager.ResourceManager
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -118,7 +121,8 @@ export class NapiBridge {
       mutationsListener,
       componentCommandsListener,
       onCppMessage,
-      (attributedString: AttributedString, paragraphAttributes: ParagraphAttributes, layoutConstraints: LayoutConstrains) => {
+      (attributedString: AttributedString, paragraphAttributes: ParagraphAttributes,
+        layoutConstraints: LayoutConstrains) => {
         try {
           const stopTracing = this.logger.clone("measureParagraph").startTracing()
           const result = measureParagraph(attributedString, paragraphAttributes, layoutConstraints)
@@ -143,7 +147,8 @@ export class NapiBridge {
   }
 
   emitComponentEvent(instanceId: number, tag: Tag, eventEmitRequestHandlerName: string, payload: any) {
-    return this.unwrapResult(this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName, payload));
+    return this.unwrapResult(this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName,
+      payload));
   }
 
   loadScript(instanceId: number, bundle: ArrayBuffer, sourceURL: string): Promise<void> {
@@ -278,6 +283,11 @@ export class NapiBridge {
 
   postMessageToCpp(name: string, payload: any) {
     const result = this.libRNOHApp?.onArkTSMessage(name, payload)
+    return this.unwrapResult(result)
+  }
+
+  getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {
+    const result = this.libRNOHApp?.getNativeNodeIdByTag(instanceId, tag)
     return this.unwrapResult(result)
   }
 }

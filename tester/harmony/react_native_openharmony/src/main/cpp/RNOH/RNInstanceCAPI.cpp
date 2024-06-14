@@ -176,6 +176,15 @@ RNInstanceCAPI::findComponentInstanceTagById(const std::string& id) {
   return m_componentInstanceRegistry->findTagById(id);
 }
 
+std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
+    facebook::react::Tag tag) const {
+  auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
+  if (componentInstance == nullptr) {
+    return std::nullopt;
+  }
+  return componentInstance->getLocalRootArkUINode().getId();
+}
+
 NativeResourceManager const* RNInstanceCAPI::getNativeResourceManager() const {
   RNOH_ASSERT(m_nativeResourceManager != nullptr);
   return m_nativeResourceManager.get();

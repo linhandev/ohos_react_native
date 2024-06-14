@@ -261,6 +261,12 @@ export interface RNInstance {
    * register an appropriate onScroll callback and call this method.
    */
   cancelTouches(): void
+
+  /**
+   * @architecture: C-API
+   * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
+   */
+  getNativeNodeIdByTag(tag: Tag): string | undefined
 }
 
 export type RNInstanceOptions = {
@@ -768,6 +774,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public cancelTouches() {
     this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
+  }
+
+  public getNativeNodeIdByTag(tag: Tag): string | undefined {
+    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 }
 
