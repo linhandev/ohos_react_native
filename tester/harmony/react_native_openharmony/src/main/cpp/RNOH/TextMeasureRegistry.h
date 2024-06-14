@@ -29,7 +29,6 @@ public:
   ArkUI_StyledString* getTextStyledString(const std::string& key);
   std::optional<std::shared_ptr<TextMeasureInfo>> getTextMeasureInfoByKey(const std::string& key);
   void eraseTextMeasureInfo(const std::string& key);
-  void eraseOldTextMeasureInfo(const std::string& key);
   std::optional<std::shared_ptr<TextMeasureInfo>> getTextMeasureInfo(const facebook::react::TextMeasureCacheKey& cacheKey);
 
  private:
@@ -40,8 +39,6 @@ public:
 
   mutable folly::EvictingCacheMap<facebook::react::TextMeasureCacheKey, std::shared_ptr<TextMeasureInfo>>
     m_textMeasureInfoCache{facebook::react::kSimpleThreadSafeCacheSizeCap}; // cached all measure result
-
-  std::unordered_map<std::string, std::shared_ptr<TextMeasureInfo>> m_oldTextMeasureInfo; // saved old measureInfo, will be deleted after set new info to CAPI
 };
 
 

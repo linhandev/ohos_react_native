@@ -13,13 +13,6 @@ TextMeasureRegistry& TextMeasureRegistry::getTextMeasureRegistry() {
 }
 
 void TextMeasureRegistry::setTextMeasureInfo(const std::string& key, std::shared_ptr<TextMeasureInfo> measureInfo, facebook::react::TextMeasureCacheKey& cacheKey) {
-  // if (m_keyToMeasureInfo.find(key) != m_keyToMeasureInfo.end()) {
-  //   const auto& oldCacheKey = m_keyToCacheKey.at(key);
-  //   if (cacheKey == oldCacheKey) {
-  //     return;
-  //   }
-  //   m_oldTextMeasureInfo.emplace(key, m_keyToMeasureInfo.at(key));
-  // }
   m_textMeasureInfoCache.set(cacheKey, measureInfo);
   m_keyToMeasureInfo.erase(key);
   m_keyToCacheKey.erase(key);
@@ -57,11 +50,5 @@ void TextMeasureRegistry::eraseTextMeasureInfo(const std::string& key) {
   if (m_keyToMeasureInfo.find(key) != m_keyToMeasureInfo.end()) {
     m_keyToMeasureInfo.erase(key);
     m_keyToCacheKey.erase(key);
-  }
-}
-
-void TextMeasureRegistry::eraseOldTextMeasureInfo(const std::string& key) {
-  if (m_oldTextMeasureInfo.find(key) != m_oldTextMeasureInfo.end()) {
-    m_oldTextMeasureInfo.erase(key);
   }
 }
