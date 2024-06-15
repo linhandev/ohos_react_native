@@ -21,10 +21,12 @@ static std::pair<TouchTarget::Shared, Point> findTargetForTouchPoint(
     // the topmost one
     std::reverse(children.begin(), children.end());
     for (auto const& child : children) {
-      auto childPoint = target->computeChildPoint(point, child);
-      auto result = findTargetForTouchPoint(childPoint, child);
-      if (result.first != nullptr) {
-        return result;
+      if(child != nullptr){
+          auto childPoint = target->computeChildPoint(point, child);
+          auto result = findTargetForTouchPoint(childPoint, child);
+          if (result.first != nullptr) {
+            return result;
+          }
       }
     }
   }
