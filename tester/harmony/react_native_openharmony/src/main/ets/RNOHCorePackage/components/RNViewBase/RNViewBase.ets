@@ -151,9 +151,13 @@ export struct RNViewBase {
   }
 
   private onDescriptorChange(descriptor: ViewBaseDescriptor) {
-    let descriptorWrapper = this.ctx.descriptorRegistry.findDescriptorWrapperByTag<ViewDescriptorWrapperBase>(descriptor.tag)
+    if(!descriptor) {
+      this.ctx!.logger.fatal(`RNViewBase with tag ${this.tag} got undefined descriptor.`);
+    }
 
-    if (this.isWrappingPullToRefresh(descriptor)) {
+    let descriptorWrapper = this.ctx.descriptorRegistry.findDescriptorWrapperByTag<ViewDescriptorWrapperBase>(descriptor?.tag)
+
+    if (descriptor && this.isWrappingPullToRefresh(descriptor)) {
       let parentTag = descriptor.parentTag ?? this.tag;
       let parentDescriptor = this.ctx.descriptorRegistry.getDescriptor(parentTag);
 
