@@ -63,8 +63,18 @@ LinesMeasurements TextLayoutManager::measureLines(
         Float ascender = static_cast<Float>(lineMetrics[i].ascender);
         Float capHeight = static_cast<Float>(lineMetrics[i].capHeight);
         Float xHeight = static_cast<Float>(lineMetrics[i].xHeight);
-        
-        std::u16string u16LineText = u16Text.substr(lineMetrics[i].startIndex, lineMetrics[i].endIndex- lineMetrics[i].startIndex);
+        std::u16string u16LineText;
+        auto pos = lineMetrics[i].startIndex;
+        auto len = lineMetrics[i].endIndex- lineMetrics[i].startIndex;
+        if (pos > u16Text.length()) {  
+            VLOG(3) << "TextLayoutManager pos is out of range, text length = " << u16Text.length() << ", pos = " << pos;
+        }  
+        else if (len != std::string::npos && pos + len > u16Text.length()) {  
+            VLOG(3) << "TextLayoutManager pos + len is out of range, text length = " << u16Text.length() << ", pos = " << pos << ", len = " << len;
+            u16LineText = u16Text.substr(pos, u16Text.length() - pos);
+        } else {
+            u16LineText = u16Text.substr(pos, len);
+        }
         std::string lineText = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(u16LineText);
         
         LineMeasurement line(lineText, frame, descender, capHeight, ascender, xHeight);

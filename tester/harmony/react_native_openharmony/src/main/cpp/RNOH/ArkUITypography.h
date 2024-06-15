@@ -96,7 +96,7 @@ class ArkUITypography final {
     auto count = OH_Drawing_TypographyGetLineCount(m_typography.get());
     for (int i = 0; i < count; i++) {
       OH_Drawing_LineMetrics metrics;
-      OH_Drawing_TypographyGetLineMetricsAt(m_typography.get(), i, &metrics);
+      OH_Drawing_TypographyGetLineMetricsAt(m_typography.get(), i, &metrics); // FIXME: lineMetrics out_of_range issue
       data.push_back(metrics);
     }
   }
