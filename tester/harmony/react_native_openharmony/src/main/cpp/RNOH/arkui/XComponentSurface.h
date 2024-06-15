@@ -59,6 +59,7 @@ class XComponentSurface {
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   facebook::react::SurfaceHandler m_surfaceHandler;
   std::unique_ptr<TouchEventHandler> m_touchEventHandler;
+  std::mutex m_mutex;
 };
 
 } // namespace rnoh

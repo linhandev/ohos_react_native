@@ -124,11 +124,7 @@ XComponentSurface& XComponentSurface::operator=(
 }
 
 XComponentSurface::~XComponentSurface() noexcept {
-  if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
-    LOG(WARNING) << "Tried to unregister a running surface with id "
-                 << m_surfaceId;
-    this->stop();
-  }
+  this->stop();
   m_scheduler->unregisterSurface(m_surfaceHandler);
   if (m_componentInstanceRegistry != nullptr && m_rootView != nullptr) {
     // NOTE: we don't detach the view from XComponent here,
@@ -189,7 +185,12 @@ void XComponentSurface::setProps(folly::dynamic const& props) {
 }
 
 void XComponentSurface::stop() {
-  m_surfaceHandler.stop();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
+        LOG(WARNING) << "Tried to unregister a running surface with id "
+                    << m_surfaceId;
+        m_surfaceHandler.stop();
+    }
 }
 
 void XComponentSurface::setDisplayMode(
