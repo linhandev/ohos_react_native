@@ -8,56 +8,7 @@
 
 namespace rnoh {
 
-std::shared_ptr<ArkTSBridge> ArkTSBridge::instance = nullptr;
-
-ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
-    : m_arkJs(ArkJS(env)), m_arkTSBridgeRef(napiBridgeRef) {
-  LOG(INFO) << "ArkTSBridge::ArkTSBridge";
-}
-
-void ArkTSBridge::initializeInstance(
-    napi_env env,
-    napi_ref arkTSBridgeHandler) {
-  RNOH_ASSERT_MSG(
-      instance == nullptr, "ArkTSBridge can only be initialized once");
-  instance =
-      std::shared_ptr<ArkTSBridge>(new ArkTSBridge(env, arkTSBridgeHandler));
-}
-
-ArkTSBridge::Shared ArkTSBridge::getInstance() {
-  RNOH_ASSERT_MSG(instance != nullptr, "ArkTSBridge is not initialized");
-  return instance;
-}
-
-ArkTSBridge::~ArkTSBridge() {
-  m_arkJs.deleteReference(m_arkTSBridgeRef);
-}
-
-void ArkTSBridge::handleError(std::exception_ptr ex) {
-  try {
-    LOG(ERROR) << boost::diagnostic_information(ex);
-    std::rethrow_exception(ex);
-  } catch (const RNOHError& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
-        .call("handleError", {m_arkJs.createFromRNOHError(e)});
-  } catch (const facebook::jsi::JSError& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
-        .call("handleError", {m_arkJs.createFromJSError(e)});
-  } catch (const std::exception& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
-        .call("handleError", {m_arkJs.createFromException(e)});
-  }
-}
-
-auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
-  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
-  auto methodImpl =
-      m_arkJs.getObjectProperty(napiBridgeObject, "getDisplayMetrics");
-  auto napiResult = m_arkJs.call<0>(methodImpl, {});
-  return DisplayMetrics::fromNapiValue(m_arkJs.getEnv(), napiResult);
-}
-
-auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
+auto physicalPixelsFromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJs(env);
   return {
@@ -74,15 +25,51 @@ auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
   };
 }
 
-auto DisplayMetrics::fromNapiValue(napi_env env, napi_value value)
+auto displayMetricsFromNapiValue(napi_env env, napi_value value)
     -> DisplayMetrics {
   ArkJS arkJs(env);
   return {
-      PhysicalPixels::fromNapiValue(
+      physicalPixelsFromNapiValue(
           env, arkJs.getObjectProperty(value, "windowPhysicalPixels")),
-      PhysicalPixels::fromNapiValue(
+      physicalPixelsFromNapiValue(
           env, arkJs.getObjectProperty(value, "screenPhysicalPixels")),
   };
+}
+
+ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
+    : m_arkJs(ArkJS(env)), m_arkTSBridgeRef(napiBridgeRef) {
+  LOG(INFO) << "ArkTSBridge::ArkTSBridge";
+}
+
+ArkTSBridge::~ArkTSBridge() {
+  m_threadGuard.assertThread();
+  m_arkJs.deleteReference(m_arkTSBridgeRef);
+}
+
+void ArkTSBridge::handleError(std::exception_ptr ex) {
+  m_threadGuard.assertThread();
+  try {
+    LOG(ERROR) << boost::diagnostic_information(ex);
+    std::rethrow_exception(ex);
+  } catch (const RNOHError& e) {
+    m_arkJs.getObject(m_arkTSBridgeRef)
+        .call("handleError", {m_arkJs.createFromRNOHError(e)});
+  } catch (const facebook::jsi::JSError& e) {
+    m_arkJs.getObject(m_arkTSBridgeRef)
+        .call("handleError", {m_arkJs.createFromJSError(e)});
+  } catch (const std::exception& e) {
+    m_arkJs.getObject(m_arkTSBridgeRef)
+        .call("handleError", {m_arkJs.createFromException(e)});
+  }
+}
+
+auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
+  m_threadGuard.assertThread();
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJs.getObjectProperty(napiBridgeObject, "getDisplayMetrics");
+  auto napiResult = m_arkJs.call<0>(methodImpl, {});
+  return displayMetricsFromNapiValue(m_arkJs.getEnv(), napiResult);
 }
 
 } // namespace rnoh

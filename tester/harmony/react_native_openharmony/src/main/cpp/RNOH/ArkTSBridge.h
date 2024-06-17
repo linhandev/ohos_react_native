@@ -1,36 +1,19 @@
 #pragma once
 
 #include "ArkJS.h"
+#include "DisplayMetricsManager.h"
+#include "ThreadGuard.h"
 
 namespace rnoh {
 
-struct PhysicalPixels {
-  float width;
-  float height;
-  float scale;
-  float fontScale;
-  float densityDpi;
-
-  static PhysicalPixels fromNapiValue(napi_env env, napi_value value);
-};
-
-struct DisplayMetrics {
-  PhysicalPixels windowPhysicalPixels;
-  PhysicalPixels screenPhysicalPixels;
-
-  static DisplayMetrics fromNapiValue(napi_env env, napi_value value);
-};
-
-class ArkTSBridge final {
-  static std::shared_ptr<ArkTSBridge> instance;
-  ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
-
+/**
+ * @thread: MAIN
+ */
+class ArkTSBridge final : public DisplayMetricsManager {
  public:
   using Shared = std::shared_ptr<ArkTSBridge>;
 
-  static void initializeInstance(napi_env env, napi_ref arkTSBridgeHandlerRef);
-
-  static ArkTSBridge::Shared getInstance();
+  ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
 
   ArkTSBridge(ArkTSBridge const&) = delete;
   ArkTSBridge& operator=(ArkTSBridge const&) = delete;
@@ -38,10 +21,11 @@ class ArkTSBridge final {
   ~ArkTSBridge();
 
   void handleError(std::exception_ptr ex);
-  DisplayMetrics getDisplayMetrics();
+  DisplayMetrics getDisplayMetrics() override;
 
  protected:
   ArkJS m_arkJs;
   napi_ref m_arkTSBridgeRef;
+  ThreadGuard m_threadGuard;
 };
 } // namespace rnoh

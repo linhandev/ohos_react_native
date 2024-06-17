@@ -22,6 +22,7 @@ import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
+import { DisplayMetricsManager } from './DisplayMetricsManager'
 
 export type SurfaceContext = {
   width: number
@@ -382,6 +383,7 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
+    private displayMetricsManager: DisplayMetricsManager,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -499,6 +501,13 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
       this.resourceManager,
+      {
+        getDisplayMetrics: () => this.displayMetricsManager.getDisplayMetrics(),
+        handleError: (err) => {
+          this.devToolsController.setLastError(err)
+          this.devToolsController.eventEmitter.emit("NEW_ERROR", err)
+        }
+      },
     )
     stopTracing()
   }

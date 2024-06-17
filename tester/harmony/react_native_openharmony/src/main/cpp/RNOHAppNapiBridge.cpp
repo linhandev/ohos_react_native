@@ -11,6 +11,7 @@
 #include "RNInstanceFactory.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkTSBridge.h"
+#include "RNOH/ArkTSErrorHandler.h"
 #include "RNOH/Inspector.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
@@ -25,6 +26,7 @@
 
 std::mutex rnInstanceByIdMutex;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>> rnInstanceById;
+std::unordered_map<int, ArkTSErrorHandler::Shared> arkTsErrorHandlerByEnvId;
 auto uiTicker = std::make_shared<UITicker>();
 static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
@@ -37,31 +39,73 @@ napi_value invoke(napi_env env, std::function<napi_value()> operation) {
   }
 }
 
-napi_value initializeArkTSBridge(napi_env env, napi_callback_info info) {
-  return invoke(env, [&] {
-    ArkJS arkJs(env);
-    auto args = arkJs.getCallbackArgs(info, 1);
-    auto bridgeHandlerRef = arkJs.createReference(args[0]);
-    ArkTSBridge::initializeInstance(env, bridgeHandlerRef);
-#ifdef C_API_ARCH
-    ArkUINodeRegistry::initialize(ArkTSBridge::getInstance());
-#endif
-    return arkJs.getNull();
-  });
-}
-
 static napi_value onInit(napi_env env, napi_callback_info info) {
+  static int nextEnvId = 0;
   return invoke(env, [&] {
     HarmonyReactMarker::setLogPerfMarkerIfNeeded();
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
+    if (!ArkUINodeRegistry::isInitialized()) {
+      /**
+       * RNOH captures errors emitted when handling ArkUI events to prevent
+       * applications from crashing.
+       *
+       * RNOH displays these errors in a RedBox. However, the C++ environment
+       * can be shared by multiple ArkTS environments when a bundle uses RNOH
+       * in multiple UIAbilities. In such scenarios, RNOH logs those errors in
+       * the console. RNOH theoretically could display a RedBox in multiple
+       * ArkTS environments. However, it is unknown which ArkTS environment is
+       * alive, because `UIAbility::onDestroy` is not called.
+       *
+       * At the moment of creating this error-handling solution,
+       * ArkUINodeRegistry is a singleton. The initial C-API version only
+       * allowed registering one global event handler for all ArkUI nodes, hence
+       * the choice of singleton. ArkUINodeRegistry captures all errors emitted
+       * during event handling and passes them to the callback below. Future
+       * C-API versions will allow registering event handlers per node, and a
+       * node will be responsible for handling events. To display such errors,
+       * RNOH needs to provide ArkTSErrorHandler to ArkUINode (in a non-breaking
+       * manner). Once libraries migrate to that new ArkUINode's constructor,
+       * this event handler could be removed.
+       */
+      ArkUINodeRegistry::initialize([](std::exception_ptr ex) {
+        if (arkTsErrorHandlerByEnvId.size() > 1) {
+          try {
+            std::rethrow_exception(ex);
+          } catch (const RNOHError& e) {
+            std::string errMsg = e.getMessage() + '\n';
+            for (auto& trace : e.getStacktrace()) {
+              errMsg += trace + "\n";
+            }
+            for (auto& suggestion : e.getSuggestions()) {
+              errMsg += suggestion + "\n";
+            }
+            LOG(ERROR) << errMsg;
+          } catch (const facebook::jsi::JSError& e) {
+            LOG(ERROR) << e.getMessage() << "\n" << e.getStack();
+          } catch (const std::exception& e) {
+            LOG(ERROR) << e.what();
+          }
+        } else {
+          for (auto& envIdAndArkTsErrorHandler : arkTsErrorHandlerByEnvId) {
+            envIdAndArkTsErrorHandler.second->handleError(ex);
+          }
+        }
+      });
+    }
 #ifdef LOG_VERBOSITY_LEVEL
     FLAGS_v = LOG_VERBOSITY_LEVEL;
     logVerbosityLevel = LOG_VERBOSITY_LEVEL;
 #endif
     DLOG(INFO) << "onInit (LOG_VERBOSITY_LEVEL=" << logVerbosityLevel << ")";
     ArkJS arkJs(env);
-    auto args = arkJs.getCallbackArgs(info, 1);
+    auto args = arkJs.getCallbackArgs(info, 2);
+    nextEnvId++;
+    auto arkTsErrorHandlerRef = arkJs.createReference(args[1]);
+    arkTsErrorHandlerByEnvId.emplace(
+        nextEnvId,
+        std::make_shared<ArkTSErrorHandler>(
+            env, std::move(arkTsErrorHandlerRef)));
     auto shouldClearRNInstances = arkJs.getBoolean(args[0]);
     if (shouldClearRNInstances) {
       /**
@@ -84,6 +128,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #endif
     return arkJs.createObjectBuilder()
         .addProperty("isDebugModeEnabled", isDebugModeEnabled)
+        .addProperty("envId", nextEnvId)
         .build();
   });
 }
@@ -106,7 +151,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     DLOG(INFO) << "onCreateRNInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJs.getCallbackArgs(info, 11);
+    auto args = arkJs.getCallbackArgs(info, 12);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto arkTsTurboModuleProviderRef = arkJs.createReference(args[1]);
     auto mutationsListenerRef = arkJs.createReference(args[2]);
@@ -123,9 +168,11 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     }
     auto frameNodeFactoryRef = arkJs.createReference(args[9]);
     auto jsResourceManager = args[10];
+    auto arkTsBridgeRef = arkJs.createReference(args[11]);
     auto rnInstance = createRNInstance(
         instanceId,
         env,
+        arkTsBridgeRef,
         arkTsTurboModuleProviderRef,
         frameNodeFactoryRef,
         [env, instanceId, mutationsListenerRef](
@@ -663,14 +710,6 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"getInspectorWrapper",
        nullptr,
        rnoh::getInspectorWrapper,
-       nullptr,
-       nullptr,
-       nullptr,
-       napi_default,
-       nullptr},
-      {"initializeArkTSBridge",
-       nullptr,
-       ::initializeArkTSBridge,
        nullptr,
        nullptr,
        nullptr,

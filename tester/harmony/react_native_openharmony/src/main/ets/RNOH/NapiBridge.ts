@@ -15,16 +15,18 @@ import ohosResourceManager from '@ohos.resourceManager';
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY"
 
+type RawRNOHError = {
+  message: string,
+  stacktrace?: string[],
+  suggestions?: string[]
+}
+
 type Result<TOK = null> = {
   ok: TOK,
   err: null
 } | {
   ok: null,
-  err: {
-    message: string,
-    stacktrace?: string[],
-    suggestions?: string[]
-  }
+  err: RawRNOHError
 }
 
 export interface ArkTSBridgeHandler {
@@ -39,24 +41,6 @@ export class NapiBridge {
   constructor(logger: RNOHLogger) {
     this.libRNOHApp = libRNOHApp;
     this.logger = logger.clone("NapiBridge")
-  }
-
-  initializeArkTSBridge(handler: ArkTSBridgeHandler) {
-    const result = this.libRNOHApp?.initializeArkTSBridge({
-      getDisplayMetrics: () => handler.getDisplayMetrics(),
-      handleError: (errData: {
-        message: string,
-        stacktrace?: string[],
-        suggestions?: string[]
-      }) => {
-        handler.handleError(new RNOHError({
-          whatHappened: errData.message,
-          howCanItBeFixed: (errData.suggestions ?? []),
-          customStack: (errData.stacktrace ?? []).join("\n"),
-        }))
-      }
-    });
-    return this.unwrapResult(result)
   }
 
   private unwrapResult<TOk = null>(result: Result<TOk>): TOk {
@@ -80,7 +64,7 @@ export class NapiBridge {
     })
   }
 
-  onInit(shouldCleanUpRNInstances: boolean) {
+  onInit(shouldCleanUpRNInstances: boolean, onCppError: (rnohError: RNOHError) => void) {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -89,9 +73,16 @@ export class NapiBridge {
       this.logger.fatal(err)
       throw err
     }
-    return this.unwrapResult<{ isDebugModeEnabled: boolean }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances))
+    return this.unwrapResult<{ isDebugModeEnabled: boolean, envId: number }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
+      handleError: (err: RawRNOHError) => {
+        onCppError(new RNOHError({
+          whatHappened: err.message,
+          howCanItBeFixed: (err.suggestions ?? []),
+          customStack: (err.stacktrace ?? []).join("\n"),
+        }))
+      }
+    }))
   }
-
 
   getNextRNInstanceId(): number {
     return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
@@ -99,17 +90,18 @@ export class NapiBridge {
 
 
   onCreateRNInstance(instanceId: number,
-    turboModuleProvider: TurboModuleProvider,
-    frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
-    mutationsListener: (mutations: Mutation[]) => void,
-    componentCommandsListener: (tag: Tag,
-      commandName: string,
-      args: unknown) => void,
-    onCppMessage: (type: string, payload: any) => void,
-    shouldEnableDebugger: boolean,
-    shouldEnableBackgroundExecutor: boolean,
-    cppFeatureFlags: CppFeatureFlag[],
-    resourceManager: ohosResourceManager.ResourceManager
+                     turboModuleProvider: TurboModuleProvider,
+                     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
+                     mutationsListener: (mutations: Mutation[]) => void,
+                     componentCommandsListener: (tag: Tag,
+                                                 commandName: string,
+                                                 args: unknown) => void,
+                     onCppMessage: (type: string, payload: any) => void,
+                     shouldEnableDebugger: boolean,
+                     shouldEnableBackgroundExecutor: boolean,
+                     cppFeatureFlags: CppFeatureFlag[],
+                     resourceManager: ohosResourceManager.ResourceManager,
+                     arkTSBridgeHandler: ArkTSBridgeHandler
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -122,7 +114,7 @@ export class NapiBridge {
       componentCommandsListener,
       onCppMessage,
       (attributedString: AttributedString, paragraphAttributes: ParagraphAttributes,
-        layoutConstraints: LayoutConstrains) => {
+       layoutConstraints: LayoutConstrains) => {
         try {
           const stopTracing = this.logger.clone("measureParagraph").startTracing()
           const result = measureParagraph(attributedString, paragraphAttributes, layoutConstraints)
@@ -138,6 +130,7 @@ export class NapiBridge {
       cppFeatureFlagStatusByName,
       frameNodeFactoryRef,
       resourceManager,
+      arkTSBridgeHandler
     );
     return this.unwrapResult(result)
   }

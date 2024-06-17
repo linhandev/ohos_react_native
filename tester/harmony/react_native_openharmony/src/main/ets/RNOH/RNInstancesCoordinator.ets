@@ -39,6 +39,10 @@ export interface RNInstancesCoordinatorOptions {
   /** @deprecated: Use `defaultHttpClient` instead (latestRNOHVersion: 0.72.27) */
   httpClientProvider?: HttpClientProvider
   defaultHttpClient?: HttpClient
+  /**
+   * Set to `true` (in each UIAbility), if your app bundle provides multiple UIAbilities that use RNOH.
+   */
+  disableCleaningRNInstances?: boolean,
 }
 
 const RNOH_BANNER = '\n\n\n' +
@@ -59,7 +63,7 @@ export class RNInstancesCoordinator {
   private static isInitialized = false
 
   static create(dependencies: RNInstancesCoordinatorDependencies,
-    options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
+                options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
     if (RNInstancesCoordinator.isInitialized) {
       dependencies.logger.fatal(new RNOHError({
         whatHappened: "RNInstancesCoordinator was already created",
@@ -69,31 +73,27 @@ export class RNInstancesCoordinator {
     RNInstancesCoordinator.isInitialized = true
 
     dependencies.logger.info(RNOH_BANNER)
-    const napiBridge = new NapiBridge(dependencies.logger);
-    const isDebugModeEnabled = napiBridge.onInit(true).isDebugModeEnabled;
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
     const devToolsController = new DevToolsController(dependencies.logger);
+    const napiBridge = new NapiBridge(dependencies.logger);
+    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, (rnohError) => {
+      devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+    });
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
       devToolsController,
       devMenu
     )
-    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(isDebugModeEnabled ? "DEBUG" : "RELEASE")
+    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
     }
-    napiBridge.initializeArkTSBridge({
-      getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
-      handleError: (err) => {
-        devToolsController.setLastError(err)
-        devToolsController.eventEmitter.emit("NEW_ERROR", err)
-      }
-    });
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
       displayMetricsManager,
-      isDebugModeEnabled,
+      envInfo.isDebugModeEnabled,
+      envInfo.envId,
       dependencies.uiAbilityContext,
       devToolsController,
       devMenu,
@@ -116,17 +116,20 @@ export class RNInstancesCoordinator {
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
   private defaultBackPressHandler: () => void
+  private envId: number;
 
   private constructor(napiBridge: NapiBridge,
-    logger: RNOHLogger,
-    displayMetricsManager: DisplayMetricsManager,
-    isDebugModeEnabled: boolean,
-    uiAbilityContext: common.UIAbilityContext,
-    devToolsController: DevToolsController,
-    devMenu: DevMenu,
-    jsPackagerClient: JSPackagerClient,
-    defaultBackPressHandler: () => void,
-    options?: RNInstancesCoordinatorOptions) {
+                      logger: RNOHLogger,
+                      displayMetricsManager: DisplayMetricsManager,
+                      isDebugModeEnabled: boolean,
+                      envId: number,
+                      uiAbilityContext: common.UIAbilityContext,
+                      devToolsController: DevToolsController,
+                      devMenu: DevMenu,
+                      jsPackagerClient: JSPackagerClient,
+                      defaultBackPressHandler: () => void,
+                      options?: RNInstancesCoordinatorOptions) {
+    this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
     this.napiBridge = napiBridge
@@ -146,7 +149,8 @@ export class RNInstancesCoordinator {
       (rnInstance) => RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
       options?.defaultHttpClient,
-      this.uiAbilityContext.resourceManager
+      this.uiAbilityContext.resourceManager,
+      displayMetricsManager,
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,
@@ -183,6 +187,7 @@ export class RNInstancesCoordinator {
   }
 
   private setAppState(appState: AppState) {
+
     this.appState = appState
   }
 

@@ -1,6 +1,5 @@
 #include "ModalHostViewComponentInstance.h"
 
-#include <RNOH/Assert.h>
 #include <RNOH/arkui/NativeNodeApi.h>
 #include <RNOH/arkui/TouchEventDispatcher.h>
 #include <glog/logging.h>
@@ -97,7 +96,7 @@ void ModalHostViewComponentInstance::onPropsChanged(
   if (!m_props || props->animationType != m_props->animationType) {
     if (props->animationType == AnimationType::Slide) {
       m_rootStackNode.resetOpacityTransition();
-      auto screenSize = ArkTSBridge::getInstance()->getDisplayMetrics();
+      auto screenSize = m_deps->displayMetricsManager->getDisplayMetrics();
       updateSlideTransition(screenSize);
     } else if (props->animationType == AnimationType::Fade) {
       m_rootStackNode.setTranslateTransition(0, 0, 0);
@@ -114,7 +113,7 @@ void ModalHostViewComponentInstance::onStateChanged(
   CppComponentInstance::onStateChanged(state);
   if (!m_state) {
     // set screen size the first time the component is initialized
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
+    auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
     updateDisplaySize(displayMetrics, state);
   }
 }
@@ -168,7 +167,7 @@ StackNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
 void ModalHostViewComponentInstance::onMessageReceived(
     ArkTSMessage const& message) {
   if (message.name == "WINDOW_SIZE_CHANGE") {
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
+    auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
     updateDisplaySize(displayMetrics, m_state);
   }
 }

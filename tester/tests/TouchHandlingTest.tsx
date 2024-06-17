@@ -118,7 +118,8 @@ export function TouchHandlingTest() {
                 if (e.nativeEvent.touches.length > 1) {
                   setState(true);
                 }
-              }}></View>
+              }}
+            />
           </View>
         )}
         assert={({expect, state}) => {

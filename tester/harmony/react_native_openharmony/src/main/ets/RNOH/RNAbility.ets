@@ -77,6 +77,7 @@ export abstract class RNAbility extends UIAbility {
         this.defaultBackPressHandler()
       },
     }, {
+      disableCleaningRNInstances: this.onShouldDisableCleaningRNInstances(),
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
         host: "localhost",
         port: 8081
@@ -94,6 +95,7 @@ export abstract class RNAbility extends UIAbility {
   }
 
   onDestroy() {
+    // this method seems to be never called
     this.rnInstancesCoordinator?.onDestroy()
   }
 
@@ -154,5 +156,12 @@ export abstract class RNAbility extends UIAbility {
 
   onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     this.rnInstancesCoordinator?.onNewWant(want, launchParam);
+  }
+
+  /**
+   * Return `true`, if your app bundle provides multiple RNAbilities, for each RNAbility.
+   */
+  onShouldDisableCleaningRNInstances(): boolean {
+    return false;
   }
 }

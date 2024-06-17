@@ -6,6 +6,7 @@ import type { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from './DevToolsController';
 import { HttpClientProvider } from './HttpClientProvider';
 import { HttpClient } from '../HttpClient/ts';
+import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 
 export class RNInstanceRegistry {
@@ -19,6 +20,7 @@ export class RNInstanceRegistry {
     private httpClientProvider: HttpClientProvider,
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
+    private displayMetricsManager: DisplayMetricsManager,
   ) {
   }
 
@@ -42,6 +44,7 @@ export class RNInstanceRegistry {
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest,
       this.resourceManager,
+      this.displayMetricsManager,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,

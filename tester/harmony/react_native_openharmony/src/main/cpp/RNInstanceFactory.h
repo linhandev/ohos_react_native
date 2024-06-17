@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "RNOH/ArkJS.h"
+#include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSTurboModule.h"
@@ -49,6 +50,7 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
+    napi_ref arkTsBridgeHandlerRef,
     napi_ref arkTsTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
@@ -66,15 +68,21 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
+  auto arkTSBridge = std::make_shared<ArkTSBridge>(env, arkTsBridgeHandlerRef);
 
   taskExecutor->setExceptionHandler(
-      [weakExecutor = std::weak_ptr(taskExecutor)](std::exception_ptr e) {
+      [weakExecutor = std::weak_ptr(taskExecutor),
+       weakArkTSBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
         auto executor = weakExecutor.lock();
         if (executor == nullptr) {
           return;
         }
-        executor->runTask(TaskThread::MAIN, [e]() {
-          ArkTSBridge::getInstance()->handleError(e);
+        executor->runTask(TaskThread::MAIN, [e, weakArkTSBridge]() {
+          auto arkTSBridge = weakArkTSBridge.lock();
+          if (arkTSBridge == nullptr) {
+            return;
+          }
+          arkTSBridge->handleError(e);
         });
       });
 
@@ -184,6 +192,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::make_shared<ComponentInstance::Dependencies>();
     componentInstanceDependencies->arkTSChannel = arkTSChannel;
     componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
+    componentInstanceDependencies->displayMetricsManager = arkTSBridge;
     auto customComponentArkUINodeFactory =
         std::make_shared<CustomComponentArkUINodeHandleFactory>(
             env, frameNodeFactoryRef, taskExecutor);
