@@ -35,7 +35,7 @@ void DraggingScrollViewInternalState::onScroll() {
 };
 
 void DraggingScrollViewInternalState::onScrollStop() {
-  m_instance->onEmitOnMomentumScrollEndEvent();
+  m_instance->onEmitOnScrollEndDragEvent();
   m_instance->onChangeInternalState(
       std::make_unique<IdleScrollViewInternalState>(m_instance));
 };
