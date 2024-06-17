@@ -72,9 +72,6 @@ class ComponentInstanceFactory {
     auto rootComponentInstance =
         this->create(tag, componentHandle, "RootView");
     rootComponentInstance->insertChild(arkUIComponentInstance, 0);
-    /* HW Patch start */
-    rootComponentInstance->getLocalRootArkUINode().setPosition({0, 0});
-    /* HW Patch end */
     return rootComponentInstance;
   }
 
