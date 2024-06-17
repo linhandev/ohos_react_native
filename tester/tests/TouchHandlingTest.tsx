@@ -102,6 +102,29 @@ export function TouchHandlingTest() {
           expect(state).to.be.true;
         }}
       />
+      <TestCase.Manual
+        itShould="pass after a multi-touch event"
+        initialState={false}
+        arrange={({setState}) => (
+          <View style={{alignItems: 'center', backgroundColor: 'white'}}>
+            <View
+              style={{
+                alignSelf: 'center',
+                width: 150,
+                height: 150,
+                backgroundColor: 'red',
+              }}
+              onTouchStart={e => {
+                if (e.nativeEvent.touches.length > 1) {
+                  setState(true);
+                }
+              }}></View>
+          </View>
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.be.true;
+        }}
+      />
       <TestCase.Example modal itShould="report transformed touch coordinates">
         <TouchCoordinatesTest
           transform={[
