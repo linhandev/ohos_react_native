@@ -15,7 +15,11 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
   m_taskExecutor->runTask(
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
-       componentInstanceRegistry = std::move(m_componentInstanceRegistry)] {});
+       componentInstanceRegistry = std::move(m_componentInstanceRegistry),
+       // NOTE: `XComponentSurface` is not copyable, but `std::function` is, so
+       // we need to move the map into a shared_ptr first in order to capture it
+       surfaces = std::make_shared<decltype(m_surfaceById)>(
+           std::move(m_surfaceById))] {});
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
 

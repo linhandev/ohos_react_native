@@ -101,8 +101,6 @@ XComponentSurface::XComponentSurface(
     std::string const& appKey)
     : m_surfaceId(surfaceId),
       m_scheduler(std::move(scheduler)),
-      m_nativeXComponent(nullptr),
-      m_rootView(nullptr),
       m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
       m_surfaceHandler(SurfaceHandler(appKey, surfaceId)) {
   m_scheduler->registerSurface(m_surfaceHandler);
@@ -127,11 +125,13 @@ XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
       m_componentInstanceRegistry(std::move(other.m_componentInstanceRegistry)),
       m_surfaceHandler(std::move(other.m_surfaceHandler)),
       m_touchEventHandler(std::move(other.m_touchEventHandler)) {
+  m_threadGuard.assertThread();
   other.m_nativeXComponent = nullptr;
 }
 
 XComponentSurface& XComponentSurface::operator=(
     XComponentSurface&& other) noexcept {
+  m_threadGuard.assertThread();
   std::swap(m_surfaceId, other.m_surfaceId);
   std::swap(m_scheduler, other.m_scheduler);
   std::swap(m_nativeXComponent, other.m_nativeXComponent);
@@ -158,6 +158,7 @@ XComponentSurface::~XComponentSurface() noexcept {
 
 void XComponentSurface::attachNativeXComponent(
     OH_NativeXComponent* nativeXComponent) {
+  m_threadGuard.assertThread();
   if (nativeXComponent == m_nativeXComponent) {
     return;
   }
@@ -173,6 +174,7 @@ void XComponentSurface::updateConstraints(
     float viewportOffsetY,
     float pixelRatio,
     bool isRTL) {
+  m_threadGuard.assertThread();
   auto layoutConstraints = m_surfaceHandler.getLayoutConstraints();
   layoutConstraints.layoutDirection = isRTL
       ? facebook::react::LayoutDirection::RightToLeft
@@ -195,6 +197,7 @@ void XComponentSurface::start(
     folly::dynamic const& initialProps,
     std::shared_ptr<facebook::react::LayoutAnimationDriver> const&
         animationDriver) {
+  m_threadGuard.assertThread();
   this->setProps(initialProps);
   this->updateConstraints(
       width, height, viewportOffsetX, viewportOffsetY, pixelRatio, isRTL);
@@ -204,15 +207,18 @@ void XComponentSurface::start(
 }
 
 void XComponentSurface::setProps(folly::dynamic const& props) {
+  m_threadGuard.assertThread();
   m_surfaceHandler.setProps(props);
 }
 
 void XComponentSurface::stop() {
+  m_threadGuard.assertThread();
   m_surfaceHandler.stop();
 }
 
 void XComponentSurface::setDisplayMode(
     facebook::react::DisplayMode displayMode) {
+  m_threadGuard.assertThread();
   m_surfaceHandler.setDisplayMode(displayMode);
 }
 
