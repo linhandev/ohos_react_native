@@ -137,6 +137,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
         case facebook::react::ShadowViewMutation::Create: {
           auto newChild = mutation.newChildShadowView;
           if (m_arkTsComponentNames.count(newChild.componentName)) {
+            mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
             validCreateMutations.push_back(mutation);
           }
           break;
@@ -144,6 +145,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
         case facebook::react::ShadowViewMutation::Insert: {
           auto newChild = mutation.newChildShadowView;
           if (m_arkTsComponentNames.count(newChild.componentName)) {
+            mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
             validInsertMutations.push_back(mutation);
           }
           break;
@@ -151,6 +153,7 @@ facebook::react::ShadowViewMutationList getValidMutations(
         case facebook::react::ShadowViewMutation::Update: {
           auto newChild = mutation.newChildShadowView;
           if (m_arkTsComponentNames.count(newChild.componentName)) {
+            mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
             validOtherMutations.push_back(mutation);
           }
           break;
