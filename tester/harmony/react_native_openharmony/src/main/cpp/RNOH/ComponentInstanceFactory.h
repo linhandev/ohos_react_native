@@ -2,14 +2,15 @@
  * Used only in C-API based Architecture.
  */
 #pragma once
+#include <glog/logging.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include <memory>
 #include <vector>
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/CustomComponentArkUINodeHandleFactory.h"
 #include "RNOH/FallbackComponentInstance.h"
+#include "RNOH/ThreadGuard.h"
 #include "RNOH/arkui/StackNode.h"
-#include "glog/logging.h"
 
 namespace rnoh {
 class ComponentInstanceFactoryDelegate {
@@ -21,13 +22,11 @@ class ComponentInstanceFactoryDelegate {
   virtual ComponentInstance::Shared create(ComponentInstance::Context ctx) = 0;
 };
 
+/**
+ * @thread: MAIN
+ * Used by the ComponentRegistry to create ComponentInstances.
+ */
 class ComponentInstanceFactory {
- private:
-  std::vector<ComponentInstanceFactoryDelegate::Shared> m_delegates;
-  ComponentInstance::Dependencies::Shared m_dependencies;
-  CustomComponentArkUINodeHandleFactory::Shared
-      m_customComponentArkUINodeHandleFactory;
-
  public:
   using Shared = std::shared_ptr<ComponentInstanceFactory>;
 
@@ -45,6 +44,7 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
+    m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,
         .componentHandle = componentHandle,
@@ -69,6 +69,7 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
+    m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,
         .componentHandle = componentHandle,
@@ -82,5 +83,12 @@ class ComponentInstanceFactory {
     }
     return nullptr;
   }
+
+ private:
+  std::vector<ComponentInstanceFactoryDelegate::Shared> m_delegates;
+  ComponentInstance::Dependencies::Shared m_dependencies;
+  CustomComponentArkUINodeHandleFactory::Shared
+      m_customComponentArkUINodeHandleFactory;
+  ThreadGuard m_threadGuard{};
 };
 } // namespace rnoh

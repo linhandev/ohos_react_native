@@ -18,7 +18,7 @@ class ArkTSBridge final : public DisplayMetricsManager {
   ArkTSBridge(ArkTSBridge const&) = delete;
   ArkTSBridge& operator=(ArkTSBridge const&) = delete;
 
-  ~ArkTSBridge();
+  ~ArkTSBridge() noexcept;
 
   void handleError(std::exception_ptr ex);
   DisplayMetrics getDisplayMetrics() override;

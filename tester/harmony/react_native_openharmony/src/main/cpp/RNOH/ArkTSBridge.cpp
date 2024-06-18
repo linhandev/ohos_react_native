@@ -41,7 +41,8 @@ ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
   LOG(INFO) << "ArkTSBridge::ArkTSBridge";
 }
 
-ArkTSBridge::~ArkTSBridge() {
+ArkTSBridge::~ArkTSBridge() noexcept {
+  LOG(INFO) << "ArkTSBridge::~ArkTSBridge";
   m_threadGuard.assertThread();
   m_arkJs.deleteReference(m_arkTSBridgeRef);
 }
