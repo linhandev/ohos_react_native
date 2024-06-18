@@ -369,6 +369,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   constructor(
+    private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
@@ -472,6 +473,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
     this.napiBridge.onCreateRNInstance(
+      this.envId,
       this.id,
       this.turboModuleProvider,
       this.frameNodeFactoryRef,
@@ -501,13 +503,6 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
       this.resourceManager,
-      {
-        getDisplayMetrics: () => this.displayMetricsManager.getDisplayMetrics(),
-        handleError: (err) => {
-          this.devToolsController.setLastError(err)
-          this.devToolsController.eventEmitter.emit("NEW_ERROR", err)
-        }
-      },
     )
     stopTracing()
   }

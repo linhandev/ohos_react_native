@@ -50,7 +50,7 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
-    napi_ref arkTsBridgeHandlerRef,
+    ArkTSBridge::Shared arkTSBridge,
     napi_ref arkTsTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
@@ -68,21 +68,20 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
-  auto arkTSBridge = std::make_shared<ArkTSBridge>(env, arkTsBridgeHandlerRef);
 
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
-       weakArkTSBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
+       weakArkTsBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
         auto executor = weakExecutor.lock();
         if (executor == nullptr) {
           return;
         }
-        executor->runTask(TaskThread::MAIN, [e, weakArkTSBridge]() {
-          auto arkTSBridge = weakArkTSBridge.lock();
-          if (arkTSBridge == nullptr) {
+        executor->runTask(TaskThread::MAIN, [e, weakArkTsBridge]() {
+          auto arkTsBridge = weakArkTsBridge.lock();
+          if (arkTsBridge == nullptr) {
             return;
           }
-          arkTSBridge->handleError(e);
+          arkTsBridge->handleError(e);
         });
       });
 

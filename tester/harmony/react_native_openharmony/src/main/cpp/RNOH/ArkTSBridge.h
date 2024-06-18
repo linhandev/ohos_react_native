@@ -6,10 +6,16 @@
 
 namespace rnoh {
 
+class ArkTSErrorHandler {
+ public:
+  virtual void handleError(std::exception_ptr ex) = 0;
+};
+
 /**
  * @thread: MAIN
  */
-class ArkTSBridge final : public DisplayMetricsManager {
+class ArkTSBridge final : public DisplayMetricsManager,
+                          public ArkTSErrorHandler {
  public:
   using Shared = std::shared_ptr<ArkTSBridge>;
 
@@ -20,7 +26,7 @@ class ArkTSBridge final : public DisplayMetricsManager {
 
   ~ArkTSBridge() noexcept;
 
-  void handleError(std::exception_ptr ex);
+  void handleError(std::exception_ptr ex) override;
   DisplayMetrics getDisplayMetrics() override;
 
  protected:

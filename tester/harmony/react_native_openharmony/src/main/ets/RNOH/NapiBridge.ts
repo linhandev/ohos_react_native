@@ -64,7 +64,7 @@ export class NapiBridge {
     })
   }
 
-  onInit(shouldCleanUpRNInstances: boolean, onCppError: (rnohError: RNOHError) => void) {
+  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -73,15 +73,19 @@ export class NapiBridge {
       this.logger.fatal(err)
       throw err
     }
-    return this.unwrapResult<{ isDebugModeEnabled: boolean, envId: number }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
+    return this.unwrapResult<{
+      isDebugModeEnabled: boolean,
+      envId: number
+    }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
       handleError: (err: RawRNOHError) => {
-        onCppError(new RNOHError({
+        arkTSBridgeHandler.handleError(new RNOHError({
           whatHappened: err.message,
           howCanItBeFixed: (err.suggestions ?? []),
           customStack: (err.stacktrace ?? []).join("\n"),
         }))
-      }
-    }))
+      },
+      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics()
+    } satisfies ArkTSBridgeHandler))
   }
 
   getNextRNInstanceId(): number {
@@ -89,19 +93,20 @@ export class NapiBridge {
   }
 
 
-  onCreateRNInstance(instanceId: number,
-                     turboModuleProvider: TurboModuleProvider,
-                     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
-                     mutationsListener: (mutations: Mutation[]) => void,
-                     componentCommandsListener: (tag: Tag,
-                                                 commandName: string,
-                                                 args: unknown) => void,
-                     onCppMessage: (type: string, payload: any) => void,
-                     shouldEnableDebugger: boolean,
-                     shouldEnableBackgroundExecutor: boolean,
-                     cppFeatureFlags: CppFeatureFlag[],
-                     resourceManager: ohosResourceManager.ResourceManager,
-                     arkTSBridgeHandler: ArkTSBridgeHandler
+  onCreateRNInstance(
+    envId: number,
+    instanceId: number,
+    turboModuleProvider: TurboModuleProvider,
+    frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
+    mutationsListener: (mutations: Mutation[]) => void,
+    componentCommandsListener: (tag: Tag,
+                                commandName: string,
+                                args: unknown) => void,
+    onCppMessage: (type: string, payload: any) => void,
+    shouldEnableDebugger: boolean,
+    shouldEnableBackgroundExecutor: boolean,
+    cppFeatureFlags: CppFeatureFlag[],
+    resourceManager: ohosResourceManager.ResourceManager,
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -130,7 +135,7 @@ export class NapiBridge {
       cppFeatureFlagStatusByName,
       frameNodeFactoryRef,
       resourceManager,
-      arkTSBridgeHandler
+      envId
     );
     return this.unwrapResult(result)
   }

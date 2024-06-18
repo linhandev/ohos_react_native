@@ -13,6 +13,7 @@ export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
 
   constructor(
+    private envId: number,
     private logger: RNOHLogger,
     private napiBridge: NapiBridge,
     private devToolsController: DevToolsController,
@@ -30,6 +31,7 @@ export class RNInstanceRegistry {
       this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated");
     }
     const instance = new RNInstanceImpl(
+      this.envId,
       id,
       this.logger,
       this.napiBridge,

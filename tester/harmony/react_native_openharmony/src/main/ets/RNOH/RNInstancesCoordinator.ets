@@ -75,10 +75,12 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, (rnohError) => {
-      devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-    });
     const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, {
+      handleError: (rnohError) => {
+        devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+      }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
+    });
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
@@ -143,6 +145,7 @@ export class RNInstancesCoordinator {
     this.defaultBackPressHandler = defaultBackPressHandler;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     this.rnInstanceRegistry = new RNInstanceRegistry(
+      this.envId,
       this.rawLogger,
       napiBridge,
       this.devToolsController,

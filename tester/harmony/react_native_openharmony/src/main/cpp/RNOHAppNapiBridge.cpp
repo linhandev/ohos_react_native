@@ -11,7 +11,6 @@
 #include "RNInstanceFactory.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkTSBridge.h"
-#include "RNOH/ArkTSErrorHandler.h"
 #include "RNOH/Inspector.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
@@ -26,7 +25,7 @@
 
 std::mutex rnInstanceByIdMutex;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>> rnInstanceById;
-std::unordered_map<int, ArkTSErrorHandler::Shared> arkTsErrorHandlerByEnvId;
+std::unordered_map<int, ArkTSBridge::Shared> arkTsBridgeByEnvId;
 auto uiTicker = std::make_shared<UITicker>();
 static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
@@ -69,7 +68,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
        * this event handler could be removed.
        */
       ArkUINodeRegistry::initialize([](std::exception_ptr ex) {
-        if (arkTsErrorHandlerByEnvId.size() > 1) {
+        if (arkTsBridgeByEnvId.size() > 1) {
           try {
             std::rethrow_exception(ex);
           } catch (const RNOHError& e) {
@@ -87,8 +86,8 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
             LOG(ERROR) << e.what();
           }
         } else {
-          for (auto& envIdAndArkTsErrorHandler : arkTsErrorHandlerByEnvId) {
-            envIdAndArkTsErrorHandler.second->handleError(ex);
+          for (auto& envIdAndArkTsBridge : arkTsBridgeByEnvId) {
+            envIdAndArkTsBridge.second->handleError(ex);
           }
         }
       });
@@ -101,11 +100,6 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     nextEnvId++;
-    auto arkTsErrorHandlerRef = arkJs.createReference(args[1]);
-    arkTsErrorHandlerByEnvId.emplace(
-        nextEnvId,
-        std::make_shared<ArkTSErrorHandler>(
-            env, std::move(arkTsErrorHandlerRef)));
     auto shouldClearRNInstances = arkJs.getBoolean(args[0]);
     if (shouldClearRNInstances) {
       /**
@@ -121,11 +115,16 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
         }
         instances.clear();
       });
+      arkTsBridgeByEnvId.clear();
     }
     auto isDebugModeEnabled = false;
 #ifdef REACT_NATIVE_DEBUG
     isDebugModeEnabled = true;
 #endif
+    auto arkTsBridgeHandler = arkJs.createReference(args[1]);
+    arkTsBridgeByEnvId.emplace(
+        nextEnvId,
+        std::make_shared<ArkTSBridge>(env, std::move(arkTsBridgeHandler)));
     return arkJs.createObjectBuilder()
         .addProperty("isDebugModeEnabled", isDebugModeEnabled)
         .addProperty("envId", nextEnvId)
@@ -168,11 +167,11 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     }
     auto frameNodeFactoryRef = arkJs.createReference(args[9]);
     auto jsResourceManager = args[10];
-    auto arkTsBridgeRef = arkJs.createReference(args[11]);
+    int envId = arkJs.getDouble(args[11]);
     auto rnInstance = createRNInstance(
         instanceId,
         env,
-        arkTsBridgeRef,
+        arkTsBridgeByEnvId[envId],
         arkTsTurboModuleProviderRef,
         frameNodeFactoryRef,
         [env, instanceId, mutationsListenerRef](
