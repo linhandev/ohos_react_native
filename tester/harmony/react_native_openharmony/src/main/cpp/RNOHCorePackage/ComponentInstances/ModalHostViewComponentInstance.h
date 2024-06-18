@@ -14,6 +14,7 @@ class ModalHostViewComponentInstance
       public ArkUIDialogDelegate,
       public ArkTSMessageHub::Observer {
  private:
+  enum FoldStatus : uint32_t { FOLD_STATUS_UNKNOWN, FOLD_STATUS_EXPANDED, FOLD_STATUS_FOLDED, FOLD_STATUS_HALF_FOLDED };
   using ScreenOrientation = facebook::react::ModalHostViewEventEmitter::
       OnOrientationChangeOrientation;
   CustomNode m_virtualNode;
@@ -27,7 +28,10 @@ class ModalHostViewComponentInstance
   void updateDisplaySize(
       DisplayMetrics const& displayMetrics,
       SharedConcreteState const& state);
-
+    
+    void resetModalPosition(
+      DisplayMetrics const& displayMetrics,
+      SharedConcreteState const& state);
   void updateSlideTransition(DisplayMetrics const& displayMetrics);
 
  public:
