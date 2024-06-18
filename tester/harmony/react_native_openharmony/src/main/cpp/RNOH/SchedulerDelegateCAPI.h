@@ -126,67 +126,30 @@ facebook::react::ShadowViewMutationList getValidMutations(
     if (m_arkTsComponentNames.empty()) {
       return {};
     }
-
-    facebook::react::ShadowViewMutationList validCreateMutations;
-    facebook::react::ShadowViewMutationList validInsertMutations;
-    facebook::react::ShadowViewMutationList validOtherMutations;
+        
     facebook::react::ShadowViewMutationList validMutations;
 
     for (auto mutation : mutations) {
       switch (mutation.type) {
-        case facebook::react::ShadowViewMutation::Create: {
-          auto newChild = mutation.newChildShadowView;
-          if (m_arkTsComponentNames.count(newChild.componentName)) {
-            mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
-            validCreateMutations.push_back(mutation);
-          }
-          break;
-        }
-        case facebook::react::ShadowViewMutation::Insert: {
-          auto newChild = mutation.newChildShadowView;
-          if (m_arkTsComponentNames.count(newChild.componentName)) {
-            mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
-            validInsertMutations.push_back(mutation);
-          }
-          break;
-        }
+        case facebook::react::ShadowViewMutation::Create: 
         case facebook::react::ShadowViewMutation::Update: {
           auto newChild = mutation.newChildShadowView;
           if (m_arkTsComponentNames.count(newChild.componentName)) {
             mutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
-            validOtherMutations.push_back(mutation);
-          }
-          break;
-        }
-        case facebook::react::ShadowViewMutation::Remove: {
-          auto oldChild = mutation.oldChildShadowView;
-          if (m_arkTsComponentNames.count(oldChild.componentName)) {
-            validOtherMutations.push_back(mutation);
+            validMutations.push_back(mutation);
           }
           break;
         }
         case facebook::react::ShadowViewMutation::Delete: {
-          auto oldChild = mutation.oldChildShadowView;
+          auto oldChild = mutation.oldChildShadowView; 
           if (m_arkTsComponentNames.count(oldChild.componentName)) {
-            validOtherMutations.push_back(mutation);
+            validMutations.push_back(mutation);
           }
           break;
         }
       }
     }
 
-    validMutations.insert(
-        validMutations.end(),
-        validCreateMutations.begin(),
-        validCreateMutations.end());
-    validMutations.insert(
-        validMutations.end(),
-        validInsertMutations.begin(),
-        validInsertMutations.end());
-    validMutations.insert(
-        validMutations.end(),
-        validOtherMutations.begin(),
-        validOtherMutations.end());
     return validMutations;
   }
 
