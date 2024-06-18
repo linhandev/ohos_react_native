@@ -56,8 +56,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
       LOG(ERROR) << "Mutation " << getMutationNameFromType(mutation.type)
                  << " failed: " << e.what();
     }
-    this->finalizeMutationUpdates(mutations);
   }
+  this->finalizeMutationUpdates(mutations);
 }
 
 facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(
