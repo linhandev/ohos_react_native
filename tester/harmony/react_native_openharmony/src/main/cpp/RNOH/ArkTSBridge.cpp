@@ -37,14 +37,14 @@ auto displayMetricsFromNapiValue(napi_env env, napi_value value)
 }
 
 ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
-    : m_arkJs(ArkJS(env)), m_arkTSBridgeRef(napiBridgeRef) {
+    : m_arkJs(ArkJS(env)), m_arkTsBridgeRef(napiBridgeRef) {
   LOG(INFO) << "ArkTSBridge::ArkTSBridge";
 }
 
 ArkTSBridge::~ArkTSBridge() noexcept {
   LOG(INFO) << "ArkTSBridge::~ArkTSBridge";
   m_threadGuard.assertThread();
-  m_arkJs.deleteReference(m_arkTSBridgeRef);
+  m_arkJs.deleteReference(m_arkTsBridgeRef);
 }
 
 void ArkTSBridge::handleError(std::exception_ptr ex) {
@@ -53,20 +53,20 @@ void ArkTSBridge::handleError(std::exception_ptr ex) {
     LOG(ERROR) << boost::diagnostic_information(ex);
     std::rethrow_exception(ex);
   } catch (const RNOHError& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
+    m_arkJs.getObject(m_arkTsBridgeRef)
         .call("handleError", {m_arkJs.createFromRNOHError(e)});
   } catch (const facebook::jsi::JSError& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
+    m_arkJs.getObject(m_arkTsBridgeRef)
         .call("handleError", {m_arkJs.createFromJSError(e)});
   } catch (const std::exception& e) {
-    m_arkJs.getObject(m_arkTSBridgeRef)
+    m_arkJs.getObject(m_arkTsBridgeRef)
         .call("handleError", {m_arkJs.createFromException(e)});
   }
 }
 
 auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
   m_threadGuard.assertThread();
-  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTsBridgeRef);
   auto methodImpl =
       m_arkJs.getObjectProperty(napiBridgeObject, "getDisplayMetrics");
   auto napiResult = m_arkJs.call<0>(methodImpl, {});

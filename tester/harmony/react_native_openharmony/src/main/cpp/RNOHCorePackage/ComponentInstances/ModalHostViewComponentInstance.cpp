@@ -79,7 +79,7 @@ void ModalHostViewComponentInstance::updateSlideTransition(
 
 ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
-      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub),
+      ArkTSMessageHub::Observer(m_deps->arkTsMessageHub),
       m_touchHandler(std::make_unique<ModalHostTouchHandler>(this)) {
   m_virtualNode.setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);

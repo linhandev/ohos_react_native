@@ -211,7 +211,7 @@ export function TextStyleTest() {
       </TestCase.Example>
       <TestCase.Example
         itShould="show lined-through text with text decoration color or font color"
-        skip={{android: false, harmony: {arkTS: true, cAPI: false}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: false}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/271
       >
         <View style={styles.container}>

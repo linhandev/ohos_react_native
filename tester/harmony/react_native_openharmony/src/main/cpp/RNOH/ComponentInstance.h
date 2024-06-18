@@ -40,8 +40,16 @@ class ComponentInstance
   struct Dependencies {
     using Shared = std::shared_ptr<const Dependencies>;
 
+    /**
+     * @deprecated: use arkTsChannel instead (latestRNOHVersion: 0.72.28)
+     */
     ArkTSChannel::Shared arkTSChannel;
+    ArkTSChannel::Shared arkTsChannel;
+    /**
+     * @deprecated: use arkTsMessageHub instead (latestRNOHVersion: 0.72.28)
+     */
     ArkTSMessageHub::Shared arkTSMessageHub;
+    ArkTSMessageHub::Shared arkTsMessageHub;
     RNInstance::Weak rnInstance;
     DisplayMetricsManager::Shared displayMetricsManager;
   };

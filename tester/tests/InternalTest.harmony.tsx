@@ -19,7 +19,7 @@ export function InternalTest() {
       <TestCase.Example
         /** A = RN, B = react-native-gesture-handler */
         itShould="block scroll if it's blocked by A, then blocked B, and then unblocked by A"
-        skip={{android: true, harmony: {arkTS: true, cAPI: false}}}>
+        skip={{android: true, harmony: {arkTs: true, cAPI: false}}}>
         <BlockNativeResponderExample />
       </TestCase.Example>
     </TestSuite>

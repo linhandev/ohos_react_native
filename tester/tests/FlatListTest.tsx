@@ -112,7 +112,7 @@ export const FlatListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Example
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         itShould="scroll to the third item at the middle (scrollToIndex)">
         <ScrollToIndexTestCase />
       </TestCase.Example>
@@ -126,7 +126,7 @@ export const FlatListTest = () => {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: true, harmony: {arkTS: false, cAPI: false}}}
+        skip={{android: true, harmony: {arkTs: false, cAPI: false}}}
         itShould="support sticky headers (fails on Android with enabled Fabric)">
         <View style={{height: 100, backgroundColor: '#fff'}}>
           <FlatList
@@ -199,7 +199,7 @@ export const FlatListTest = () => {
         modal
         skip={{
           android: 'fails on Android with enabled Fabric',
-          harmony: {arkTS: false, cAPI: false},
+          harmony: {arkTs: false, cAPI: false},
         }}
         itShould="stick first item to the bottom (invertStickyHeaders)">
         <View style={{height: 100, backgroundColor: '#fff'}}>

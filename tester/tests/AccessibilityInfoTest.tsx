@@ -7,7 +7,7 @@ export function AccessibilityInfoTest() {
   return (
     <TestSuite name="AccessibilityInfo">
       <TestCase.Example
-        skip={{android: true, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: true, harmony: {arkTs: true, cAPI: true}}}
         itShould="display red background if Screen Reader is enabled">
         <AccessibilityInfoScreenReaderStatus />
       </TestCase.Example>

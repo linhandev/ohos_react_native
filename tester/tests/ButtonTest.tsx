@@ -17,7 +17,7 @@ export const ButtonTest = () => {
         skip={{
           android: false,
           harmony: {
-            arkTS: "prop doesn't exist on native side",
+            arkTs: "prop doesn't exist on native side",
             cAPI: "prop doesn't exist on native side",
           },
         }} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/476
@@ -28,7 +28,7 @@ export const ButtonTest = () => {
         <ButtonAccessibilityLabel />
       </TestCase.Example>
       <TestCase.Example
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         modal
         itShould="allow user to move with keyboard's arrows keys between buttons">
         <ButtonNextFocus />

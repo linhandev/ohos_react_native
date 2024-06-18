@@ -34,9 +34,9 @@ class RNInstanceCAPI : public RNInstanceInternal {
       UITicker::Shared uiTicker,
       ShadowViewRegistry::Shared shadowViewRegistry,
       MountingManager::Shared mountingManager,
-      std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
-      ArkTSChannel::Shared arkTSChannel,
-      ArkTSMessageHub::Shared arkTSMessageHub,
+      std::vector<ArkTSMessageHandler::Shared> arkTsMessageHandlers,
+      ArkTSChannel::Shared arkTsChannel,
+      ArkTSMessageHub::Shared arkTsMessageHub,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
       UniqueNativeResourceManager nativeResourceManager,
@@ -53,12 +53,12 @@ class RNInstanceCAPI : public RNInstanceInternal {
             std::move(globalJSIBinders),
             std::move(uiTicker),
             std::move(shadowViewRegistry),
-            std::move(arkTSChannel),
+            std::move(arkTsChannel),
             std::move(mountingManager),
-            std::move(arkTSMessageHandlers),
+            std::move(arkTsMessageHandlers),
             shouldEnableDebugger,
             shouldEnableBackgroundExecutor),
-        m_arkTSMessageHub(std::move(arkTSMessageHub)),
+        m_arkTsMessageHub(std::move(arkTsMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {}
@@ -120,7 +120,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   UniqueNativeResourceManager m_nativeResourceManager;
-  ArkTSMessageHub::Shared m_arkTSMessageHub;
+  ArkTSMessageHub::Shared m_arkTsMessageHub;
 };
 
 } // namespace rnoh

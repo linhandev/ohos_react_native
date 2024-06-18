@@ -33,7 +33,7 @@ export function KeyboardTest() {
       </TestCase.Example>
       <TestCase.Manual
         modal
-        skip={{android: true, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: true, harmony: {arkTs: true, cAPI: true}}}
         initialState={{
           keyboardDidHide: false,
           keyboardDidShow: true,

@@ -32,7 +32,7 @@ export const MiscPropsTest = () => {
         }}
       />
       <TestCase.Logical
-        skip={{android: true, harmony: {arkTS: false, cAPI: false}}}
+        skip={{android: true, harmony: {arkTs: false, cAPI: false}}}
         itShould="represent a color as a number"
         fn={({expect}) => {
           expect(processColor('red')).to.be.eq(0xffff0000);

@@ -43,9 +43,9 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   } else {
     auto result = this->delegateCreatingTurboModule(ctx, name);
     if (result != nullptr) {
-      auto arkTSTurboModule =
+      auto arkTsTurboModule =
           std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
-      if (arkTSTurboModule != nullptr &&
+      if (arkTsTurboModule != nullptr &&
           ctx.arkTsTurboModuleInstanceRef == nullptr) {
         throw FatalRNOHError(
             std::move(std::string("Couldn't find turbo module '")

@@ -199,7 +199,7 @@ function GeneratedCustomComponentTest() {
         >
           skip={{
             android: true,
-            harmony: {arkTS: 'C-API only test', cAPI: false},
+            harmony: {arkTs: 'C-API only test', cAPI: false},
           }}
           itShould="receive props and emit them back via event"
           initialState={undefined}
@@ -261,7 +261,7 @@ function GeneratedCustomComponentTest() {
         >
           skip={{
             android: true,
-            harmony: {arkTS: 'C-API only test', cAPI: false},
+            harmony: {arkTs: 'C-API only test', cAPI: false},
           }}
           itShould="receive command args and emit them back via event"
           initialState={undefined}

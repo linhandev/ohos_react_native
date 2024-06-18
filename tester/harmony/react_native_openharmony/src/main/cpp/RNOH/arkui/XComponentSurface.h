@@ -23,7 +23,7 @@ class XComponentSurface {
       std::shared_ptr<facebook::react::Scheduler> scheduler,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared const& componentInstanceFactory,
-      ArkTSMessageHub::Shared arkTSMessageHub,
+      ArkTSMessageHub::Shared arkTsMessageHub,
       facebook::react::SurfaceId surfaceId,
       int rnInstanceId,
       std::string const& appKey);

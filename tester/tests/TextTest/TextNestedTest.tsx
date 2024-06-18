@@ -207,7 +207,7 @@ export function TextNestedTest() {
       </TestCase.Example>
       <TestCase.Example
         skip={{
-          harmony: {arkTS: "justify isn't supported", cAPI: false},
+          harmony: {arkTs: "justify isn't supported", cAPI: false},
           android: false,
         }}
         itShould="show nested view with different horizontal alignments">

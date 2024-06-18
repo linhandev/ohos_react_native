@@ -25,12 +25,12 @@ export function AppStateTest() {
         <AppStateHistoryView />
       </TestCase.Example>
       <TestCase.Example
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         itShould="show focus history">
         <FocusHistoryView />
       </TestCase.Example>
       <TestCase.Manual
-        skip={{android: false, harmony: {arkTS: false, cAPI: false}}}
+        skip={{android: false, harmony: {arkTs: false, cAPI: false}}}
         itShould="throw memory warning event after adding too much items"
         initialState={{
           didEmitMemoryEvent: false,

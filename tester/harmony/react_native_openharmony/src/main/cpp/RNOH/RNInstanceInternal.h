@@ -23,9 +23,9 @@ class RNInstanceInternal
       GlobalJSIBinders globalJSIBinders,
       UITicker::Shared uiTicker,
       ShadowViewRegistry::Shared shadowViewRegistry,
-      ArkTSChannel::Shared arkTSChannel,
+      ArkTSChannel::Shared arkTsChannel,
       MountingManager::Shared mountingManager,
-      std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
+      std::vector<ArkTSMessageHandler::Shared> arkTsMessageHandlers,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : m_id(id),
@@ -42,8 +42,8 @@ class RNInstanceInternal
         m_uiTicker(std::move(uiTicker)),
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
-        m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
-        m_arkTSChannel(std::move(arkTSChannel)) {
+        m_arkTsMessageHandlers(std::move(arkTsMessageHandlers)),
+        m_arkTsChannel(std::move(arkTsChannel)) {
     m_unsubscribeUITickListener = m_uiTicker->subscribe(m_id, [this]() {
       m_taskExecutor->runTask(TaskThread::MAIN, [this]() { onUITick(); });
     });
@@ -145,7 +145,7 @@ class RNInstanceInternal
   std::shared_ptr<MessageQueueThread> m_jsQueue = nullptr;
   bool m_shouldEnableDebugger;
   bool m_shouldEnableBackgroundExecutor;
-  std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
-  ArkTSChannel::Shared m_arkTSChannel;
+  std::vector<ArkTSMessageHandler::Shared> m_arkTsMessageHandlers;
+  ArkTSChannel::Shared m_arkTsChannel;
 };
 } // namespace rnoh

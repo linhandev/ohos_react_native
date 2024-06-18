@@ -315,7 +315,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         itShould="render square with elevation"
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/238
       >
         <View style={{width: '100%', height: 100}}>
@@ -334,7 +334,7 @@ export function ViewTest() {
         skip={{
           android: false,
           harmony: {
-            arkTS: true,
+            arkTs: true,
             cAPI: true,
           },
         }}
@@ -669,7 +669,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         itShould="render a view with role"
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/603
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/603
       >
         <View role="alert">
           <Text>Alert</Text>
@@ -725,7 +725,7 @@ export function ViewTest() {
         modal
         itShould='call the "escape" gesture handler'
         initialState={false}
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/602
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/602
         arrange={({setState}) => (
           <View
             accessible={true}
@@ -765,7 +765,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
         itShould="render a view with aria-valuemax accessibility prop">
         <View
           accessible={true}
@@ -776,7 +776,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
         itShould="render a view with aria-valuemin accessibility prop">
         <View
           accessible={true}
@@ -787,7 +787,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
         itShould="render a view with aria-valuenow accessibility prop">
         <View
           accessible={true}
@@ -798,7 +798,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
         itShould="render a view with aria-valuetext accessibility prop">
         <View
           accessible={true}
@@ -809,7 +809,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/599
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/599
         itShould="render a view with aria-selected accessibility prop">
         <ViewAccessibilityAriaSelected />
       </TestCase.Example>
@@ -897,7 +897,7 @@ export function ViewTest() {
         />
       </TestCase.Example>
       <TestCase.Example
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         modal
         itShould="allow user to move with keyboard's arrows keys between blue squares">
         <ViewNextFocus />

@@ -14,7 +14,7 @@ export function MomentumCallbacksTest() {
       <TestCase.Manual<string[]>
         skip={{
           android: "skipped because on Android ScrollView doesn't bounce",
-          harmony: {arkTS: true, cAPI: false},
+          harmony: {arkTs: true, cAPI: false},
         }}
         itShould="execute callbacks in the identical order as iOS during a bounce"
         modal

@@ -58,7 +58,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}
@@ -80,7 +80,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}
@@ -92,7 +92,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}
@@ -104,7 +104,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}
@@ -116,7 +116,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}
@@ -128,7 +128,7 @@ export const RefreshControlTest = () => {
         skip={{
           harmony: {
             cAPI: true,
-            arkTS: false,
+            arkTs: false,
           },
           android: false,
         }}

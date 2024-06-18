@@ -50,7 +50,7 @@ TurboModule::Shared RNInstanceInternal::getTurboModule(
 void RNInstanceInternal::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
-  m_arkTSChannel->postMessage(name, payload);
+  m_arkTsChannel->postMessage(name, payload);
 }
 
 void RNInstanceInternal::start() {
@@ -249,8 +249,8 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
-  for (auto const& arkTSMessageHandler : m_arkTSMessageHandlers) {
-    arkTSMessageHandler->handleArkTSMessage(
+  for (auto const& arkTsMessageHandler : m_arkTsMessageHandlers) {
+    arkTsMessageHandler->handleArkTSMessage(
         {.messageName = name,
          .messagePayload = payload,
          .rnInstance = shared_from_this()});

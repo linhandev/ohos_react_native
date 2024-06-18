@@ -283,7 +283,7 @@ export function TextInputTest() {
       />
       <TestCase.Manual
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: false}}}
+        skip={{android: false, harmony: {arkTs: true, cAPI: false}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/736
         itShould="trigger onKeyPress event after pressing backspace"
         initialState={''}
@@ -527,7 +527,7 @@ export function TextInputTest() {
                 skip={{
                   android: false,
                   harmony: {
-                    arkTS: true,
+                    arkTs: true,
                     cAPI: multiline
                       ? "text should be vertically aligned (to match Android); spacing between wrapped lines isn't correct — those issues seem like a platform issue"
                       : false,

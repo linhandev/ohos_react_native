@@ -171,7 +171,7 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Example
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/246
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/246
         itShould="render circular image on a red rectangle (overlayColor)">
         <Image
           source={LOCAL_IMAGE_ASSET_ID}
@@ -392,7 +392,7 @@ export const ImageTest = () => {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/483
+        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/483
         itShould="fade images with varying durations">
         <View style={{flexDirection: 'row', gap: 24}}>
           <View style={{width: 100}}>
@@ -552,7 +552,7 @@ const FileExampleCase = () => {
 
   return (
     <TestCase.Example
-      skip={{android: true, harmony: {arkTS: false, cAPI: false}}}
+      skip={{android: true, harmony: {arkTs: false, cAPI: false}}}
       itShould="load image from local file">
       {error !== undefined ? (
         <Text>{error}</Text>

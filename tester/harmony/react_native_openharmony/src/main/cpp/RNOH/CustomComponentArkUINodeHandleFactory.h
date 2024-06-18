@@ -41,14 +41,14 @@ class CustomComponentArkUINodeHandleFactory final {
             .call(
                 "create",
                 {arkJs.createInt(tag), arkJs.createString(componentName)});
-    ArkUI_NodeHandle arkTSNodeHandle = nullptr;
+    ArkUI_NodeHandle arkTsNodeHandle = nullptr;
     auto errorCode =
-        OH_ArkUI_GetNodeHandleFromNapiValue(m_env, n_result, &arkTSNodeHandle);
+        OH_ArkUI_GetNodeHandleFromNapiValue(m_env, n_result, &arkTsNodeHandle);
     if (errorCode != 0) {
       LOG(ERROR) << "Couldn't get node handle. Error code: " << errorCode;
       return nullptr;
     }
-    return arkTSNodeHandle;
+    return arkTsNodeHandle;
 #else
     return nullptr;
 #endif

@@ -15,7 +15,7 @@ type TesterHarmonySkipProp =
   | boolean
   | string
   | {
-      arkTS: string | boolean;
+      arkTs: string | boolean;
       cAPI: string | boolean;
     };
 
@@ -46,7 +46,7 @@ function prepareHarmonySkipProp(
     return 'rnohArchitecture' in Platform.constants &&
       Platform.constants.rnohArchitecture === 'C_API'
       ? skipProp?.cAPI
-      : skipProp?.arkTS;
+      : skipProp?.arkTs;
   }
 }
 

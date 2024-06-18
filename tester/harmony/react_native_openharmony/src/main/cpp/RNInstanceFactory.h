@@ -50,7 +50,7 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
-    ArkTSBridge::Shared arkTSBridge,
+    ArkTSBridge::Shared arkTsBridge,
     napi_ref arkTsTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
@@ -66,12 +66,12 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
   std::shared_ptr<TaskExecutor> taskExecutor =
       std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
-  auto arkTSChannel = std::make_shared<ArkTSChannel>(
+  auto arkTsChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
 
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
-       weakArkTsBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
+       weakArkTsBridge = std::weak_ptr(arkTsBridge)](std::exception_ptr e) {
         auto executor = weakExecutor.lock();
         if (executor == nullptr) {
           return;
@@ -106,7 +106,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   EventEmitRequestHandlers eventEmitRequestHandlers = {};
   std::vector<ComponentInstanceFactoryDelegate::Shared>
       componentInstanceFactoryDelegates = {};
-  std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers = {};
+  std::vector<ArkTSMessageHandler::Shared> arkTsMessageHandlers = {};
 
   for (auto& package : packages) {
     auto turboModuleFactoryDelegate =
@@ -147,9 +147,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     componentInstanceFactoryDelegates.push_back(
         std::make_shared<PackageToComponentInstanceFactoryDelegateAdapter>(
             package));
-    for (auto const& arkTSMessageHandler :
+    for (auto const& arkTsMessageHandler :
          package->createArkTSMessageHandlers()) {
-      arkTSMessageHandlers.push_back(arkTSMessageHandler);
+      arkTsMessageHandlers.push_back(arkTsMessageHandler);
     }
   }
 
@@ -182,16 +182,16 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
               });
         }
       },
-      arkTSChannel);
-  auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
-  arkTSMessageHandlers.emplace_back(arkTSMessageHub);
+      arkTsChannel);
+  auto arkTsMessageHub = std::make_shared<ArkTSMessageHub>();
+  arkTsMessageHandlers.emplace_back(arkTsMessageHub);
   if (shouldUseCAPIArchitecture) {
 #ifdef C_API_ARCH
     auto componentInstanceDependencies =
         std::make_shared<ComponentInstance::Dependencies>();
-    componentInstanceDependencies->arkTSChannel = arkTSChannel;
-    componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
-    componentInstanceDependencies->displayMetricsManager = arkTSBridge;
+    componentInstanceDependencies->arkTsChannel = arkTsChannel;
+    componentInstanceDependencies->arkTsMessageHub = arkTsMessageHub;
+    componentInstanceDependencies->displayMetricsManager = arkTsBridge;
     auto customComponentArkUINodeFactory =
         std::make_shared<CustomComponentArkUINodeHandleFactory>(
             env, frameNodeFactoryRef, taskExecutor);
@@ -221,9 +221,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         uiTicker,
         shadowViewRegistry,
         std::move(mountingManagerCAPI),
-        std::move(arkTSMessageHandlers),
-        std::move(arkTSChannel),
-        arkTSMessageHub,
+        std::move(arkTsMessageHandlers),
+        std::move(arkTsChannel),
+        arkTsMessageHub,
         componentInstanceRegistry,
         componentInstanceFactory,
         std::move(nativeResourceManager),
@@ -249,9 +249,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       globalJSIBinders,
       uiTicker,
       shadowViewRegistry,
-      arkTSChannel,
+      arkTsChannel,
       std::move(mountingManager),
-      std::move(arkTSMessageHandlers),
+      std::move(arkTsMessageHandlers),
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor);
 }
