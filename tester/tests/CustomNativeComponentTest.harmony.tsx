@@ -168,9 +168,9 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
-          assert={({expect, state}) => {
+          assert={async ({expect, state}) => {
             if (state === 'IN_PROGRESS') {
-              expect(true, 'Test in progress').to.be.false;
+              await new Promise(() => {});
               return;
             }
             expect(state?.booleanTest).to.be.true;
@@ -233,9 +233,9 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
-          assert={({expect, state}) => {
+          assert={async ({expect, state}) => {
             if (state === 'IN_PROGRESS') {
-              expect(true, 'Test in progress').to.be.false;
+              await new Promise(() => {});
               return;
             }
             expect(state?.booleanTest).to.be.true;
@@ -302,9 +302,9 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
-          assert={({expect, state}) => {
+          assert={async ({expect, state}) => {
             if (state === 'IN_PROGRESS') {
-              expect(true, 'Test in progress').to.be.false;
+              await new Promise(() => {});
               return;
             }
             expect(state?.intTest).to.be.eq(42);
