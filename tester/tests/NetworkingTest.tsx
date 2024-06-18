@@ -2,12 +2,21 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React from 'react';
 import {Button, TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 const RCTNetworking =
   require('react-native/Libraries/Network/RCTNetworking').default;
 
 const FILE_URI = '/data/storage/el2/base/files/testFile.txt';
 
 export const NetworkingTest = () => {
+  const {
+    env: {isConnectedToInternet},
+  } = useEnvironment();
+
+  const noInternetSkipMsg = isConnectedToInternet
+    ? undefined
+    : 'Internet connection required';
+
   const canFetch = async (url: string) => {
     try {
       const response = await fetch(url);
@@ -22,6 +31,7 @@ export const NetworkingTest = () => {
     <TestSuite name="Networking">
       <TestSuite name="Fetch API">
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="download data"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -31,6 +41,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="download and parse JSON data"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -39,6 +50,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="download data to an ArrayBuffer"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -47,6 +59,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="download data to a blob"
           fn={async ({expect}) => {
             const response = await fetch('https://reactnative.dev/movies.json');
@@ -55,6 +68,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="correctly send requests with FormData"
           fn={async ({expect}) => {
             const formData = new FormData();
@@ -73,17 +87,34 @@ export const NetworkingTest = () => {
             expect(result.form.surname).to.be.eq('test2');
           }}
         />
-        <TestCase.Logical
+        <TestCase.Manual<undefined | FormData>
+          initialState={undefined}
+          skip={{android: true, harmony: noInternetSkipMsg ?? false}}
           itShould="correctly send a text file in FormData"
-          fn={async ({expect}) => {
+          arrange={({setState}) => (
+            <>
+              <Text>
+                {
+                  'To run this test, you need to create a file at the correct path on the phone. You can run this command in the hdc shell: echo "Test file content" >> /data/app/el2/100/base/com.rnoh.tester/files/testFile.txt'
+                }
+              </Text>
+              <Button
+                label="Run"
+                onPress={() => {
+                  let formData = new FormData();
+                  formData.append('file', {
+                    uri: FILE_URI,
+                    type: 'text/plain',
+                    name: 'testFile.txt',
+                  });
+                  formData.append('text', 'test text field');
+                  setState(formData);
+                }}
+              />
+            </>
+          )}
+          assert={async ({expect, state: formData}) => {
             try {
-              let formData = new FormData();
-              formData.append('file', {
-                uri: FILE_URI,
-                type: 'text/plain',
-                name: 'testFile.txt',
-              });
-              formData.append('text', 'test text field');
               let response = await fetch('https://httpbin.org/post', {
                 method: 'POST',
                 body: formData,
@@ -95,14 +126,16 @@ export const NetworkingTest = () => {
               expect(responseJson.form.text).to.be.eq('test text field');
               expect(responseJson.files.file).to.exist;
             } catch (error) {
-              console.error(
-                'To run this test, you need to create a file at the correct path on the phone. You can run this command in the hdc shell: echo "Test file content" >> /data/app/el2/100/base/com.rnoh.tester/files/testFile.txt',
-              );
-              throw error;
+              if (error instanceof Error) {
+                expect.fail(error.message);
+              } else {
+                throw error;
+              }
             }
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="correctly read response headers"
           fn={async ({expect}) => {
             const response = await fetch(
@@ -115,6 +148,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="fail on bad url"
           fn={async ({expect}) => {
             const received = await canFetch(
@@ -126,6 +160,7 @@ export const NetworkingTest = () => {
       </TestSuite>
       <TestSuite name="XmlHttpRequest">
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="verify if correct data is received in onprogress event"
           fn={async ({expect}) => {
             // emojis use 4 bytes so theres a higher chance of them getting cut when loading incrementally
@@ -167,6 +202,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="verify if correct data is received in onupload progress event"
           fn={async ({expect}) => {
             let longStr = 'a'.repeat(100000); //the value needs to be high enough so that several events are triggered
@@ -195,6 +231,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="verify that correct events are emitted"
           fn={async ({expect}) => {
             let longStr = 'a'.repeat(100000); //the value needs to be high enough so that several events are triggered
@@ -233,6 +270,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="verify that the abort event gets triggered"
           fn={async ({expect}) => {
             const event = await new Promise<ProgressEvent<EventTarget>>(
@@ -256,6 +294,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={{android: true, harmony: false}}
           itShould="verify that the timeout event gets triggered"
           fn={async ({expect}) => {
             const event = await new Promise<ProgressEvent<EventTarget>>(
@@ -279,6 +318,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
+          skip={noInternetSkipMsg}
           itShould="verify that cookies are saved and sent correctly (withCredentials)"
           fn={async ({expect}) => {
             await sendCookieRequest(
@@ -305,6 +345,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Manual
+          skip={noInternetSkipMsg}
           initialState={{cookies: {}}}
           arrange={({setState}) => {
             const requestSetCookies = async () => {
@@ -358,15 +399,19 @@ export const NetworkingTest = () => {
         />
       </TestSuite>
       <TestSuite name="WebSocket">
-        <TestCase.Example itShould="connect to websockets">
+        <TestCase.Example
+          skip={noInternetSkipMsg}
+          itShould="connect to websockets">
           <WebSocketEcho />
         </TestCase.Example>
         <TestCase.Example
           modal
+          skip={noInternetSkipMsg}
           itShould="send and receive arraybuffer through websocket and display 'Hello World from WebSocket!'">
           <WebSocketSendingAndReceivingArrayBuffer />
         </TestCase.Example>
         <TestCase.Example
+          skip={noInternetSkipMsg}
           modal
           itShould="send and receive blob through websocket and display blob size">
           <WebSocketSendingAndReceivingBlob />
@@ -434,12 +479,10 @@ const WebSocketEcho = () => {
     };
 
     ws.onerror = e => {
-      console.error(e.message);
       setStatus(`Error ${e.message}`);
     };
 
     ws.onclose = e => {
-      console.log(e.code, e.reason);
       setStatus(`Closed ${e.code} ${e.reason}`);
     };
   };

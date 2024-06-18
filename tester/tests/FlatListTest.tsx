@@ -160,7 +160,8 @@ export const FlatListTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Manual
-        itShould="Get the node number - getScrollableNode()"
+        modal
+        itShould="get the node number - getScrollableNode()"
         initialState={undefined}
         arrange={({state, setState}) => {
           return (
@@ -172,7 +173,8 @@ export const FlatListTest = () => {
         }}
       />
       <TestCase.Manual
-        itShould="Get the nativeScrollRef - getNativeScrollRef()"
+        modal
+        itShould="get the nativeScrollRef - getNativeScrollRef()"
         initialState={undefined}
         arrange={({state, setState}) => {
           return (
@@ -184,7 +186,8 @@ export const FlatListTest = () => {
         }}
       />
       <TestCase.Manual
-        itShould="Get the scroll responder - getScrollResponder()"
+        modal
+        itShould="get the scroll responder - getScrollResponder()"
         initialState={undefined}
         arrange={({state, setState}) => {
           return (
