@@ -23,11 +23,12 @@
 #include "RNOH/arkui/ArkUINodeRegistry.h"
 #include "napi/native_api.h"
 
-std::mutex rnInstanceByIdMutex;
-std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>> rnInstanceById;
-std::unordered_map<int, ArkTSBridge::Shared> arkTsBridgeByEnvId;
-auto uiTicker = std::make_shared<UITicker>();
-static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
+std::mutex RN_INSTANCE_BY_ID_MTX;
+std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
+    RN_INSTANCE_BY_ID;
+std::unordered_map<int, ArkTSBridge::Shared> ARK_TS_BRIDGE_BY_ENV_ID;
+auto UI_TICKER = std::make_shared<UITicker>();
+static auto CLEANUP_RUNNER = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
 napi_value invoke(napi_env env, std::function<napi_value()> operation) {
   ArkJS arkJs(env);
@@ -68,7 +69,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
        * this event handler could be removed.
        */
       ArkUINodeRegistry::initialize([](std::exception_ptr ex) {
-        if (arkTsBridgeByEnvId.size() > 1) {
+        if (ARK_TS_BRIDGE_BY_ENV_ID.size() > 1) {
           try {
             std::rethrow_exception(ex);
           } catch (const RNOHError& e) {
@@ -86,7 +87,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
             LOG(ERROR) << e.what();
           }
         } else {
-          for (auto& envIdAndArkTsBridge : arkTsBridgeByEnvId) {
+          for (auto& envIdAndArkTsBridge : ARK_TS_BRIDGE_BY_ENV_ID) {
             envIdAndArkTsBridge.second->handleError(ex);
           }
         }
@@ -107,22 +108,22 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
        * removing all RNInstances. As a workaround, all rnInstances are removed
        * on the start.
        */
-      cleanupRunner->runAsyncTask([] {
-        decltype(rnInstanceById) instances;
+      CLEANUP_RUNNER->runAsyncTask([] {
+        decltype(RN_INSTANCE_BY_ID) instances;
         {
-          std::lock_guard<std::mutex> lock(rnInstanceByIdMutex);
-          std::swap(rnInstanceById, instances);
+          std::lock_guard<std::mutex> lock(RN_INSTANCE_BY_ID_MTX);
+          std::swap(RN_INSTANCE_BY_ID, instances);
         }
         instances.clear();
       });
-      arkTsBridgeByEnvId.clear();
+      ARK_TS_BRIDGE_BY_ENV_ID.clear();
     }
     auto isDebugModeEnabled = false;
 #ifdef REACT_NATIVE_DEBUG
     isDebugModeEnabled = true;
 #endif
     auto arkTsBridgeHandler = arkJs.createReference(args[1]);
-    arkTsBridgeByEnvId.emplace(
+    ARK_TS_BRIDGE_BY_ENV_ID.emplace(
         nextEnvId,
         std::make_shared<ArkTSBridge>(env, std::move(arkTsBridgeHandler)));
     return arkJs.createObjectBuilder()
@@ -171,14 +172,14 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto rnInstance = createRNInstance(
         instanceId,
         env,
-        arkTsBridgeByEnvId[envId],
+        ARK_TS_BRIDGE_BY_ENV_ID[envId],
         arkTsTurboModuleProviderRef,
         frameNodeFactoryRef,
         [env, instanceId, mutationsListenerRef](
             auto const& mutationsToNapiConverter, auto const& mutations) {
           {
-            auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-            if (rnInstanceById.find(instanceId) == rnInstanceById.end()) {
+            auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+            if (RN_INSTANCE_BY_ID.find(instanceId) == RN_INSTANCE_BY_ID.end()) {
               LOG(WARNING) << "RNInstance with the following id " +
                       std::to_string(instanceId) + " does not exist";
               return;
@@ -193,8 +194,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         [env, instanceId, commandDispatcherRef](
             auto tag, auto const& commandName, auto args) {
           {
-            auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-            if (rnInstanceById.find(instanceId) == rnInstanceById.end()) {
+            auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+            if (RN_INSTANCE_BY_ID.find(instanceId) == RN_INSTANCE_BY_ID.end()) {
               LOG(WARNING) << "RNInstance with the following id " +
                       std::to_string(instanceId) + " does not exist";
               return;
@@ -213,18 +214,18 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         measureTextFnRef,
         eventDispatcherRef,
         featureFlagRegistry,
-        uiTicker,
+        UI_TICKER,
         jsResourceManager,
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
 
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    if (rnInstanceById.find(instanceId) != rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    if (RN_INSTANCE_BY_ID.find(instanceId) != RN_INSTANCE_BY_ID.end()) {
       LOG(FATAL) << "RNInstance with the following id " +
               std::to_string(instanceId) + " has been already created";
     }
     auto [it, _inserted] =
-        rnInstanceById.emplace(instanceId, std::move(rnInstance));
+        RN_INSTANCE_BY_ID.emplace(instanceId, std::move(rnInstance));
     it->second->start();
     return arkJs.getNull();
   });
@@ -236,14 +237,14 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 1);
     size_t rnInstanceId = arkJs.getDouble(args[0]);
-    cleanupRunner->runAsyncTask([rnInstanceId] {
+    CLEANUP_RUNNER->runAsyncTask([rnInstanceId] {
       std::shared_ptr<RNInstanceInternal> instance;
       {
-        auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-        if (auto it = rnInstanceById.find(rnInstanceId);
-            it != rnInstanceById.end()) {
+        auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+        if (auto it = RN_INSTANCE_BY_ID.find(rnInstanceId);
+            it != RN_INSTANCE_BY_ID.end()) {
           std::swap(it->second, instance);
-          rnInstanceById.erase(rnInstanceId);
+          RN_INSTANCE_BY_ID.erase(rnInstanceId);
         }
       }
     });
@@ -257,9 +258,9 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -289,9 +290,9 @@ static napi_value updateSurfaceConstraints(
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 8);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -312,9 +313,9 @@ static napi_value createSurface(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -331,9 +332,9 @@ static napi_value startSurface(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 9);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -357,9 +358,9 @@ static napi_value stopSurface(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -377,9 +378,9 @@ static napi_value destroySurface(napi_env env, napi_callback_info info) {
     size_t instanceId = arkJs.getDouble(args[0]);
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "destroySurface: surfaceId=" << surfaceId << "\n";
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -393,9 +394,9 @@ static napi_value setSurfaceDisplayMode(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -413,9 +414,9 @@ static napi_value emitComponentEvent(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 5);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -430,9 +431,9 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -450,8 +451,8 @@ static napi_value onMemoryLevel(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 1);
     auto memoryLevel = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    for (auto& [id, instance] : rnInstanceById) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    for (auto& [id, instance] : RN_INSTANCE_BY_ID) {
       if (instance != nullptr) {
         instance->onMemoryLevel(static_cast<size_t>(memoryLevel));
       }
@@ -465,9 +466,9 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -488,9 +489,9 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
     auto wrappedPayload = arkJs.getDynamic(args[1]);
     auto rnInstanceId = wrappedPayload["rnInstanceId"].getDouble();
     auto messagePayload = wrappedPayload["payload"];
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(rnInstanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(rnInstanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
@@ -539,12 +540,12 @@ static void registerNativeXComponent(napi_env env, napi_value exports) {
   std::string surfaceId;
   std::getline(ss, surfaceId, '_');
   size_t instanceIdNum = std::stod(instanceId, nullptr);
-  if (rnInstanceById.find(instanceIdNum) == rnInstanceById.end()) {
+  if (RN_INSTANCE_BY_ID.find(instanceIdNum) == RN_INSTANCE_BY_ID.end()) {
     LOG(ERROR) << "RNInstance with the following id " +
             std::to_string(instanceIdNum) + " does not exist";
     return;
   }
-  auto& rnInstance = rnInstanceById.at(instanceIdNum);
+  auto& rnInstance = RN_INSTANCE_BY_ID.at(instanceIdNum);
 
   auto* rnInstanceCPIRawPtr = dynamic_cast<RNInstanceCAPI*>(rnInstance.get());
   if (rnInstanceCPIRawPtr != nullptr) {
@@ -559,17 +560,17 @@ static napi_value getNativeNodeIdByTag(napi_env env, napi_callback_info info) {
     ArkJS arkJs(env);
     auto args = arkJs.getCallbackArgs(info, 2);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
-    auto it = rnInstanceById.find(instanceId);
-    if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJs.getUndefined();
     }
-    auto rnInstanceCapi = std::dynamic_pointer_cast<RNInstanceCAPI>(it->second);
-    if (rnInstanceCapi == nullptr) {
+    auto rnInstanceCApi = std::dynamic_pointer_cast<RNInstanceCAPI>(it->second);
+    if (rnInstanceCApi == nullptr) {
       return arkJs.getUndefined();
     }
     auto tag = arkJs.getDouble(args[1]);
-    auto nativeNodeId = rnInstanceCapi->getNativeNodeIdByTag(tag);
+    auto nativeNodeId = rnInstanceCApi->getNativeNodeIdByTag(tag);
     return nativeNodeId.has_value() ? arkJs.createString(nativeNodeId.value())
                                     : arkJs.getUndefined();
   });
