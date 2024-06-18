@@ -57,6 +57,22 @@ auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
   return DisplayMetrics::fromNapiValue(m_arkJs.getEnv(), napiResult);
 }
 
+auto ArkTSBridge::getFoldStatus() -> uint32_t  {
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJs.getObjectProperty(napiBridgeObject, "getFoldStatus");
+  auto napiResult = m_arkJs.call<0>(methodImpl, {});
+    return m_arkJs.getInteger(napiResult);
+}
+
+auto ArkTSBridge::getIsSplitScreenMode() -> bool  {
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJs.getObjectProperty(napiBridgeObject, "getIsSplitScreenMode");
+  auto napiResult = m_arkJs.call<0>(methodImpl, {});
+    return m_arkJs.getBoolean(napiResult);
+}
+
 auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJs(env);

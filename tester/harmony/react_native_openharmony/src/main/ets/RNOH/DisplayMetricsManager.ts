@@ -32,6 +32,14 @@ export class DisplayMetricsManager {
     this.logger = logger.clone("DisplayMetricsManager");
   }
 
+  public getFoldStatus():display.FoldStatus{
+    return display.getFoldStatus()
+  }
+
+  public getIsSplitScreenMode():boolean{
+    return AppStorage.get("isSplitScreenMode") ?? false
+  }
+
   public updateWindowSize(windowSize: window.Size | window.Rect) {
     this.displayMetrics.windowPhysicalPixels.height = windowSize.height;
     this.displayMetrics.windowPhysicalPixels.width = windowSize.width;

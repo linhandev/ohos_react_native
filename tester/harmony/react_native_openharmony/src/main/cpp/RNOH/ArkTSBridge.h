@@ -39,6 +39,8 @@ class ArkTSBridge final {
 
   void handleError(std::exception_ptr ex);
   DisplayMetrics getDisplayMetrics();
+  uint32_t getFoldStatus();
+  bool getIsSplitScreenMode();
 
  protected:
   ArkJS m_arkJs;

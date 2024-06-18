@@ -11,7 +11,7 @@ import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FontOptions, FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
-
+import display from '@ohos.display';
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH"
 
@@ -19,6 +19,8 @@ export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH"
 export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
   handleError: (rnohError: RNOHError) => void
+  getFoldStatus: () => display.FoldStatus
+  getIsSplitScreenMode: () => boolean
 }
 
 export class NapiBridge {
@@ -234,7 +236,9 @@ export class NapiBridge {
           howCanItBeFixed: (errData.suggestions ?? []),
           customStack: (errData.stacktrace ?? []).join("\n"),
         }))
-      }
+      },
+      getFoldStatus: () => handler.getFoldStatus(),
+      getIsSplitScreenMode: () => handler.getIsSplitScreenMode()
     });
   }
 

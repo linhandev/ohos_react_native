@@ -86,7 +86,9 @@ export class RNInstancesCoordinator {
       handleError: (err) => {
         devToolsController.setLastError(err)
         devToolsController.eventEmitter.emit("NEW_ERROR", err)
-      }
+      },
+      getFoldStatus: () => displayMetricsManager.getFoldStatus(),
+      getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
     });
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
