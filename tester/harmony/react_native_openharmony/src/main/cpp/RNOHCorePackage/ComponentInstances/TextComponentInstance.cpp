@@ -81,7 +81,7 @@ void TextComponentInstance::onPropsChanged(
           facebook::react::TextAlignment::Right;
     }
     std::string alignVertical = "top";
-    if (textProps->rawProps.count("textAlignVertical") != 0) {
+    if (textProps->rawProps.count("textAlignVertical") != 0 && textProps->rawProps["textAlignVertical"].isString()) {
       alignVertical = textProps->rawProps["textAlignVertical"].asString();
     }
     if (textProps->textAttributes.alignment.has_value()) {
@@ -93,7 +93,7 @@ void TextComponentInstance::onPropsChanged(
     facebook::react::TextAlignment alignHorizonOld =
         facebook::react::TextAlignment::Left;
     std::string alignVerticalOld = "top";
-    if (m_props && m_props->rawProps.count("textAlignVertical") != 0) {
+    if (m_props && m_props->rawProps.count("textAlignVertical") != 0 && m_props->rawProps["textAlignVertical"].isString()) {
       alignVerticalOld = m_props->rawProps["textAlignVertical"].asString();
     }
     if (m_props && m_props->textAttributes.alignment.has_value()) {
