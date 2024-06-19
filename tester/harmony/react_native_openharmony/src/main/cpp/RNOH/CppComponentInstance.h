@@ -9,6 +9,7 @@
 #include <react/renderer/core/Props.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include <react/renderer/core/State.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <vector>
 #include "RNOH/ComponentInstance.h"
 
@@ -189,6 +190,11 @@ class CppComponentInstance : public ComponentInstance {
   }
 
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
+    facebook::react::SystraceSection s(std::string(
+                                           "#RNOH::CppComponentInstance(" +
+                                           this->getComponentName() +
+                                           ")::onPropsChanged")
+                                           .c_str());
     auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
         concreteProps);
     auto old =
@@ -281,12 +287,23 @@ class CppComponentInstance : public ComponentInstance {
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
   };
 
-  virtual void onStateChanged(SharedConcreteState const& state){};
+  virtual void onStateChanged(SharedConcreteState const& state) {
+    facebook::react::SystraceSection s(std::string(
+                                           "#RNOH::CppComponentInstance(" +
+                                           this->getComponentName() +
+                                           ")::onStateChanged")
+                                           .c_str());
+  };
 
   virtual void onEventEmitterChanged(
       SharedConcreteEventEmitter const& eventEmitter){};
 
   void calculateBoundingBox() {
+    facebook::react::SystraceSection s(std::string(
+                                           "#RNOH::CppComponentInstance(" +
+                                           this->getComponentName() +
+                                           ")::calculateBoundingBox")
+                                           .c_str());
     auto newBoundingBox = getHitRect();
     if (!m_isClipping) {
       for (auto& child : m_children) {

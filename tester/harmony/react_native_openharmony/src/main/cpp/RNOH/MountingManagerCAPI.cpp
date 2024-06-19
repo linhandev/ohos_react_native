@@ -1,4 +1,5 @@
 #include "MountingManagerCAPI.h"
+#include <cxxreact/SystraceSection.h>
 
 namespace rnoh {
 
@@ -65,6 +66,8 @@ void MountingManagerCAPI::dispatchCommand(
     const facebook::react::ShadowView& shadowView,
     const std::string& commandName,
     folly::dynamic const& args) {
+  facebook::react::SystraceSection s(
+      "RNOH::MountingManagerCAPI::dispatchCommand");
   m_arkTsMountingManager->dispatchCommand(shadowView, commandName, args);
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
@@ -82,6 +85,7 @@ void MountingManagerCAPI::updateView(
     facebook::react::Tag tag,
     folly::dynamic props,
     facebook::react::ComponentDescriptor const& componentDescriptor) {
+  facebook::react::SystraceSection s("RNOH::MountingManagerCAPI::updateView");
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
   if (componentInstance == nullptr) {
     return;
@@ -114,6 +118,8 @@ void MountingManagerCAPI::updateView(
 void MountingManagerCAPI::updateComponentWithShadowView(
     ComponentInstance::Shared const& componentInstance,
     facebook::react::ShadowView const& shadowView) {
+  facebook::react::SystraceSection s(
+      "RNOH::MountingManagerCAPI::updateComponentWithShadowView");
   // NOTE: updating tag by id must happen before updating props
   m_componentInstanceRegistry->updateTagById(
       shadowView.tag, shadowView.props->nativeId, componentInstance->getId());
@@ -124,6 +130,9 @@ void MountingManagerCAPI::updateComponentWithShadowView(
 }
 
 void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
+  facebook::react::SystraceSection s(
+      "RNOH::MountingManagerCAPI::handleMutation");
+
   VLOG(1) << "Mutation (type:" << getMutationNameFromType(mutation.type)
           << "; componentName: "
           << (mutation.newChildShadowView.componentName != nullptr
@@ -239,8 +248,9 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
 
 void MountingManagerCAPI::finalizeMutationUpdates(
     MutationList const& mutations) {
+  facebook::react::SystraceSection s(
+      "RNOH::MountingManagerCAPI::finalizeMutationUpdates");
   std::unordered_set<ComponentInstance::Shared> componentInstancesToFinalize;
-
   for (const auto& mutation : mutations) {
     std::shared_ptr<ComponentInstance> componentInstance = nullptr;
     switch (mutation.type) {

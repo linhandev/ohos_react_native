@@ -1,8 +1,8 @@
+#include "TaskExecutor.h"
 #include <glog/logging.h>
-
+#include <react/renderer/debug/SystraceSection.h>
 #include "NapiTaskRunner.h"
 #include "RNOH/RNOHError.h"
-#include "TaskExecutor.h"
 #include "ThreadTaskRunner.h"
 
 namespace rnoh {
@@ -38,10 +38,12 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 }
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runTask");
   m_taskRunners[thread]->runAsyncTask(std::move(task));
 }
 
 void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runSyncTask");
   auto waitsOnThread = m_waitsOnThread[thread];
   if (waitsOnThread.has_value() && isOnTaskThread(waitsOnThread.value())) {
     throw RNOHError("Deadlock detected");
@@ -67,11 +69,14 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
 }
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::isOnTaskThread");
   auto runner = m_taskRunners[thread];
   return runner && runner->isOnCurrentThread();
 }
 
 std::optional<TaskThread> TaskExecutor::getCurrentTaskThread() const {
+  facebook::react::SystraceSection s(
+      "#RNOH::TaskExecutor::getCurrentTaskThread");
   if (isOnTaskThread(TaskThread::MAIN)) {
     return TaskThread::MAIN;
   } else if (isOnTaskThread(TaskThread::JS)) {
@@ -84,6 +89,8 @@ std::optional<TaskThread> TaskExecutor::getCurrentTaskThread() const {
 }
 
 void TaskExecutor::setExceptionHandler(ExceptionHandler handler) {
+  facebook::react::SystraceSection s(
+      "#RNOH::TaskExecutor::setExceptionHandler");
   for (auto& taskRunner : m_taskRunners) {
     if (taskRunner) {
       taskRunner->setExceptionHandler(handler);

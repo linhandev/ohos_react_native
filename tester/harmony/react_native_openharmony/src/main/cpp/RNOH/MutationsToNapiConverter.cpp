@@ -1,4 +1,5 @@
 #include "RNOH/MutationsToNapiConverter.h"
+#include <react/renderer/debug/SystraceSection.h>
 #include "MutationsToNapiConverter.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/BaseComponentNapiBinder.h"
@@ -13,6 +14,8 @@ MutationsToNapiConverter::MutationsToNapiConverter(
 napi_value MutationsToNapiConverter::convert(
     napi_env env,
     react::ShadowViewMutationList const& mutations) const {
+  facebook::react::SystraceSection s(
+      "#RNOH::MutationsToNapiConverter::convert");
   std::vector<napi_value> napiMutations;
   ArkJS arkJs(env);
   for (auto& mutation : mutations) {

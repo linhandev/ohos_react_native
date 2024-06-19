@@ -1,5 +1,6 @@
 #include "ThreadTaskRunner.h"
 #include <glog/logging.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <atomic>
 #include <exception>
 
@@ -61,6 +62,7 @@ void ThreadTaskRunner::setExceptionHandler(ExceptionHandler handler) {
 
 void ThreadTaskRunner::runLoop() {
   while (running) {
+    facebook::react::SystraceSection s("#RNOH::ThreadTaskRunner::task");
     std::unique_lock<std::mutex> lock(mutex);
     cv.wait(lock, [this] { return hasPendingTasks() || !running; });
     if (!running) {

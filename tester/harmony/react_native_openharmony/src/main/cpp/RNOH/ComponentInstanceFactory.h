@@ -4,6 +4,7 @@
 #pragma once
 #include <glog/logging.h>
 #include <react/renderer/core/ReactPrimitives.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <memory>
 #include <vector>
 #include "RNOH/ComponentInstance.h"
@@ -44,6 +45,8 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
+    facebook::react::SystraceSection s(
+        "#RNOH::ComponentInstanceFactory::createArkTSComponent");
     m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,
@@ -69,6 +72,8 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
+    facebook::react::SystraceSection s(
+        "#RNOH::ComponentInstanceFactory::create");
     m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,

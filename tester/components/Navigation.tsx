@@ -4,6 +4,7 @@ import {
   Image,
   Platform,
   StyleSheet,
+  Systrace,
   Text,
   TouchableOpacity,
   View,
@@ -77,6 +78,8 @@ export function Page({name, children}: {name: string; children: any}) {
         <View style={{backgroundColor: PALETTE.REACT_CYAN_DARK}}>
           <TouchableOpacity
             onPress={() => {
+              Systrace.beginEvent('#TESTER::BACK');
+              Systrace.endEvent();
               navigateTo('INDEX');
             }}>
             <Text

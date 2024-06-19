@@ -1,6 +1,7 @@
 #include "RNOH/TextMeasurer.h"
 #include <native_drawing/drawing_font_collection.h>
 #include <native_drawing/drawing_text_typography.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkUITypography.h"
 #include "RNOHCorePackage/ComponentInstances/TextConversions.h"
@@ -17,6 +18,7 @@ TextMeasurement TextMeasurer::measure(
     AttributedString attributedString,
     ParagraphAttributes paragraphAttributes,
     LayoutConstraints layoutConstraints) {
+  facebook::react::SystraceSection s("#RNOH::TextMeasurer::measure");
   auto const& fragments = attributedString.getFragments();
   auto canUseOHOSTextMeasurer = fragments.size() == 1 &&
       !fragments[0].isAttachment() &&

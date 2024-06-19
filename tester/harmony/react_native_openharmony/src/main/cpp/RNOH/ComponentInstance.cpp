@@ -1,5 +1,6 @@
 #include "ComponentInstance.h"
 #include <glog/logging.h>
+#include <react/renderer/debug/SystraceSection.h>
 
 namespace rnoh {
 ComponentInstance::ComponentInstance(Context ctx)
@@ -11,6 +12,7 @@ ComponentInstance::ComponentInstance(Context ctx)
 void ComponentInstance::insertChild(
     ComponentInstance::Shared childComponentInstance,
     std::size_t index) {
+  facebook::react::SystraceSection s("#RNOH::ComponentInstance::insertChild");
   auto it = m_children.begin() + index;
   onChildInserted(childComponentInstance, index);
   childComponentInstance->setParent(shared_from_this());
@@ -19,6 +21,7 @@ void ComponentInstance::insertChild(
 
 void ComponentInstance::removeChild(
     ComponentInstance::Shared childComponentInstance) {
+  facebook::react::SystraceSection s("#RNOH::ComponentInstance::removeChild");
   auto it =
       std::find(m_children.begin(), m_children.end(), childComponentInstance);
   if (it != m_children.end()) {

@@ -2,6 +2,7 @@
 #include <ReactCommon/TurboModuleUtils.h>
 #include <glog/logging.h>
 #include <jsi/JSIDynamic.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <exception>
 #include <optional>
 #include <variant>
@@ -37,6 +38,10 @@ jsi::Value ArkTSTurboModule::call(
     const std::string& methodName,
     const jsi::Value* jsiArgs,
     size_t argsCount) {
+  react::SystraceSection s(std::string(
+                               "#RNOH::ArkTSTurboModule::call (" + this->name_ +
+                               "::" + methodName + ")")
+                               .c_str());
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
   return jsi::valueFromDynamic(runtime, callSync(methodName, args));
@@ -47,6 +52,10 @@ jsi::Value ArkTSTurboModule::call(
 folly::dynamic ArkTSTurboModule::callSync(
     const std::string& methodName,
     std::vector<IntermediaryArg> args) {
+  react::SystraceSection s(std::string(
+                               "#RNOH::ArkTSTurboModule::callSync (" +
+                               this->name_ + "::" + methodName + ")")
+                               .c_str());
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -72,6 +81,10 @@ void rnoh::ArkTSTurboModule::scheduleCall(
     const std::string& methodName,
     const facebook::jsi::Value* jsiArgs,
     size_t argsCount) {
+  react::SystraceSection s(std::string(
+                               "#RNOH::ArkTSTurboModule::scheduleCall (" +
+                               this->name_ + "::" + methodName + ")")
+                               .c_str());
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -107,6 +120,10 @@ jsi::Value ArkTSTurboModule::callAsync(
     const std::string& methodName,
     const jsi::Value* jsiArgs,
     size_t argsCount) {
+  react::SystraceSection s(std::string(
+                               "#RNOH::ArkTSTurboModule::callAsync (" +
+                               this->name_ + "::" + methodName + ")")
+                               .c_str());
   if (!m_ctx.arkTsTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";

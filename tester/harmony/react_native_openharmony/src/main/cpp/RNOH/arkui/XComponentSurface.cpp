@@ -1,6 +1,7 @@
 #include "XComponentSurface.h"
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
@@ -79,6 +80,25 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
   }
 
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
+    auto action = OH_ArkUI_UIInputEvent_GetAction(event);
+    auto actionName = "UNKNOWN";
+    switch (action) {
+      case UI_TOUCH_EVENT_ACTION_UP:
+        actionName = "UP";
+        break;
+      case UI_TOUCH_EVENT_ACTION_CANCEL:
+        actionName = "CANCEL";
+        break;
+      case UI_TOUCH_EVENT_ACTION_MOVE:
+        actionName = "MOVE";
+        break;
+      case UI_TOUCH_EVENT_ACTION_DOWN:
+        actionName = "DOWN";
+        break;
+    }
+    facebook::react::SystraceSection s(
+        (std::string("#RNOH::XComponentSurface::onTouchEvent::") + actionName)
+            .c_str());
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
 

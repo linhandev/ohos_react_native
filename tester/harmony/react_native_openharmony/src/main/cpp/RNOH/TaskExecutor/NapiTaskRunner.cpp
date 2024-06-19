@@ -1,5 +1,6 @@
 #include <glog/logging.h>
 #include <napi/native_api.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <uv.h>
 #include <atomic>
 
@@ -34,6 +35,7 @@ NapiTaskRunner::NapiTaskRunner(napi_env env, ExceptionHandler exceptionHandler)
       std::swap(tasksQueue, runner->tasksQueue);
     }
     while (!tasksQueue.empty()) {
+      facebook::react::SystraceSection s("#RNOH::NapiTaskRunner::task");
       auto task = std::move(tasksQueue.front());
       tasksQueue.pop();
       try {

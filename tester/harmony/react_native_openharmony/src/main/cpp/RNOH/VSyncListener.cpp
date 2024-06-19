@@ -1,4 +1,5 @@
 #include "VSyncListener.h"
+#include <react/renderer/debug/SystraceSection.h>
 
 namespace rnoh {
 
@@ -9,6 +10,8 @@ void VSyncListener::scheduleNextVsync() {
   }
   m_vsyncHandle.requestFrame(
       [](long long timestamp, void* data) {
+        facebook::react::SystraceSection s(
+            "#RNOH::VSyncListener::scheduleNextVSync::lambda");
         auto weakSelf = static_cast<std::weak_ptr<VSyncListener>*>(data);
         if (auto self = weakSelf->lock()) {
           self->m_scheduled.store(false);

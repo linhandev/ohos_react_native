@@ -27,6 +27,8 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
 void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
     folly::dynamic props) {
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread");
   DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
   RNOH_ASSERT(m_taskExecutor->getCurrentTaskThread() == TaskThread::MAIN);
 
@@ -98,6 +100,8 @@ void RNInstanceCAPI::updateSurfaceConstraints(
     float pixelRatio,
     bool isRTL) {
   DLOG(INFO) << "RNInstanceCAPI::updateSurfaceConstraints";
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceCAPI::updateSurfaceConstraints");
   auto it = m_surfaceById.find(surfaceId);
   if (it == m_surfaceById.end()) {
     return;
@@ -135,6 +139,7 @@ void RNInstanceCAPI::setSurfaceProps(
     facebook::react::Tag surfaceId,
     folly::dynamic&& props) {
   DLOG(INFO) << "RNInstanceCAPI::setSurfaceProps";
+  facebook::react::SystraceSection s("#RNOH::RNInstanceCAPI::setSurfaceProps");
   auto it = m_surfaceById.find(surfaceId);
   if (it == m_surfaceById.end()) {
     return;
@@ -164,6 +169,8 @@ void RNInstanceCAPI::setSurfaceDisplayMode(
     facebook::react::Tag surfaceId,
     facebook::react::DisplayMode displayMode) {
   DLOG(INFO) << "RNInstanceCAPI::setSurfaceDisplayMode";
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceCAPI::setSurfaceDisplayMode");
   auto it = m_surfaceById.find(surfaceId);
   if (it == m_surfaceById.end()) {
     return;

@@ -6,6 +6,7 @@
 #include <thread>
 
 #include <react/renderer/core/ReactPrimitives.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
 
@@ -27,6 +28,8 @@ class ComponentInstanceRegistry {
 
   ComponentInstance::Shared findByTag(facebook::react::Tag tag) {
     assertMainThread();
+    facebook::react::SystraceSection s(
+        "#RNOH::ComponentInstanceRegistry::findByTag");
     auto it = m_componentInstanceByTag.find(tag);
     if (it != m_componentInstanceByTag.end()) {
       return it->second;

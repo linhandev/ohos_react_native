@@ -156,6 +156,8 @@ void RNInstanceInternal::callFunction(
        method = std::move(method),
        params = std::move(params)]() mutable {
         if (auto instance = weakInstance.lock()) {
+          facebook::react::SystraceSection s(
+              "#RNOH::RNInstanceInternal::callFunction::lambda");
           instance->callJSFunction(
               std::move(module), std::move(method), std::move(params));
         }
@@ -166,6 +168,7 @@ void RNInstanceInternal::updateState(
     std::string const& componentName,
     facebook::react::Tag tag,
     napi_value newState) {
+  facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::updateState");
   if (auto state =
           m_shadowViewRegistry->getFabricState<facebook::react::State>(tag)) {
     m_mutationsToNapiConverter->updateState(
@@ -173,6 +176,7 @@ void RNInstanceInternal::updateState(
   }
 }
 void RNInstanceInternal::onUITick() {
+  facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
   if (m_shouldRelayUITick.load()) {
     m_scheduler->animationTick();
   }
@@ -221,6 +225,8 @@ void RNInstanceInternal::emitComponentEvent(
     std::string eventName,
     napi_value payload) {
   DLOG(INFO) << "RNInstanceInternal::emitComponentEvent";
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::emitComponentEvent");
   EventEmitRequestHandler::Context ctx{
       .env = env,
       .tag = tag,
@@ -241,6 +247,8 @@ void RNInstanceInternal::emitComponentEvent(
 void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   // Android memory levels are 5, 10, 15, while Ark's are 0, 1, 2
   static const int memoryLevels[] = {5, 10, 15};
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::onMemoryLevel");
   if (m_reactInstance) {
     m_reactInstance->handleMemoryPressure(memoryLevels[memoryLevel]);
   }
@@ -249,6 +257,8 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::handleArkTSMessage");
   for (auto const& arkTsMessageHandler : m_arkTsMessageHandlers) {
     arkTsMessageHandler->handleArkTSMessage(
         {.messageName = name,
@@ -258,10 +268,14 @@ void RNInstanceInternal::handleArkTSMessage(
 }
 
 void RNInstanceInternal::onAnimationStarted() {
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::onAnimationStarted");
   m_shouldRelayUITick.store(true);
 }
 
 void RNInstanceInternal::onAllAnimationsComplete() {
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::onAllAnimationsComplete");
   m_shouldRelayUITick.store(false);
 }
 } // namespace rnoh

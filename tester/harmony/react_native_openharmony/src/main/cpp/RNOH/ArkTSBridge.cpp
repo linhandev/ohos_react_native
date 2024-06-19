@@ -3,6 +3,7 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <glog/logging.h>
 #include <jsi/jsi.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Assert.h"
 #include "RNOH/RNOHError.h"
 
@@ -66,6 +67,7 @@ void ArkTSBridge::handleError(std::exception_ptr ex) {
 
 auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
   m_threadGuard.assertThread();
+  facebook::react::SystraceSection s("#RNOH::ArkTSBridge::getDisplayMetrics");
   auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTsBridgeRef);
   auto methodImpl =
       m_arkJs.getObjectProperty(napiBridgeObject, "getDisplayMetrics");

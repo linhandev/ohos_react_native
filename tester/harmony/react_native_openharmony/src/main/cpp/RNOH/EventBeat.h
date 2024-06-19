@@ -1,5 +1,6 @@
 #include <ReactCommon/RuntimeExecutor.h>
 #include <react/renderer/core/EventBeat.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
 namespace rnoh {
@@ -15,6 +16,7 @@ class EventBeat : public facebook::react::EventBeat {
         facebook::react::EventBeat(ownerBox) {}
 
   void induce() const override {
+    facebook::react::SystraceSection s("#RNOH::EventBeat::induce");
     if (!this->isRequested_) {
       return;
     }
@@ -24,6 +26,7 @@ class EventBeat : public facebook::react::EventBeat {
   }
 
   void request() const override {
+    facebook::react::SystraceSection s("#RNOH::EventBeat::request");
     facebook::react::EventBeat::request();
     induce();
   }
