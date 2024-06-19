@@ -384,6 +384,9 @@ export class DescriptorRegistry {
     } else if (mutation.type === MutationType.REMOVE) {
       const parentDescriptor = this.descriptorByTag.get(mutation.parentTag)!;
       const childDescriptor = this.descriptorByTag.get(mutation.childTag)!;
+      if (parentDescriptor == undefined) {
+        return [];
+      }
       const idx = parentDescriptor.childrenTags.indexOf(mutation.childTag);
       this.descriptorMutationListenersByTag.get(mutation.parentTag)?.forEach((cb) => cb({
         descriptorMutationType: "REMOVE_CHILD",
