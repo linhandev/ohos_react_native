@@ -171,6 +171,22 @@ export class NetworkingTurboModule extends TurboModule {
     callback(didDeleteAnyCookies);
   }
 
+  private isEncodedURI(str: string): boolean {
+    try {
+      const decodedStr = decodeURI(str);
+      return decodedStr !== str;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private getEncodedURI(str: string): string {
+    if (this.isEncodedURI(str)) {
+      return str;
+    }
+    return encodeURI(str);
+  }
+  
   async sendRequest(query: Query, callback: (requestId: number) => void) {
     const httpClient = this.ctx.rnInstance.httpClient;
     const requestId = this.createId();
@@ -232,8 +248,7 @@ export class NetworkingTurboModule extends TurboModule {
         sendProgress.totalLength)
     };
 
-
-    const { cancel, promise } = httpClient.sendRequest(query.url,
+    const { cancel, promise } = httpClient.sendRequest(this.getEncodedURI(query.url),
       {
         method: this.REQUEST_METHOD_BY_NAME[query.method],
         header: query.headers,
