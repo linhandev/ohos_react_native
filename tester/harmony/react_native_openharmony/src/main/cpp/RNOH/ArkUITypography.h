@@ -7,13 +7,23 @@
 
 namespace rnoh {
 
+/**
+ * @internal
+ */
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
+
+/**
+ * @internal
+ */
 using UniqueFontCollection = std::unique_ptr<
     OH_Drawing_FontCollection,
     decltype(&OH_Drawing_DestroyFontCollection)>;
 
+/**
+ * @internal
+ */
 class ArkUITypography final {
  public:
   facebook::react::TextMeasurement::Attachments getAttachments() const {
@@ -104,6 +114,9 @@ class ArkUITypography final {
   friend class ArkUITypographyBuilder;
 };
 
+/**
+ * @internal
+ */
 class ArkUITypographyBuilder final {
  public:
   ArkUITypographyBuilder(

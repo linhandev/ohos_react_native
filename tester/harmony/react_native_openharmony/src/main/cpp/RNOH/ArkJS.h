@@ -18,6 +18,9 @@
 class RNOHNapiObjectBuilder;
 class RNOHNapiObject;
 
+/**
+ * @api
+ */
 class ArkJS {
  public:
   using IntermediaryCallback = std::function<void(std::vector<folly::dynamic>)>;

@@ -2,6 +2,10 @@
 #include "RNOH/UIManagerModule.h"
 
 namespace rnoh {
+/**
+ * @internal
+ * Used by codegen.
+ */
 class BaseComponentJSIBinder : public ComponentJSIBinder {
  public:
   facebook::jsi::Object createBindings(facebook::jsi::Runtime& rt) override {

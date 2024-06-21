@@ -12,6 +12,7 @@ class ArkTSErrorHandler {
 };
 
 /**
+ * @internal
  * @thread: MAIN
  */
 class ArkTSBridge final : public DisplayMetricsManager,

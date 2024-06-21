@@ -6,8 +6,12 @@ namespace rnoh {
 class RNInstance;
 
 /**
- * Provides a mechanism to respond to messages sent from the ArkTS side.
- * Messages are sent within the context of an RNInstance.
+ * @api
+ * @thread: MAIN
+ * Handles messages sent from the ArkTS side within the context of an
+ * RNInstance. If a message needs to be handled by a specific component
+ * or turbo module, use ArkTSMessageHub::Observer instead. The class
+ * is expected to be instantiated in Package::createArkTSMessageHandlers.
  */
 class ArkTSMessageHandler {
  public:
@@ -19,9 +23,6 @@ class ArkTSMessageHandler {
     std::weak_ptr<RNInstance> rnInstance;
   };
 
-  /**
-   * This method is executed on MAIN thread.
-   */
   virtual void handleArkTSMessage(const Context& ctx) = 0;
 };
 } // namespace rnoh

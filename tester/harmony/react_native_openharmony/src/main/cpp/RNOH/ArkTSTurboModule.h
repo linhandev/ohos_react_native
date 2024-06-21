@@ -13,6 +13,10 @@
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TurboModule.h"
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_METHOD_CALLER(name)                        \
   [](facebook::jsi::Runtime& rt,                       \
      facebook::react::TurboModule& turboModule,        \
@@ -22,6 +26,10 @@
         .call(rt, #name, args, count);                 \
   }
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_ASYNC_METHOD_CALLER(name)                  \
   [](facebook::jsi::Runtime& rt,                       \
      facebook::react::TurboModule& turboModule,        \
@@ -31,6 +39,10 @@
         .callAsync(rt, #name, args, count);            \
   }
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_SCHEDULE_METHOD_CALLER(name)        \
   [](facebook::jsi::Runtime& rt,                \
      facebook::react::TurboModule& turboModule, \
@@ -41,16 +53,28 @@
     return facebook::jsi::Value::undefined();   \
   }
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_METHOD_METADATA(name, argc)      \
   {                                          \
 #name, { argc, ARK_METHOD_CALLER(name) } \
   }
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_ASYNC_METHOD_METADATA(name, argc)      \
   {                                                \
 #name, { argc, ARK_ASYNC_METHOD_CALLER(name) } \
   }
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 #define ARK_SCHEDULE_METHOD_METADATA(name, argc)      \
   {                                                   \
 #name, { argc, ARK_SCHEDULE_METHOD_CALLER(name) } \
@@ -58,6 +82,10 @@
 
 namespace rnoh {
 
+/**
+ * @internal
+ * Used by codegen.
+ */
 class ArkTSTurboModule : public TurboModule {
  public:
   struct Context : public TurboModule::Context {

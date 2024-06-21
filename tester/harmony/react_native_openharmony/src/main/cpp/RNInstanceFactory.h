@@ -189,8 +189,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
 #ifdef C_API_ARCH
     auto componentInstanceDependencies =
         std::make_shared<ComponentInstance::Dependencies>();
-    componentInstanceDependencies->arkTsChannel = arkTsChannel;
+    componentInstanceDependencies->arkTSChannel = arkTsChannel;
     componentInstanceDependencies->arkTsMessageHub = arkTsMessageHub;
+    componentInstanceDependencies->arkTSMessageHub = arkTsMessageHub;
     componentInstanceDependencies->displayMetricsManager = arkTsBridge;
     auto customComponentArkUINodeFactory =
         std::make_shared<CustomComponentArkUINodeHandleFactory>(
