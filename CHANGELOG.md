@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.72.29
+- deprecated `ComponentInstance::Dependencies::arkTSChannel` in favor of `RNInstance::postMessageToArkTS` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3d15e2e7ed7c8424d5a8e1337aa26d28f7408c5f))
+- deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `ComponentInstance::Dependencies::arkTsMessageHub` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ca56635340592d3f52de5447a8371a689660c6b0))
+- added traces in RNOH code ([b2e6ce9ebc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b2e6ce9ebc57992b0acce6ad01221a0ca5736881))
+- added support for multiple abilities using RNOH in one bundle ([0873ca8e45](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0873ca8e45348c66f84d26de3c333d51de33dd30))
+- added `disableCleaningRNInstances` option to `RNInstanceCoordinator` and `onShouldDisableCleaningRNInstances` to `RNAbility` ([0873ca8e45](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0873ca8e45348c66f84d26de3c333d51de33dd30))
+- added `getNativeNodeIdByTag` method to `RNInstance` (ArkTS class) ([39d6962924](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/39d6962924ced6c1188c91205621928aeb437e0f))
+- fixed issue with URL encoding in the `NetworkingTurboModule.sendRequest` ([61323e7fdd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/k61323e7fdd8d91a7655db7438f3bdaaa037247d9))
+- fixed a bug causing performance issues for large mutations ([1c380d38bc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c380d38bc91e9dcd8b8fbde40806e7e25c0d20d))
+- fixed useNativeDriver issue by running maybeStartAnimation on AnimatedNodesManager::connectNodeToView ([3741eddd27](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3741eddd27dab375e6a1cda86ad63b18d6d39716))
+- fixed `XComponentSurface`s clean up on `MAIN` thread ([eb0a5bb9af](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eb0a5bb9afd09b3a0b773471f40909ffb5d5d5f3))
+- fixed onMomentumScrollEnd called instead of onScrollEndDrag ([3e44fc2279](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e44fc2279c4b8e54b68bb4bf2beb6514bf13bc6))
+- fixed `ScrollView`'s `onMomentumScrollBegin`, `onMomentumScrollEnd`, `onScrollDragEnd` ([6251ba80ea](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6251ba80ea93e0fbe7d7fb0e96c64d57d268bba0))
+
+
 ## v0.72.28
 - deprecated `ComponentInstance::{setProps, setState, setLayout, setEventEmitter, finalizeUpdates (override onFinalizeUpdates instead), handleCommand (override onCommandReceived instead)}` — these methods will be inaccessible for library developers in the future ([8ccb62b664](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8ccb62b66437f4b818c2c659b855605a9b091a3c))
 - deprecated `HttpClientProvider` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
