@@ -20,14 +20,22 @@ Class names should follow PascalCase convention.
 | ---------------- | ---------------- |
 | `RNInstanceCAPI` | `RNInstanceCApi` |
 
+#### RNOH prefix
+
+| Good          | Bad           |
+| ------------- | ------------- |
+| `RNOHContext` | `RnohContext` |
+
 
 ## Variable Names
 
 Variable names should follow camelCase convention for example:
 
-| Good             | Bad              |
-| ---------------- | ---------------- |
-| `arkTs`          | `arkTS`          |
-| `rnInstanceId`   | `rnInstanceID`   |
-| `rnInstanceCApi` | `rnInstanceCAPI` |
-| `rnInstanceCApi` | `rnInstanceCapi` |
+| Pascal case      | Good             | Bad              |
+| ---------------- | ---------------- | ---------------- |
+| `ArkTS`          | `arkTS`          | `arkTs`          |
+| `ArkUI`          | `arkUI`          | `arkUi`          |
+| `RNInstanceId`   | `rnInstanceId`   | `rnInstanceID`   |
+| `RNInstanceCAPI` | `rnInstanceCAPI` | `rnInstanceCapi` |
+
+NOTE: `Id` is an abbreviation not an acronym.

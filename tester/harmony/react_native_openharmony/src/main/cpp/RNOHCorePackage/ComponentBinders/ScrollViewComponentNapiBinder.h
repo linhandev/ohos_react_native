@@ -75,7 +75,7 @@ class ScrollViewComponentNapiBinder : public ViewComponentNapiBinder {
   };
 
   void updateState(StateUpdateContext const& ctx) override {
-    ArkJS arkJs(ctx.env);
+    ArkJS arkJS(ctx.env);
     auto scrollState = std::dynamic_pointer_cast<
         facebook::react::ConcreteState<facebook::react::ScrollViewState> const>(
         ctx.state);
@@ -84,12 +84,12 @@ class ScrollViewComponentNapiBinder : public ViewComponentNapiBinder {
     }
 
     auto contentOffsetX =
-        arkJs.getObjectProperty(ctx.newState, "contentOffsetX");
+        arkJS.getObjectProperty(ctx.newState, "contentOffsetX");
     auto contentOffsetY =
-        arkJs.getObjectProperty(ctx.newState, "contentOffsetY");
+        arkJS.getObjectProperty(ctx.newState, "contentOffsetY");
     auto contentOffset = facebook::react::Point{
-        (facebook::react::Float)arkJs.getDouble(contentOffsetX),
-        (facebook::react::Float)arkJs.getDouble(contentOffsetY)};
+        (facebook::react::Float)arkJS.getDouble(contentOffsetX),
+        (facebook::react::Float)arkJS.getDouble(contentOffsetY)};
 
     // we want to keep content size so we use update function, similar to iOS
     // implementation

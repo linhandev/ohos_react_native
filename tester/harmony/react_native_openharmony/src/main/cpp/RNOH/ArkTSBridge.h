@@ -31,8 +31,8 @@ class ArkTSBridge final : public DisplayMetricsManager,
   DisplayMetrics getDisplayMetrics() override;
 
  protected:
-  ArkJS m_arkJs;
-  napi_ref m_arkTsBridgeRef;
+  ArkJS m_arkJS;
+  napi_ref m_arkTSBridgeRef;
   ThreadGuard m_threadGuard;
 };
 } // namespace rnoh

@@ -13,13 +13,13 @@ class ImageEventEmitRequestHandler : public EventEmitRequestHandler {
   };
 
   ImageLoadEventSourceObject getImageLoadEventSourceObject(
-      ArkJS& arkJs,
+      ArkJS& arkJS,
       napi_value eventObject) {
     auto width =
-        (float)(arkJs.getDouble(arkJs.getObjectProperty(eventObject, "width")));
-    auto height = (float)(arkJs.getDouble(
-        arkJs.getObjectProperty(eventObject, "height")));
-    auto uri = arkJs.getString(arkJs.getObjectProperty(eventObject, "uri"));
+        (float)(arkJS.getDouble(arkJS.getObjectProperty(eventObject, "width")));
+    auto height = (float)(arkJS.getDouble(
+        arkJS.getObjectProperty(eventObject, "height")));
+    auto uri = arkJS.getString(arkJS.getObjectProperty(eventObject, "uri"));
     return {width, height, uri};
   }
 
@@ -36,12 +36,12 @@ class ImageEventEmitRequestHandler : public EventEmitRequestHandler {
       return;
     }
 
-    ArkJS arkJs(ctx.env);
+    ArkJS arkJS(ctx.env);
     if (ctx.eventName == "loadStart") {
       eventEmitter->onLoadStart();
     } else if (ctx.eventName == "load") {
       auto imageLoadEventSourceObject =
-          getImageLoadEventSourceObject(arkJs, ctx.payload);
+          getImageLoadEventSourceObject(arkJS, ctx.payload);
       eventEmitter->dispatchEvent("load", [=](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
         auto source = facebook::jsi::Object(runtime);
@@ -56,7 +56,7 @@ class ImageEventEmitRequestHandler : public EventEmitRequestHandler {
     } else if (ctx.eventName == "loadEnd") {
       eventEmitter->onLoadEnd();
     } else if (ctx.eventName == "error") {
-      auto message = arkJs.getString(ctx.payload);
+      auto message = arkJS.getString(ctx.payload);
       eventEmitter->dispatchEvent(
           "error", [=](facebook::jsi::Runtime& runtime) {
             auto payload = facebook::jsi::Object(runtime);

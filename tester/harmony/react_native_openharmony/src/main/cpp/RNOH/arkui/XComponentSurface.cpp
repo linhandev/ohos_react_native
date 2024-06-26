@@ -50,9 +50,9 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
  public:
   SurfaceTouchEventHandler(
       ComponentInstance::Shared rootView,
-      ArkTSMessageHub::Shared arkTsMessageHub,
+      ArkTSMessageHub::Shared arkTSMessageHub,
       int rnInstanceId)
-      : ArkTSMessageHub::Observer(arkTsMessageHub),
+      : ArkTSMessageHub::Observer(arkTSMessageHub),
         m_rootView(std::move(rootView)),
         m_rnInstanceId(rnInstanceId) {
     ArkUINodeRegistry::getInstance().registerTouchHandler(
@@ -115,7 +115,7 @@ XComponentSurface::XComponentSurface(
     std::shared_ptr<Scheduler> scheduler,
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
     ComponentInstanceFactory::Shared const& componentInstanceFactory,
-    ArkTSMessageHub::Shared arkTsMessageHub,
+    ArkTSMessageHub::Shared arkTSMessageHub,
     SurfaceId surfaceId,
     int rnInstanceId,
     std::string const& appKey)
@@ -132,9 +132,9 @@ XComponentSurface::XComponentSurface(
     return;
   }
   m_componentInstanceRegistry->insert(m_rootView);
-  RNOH_ASSERT(arkTsMessageHub != nullptr);
+  RNOH_ASSERT(arkTSMessageHub != nullptr);
   m_touchEventHandler = std::make_unique<SurfaceTouchEventHandler>(
-      m_rootView, std::move(arkTsMessageHub), rnInstanceId);
+      m_rootView, std::move(arkTSMessageHub), rnInstanceId);
 }
 
 XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept

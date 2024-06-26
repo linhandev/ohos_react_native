@@ -20,11 +20,11 @@ class MountingManagerCAPI final : public MountingManager {
   MountingManagerCAPI(
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
-      MountingManager::Shared arkTsMountingManager,
+      MountingManager::Shared arkTSMountingManager,
       FeatureFlagRegistry::Shared featureFlagRegistry)
       : m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
-        m_arkTsMountingManager(std::move(arkTsMountingManager)),
+        m_arkTSMountingManager(std::move(arkTSMountingManager)),
         m_featureFlagRegistry(std::move(featureFlagRegistry)){};
 
   void willMount(MutationList const& mutations) override;
@@ -60,7 +60,7 @@ class MountingManagerCAPI final : public MountingManager {
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   facebook::react::ContextContainer::Shared m_contextContainer;
-  MountingManager::Shared m_arkTsMountingManager;
+  MountingManager::Shared m_arkTSMountingManager;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   std::unordered_set<std::string> m_cApiComponentNames;
 };

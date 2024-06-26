@@ -85,7 +85,7 @@ void RNInstanceCAPI::createSurface(
           m_scheduler,
           m_componentInstanceRegistry,
           m_componentInstanceFactory,
-          m_arkTsMessageHub,
+          m_arkTSMessageHub,
           surfaceId,
           m_id,
           moduleName));

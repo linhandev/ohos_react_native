@@ -44,14 +44,14 @@ TextMeasurement TextMeasurer::measure(
          &attributedString,
          &paragraphAttributes,
          &layoutConstraints]() {
-          ArkJS arkJs(env);
-          auto napiMeasureText = arkJs.getReferenceValue(measureTextRef);
-          auto napiAttributedStringBuilder = arkJs.createObjectBuilder();
+          ArkJS arkJS(env);
+          auto napiMeasureText = arkJS.getReferenceValue(measureTextRef);
+          auto napiAttributedStringBuilder = arkJS.createObjectBuilder();
           napiAttributedStringBuilder.addProperty(
               "string", attributedString.getString());
           std::vector<napi_value> napiFragments = {};
           for (auto fragment : attributedString.getFragments()) {
-            auto textAttributesBuilder = arkJs.createObjectBuilder();
+            auto textAttributesBuilder = arkJS.createObjectBuilder();
             textAttributesBuilder.addProperty(
                 "fontSize", fragment.textAttributes.fontSize);
             textAttributesBuilder.addProperty(
@@ -68,23 +68,23 @@ TextMeasurement TextMeasurer::measure(
                   int(fragment.textAttributes.fontWeight.value()));
             }
 
-            auto napiFragmentBuilder = arkJs.createObjectBuilder();
+            auto napiFragmentBuilder = arkJS.createObjectBuilder();
             napiFragmentBuilder.addProperty("string", fragment.string)
                 .addProperty("textAttributes", textAttributesBuilder.build());
             if (fragment.isAttachment()) {
               napiFragmentBuilder.addProperty(
                   "parentShadowView",
-                  arkJs.createObjectBuilder()
+                  arkJS.createObjectBuilder()
                       .addProperty("tag", fragment.parentShadowView.tag)
                       .addProperty(
                           "layoutMetrics",
-                          arkJs.createObjectBuilder()
+                          arkJS.createObjectBuilder()
                               .addProperty(
                                   "frame",
-                                  arkJs.createObjectBuilder()
+                                  arkJS.createObjectBuilder()
                                       .addProperty(
                                           "size",
-                                          arkJs.createObjectBuilder()
+                                          arkJS.createObjectBuilder()
                                               .addProperty(
                                                   "width",
                                                   fragment.parentShadowView
@@ -104,46 +104,46 @@ TextMeasurement TextMeasurer::measure(
             napiFragments.push_back(napiFragmentBuilder.build());
           }
           napiAttributedStringBuilder.addProperty(
-              "fragments", arkJs.createArray(napiFragments));
+              "fragments", arkJS.createArray(napiFragments));
 
-          auto napiParagraphAttributesBuilder = arkJs.createObjectBuilder();
+          auto napiParagraphAttributesBuilder = arkJS.createObjectBuilder();
           napiParagraphAttributesBuilder.addProperty(
               "maximumNumberOfLines", paragraphAttributes.maximumNumberOfLines);
 
-          auto napiLayoutConstraintsBuilder = arkJs.createObjectBuilder();
+          auto napiLayoutConstraintsBuilder = arkJS.createObjectBuilder();
           napiLayoutConstraintsBuilder.addProperty(
               "maximumSize",
-              arkJs.createObjectBuilder()
+              arkJS.createObjectBuilder()
                   .addProperty("width", layoutConstraints.maximumSize.width)
                   .addProperty("height", layoutConstraints.maximumSize.height)
                   .build());
 
-          auto resultNapiValue = arkJs.call(
+          auto resultNapiValue = arkJS.call(
               napiMeasureText,
               {napiAttributedStringBuilder.build(),
                napiParagraphAttributesBuilder.build(),
                napiLayoutConstraintsBuilder.build()});
 
-          result.size.width = arkJs.getDouble(arkJs.getObjectProperty(
-              arkJs.getObjectProperty(resultNapiValue, "size"), "width"));
-          result.size.height = arkJs.getDouble(arkJs.getObjectProperty(
-              arkJs.getObjectProperty(resultNapiValue, "size"), "height"));
+          result.size.width = arkJS.getDouble(arkJS.getObjectProperty(
+              arkJS.getObjectProperty(resultNapiValue, "size"), "width"));
+          result.size.height = arkJS.getDouble(arkJS.getObjectProperty(
+              arkJS.getObjectProperty(resultNapiValue, "size"), "height"));
           auto napiAttachments =
-              arkJs.getObjectProperty(resultNapiValue, "attachmentLayouts");
-          for (auto i = 0; i < arkJs.getArrayLength(napiAttachments); i++) {
-            auto napiAttachment = arkJs.getArrayElement(napiAttachments, i);
-            auto napiPositionRelativeToContainer = arkJs.getObjectProperty(
+              arkJS.getObjectProperty(resultNapiValue, "attachmentLayouts");
+          for (auto i = 0; i < arkJS.getArrayLength(napiAttachments); i++) {
+            auto napiAttachment = arkJS.getArrayElement(napiAttachments, i);
+            auto napiPositionRelativeToContainer = arkJS.getObjectProperty(
                 napiAttachment, "positionRelativeToContainer");
-            auto napiSize = arkJs.getObjectProperty(napiAttachment, "size");
+            auto napiSize = arkJS.getObjectProperty(napiAttachment, "size");
             TextMeasurement::Attachment attachment;
-            attachment.frame.origin.x = arkJs.getDouble(
-                arkJs.getObjectProperty(napiPositionRelativeToContainer, "x"));
-            attachment.frame.origin.y = arkJs.getDouble(
-                arkJs.getObjectProperty(napiPositionRelativeToContainer, "y"));
+            attachment.frame.origin.x = arkJS.getDouble(
+                arkJS.getObjectProperty(napiPositionRelativeToContainer, "x"));
+            attachment.frame.origin.y = arkJS.getDouble(
+                arkJS.getObjectProperty(napiPositionRelativeToContainer, "y"));
             attachment.frame.size.width =
-                arkJs.getDouble(arkJs.getObjectProperty(napiSize, "width"));
+                arkJS.getDouble(arkJS.getObjectProperty(napiSize, "width"));
             attachment.frame.size.height =
-                arkJs.getDouble(arkJs.getObjectProperty(napiSize, "height"));
+                arkJS.getDouble(arkJS.getObjectProperty(napiSize, "height"));
             result.attachments.push_back(attachment);
           }
         });

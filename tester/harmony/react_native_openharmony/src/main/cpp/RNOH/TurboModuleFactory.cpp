@@ -10,12 +10,12 @@ using namespace facebook;
 
 TurboModuleFactory::TurboModuleFactory(
     napi_env env,
-    napi_ref arkTsTurboModuleProviderRef,
+    napi_ref arkTSTurboModuleProviderRef,
     const ComponentJSIBinderByString&& componentBinderByString,
     std::shared_ptr<TaskExecutor> taskExecutor,
     std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates)
     : m_env(env),
-      m_arkTsTurboModuleProviderRef(arkTsTurboModuleProviderRef),
+      m_arkTSTurboModuleProviderRef(arkTSTurboModuleProviderRef),
       m_componentBinderByString(std::move(componentBinderByString)),
       m_taskExecutor(taskExecutor),
       m_delegates(delegates) {}
@@ -31,7 +31,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   Context ctx{
       {.jsInvoker = jsInvoker, .instance = instance},
       .env = m_env,
-      .arkTsTurboModuleInstanceRef =
+      .arkTSTurboModuleInstanceRef =
           this->maybeGetArkTsTurboModuleInstanceRef(name),
       .taskExecutor = m_taskExecutor,
       .eventDispatcher = eventDispatcher,
@@ -43,10 +43,10 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   } else {
     auto result = this->delegateCreatingTurboModule(ctx, name);
     if (result != nullptr) {
-      auto arkTsTurboModule =
+      auto arkTSTurboModule =
           std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
-      if (arkTsTurboModule != nullptr &&
-          ctx.arkTsTurboModuleInstanceRef == nullptr) {
+      if (arkTSTurboModule != nullptr &&
+          ctx.arkTSTurboModuleInstanceRef == nullptr) {
         throw FatalRNOHError(
             std::move(std::string("Couldn't find turbo module '")
                           .append(name)
@@ -80,23 +80,23 @@ napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
   m_taskExecutor->runSyncTask(
       TaskThread::MAIN,
       [env = m_env,
-       arkTsTurboModuleProviderRef = m_arkTsTurboModuleProviderRef,
+       arkTSTurboModuleProviderRef = m_arkTSTurboModuleProviderRef,
        name,
        &result]() {
         VLOG(3)
             << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: started calling hasModule";
-        ArkJS arkJs(env);
+        ArkJS arkJS(env);
         {
-          auto result = arkJs.getObject(arkTsTurboModuleProviderRef)
-                            .call("hasModule", {arkJs.createString(name)});
-          if (!arkJs.getBoolean(result)) {
+          auto result = arkJS.getObject(arkTSTurboModuleProviderRef)
+                            .call("hasModule", {arkJS.createString(name)});
+          if (!arkJS.getBoolean(result)) {
             return;
           }
         }
         auto n_turboModuleInstance =
-            arkJs.getObject(arkTsTurboModuleProviderRef)
-                .call("getModule", {arkJs.createString(name)});
-        result = arkJs.createReference(n_turboModuleInstance);
+            arkJS.getObject(arkTSTurboModuleProviderRef)
+                .call("getModule", {arkJS.createString(name)});
+        result = arkJS.createReference(n_turboModuleInstance);
       });
   VLOG(3) << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: stop";
   return result;

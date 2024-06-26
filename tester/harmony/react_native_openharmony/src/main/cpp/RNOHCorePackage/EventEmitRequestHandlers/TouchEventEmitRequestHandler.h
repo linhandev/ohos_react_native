@@ -15,11 +15,11 @@ class TouchEventEmitRequestHandler : public EventEmitRequestHandler {
 
  private:
   facebook::react::Touch convertTouchObject(
-      ArkJS& arkJs,
+      ArkJS& arkJS,
       napi_value touchObject);
 
   facebook::react::Touches convertTouches(
-      ArkJS& arkJs,
+      ArkJS& arkJS,
       facebook::react::Tag tag,
       facebook::react::Float timestamp,
       napi_value touchArray);

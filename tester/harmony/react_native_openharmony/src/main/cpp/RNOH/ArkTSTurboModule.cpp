@@ -56,7 +56,7 @@ folly::dynamic ArkTSTurboModule::callSync(
                                "#RNOH::ArkTSTurboModule::callSync (" +
                                this->name_ + "::" + methodName + ")")
                                .c_str());
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -65,12 +65,12 @@ folly::dynamic ArkTSTurboModule::callSync(
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
       TaskThread::MAIN, [ctx = m_ctx, &methodName, &args, &result]() {
-        ArkJS arkJs(ctx.env);
-        auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
+        ArkJS arkJS(ctx.env);
+        auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
-            arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+            arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
         auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
-        result = arkJs.getDynamic(napiResult);
+        result = arkJS.getDynamic(napiResult);
       });
   return result;
 }
@@ -85,7 +85,7 @@ void rnoh::ArkTSTurboModule::scheduleCall(
                                "#RNOH::ArkTSTurboModule::scheduleCall (" +
                                this->name_ + "::" + methodName + ")")
                                .c_str());
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -101,10 +101,10 @@ void rnoh::ArkTSTurboModule::scheduleCall(
        args = std::move(args),
        &runtime]() {
         try {
-          ArkJS arkJs(ctx.env);
-          auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
+          ArkJS arkJS(ctx.env);
+          auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
           auto napiTurboModuleObject =
-              arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+              arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
           napiTurboModuleObject.call(methodName, napiArgs);
         } catch (const std::exception& e) {
           LOG(ERROR) << "Exception thrown while calling " << name
@@ -124,7 +124,7 @@ jsi::Value ArkTSTurboModule::callAsync(
                                "#RNOH::ArkTSTurboModule::callAsync (" +
                                this->name_ + "::" + methodName + ")")
                                .c_str());
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -142,13 +142,13 @@ jsi::Value ArkTSTurboModule::callAsync(
          &args,
          &runtime,
          &napiResultRef]() {
-          ArkJS arkJs(ctx.env);
-          auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
+          ArkJS arkJS(ctx.env);
+          auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
           auto napiTurboModuleObject =
-              arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+              arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
 
           auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
-          napiResultRef = arkJs.createReference(napiResult);
+          napiResultRef = arkJS.createReference(napiResult);
         });
   } catch (const std::exception& e) {
     return react::createPromiseAsJSIValue(
@@ -165,8 +165,8 @@ jsi::Value ArkTSTurboModule::callAsync(
           jsi::Runtime& rt2, std::shared_ptr<react::Promise> jsiPromise) {
         ctx.taskExecutor->runTask(
             TaskThread::MAIN, [ctx, napiResultRef, &rt2, jsiPromise]() {
-              ArkJS arkJs(ctx.env);
-              auto napiResult = arkJs.getReferenceValue(napiResultRef);
+              ArkJS arkJS(ctx.env);
+              auto napiResult = arkJS.getReferenceValue(napiResultRef);
               Promise(ctx.env, napiResult)
                   .then([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
                     ctx.jsInvoker->invokeAsync(
@@ -175,16 +175,16 @@ jsi::Value ArkTSTurboModule::callAsync(
                               preparePromiseResolverResult(rt2, args));
                           jsiPromise->allowRelease();
                         });
-                    ArkJS arkJs(ctx.env);
-                    arkJs.deleteReference(napiResultRef);
+                    ArkJS arkJS(ctx.env);
+                    arkJS.deleteReference(napiResultRef);
                   })
                   .catch_([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
                     ctx.jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
                       jsiPromise->reject(preparePromiseRejectionResult(args));
                       jsiPromise->allowRelease();
                     });
-                    ArkJS arkJs(ctx.env);
-                    arkJs.deleteReference(napiResultRef);
+                    ArkJS arkJS(ctx.env);
+                    arkJS.deleteReference(napiResultRef);
                   });
             });
       });

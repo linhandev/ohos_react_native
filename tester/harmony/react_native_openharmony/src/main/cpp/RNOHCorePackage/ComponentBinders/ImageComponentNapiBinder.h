@@ -17,8 +17,8 @@ class ImageComponentNapiBinder : public ViewComponentNapiBinder {
       facebook::react::ImageSource imageSource;
       if (props->sources.size() > 0) {
         imageSource = props->sources[0];
-        ArkJS arkJs(env);
-        auto propsObjBuilder = arkJs.getObjectBuilder(napiViewProps);
+        ArkJS arkJS(env);
+        auto propsObjBuilder = arkJS.getObjectBuilder(napiViewProps);
         if (props->defaultSources.size() > 0) {
           facebook::react::ImageSource defaultSource = props->defaultSources[0];
           propsObjBuilder.addProperty("defaultSource", defaultSource.uri);

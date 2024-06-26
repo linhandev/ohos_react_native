@@ -24,8 +24,8 @@ class TextComponentNapiBinder : public ViewComponentNapiBinder {
             std::dynamic_pointer_cast<const facebook::react::ConcreteState<
                 facebook::react::ParagraphState>>(shadowView.state)) {
       auto data = state->getData();
-      ArkJS arkJs(env);
-      auto propsObjBuilder = arkJs.getObjectBuilder(napiViewProps);
+      ArkJS arkJS(env);
+      auto propsObjBuilder = arkJS.getObjectBuilder(napiViewProps);
       auto fragmentsPayload = std::vector<napi_value>();
       auto fragments = data.attributedString.getFragments();
 
@@ -64,7 +64,7 @@ class TextComponentNapiBinder : public ViewComponentNapiBinder {
       }
 
       for (auto fragment : fragments) {
-        auto fragmentObjBuilder = arkJs.createObjectBuilder();
+        auto fragmentObjBuilder = arkJS.createObjectBuilder();
         auto textAttributes = fragment.textAttributes;
 
         if (textAttributes.textTransform.has_value()) {
@@ -120,17 +120,17 @@ class TextComponentNapiBinder : public ViewComponentNapiBinder {
         if (fragment.isAttachment() || shouldAddFragmentToShadowViewRegistry) {
           fragmentObjBuilder.addProperty(
               "parentShadowView",
-              arkJs.createObjectBuilder()
+              arkJS.createObjectBuilder()
                   .addProperty("tag", fragmentShadowView.tag)
                   .addProperty(
                       "layoutMetrics",
-                      arkJs.createObjectBuilder()
+                      arkJS.createObjectBuilder()
                           .addProperty(
                               "frame",
-                              arkJs.createObjectBuilder()
+                              arkJS.createObjectBuilder()
                                   .addProperty(
                                       "size",
-                                      arkJs.createObjectBuilder()
+                                      arkJS.createObjectBuilder()
                                           .addProperty(
                                               "width",
                                               fragmentShadowView.layoutMetrics
@@ -151,7 +151,7 @@ class TextComponentNapiBinder : public ViewComponentNapiBinder {
 
         fragmentsPayload.push_back(fragmentObjBuilder.build());
       }
-      auto fragmentsArray = arkJs.createArray(fragmentsPayload);
+      auto fragmentsArray = arkJS.createArray(fragmentsPayload);
       propsObjBuilder.addProperty("fragments", fragmentsArray);
       propsObjBuilder.addProperty(
           "padding", getParagraphPaddingProps(shadowView));

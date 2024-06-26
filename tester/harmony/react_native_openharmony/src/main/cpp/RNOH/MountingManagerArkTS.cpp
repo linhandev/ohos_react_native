@@ -66,7 +66,7 @@ void MountingManagerArkTS::setIsJsResponder(
   payload["tag"] = shadowView.tag;
   payload["isJSResponder"] = isJsResponder;
   payload["blockNativeResponder"] = blockNativeResponder;
-  m_arkTsChannel->postMessage("SCHEDULER_DID_SET_IS_JS_RESPONDER", payload);
+  m_arkTSChannel->postMessage("SCHEDULER_DID_SET_IS_JS_RESPONDER", payload);
 }
 
 void MountingManagerArkTS::updateView(

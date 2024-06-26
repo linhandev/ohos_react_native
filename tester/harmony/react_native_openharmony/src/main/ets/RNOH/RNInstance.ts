@@ -380,7 +380,7 @@ export class RNInstanceImpl implements RNInstance {
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
-    private shouldUseCApiArchitecture: boolean,
+    private shouldUseCAPIArchitecture: boolean,
     private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
@@ -399,14 +399,14 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseImageLoader) {
       this.enableFeatureFlag("IMAGE_LOADER")
     }
-    if (this.shouldUseCApiArchitecture) {
+    if (this.shouldUseCAPIArchitecture) {
       this.enableFeatureFlag("C_API_ARCH")
     }
     this.onCreate()
   }
 
   public getArchitecture() {
-    return this.shouldUseCApiArchitecture ? "C_API" : "ARK_TS"
+    return this.shouldUseCAPIArchitecture ? "C_API" : "ARK_TS"
   }
 
   public getAssetsDest(): string {
@@ -463,7 +463,7 @@ export class RNInstanceImpl implements RNInstance {
       this.logger,
     );
     const cppFeatureFlags: CppFeatureFlag[] = []
-    if (this.shouldUseCApiArchitecture) {
+    if (this.shouldUseCAPIArchitecture) {
       cppFeatureFlags.push("C_API_ARCH")
     }
     if (this.shouldUseNDKToMeasureText) {

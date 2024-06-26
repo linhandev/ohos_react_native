@@ -434,7 +434,7 @@ void NativeAnimatedTurboModule::addListener(const std::string& eventName) {}
 void NativeAnimatedTurboModule::removeListeners(double count) {}
 
 void NativeAnimatedTurboModule::runUpdates() {
-  ArkJS arkJs(m_ctx.env);
+  ArkJS arkJS(m_ctx.env);
   auto lock = this->acquireLock();
   try {
     auto now = std::chrono::high_resolution_clock::now();
@@ -471,12 +471,12 @@ void NativeAnimatedTurboModule::setNativeProps(
     clonedProps["transform"] = transform[0]["matrix"];
   }
 
-  ArkJS arkJs(m_ctx.env);
-  auto napiTag = arkJs.createInt(tag);
-  auto napiProps = arkJs.createFromDynamic(clonedProps);
+  ArkJS arkJS(m_ctx.env);
+  auto napiTag = arkJS.createInt(tag);
+  auto napiProps = arkJS.createFromDynamic(clonedProps);
 
   auto napiTurboModuleObject =
-      arkJs.getObject(m_ctx.arkTsTurboModuleInstanceRef);
+      arkJS.getObject(m_ctx.arkTSTurboModuleInstanceRef);
   napiTurboModuleObject.call("setViewProps", {napiTag, napiProps});
 }
 
@@ -498,8 +498,8 @@ void NativeAnimatedTurboModule::emitAnimationEndedEvent(
 
 void NativeAnimatedTurboModule::handleEvent(
     EventEmitRequestHandler::Context const& ctx) {
-  ArkJS arkJs(ctx.env);
-  folly::dynamic payload = arkJs.getDynamic(ctx.payload);
+  ArkJS arkJS(ctx.env);
+  folly::dynamic payload = arkJS.getDynamic(ctx.payload);
   react::Tag tag = ctx.tag;
   auto eventName = ctx.eventName;
 

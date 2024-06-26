@@ -50,7 +50,7 @@ TurboModule::Shared RNInstanceInternal::getTurboModule(
 void RNInstanceInternal::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
-  m_arkTsChannel->postMessage(name, payload);
+  m_arkTSChannel->postMessage(name, payload);
 }
 
 void RNInstanceInternal::start() {
@@ -259,8 +259,8 @@ void RNInstanceInternal::handleArkTSMessage(
     folly::dynamic const& payload) {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::handleArkTSMessage");
-  for (auto const& arkTsMessageHandler : m_arkTsMessageHandlers) {
-    arkTsMessageHandler->handleArkTSMessage(
+  for (auto const& arkTSMessageHandler : m_arkTSMessageHandlers) {
+    arkTSMessageHandler->handleArkTSMessage(
         {.messageName = name,
          .messagePayload = payload,
          .rnInstance = shared_from_this()});

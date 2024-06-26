@@ -34,32 +34,32 @@ class CustomComponentArkUINodeHandleFactory final {
       std::string componentName) {
     m_threadGuard.assertThread();
 #ifdef C_API_ARCH
-    ArkJS arkJs(m_env);
+    ArkJS arkJS(m_env);
     auto frameNodeFactory =
-        arkJs.getObject(m_customRNComponentFrameNodeFactoryRef)
+        arkJS.getObject(m_customRNComponentFrameNodeFactoryRef)
             .getProperty("frameNodeFactory");
     auto n_result =
-        arkJs.getObject(frameNodeFactory)
+        arkJS.getObject(frameNodeFactory)
             .call(
                 "create",
-                {arkJs.createInt(tag), arkJs.createString(componentName)});
-    auto n_arkTsNodeHandle = arkJs.getObjectProperty(n_result, "frameNode");
+                {arkJS.createInt(tag), arkJS.createString(componentName)});
+    auto n_arkTSNodeHandle = arkJS.getObjectProperty(n_result, "frameNode");
     auto n_destroyBuilderNode =
-        arkJs.getObjectProperty(n_result, "destroyBuilderNode");
-    auto n_destroyBuilderNodeRef = arkJs.createReference(n_destroyBuilderNode);
-    ArkUI_NodeHandle arkTsNodeHandle = nullptr;
+        arkJS.getObjectProperty(n_result, "destroyBuilderNode");
+    auto n_destroyBuilderNodeRef = arkJS.createReference(n_destroyBuilderNode);
+    ArkUI_NodeHandle arkTSNodeHandle = nullptr;
     auto errorCode = OH_ArkUI_GetNodeHandleFromNapiValue(
-        m_env, n_arkTsNodeHandle, &arkTsNodeHandle);
+        m_env, n_arkTSNodeHandle, &arkTSNodeHandle);
     if (errorCode != 0) {
       LOG(ERROR) << "Couldn't get node handle. Error code: " << errorCode;
       return std::make_pair(nullptr, [] {});
     }
     return std::make_pair(
-        arkTsNodeHandle, [env = m_env, n_destroyBuilderNodeRef] {
-          ArkJS arkJs(env);
-          auto n_destroy = arkJs.getReferenceValue(n_destroyBuilderNodeRef);
-          arkJs.call(n_destroy, {});
-          arkJs.deleteReference(n_destroyBuilderNodeRef);
+        arkTSNodeHandle, [env = m_env, n_destroyBuilderNodeRef] {
+          ArkJS arkJS(env);
+          auto n_destroy = arkJS.getReferenceValue(n_destroyBuilderNodeRef);
+          arkJS.call(n_destroy, {});
+          arkJS.deleteReference(n_destroyBuilderNodeRef);
         });
 #else
     return std::make_pair(nullptr, [] {});

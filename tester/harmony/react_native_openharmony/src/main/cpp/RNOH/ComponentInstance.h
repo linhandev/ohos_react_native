@@ -46,10 +46,10 @@ class ComponentInstance
      */
     ArkTSChannel::Shared arkTSChannel;
     /**
-     * @deprecated: use arkTsMessageHub instead (latestRNOHVersion: 0.72.28)
+     * @deprecated: use arkTSMessageHub instead (latestRNOHVersion: 0.72.29)
      */
-    ArkTSMessageHub::Shared arkTSMessageHub;
     ArkTSMessageHub::Shared arkTsMessageHub;
+    ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
     DisplayMetricsManager::Shared displayMetricsManager;
   };

@@ -12,29 +12,29 @@ void TouchEventEmitRequestHandler::handleEvent(
     return;
   }
 
-  ArkJS arkJs(ctx.env);
+  ArkJS arkJS(ctx.env);
   auto touchEvent = ctx.payload;
 
   auto timestampNanos =
-      arkJs.getDouble(arkJs.getObjectProperty(touchEvent, "timestamp"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchEvent, "timestamp"));
   // rn expects a timestamp in seconds. We need to convert the timestamp from
   // nanoseconds to miliseconds, use floor to round down and then convert to
   // seconds. RN multiplies it by 1e3 to convert to miliseconds.
   react::Float timestamp = std::floor(timestampNanos / 1e6) / 1e3;
 
   auto touches = convertTouches(
-      arkJs,
+      arkJS,
       ctx.tag,
       timestamp,
-      arkJs.getObjectProperty(touchEvent, "touches"));
+      arkJS.getObjectProperty(touchEvent, "touches"));
   auto changedTouches = convertTouches(
-      arkJs,
+      arkJS,
       ctx.tag,
       timestamp,
-      arkJs.getObjectProperty(touchEvent, "changedTouches"));
+      arkJS.getObjectProperty(touchEvent, "changedTouches"));
 
-  auto eventType = (TouchType)(arkJs.getDouble(
-      arkJs.getObjectProperty(ctx.payload, "type")));
+  auto eventType = (TouchType)(arkJS.getDouble(
+      arkJS.getObjectProperty(ctx.payload, "type")));
   bool isTouchEnd =
       eventType == TouchType::UP || eventType == TouchType::CANCEL;
 
@@ -83,24 +83,24 @@ void TouchEventEmitRequestHandler::handleEvent(
 }
 
 facebook::react::Touch TouchEventEmitRequestHandler::convertTouchObject(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     napi_value touchObject) {
   facebook::react::Tag id =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "id"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "id"));
   facebook::react::Tag target =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "targetTag"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "targetTag"));
   facebook::react::Float screenX =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "screenX"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "screenX"));
   facebook::react::Float screenY =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "screenY"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "screenY"));
   facebook::react::Float pageX =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "pageX"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "pageX"));
   facebook::react::Float pageY =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "pageY"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "pageY"));
   facebook::react::Float x =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "x"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "x"));
   facebook::react::Float y =
-      arkJs.getDouble(arkJs.getObjectProperty(touchObject, "y"));
+      arkJS.getDouble(arkJS.getObjectProperty(touchObject, "y"));
   return facebook::react::Touch{
       .pagePoint = {.x = pageX, .y = pageY},
       .offsetPoint = {.x = x, .y = y},
@@ -111,15 +111,15 @@ facebook::react::Touch TouchEventEmitRequestHandler::convertTouchObject(
 }
 
 facebook::react::Touches TouchEventEmitRequestHandler::convertTouches(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     facebook::react::Tag tag,
     facebook::react::Float timestamp,
     napi_value touchArray) {
   facebook::react::Touches touches;
-  auto arrayLength = arkJs.getArrayLength(touchArray);
+  auto arrayLength = arkJS.getArrayLength(touchArray);
   for (int i = 0; i < arrayLength; i++) {
-    auto touchObject = arkJs.getArrayElement(touchArray, i);
-    auto touch = convertTouchObject(arkJs, touchObject);
+    auto touchObject = arkJS.getArrayElement(touchArray, i);
+    auto touch = convertTouchObject(arkJS, touchObject);
     touch.timestamp = timestamp;
 
     touches.insert(std::move(touch));

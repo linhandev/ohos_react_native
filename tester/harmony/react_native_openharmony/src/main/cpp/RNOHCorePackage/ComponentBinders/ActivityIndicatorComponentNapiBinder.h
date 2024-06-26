@@ -9,18 +9,18 @@ class ActivityIndicatorComponentNapiBinder : public ViewComponentNapiBinder {
   napi_value createProps(
       napi_env env,
       facebook::react::ShadowView const shadowView) override {
-    ArkJS arkJs(env);
+    ArkJS arkJS(env);
     auto activityIndicatorProps = std::dynamic_pointer_cast<
         const facebook::react::ActivityIndicatorViewProps>(shadowView.props);
     if (!activityIndicatorProps) {
       LOG(ERROR)
           << "ActivityIndicatorComponentNapiBinder::createProps: props is not ActivityIndicatorViewProps";
-      return arkJs.getUndefined();
+      return arkJS.getUndefined();
     }
 
     napi_value napiBaseProps =
         ViewComponentNapiBinder::createProps(env, shadowView);
-    auto propsBuilder = arkJs.getObjectBuilder(napiBaseProps);
+    auto propsBuilder = arkJS.getObjectBuilder(napiBaseProps);
 
     propsBuilder.addProperty("animating", activityIndicatorProps->animating)
         .addProperty("color", activityIndicatorProps->color);

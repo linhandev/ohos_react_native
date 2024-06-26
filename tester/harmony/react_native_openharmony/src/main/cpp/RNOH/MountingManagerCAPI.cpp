@@ -43,13 +43,13 @@ std::optional<facebook::react::SurfaceId> findSurfaceIdForComponentInstance(
 void MountingManagerCAPI::willMount(MutationList const& mutations) {}
 
 void MountingManagerCAPI::doMount(MutationList const& mutations) {
-  m_arkTsMountingManager->doMount(mutations);
+  m_arkTSMountingManager->doMount(mutations);
 }
 
 void MountingManagerCAPI::didMount(MutationList const& mutations) {
   if (!m_featureFlagRegistry->isFeatureFlagOn(
           "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-    m_arkTsMountingManager->didMount(mutations);
+    m_arkTSMountingManager->didMount(mutations);
   }
   for (auto const& mutation : mutations) {
     try {
@@ -68,7 +68,7 @@ void MountingManagerCAPI::dispatchCommand(
     folly::dynamic const& args) {
   facebook::react::SystraceSection s(
       "RNOH::MountingManagerCAPI::dispatchCommand");
-  m_arkTsMountingManager->dispatchCommand(shadowView, commandName, args);
+  m_arkTSMountingManager->dispatchCommand(shadowView, commandName, args);
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
   if (componentInstance) {
@@ -156,7 +156,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
                   << newChild.componentName;
         if (m_featureFlagRegistry->isFeatureFlagOn(
                 "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-          m_arkTsMountingManager->didMount({mutation});
+          m_arkTSMountingManager->didMount({mutation});
         }
       }
       break;
@@ -169,7 +169,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
               m_cApiComponentNames.end() &&
           m_featureFlagRegistry->isFeatureFlagOn(
               "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-        m_arkTsMountingManager->didMount({mutation});
+        m_arkTSMountingManager->didMount({mutation});
       }
       break;
     }
@@ -234,7 +234,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
                 m_cApiComponentNames.end() &&
             m_featureFlagRegistry->isFeatureFlagOn(
                 "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-          m_arkTsMountingManager->didMount({mutation});
+          m_arkTSMountingManager->didMount({mutation});
         }
       }
       break;

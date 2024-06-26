@@ -6,11 +6,11 @@
 namespace rnoh {
 
 facebook::react::SwitchEventEmitter::OnChange convertSwitchEvent(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     napi_value eventObject) {
-  auto value = arkJs.getBoolean(arkJs.getObjectProperty(eventObject, "value"));
+  auto value = arkJS.getBoolean(arkJS.getObjectProperty(eventObject, "value"));
   auto target =
-      arkJs.getInteger(arkJs.getObjectProperty(eventObject, "target"));
+      arkJS.getInteger(arkJS.getObjectProperty(eventObject, "target"));
 
   return {value, target};
 }
@@ -28,8 +28,8 @@ class SwitchEventEmitRequestHandler : public EventEmitRequestHandler {
       return;
     }
 
-    ArkJS arkJs(ctx.env);
-    auto event = convertSwitchEvent(arkJs, ctx.payload);
+    ArkJS arkJS(ctx.env);
+    auto event = convertSwitchEvent(arkJS, ctx.payload);
     eventEmitter->onChange(event);
   }
 };

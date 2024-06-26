@@ -38,11 +38,11 @@ class MountingManagerArkTS final : public MountingManager {
       ShadowViewRegistry::Shared shadowViewRegistry,
       TriggerUICallback triggerUICallback,
       CommandDispatcher commandDispatcher,
-      ArkTSChannel::Shared arkTsChannel)
+      ArkTSChannel::Shared arkTSChannel)
       : shadowViewRegistry(std::move(shadowViewRegistry)),
         triggerUICallback(std::move(triggerUICallback)),
         commandDispatcher(std::move(commandDispatcher)),
-        m_arkTsChannel(std::move(arkTsChannel)) {}
+        m_arkTSChannel(std::move(arkTSChannel)) {}
 
   void willMount(MutationList const& mutations) override;
 
@@ -69,7 +69,7 @@ class MountingManagerArkTS final : public MountingManager {
   ShadowViewRegistry::Shared shadowViewRegistry;
   TriggerUICallback triggerUICallback;
   CommandDispatcher commandDispatcher;
-  ArkTSChannel::Shared m_arkTsChannel;
+  ArkTSChannel::Shared m_arkTSChannel;
 };
 
 } // namespace rnoh

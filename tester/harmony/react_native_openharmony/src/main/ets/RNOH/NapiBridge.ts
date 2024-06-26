@@ -64,7 +64,7 @@ export class NapiBridge {
     })
   }
 
-  onInit(shouldCleanUpRNInstances: boolean, arkTsBridgeHandler: ArkTSBridgeHandler) {
+  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -78,13 +78,13 @@ export class NapiBridge {
       envId: number
     }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
       handleError: (err: RawRNOHError) => {
-        arkTsBridgeHandler.handleError(new RNOHError({
+        arkTSBridgeHandler.handleError(new RNOHError({
           whatHappened: err.message,
           howCanItBeFixed: (err.suggestions ?? []),
           customStack: (err.stacktrace ?? []).join("\n"),
         }))
       },
-      getDisplayMetrics: () => arkTsBridgeHandler.getDisplayMetrics()
+      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics()
     } satisfies ArkTSBridgeHandler))
   }
 

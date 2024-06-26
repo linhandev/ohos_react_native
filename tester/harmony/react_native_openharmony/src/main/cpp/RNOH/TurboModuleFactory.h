@@ -26,7 +26,7 @@ class TurboModuleFactory {
 
   TurboModuleFactory(
       napi_env env,
-      napi_ref arkTsTurboModuleProviderRef,
+      napi_ref arkTSTurboModuleProviderRef,
       const ComponentJSIBinderByString&&,
       std::shared_ptr<TaskExecutor>,
       std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>);
@@ -52,7 +52,7 @@ class TurboModuleFactory {
 
   const ComponentJSIBinderByString m_componentBinderByString;
   napi_env m_env;
-  napi_ref m_arkTsTurboModuleProviderRef;
+  napi_ref m_arkTSTurboModuleProviderRef;
   std::shared_ptr<TaskExecutor> m_taskExecutor;
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> m_delegates;
 };

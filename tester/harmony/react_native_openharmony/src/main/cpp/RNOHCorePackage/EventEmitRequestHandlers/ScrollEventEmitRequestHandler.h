@@ -15,30 +15,30 @@ enum ScrollEventType {
 };
 
 facebook::react::ScrollViewMetrics convertScrollEvent(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     napi_value eventObject) {
-  auto arkContentSize = arkJs.getObjectProperty(eventObject, "contentSize");
+  auto arkContentSize = arkJS.getObjectProperty(eventObject, "contentSize");
   facebook::react::Size contentSize = {
-      (float)arkJs.getDouble(arkJs.getObjectProperty(arkContentSize, "width")),
-      (float)arkJs.getDouble(
-          arkJs.getObjectProperty(arkContentSize, "height"))};
+      (float)arkJS.getDouble(arkJS.getObjectProperty(arkContentSize, "width")),
+      (float)arkJS.getDouble(
+          arkJS.getObjectProperty(arkContentSize, "height"))};
 
-  auto arkContentOffset = arkJs.getObjectProperty(eventObject, "contentOffset");
+  auto arkContentOffset = arkJS.getObjectProperty(eventObject, "contentOffset");
   facebook::react::Point contentOffset = {
-      (float)arkJs.getDouble(arkJs.getObjectProperty(arkContentOffset, "x")),
-      (float)arkJs.getDouble(arkJs.getObjectProperty(arkContentOffset, "y"))};
+      (float)arkJS.getDouble(arkJS.getObjectProperty(arkContentOffset, "x")),
+      (float)arkJS.getDouble(arkJS.getObjectProperty(arkContentOffset, "y"))};
 
-  auto arkContainerSize = arkJs.getObjectProperty(eventObject, "containerSize");
+  auto arkContainerSize = arkJS.getObjectProperty(eventObject, "containerSize");
   facebook::react::Size containerSize = {
-      (float)arkJs.getDouble(
-          arkJs.getObjectProperty(arkContainerSize, "width")),
-      (float)arkJs.getDouble(
-          arkJs.getObjectProperty(arkContainerSize, "height"))};
+      (float)arkJS.getDouble(
+          arkJS.getObjectProperty(arkContainerSize, "width")),
+      (float)arkJS.getDouble(
+          arkJS.getObjectProperty(arkContainerSize, "height"))};
 
   float zoomScale =
-      (float)arkJs.getDouble(arkJs.getObjectProperty(eventObject, "zoomScale"));
-  bool responderIgnoreScroll = (bool)arkJs.getBoolean(
-      arkJs.getObjectProperty(eventObject, "responderIgnoreScroll"));
+      (float)arkJS.getDouble(arkJS.getObjectProperty(eventObject, "zoomScale"));
+  bool responderIgnoreScroll = (bool)arkJS.getBoolean(
+      arkJS.getObjectProperty(eventObject, "responderIgnoreScroll"));
 
   return {
       contentSize,
@@ -79,8 +79,8 @@ class ScrollEventEmitRequestHandler : public EventEmitRequestHandler {
       return;
     }
 
-    ArkJS arkJs(ctx.env);
-    auto event = convertScrollEvent(arkJs, ctx.payload);
+    ArkJS arkJS(ctx.env);
+    auto event = convertScrollEvent(arkJS, ctx.payload);
 
     switch (eventType) {
       case ScrollEventType::BEGIN_DRAG:

@@ -5,17 +5,17 @@
 namespace rnoh {
 
 facebook::react::TextInputMetrics convertTextInputEvent(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     napi_value eventObject) {
-  auto text = arkJs.getString(arkJs.getObjectProperty(eventObject, "text"));
+  auto text = arkJS.getString(arkJS.getObjectProperty(eventObject, "text"));
   auto eventCount =
-      arkJs.getInteger(arkJs.getObjectProperty(eventObject, "eventCount"));
+      arkJS.getInteger(arkJS.getObjectProperty(eventObject, "eventCount"));
   auto selectionRangeNapi =
-      arkJs.getObject(arkJs.getObjectProperty(eventObject, "selectionRange"));
+      arkJS.getObject(arkJS.getObjectProperty(eventObject, "selectionRange"));
   auto selectionRangeLocation =
-      arkJs.getInteger(selectionRangeNapi.getProperty("location"));
+      arkJS.getInteger(selectionRangeNapi.getProperty("location"));
   auto selectionRangeLength =
-      arkJs.getInteger(selectionRangeNapi.getProperty("length"));
+      arkJS.getInteger(selectionRangeNapi.getProperty("length"));
   facebook::react::TextInputMetrics textInputMetrics{
       .text = text,
       .selectionRange =
@@ -25,11 +25,11 @@ facebook::react::TextInputMetrics convertTextInputEvent(
 }
 
 facebook::react::KeyPressMetrics convertKeyPressEvent(
-    ArkJS& arkJs,
+    ArkJS& arkJS,
     napi_value eventObject) {
-  auto key = arkJs.getString(arkJs.getObjectProperty(eventObject, "key"));
+  auto key = arkJS.getString(arkJS.getObjectProperty(eventObject, "key"));
   auto eventCount =
-      arkJs.getInteger(arkJs.getObjectProperty(eventObject, "eventCount"));
+      arkJS.getInteger(arkJS.getObjectProperty(eventObject, "eventCount"));
   facebook::react::KeyPressMetrics keyPressMetrics{
       .text = key, .eventCount = eventCount};
   return keyPressMetrics;
@@ -80,30 +80,30 @@ class TextInputEventEmitRequestHandler : public EventEmitRequestHandler {
       return;
     }
 
-    ArkJS arkJs(ctx.env);
+    ArkJS arkJS(ctx.env);
     switch (eventType) {
       case TextInputEventType::TEXT_INPUT_ON_CHANGE:
-        eventEmitter->onChange(convertTextInputEvent(arkJs, ctx.payload));
+        eventEmitter->onChange(convertTextInputEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_SUBMIT_EDITING:
         eventEmitter->onSubmitEditing(
-            convertTextInputEvent(arkJs, ctx.payload));
+            convertTextInputEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_END_EDITING:
-        eventEmitter->onEndEditing(convertTextInputEvent(arkJs, ctx.payload));
+        eventEmitter->onEndEditing(convertTextInputEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_FOCUS:
-        eventEmitter->onFocus(convertTextInputEvent(arkJs, ctx.payload));
+        eventEmitter->onFocus(convertTextInputEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_BLUR:
-        eventEmitter->onBlur(convertTextInputEvent(arkJs, ctx.payload));
+        eventEmitter->onBlur(convertTextInputEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_KEY_PRESS:
-        eventEmitter->onKeyPress(convertKeyPressEvent(arkJs, ctx.payload));
+        eventEmitter->onKeyPress(convertKeyPressEvent(arkJS, ctx.payload));
         break;
       case TextInputEventType::TEXT_INPUT_ON_SELECTION_CHANGE:
         eventEmitter->onSelectionChange(
-            convertTextInputEvent(arkJs, ctx.payload));
+            convertTextInputEvent(arkJS, ctx.payload));
         break;
       default:
         break;
