@@ -11,6 +11,10 @@ ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {
   ArkUINodeRegistry::getInstance().registerNode(this);
 }
 
+void ArkUINode::setArkUINodeDelegate(ArkUINodeDelegate* delegate) {
+  m_arkUINodeDelegate = delegate;
+}
+
 ArkUINode::ArkUINode(ArkUINode&& other) noexcept
     : m_nodeHandle(std::move(other.m_nodeHandle)) {
   other.m_nodeHandle = nullptr;
@@ -513,6 +517,9 @@ ArkUINode::~ArkUINode() {
   if (m_nodeHandle != nullptr) {
     ArkUINodeRegistry::getInstance().unregisterNode(this);
     NativeNodeApi::getInstance()->disposeNode(m_nodeHandle);
+  }
+  if (m_arkUINodeDelegate != nullptr) {
+    m_arkUINodeDelegate->onArkUINodeDestroy(this);
   }
 }
 
