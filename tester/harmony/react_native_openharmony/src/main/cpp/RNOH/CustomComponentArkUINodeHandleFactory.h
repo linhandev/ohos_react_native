@@ -29,7 +29,9 @@ class CustomComponentArkUINodeHandleFactory final {
         m_customRNComponentFrameNodeFactoryRef(
             customRNComponentFrameNodeFactoryRef) {}
 
-  ArkUI_NodeHandle create(facebook::react::Tag tag, std::string componentName) {
+  std::pair<ArkUI_NodeHandle, std::function<void()>> create(
+      facebook::react::Tag tag,
+      std::string componentName) {
     m_threadGuard.assertThread();
 #ifdef C_API_ARCH
     ArkJS arkJs(m_env);
@@ -41,16 +43,26 @@ class CustomComponentArkUINodeHandleFactory final {
             .call(
                 "create",
                 {arkJs.createInt(tag), arkJs.createString(componentName)});
+    auto n_arkTsNodeHandle = arkJs.getObjectProperty(n_result, "frameNode");
+    auto n_destroyBuilderNode =
+        arkJs.getObjectProperty(n_result, "destroyBuilderNode");
+    auto n_destroyBuilderNodeRef = arkJs.createReference(n_destroyBuilderNode);
     ArkUI_NodeHandle arkTsNodeHandle = nullptr;
-    auto errorCode =
-        OH_ArkUI_GetNodeHandleFromNapiValue(m_env, n_result, &arkTsNodeHandle);
+    auto errorCode = OH_ArkUI_GetNodeHandleFromNapiValue(
+        m_env, n_arkTsNodeHandle, &arkTsNodeHandle);
     if (errorCode != 0) {
       LOG(ERROR) << "Couldn't get node handle. Error code: " << errorCode;
-      return nullptr;
+      return std::make_pair(nullptr, [] {});
     }
-    return arkTsNodeHandle;
+    return std::make_pair(
+        arkTsNodeHandle, [env = m_env, n_destroyBuilderNodeRef] {
+          ArkJS arkJs(env);
+          auto n_destroy = arkJs.getReferenceValue(n_destroyBuilderNodeRef);
+          arkJs.call(n_destroy, {});
+          arkJs.deleteReference(n_destroyBuilderNodeRef);
+        });
 #else
-    return nullptr;
+    return std::make_pair(nullptr, [] {});
 #endif
   }
 

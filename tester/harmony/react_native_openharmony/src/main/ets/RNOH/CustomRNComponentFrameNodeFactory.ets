@@ -4,8 +4,13 @@ import { RNComponentContext, ComponentBuilderContext, ComponentBuilderContextImp
 import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
 
+interface CustomRNComponentFrameNodeFactoryResult {
+  frameNode: FrameNode
+  destroyBuilderNode: () => void
+}
+
 /**
- * This is internal class used by RNSurface when C-API architecture is enabled.
+ * @internal
  */
 export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
   private uiCtx: UIContext;
@@ -19,7 +24,7 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     this.logger = logger.clone("CustomRNComponentFrameNodeFactory")
   }
 
-  create(tag: Tag, componentName: string): FrameNode {
+  create(tag: Tag, componentName: string): CustomRNComponentFrameNodeFactoryResult {
     const logger = this.logger.clone("create")
     const stopTracing = logger.startTracing()
     if (this.componentContext === undefined) {
@@ -40,6 +45,8 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
       this.componentContext!.logger.fatal(`Couldn't create frameNode for: ${componentName}`);
     }
     stopTracing();
-    return frameNode!;
+    return { frameNode: frameNode!, destroyBuilderNode: () => {
+      builderNode.dispose()
+    } };
   }
 }
