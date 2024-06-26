@@ -27,7 +27,15 @@ enum class ArkuiHitTestMode : int32_t {
 };
 }
 
+class ArkUINodeDelegate {
+ public:
+  virtual ~ArkUINodeDelegate() = default;
+  virtual void onArkUINodeDestroy(ArkUINode* node){};
+};
+
 class ArkUINode {
+  ArkUINodeDelegate* m_arkUINodeDelegate = nullptr;
+
  protected:
   ArkUINode(const ArkUINode& other) = delete;
   ArkUINode& operator=(const ArkUINode& other) = delete;
@@ -40,6 +48,8 @@ class ArkUINode {
 
   ArkUI_NodeHandle getArkUINodeHandle();
   ArkUINode(ArkUI_NodeHandle nodeHandle);
+
+  void setArkUINodeDelegate(ArkUINodeDelegate* arkUiNodeDelegate);
 
   void markDirty();
   void saveSize(int32_t width, int32_t height);
