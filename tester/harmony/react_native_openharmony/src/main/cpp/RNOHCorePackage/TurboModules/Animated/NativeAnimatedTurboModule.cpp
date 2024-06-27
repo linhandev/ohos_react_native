@@ -112,7 +112,10 @@ jsi::Value startAnimatingNode(
   auto config = jsi::dynamicFromValue(rt, args[2]);
   // always send emit event instead of using callback from args[3] as it causes
   // problem with destruction of the RNInstance
-  self->startAnimatingNode(
+  if (self == nullptr) {
+      return facebook::jsi::Value::undefined();
+  }
+  self->startAnimatingNode( 
       animationId,
       args[1].getNumber(),
       config,
