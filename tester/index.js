@@ -19,6 +19,7 @@ import {
   TogglingComponentExample,
 } from './examples';
 import { TextTestsExample } from './examples/TestTextsExample';
+import { AAAAScrollViews2 } from './tests/CHYTest/AAAAScrollViews2';
 
 AppRegistry.setWrapperComponentProvider(appParams => {
   return ({children, ..._otherProps}) => (
@@ -32,7 +33,7 @@ ReactNativeFeatureFlags.shouldEmitW3CPointerEvents = () => true;
 ReactNativeFeatureFlags.shouldPressibilityUseW3CPointerEventsForHover = () =>
   true;
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => AAAAScrollViews2);
 
 AppRegistry.registerComponent('tester', () => TesterExample);
 AppRegistry.registerComponent('animations', () => AnimationsExample);

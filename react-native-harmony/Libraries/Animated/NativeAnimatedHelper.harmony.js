@@ -40,8 +40,10 @@ let queue: Array<() => void> = [];
 // $FlowFixMe
 let singleOpQueue: Array<any> = [];
 
-// RNOH: patch
-const useSingleOpBatching = true; // while we do not use operationBatching we want to use logic for listening to events
+const useSingleOpBatching =
+  Platform.OS === 'android' &&
+  !!NativeAnimatedModule?.queueAndExecuteBatchedOperations &&
+  ReactNativeFeatureFlags.animatedShouldUseSingleOp();
 let flushQueueTimeout = null;
 
 const eventListenerGetValueCallbacks: {
@@ -53,8 +55,40 @@ const eventListenerAnimationFinishedCallbacks: {
 let globalEventEmitterGetValueListener: ?EventSubscription = null;
 let globalEventEmitterAnimationFinishedListener: ?EventSubscription = null;
 
-// RNOH: patch
-const nativeOps = NativeAnimatedModule;
+const nativeOps: ?typeof NativeAnimatedModule = useSingleOpBatching
+  ? ((function () {
+      const apis = [
+        'createAnimatedNode', // 1
+        'updateAnimatedNodeConfig', // 2
+        'getValue', // 3
+        'startListeningToAnimatedNodeValue', // 4
+        'stopListeningToAnimatedNodeValue', // 5
+        'connectAnimatedNodes', // 6
+        'disconnectAnimatedNodes', // 7
+        'startAnimatingNode', // 8
+        'stopAnimation', // 9
+        'setAnimatedNodeValue', // 10
+        'setAnimatedNodeOffset', // 11
+        'flattenAnimatedNodeOffset', // 12
+        'extractAnimatedNodeOffset', // 13
+        'connectAnimatedNodeToView', // 14
+        'disconnectAnimatedNodeFromView', // 15
+        'restoreDefaultValues', // 16
+        'dropAnimatedNode', // 17
+        'addAnimatedEventToView', // 18
+        'removeAnimatedEventFromView', // 19
+        'addListener', // 20
+        'removeListener', // 21
+      ];
+      return apis.reduce<{[string]: number}>((acc, functionName, i) => {
+        // These indices need to be kept in sync with the indices in native (see NativeAnimatedModule in Java, or the equivalent for any other native platform).
+        // $FlowFixMe[prop-missing]
+        acc[functionName] = i + 1;
+        return acc;
+      }, {});
+    })(): $FlowFixMe)
+  : NativeAnimatedModule;
+
 /**
  * Wrappers around NativeAnimatedModule to provide flow and autocomplete support for
  * the native module methods, and automatic queue management on Android
@@ -132,11 +166,7 @@ const API = {
       // use RCTDeviceEventEmitter. This reduces overhead of sending lots of
       // JSI functions across to native code; but also, TM infrastructure currently
       // does not support packing a function into native arrays.
-
-      // RNOH: patch
-      for (let q = 0, l = singleOpQueue.length; q < l; q++) {
-        singleOpQueue[q]();
-      }
+      NativeAnimatedModule?.queueAndExecuteBatchedOperations?.(singleOpQueue);
       singleOpQueue.length = 0;
     } else {
       Platform.OS === 'android' &&
@@ -154,13 +184,18 @@ const API = {
     fn: Fn,
     ...args: Args
   ): void => {
+    if (useSingleOpBatching) {
+      // Get the command ID from the queued function, and push that ID and any arguments needed to execute the operation
+      // $FlowFixMe: surprise, fn is actually a number
+      singleOpQueue.push(fn, ...args);
+      return;
+    }
+
     // If queueing is explicitly on, *or* the queue has not yet
     // been flushed, use the queue. This is to prevent operations
     // from being executed out of order.
-    // RNOH: patch
-    const currentlyUsedQueue = useSingleOpBatching ? singleOpQueue : queue;
-    if (queueOperations || currentlyUsedQueue.length !== 0) {
-      currentlyUsedQueue.push(() => fn(...args));
+    if (queueOperations || queue.length !== 0) {
+      queue.push(() => fn(...args));
     } else {
       fn(...args);
     }
