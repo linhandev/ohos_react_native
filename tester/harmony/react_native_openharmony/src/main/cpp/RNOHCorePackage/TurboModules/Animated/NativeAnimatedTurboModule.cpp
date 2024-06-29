@@ -56,7 +56,9 @@ jsi::Value getValue(
     size_t count) {
   auto self = static_cast<NativeAnimatedTurboModule*>(&turboModule);
   auto value = self->getValue(args[0].getNumber());
-  args[1].getObject(rt).getFunction(rt).call(rt, value);
+  if (count > 1) {
+    args[1].getObject(rt).getFunction(rt).call(rt, value);
+  }
   return facebook::jsi::Value::undefined();
 }
 
@@ -108,25 +110,18 @@ jsi::Value startAnimatingNode(
   auto self = static_cast<NativeAnimatedTurboModule*>(&turboModule);
   auto animationId = args[0].getNumber();
   auto config = jsi::dynamicFromValue(rt, args[2]);
-  if (args[3].isUndefined()) {
-    self->startAnimatingNode(
-        animationId,
-        args[1].getNumber(),
-        config,
-        [self, &rt, animationId](bool finished) {
-          self->emitAnimationEndedEvent(rt, animationId, finished);
-        });
-    return facebook::jsi::Value::undefined();
+  // always send emit event instead of using callback from args[3] as it causes
+  // problem with destruction of the RNInstance
+  if (self == nullptr) {
+      return facebook::jsi::Value::undefined();
   }
-  auto callback = std::make_shared<jsi::Function>(
-      std::move(args[3].getObject(rt).getFunction(rt)));
-  auto endCallback = [&rt, callback = std::move(callback)](bool finished) {
-    auto result = jsi::Object(rt);
-    result.setProperty(rt, "finished", jsi::Value(finished));
-    callback->call(rt, {std::move(result)});
-  };
-  self->startAnimatingNode(
-      args[0].getNumber(), args[1].getNumber(), config, std::move(endCallback));
+  self->startAnimatingNode( 
+      animationId,
+      args[1].getNumber(),
+      config,
+      [self, &rt, animationId](bool finished) {
+        self->emitAnimationEndedEvent(rt, animationId, finished);
+      });
   return facebook::jsi::Value::undefined();
 }
 
@@ -363,18 +358,9 @@ void NativeAnimatedTurboModule::startAnimatingNode(
     react::Tag nodeTag,
     folly::dynamic const& config,
     std::function<void(bool)>&& endCallback) {
-  auto jsThreadCallback = [jsInvoker = this->jsInvoker_,
-                           endCallback =
-                               std::move(endCallback)](bool finished) mutable {
-    // callbacks passed from JS need to be called through the jsInvoker
-    // to ensure proper handling by React
-    jsInvoker->invokeAsync([finished, endCallback = std::move(endCallback)] {
-      endCallback(finished);
-    });
-  };
   auto lock = acquireLock();
   m_animatedNodesManager.startAnimatingNode(
-      animationId, nodeTag, config, std::move(jsThreadCallback));
+      animationId, nodeTag, config, std::move(endCallback));
 }
 
 void NativeAnimatedTurboModule::stopAnimation(react::Tag animationId) {
