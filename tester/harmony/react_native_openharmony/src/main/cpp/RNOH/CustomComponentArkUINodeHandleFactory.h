@@ -27,17 +27,13 @@ class CustomComponentArkUINodeHandleFactory {
         m_taskExecutor(taskExecutor),
         m_customRNComponentFrameNodeFactoryRef(
             customRNComponentFrameNodeFactoryRef) {}
-  napi_env getEnv() {
-    return m_env;
-  }
 
-  std::pair<ArkUI_NodeHandle, napi_ref> create(facebook::react::Tag tag, std::string componentName) {
+  ArkUI_NodeHandle create(facebook::react::Tag tag, std::string componentName) {
 #ifdef C_API_ARCH
     ArkUI_NodeHandle arkTSNodeHandle = nullptr;
-    napi_ref componentContentRef = nullptr;
     m_taskExecutor->runSyncTask(
         TaskThread::MAIN,
-        [=, &arkTSNodeHandle, &componentContentRef, componentName = std::move(componentName)] {
+        [=, &arkTSNodeHandle, componentName = std::move(componentName)] {
           ArkJS arkJs(m_env);
           auto frameNodeFactory =
               arkJs.getObject(m_customRNComponentFrameNodeFactoryRef)
@@ -52,12 +48,9 @@ class CustomComponentArkUINodeHandleFactory {
           if (errorCode != 0) {
             LOG(ERROR) << "Couldn't get node handle. Error code: " << errorCode;
             arkTSNodeHandle = nullptr;
-          } else {
-            napi_create_reference(
-                m_env, n_result, 1, &componentContentRef);
           }
         });
-    return std::pair<ArkUI_NodeHandle, napi_ref>(arkTSNodeHandle, componentContentRef);
+    return arkTSNodeHandle;
 #else
     return nullptr;
 #endif

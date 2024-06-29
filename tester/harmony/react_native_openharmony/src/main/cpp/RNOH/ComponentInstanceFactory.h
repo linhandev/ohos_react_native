@@ -56,14 +56,10 @@ class ComponentInstanceFactory {
                  << ""
                     ""
                  << tag;
-    auto handleRefPair =
+    auto frameNodeHandle =
         m_customComponentArkUINodeHandleFactory->create(tag, componentName);
-    auto arkUINode = handleRefPair.first != nullptr
-        ? std::make_unique<ArkUINode>(
-          handleRefPair.first,
-          handleRefPair.second,
-          m_customComponentArkUINodeHandleFactory->getEnv()
-          )
+    auto arkUINode = frameNodeHandle != nullptr
+        ? std::make_unique<ArkUINode>(frameNodeHandle)
         // use Stack as a fallback when no frame node was created
         : std::make_unique<StackNode>();
     auto arkUIComponentInstance =
