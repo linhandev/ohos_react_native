@@ -316,7 +316,6 @@ class CppComponentInstance : public ComponentInstance {
       if (!old) {
         if (props->transform != defaultTransform || abs(m_oldPointScaleFactor - 0.0f) > 0.001f) {
           m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
-          this->setTransform(props->transform);
           this->getLocalRootArkUINode().setTransform(
             props->transform, m_layoutMetrics.pointScaleFactor);
           markBoundingBoxAsDirty();
