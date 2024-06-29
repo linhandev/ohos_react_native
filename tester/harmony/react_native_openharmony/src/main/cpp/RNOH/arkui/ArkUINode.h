@@ -40,7 +40,6 @@ class ArkUINode {
 
   ArkUI_NodeHandle getArkUINodeHandle();
   ArkUINode(ArkUI_NodeHandle nodeHandle);
-  ArkUINode(ArkUI_NodeHandle nodeHandle, napi_ref ref, napi_env);
 
   void markDirty();
   void saveSize(int32_t width, int32_t height);
@@ -133,8 +132,6 @@ class ArkUINode {
       ArkUI_NodeAttributeType attribute) const;
 
   ArkUI_NodeHandle m_nodeHandle;
-  napi_ref m_ref = nullptr;
-  napi_env m_env = nullptr;
 
  private:
   int32_t m_width = 0;

@@ -11,13 +11,6 @@ ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {
   ArkUINodeRegistry::getInstance().registerNode(this);
 }
 
-ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle, napi_ref ref, napi_env env)
-: m_nodeHandle(nodeHandle),
-  m_ref(ref),
-  m_env(env) {
-  ArkUINodeRegistry::getInstance().registerNode(this);
-}
-
 ArkUINode::ArkUINode(ArkUINode&& other) noexcept
     : m_nodeHandle(std::move(other.m_nodeHandle)) {
   other.m_nodeHandle = nullptr;
@@ -521,10 +514,6 @@ ArkUINode::~ArkUINode() {
     ArkUINodeRegistry::getInstance().unregisterNode(this);
     NativeNodeApi::getInstance()->disposeNode(m_nodeHandle);
   }
-    
-    if (m_ref != nullptr) {
-        napi_delete_reference(m_env, m_ref);
-    }
 }
 
 const ArkUI_AttributeItem& ArkUINode::getAttribute(
