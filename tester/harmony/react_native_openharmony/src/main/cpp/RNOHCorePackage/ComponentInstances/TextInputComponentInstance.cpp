@@ -2,6 +2,7 @@
 #include "RNOH/arkui/conversions.h"
 #include "conversions.h"
 
+#include <boost/locale.hpp>
 #include <folly/dynamic.h>
 #include <glog/logging.h>
 #include <react/renderer/components/textinput/TextInputProps.h>
@@ -86,7 +87,10 @@ void TextInputComponentInstance::onTextSelectionChange(
         (location < m_selectionLocation) || location <= 0;
     if (!cursorMovedBackwardsOrAtBeginningOfInput &&
         (noPreviousSelection || !cursorDidNotMove)) {
-      key = m_content.at(location - 1);
+      auto wideContent = boost::locale::conv::utf_to_utf<char16_t>(m_content);
+      auto wideKey = wideContent.substr(
+          m_selectionLocation, location - m_selectionLocation);
+      key = boost::locale::conv::utf_to_utf<char>(wideKey);
     }
     auto keyPressMetrics = facebook::react::KeyPressMetrics();
     keyPressMetrics.text = key;

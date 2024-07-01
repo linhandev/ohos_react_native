@@ -308,6 +308,24 @@ export function TextInputTest() {
           expect(state).to.be.eq('Backspace');
         }}
       />
+      <TestCase.Manual
+        modal
+        itShould="trigger onKeyPress for a non-ASCII input (press 'a' to pass)"
+        initialState={''}
+        arrange={({setState}) => (
+          <>
+            <TextInputWithText
+              style={styles.textInput}
+              autoFocus
+              defaultValue="你好😊"
+              onKeyPress={event => setState(event.nativeEvent.key)}
+            />
+          </>
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.be.eq('a');
+        }}
+      />
       <TestCase.Example
         modal
         itShould="show text input with default value (defaultProps)">
