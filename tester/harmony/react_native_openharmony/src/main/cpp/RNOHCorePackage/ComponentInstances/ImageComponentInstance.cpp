@@ -7,11 +7,24 @@
 namespace rnoh {
 
 ImageComponentInstance::ImageComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)) {
+    : CppComponentInstance(std::move(context)),
+      ImageSourceResolver::ImageSourceUpdateListener(
+          m_deps->imageSourceResolver) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);
   this->getLocalRootArkUINode().setDraggable(false);
+}
+
+void ImageComponentInstance::setSources(
+    facebook::react::ImageSources const& sources) {
+  auto newSources =
+      m_deps->imageSourceResolver->resolveImageSources(*this, sources);
+  if (!newSources.empty()) {
+    this->getLocalRootArkUINode().setSources(newSources);
+  } else {
+    this->getLocalRootArkUINode().resetSources();
+  }
 }
 
 void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
@@ -20,7 +33,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
   if (!m_props || m_props->sources != props->sources) {
-    this->getLocalRootArkUINode().setSources(props->sources);
+    setSources(props->sources);
     if (!this->getLocalRootArkUINode().getUri().empty()) {
       onLoadStart();
     }
@@ -83,10 +96,13 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   }
 }
 
+void ImageComponentInstance::onImageSourceCacheUpdate() {
+  setSources({m_state->getData().getImageSource()});
+}
+
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
-  auto vector = {state->getData().getImageSource()};
-  this->getLocalRootArkUINode().setSources(vector);
+  setSources({state->getData().getImageSource()});
   this->getLocalRootArkUINode().setBlur(state->getData().getBlurRadius());
 }
 

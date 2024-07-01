@@ -1,6 +1,6 @@
 import {Image, ImageSourcePropType, ScrollView, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, TestCase} from '../components';
 import {getScrollViewContentHorizontal} from './ScrollViewTest/fixtures';
 
@@ -502,6 +502,9 @@ export const ImageTest = () => {
           style={{width: '100%', height: 200, marginVertical: 16}}
         />
       </TestCase.Example>
+      <TestCase.Example modal itShould="Prefetch large number of images">
+        <ImagePrefetchTest />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -646,5 +649,73 @@ const LoadLocalImagesFromDifferentFolders = () => {
         />
       </View>
     </View>
+  );
+};
+
+const IMAGE_ID_OFFSET = new Date().getTime();
+const NUMBER_OF_IMAGES = 45;
+
+const ImagePrefetchTest = () => {
+  const [renderImageList, setRenderImageList] = useState(false);
+
+  useEffect(() => {
+    // Delay the rendering of the images to allow the prefetch to start
+    setTimeout(() => {
+      setRenderImageList(true);
+    }, 500);
+
+    const promisesArray: Promise<boolean>[] = [];
+    for (let i = 0; i < NUMBER_OF_IMAGES; i++) {
+      const promise = Image.prefetch(
+        REMOTE_IMAGE_URL + '&v=' + (i + IMAGE_ID_OFFSET),
+      );
+      promisesArray.push(promise);
+    }
+    Promise.all(promisesArray)
+      .then(res => console.log('Successfully loaded all images', res))
+      .catch(err => console.log('Failed to load all images', err));
+  }, []);
+
+  return (
+    <>
+      {renderImageList && (
+        <ScrollView style={{height: '70%'}}>
+          <Button
+            label="Reload Images"
+            onPress={() => {
+              setRenderImageList(false);
+
+              setTimeout(() => {
+                setRenderImageList(true);
+              }, 500);
+            }}
+          />
+          <View
+            style={{
+              width: '100%',
+              flexWrap: 'wrap',
+              flexDirection: 'row',
+              justifyContent: 'center',
+            }}>
+            {new Array(NUMBER_OF_IMAGES).fill(0).map((_, idx) => {
+              return (
+                <Image
+                  key={idx}
+                  source={{
+                    uri: REMOTE_IMAGE_URL + '&v=' + (idx + IMAGE_ID_OFFSET),
+                  }}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    aspectRatio: 1,
+                    backgroundColor: 'blue',
+                  }}
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
+      )}
+    </>
   );
 };

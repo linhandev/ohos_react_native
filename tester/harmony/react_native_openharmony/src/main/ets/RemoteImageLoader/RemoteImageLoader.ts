@@ -7,6 +7,7 @@ import fs from '@ohos.file.fs';
 import { fetchDataFromUrl, FetchOptions, FetchResult } from '../RNOH/HttpRequestHelper';
 import { RemoteImageSource } from './RemoteImageSource';
 import { common } from '@kit.AbilityKit';
+import { RNInstance } from '../RNOH/ts';
 
 export class RemoteImageLoader {
   private activeRequestByUrl: Map<string, Promise<FetchResult>> = new Map();
@@ -16,6 +17,7 @@ export class RemoteImageLoader {
     private memoryCache: RemoteImageMemoryCache,
     private diskCache: RemoteImageDiskCache,
     private context: common.UIAbilityContext,
+    private rnInstance: RNInstance,
   ) {
   }
 
@@ -146,35 +148,44 @@ export class RemoteImageLoader {
     this.activePrefetchByUrl.set(uri, promise);
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
+      const fileUri = `file://${this.diskCache.getLocation(uri)}`;
+      this.rnInstance.postMessageToCpp('UPDATE_IMAGE_SOURCE_MAP', {        
+        remoteUri: uri,
+        fileUri,
+      });
     });
 
     return await promise;
   }
 
+  private async performDownload(config: request.DownloadConfig): Promise<boolean> {
+    return await new Promise(async (resolve, reject) => {
+      try {
+        const downloadTask = await request.downloadFile(this.context, config);
+        downloadTask.on("complete", () => resolve(true));
+        downloadTask.on("fail", (err: number) => reject(`Failed to download the task. Code: ${err}`));
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
   private async downloadFile(uri: string): Promise<boolean> {
     const path = this.diskCache.getLocation(uri);
+    const tempPath = path + '_tmp';
 
     try {
-      await request.downloadFile(this.context, { url: uri, filePath: path });
+      // Download to a temporary location to avoid risks of corrupted files from incomplete downloads, 
+      // as request.downloadFile does not clean up failed downloads automatically.
+      if (fs.accessSync(tempPath)){
+        await fs.unlink(tempPath);
+      }
+      await this.performDownload({ url: uri, filePath: tempPath });
+      // Move the file to the final location and remove the temporary file
+      await fs.moveFile(tempPath, path);
       this.diskCache.set(uri);
     } catch (e) {
-      // request.downloadFile does not allow overwriting,
-      // so we create a temp file and override the old one manually
-      if (e.code === request.EXCEPTION_FILEPATH) {
-        try {
-          const tempPath = path + '_temp';
-          await request.downloadFile(this.context, {
-            url: uri,
-            filePath: tempPath,
-          });
-          await fs.moveFile(tempPath, path);
-          this.diskCache.set(uri);
-        } catch (e1) {
-          return Promise.reject('Failed to fetch the image');
-        }
-      } else {
-        return Promise.reject('Failed to fetch the image');
-      }
+      return Promise.reject(e);
     }
     return true;
   }
@@ -185,6 +196,16 @@ export class RemoteImageLoader {
     }
     if (this.memoryCache.has(uri)) {
       return 'memory';
+    }
+    return undefined;
+  }
+
+  public getPrefetchResult(uri: string) {
+    if (this.activePrefetchByUrl.has(uri)) {
+      return 'pending';
+    }
+    if (this.diskCache.has(uri)) {
+      return `file://${this.diskCache.getLocation(uri)}`;
     }
     return undefined;
   }

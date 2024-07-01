@@ -17,7 +17,7 @@ export class ImageLoaderTurboModule extends TurboModule {
   constructor(protected ctx: TurboModuleContext) {
     super(ctx)
     this.imageLoader = new RemoteImageLoader(
-      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext)
+      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext, ctx.rnInstance)
   }
 
   public getConstants() {
@@ -57,6 +57,10 @@ export class ImageLoaderTurboModule extends TurboModule {
   public prefetchImageWithMetadata(uri: string, queryRootName: string, rootTag: number): Promise<boolean> {
     this.ctx.logger.warn("ImageLoader::prefetchImageWithMetadata is not supported")
     return Promise.resolve(false)
+  }
+
+  public getPrefetchResult(uri: string): string | undefined {
+    return this.imageLoader.getPrefetchResult(uri);
   }
 
   public queryCache(uris: Array<string>): Promise<Object> {

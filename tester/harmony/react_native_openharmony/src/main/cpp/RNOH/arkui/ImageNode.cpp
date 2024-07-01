@@ -183,6 +183,11 @@ ImageNode& ImageNode::resetResizeMethod() {
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
 }
+ImageNode& ImageNode::resetSources() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+      m_nodeHandle, NODE_IMAGE_SRC));
+  return *this;
+}
 
 std::string ImageNode::getUri() {
   return m_uri;
