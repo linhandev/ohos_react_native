@@ -30,6 +30,7 @@ class ScrollViewComponentJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "maintainVisibleContentPosition", "Object");
     object.setProperty(rt, "scrollToOverflowEnabled", "boolean");
     object.setProperty(rt, "centerContent", "boolean");
+    object.setProperty(rt, "__keyboardAvoidingViewBottomHeight", true);
     return object;
   }
 

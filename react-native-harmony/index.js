@@ -76,7 +76,7 @@ module.exports = {
     return require('react-native/Libraries/Components/Keyboard/Keyboard');
   },
   get KeyboardAvoidingView() {
-    return require('react-native/Libraries/Components/Keyboard/KeyboardAvoidingView')
+    return require('./Libraries/Components/Keyboard/KeyboardAvoidingView')
       .default;
   },
   get NativeEventEmitter() {

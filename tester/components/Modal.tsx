@@ -35,7 +35,7 @@ export function Modal(props: {
         ]}>
         <View
           style={[
-            {backgroundColor: 'white', padding: 16},
+            {backgroundColor: 'white', padding: 0},
             props.contentContainerStyle,
           ]}
           onTouchEnd={e => e.stopPropagation()}>
