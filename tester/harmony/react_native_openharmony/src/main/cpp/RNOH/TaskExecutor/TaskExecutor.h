@@ -25,6 +25,7 @@ class TaskExecutor {
   using Weak = std::weak_ptr<TaskExecutor>;
 
   TaskExecutor(napi_env mainEnv, bool shouldEnableBackground = false);
+  ~TaskExecutor() noexcept;
 
   void runTask(TaskThread thread, Task&& task);
   void runSyncTask(TaskThread thread, Task&& task);

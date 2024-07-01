@@ -1,6 +1,7 @@
 #include "TaskExecutor.h"
 #include <glog/logging.h>
 #include <react/renderer/debug/SystraceSection.h>
+#include "EventLoopTaskRunner.h"
 #include "NapiTaskRunner.h"
 #include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
@@ -9,7 +10,7 @@ namespace rnoh {
 
 TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
   auto mainTaskRunner = std::make_shared<NapiTaskRunner>(mainEnv);
-  auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
+  auto jsTaskRunner = std::make_shared<EventLoopTaskRunner>("RNOH_JS");
   auto backgroundExecutor = shouldEnableBackground
       ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
       : nullptr;
@@ -24,11 +25,15 @@ TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
   }
 }
 
+TaskExecutor::~TaskExecutor() noexcept {
+  DLOG(INFO) << "TaskExecutor::~TaskExecutor()";
+}
+
 void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 #ifdef C_API_ARCH
   int ret = OH_QoS_SetThreadQoS(level);
   std::array<char, 16> buffer = {0};
-  pthread_getname_np(pthread_self(), buffer.data(), sizeof(buffer));
+  pthread_getname_np(pthread_self(), buffer.data(), buffer.size());
   DLOG(INFO) << "TaskExecutor::setTaskThreadPriority " << buffer.data()
              << (ret == 0 ? " SUCCESSFUL" : " FAILED");
 #else
