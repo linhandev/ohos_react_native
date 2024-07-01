@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72.30
+- deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `arkTSMessageHub` ([59d7550bb4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59d7550bb4629787ec0ecbfa4eeee0e93b2ad10c))
+- added image prefetch support  ([6511bda8cf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6511bda8cf0da47c3b61663ff385ca1692c89441))
+- fixed cleaning up after ArkTS components — aboutToDisappear wasn't called when the ArkTS component was destroyed ([00e9ea3fbf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00e9ea3fbf201ecea6e60dd146c444dc05049c2f))
+- maybe fixed crash — "Trying to send a message on websocket "0" but there is no socket." ([7001556e85](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7001556e85dfa48c8dd57a50b8ec5d7dd09d6920))
+
+
 ## v0.72.29
 - deprecated `ComponentInstance::Dependencies::arkTSChannel` in favor of `RNInstance::postMessageToArkTS` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3d15e2e7ed7c8424d5a8e1337aa26d28f7408c5f))
 - deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `ComponentInstance::Dependencies::arkTsMessageHub` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ca56635340592d3f52de5447a8371a689660c6b0))
