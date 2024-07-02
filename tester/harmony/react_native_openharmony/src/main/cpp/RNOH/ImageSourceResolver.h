@@ -29,7 +29,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
 
     ImageSourceUpdateListener(
         ImageSourceResolver::Shared const& imageSourceResolver)
-        : m_imageSourceResolver(imageSourceResolver) {};
+        : m_imageSourceResolver(imageSourceResolver){};
 
     ~ImageSourceUpdateListener() {
       m_imageSourceResolver->removeListener(this);

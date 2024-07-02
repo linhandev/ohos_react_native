@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <unordered_map>
 #include "AbstractTaskRunner.h"
 #include "DefaultExceptionHandler.h"
 #include "uv/Async.h"
@@ -12,10 +13,11 @@
 #include "uv/Timer.h"
 
 namespace rnoh {
-class EventLoopTaskRunner final : public AbstractTaskRunner {
+class EventLoopTaskRunner : public AbstractTaskRunner {
  public:
   EventLoopTaskRunner(
       std::string name,
+      uv_loop_t* loop,
       ExceptionHandler exceptionHandler = defaultExceptionHandler);
   ~EventLoopTaskRunner() override;
 
@@ -25,23 +27,25 @@ class EventLoopTaskRunner final : public AbstractTaskRunner {
   void runAsyncTask(Task&& task) override;
   void runSyncTask(Task&& task) override;
 
-  bool isOnCurrentThread() const override;
+  DelayedTaskId
+  runDelayedTask(Task&& task, uint64_t delayMs, uint64_t repeatMs = 0) override;
+  void cancelDelayedTask(DelayedTaskId taskId) override;
 
   void setExceptionHandler(ExceptionHandler handler) override;
 
- private:
-  void executeTask();
-  void runLoop();
+ protected:
+  virtual void executeTask();
 
+  DelayedTaskId m_nextTaskId = 0;
   std::string m_name;
+  uv_loop_t* m_loop;
   std::atomic_bool m_running{true};
-  std::thread m_thread;
   std::queue<Task> m_asyncTaskQueue{};
   std::queue<Task> m_syncTaskQueue{};
-  std::mutex m_taskQueueMutex;
+  std::mutex m_mutex;
   std::condition_variable m_syncTaskCv;
-  uv::EventLoop m_eventLoop;
   std::unique_ptr<uv::Async> m_asyncHandle;
+  std::unordered_map<DelayedTaskId, uv::Timer> m_timerByTaskId;
   ExceptionHandler m_exceptionHandler;
 };
 } // namespace rnoh

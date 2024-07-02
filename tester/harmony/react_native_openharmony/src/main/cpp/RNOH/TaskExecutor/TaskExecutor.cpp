@@ -1,7 +1,6 @@
 #include "TaskExecutor.h"
 #include <glog/logging.h>
 #include <react/renderer/debug/SystraceSection.h>
-#include "EventLoopTaskRunner.h"
 #include "NapiTaskRunner.h"
 #include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
@@ -10,7 +9,7 @@ namespace rnoh {
 
 TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
   auto mainTaskRunner = std::make_shared<NapiTaskRunner>(mainEnv);
-  auto jsTaskRunner = std::make_shared<EventLoopTaskRunner>("RNOH_JS");
+  auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
   auto backgroundExecutor = shouldEnableBackground
       ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
       : nullptr;
@@ -71,6 +70,21 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
   if (currentThread.has_value()) {
     m_waitsOnThread[currentThread.value()] = std::nullopt;
   }
+}
+
+TaskExecutor::DelayedTask TaskExecutor::runDelayedTask(
+    TaskThread thread,
+    Task&& task,
+    uint64_t delayMs,
+    uint64_t repeatMs) {
+  auto runner = m_taskRunners[thread];
+  auto id = runner->runDelayedTask(std::move(task), delayMs, repeatMs);
+  return {id, thread};
+}
+
+void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
+  auto runner = m_taskRunners[taskId.thread];
+  runner->cancelDelayedTask(taskId.taskId);
 }
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
