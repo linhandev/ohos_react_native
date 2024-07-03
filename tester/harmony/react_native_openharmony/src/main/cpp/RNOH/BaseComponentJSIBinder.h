@@ -44,6 +44,16 @@ class BaseComponentJSIBinder : public ComponentJSIBinder {
     nativeProps.setProperty(rt, "aria-hidden", "boolean");
     nativeProps.setProperty(rt, "aria-label", "string");
     nativeProps.setProperty(rt, "importantForAccessibility", "number");
+    nativeProps.setProperty(rt, "backgroundColor", "Color");
+    nativeProps.setProperty(rt, "opacity", "number");
+    nativeProps.setProperty(rt, "borderRadius", "boolean");
+    nativeProps.setProperty(rt, "borderColor", "Color");
+    nativeProps.setProperty(rt, "borderWidth", "number");
+    nativeProps.setProperty(rt, "borderStyle", "string");
+    nativeProps.setProperty(rt, "shadowColor", "Color");
+    nativeProps.setProperty(rt, "transform", "array");
+    nativeProps.setProperty(rt, "zIndex", "number");
+    nativeProps.setProperty(rt, "backfaceVisibility", "string");
     return nativeProps;
   }
 

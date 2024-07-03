@@ -904,35 +904,12 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        itShould="change backgroundColor to red after pressing a button (setNativeProps)">
+        itShould="Change the various properties of the View by using setNativeProps">
         <SetNativePropsTest />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="Change the height of the View by using setNativeProps({height: h}), similarly for width, top, right, bottom, and left">
-        <SetNativePropsOfHeight />
       </TestCase.Example>
     </TestSuite>
   );
 }
-
-const SetNativePropsTest = () => {
-  const ref = useRef<View>(null);
-  return (
-    <View>
-      <View
-        style={{backgroundColor: 'yellow', width: 50, height: 50}}
-        ref={ref}
-      />
-      <Button
-        label="setBackgroudColor"
-        onPress={() =>
-          ref.current?.setNativeProps({style: {backgroundColor: 'red'}})
-        }
-      />
-    </View>
-  );
-};
 
 function PointerEventsView(props: {
   disableOuterContainerTouch?: boolean;
@@ -1123,17 +1100,114 @@ function ViewNextFocus() {
   );
 }
 
-function SetNativePropsOfHeight() {
+function SetNativePropsTest() {
+  return (
+    <>
+      <SetNativePropsTestProp
+        propName="height"
+        propInitialValue={50}
+        propNewValue={100}
+      />
+      <SetNativePropsTestProp
+        propName="backgroundColor"
+        propInitialValue="red"
+        propNewValue="blue"
+      />
+      <SetNativePropsTestProp
+        propName="borderWidth"
+        propInitialValue={10}
+        propNewValue={1}
+      />
+      <SetNativePropsTestProp
+        propName="borderColor"
+        propInitialValue="red"
+        propNewValue="blue"
+        style={{borderWidth: 20}}
+      />
+      <SetNativePropsTestProp
+        propName="borderStyle"
+        propInitialValue="dotted"
+        propNewValue="dashed"
+        style={{borderWidth: 20}}
+      />
+      <SetNativePropsTestProp
+        propName="opacity"
+        propInitialValue={1}
+        propNewValue={0.3}
+        style={{backgroundColor: 'blue'}}
+      />
+      <SetNativePropsTestProp
+        propName="backfaceVisibility"
+        propInitialValue="visible"
+        propNewValue="hidden"
+        style={{backgroundColor: 'blue', transform: [{rotateY: '180deg'}]}}
+      />
+      <SetNativePropsTestProp
+        propName="transform"
+        propInitialValue={[{rotateY: '45deg'}]}
+        propNewValue={[{rotateY: '0deg'}]}
+        style={{backgroundColor: 'blue'}}
+      />
+      <SetNativePropsTestZIndexProp
+        propName="zIndex"
+        propInitialValue={3}
+        propNewValue={1}
+      />
+      <SetNativePropsTestProp
+        propName="shadowColor"
+        propInitialValue="#ff00ff"
+        propNewValue="#ffff00"
+        style={{
+          margin: 20,
+          backgroundColor: 'blue',
+          shadowOffset: {width: 20, height: 20},
+          shadowOpacity: 0.8,
+          shadowRadius: 3,
+        }}
+      />
+    </>
+  );
+}
+
+function SetNativePropsTestProp({
+  propName,
+  propInitialValue,
+  propNewValue,
+  style,
+}: any) {
   const viewRef = useRef<View>(null);
   const onPress = () => {
-    viewRef?.current?.setNativeProps({height: Math.random() * 256});
+    viewRef?.current?.setNativeProps({[propName]: propNewValue});
   };
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <View ref={viewRef} style={{backgroundColor: 'deepskyblue'}}>
-        <Text>Press Me to change the height of View</Text>
+      <View
+        ref={viewRef}
+        style={{...style, minHeight: 50, [propName]: propInitialValue}}>
+        <Text>Press Me to change the {propName} value of the View</Text>
       </View>
     </TouchableWithoutFeedback>
+  );
+}
+
+function SetNativePropsTestZIndexProp(props: any) {
+  return (
+    <>
+      <View>
+        <View
+          style={{
+            minHeight: 50,
+            backgroundColor: 'red',
+            zIndex: 2,
+            position: 'relative',
+          }}
+        />
+        <SetNativePropsTestProp
+          {...props}
+          style={{backgroundColor: 'blue', position: 'absolute'}}
+        />
+      </View>
+    </>
   );
 }
 
