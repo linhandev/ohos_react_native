@@ -254,6 +254,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   }
   double prevParentKeyboardAvoidingViewBottomHeight = 0;
   if (m_props != nullptr &&
+      m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0 &&
       m_props->rawProps["__keyboardAvoidingViewBottomHeight"] > 0) {
     prevParentKeyboardAvoidingViewBottomHeight =
         m_props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
