@@ -17,12 +17,10 @@ class TimingArkTSMessageHandler: public ArkTSMessageHandler {
   {
     if (ctx.messageName == "TimingCreateTimer") {
       if (auto turboModule = m_weakTurboModule.lock(); turboModule!= nullptr) {
-        try {
-          turboModule->createTimer(ctx.messagePayload[0].asDouble(),
-                                  ctx.messagePayload[1].asDouble(),
-                                  0,
-                                  ctx.messagePayload[2].asBool());
-        } catch (std::exception& e){}
+        turboModule->createTimer(ctx.messagePayload["id"].asDouble(),
+                                ctx.messagePayload["duration"].asDouble(),
+                                0,
+                                ctx.messagePayload["repeat"].asBool());
       }
     }
   }
