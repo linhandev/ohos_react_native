@@ -50,6 +50,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
   if (!m_featureFlagRegistry->isFeatureFlagOn(
           "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
     m_arkTSMountingManager->didMount(mutations);
+  } else {
+    m_arkTSMountingManager->didMount(getArkTSMutations(mutations));
   }
   for (auto const& mutation : mutations) {
     try {
@@ -151,26 +153,12 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
         this->updateComponentWithShadowView(componentInstance, newChild);
         m_componentInstanceRegistry->insert(componentInstance);
         m_cApiComponentNames.insert(newChild.componentName);
-      } else {
-        LOG(INFO) << "Couldn't create CppComponentInstance for: "
-                  << newChild.componentName;
-        if (m_featureFlagRegistry->isFeatureFlagOn(
-                "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-          m_arkTSMountingManager->didMount({mutation});
-        }
       }
       break;
     }
     case facebook::react::ShadowViewMutation::Delete: {
       auto oldChild = mutation.oldChildShadowView;
       m_componentInstanceRegistry->deleteByTag(oldChild.tag);
-      if (m_cApiComponentNames.find(
-              mutation.oldChildShadowView.componentName) ==
-              m_cApiComponentNames.end() &&
-          m_featureFlagRegistry->isFeatureFlagOn(
-              "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-        m_arkTSMountingManager->didMount({mutation});
-      }
       break;
     }
     case facebook::react::ShadowViewMutation::Insert: {
@@ -229,13 +217,6 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       if (componentInstance != nullptr) {
         this->updateComponentWithShadowView(
             componentInstance, mutation.newChildShadowView);
-        if (m_cApiComponentNames.find(
-                mutation.newChildShadowView.componentName) ==
-                m_cApiComponentNames.end() &&
-            m_featureFlagRegistry->isFeatureFlagOn(
-                "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
-          m_arkTSMountingManager->didMount({mutation});
-        }
       }
       break;
     }
@@ -289,6 +270,51 @@ void MountingManagerCAPI::finalizeMutationUpdates(
   for (const auto& componentInstance : componentInstancesToFinalize) {
     componentInstance->finalizeUpdates();
   }
+}
+
+auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
+    -> MutationList {
+  MutationList arkTSMutations{};
+  for (auto const& mutation : mutations) {
+    bool isArkTSMutation = false;
+    switch (mutation.type) {
+      case facebook::react::ShadowViewMutation::Create:
+      case facebook::react::ShadowViewMutation::Update:
+        isArkTSMutation = !isCAPIComponent(mutation.newChildShadowView);
+        break;
+      case facebook::react::ShadowViewMutation::Delete:
+        isArkTSMutation = !isCAPIComponent(mutation.oldChildShadowView);
+        break;
+      case facebook::react::ShadowViewMutation::Insert:
+      case facebook::react::ShadowViewMutation::Remove:
+      case facebook::react::ShadowViewMutation::RemoveDeleteTree:
+        isArkTSMutation = false;
+        break;
+    }
+    if (isArkTSMutation) {
+      arkTSMutations.push_back(mutation);
+    }
+  }
+  return arkTSMutations;
+}
+
+bool MountingManagerCAPI::isCAPIComponent(
+    facebook::react::ShadowView const& shadowView) {
+  std::string componentName = shadowView.componentName;
+  if (m_cApiComponentNames.count(componentName) > 0) {
+    return true;
+  }
+  if (m_arkTSComponentNames.count(componentName) > 0) {
+    return false;
+  }
+  auto componentInstance = m_componentInstanceFactory->create(
+      shadowView.tag, shadowView.componentHandle, componentName);
+  if (componentInstance) {
+    m_cApiComponentNames.insert(std::move(componentName));
+    return true;
+  }
+  m_arkTSComponentNames.insert(std::move(componentName));
+  return false;
 }
 
 } // namespace rnoh

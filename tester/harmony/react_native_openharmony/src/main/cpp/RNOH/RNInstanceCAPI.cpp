@@ -29,7 +29,7 @@ void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     folly::dynamic props) {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread");
-  DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
+  VLOG(2) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
   RNOH_ASSERT(m_taskExecutor->getCurrentTaskThread() == TaskThread::MAIN);
 
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);

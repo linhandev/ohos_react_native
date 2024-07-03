@@ -57,11 +57,15 @@ class MountingManagerCAPI final : public MountingManager {
 
   void finalizeMutationUpdates(MutationList const& mutations);
 
+  MutationList getArkTSMutations(MutationList const& mutations);
+  bool isCAPIComponent(facebook::react::ShadowView const& shadowView);
+
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   facebook::react::ContextContainer::Shared m_contextContainer;
   MountingManager::Shared m_arkTSMountingManager;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   std::unordered_set<std::string> m_cApiComponentNames;
+  std::unordered_set<std::string> m_arkTSComponentNames;
 };
 } // namespace rnoh
