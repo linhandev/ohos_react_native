@@ -440,7 +440,7 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
     auto moduleString = arkJS.getString(args[1]);
     auto nameString = arkJS.getString(args[2]);
     auto argsDynamic = arkJS.getDynamic(args[3]);
-    rnInstance->callFunction(
+    rnInstance->callJSFunction(
         std::move(moduleString), std::move(nameString), std::move(argsDynamic));
     return arkJS.getNull();
   });

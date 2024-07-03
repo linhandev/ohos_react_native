@@ -13,12 +13,14 @@ TurboModuleFactory::TurboModuleFactory(
     napi_ref arkTSTurboModuleProviderRef,
     const ComponentJSIBinderByString&& componentBinderByString,
     std::shared_ptr<TaskExecutor> taskExecutor,
-    std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates)
+    std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
+    std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
     : m_env(env),
       m_arkTSTurboModuleProviderRef(arkTSTurboModuleProviderRef),
       m_componentBinderByString(std::move(componentBinderByString)),
       m_taskExecutor(taskExecutor),
-      m_delegates(delegates) {}
+      m_delegates(delegates),
+      m_arkTSMessageHub(arkTSMessageHub) {}
 
 TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -29,7 +31,9 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::weak_ptr<RNInstance> instance) const {
   LOG(INFO) << "Providing Turbo Module: " << name;
   Context ctx{
-      {.jsInvoker = jsInvoker, .instance = instance},
+      {.jsInvoker = jsInvoker,
+       .instance = instance,
+       .arkTSMessageHub = m_arkTSMessageHub},
       .env = m_env,
       .arkTSTurboModuleInstanceRef =
           this->maybeGetArkTsTurboModuleInstanceRef(name),
@@ -104,7 +108,7 @@ napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
 
 TurboModuleFactory::SharedTurboModule
 TurboModuleFactory::handleUnregisteredModuleRequest(
-    Context ctx,
+    Context /*ctx*/,
     const std::string& name) const {
   LOG(WARNING) << "Turbo Module '" << name << "' not found.";
   return nullptr;

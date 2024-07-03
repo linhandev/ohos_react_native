@@ -29,7 +29,8 @@ class TurboModuleFactory {
       napi_ref arkTSTurboModuleProviderRef,
       const ComponentJSIBinderByString&&,
       std::shared_ptr<TaskExecutor>,
-      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>);
+      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
+      std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
 
   virtual SharedTurboModule create(
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -55,6 +56,7 @@ class TurboModuleFactory {
   napi_ref m_arkTSTurboModuleProviderRef;
   std::shared_ptr<TaskExecutor> m_taskExecutor;
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> m_delegates;
+  std::shared_ptr<ArkTSMessageHub> m_arkTSMessageHub;
 };
 
 } // namespace rnoh

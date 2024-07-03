@@ -704,11 +704,13 @@ export class RNInstanceImpl implements RNInstance {
   public onForeground() {
     this.lifecycleState = LifecycleState.READY
     this.lifecycleEventEmitter.emit("FOREGROUND")
+    this.postMessageToCpp("FOREGROUND", {})
   }
 
   public onBackground() {
     this.lifecycleState = LifecycleState.PAUSED
     this.lifecycleEventEmitter.emit("BACKGROUND")
+    this.postMessageToCpp("BACKGROUND", {})
   }
 
   public onNewWant(url: string) {

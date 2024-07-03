@@ -145,7 +145,7 @@ void RNInstanceInternal::initializeScheduler(
   DLOG(INFO) << "RNInstanceInternal::initializeScheduler::end";
 }
 
-void RNInstanceInternal::callFunction(
+void RNInstanceInternal::callJSFunction(
     std::string module,
     std::string method,
     folly::dynamic params) {
@@ -157,7 +157,7 @@ void RNInstanceInternal::callFunction(
        params = std::move(params)]() mutable {
         if (auto instance = weakInstance.lock()) {
           facebook::react::SystraceSection s(
-              "#RNOH::RNInstanceInternal::callFunction::lambda");
+              "#RNOH::RNInstanceInternal::callJSFunction::lambda");
           instance->callJSFunction(
               std::move(module), std::move(method), std::move(params));
         }

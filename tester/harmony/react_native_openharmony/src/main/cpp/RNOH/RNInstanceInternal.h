@@ -91,8 +91,10 @@ class RNInstanceInternal
   virtual void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) = 0;
-  void
-  callFunction(std::string module, std::string method, folly::dynamic params);
+  void callJSFunction(
+      std::string module,
+      std::string method,
+      folly::dynamic params) override;
   void emitComponentEvent(
       napi_env env,
       facebook::react::Tag tag,
