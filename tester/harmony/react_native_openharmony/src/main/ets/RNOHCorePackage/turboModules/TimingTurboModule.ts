@@ -22,7 +22,7 @@ export class TimingTurboModule extends TurboModule {
     repeats: boolean
   ):void {
     let timerDeleteFunc = this.ctx.rnInstance.subscribeToLifecycleEvents("FOREGROUND", () => {
-      this.ctx.rnInstance.postMessageToCpp("TimingCreateTimer", [id, duration,repeats]);
+      this.ctx.rnInstance.postMessageToCpp("TimingCreateTimer", {id, duration,repeats});
       timerDeleteFunc();
     })
   }
