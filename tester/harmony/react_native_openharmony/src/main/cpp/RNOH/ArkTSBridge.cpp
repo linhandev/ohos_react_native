@@ -9,6 +9,7 @@
 namespace rnoh {
 
 std::shared_ptr<ArkTSBridge> ArkTSBridge::instance = nullptr;
+std::once_flag ArkTSBridge::initFlag;
 
 ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
     : m_arkJs(ArkJS(env)), m_arkTSBridgeRef(napiBridgeRef) {
@@ -18,10 +19,9 @@ ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
 void ArkTSBridge::initializeInstance(
     napi_env env,
     napi_ref arkTSBridgeHandler) {
-  RNOH_ASSERT_MSG(
-      instance == nullptr, "ArkTSBridge can only be initialized once");
-  instance =
-      std::shared_ptr<ArkTSBridge>(new ArkTSBridge(env, arkTSBridgeHandler));
+   std::call_once(initFlag, [&] {
+        instance = std::shared_ptr<ArkTSBridge>(new ArkTSBridge(env, arkTSBridgeHandler));
+    });
 }
 
 ArkTSBridge::Shared ArkTSBridge::getInstance() {
