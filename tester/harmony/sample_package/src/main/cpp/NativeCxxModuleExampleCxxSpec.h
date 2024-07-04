@@ -50,6 +50,9 @@ class JSI_EXPORT NativeCxxModuleExampleCxxSpecJSI : public TurboModule {
 
   std::string getString(jsi::Runtime& rt, std::string arg);
 
+  jsi::String getValueWithCallback(
+    jsi::Runtime& rt);
+
   ConstantsStruct getConstants(jsi::Runtime& rt);
 
   std::vector<std::optional<ObjectStruct>> getArray(
