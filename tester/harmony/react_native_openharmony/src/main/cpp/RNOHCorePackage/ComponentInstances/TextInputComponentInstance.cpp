@@ -293,6 +293,7 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setSelectedBackgroundColor(props->selectionColor);
       if (!props->cursorColor) {
         m_textInputNode.setCaretColor(props->selectionColor);
+        m_textAreaNode.setCaretColor(props->selectionColor);
       }
     } else {
       m_textInputNode.resetSelectedBackgroundColor();

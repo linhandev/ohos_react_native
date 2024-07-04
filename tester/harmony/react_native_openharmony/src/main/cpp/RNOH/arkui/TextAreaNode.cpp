@@ -168,7 +168,7 @@ void TextAreaNode::setCaretColor(facebook::react::SharedColor const& color) {
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_AREA_CARET_COLOR, &item));
+      m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
 }
 
 void TextAreaNode::setMaxLength(int32_t maxLength) {
