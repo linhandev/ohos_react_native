@@ -18,6 +18,9 @@ void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   if (!m_props || props->onTintColor != m_props->onTintColor) {
     m_toggleNode.setSelectedColor(props->onTintColor);
   }
+  if (!m_props || props->tintColor != m_props->tintColor) {
+    m_toggleNode.setUnselectedColor(props->tintColor);
+  }
   if (!m_props || props->thumbTintColor != m_props->thumbTintColor) {
     m_toggleNode.setThumbColor(props->thumbTintColor);
   }

@@ -50,6 +50,22 @@ ToggleNode& ToggleNode::setSelectedColor(
   return *this;
 }
 
+ToggleNode& ToggleNode::setUnselectedColor(
+    facebook::react::SharedColor const& color) {
+  if (!color) {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR));
+    return *this;
+  }
+  uint32_t colorValue = *color;
+  std::array<ArkUI_NumberValue, 1> preparedColorValue = {{{.u32 = colorValue}}};
+  ArkUI_AttributeItem colorItem = {
+      preparedColorValue.data(), preparedColorValue.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TOGGLE_UNSELECTED_COLOR, &colorItem));
+  return *this;
+}
+
 ToggleNode& ToggleNode::setThumbColor(
     facebook::react::SharedColor const& color) {
   uint32_t colorValue = *color;
