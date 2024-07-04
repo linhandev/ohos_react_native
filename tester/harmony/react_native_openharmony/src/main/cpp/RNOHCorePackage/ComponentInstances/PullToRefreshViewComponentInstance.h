@@ -51,5 +51,8 @@ class PullToRefreshViewComponentInstance
   bool isRefreshControlComponentInstance() const override {
     return true;
   }
+
+  void setRefreshPullDownRation(float pullDownRatio);
+
 };
 } // namespace rnoh
