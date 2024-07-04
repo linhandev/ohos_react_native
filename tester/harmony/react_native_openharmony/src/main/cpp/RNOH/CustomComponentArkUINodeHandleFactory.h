@@ -29,6 +29,11 @@ class CustomComponentArkUINodeHandleFactory final {
         m_customRNComponentFrameNodeFactoryRef(
             customRNComponentFrameNodeFactoryRef) {}
 
+  ~CustomComponentArkUINodeHandleFactory() {
+    m_threadGuard.assertThread();
+    DLOG(INFO) << "~CustomComponentArkUINodeHandleFactory";
+  }
+
   std::pair<ArkUI_NodeHandle, std::function<void()>> create(
       facebook::react::Tag tag,
       std::string componentName) {

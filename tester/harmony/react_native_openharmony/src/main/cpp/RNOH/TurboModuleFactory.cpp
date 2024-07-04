@@ -12,7 +12,7 @@ TurboModuleFactory::TurboModuleFactory(
     napi_env env,
     napi_ref arkTSTurboModuleProviderRef,
     const ComponentJSIBinderByString&& componentBinderByString,
-    std::shared_ptr<TaskExecutor> taskExecutor,
+    TaskExecutor::Shared taskExecutor,
     std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
     std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
     : m_env(env),

@@ -16,9 +16,7 @@ EventLoopTaskRunner::EventLoopTaskRunner(
 
 EventLoopTaskRunner::~EventLoopTaskRunner() {
   DLOG(INFO) << "EventLoopTaskRunner::~EventLoopTaskRunner()";
-  m_running = false;
-  m_asyncHandle->send();
-  m_syncTaskCv.notify_all();
+  cleanup();
 }
 
 void EventLoopTaskRunner::runAsyncTask(Task&& task) {
@@ -34,16 +32,7 @@ void EventLoopTaskRunner::runSyncTask(Task&& task) {
     task();
     return;
   }
-
-  std::unique_lock<std::mutex> lock(m_mutex);
-  std::atomic_bool done{false};
-  m_syncTaskQueue.push([task = std::move(task), &done] {
-    task();
-    done = true;
-  });
-  m_asyncHandle->send();
-  m_syncTaskCv.wait(
-      lock, [this, &done] { return !m_running.load() || done.load(); });
+  waitForSyncTask(std::move(task));
 }
 
 EventLoopTaskRunner::DelayedTaskId EventLoopTaskRunner::runDelayedTask(
@@ -85,13 +74,6 @@ void EventLoopTaskRunner::executeTask() {
   Task task = nullptr;
   bool isSyncTask = false;
   if (!m_running) {
-    // TODO: this is wrong -- we need to refine how task runners are stopped
-    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1130
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_asyncHandle.reset();
-    m_syncTaskQueue = {};
-    m_asyncTaskQueue = {};
-    m_timerByTaskId.clear();
     return;
   }
   {
@@ -122,6 +104,34 @@ void EventLoopTaskRunner::executeTask() {
       m_asyncHandle->send();
     }
   }
+}
+
+void EventLoopTaskRunner::waitForSyncTask(Task&& task) {
+  std::unique_lock<std::mutex> lock(m_mutex);
+  std::atomic_bool done{false};
+  m_syncTaskQueue.push([task = std::move(task), &done] {
+    task();
+    done = true;
+  });
+  m_asyncHandle->send();
+  m_syncTaskCv.wait(
+      lock, [this, &done] { return !m_running.load() || done.load(); });
+}
+
+void EventLoopTaskRunner::cleanup() {
+  if (cleanedUp) {
+    return;
+  }
+  waitForSyncTask([this] {
+    m_running = false;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_syncTaskCv.notify_all();
+    m_asyncHandle.reset();
+    m_syncTaskQueue = {};
+    m_asyncTaskQueue = {};
+    m_timerByTaskId.clear();
+  });
+  cleanedUp = true;
 }
 
 } // namespace rnoh

@@ -36,6 +36,9 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
  protected:
   virtual void executeTask();
 
+  void waitForSyncTask(Task&& task);
+  void cleanup();
+
   DelayedTaskId m_nextTaskId = 0;
   std::string m_name;
   uv_loop_t* m_loop;
@@ -47,5 +50,6 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
   std::unique_ptr<uv::Async> m_asyncHandle;
   std::unordered_map<DelayedTaskId, uv::Timer> m_timerByTaskId;
   ExceptionHandler m_exceptionHandler;
+  bool cleanedUp = false;
 };
 } // namespace rnoh

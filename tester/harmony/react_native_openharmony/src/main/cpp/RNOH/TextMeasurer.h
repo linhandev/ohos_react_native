@@ -13,12 +13,16 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   TextMeasurer(
       napi_env env,
       napi_ref measureTextFnRef,
-      std::shared_ptr<TaskExecutor> taskExecutor,
+      TaskExecutor::Shared taskExecutor,
       FeatureFlagRegistry::Shared featureFlagManager)
       : m_env(env),
         m_measureTextFnRef(measureTextFnRef),
         m_taskExecutor(taskExecutor),
         m_featureFlagRegistry(featureFlagManager) {}
+
+  ~TextMeasurer() {
+    DLOG(INFO) << "~TextMeasurer";
+  };
 
   facebook::react::TextMeasurement measure(
       facebook::react::AttributedString attributedString,
@@ -33,7 +37,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
  private:
   napi_env m_env;
   napi_ref m_measureTextFnRef;
-  std::shared_ptr<TaskExecutor> m_taskExecutor;
+  TaskExecutor::Shared m_taskExecutor;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   int32_t getOHDrawingTextAlign(
       const facebook::react::TextAlignment& textAlign);

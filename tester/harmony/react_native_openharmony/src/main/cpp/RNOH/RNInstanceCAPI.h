@@ -25,7 +25,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
       int id,
       std::shared_ptr<facebook::react::ContextContainer> contextContainer,
       TurboModuleFactory&& turboModuleFactory,
-      std::shared_ptr<TaskExecutor> taskExecutor,
+      TaskExecutor::Shared taskExecutor,
       std::shared_ptr<facebook::react::ComponentDescriptorProviderRegistry>
           componentDescriptorProviderRegistry,
       MutationsToNapiConverter::Shared mutationsToNapiConverter,
