@@ -134,8 +134,8 @@ void TextInputComponentInstance::onPropsChanged(
 
   if (!m_props ||
       props->traits.contextMenuHidden != m_props->traits.contextMenuHidden) {
-    m_textInputNode.SetContextMenuHidden(props->traits.contextMenuHidden);
-    m_textAreaNode.SetContextMenuHidden(props->traits.contextMenuHidden);
+    m_textInputNode.setContextMenuHidden(props->traits.contextMenuHidden);
+    m_textAreaNode.setContextMenuHidden(props->traits.contextMenuHidden);
   }
   if (!m_props ||
       *(props->textAttributes.foregroundColor) !=
