@@ -58,6 +58,24 @@ void TextInputNodeBase::setFontColor(
       m_nodeHandle, NODE_FONT_COLOR, &colorItem));
 }
 
+void TextInputNodeBase::setTextInputLineHeight(
+      facebook::react::TextAttributes const& textAttributes) {
+  bool allowFontScaling = true;
+  if (textAttributes.allowFontScaling.has_value()) {
+        allowFontScaling = textAttributes.allowFontScaling.value();
+  }
+  float lineHeight = static_cast<float>(textAttributes.lineHeight);
+  if (!allowFontScaling) {
+      float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+      lineHeight /= scale;
+  }
+   ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
+   ArkUI_AttributeItem item = {.value = value, .size = 1};
+   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+     m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
+ }
+
 void TextInputNodeBase::setCommonFontAttributes(
     facebook::react::TextAttributes const& textAttributes) {
   if (textAttributes.fontFamily.empty()) {

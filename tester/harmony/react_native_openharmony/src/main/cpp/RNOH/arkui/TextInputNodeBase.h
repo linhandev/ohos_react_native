@@ -45,6 +45,9 @@ class TextInputNodeBase : public ArkUINode {
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);
 
+  void setTextInputLineHeight(
+        facebook::react::TextAttributes const& textAttributes);
+
   std::string virtual getTextContent() = 0;
   
   virtual facebook::react::Rect getTextContentRect() const = 0;
