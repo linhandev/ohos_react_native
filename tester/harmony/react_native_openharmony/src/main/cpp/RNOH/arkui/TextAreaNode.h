@@ -52,6 +52,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   void defaultSetPadding();
 
+  void setTextContentType(std::string const& textContentType);
+
   void setContextMenuHidden(bool hidden);
 
   void setBlurOnSubmit(bool blurOnSubmit);

@@ -63,6 +63,8 @@ class TextInputNode : public TextInputNodeBase {
 
   void resetSelectedBackgroundColor();
 
+  void setTextContentType(std::string const& textContentType);
+
   void setContextMenuHidden(bool hidden);
 
   void setBlurOnSubmit(bool blurOnSubmit);

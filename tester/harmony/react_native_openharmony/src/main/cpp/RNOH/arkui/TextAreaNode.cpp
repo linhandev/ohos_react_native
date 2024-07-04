@@ -177,6 +177,37 @@ void TextAreaNode::defaultSetPadding() {
       m_nodeHandle, NODE_PADDING, &item));
 }
 
+void TextAreaNode::setTextContentType(std::string const& textContentType) {
+  std::array<ArkUI_NumberValue, 1> autoFillValue = {{{.i32 = 1}}};
+  ArkUI_AttributeItem autoFillItem = {
+      autoFillValue.data(), autoFillValue.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &autoFillItem));
+
+  ArkUI_TextInputContentType type = rnoh::convertContentType(textContentType);
+
+  if (type == static_cast<ArkUI_TextInputContentType>(-1)) {
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_AREA_CONTENT_TYPE);
+    return;
+  }
+
+  if (type == static_cast<ArkUI_TextInputContentType>(-2)) {
+    autoFillValue = {{{.i32 = 0}}};
+    autoFillItem = {autoFillValue.data(), autoFillValue.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &autoFillItem));
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_AREA_CONTENT_TYPE);
+    return;
+  }
+
+  std::array<ArkUI_NumberValue, 1> value = {{{.i32 = type}}};
+  ArkUI_AttributeItem item = {value.data(), value.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_CONTENT_TYPE, &item));
+}
+
 std::string TextAreaNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_AREA_TEXT);

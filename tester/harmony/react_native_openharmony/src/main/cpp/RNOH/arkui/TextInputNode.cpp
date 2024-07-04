@@ -238,6 +238,37 @@ void TextInputNode::resetSelectedBackgroundColor() {
       m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR));
 }
 
+void TextInputNode::setTextContentType(std::string const& textContentType) {
+  std::array<ArkUI_NumberValue, 1> autoFillValue = {{{.i32 = 1}}};
+  ArkUI_AttributeItem autoFillItem = {
+      autoFillValue.data(), autoFillValue.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &autoFillItem));
+
+  ArkUI_TextInputContentType type = rnoh::convertContentType(textContentType);
+
+  if (type == static_cast<ArkUI_TextInputContentType>(-1)) {
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE);
+    return;
+  }
+
+  if (type == static_cast<ArkUI_TextInputContentType>(-2)) {
+    autoFillValue = {{{.i32 = 0}}};
+    autoFillItem = {autoFillValue.data(), autoFillValue.size()};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &autoFillItem));
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE);
+    return;
+  }
+
+  std::array<ArkUI_NumberValue, 1> value = {{{.i32 = type}}};
+  ArkUI_AttributeItem item = {value.data(), value.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
+}
+
 void TextInputNode::setBlurOnSubmit(bool blurOnSubmit) {
   ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
   ArkUI_AttributeItem item = {&value, 1};

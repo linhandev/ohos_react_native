@@ -27,6 +27,7 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "defaultValue", "string");
     nativeProps.setProperty(rt, "selectTextOnFocus", "boolean");
     nativeProps.setProperty(rt, "contextMenuHidden", "boolean");
+    nativeProps.setProperty(rt, "textContentType", "string");
     nativeProps.setProperty(rt, "submitBehavior", "string");
     return nativeProps;
   };

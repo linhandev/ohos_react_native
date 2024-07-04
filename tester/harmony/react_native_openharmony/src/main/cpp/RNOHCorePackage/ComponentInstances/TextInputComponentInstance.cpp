@@ -287,6 +287,12 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
   }
+
+  if (!m_props ||
+      props->traits.textContentType != m_props->traits.textContentType) {
+    m_textInputNode.setTextContentType(props->traits.textContentType);
+    m_textAreaNode.setTextContentType(props->traits.textContentType);
+  }
   m_textAreaNode.setEnabled(props->traits.editable);
   m_textInputNode.setEnabled(props->traits.editable);
   if (!m_props ||
