@@ -38,7 +38,7 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setTextContent(std::string const& textContent);
 
-  void setInputType(ArkUI_TextInputType keyboardType);
+  void setInputType(ArkUI_TextAreaType keyboardType);
 
   void setFont(facebook::react::TextAttributes const& textAttributes) override;
 
@@ -52,7 +52,10 @@ class TextAreaNode : public TextInputNodeBase {
 
   void defaultSetPadding();
 
+  void setContextMenuHidden(bool hidden);
+
   void setBlurOnSubmit(bool blurOnSubmit);
+
   void setLineHeight(float lineHeight);
 
   std::string getTextContent() override;

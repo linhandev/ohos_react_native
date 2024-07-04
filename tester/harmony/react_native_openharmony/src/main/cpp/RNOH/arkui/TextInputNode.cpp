@@ -251,4 +251,12 @@ std::string TextInputNode::getTextContent() {
   return item->string;
 }
 
+void TextInputNode::setContextMenuHidden(bool hidden) {
+  std::array<ArkUI_NumberValue, 1> value = {
+      {{.i32 = static_cast<int32_t>(hidden)}}};
+  ArkUI_AttributeItem item = {value.data(), value.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECTION_MENU_HIDDEN, &item));
+}
+
 } // namespace rnoh

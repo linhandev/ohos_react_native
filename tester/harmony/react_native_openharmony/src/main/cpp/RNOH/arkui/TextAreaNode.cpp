@@ -93,7 +93,7 @@ void TextAreaNode::setTextContent(std::string const& textContent) {
       m_nodeHandle, NODE_TEXT_AREA_TEXT, &item));
 }
 
-void TextAreaNode::setInputType(ArkUI_TextInputType keyboardType) {
+void TextAreaNode::setInputType(ArkUI_TextAreaType keyboardType) {
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -181,6 +181,14 @@ std::string TextAreaNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_AREA_TEXT);
   return item->string;
+}
+
+void TextAreaNode::setContextMenuHidden(bool hidden) {
+  std::array<ArkUI_NumberValue, 1> value = {
+      {{.i32 = static_cast<int32_t>(hidden)}}};
+  ArkUI_AttributeItem item = {value.data(), value.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_SELECTION_MENU_HIDDEN, &item));
 }
 
 void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {

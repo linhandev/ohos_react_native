@@ -133,6 +133,11 @@ void TextInputComponentInstance::onPropsChanged(
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
 
   if (!m_props ||
+      props->traits.contextMenuHidden != m_props->traits.contextMenuHidden) {
+    m_textInputNode.SetContextMenuHidden(props->traits.contextMenuHidden);
+    m_textAreaNode.SetContextMenuHidden(props->traits.contextMenuHidden);
+  }
+  if (!m_props ||
       *(props->textAttributes.foregroundColor) !=
           *(m_props->textAttributes.foregroundColor)) {
     if (props->textAttributes.foregroundColor) {
@@ -181,6 +186,8 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (!m_props || props->traits.keyboardType != m_props->traits.keyboardType) {
+    m_textAreaNode.setInputType(
+        rnoh::convertTextAreaInputType(props->traits.keyboardType));
     m_textInputNode.setInputType(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD

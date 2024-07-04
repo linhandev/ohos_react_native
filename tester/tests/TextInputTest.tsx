@@ -210,10 +210,10 @@ export function TextInputTest() {
         <TextInputWithText style={styles.textInput} selectionColor="green" />
       </TestCase.Example>
       <TestCase.Example itShould="render multiline text input">
-        <TextInputWithText style={styles.textInputBigger} multiline={true} />
+        <TextInputWithText style={styles.textInputBigger} multiline />
       </TestCase.Example>
       <TestCase.Example itShould="render multiline text input with common border">
-        <TextInputWithText style={styles.multilineInput} multiline={true} />
+        <TextInputWithText style={styles.multilineInput} multiline />
       </TestCase.Example>
       <TestCase.Example itShould="render multiline text input with Pacifico Regular font">
         <TextInputWithText
@@ -662,6 +662,16 @@ export function TextInputTest() {
         itShould="change the text input value programmatically when submitted">
         <TextInputValueSetProgrammaticallyWhenSubmitted />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="render textinput textinputs with different InputMode types">
+        <TextInputInputModeTest />
+      </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="render multiline with different InputMode types">
+        <TextAreaInputModeTest />
+      </TestCase.Example>
     </TestSuite>
   );
 }
@@ -721,7 +731,7 @@ const ContextMenuHiddenTest = () => {
       <TextInput
         style={[styles.textInput, {marginTop: 5}]}
         value="ContextMenuHiddenTest_multiline"
-        multiline={true}
+        multiline
         contextMenuHidden={true}
       />
     </View>
@@ -968,6 +978,107 @@ const TextInputValueSetProgrammaticallyWhenSubmitted = () => {
   );
 };
 
+const TextAreaInputModeTest = () => {
+  return (
+    <View>
+      <TextInput
+        multiline
+        inputMode={'none'}
+        style={styles.textInput}
+        placeholder={'none'}
+      />
+      <TextInput
+        multiline
+        inputMode={'text'}
+        style={styles.textInput}
+        placeholder={'text'}
+      />
+      <TextInput
+        multiline
+        inputMode={'decimal'}
+        style={styles.textInput}
+        placeholder={'decimal'}
+      />
+      <TextInput
+        multiline
+        inputMode={'numeric'}
+        style={styles.textInput}
+        placeholder={'numeric'}
+      />
+      <TextInput
+        multiline
+        inputMode={'tel'}
+        style={styles.textInput}
+        placeholder={'tel'}
+      />
+      <TextInput
+        multiline
+        inputMode={'search'}
+        style={styles.textInput}
+        placeholder={'search'}
+      />
+      <TextInput
+        multiline
+        inputMode={'email'}
+        style={styles.textInput}
+        placeholder={'email'}
+      />
+      <TextInput
+        multiline
+        inputMode={'url'}
+        style={styles.textInput}
+        placeholder={'url'}
+      />
+    </View>
+  );
+};
+
+const TextInputInputModeTest = () => {
+  return (
+    <View>
+      <TextInput
+        inputMode={'none'}
+        style={styles.textInput}
+        placeholder={'none'}
+      />
+      <TextInput
+        inputMode={'text'}
+        style={styles.textInput}
+        placeholder={'text'}
+      />
+      <TextInput
+        inputMode={'decimal'}
+        style={styles.textInput}
+        placeholder={'decimal'}
+      />
+      <TextInput
+        inputMode={'numeric'}
+        style={styles.textInput}
+        placeholder={'numeric'}
+      />
+      <TextInput
+        inputMode={'tel'}
+        style={styles.textInput}
+        placeholder={'tel'}
+      />
+      <TextInput
+        inputMode={'search'}
+        style={styles.textInput}
+        placeholder={'search'}
+      />
+      <TextInput
+        inputMode={'email'}
+        style={styles.textInput}
+        placeholder={'email'}
+      />
+      <TextInput
+        inputMode={'url'}
+        style={styles.textInput}
+        placeholder={'url'}
+      />
+    </View>
+  );
+};
 const styles = StyleSheet.create({
   container: {
     width: 80,

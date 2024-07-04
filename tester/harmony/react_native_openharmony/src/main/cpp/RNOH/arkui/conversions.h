@@ -26,6 +26,7 @@ inline ArkUI_BorderStyle convertReactBorderStyleToArk(
 inline ArkUI_TextAreaType convertTextAreaInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
+    case facebook::react::KeyboardType::DecimalPad:
     case facebook::react::KeyboardType::Numeric:
     case facebook::react::KeyboardType::NumberPad:
       return ARKUI_TEXTAREA_TYPE_NUMBER;
