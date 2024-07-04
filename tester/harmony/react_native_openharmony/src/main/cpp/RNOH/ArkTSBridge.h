@@ -23,6 +23,7 @@ struct DisplayMetrics {
 
 class ArkTSBridge final {
   static std::shared_ptr<ArkTSBridge> instance;
+  static std::once_flag initFlag;
   ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
 
  public:
