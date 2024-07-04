@@ -182,4 +182,11 @@ std::string TextAreaNode::getTextContent() {
       m_nodeHandle, NODE_TEXT_AREA_TEXT);
   return item->string;
 }
+
+void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {
+  ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_BLUR_ON_SUBMIT, &item));
+}
 } // namespace rnoh

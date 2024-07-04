@@ -97,6 +97,25 @@ export function TextInputTest() {
           }}
         />
         <TestCase.Manual
+          itShould="blur text on submit (multiline)"
+          initialState={false}
+          arrange={({setState}) => {
+            return (
+              <>
+                <TextInputWithText
+                  style={styles.textInput}
+                  blurOnSubmit
+                  multiline
+                  onBlur={() => setState(true)}
+                />
+              </>
+            );
+          }}
+          assert={({expect, state}) => {
+            expect(state).to.be.true;
+          }}
+        />
+        <TestCase.Manual
           itShould="blur text after switching to another textinput"
           initialState={false}
           arrange={({setState}) => {
@@ -117,19 +136,17 @@ export function TextInputTest() {
             expect(state).to.be.true;
           }}
         />
-        <TestCase.Example
-          modal
-          itShould="not blur text on submit"
-          skip={{android: false, harmony: true}}
-          //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/403
-        >
+        <TestCase.Example itShould="not blur text on submit (singleline)">
           <TextInputWithText style={styles.textInput} blurOnSubmit={false} />
+        </TestCase.Example>
+        <TestCase.Example itShould="not blur text on submit (multiline)">
           <TextInputWithText
             style={styles.textInput}
             blurOnSubmit={false}
             multiline
           />
         </TestCase.Example>
+
         <TestCase.Manual
           modal
           itShould="automatically focus textInput when displayed"

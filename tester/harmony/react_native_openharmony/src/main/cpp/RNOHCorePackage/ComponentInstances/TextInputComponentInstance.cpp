@@ -1,7 +1,4 @@
 #include "TextInputComponentInstance.h"
-#include "RNOH/arkui/conversions.h"
-#include "conversions.h"
-
 #include <boost/locale.hpp>
 #include <folly/dynamic.h>
 #include <glog/logging.h>
@@ -10,7 +7,10 @@
 #include <react/renderer/core/ConcreteState.h>
 #include <sstream>
 #include <utility>
+#include "RNOH/arkui/conversions.h"
 #include "ScrollViewComponentInstance.h"
+#include "conversions.h"
+#include "react/renderer/components/textinput/primitives.h"
 
 namespace rnoh {
 
@@ -282,6 +282,15 @@ void TextInputComponentInstance::onPropsChanged(
   }
   m_textAreaNode.setEnabled(props->traits.editable);
   m_textInputNode.setEnabled(props->traits.editable);
+  if (!m_props ||
+      props->traits.submitBehavior != m_props->traits.submitBehavior) {
+    m_textInputNode.setBlurOnSubmit(
+        props->traits.submitBehavior ==
+        facebook::react::SubmitBehavior::BlurAndSubmit);
+    m_textAreaNode.setBlurOnSubmit(
+        props->traits.submitBehavior ==
+        facebook::react::SubmitBehavior::BlurAndSubmit);
+  }
 }
 
 void TextInputComponentInstance::onLayoutChanged(

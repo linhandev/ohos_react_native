@@ -52,6 +52,7 @@ class TextAreaNode : public TextInputNodeBase {
 
   void defaultSetPadding();
 
+  void setBlurOnSubmit(bool blurOnSubmit);
   void setLineHeight(float lineHeight);
 
   std::string getTextContent() override;
