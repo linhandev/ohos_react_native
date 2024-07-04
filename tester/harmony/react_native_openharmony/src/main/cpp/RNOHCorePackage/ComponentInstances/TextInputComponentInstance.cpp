@@ -216,6 +216,13 @@ void TextInputComponentInstance::onPropsChanged(
     m_textAreaNode.setFont(props->textAttributes);
     m_textInputNode.setFont(props->textAttributes);
   }
+  if (!m_props ||
+    props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
+    if (props->textAttributes.lineHeight) {
+      m_textAreaNode.setTextInputLineHeight(props->textAttributes);
+      m_textInputNode.setTextInputLineHeight(props->textAttributes);
+    }
+  }  
   if (!m_props || *(props->backgroundColor) != *(m_props->backgroundColor)) {
     if (props->backgroundColor) {
       m_textAreaNode.setBackgroundColor(props->backgroundColor);
