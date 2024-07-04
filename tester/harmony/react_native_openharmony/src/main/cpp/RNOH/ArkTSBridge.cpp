@@ -73,6 +73,14 @@ auto ArkTSBridge::getIsSplitScreenMode() -> bool  {
     return m_arkJs.getBoolean(napiResult);
 }
 
+auto ArkTSBridge::getFontSizeScale() -> float  {
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJs.getObjectProperty(napiBridgeObject, "getFontSizeScale");
+  auto napiResult = m_arkJs.call<0>(methodImpl, {});
+    return m_arkJs.getDouble(napiResult);
+}
+
 auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJs(env);

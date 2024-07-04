@@ -3,6 +3,7 @@ import window from '@ohos.window';
 import { RNOHLogger } from './RNOHLogger';
 import display from '@ohos.display';
 import { RNOHError } from "./RNOHError"
+import UIContext from '@ohos.arkui.UIContext';
 
 const defaultDisplayMetrics: DisplayMetrics = {
   windowPhysicalPixels: {
@@ -26,9 +27,11 @@ const defaultDisplayMetrics: DisplayMetrics = {
  */
 export class DisplayMetricsManager {
   private displayMetrics: DisplayMetrics = defaultDisplayMetrics;
+  private fontSizeScale: number
   private logger: RNOHLogger
 
-  constructor(logger: RNOHLogger) {
+  constructor(fontSizeScale: number, logger: RNOHLogger) {
+    this.fontSizeScale = fontSizeScale;
     this.logger = logger.clone("DisplayMetricsManager");
   }
 
@@ -38,6 +41,10 @@ export class DisplayMetricsManager {
 
   public getIsSplitScreenMode():boolean{
     return AppStorage.get("isSplitScreenMode") ?? false
+  }
+
+  public getFontSizeScale():number{
+    return AppStorage.get("fontSizeScale") ?? this.fontSizeScale
   }
 
   public updateWindowSize(windowSize: window.Size | window.Rect) {

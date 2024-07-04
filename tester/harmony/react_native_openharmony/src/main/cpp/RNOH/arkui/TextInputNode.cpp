@@ -215,6 +215,15 @@ void TextInputNode::setFont(
   if (!std::isnan(textAttributes.fontSize)) {
     fontSize = static_cast<float>(textAttributes.fontSize);
   }
+  bool allowFontScaling = true;
+  if (textAttributes.allowFontScaling.has_value()) {
+        allowFontScaling = textAttributes.allowFontScaling.value();
+  }
+  if (!allowFontScaling) {
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
+  }
 
   std::array<ArkUI_NumberValue, 3> value = {
       {{.f32 = fontSize},

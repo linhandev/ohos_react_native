@@ -21,6 +21,7 @@ import type { HttpClient } from "../HttpClient/ts"
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
+  fontSizeScale : number | undefined
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
 
@@ -69,7 +70,7 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const napiBridge = new NapiBridge(dependencies.logger);
     const isDebugModeEnabled = napiBridge.onInit(true).isDebugModeEnabled;
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
     const devToolsController = new DevToolsController(dependencies.logger);
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
@@ -89,6 +90,7 @@ export class RNInstancesCoordinator {
       },
       getFoldStatus: () => displayMetricsManager.getFoldStatus(),
       getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
+      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
     });
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
