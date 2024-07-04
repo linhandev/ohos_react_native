@@ -53,6 +53,16 @@ RefreshNode& RefreshNode::setNativeRefreshing(bool isRefreshing) {
   return *this;
 }
 
+ RefreshNode& RefreshNode::setRefreshPullDownRation(float pullDownRatio) {
+   ArkUI_NumberValue pullDownRatioValue[] = {{.f32 = pullDownRatio}};
+   ArkUI_AttributeItem pullDownRatioItem = {
+       pullDownRatioValue, sizeof(pullDownRatioValue) /
+       sizeof(ArkUI_NumberValue)};
+   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+       m_nodeHandle, NODE_REFRESH_PULL_DOWN_RATIO, &pullDownRatioItem));
+   return *this;
+ }
+
 void RefreshNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {

@@ -176,6 +176,16 @@ void rnoh::ScrollViewComponentInstance::onNativeResponderBlockChange(
     m_enableScrollInteraction = newEnableScrollInteraction;  
     m_scrollNode.setEnableScrollInteraction(m_enableScrollInteraction);
   }
+
+  auto parent =std::dynamic_pointer_cast<rnoh::PullToRefreshViewComponentInstance>(this->getParent().lock());
+    if (parent){
+            if (isBlocked) {
+            parent->setRefreshPullDownRation(0.0);
+            } else {
+            parent->setRefreshPullDownRation(1.0);
+        }
+    }  
+
   m_scrollNode.markDirty();
 }
 

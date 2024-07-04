@@ -186,3 +186,8 @@ facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
 
   return {0, 0};
 }
+
+ void PullToRefreshViewComponentInstance::setRefreshPullDownRation(float
+ pullDownRatio) {
+   getLocalRootArkUINode().setRefreshPullDownRation(pullDownRatio);
+ }
