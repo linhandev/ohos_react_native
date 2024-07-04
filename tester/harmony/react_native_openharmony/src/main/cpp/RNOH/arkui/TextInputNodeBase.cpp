@@ -73,8 +73,19 @@ void TextInputNodeBase::setCommonFontAttributes(
     maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_FONT_SIZE));
   } else {
+    bool allowFontScaling = true;
+    if (textAttributes.allowFontScaling.has_value()) {
+        allowFontScaling = textAttributes.allowFontScaling.value();
+    }
+
+    float fontSize = static_cast<float>(textAttributes.fontSize);
+    if (!allowFontScaling) {
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
+    }
     std::array<ArkUI_NumberValue, 1> value = {
-        {{.f32 = static_cast<float>(textAttributes.fontSize)}}};
+        {{.f32 = fontSize}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_FONT_SIZE, &item));

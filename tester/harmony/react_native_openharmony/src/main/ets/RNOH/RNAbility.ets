@@ -8,6 +8,8 @@ import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClient, DefaultHttpClient } from "../HttpClient"
+import { EnvironmentCallback } from '@kit.AbilityKit';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 /**
  Application developers are expected to extend this class. RNAbility aims to move much of the code to the RNOH side in order to improve stability.
@@ -69,8 +71,27 @@ export abstract class RNAbility extends UIAbility {
   private logger!: RNOHLogger
 
   onCreate(want: Want) {
+    let envCallback: EnvironmentCallback = {
+      onConfigurationUpdated(config) {
+        console.info(`envCallback onConfigurationUpdated success: ${JSON.stringify(config)}`);
+        let fontSizeScale = config.fontSizeScale
+        console.log("wxjer===="+fontSizeScale);
+        AppStorage.setOrCreate('fontSizeScale', fontSizeScale)
+      },
+      onMemoryLevel(level) {
+        console.log('onMemoryLevel level: ${level}');
+      }
+    };
+    try {
+      let applicationContext = this.context.getApplicationContext();
+      let callbackId = applicationContext.on('environment', envCallback);
+      console.log(`callbackId: ${callbackId}`);
+    } catch (paramError) {
+      console.error(`error: ${(paramError as BusinessError).code}, ${(paramError as BusinessError).message}`);
+    }
     this.logger = this.createLogger().clone("RNAbility")
     this.rnInstancesCoordinator = RNInstancesCoordinator.create({
+      fontSizeScale: this.context.config.fontSizeScale,
       logger: this.createLogger(),
       uiAbilityContext: this.context,
       defaultBackPressHandler: () => {

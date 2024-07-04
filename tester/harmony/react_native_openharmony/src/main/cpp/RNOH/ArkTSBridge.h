@@ -41,6 +41,7 @@ class ArkTSBridge final {
   DisplayMetrics getDisplayMetrics();
   uint32_t getFoldStatus();
   bool getIsSplitScreenMode();
+  float getFontSizeScale();  
 
  protected:
   ArkJS m_arkJs;
