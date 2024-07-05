@@ -65,7 +65,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableBackgroundExecutor) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
-  auto taskExecutor =
+  std::shared_ptr<TaskExecutor> taskExecutor =
       std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);

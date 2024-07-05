@@ -102,8 +102,10 @@ void RNInstanceInternal::initializeScheduler(
   m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
 
   react::EventBeat::Factory eventBeatFactory =
-      [runtimeExecutor = m_reactInstance->getRuntimeExecutor()](auto ownerBox) {
-        return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
+      [taskExecutor = std::weak_ptr(m_taskExecutor),
+       runtimeExecutor = m_reactInstance->getRuntimeExecutor()](auto ownerBox) {
+        return std::make_unique<EventBeat>(
+            taskExecutor, runtimeExecutor, ownerBox);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =

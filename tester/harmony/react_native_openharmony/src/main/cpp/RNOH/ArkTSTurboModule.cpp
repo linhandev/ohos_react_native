@@ -161,43 +161,29 @@ jsi::Value ArkTSTurboModule::callAsync(
   }
   return react::createPromiseAsJSIValue(
       runtime,
-      [weakExecutor = std::weak_ptr(m_ctx.taskExecutor),
-       jsInvoker = jsInvoker_,
-       env = m_ctx.env,
-       napiResultRef](
+      [ctx = m_ctx, napiResultRef](
           jsi::Runtime& rt2, std::shared_ptr<react::Promise> jsiPromise) {
-        auto taskExecutor = weakExecutor.lock();
-        if (!taskExecutor) {
-          jsiPromise->reject(
-              "TurboModule was called after the instance was "
-              "destroyed.");
-          jsiPromise->allowRelease();
-          return;
-        }
-        taskExecutor->runTask(
-            TaskThread::MAIN,
-            [env, jsInvoker, napiResultRef, &rt2, jsiPromise]() {
-              ArkJS arkJS(env);
+        ctx.taskExecutor->runTask(
+            TaskThread::MAIN, [ctx, napiResultRef, &rt2, jsiPromise]() {
+              ArkJS arkJS(ctx.env);
               auto napiResult = arkJS.getReferenceValue(napiResultRef);
-              Promise(env, napiResult)
-                  .then([&rt2, jsiPromise, env, jsInvoker, napiResultRef](
-                            auto args) {
-                    jsInvoker->invokeAsync(
+              Promise(ctx.env, napiResult)
+                  .then([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
+                    ctx.jsInvoker->invokeAsync(
                         [&rt2, jsiPromise, args = std::move(args)]() {
                           jsiPromise->resolve(
                               preparePromiseResolverResult(rt2, args));
                           jsiPromise->allowRelease();
                         });
-                    ArkJS arkJS(env);
+                    ArkJS arkJS(ctx.env);
                     arkJS.deleteReference(napiResultRef);
                   })
-                  .catch_([&rt2, jsiPromise, env, jsInvoker, napiResultRef](
-                              auto args) {
-                    jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
+                  .catch_([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
+                    ctx.jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
                       jsiPromise->reject(preparePromiseRejectionResult(args));
                       jsiPromise->allowRelease();
                     });
-                    ArkJS arkJS(env);
+                    ArkJS arkJS(ctx.env);
                     arkJS.deleteReference(napiResultRef);
                   });
             });

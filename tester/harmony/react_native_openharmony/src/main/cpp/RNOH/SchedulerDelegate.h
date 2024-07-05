@@ -25,8 +25,6 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
       TaskExecutor::Shared taskExecutor)
       : m_mountingManager(mountingManager), m_taskExecutor(taskExecutor){};
 
-  ~SchedulerDelegate() override;
-
   void schedulerDidFinishTransaction(
       MountingCoordinator::Shared mountingCoordinator) override;
 

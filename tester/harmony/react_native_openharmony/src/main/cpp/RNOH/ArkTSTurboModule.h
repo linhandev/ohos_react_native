@@ -91,7 +91,7 @@ class ArkTSTurboModule : public TurboModule {
   struct Context : public TurboModule::Context {
     napi_env env;
     napi_ref arkTSTurboModuleInstanceRef;
-    TaskExecutor::Shared taskExecutor;
+    std::shared_ptr<TaskExecutor> taskExecutor;
     std::shared_ptr<EventDispatcher> eventDispatcher;
     std::shared_ptr<MessageQueueThread> jsQueue;
     std::shared_ptr<facebook::react::Scheduler> scheduler;

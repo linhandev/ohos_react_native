@@ -15,7 +15,7 @@ class RNInstanceInternal
       int id,
       std::shared_ptr<facebook::react::ContextContainer> contextContainer,
       TurboModuleFactory turboModuleFactory,
-      TaskExecutor::Shared taskExecutor,
+      std::shared_ptr<TaskExecutor> taskExecutor,
       std::shared_ptr<facebook::react::ComponentDescriptorProviderRegistry>
           componentDescriptorProviderRegistry,
       MutationsToNapiConverter::Shared mutationsToNapiConverter,
@@ -122,7 +122,7 @@ class RNInstanceInternal
       override; // react::LayoutAnimationStatusDelegate
 
   int m_id;
-  TaskExecutor::Shared m_taskExecutor;
+  std::shared_ptr<TaskExecutor> m_taskExecutor;
   facebook::react::ContextContainer::Shared m_contextContainer;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =

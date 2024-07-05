@@ -18,10 +18,7 @@ NapiTaskRunner::NapiTaskRunner(napi_env env, ExceptionHandler exceptionHandler)
   m_threadId = std::this_thread::get_id();
 }
 
-NapiTaskRunner::~NapiTaskRunner() {
-  DLOG(INFO) << "NapiTaskRunner::~NapiTaskRunner()";
-  cleanup();
-}
+NapiTaskRunner::~NapiTaskRunner() {}
 
 bool NapiTaskRunner::isOnCurrentThread() const {
   return m_threadId == std::this_thread::get_id();
