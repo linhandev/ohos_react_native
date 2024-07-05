@@ -114,9 +114,9 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
     m_eventEmitter->onScroll(scrollViewMetrics);
-    sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
   };
+  sendEventForNativeAnimations(scrollViewMetrics);
 }
 
 void ScrollViewComponentInstance::onEmitOnScrollEndDragEvent() {
