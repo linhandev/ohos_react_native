@@ -75,7 +75,6 @@ export abstract class RNAbility extends UIAbility {
       onConfigurationUpdated(config) {
         console.info(`envCallback onConfigurationUpdated success: ${JSON.stringify(config)}`);
         let fontSizeScale = config.fontSizeScale
-        console.log("wxjer===="+fontSizeScale);
         AppStorage.setOrCreate('fontSizeScale', fontSizeScale)
       },
       onMemoryLevel(level) {
