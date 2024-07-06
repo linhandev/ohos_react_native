@@ -18,7 +18,7 @@
 
 namespace rnoh {
 
-class SchedulerDelegateCAPI;
+class MountingManagerCAPI;
 
 /**
  * @api
@@ -36,7 +36,7 @@ class ComponentInstance
   using ComponentHandle = facebook::react::ComponentHandle;
 
  public:
-  friend SchedulerDelegateCAPI;
+  friend MountingManagerCAPI;
 
   struct Dependencies {
     using Shared = std::shared_ptr<const Dependencies>;
@@ -100,7 +100,7 @@ class ComponentInstance
 
   /**
    * TODO: change to protected — those methods are intended to be called
-   * only by SchedulerDelegateCAPI which is a friend of this class
+   * only by MountingManagerCAPI which is a friend of this class
    * (latestRNOHVersion: 0.72.27)
    */
  public:

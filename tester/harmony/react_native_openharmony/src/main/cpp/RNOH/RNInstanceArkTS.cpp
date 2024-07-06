@@ -14,6 +14,7 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "hermes/executor/HermesExecutorFactory.h"
+#include "RNOH/SchedulerDelegate.h"
 
 using namespace facebook;
 using namespace rnoh;
@@ -103,6 +104,8 @@ void RNInstanceArkTS::initializeScheduler(
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       this->instance->getRuntimeExecutor(), m_contextContainer, this);
+    m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
+      m_mountingManager, taskExecutor, m_mountingManager->getPreAllocationBuffer());
   this->scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
   turboModuleProvider->setScheduler(this->scheduler);

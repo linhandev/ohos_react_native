@@ -1,63 +1,50 @@
 #pragma once
 
-#include <functional>
-
-#include <react/renderer/components/modal/ModalHostViewState.h>
-#include <react/renderer/components/root/RootShadowNode.h>
-#include <react/renderer/core/LayoutableShadowNode.h>
-#include <react/renderer/core/RawProps.h>
-#include <react/renderer/core/ReactPrimitives.h>
-#include <react/renderer/mounting/MountingCoordinator.h>
-#include <react/renderer/mounting/TelemetryController.h>
-
-#include "RNOH/MutationsToNapiConverter.h"
-#include "RNOH/ShadowViewRegistry.h"
-#include "RNOH/TaskExecutor/TaskExecutor.h"
+#include <react/renderer/mounting/ShadowViewMutation.h>
+#include "RNOH/ComponentInstance.h"
+#include "RNOH/PreAllocationBuffer.h"
 
 namespace rnoh {
 
+/**
+ * @Thread: MAIN
+ *
+ * MountingManager is responsible for creating, updating and destroying
+ * ComponentInstances
+ *
+ */
 class MountingManager {
+ protected:
+  using Mutation = facebook::react::ShadowViewMutation;
+  using MutationList = facebook::react::ShadowViewMutationList;
+
  public:
-  using TriggerUICallback = std::function<void(
-      facebook::react::ShadowViewMutationList const& mutations)>;
-  using CommandDispatcher = std::function<void(
-      facebook::react::Tag tag,
-      std::string const& commandName,
-      folly::dynamic const args)>;
   using Shared = std::shared_ptr<MountingManager>;
+  using Weak = std::weak_ptr<MountingManager>;
 
-  MountingManager(
-      TaskExecutor::Shared taskExecutor,
-      ShadowViewRegistry::Shared shadowViewRegistry,
-      TriggerUICallback&& triggerUICallback,
-      CommandDispatcher&& commandDispatcher)
-      : taskExecutor(std::move(taskExecutor)),
-        shadowViewRegistry(std::move(shadowViewRegistry)),
-        triggerUICallback(std::move(triggerUICallback)),
-        commandDispatcher(std::move(commandDispatcher)) {}
+  virtual ~MountingManager() noexcept = default;
+    
+  virtual PreAllocationBuffer::Shared getPreAllocationBuffer() = 0;
 
-  void performMountInstructions(
-      facebook::react::ShadowViewMutationList const& mutations,
-      facebook::react::SurfaceId surfaceId);
+  virtual void willMount(MutationList const& mutations) = 0;
 
-  void scheduleTransaction(
-      facebook::react::MountingCoordinator::Shared const& mountingCoordinator);
+  virtual void doMount(MutationList const& mutations) = 0;
 
-  void performTransaction(
-      facebook::react::MountingCoordinator::Shared const& mountingCoordinator);
+  virtual void didMount(MutationList const& mutations) = 0;
 
-  void dispatchCommand(
+  virtual void dispatchCommand(
+      const facebook::react::ShadowView& shadowView,
+      const std::string& commandName,
+      folly::dynamic const& args) = 0;
+
+  virtual void setIsJsResponder(
+      const facebook::react::ShadowView& shadowView,
+      bool isJsResponder,
+      bool blockNativeResponder) = 0;
+
+  virtual void updateView(
       facebook::react::Tag tag,
-      std::string const& commandName,
-      folly::dynamic const args);
-
-  void processMutations(facebook::react::ShadowViewMutationList mutations);
-
- private:
-  TaskExecutor::Shared taskExecutor;
-  ShadowViewRegistry::Shared shadowViewRegistry;
-  TriggerUICallback triggerUICallback;
-  CommandDispatcher commandDispatcher;
+      folly::dynamic props,
+      facebook::react::ComponentDescriptor const& componentDescriptor) = 0;
 };
-
 } // namespace rnoh
