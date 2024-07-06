@@ -88,8 +88,25 @@ std::string NativeCxxModuleExampleCxxSpecJSI::getString(
   return arg; 
 }
 
+jsi::String NativeCxxModuleExampleCxxSpecJSI::getValueWithCallback(
+    jsi::Runtime& rt){
+    jsi::String jsString = facebook::jsi::String::createFromUtf8(rt, "value from callback!");
+  return jsString; 
+}
+
 void NativeCxxModuleExampleCxxSpecJSI::voidFunc(jsi::Runtime &rt) {
     // Nothing to do
+}
+
+static jsi::Value __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithCallback(
+    jsi::Runtime &rt,
+    react::TurboModule &turboModule,
+    const jsi::Value *args, 
+    size_t count) {
+    jsi::String str = static_cast<NativeCxxModuleExampleCxxSpecJSI*>(&turboModule)
+         ->getValueWithCallback(rt);
+    std::string result = str.utf8(rt);
+    return jsi::String::createFromUtf8(rt, result);
 }
 
 std::map<std::string,std::optional<int32_t>> NativeCxxModuleExampleCxxSpecJSI::getMap(
@@ -331,4 +348,6 @@ NativeCxxModuleExampleCxxSpecJSI::NativeCxxModuleExampleCxxSpecJSI(
            1, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getObject};
     methodMap_["voidFunc"] = MethodMetadata{
            0, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_voidFunc};
+    methodMap_["getValueWithCallback"] = MethodMetadata{
+           1, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithCallback};
 }
