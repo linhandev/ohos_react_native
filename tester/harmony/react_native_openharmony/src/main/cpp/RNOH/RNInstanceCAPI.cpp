@@ -10,17 +10,33 @@
 #include "RNOH/Assert.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
-#include "SchedulerDelegateCAPI.h"
 #include "hermes/executor/HermesExecutorFactory.h"
+#include "RNOH/SchedulerDelegate.h"
 
 using namespace facebook;
-using namespace rnoh;
+namespace rnoh {
+
+rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
+  DLOG(INFO) << "~RNInstanceCAPI::start";
+  if (unsubscribeUITickListener != nullptr) {
+    unsubscribeUITickListener();
+  }
+  // clear non-thread-safe objects on the main thread
+  // by moving them into a task
+  taskExecutor->runTask(
+      TaskThread::MAIN,
+      [mountingManager = std::move(m_mountingManager),
+       componentInstanceRegistry = std::move(m_componentInstanceRegistry)] {});
+  DLOG(INFO) << "~RNInstanceCAPI::stop";
+}
+
 
 TaskExecutor::Shared RNInstanceCAPI::getTaskExecutor() {
   return taskExecutor;
@@ -125,6 +141,8 @@ void RNInstanceCAPI::initializeScheduler(
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       this->instance->getRuntimeExecutor(), m_contextContainer, this);
+     m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
+      m_mountingManager, taskExecutor, m_mountingManager->getPreAllocationBuffer());
   this->scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
   turboModuleProvider->setScheduler(this->scheduler);
@@ -233,14 +251,7 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     folly::dynamic props) {
   // DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
 
-  auto schedulerDelegateCapi =
-      dynamic_cast<SchedulerDelegateCAPI*>(m_schedulerDelegate.get());
-  if (schedulerDelegateCapi == nullptr) {
-    // LOG(ERROR)
-    //     << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: scheduler delegate for this instance is not "
-    //        "set up correctly";
-    return;
-  }
+  RNOH_ASSERT(taskExecutor->getCurrentTaskThread() == TaskThread::MAIN);
 
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
   if (componentInstance == nullptr) {
@@ -261,8 +272,7 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     return;
   }
 
-  schedulerDelegateCapi->synchronouslyUpdateViewOnUIThread(
-      tag, std::move(props), *componentDescriptor);
+  m_mountingManager->updateView(tag, std::move(props), *componentDescriptor);
 }
 
 facebook::react::ContextContainer const&
@@ -275,8 +285,6 @@ void RNInstanceCAPI::callFunction(
     std::string&& module,
     std::string&& method,
     folly::dynamic&& params) {
-  //     DLOG(INFO) << "RNInstanceCAPI::callFunction"; // commented out, it's
-  //     too verbose
   this->taskExecutor->runTask(
       TaskThread::JS,
       [weakInstance = std::weak_ptr(this->instance),
@@ -309,7 +317,7 @@ void RNInstanceCAPI::onUITick(long long timestamp) {
 
 void RNInstanceCAPI::schedulerTransactionByVsync(long long timestamp, long long period) {
   auto schedulerDelegateCapi =
-      dynamic_cast<SchedulerDelegateCAPI *>(m_schedulerDelegate.get());
+      dynamic_cast<SchedulerDelegate *>(m_schedulerDelegate.get());
   if (schedulerDelegateCapi != nullptr) {
     schedulerDelegateCapi->schedulerDidViewAllocationByVsync(timestamp, period);
     return;
@@ -501,4 +509,5 @@ void RNInstanceCAPI::setBundlePath(std::string const& path)
 
 std::string RNInstanceCAPI::getBundlePath() {
   return m_bundlePath;
+}
 }

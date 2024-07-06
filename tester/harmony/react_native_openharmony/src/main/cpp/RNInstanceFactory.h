@@ -12,13 +12,14 @@
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
+#include "RNOH/MountingManagerArkTS.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
 #include "RNOH/PreAllocationBuffer.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
-#include "RNOH/SchedulerDelegateArkTS.h"
+#include "RNOH/SchedulerDelegate.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/UITicker.h"
@@ -28,7 +29,7 @@
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/CustomComponentArkUINodeHandleFactory.h"
-#include "RNOH/SchedulerDelegateCAPI.h"
+#include "RNOH/MountingManagerCAPI.h"
 #endif
 
 using namespace rnoh;
@@ -51,8 +52,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_env env,
     napi_ref arkTsTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
-    MutationsListener&& mutationsListener,
-    MountingManager::CommandDispatcher&& commandDispatcher,
+    MutationsListener mutationsListener,
+    MountingManagerArkTS::CommandDispatcher commandDispatcher,
     napi_ref measureTextFnRef,
     napi_ref napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
@@ -157,8 +158,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::move(turboModuleFactoryDelegates));
   auto mutationsToNapiConverter = std::make_shared<MutationsToNapiConverter>(
       std::move(componentNapiBinderByName));
-  auto mountingManager = std::make_shared<MountingManager>(
-      taskExecutor,
+  auto mountingManager = std::make_shared<MountingManagerArkTS>(
       shadowViewRegistry,
       [mutationsListener = std::move(mutationsListener),
        mutationsToNapiConverter](
@@ -178,9 +178,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
                 commandDispatcher(tag, commandName, args);
               });
         }
-      });
-  auto schedulerDelegateArkTS =
-      std::make_unique<SchedulerDelegateArkTS>(mountingManager, arkTSChannel);
+      },
+      arkTSChannel);
   auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   arkTSMessageHandlers.emplace_back(arkTSMessageHub);
   if (shouldUseCAPIArchitecture) {
@@ -199,11 +198,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
     auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>();
-    auto schedulerDelegateCAPI = std::make_shared<SchedulerDelegateCAPI>(
-        taskExecutor,
+    auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
         componentInstanceRegistry,
         componentInstanceFactory,
-        std::move(schedulerDelegateArkTS),
         mountingManager,
         arkTsComponentNames,
 		preAllocationBuffer,
@@ -225,7 +222,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         globalJSIBinders,
         uiTicker,
         shadowViewRegistry,
-        std::move(schedulerDelegateCAPI),
+        std::move(mountingManagerCAPI),
         std::move(arkTSMessageHandlers),
         std::move(arkTSChannel),
         arkTSMessageHub,
@@ -255,7 +252,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       uiTicker,
       shadowViewRegistry,
       arkTSChannel,
-      std::move(schedulerDelegateArkTS),
+      std::move(mountingManager),
       std::move(arkTSMessageHandlers),
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor);
