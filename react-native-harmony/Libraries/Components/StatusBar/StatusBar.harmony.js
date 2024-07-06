@@ -406,6 +406,9 @@ class StatusBar extends React.Component<Props> {
         StatusBar._defaultProps
       );
       //RNOH: patch - delete code specific to IOS and Android
+      if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
+        NativeStatusBarManagerHarmony.setHidden(mergedProps.hidden.value);
+      }
 
       // Update the props that have changed using the merged values from the props stack.
       if (!oldProps || oldProps.barStyle.value !== mergedProps.barStyle.value) {
@@ -430,9 +433,6 @@ class StatusBar extends React.Component<Props> {
           );
           NativeStatusBarManagerHarmony.setColor(processedColor, mergedProps.backgroundColor.animated);
         }
-      }
-      if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
-        NativeStatusBarManagerHarmony.setHidden(mergedProps.hidden.value);
       }
       // Update the current prop values.
       StatusBar._currentValues = mergedProps;
