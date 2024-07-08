@@ -1,6 +1,6 @@
 import webSocket from '@ohos.net.webSocket'
 import util from '@ohos.util'
-import { TurboModule, TurboModuleContext, RNOHLogger } from "../../RNOH/ts";
+import { TurboModule, TurboModuleContext, RNOHLogger, RNOHError } from "../../RNOH/ts";
 import { BusinessError } from '@ohos.base';
 import { BlobMetadata as BlobMetadata } from './Blob';
 
@@ -20,10 +20,10 @@ export type ContentHandler = {
 export class WebSocketTurboModule extends TurboModule {
   public static readonly NAME = 'WebSocketModule';
 
-  private socketsById: Map<number, webSocket.WebSocket> = new Map();
+  private socketById: Map<number, webSocket.WebSocket> = new Map();
   private logger: RNOHLogger
   private base64 = new util.Base64Helper();
-  private contentHandlersBySocketID: Map<number, ContentHandler> = new Map();
+  private contentHandlerBySocketId: Map<number, ContentHandler> = new Map();
 
   constructor(ctx: TurboModuleContext) {
     super(ctx)
@@ -36,15 +36,15 @@ export class WebSocketTurboModule extends TurboModule {
 
   setContentHandler(socketID: number, contentHandler?: ContentHandler) {
     if (contentHandler) {
-      this.contentHandlersBySocketID.set(socketID, contentHandler);
+      this.contentHandlerBySocketId.set(socketID, contentHandler);
     } else {
-      this.contentHandlersBySocketID.delete(socketID);
+      this.contentHandlerBySocketId.delete(socketID);
     }
   }
 
-  private onMessage(err: BusinessError<void>, data: string | ArrayBuffer, socketID:number) {
-    const contentHandler = this.contentHandlersBySocketID.get(socketID);
-    
+  private onMessage(err: BusinessError<void>, data: string | ArrayBuffer, socketID: number) {
+    const contentHandler = this.contentHandlerBySocketId.get(socketID);
+
     if (typeof data === "string") {
       let params: MessageParams = { id: socketID, type: 'text', data: data };
       if (contentHandler) {
@@ -74,83 +74,95 @@ export class WebSocketTurboModule extends TurboModule {
     if (url.startsWith('http')) {
       url = url.replace('http', 'ws')
     }
-    ws.on('open', (err: BusinessError, value: Object) => {
+
+    ws.on('open', (data) => {
       this.ctx.rnInstance.emitDeviceEvent("websocketOpen", {
         id: socketID,
         protocol: "",
       });
     });
 
-    ws.on('error', (err) => this.handleError(socketID, err));
-    ws.on('message', (err: BusinessError, value: string | ArrayBuffer) => {
-      this.onMessage(err, value, socketID);
-    });
+    ws.on('error', (err) => this.maybeHandleError(socketID, err));
+    ws.on('message', (err, data) => this.onMessage(err, data, socketID));
     ws.on('close', (err, data) => {
       this.ctx.rnInstance.emitDeviceEvent("websocketClosed", {
         id: socketID,
         ...data,
       })
+
     })
-    ws.connect(url, { header: options.headers, protocol: (protocols ? protocols.join(',') : "") }, (err: BusinessError, value: boolean) => {
-      this.handleError(socketID, err)
-    });
-    this.socketsById.set(socketID, ws);
+
+    ws.connect(url, { header: options.headers }, (err) => this.maybeHandleError(socketID, err));
+    this.socketById.set(socketID, ws);
   }
 
-  send(message: string, socketID: number) {
-    const ws = this.socketsById.get(socketID);
+  send(message: string, socketId: number) {
+    const ws = this.getSocketById(socketId, "send")
     if (!ws) {
-      throw new Error(`Trying to send a message on websocket "${socketID}" but there is no socket.`);
+      return
     }
-
-    ws.send(message, (err) => this.handleError(socketID, err));
+    ws.send(message, (err) => this.maybeHandleError(socketId, err));
   }
 
-  sendBinary(base64Message: string, socketID: number) {
-    const ws = this.socketsById.get(socketID);
+  sendBinary(base64Message: string, socketId: number) {
+    const ws = this.getSocketById(socketId, "sendBinary")
     if (!ws) {
-      throw new Error(`Trying to send a message on websocket "${socketID}" but there is no socket.`);
+      return
     }
     const message = this.base64.decodeSync(base64Message);
-
-    ws.send(message.buffer, (err) => this.handleError(socketID, err));
+    ws.send(message.buffer, (err) => this.maybeHandleError(socketId, err));
   }
 
-  sendBinaryArray(message: Uint8Array, socketID: number) {
-    const ws = this.socketsById.get(socketID);
+  sendBinaryArray(message: Uint8Array, socketId: number) {
+    const ws = this.getSocketById(socketId, "sendBinaryArray")
     if (!ws) {
-      throw new Error(`Trying to send a message on websocket "${socketID}" but there is no socket.`);
+      return
     }
-
-    ws.send(message.buffer, (err) => this.handleError(socketID, err));
+    ws.send(message.buffer, (err) => this.maybeHandleError(socketId, err));
   }
 
-  ping(socketID: number) {
-    const ws = this.socketsById.get(socketID);
+  ping(socketId: number) {
+    const ws = this.getSocketById(socketId, "ping")
     if (!ws) {
-      throw new Error(`Trying to send a ping on websocket "${socketID}" but there is no socket.`);
+      return
     }
-
     this.ctx.logger.warn("WebSocketTurboModule::ping not implemented");
   }
 
-  close(code: number, reason: string, socketID: number) {
-    const ws = this.socketsById.get(socketID);
+  close(code: number, reason: string, socketId: number) {
+    const ws = this.getSocketById(socketId, "close")
     if (!ws) {
-      throw new Error(`Trying to close websocket "${socketID}" but there is no socket.`);
+      return
     }
 
-    ws.close({ code, reason }, (err) => this.handleError(socketID, err));
-    this.socketsById.delete(socketID);
-    this.contentHandlersBySocketID.delete(socketID);
+    ws.close({ code, reason }, (err) => this.maybeHandleError(socketId, err));
+    this.socketById.delete(socketId);
+    this.contentHandlerBySocketId.delete(socketId);
   }
 
-  private handleError(socketID: number, err) {
+  private maybeHandleError(socketId: number, err: unknown | undefined): boolean {
     if (err) {
-      this.ctx.logger.info(`WebSocketTurboModule::handleError ${JSON.stringify(err)}`);
-      this.ctx.rnInstance.emitDeviceEvent("websocketFailed", { id: socketID, message: JSON.stringify(err) });
-      this.socketsById.delete(socketID);
-      this.contentHandlersBySocketID.delete(socketID);
+      let stringifiedErr = ""
+      if (err instanceof Error) {
+        stringifiedErr = err.message
+      } else {
+        stringifiedErr = JSON.stringify(err)
+      }
+      this.logger.clone("maybeHandleError").error(err);
+      this.ctx.rnInstance.emitDeviceEvent("websocketFailed", { id: socketId, message: stringifiedErr });
+      this.socketById.delete(socketId);
+      this.contentHandlerBySocketId.delete(socketId);
+      return true
     }
+    return false
+  }
+
+  private getSocketById(socketId: number, methodName: string) {
+    const ws = this.socketById.get(socketId);
+    if (!ws) {
+      this.maybeHandleError(socketId, new Error(`Tried to get websocket with ID "${socketId}", but such socket hasn't been created or it's closed. (WebSocketTurboModule::${methodName})`));
+      return null
+    }
+    return ws
   }
 }
