@@ -8,11 +8,9 @@ namespace rnoh {
 class EventBeat : public facebook::react::EventBeat {
  public:
   EventBeat(
-      std::weak_ptr<TaskExecutor> const& taskExecutor,
       facebook::react::RuntimeExecutor runtimeExecutor,
       SharedOwnerBox ownerBox)
-      : m_taskExecutor(taskExecutor),
-        m_runtimeExecutor(runtimeExecutor),
+      : m_runtimeExecutor(runtimeExecutor),
         facebook::react::EventBeat(ownerBox) {}
 
   void induce() const override {
@@ -34,7 +32,6 @@ class EventBeat : public facebook::react::EventBeat {
   ~EventBeat() override = default;
 
  private:
-  std::weak_ptr<TaskExecutor> m_taskExecutor;
   facebook::react::RuntimeExecutor m_runtimeExecutor;
 };
 

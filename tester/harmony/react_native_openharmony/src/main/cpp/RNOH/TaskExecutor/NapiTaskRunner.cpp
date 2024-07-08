@@ -18,7 +18,10 @@ NapiTaskRunner::NapiTaskRunner(napi_env env, ExceptionHandler exceptionHandler)
   m_threadId = std::this_thread::get_id();
 }
 
-NapiTaskRunner::~NapiTaskRunner() {}
+NapiTaskRunner::~NapiTaskRunner() {
+  DLOG(INFO) << "NapiTaskRunner::~NapiTaskRunner()";
+  cleanup();
+}
 
 bool NapiTaskRunner::isOnCurrentThread() const {
   return m_threadId == std::this_thread::get_id();
@@ -31,8 +34,9 @@ void NapiTaskRunner::executeTask() {
   // "For any invocations of code outside the execution of a native method
   // (...) the module is required to create a scope before invoking any
   // functions that can result in the creation of JavaScript values"
+  auto env = m_env;
   napi_handle_scope scope;
-  auto result = napi_open_handle_scope(m_env, &scope);
+  auto result = napi_open_handle_scope(env, &scope);
   if (result != napi_ok) {
     LOG(ERROR) << "Failed to open handle scope";
     return;
@@ -40,7 +44,7 @@ void NapiTaskRunner::executeTask() {
 
   EventLoopTaskRunner::executeTask();
 
-  result = napi_close_handle_scope(m_env, scope);
+  result = napi_close_handle_scope(env, scope);
   if (result != napi_ok) {
     LOG(ERROR) << "Failed to close handle scope";
     return;

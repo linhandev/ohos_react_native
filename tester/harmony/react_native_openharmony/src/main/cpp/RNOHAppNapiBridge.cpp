@@ -182,7 +182,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
             if (RN_INSTANCE_BY_ID.find(instanceId) == RN_INSTANCE_BY_ID.end()) {
               LOG(WARNING) << "RNInstance with the following id " +
                       std::to_string(instanceId) + " does not exist";
-              return;
             }
           }
           ArkJS arkJS(env);

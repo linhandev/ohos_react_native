@@ -1,13 +1,15 @@
 #include "RNOH/MessageQueueThread.h"
+#include <glog/logging.h>
 #include <react/renderer/debug/SystraceSection.h>
 
 using namespace rnoh;
 
-MessageQueueThread::MessageQueueThread(
-    std::shared_ptr<TaskExecutor> const& taskExecutor)
+MessageQueueThread::MessageQueueThread(TaskExecutor::Shared const& taskExecutor)
     : taskExecutor(taskExecutor) {}
 
-MessageQueueThread::~MessageQueueThread(){};
+MessageQueueThread::~MessageQueueThread() {
+  DLOG(INFO) << "~MessageQueueThread";
+};
 
 void MessageQueueThread::runOnQueue(std::function<void()>&& func) {
   facebook::react::SystraceSection s("#RNOH::MessageQueueThread::runOnQueue");

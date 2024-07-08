@@ -2,6 +2,9 @@
 #include <react/renderer/debug/SystraceSection.h>
 
 namespace rnoh {
+SchedulerDelegate::~SchedulerDelegate() {
+  DLOG(INFO) << "~SchedulerDelegate";
+}
 
 void SchedulerDelegate::schedulerDidFinishTransaction(
     MountingCoordinator::Shared mountingCoordinator) {
