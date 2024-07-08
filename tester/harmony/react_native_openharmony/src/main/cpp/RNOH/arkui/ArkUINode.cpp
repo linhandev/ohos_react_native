@@ -1,27 +1,48 @@
 #include "ArkUINode.h"
 #include <algorithm>
-#include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
+#include "RNOH/Assert.h"
 #include "conversions.h"
 
 namespace rnoh {
 
+static void receiveEvent(ArkUI_NodeEvent* event) {
+#ifdef C_API_ARCH
+  try {
+    auto eventType = OH_ArkUI_NodeEvent_GetEventType(event);
+    auto target =
+        static_cast<ArkUINode*>(OH_ArkUI_NodeEvent_GetUserData(event));
+
+    if (eventType == ArkUI_NodeEventType::NODE_TOUCH_EVENT) {
+      // Node Touch events are handled in UIInputEventHandler instead
+      return;
+    }
+
+    auto componentEvent = OH_ArkUI_NodeEvent_GetNodeComponentEvent(event);
+    if (componentEvent != nullptr) {
+      target->onNodeEvent(eventType, componentEvent->data);
+      return;
+    }
+    auto eventString = OH_ArkUI_NodeEvent_GetStringAsyncEvent(event);
+    if (eventString != nullptr) {
+      target->onNodeEvent(eventType, std::string_view(eventString->pStr));
+      return;
+    }
+
+  } catch (std::exception& e) {
+    LOG(ERROR) << e.what();
+  }
+#endif
+}
+
 ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {
-  ArkUINodeRegistry::getInstance().registerNode(this);
+  RNOH_ASSERT(nodeHandle != nullptr);
+  maybeThrow(NativeNodeApi::getInstance()->addNodeEventReceiver(
+      m_nodeHandle, receiveEvent));
 }
 
 void ArkUINode::setArkUINodeDelegate(ArkUINodeDelegate* delegate) {
   m_arkUINodeDelegate = delegate;
-}
-
-ArkUINode::ArkUINode(ArkUINode&& other) noexcept
-    : m_nodeHandle(std::move(other.m_nodeHandle)) {
-  other.m_nodeHandle = nullptr;
-}
-
-ArkUINode& ArkUINode::operator=(ArkUINode&& other) noexcept {
-  std::swap(m_nodeHandle, other.m_nodeHandle);
-  return *this;
 }
 
 ArkUI_NodeHandle ArkUINode::getArkUINodeHandle() {
@@ -475,14 +496,22 @@ ArkUI_IntOffset ArkUINode::getLayoutPosition() {
   return NativeNodeApi::getInstance()->getLayoutPosition(m_nodeHandle);
 }
 
-ArkUINode::~ArkUINode() {
-  if (m_nodeHandle != nullptr) {
-    ArkUINodeRegistry::getInstance().unregisterNode(this);
-    NativeNodeApi::getInstance()->disposeNode(m_nodeHandle);
-  }
+ArkUINode::~ArkUINode() noexcept {
   if (m_arkUINodeDelegate != nullptr) {
     m_arkUINodeDelegate->onArkUINodeDestroy(this);
   }
+  NativeNodeApi::getInstance()->removeNodeEventReceiver(
+      m_nodeHandle, receiveEvent);
+  NativeNodeApi::getInstance()->disposeNode(m_nodeHandle);
+}
+
+void ArkUINode::registerNodeEvent(ArkUI_NodeEventType eventType) {
+  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
+      m_nodeHandle, eventType, eventType, this));
+}
+
+void ArkUINode::unregisterNodeEvent(ArkUI_NodeEventType eventType) {
+  NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
 }
 
 } // namespace rnoh

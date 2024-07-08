@@ -11,8 +11,7 @@ ColumnNode::ColumnNode()
     : ArkUINode(NativeNodeApi::getInstance()->createNode(
           ArkUI_NodeType::ARKUI_NODE_COLUMN)),
       m_columnNodeDelegate(nullptr) {
-  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
-      m_nodeHandle, NODE_ON_CLICK, 0, this));
+  registerNodeEvent(NODE_ON_CLICK);
 }
 
 void ColumnNode::insertChild(ArkUINode& child, std::size_t index) {
@@ -50,7 +49,6 @@ void ColumnNode::onClick() {
 }
 
 ColumnNode::~ColumnNode() {
-  NativeNodeApi::getInstance()->unregisterNodeEvent(
-      m_nodeHandle, NODE_ON_CLICK);
+  unregisterNodeEvent(NODE_ON_CLICK);
 }
 } // namespace rnoh

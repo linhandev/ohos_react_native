@@ -1,11 +1,12 @@
 #pragma once
 
+#include <react/renderer/components/modal/ModalHostViewShadowNode.h>
+#include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUIDialogHandler.h"
-#include "RNOH/arkui/ArkUINodeRegistry.h"
 #include "RNOH/arkui/StackNode.h"
-#include "react/renderer/components/modal/ModalHostViewShadowNode.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
 class ModalHostViewComponentInstance
@@ -18,7 +19,7 @@ class ModalHostViewComponentInstance
   StackNode m_virtualNode;
   StackNode m_rootStackNode;
   ArkUIDialogHandler m_dialogHandler;
-  std::unique_ptr<TouchEventHandler> m_touchHandler;
+  std::unique_ptr<UIInputEventHandler> m_touchHandler;
   std::shared_ptr<ArkTSMessageHandler> m_displaySizeChangeHandler;
   std::optional<ScreenOrientation> m_screenOrientation;
 
