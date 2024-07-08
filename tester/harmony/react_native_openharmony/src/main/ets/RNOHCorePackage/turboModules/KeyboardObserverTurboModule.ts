@@ -32,6 +32,7 @@ export class KeyboardObserverTurboModule extends TurboModule {
       if (keyboardHeight > 0) {
         const keyboardAvoidArea = windowInstance.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD).bottomRect;
         this.ctx.rnInstance.emitDeviceEvent('keyboardDidShow', this.createKeyboardEvent(keyboardAvoidArea.left, keyboardAvoidArea.top, keyboardAvoidArea.width, keyboardAvoidArea.height));
+        this.ctx.rnInstance.postMessageToCpp("KEYBOARD_VISIBLE", {keyboardHeight: px2vp(keyboardAvoidArea.height)});
       } else {
         const windowRect = windowInstance.getWindowProperties().windowRect;
         this.ctx.rnInstance.emitDeviceEvent('keyboardDidHide', this.createKeyboardEvent(0, windowRect.height, windowRect.width, 0))

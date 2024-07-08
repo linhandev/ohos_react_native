@@ -3,6 +3,7 @@
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/TextAreaNode.h"
 #include "RNOH/arkui/TextInputNode.h"
+#include "ScrollViewComponentInstance.h"
 #include "react/renderer/components/textinput/TextInputEventEmitter.h"
 #include "react/renderer/components/textinput/TextInputShadowNode.h"
 
@@ -10,7 +11,9 @@ namespace rnoh {
 class TextInputComponentInstance
     : public CppComponentInstance<facebook::react::TextInputShadowNode>,
       public TextInputNodeDelegate,
-      public TextAreaNodeDelegate {
+      public TextAreaNodeDelegate,
+      public ArkTSMessageHub::Observer,
+      public KeyboardAvoider {
  private:
   TextInputNode m_textInputNode;
   TextAreaNode m_textAreaNode;
@@ -76,5 +79,11 @@ class TextInputComponentInstance
   void onContentSizeChange(float width, float height) override;
 
   ArkUINode& getLocalRootArkUINode() override;
+
+  void onMessageReceived(ArkTSMessage const& message) override;
+
+  // KeyboardAvoider
+  facebook::react::Float getBottomEdgeOffsetRelativeToScrollView(
+      std::shared_ptr<ScrollViewComponentInstance> scrollView) override;
 };
 } // namespace rnoh
