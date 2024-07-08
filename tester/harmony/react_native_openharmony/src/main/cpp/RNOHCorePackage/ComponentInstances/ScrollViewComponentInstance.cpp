@@ -70,6 +70,30 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
+  /**
+   * This block is needed to detects which batch of mutations were triggered by
+   * appearance of the keyboard.
+   * "__keyboardAvoidingViewBottomHeight" is injected by KeyboardAvoidingView.
+   * ScrollView needs to be placed directly inside KeyboardAvoidingView.
+   */
+  double parentKeyboardAvoidingViewBottomHeight = 0;
+  if (props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0) {
+    parentKeyboardAvoidingViewBottomHeight =
+        props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
+  }
+  double prevParentKeyboardAvoidingViewBottomHeight = 0;
+  if (m_props != nullptr &&
+      m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0) {
+    prevParentKeyboardAvoidingViewBottomHeight =
+        m_props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
+  }
+  auto keyboardAvoider = m_keyboardAvoider.lock();
+  if (keyboardAvoider && parentKeyboardAvoidingViewBottomHeight > 0 &&
+      parentKeyboardAvoidingViewBottomHeight !=
+          prevParentKeyboardAvoidingViewBottomHeight) {
+    m_shouldAdjustScrollPositionOnNextRender = true;
+  }
+  
   auto rawProps = ScrollViewRawProps::getFromDynamic(props->rawProps);
 
   if (props->rawProps.count("persistentScrollbar") > 0) {
@@ -437,6 +461,36 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     m_firstVisibleView = getFirstVisibleView(
         m_props->maintainVisibleContentPosition.value().minIndexForVisible);
   }
+
+  if (m_shouldAdjustScrollPositionOnNextRender) {
+    auto maybeKeyboardAvoider = m_keyboardAvoider.lock();
+    if (maybeKeyboardAvoider != nullptr) {
+      auto keyboardAvoider =
+          std::dynamic_pointer_cast<KeyboardAvoider>(maybeKeyboardAvoider);
+      if (keyboardAvoider != nullptr) {
+        auto scrollOffset =
+            keyboardAvoider->getBottomEdgeOffsetRelativeToScrollView(
+                std::dynamic_pointer_cast<ScrollViewComponentInstance>(
+                    this->shared_from_this()));
+        auto newScrollOffset = scrollOffset - m_layoutMetrics.frame.size.height;
+        if (isHorizontal(m_props)) {
+          if (newScrollOffset > m_scrollNode.getScrollOffset().x) {
+            m_scrollNode.scrollTo(
+                newScrollOffset, m_scrollNode.getScrollOffset().y, true);
+          }
+        } else {
+          if (newScrollOffset > m_scrollNode.getScrollOffset().y) {
+            LOG(INFO)
+                << "Adjusting scroll position to prevent keyboard avoider being hidden by the keyboard";
+            m_scrollNode.scrollTo(
+                m_scrollNode.getScrollOffset().x, newScrollOffset, true);
+          }
+        }
+        m_keyboardAvoider.reset();
+      }
+    }
+    m_shouldAdjustScrollPositionOnNextRender = false;
+  }
 }
 
 folly::dynamic ScrollViewComponentInstance::getScrollEventPayload(
@@ -672,6 +726,12 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
       : lastChild->getLayoutMetrics().frame.origin.y;
   return std::optional<ScrollViewComponentInstance::ChildTagWithOffset>(
       {lastChild->getTag(), position});
+}
+
+bool ScrollViewComponentInstance::setKeyboardAvoider(
+    ComponentInstance::Weak keyboardAvoidingComponentInstance) {
+  m_keyboardAvoider = keyboardAvoidingComponentInstance;
+  return true;
 }
 
 } // namespace rnoh

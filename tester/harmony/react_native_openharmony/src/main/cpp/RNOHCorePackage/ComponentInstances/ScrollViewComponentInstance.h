@@ -36,6 +36,7 @@ class ScrollViewComponentInstance
   bool m_disableIntervalMomentum = false;
   bool m_scrollToOverflowEnabled = false;
   float m_recentScrollFrameOffset = 0;
+  bool m_shouldAdjustScrollPositionOnNextRender = false;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
   std::optional<ChildTagWithOffset> m_firstVisibleView = std::nullopt;
   bool m_enableScrollInteraction = true;  
@@ -115,6 +116,9 @@ class ScrollViewComponentInstance
 
   bool isHandlingTouches() const override;
 
+  bool setKeyboardAvoider(
+      ComponentInstance::Weak keyboardAvoidingComponentInstance);
+
  protected:
   void onNativeResponderBlockChange(bool isBlocked) override;
 
@@ -123,7 +127,31 @@ class ScrollViewComponentInstance
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
   facebook::react::Point getContentViewOffset() const;
+  ComponentInstance::Weak m_keyboardAvoider;
   bool isNestedScroll();
   bool isEnableScrollInteraction(bool scrollEnabled);
+};
+
+/**
+ * HACK: This interface is needed for adjusting scroll position when keyboard
+ * appears. It is meant to be implemented by ComponentInstances that can trigger
+ * keyboard visibility e.g. TextInput.
+ *
+ * Adjusting the scroll position when the keyboard appears is the
+ * responsibility of the platform. However, the platform doesn't adjust the
+ * position correctly when a ScrollView changes its dimensions right after
+ * the platform starts adjusting the position. To fix this problem, this hack
+ * checks for changes in "__keyboardAvoidingViewBottomHeight" to detect
+ * mutations triggered by the keyboard appearance.
+ *
+ * "__keyboardAvoidingViewBottomHeight" is injected by KeyboardAvoidingView.
+ * ScrollView needs to be placed directly inside KeyboardAvoidingView.
+ */
+class KeyboardAvoider {
+ public:
+  using Weak = std::weak_ptr<KeyboardAvoider>;
+
+  virtual facebook::react::Float getBottomEdgeOffsetRelativeToScrollView(
+      std::shared_ptr<ScrollViewComponentInstance> scrollView) = 0;
 };
 } // namespace rnoh

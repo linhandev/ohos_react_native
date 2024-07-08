@@ -1,6 +1,8 @@
 import {
+  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
+  ScrollView,
   StyleProp,
   StyleSheet,
   TextInput,
@@ -11,6 +13,7 @@ import {
 import {TestSuite} from '@rnoh/testerino';
 import React from 'react';
 import {Modal, TestCase} from '../components';
+import {PALETTE} from '../components/palette';
 
 export const KeyboardAvoidingViewTest = () => {
   return (
@@ -41,6 +44,30 @@ export const KeyboardAvoidingViewTest = () => {
           behavior="padding"
           justifyContent="flex-end"
         />
+      </TestCase.Example>
+      <TestCase.Example itShould="keep TextInput visible after tapping TextInput">
+        <Modal contentContainerStyle={{height: '100%', width: '50%'}}>
+          <KeyboardAvoidingView behavior={'height'}>
+            <ScrollView>
+              <View
+                style={{
+                  height: Dimensions.get('window').height - 128,
+                  backgroundColor: 'silver',
+                }}
+              />
+              <TextInput
+                style={{
+                  width: '100%',
+                  backgroundColor: PALETTE.REACT_CYAN_LIGHT,
+                  paddingHorizontal: 8,
+                  paddingVertical: 16,
+                  marginBottom: 64,
+                }}
+                placeholder="CLICK ME"
+              />
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </Modal>
       </TestCase.Example>
     </TestSuite>
   );

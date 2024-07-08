@@ -11,11 +11,13 @@
 #include <utility>
 #include <algorithm>
 #include <boost/locale.hpp>
+#include "ScrollViewComponentInstance.h"
 
 namespace rnoh {
 
 TextInputComponentInstance::TextInputComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)) {
+    : CppComponentInstance(std::move(context)),
+      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {
   m_textInputNode.setTextInputNodeDelegate(this);
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
@@ -444,6 +446,42 @@ void TextInputComponentInstance::focus() {
 
 void TextInputComponentInstance::blur() {
   getLocalRootArkUINode().setFocusStatus(0);
+}
+
+void TextInputComponentInstance::onMessageReceived(
+    const ArkTSMessage& message) {
+  if (message.name == "KEYBOARD_VISIBLE" && this->m_focused) {
+    auto parent = this->m_parent.lock();
+    std::shared_ptr<ScrollViewComponentInstance> scrollView = nullptr;
+    while (parent != nullptr) {
+      scrollView =
+          std::dynamic_pointer_cast<ScrollViewComponentInstance>(parent);
+      if (scrollView != nullptr) {
+        scrollView->setKeyboardAvoider(shared_from_this());
+        break;
+      }
+      parent = parent->getParent().lock();
+    }
+  }
+}
+
+// KeyboardAvoider
+facebook::react::Float
+TextInputComponentInstance::getBottomEdgeOffsetRelativeToScrollView(
+    std::shared_ptr<ScrollViewComponentInstance> scrollView) {
+  auto relativePos = m_layoutMetrics.frame.origin;
+  auto parent = m_parent.lock();
+  while (parent != nullptr && parent->getTag() != scrollView->getTag()) {
+    relativePos += parent->getLayoutMetrics().frame.origin;
+    parent = parent->getParent().lock();
+  }
+  /**
+   * It looks like 24 is used by the platform when KeyboardAvoider hack isn't
+   * needed.
+   */
+  auto GAP_BETWEEN_KEYBOARD_AND_TEXT_INPUT = 24;
+  return relativePos.y + m_layoutMetrics.frame.size.height +
+      GAP_BETWEEN_KEYBOARD_AND_TEXT_INPUT;
 }
 
 } // namespace rnoh
