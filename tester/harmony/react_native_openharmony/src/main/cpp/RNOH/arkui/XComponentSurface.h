@@ -8,9 +8,15 @@
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
+#include "RNOH/ThreadGuard.h"
 
 namespace rnoh {
 
+/**
+ * @Thread: MAIN
+ * Wraps the `react::SurfaceHandle` and attaches the root component of the
+ * React Native `Surface` to the native `XComponent`
+ */
 class XComponentSurface {
  public:
   XComponentSurface(
@@ -56,12 +62,12 @@ class XComponentSurface {
  private:
   facebook::react::SurfaceId m_surfaceId;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler;
-  OH_NativeXComponent* m_nativeXComponent;
-  ComponentInstance::Shared m_rootView;
+  OH_NativeXComponent* m_nativeXComponent = nullptr;
+  ComponentInstance::Shared m_rootView = nullptr;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   facebook::react::SurfaceHandler m_surfaceHandler;
   std::unique_ptr<TouchEventHandler> m_touchEventHandler;
-  std::mutex m_mutex;
+  ThreadGuard m_threadGuard{};
 };
 
 } // namespace rnoh
