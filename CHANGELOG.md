@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.72.31
+- added support for `TextInput::inputMode`  ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
+- added support for `TextInput::contextMenuHidden` ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
+- added onHoverIn and onHoverOut support ([dd4b30ed38](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dd4b30ed38e4a3f5d60939b86f8b6e8b5f963083))
+- added `ArkTSMessageHub` to `TurboModule::Context` to allow TMs to listen to ArkTS messages ([8aeaf643bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8aeaf643bbaaef79cb7665a17a957b906def9a04))
+- fixed animation issues caused by Animated Scroll events throttling ([2579748710](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/25797487102bbb7282cc7154281de17661976deb))
+- fixed setNativeProps for values which can be defined outside `style` object   ([e90d1cd744](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e90d1cd744784175efb2b232161a617ab492c46e))
+- fixed TextInput sometimes being covered by keyboard ([e482abc673](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e482abc6732287f16052b3e24d5692e39bbe1787))
+- fixed incorrect keyValue in onKeyPress when non-ASCII characters were in the input text ([37092cdc38](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37092cdc386955e0b2dde227117d33fccd22c7eb))
+- fixed ArkUI nodes' ids colliding in multi RNInstance environment ([04e23564e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/04e23564e40d5e3eae6a44706b2ba773dd111c32))
+- removed ArkTS `TimingTurboModule` ([8aeaf643bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8aeaf643bbaaef79cb7665a17a957b906def9a04))
+
+
 ## v0.72.30
 - deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `arkTSMessageHub` ([59d7550bb4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59d7550bb4629787ec0ecbfa4eeee0e93b2ad10c))
 - added image prefetch support  ([6511bda8cf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6511bda8cf0da47c3b61663ff385ca1692c89441))
