@@ -5,6 +5,7 @@
 
 class AbstractTaskRunner {
  public:
+  using Shared = std::shared_ptr<AbstractTaskRunner>;
   using Task = std::function<void()>;
   using DelayedTaskId = uint64_t;
   using ExceptionHandler = std::function<void(std::exception_ptr const)>;

@@ -1,12 +1,19 @@
 import type { RNOHContext } from './RNOHContext';
 import type { RNOHLogger } from "./RNOHLogger"
 
-export type MainTurboModuleContext = RNOHContext;
+/**
+ * @api
+ */
+export type UITurboModuleContext = RNOHContext;
 
-export class MainTurboModule {
+/**
+ * @thread: MAIN
+ * @api
+ */
+export class UITurboModule {
   public static readonly NAME;
 
-  public constructor(protected ctx: MainTurboModuleContext) {
+  public constructor(protected ctx: UITurboModuleContext) {
   };
 
   public __onDestroy__() {
@@ -14,22 +21,29 @@ export class MainTurboModule {
 }
 
 /**
- * @deprecated: Use MainTurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
+ * @api
+ * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
  */
-export type TurboModuleContext = MainTurboModuleContext
+export type TurboModuleContext = UITurboModuleContext
 
 /**
- * @deprecated Use MainTurboModule or WorkerTurboModule instead (latestRNOHVersion: 0.72.30)
+ * @api
+ * @deprecated Use UITurboModule or WorkerTurboModule instead (latestRNOHVersion: 0.72.30)
  */
-export class TurboModule extends MainTurboModule {
+export class TurboModule extends UITurboModule {
 }
 
+/**
+ * @api
+ */
 export type WorkerTurboModuleContext = {
   logger: RNOHLogger
 }
 
 /**
+ * @api
  * @experimental
+ * @thread: WORKER
  */
 export class WorkerTurboModule {
   public static readonly NAME;

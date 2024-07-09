@@ -5,7 +5,7 @@ export default class EntryAbility extends RNAbility {
     return 'pages/Index';
   }
 
-  onGetRNOHWorkerScriptUrl() {
+  getRNOHWorkerScriptUrl() {
     return "entry/ets/workers/RNOHWorker.ts"
   }
 }

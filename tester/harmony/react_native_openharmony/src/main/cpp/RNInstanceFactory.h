@@ -79,13 +79,13 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
 
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
-       weakArkTSBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
+       weakArkTsBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
         auto executor = weakExecutor.lock();
         if (executor == nullptr) {
           return;
         }
-        executor->runTask(TaskThread::MAIN, [e, weakArkTSBridge]() {
-          auto arkTSBridge = weakArkTSBridge.lock();
+        executor->runTask(TaskThread::MAIN, [e, weakArkTsBridge]() {
+          auto arkTSBridge = weakArkTsBridge.lock();
           if (arkTSBridge == nullptr) {
             return;
           }
@@ -161,6 +161,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     }
   }
 
+  auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   auto turboModuleFactory = TurboModuleFactory(
      {
           // clang-format off
@@ -170,7 +171,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       featureFlagRegistry,
       std::move(componentJSIBinderByName),
       taskExecutor,
-      std::move(turboModuleFactoryDelegates));
+      std::move(turboModuleFactoryDelegates),
+      arkTSMessageHub);
   auto mutationsToNapiConverter = std::make_shared<MutationsToNapiConverter>(
       std::move(componentNapiBinderByName));
   auto mountingManager = std::make_shared<MountingManagerArkTS>(
@@ -195,7 +197,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         }
       },
       arkTSChannel);
-  auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   arkTSMessageHandlers.emplace_back(arkTSMessageHub);
   if (shouldUseCAPIArchitecture) {
 #ifdef C_API_ARCH
