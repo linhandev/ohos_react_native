@@ -8,12 +8,13 @@ import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
+import type { RNOHContext } from './RNOHContext'
 import { RNOHCorePackage } from '../RNOHCorePackage/ts'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
 import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule, TurboModuleContext } from './TurboModule'
+import type { TurboModule } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -22,6 +23,7 @@ import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
+import { DisplayMetricsManager } from './DisplayMetricsManager'
 import font from '@ohos.font'
 
 export type Resource = Exclude<font.FontOptions["familySrc"], string>
@@ -95,6 +97,7 @@ export interface RNInstance {
    * Check DescriptorRegistry documentation for more information.
    */
   descriptorRegistry: DescriptorRegistry;
+
   /**
    * @architecture: C-API
    * Relays messages emitted from C++ by RNInstanceCAPI::postMessageToArkTS
@@ -104,16 +107,19 @@ export interface RNInstance {
    * @deprecated Use RNOHContext::componentCommandReceiver
    */
   commandDispatcher: CommandDispatcher;
+
   /**
    * Check ComponentManagerRegistry documentation for more information.
    */
   componentManagerRegistry: ComponentManagerRegistry;
+
   /**
    * Mindless copy of Android's `ReactInstanceManager::getLifecycleState` per specific request.
    * It probably behaves differently to Android because UIAbility is a different concept than Android's Activity despite
    * certain similarities.
    */
   getLifecycleState(): LifecycleState;
+
   /**
    * Allows subscribing to various events. Check LifecycleEventArgsByEventName type for more information.
    */
@@ -121,6 +127,7 @@ export interface RNInstance {
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void
   ) => () => void;
+
   /**
    * Similar to subscribeToLifecycleEvents but handles different set of events. It may be removed to unify subscribing to events.
    */
@@ -128,6 +135,7 @@ export interface RNInstance {
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void
   ) => () => void;
+
   /**
    * Asynchronously executes a JS function. It may be renamed in the future because "call" suggest synchronous communication.
    * @param moduleName — name of the JavaScript file
@@ -135,48 +143,59 @@ export interface RNInstance {
    * @param args - args that function should receive
    */
   callRNFunction(moduleName: string, functionName: string, args: unknown[]): void;
+
   /**
    * Sends device events (e.g. "appearanceChanged") to React Native.
    */
   emitDeviceEvent(eventName: string, payload: any): void;
+
   /**
    * Sends component events like "onScroll". That event is received by "EventEmitRequestHandler" on the C++ side. That handler
    * calls proper method on Component's EventEmitter.
    */
   emitComponentEvent(tag: Tag, eventName: string, payload: any): void;
+
   /**
    * Used by RNApp to avoid loading the same bundle twice.
    */
   getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined
+
   /**
    * Enables feature flag. It may be removed in the future because usually feature flags need to be provided when creating
    * RNInstance.
    */
   enableFeatureFlag(featureFlagName: FeatureFlagName): void
+
   /**
    * Checks if given feature flag is enabled.
    */
   isFeatureFlagEnabled(featureFlagName: FeatureFlagName): boolean
+
   /**
    * Reads JS Bundle and executes loaded code.
    */
+
   runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null): Promise<void>;
   /**
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
   getTurboModule<T extends TurboModule>(name: string): T;
+
   /**
    * Used by RNSurface. It creates a surface somewhere in React Native.
    */
   createSurface(appKey: string): SurfaceHandle;
+
   /**
    * Sets (Right-To-Left) mode in all surfaces.
    */
   updateRTL(isRTL: boolean): void;
+
   /**
    * Sends state update request to ComponentNapiBinder.h::updateState to update the state on C++ side.
    */
   updateState(componentName: string, tag: Tag, state: unknown): void;
+
   /**
    * @returns RNInstance ID.
    */
@@ -201,15 +220,18 @@ export interface RNInstance {
    * @returns a function that cancels this this effect
    */
   blockComponentsGestures(targetComponentTag: Tag): (() => void)
+
   /**
    * @returns the first loaded JS Bundle URL. This method is used by SourceCodeTurboModule to generate proper stack traces.
    * Some apps split their bundles to improve the start up performance, hence the word "initial".
    */
   getInitialBundleUrl(): string | undefined
+
   /**
    * @returns current RNOH architecture name
    */
   getArchitecture(): "ARK_TS" | "C_API"
+
   /**
    * (Almost) all network request go through HttpClient which can be used to improve logging or unify request handling
    * in hybrid (JS+Native) applications.
@@ -245,9 +267,19 @@ export interface RNInstance {
   cancelTouches(): void
 
   getUIContext(): UIContext
+
+  /**
+   * @architecture: C-API
+   * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
+   */
+  getNativeNodeIdByTag(tag: Tag): string | undefined
 }
 
 export type RNInstanceOptions = {
+  /**
+   * Used to identify RNInstance on RNOHWorker thread.
+   */
+  name?: string,
   /**
    * Creates RNPackages provided by third-party libraries.
    */
@@ -293,9 +325,9 @@ export type RNInstanceOptions = {
    */
   backPressHandler?: () => void;
   /**
-   If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
+   * If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
    */
-  httpClient?: HttpClient,
+  httpClient?: HttpClient
   /**
    * Specifies custom fonts used by RN application.
    * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
@@ -340,21 +372,25 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   constructor(
+    private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
-    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => TurboModuleContext,
+    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private shouldUseWorkerThread: boolean,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
-    private shouldUseCApiArchitecture: boolean,
+    private shouldUseCAPIArchitecture: boolean,
+    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
     private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
+    private displayMetricsManager: DisplayMetricsManager,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -369,14 +405,14 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseImageLoader) {
       this.enableFeatureFlag("IMAGE_LOADER")
     }
-    if (this.shouldUseCApiArchitecture) {
+    if (this.shouldUseCAPIArchitecture) {
       this.enableFeatureFlag("C_API_ARCH")
     }
     this.onCreate()
   }
 
   public getArchitecture() {
-    return this.shouldUseCApiArchitecture ? "C_API" : "ARK_TS"
+    return this.shouldUseCAPIArchitecture ? "C_API" : "ARK_TS"
   }
 
   public getAssetsDest(): string {
@@ -401,7 +437,7 @@ export class RNInstanceImpl implements RNInstance {
       surfaceHandle.destroy()
     }
     if (this.isFeatureFlagEnabled("ENABLE_RN_INSTANCE_CLEAN_UP")) {
-      this.napiBridge.destroyReactNativeInstance(this.id)
+      this.napiBridge.onDestroyRNInstance(this.id)
     }
     this.turboModuleProvider.onDestroy()
     stopTracing()
@@ -433,13 +469,20 @@ export class RNInstanceImpl implements RNInstance {
       this.logger,
     );
     const cppFeatureFlags: CppFeatureFlag[] = []
-    if (this.shouldUseCApiArchitecture) {
+    if (this.shouldUseCAPIArchitecture) {
       cppFeatureFlags.push("C_API_ARCH")
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
-    this.napiBridge.createReactNativeInstance(
+    if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
+      cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
+    }
+    if (this.shouldUseWorkerThread) {
+      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
+    }
+    this.napiBridge.onCreateRNInstance(
+      this.envId,
       this.id,
       this.turboModuleProvider,
       this.frameNodeFactoryRef,
@@ -517,7 +560,7 @@ export class RNInstanceImpl implements RNInstance {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
     packages.unshift(new RNOHCorePackage({}));
-    const turboModuleContext = this.createUITurboModuleContext(this)
+    const turboModuleContext = this.createRNOHContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
@@ -528,17 +571,27 @@ export class RNInstanceImpl implements RNInstance {
         return acc
       }, new Map<string, DescriptorWrapperFactory>()),
       turboModuleProvider: new TurboModuleProvider(
-        await Promise.all(packages.map(async (pkg, idx) => {
+        await Promise.all([...packages.map(async (pkg, idx) => {
           const pkgDebugName = pkg.getDebugName()
           let traceName = `package${idx + 1}`
           if (pkgDebugName) {
             traceName += `: ${pkgDebugName}`
           }
-          logger.clone(traceName).debug("")
+          logger.clone(traceName).debug("createTurboModulesFactory")
           const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
           await turboModuleFactory.prepareEagerTurboModules()
           return turboModuleFactory
-        })),
+        }), ...packages.map(async (pkg, idx) => {
+          const pkgDebugName = pkg.getDebugName()
+          let traceName = `package${idx + 1}`
+          if (pkgDebugName) {
+            traceName += `: ${pkgDebugName}`
+          }
+          logger.clone(traceName).debug("createUITurboModuleFactory")
+          const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
+          await turboModuleFactory.prepareEagerTurboModules()
+          return turboModuleFactory
+        })]),
         this.logger
       )
     }
@@ -682,11 +735,17 @@ export class RNInstanceImpl implements RNInstance {
   public onForeground() {
     this.lifecycleState = LifecycleState.READY
     this.lifecycleEventEmitter.emit("FOREGROUND")
+    this.postMessageToCpp("FOREGROUND", {})
   }
 
   public onBackground() {
     this.lifecycleState = LifecycleState.PAUSED
     this.lifecycleEventEmitter.emit("BACKGROUND")
+    this.postMessageToCpp("BACKGROUND", {})
+  }
+
+  public onNewWant(url: string) {
+    this.emitDeviceEvent("url", { url: url })
   }
 
   public onConfigurationUpdate(...args: Parameters<UIAbility["onConfigurationUpdate"]>) {
@@ -756,6 +815,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public cancelTouches() {
     this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
+  }
+
+  public getNativeNodeIdByTag(tag: Tag): string | undefined {
+    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 
   public setUIContext(uiCtx: UIContext): void {

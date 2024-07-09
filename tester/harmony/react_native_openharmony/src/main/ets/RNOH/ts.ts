@@ -27,3 +27,4 @@ export * from './JSPackagerClient'
 export * from "./SafeAreaInsetsProvider"
 export * from "./DisplayMetricsManager"
 export * from "./HttpClientProvider"
+export * from "./WorkerThread"
