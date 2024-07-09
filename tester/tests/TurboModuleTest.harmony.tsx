@@ -2,13 +2,15 @@ import {TestSuite} from '@rnoh/testerino';
 import {
   SampleTurboModule,
   GeneratedSampleTurboModule,
+  SampleWorkerTurboModule,
 } from 'react-native-sample-package';
 import {
   SomeEnum1,
   SomeEnum2,
   SomeEnum3,
 } from 'react-native-sample-package/src/specs/v2/NativeGeneratedSampleTurboModule';
-import {TestCase} from '../components';
+import {Button, TestCase} from '../components';
+import {ScrollView} from 'react-native';
 
 export function TurboModuleTest() {
   return (
@@ -65,6 +67,28 @@ export function TurboModuleTest() {
             expect(result.hardcodedEnum1 === SomeEnum1.FOO).to.be.true;
           }}
         />
+      </TestSuite>
+      <TestSuite name="WorkerTurboModule">
+        <TestCase.Logical
+          itShould="not crash"
+          fn={({}) => {
+            SampleWorkerTurboModule.runComputeIntensiveTask();
+          }}
+        />
+        <TestCase.Example
+          modal
+          itShould="not impact the performance of ScrollView when running intensive task">
+          <ScrollView
+            style={{height: 256}}
+            contentContainerStyle={{height: 384, justifyContent: 'center'}}>
+            <Button
+              label="Run task"
+              onPress={() => {
+                SampleWorkerTurboModule.runComputeIntensiveTask();
+              }}
+            />
+          </ScrollView>
+        </TestCase.Example>
       </TestSuite>
     </TestSuite>
   );

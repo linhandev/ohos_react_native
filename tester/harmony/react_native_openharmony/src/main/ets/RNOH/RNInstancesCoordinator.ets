@@ -5,7 +5,6 @@ import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
 import { RNOHContext } from "./RNOHContext"
 import { RNOHCoreContext } from "./RNOHCoreContext"
-import { TurboModuleContext } from './TurboModule'
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -15,6 +14,8 @@ import { RNOHError } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
 import type { HttpClient } from "../HttpClient/ts"
+import { AbilityConstant, Want } from '@kit.AbilityKit';
+import { WorkerThread } from "./WorkerThread"
 
 /**
  * This interface allows providing dependencies in any order.
@@ -25,6 +26,10 @@ export interface RNInstancesCoordinatorDependencies {
   fontSizeScale : number | undefined
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
+  /**
+   * If the string is empty, worker thread will be disabled.
+   */
+  rnohWorkerScriptUrl: string,
 
   /**
    * invoked when the React application doesn't want to handle the device back press
@@ -48,7 +53,12 @@ const RNOH_BANNER = '\n\n\n' +
   '██████╔╝██╔██╗ ██║██║   ██║███████║' + '\n' +
   '██╔══██╗██║╚██╗██║██║   ██║██╔══██║' + '\n' +
   '██║  ██║██║ ╚████║╚██████╔╝██║  ██║' + '\n' +
-  '╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝' + '\n\n'
+  '╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝' + '\n\n' +
+"█____ — MAIN" + "\n" +
+"_█___ — BACKGROUND" + "\n" +
+"__█__ — JS" + "\n" +
+"___█_ — WORKER" + "\n" +
+"____█ — CLEANUP" + "\n==================\n"
 
 type AppState = "FOREGROUND" | "BACKGROUND"
 
@@ -59,7 +69,8 @@ type AppState = "FOREGROUND" | "BACKGROUND"
 export class RNInstancesCoordinator {
   private static isInitialized = false
 
-  static create(dependencies: RNInstancesCoordinatorDependencies, options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
+  static create(dependencies: RNInstancesCoordinatorDependencies,
+                options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
     if (RNInstancesCoordinator.isInitialized) {
       dependencies.logger.fatal(new RNOHError({
         whatHappened: "RNInstancesCoordinator was already created",
@@ -67,19 +78,22 @@ export class RNInstancesCoordinator {
       }))
     }
     RNInstancesCoordinator.isInitialized = true
-
     dependencies.logger.info(RNOH_BANNER)
-    const napiBridge = new NapiBridge(dependencies.logger);
-    const isDebugModeEnabled = napiBridge.onInit(true).isDebugModeEnabled;
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
     const devToolsController = new DevToolsController(dependencies.logger);
+    const napiBridge = new NapiBridge(dependencies.logger);
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, {
+      handleError: (rnohError) => {
+        devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+      }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
+    });
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
       devToolsController,
       devMenu
     )
-    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(isDebugModeEnabled ? "DEBUG" : "RELEASE")
+    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
     }
@@ -96,12 +110,14 @@ export class RNInstancesCoordinator {
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
       displayMetricsManager,
-      isDebugModeEnabled,
+      envInfo.isDebugModeEnabled,
+      envInfo.envId,
       dependencies.uiAbilityContext,
       devToolsController,
       devMenu,
       jsPackagerClient,
       dependencies.defaultBackPressHandler,
+      dependencies.rnohWorkerScriptUrl,
       options);
   }
 
@@ -119,16 +135,21 @@ export class RNInstancesCoordinator {
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
   private defaultBackPressHandler: () => void
+  private envId: number;
+
   private constructor(napiBridge: NapiBridge,
                       logger: RNOHLogger,
                       displayMetricsManager: DisplayMetricsManager,
                       isDebugModeEnabled: boolean,
+                      envId: number,
                       uiAbilityContext: common.UIAbilityContext,
                       devToolsController: DevToolsController,
                       devMenu: DevMenu,
                       jsPackagerClient: JSPackagerClient,
                       defaultBackPressHandler: () => void,
+                      rnohWorkerScriptUrl: string,
                       options?: RNInstancesCoordinatorOptions) {
+    this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
     this.napiBridge = napiBridge
@@ -142,13 +163,16 @@ export class RNInstancesCoordinator {
     this.defaultBackPressHandler = defaultBackPressHandler;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     this.rnInstanceRegistry = new RNInstanceRegistry(
+      this.envId,
       this.rawLogger,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => new TurboModuleContext(RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance)),
+      (rnInstance) => RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
       options?.defaultHttpClient,
-      this.uiAbilityContext.resourceManager
+      this.uiAbilityContext.resourceManager,
+      displayMetricsManager,
+      rnohWorkerScriptUrl !== "" ? WorkerThread.create({ scriptUrl: rnohWorkerScriptUrl, name: "RNOHWorker"}) : null
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,
@@ -211,5 +235,11 @@ export class RNInstancesCoordinator {
     const MEMORY_LEVEL_NAMES = ["MEMORY_LEVEL_MODERATE", "MEMORY_LEVEL_LOW", "MEMORY_LEVEL_CRITICAL"]
     this.logger.debug("Received memory level event: " + MEMORY_LEVEL_NAMES[memoryLevel])
     this.napiBridge.onMemoryLevel(memoryLevel);
+  }
+
+  public onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam) {
+    this.rnInstanceRegistry?.forEach((rnInstance) => {
+      rnInstance.onNewWant(want.uri);
+    })
   }
 }

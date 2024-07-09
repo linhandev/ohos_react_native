@@ -9,9 +9,11 @@
 namespace rnoh {
 
 NapiTaskRunner::NapiTaskRunner(
+    std::string name,
     napi_env env,
     ExceptionHandler exceptionHandler)
     : EventLoopTaskRunner(
+          "RNOH_MAIN",
           getLoop(env),
           std::move(exceptionHandler)),
       m_env(env) {
@@ -20,6 +22,7 @@ NapiTaskRunner::NapiTaskRunner(
 }
 
 NapiTaskRunner::~NapiTaskRunner() {
+  DLOG(INFO) << "NapiTaskRunner::~NapiTaskRunner()";
   cleanup();
 }
 
