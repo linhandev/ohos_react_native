@@ -29,6 +29,8 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "contextMenuHidden", "boolean");
     nativeProps.setProperty(rt, "textContentType", "string");
     nativeProps.setProperty(rt, "submitBehavior", "string");
+    nativeProps.setProperty(rt, "passwordRules", "string");
+
     return nativeProps;
   };
   facebook::jsi::Object createDirectEventTypes(

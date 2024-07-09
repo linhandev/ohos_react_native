@@ -289,4 +289,10 @@ void TextInputNode::setContextMenuHidden(bool hidden) {
       m_nodeHandle, NODE_TEXT_INPUT_SELECTION_MENU_HIDDEN, &item));
 }
 
+void TextInputNode::setPasswordRules(const std::string& rules) {
+  ArkUI_AttributeItem item = {.string = rules.c_str()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item));
+}
+
 } // namespace rnoh

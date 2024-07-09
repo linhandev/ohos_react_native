@@ -71,6 +71,8 @@ class TextInputNode : public TextInputNodeBase {
 
   void setLineHeight(float lineHeight);
 
+  void setPasswordRules(const std::string& rules);
+
   std::string getTextContent() override;
 };
 
