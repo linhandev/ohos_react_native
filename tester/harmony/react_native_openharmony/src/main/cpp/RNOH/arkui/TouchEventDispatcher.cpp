@@ -1,6 +1,7 @@
 #include "TouchEventDispatcher.h"
 #include <glog/logging.h>
 #include <set>
+#include "RNOH/Assert.h"
 
 namespace rnoh {
 
@@ -21,6 +22,10 @@ static std::pair<TouchTarget::Shared, Point> findTargetForTouchPoint(
     // the topmost one
     std::reverse(children.begin(), children.end());
     for (auto const& child : children) {
+      if (child == nullptr) {
+        RNOH_ASSERT(child != nullptr);
+        continue;
+      }
       auto childPoint = target->computeChildPoint(point, child);
       auto result = findTargetForTouchPoint(childPoint, child);
       if (result.first != nullptr) {

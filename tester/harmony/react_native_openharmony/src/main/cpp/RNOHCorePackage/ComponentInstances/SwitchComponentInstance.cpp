@@ -29,7 +29,8 @@ void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     if (!m_props ||
         props->rawProps["focusable"].asBool() !=
             m_props->rawProps["focusable"].asBool()) {
-      getLocalRootArkUINode().setFocusable(props->rawProps["focusable"].asBool());
+      getLocalRootArkUINode().setFocusable(
+          props->rawProps["focusable"].asBool());
     }
   }
   if (props->value != m_toggleNode.getValue()) {

@@ -37,6 +37,11 @@ class TouchTarget {
   virtual facebook::react::Tag getTouchTargetTag() const = 0;
   virtual facebook::react::SharedTouchEventEmitter getTouchEventEmitter()
       const = 0;
+  /**
+   * @return A std::vector of TouchTarget::Shared objects representing
+   *         the child touch targets. The returned vector should never
+   *         include a nullptr.
+   */
   virtual std::vector<Shared> getTouchTargetChildren() = 0;
   virtual facebook::react::LayoutMetrics getLayoutMetrics() const = 0;
   virtual facebook::react::Transform getTransform() const = 0;
