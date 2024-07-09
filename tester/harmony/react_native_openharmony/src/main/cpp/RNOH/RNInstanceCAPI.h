@@ -185,6 +185,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   int getId() override { return m_id; }
   NativeResourceManager const* getNativeResourceManager() const override;
+  std::optional<std::string> getNativeNodeIdByTag(
+      facebook::react::Tag tag) const;
 
  protected:
   int m_id;

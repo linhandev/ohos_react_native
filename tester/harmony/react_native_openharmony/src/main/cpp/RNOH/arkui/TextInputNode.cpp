@@ -192,8 +192,8 @@ void TextInputNode::setCancelButtonMode(
 }
 
 void TextInputNode::setFont(
-    facebook::react::TextAttributes const& textAttributes) {
-  TextInputNodeBase::setCommonFontAttributes(textAttributes);
+    facebook::react::TextAttributes const& textAttributes, float fontSizeScale) {
+  TextInputNodeBase::setCommonFontAttributes(textAttributes, fontSizeScale);
 
   std::string fontFamily = "HarmonyOS Sans";
   if (!textAttributes.fontFamily.empty()) {
@@ -220,9 +220,7 @@ void TextInputNode::setFont(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   if (!allowFontScaling) {
-        float scale = ArkTSBridge::getInstance()
-                            ->getFontSizeScale();
-        fontSize /= scale;
+        fontSize /= fontSizeScale;
   }
 
   std::array<ArkUI_NumberValue, 3> value = {

@@ -205,6 +205,15 @@ void RNInstanceCAPI::loadScript(
       });
 }
 
+std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
+    facebook::react::Tag tag) const {
+  auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
+  if (componentInstance == nullptr) {
+    return std::nullopt;
+  }
+  return componentInstance->getLocalRootArkUINode().getId();
+}
+
 void rnoh::RNInstanceCAPI::emitComponentEvent(
     napi_env env,
     react::Tag tag,

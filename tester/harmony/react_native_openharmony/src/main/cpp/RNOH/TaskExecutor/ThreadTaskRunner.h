@@ -1,49 +1,24 @@
 #pragma once
 
-#include <atomic>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
-#include <queue>
-#include <thread>
-
-#include "AbstractTaskRunner.h"
-#include "DefaultExceptionHandler.h"
+#include <memory>
+#include "EventLoopTaskRunner.h"
+#include "uv/EventLoop.h"
 
 namespace rnoh {
 
-class ThreadTaskRunner : public AbstractTaskRunner {
+class ThreadTaskRunner : public EventLoopTaskRunner {
  public:
   ThreadTaskRunner(
       std::string name,
+      std::unique_ptr<uv::EventLoop> eventLoop =
+          std::make_unique<uv::EventLoop>(),
       ExceptionHandler exceptionHandler = defaultExceptionHandler);
   ~ThreadTaskRunner() override;
 
-  ThreadTaskRunner(const ThreadTaskRunner&) = delete;
-  ThreadTaskRunner& operator=(const ThreadTaskRunner&) = delete;
-
-  void runAsyncTask(Task&& task) override;
-  void runSyncTask(Task&& task) override;
-
   bool isOnCurrentThread() const override;
 
-  void setExceptionHandler(ExceptionHandler handler) override;
-
- private:
-  void runLoop();
-
-  bool hasPendingTasks() const {
-    return !asyncTaskQueue.empty() || !syncTaskQueue.empty();
-  }
-
-  std::string name;
-  std::atomic_bool running{true};
-  std::thread thread;
-  std::queue<std::function<void()>> asyncTaskQueue;
-  std::queue<std::function<void()>> syncTaskQueue;
-  std::mutex mutex;
-  std::condition_variable cv;
-  ExceptionHandler exceptionHandler;
+ protected:
+  std::unique_ptr<uv::EventLoop> m_eventLoop;
+  std::thread m_thread;
 };
-
 } // namespace rnoh

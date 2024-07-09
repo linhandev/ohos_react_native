@@ -1,19 +1,27 @@
-#include <glog/logging.h>
-
-#include "NapiTaskRunner.h"
-#include "RNOH/RNOHError.h"
 #include "TaskExecutor.h"
+#include <glog/logging.h>
+#include <react/renderer/debug/SystraceSection.h>
+#include "NapiTaskRunner.h"
+#include "RNOH/Assert.h"
+#include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
 
 namespace rnoh {
 
-TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
-  auto mainTaskRunner = std::make_shared<NapiTaskRunner>(mainEnv);
+TaskExecutor::TaskExecutor(
+    napi_env mainEnv,
+    std::shared_ptr<AbstractTaskRunner> workerTaskRunner,
+    bool shouldEnableBackground) {
+  auto mainTaskRunner = std::make_shared<NapiTaskRunner>("RNOH_MAIN", mainEnv);
   auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
   auto backgroundExecutor = shouldEnableBackground
       ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
       : nullptr;
-  m_taskRunners = {mainTaskRunner, jsTaskRunner, backgroundExecutor};
+  m_taskRunners = {
+      mainTaskRunner,
+      jsTaskRunner,
+      backgroundExecutor,
+      std::move(workerTaskRunner)};
   this->runTask(TaskThread::JS, [this]() {
     this->setTaskThreadPriority(QoS_Level::QOS_USER_INTERACTIVE);
   });
@@ -24,11 +32,15 @@ TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
   }
 }
 
+TaskExecutor::~TaskExecutor() noexcept {
+  DLOG(INFO) << "TaskExecutor::~TaskExecutor()";
+}
+
 void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 #ifdef C_API_ARCH
   int ret = OH_QoS_SetThreadQoS(level);
   std::array<char, 16> buffer = {0};
-  pthread_getname_np(pthread_self(), buffer.data(), sizeof(buffer));
+  pthread_getname_np(pthread_self(), buffer.data(), buffer.size());
   DLOG(INFO) << "TaskExecutor::setTaskThreadPriority " << buffer.data()
              << (ret == 0 ? " SUCCESSFUL" : " FAILED");
 #else
@@ -38,7 +50,10 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 }
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
-  m_taskRunners[thread]->runAsyncTask(std::move(task));
+  
+  auto taskRunner = m_taskRunners[thread];
+  RNOH_ASSERT(taskRunner != nullptr);
+  taskRunner->runAsyncTask(std::move(task));
 }
 
 void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
@@ -51,7 +66,9 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
     m_waitsOnThread[currentThread.value()] = thread;
   }
   std::exception_ptr thrownError;
-  m_taskRunners[thread]->runSyncTask([task = std::move(task), &thrownError]() {
+  auto taskRunner = m_taskRunners[thread];
+  RNOH_ASSERT(taskRunner != nullptr);
+  taskRunner->runSyncTask([task = std::move(task), &thrownError]() {
     try {
       task();
     } catch (const std::exception& e) {
@@ -64,6 +81,21 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
   if (currentThread.has_value()) {
     m_waitsOnThread[currentThread.value()] = std::nullopt;
   }
+}
+
+TaskExecutor::DelayedTask TaskExecutor::runDelayedTask(
+    TaskThread thread,
+    Task&& task,
+    uint64_t delayMs,
+    uint64_t repeatMs) {
+  auto runner = m_taskRunners[thread];
+  auto id = runner->runDelayedTask(std::move(task), delayMs, repeatMs);
+  return {id, thread};
+}
+
+void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
+  auto runner = m_taskRunners[taskId.thread];
+  runner->cancelDelayedTask(taskId.taskId);
 }
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
