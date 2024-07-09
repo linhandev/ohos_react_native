@@ -15,6 +15,7 @@ import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
 import type { HttpClient } from "../HttpClient/ts"
 import { AbilityConstant, Want } from '@kit.AbilityKit';
+import { WorkerThread } from "./WorkerThread"
 
 /**
  * This interface allows providing dependencies in any order.
@@ -24,6 +25,10 @@ import { AbilityConstant, Want } from '@kit.AbilityKit';
 export interface RNInstancesCoordinatorDependencies {
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
+  /**
+   * If the string is empty, worker thread will be disabled.
+   */
+  rnohWorkerScriptUrl: string,
 
   /**
    * invoked when the React application doesn't want to handle the device back press
@@ -51,7 +56,12 @@ const RNOH_BANNER = '\n\n\n' +
   '██████╔╝██╔██╗ ██║██║   ██║███████║' + '\n' +
   '██╔══██╗██║╚██╗██║██║   ██║██╔══██║' + '\n' +
   '██║  ██║██║ ╚████║╚██████╔╝██║  ██║' + '\n' +
-  '╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝' + '\n\n'
+  '╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝' + '\n\n' +
+"█____ — MAIN" + "\n" +
+"_█___ — BACKGROUND" + "\n" +
+"__█__ — JS" + "\n" +
+"___█_ — WORKER" + "\n" +
+"____█ — CLEANUP" + "\n==================\n"
 
 type AppState = "FOREGROUND" | "BACKGROUND"
 
@@ -71,7 +81,6 @@ export class RNInstancesCoordinator {
       }))
     }
     RNInstancesCoordinator.isInitialized = true
-
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
@@ -101,6 +110,7 @@ export class RNInstancesCoordinator {
       devMenu,
       jsPackagerClient,
       dependencies.defaultBackPressHandler,
+      dependencies.rnohWorkerScriptUrl,
       options);
   }
 
@@ -130,6 +140,7 @@ export class RNInstancesCoordinator {
                       devMenu: DevMenu,
                       jsPackagerClient: JSPackagerClient,
                       defaultBackPressHandler: () => void,
+                      rnohWorkerScriptUrl: string,
                       options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
@@ -154,6 +165,7 @@ export class RNInstancesCoordinator {
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
+      rnohWorkerScriptUrl !== "" ? WorkerThread.create({ scriptUrl: rnohWorkerScriptUrl, name: "RNOHWorker"}) : null
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,

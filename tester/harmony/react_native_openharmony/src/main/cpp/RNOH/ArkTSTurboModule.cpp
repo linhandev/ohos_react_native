@@ -64,7 +64,7 @@ folly::dynamic ArkTSTurboModule::callSync(
   }
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
-      TaskThread::MAIN, [ctx = m_ctx, &methodName, &args, &result]() {
+      m_ctx.turboModuleThread, [ctx = m_ctx, &methodName, &args, &result]() {
         ArkJS arkJS(ctx.env);
         auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
@@ -94,7 +94,7 @@ void rnoh::ArkTSTurboModule::scheduleCall(
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
   m_ctx.taskExecutor->runTask(
-      TaskThread::MAIN,
+      m_ctx.turboModuleThread,
       [ctx = m_ctx,
        name = name_,
        methodName,
@@ -135,7 +135,7 @@ jsi::Value ArkTSTurboModule::callAsync(
   napi_ref napiResultRef;
   try {
     m_ctx.taskExecutor->runSyncTask(
-        TaskThread::MAIN,
+        m_ctx.turboModuleThread,
         [ctx = m_ctx,
          name = name_,
          &methodName,
@@ -163,6 +163,7 @@ jsi::Value ArkTSTurboModule::callAsync(
       runtime,
       [weakExecutor = std::weak_ptr(m_ctx.taskExecutor),
        jsInvoker = jsInvoker_,
+       turboModuleThread = m_ctx.turboModuleThread,
        env = m_ctx.env,
        napiResultRef](
           jsi::Runtime& rt2, std::shared_ptr<react::Promise> jsiPromise) {
@@ -175,7 +176,7 @@ jsi::Value ArkTSTurboModule::callAsync(
           return;
         }
         taskExecutor->runTask(
-            TaskThread::MAIN,
+            turboModuleThread,
             [env, jsInvoker, napiResultRef, &rt2, jsiPromise]() {
               ArkJS arkJS(env);
               auto napiResult = arkJS.getReferenceValue(napiResultRef);

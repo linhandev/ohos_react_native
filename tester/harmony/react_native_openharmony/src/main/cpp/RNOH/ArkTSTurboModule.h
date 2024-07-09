@@ -5,6 +5,7 @@
 #include <jsi/jsi.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include <variant>
+#include "TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
 
 #include "ArkJS.h"
@@ -91,6 +92,7 @@ class ArkTSTurboModule : public TurboModule {
   struct Context : public TurboModule::Context {
     napi_env env;
     napi_ref arkTSTurboModuleInstanceRef;
+    TaskThread turboModuleThread;
     TaskExecutor::Shared taskExecutor;
     std::shared_ptr<EventDispatcher> eventDispatcher;
     std::shared_ptr<MessageQueueThread> jsQueue;

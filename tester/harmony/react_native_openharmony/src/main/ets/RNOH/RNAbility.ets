@@ -8,13 +8,14 @@ import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClient, DefaultHttpClient } from "../HttpClient"
+import worker from '@ohos.worker';
 
 /**
  Application developers are expected to extend this class. RNAbility aims to move much of the code to the RNOH side in order to improve stability.
  RNInstancesCoordinator can be used if more control is needed.
  */
 export abstract class RNAbility extends UIAbility {
-  // region RNAbility custom methods that can be safely overridden.
+  // region RNAbility methods that can be safely overridden.
   protected createLogger(): RNOHLogger {
     return new StandardRNOHLogger((err) => {
       this.rnInstancesCoordinator?.getRNOHCoreContext().reportRNOHError(err)
@@ -54,6 +55,19 @@ export abstract class RNAbility extends UIAbility {
   protected abstract getPagePath(): string
 
   /**
+   * Override to specify the worker script URL and enable the RNOHWorker thread and WorkerTurboModules.
+   * @example return "entry/ets/workers/RNOHWorker.ts"
+   *
+   * RNOHWorker.ts calls `setupRNOHWorker` which can be imported from RNOH in the following way:
+   * import { setupRNOHWorker } from "@rnoh/react-native-openharmony/ts"
+   */
+  protected getRNOHWorkerScriptUrl(): string {
+    this.logger.clone("getRNOHWorkerScriptUrl")
+      .warn("WorkerThread is disabled. Some third-party libraries may provide WorkerTurboModules. Please set up the worker thread.")
+    return ""
+  }
+
+  /**
    * Invoked when the React application doesn't handle the device back press.
    */
   protected defaultBackPressHandler() {
@@ -76,6 +90,7 @@ export abstract class RNAbility extends UIAbility {
       defaultBackPressHandler: () => {
         this.defaultBackPressHandler()
       },
+      rnohWorkerScriptUrl: this.getRNOHWorkerScriptUrl(),
     }, {
       disableCleaningRNInstances: this.onShouldDisableCleaningRNInstances(),
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {

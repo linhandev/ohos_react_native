@@ -11,9 +11,10 @@ import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
+import { WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
 
 
-export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY"
+export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
 
 type RawRNOHError = {
   message: string,
@@ -88,10 +89,13 @@ export class NapiBridge {
     } satisfies ArkTSBridgeHandler))
   }
 
+  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>, rnInstanceId: number) {
+    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId))
+  }
+
   getNextRNInstanceId(): number {
     return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
   }
-
 
   onCreateRNInstance(
     envId: number,

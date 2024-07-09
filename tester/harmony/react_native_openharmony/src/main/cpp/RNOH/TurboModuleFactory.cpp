@@ -1,22 +1,26 @@
 #include "RNOH/TurboModuleFactory.h"
+#include "Assert.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNOHError.h"
 #include "RNOH/StubModule.h"
 #include "RNOH/UIManagerModule.h"
+#include "TaskExecutor/TaskExecutor.h"
 #include "TurboModuleFactory.h"
 
 using namespace rnoh;
 using namespace facebook;
 
 TurboModuleFactory::TurboModuleFactory(
-    napi_env env,
-    napi_ref arkTSTurboModuleProviderRef,
+    std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
+        arkTSTurboModuleEnvironmentByTaskThread,
+    FeatureFlagRegistry::Shared featureFlagRegistry,
     const ComponentJSIBinderByString&& componentBinderByString,
     TaskExecutor::Shared taskExecutor,
     std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
     std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
-    : m_env(env),
-      m_arkTSTurboModuleProviderRef(arkTSTurboModuleProviderRef),
+    : m_arkTSTurboModuleEnvironmentByTaskThread(
+          arkTSTurboModuleEnvironmentByTaskThread),
+      m_featureFlagRegistry(std::move(featureFlagRegistry)),
       m_componentBinderByString(std::move(componentBinderByString)),
       m_taskExecutor(taskExecutor),
       m_delegates(delegates),
@@ -29,14 +33,21 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::shared_ptr<MessageQueueThread> jsQueue,
     std::shared_ptr<facebook::react::Scheduler> scheduler,
     std::weak_ptr<RNInstance> instance) const {
-  LOG(INFO) << "Providing Turbo Module: " << name;
+  LOG(INFO) << "Creating Turbo Module: " << name;
+  auto arkTSTurboModuleThread =
+      this->findArkTSTurboModuleThread(name).value_or(TaskThread::JS);
+  auto arkTSTurboModuleEnvironment =
+      this->getArkTSTurboModuleEnvironmentByTaskThread(arkTSTurboModuleThread);
   Context ctx{
       {.jsInvoker = jsInvoker,
        .instance = instance,
        .arkTSMessageHub = m_arkTSMessageHub},
-      .env = m_env,
-      .arkTSTurboModuleInstanceRef =
-          this->maybeGetArkTsTurboModuleInstanceRef(name),
+      .env = arkTSTurboModuleEnvironment.napiEnv,
+      .arkTSTurboModuleInstanceRef = arkTSTurboModuleThread == TaskThread::JS
+          ? nullptr
+          : this->maybeGetArkTsTurboModuleInstanceRef(
+                name, arkTSTurboModuleEnvironment),
+      .turboModuleThread = arkTSTurboModuleThread,
       .taskExecutor = m_taskExecutor,
       .eventDispatcher = eventDispatcher,
       .jsQueue = jsQueue,
@@ -51,17 +62,74 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
           std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
       if (arkTSTurboModule != nullptr &&
           ctx.arkTSTurboModuleInstanceRef == nullptr) {
+        std::vector<std::string> suggestions = {
+            "Have you linked a package that provides this turbo module on the ArkTS side?"};
+        if (!m_featureFlagRegistry->isFeatureFlagOn("WORKER_THREAD_ENABLED")) {
+          suggestions.push_back(
+              "Is this a WorkerTurboModule? If so, it requires the Worker thread to be enabled. Check RNAbility::getRNOHWorkerScriptUrl.");
+        }
         throw FatalRNOHError(
-            std::move(std::string("Couldn't find turbo module '")
-                          .append(name)
-                          .append("' on the ArkTS side.")),
-            {"Have you linked a package that provides this turbo module on the ArkTS side?"});
+            std::string("Couldn't find Turbo Module '")
+                .append(name)
+                .append("' on the ArkTS side."),
+            suggestions);
       }
       return result;
     }
   }
 
   return this->handleUnregisteredModuleRequest(ctx, name);
+}
+
+std::optional<TaskThread> TurboModuleFactory::findArkTSTurboModuleThread(
+    const std::string& turboModuleName) const {
+  if (m_featureFlagRegistry->isFeatureFlagOn("WORKER_THREAD_ENABLED")) {
+    auto workerArkTSTurboModuleEnv =
+        this->getArkTSTurboModuleEnvironmentByTaskThread(TaskThread::WORKER);
+    if (this->hasArkTSTurboModule(
+            turboModuleName,
+            TaskThread::WORKER,
+            workerArkTSTurboModuleEnv.napiEnv,
+            workerArkTSTurboModuleEnv.arkTSTurboModuleProviderRef)) {
+      return TaskThread::WORKER;
+    }
+  }
+  auto mainArkTSTurboModuleEnv =
+      this->getArkTSTurboModuleEnvironmentByTaskThread(TaskThread::MAIN);
+  if (this->hasArkTSTurboModule(
+          turboModuleName,
+          TaskThread::MAIN,
+          mainArkTSTurboModuleEnv.napiEnv,
+          mainArkTSTurboModuleEnv.arkTSTurboModuleProviderRef)) {
+    return TaskThread::MAIN;
+  }
+  return std::nullopt;
+}
+
+bool TurboModuleFactory::hasArkTSTurboModule(
+    const std::string& turboModuleName,
+    TaskThread thread,
+    napi_env env,
+    napi_ref arkTSTurboModuleProviderRef) const {
+  ArkJS arkJS(env);
+  bool result = false;
+  m_taskExecutor->runSyncTask(thread, [&] {
+    RNOH_ASSERT(arkTSTurboModuleProviderRef != nullptr);
+    result = arkJS.getBoolean(
+        arkJS.getObject(arkTSTurboModuleProviderRef)
+            .call("hasModule", {arkJS.createString(turboModuleName)}));
+  });
+  return result;
+}
+
+TurboModuleFactory::ArkTSTurboModuleEnvironment
+TurboModuleFactory::getArkTSTurboModuleEnvironmentByTaskThread(
+    TaskThread taskThread) const {
+  auto it = m_arkTSTurboModuleEnvironmentByTaskThread.find(taskThread);
+  if (it != m_arkTSTurboModuleEnvironmentByTaskThread.end()) {
+    return it->second;
+  }
+  return {.napiEnv = nullptr, .arkTSTurboModuleProviderRef = nullptr};
 }
 
 TurboModuleFactory::SharedTurboModule
@@ -78,27 +146,25 @@ TurboModuleFactory::delegateCreatingTurboModule(
 }
 
 napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
-    const std::string& name) const {
+    const std::string& name,
+    ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const {
   VLOG(3) << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: start";
+  RNOH_ASSERT(arkTSTurboModuleEnv.arkTSTurboModuleProviderRef != nullptr);
   napi_ref result = nullptr;
   m_taskExecutor->runSyncTask(
-      TaskThread::MAIN,
-      [env = m_env,
-       arkTSTurboModuleProviderRef = m_arkTSTurboModuleProviderRef,
-       name,
-       &result]() {
+      TaskThread::MAIN, [tmEnv = arkTSTurboModuleEnv, name, &result]() {
         VLOG(3)
             << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: started calling hasModule";
-        ArkJS arkJS(env);
+        ArkJS arkJS(tmEnv.napiEnv);
         {
-          auto result = arkJS.getObject(arkTSTurboModuleProviderRef)
+          auto result = arkJS.getObject(tmEnv.arkTSTurboModuleProviderRef)
                             .call("hasModule", {arkJS.createString(name)});
           if (!arkJS.getBoolean(result)) {
             return;
           }
         }
         auto n_turboModuleInstance =
-            arkJS.getObject(arkTSTurboModuleProviderRef)
+            arkJS.getObject(tmEnv.arkTSTurboModuleProviderRef)
                 .call("getModule", {arkJS.createString(name)});
         result = arkJS.createReference(n_turboModuleInstance);
       });

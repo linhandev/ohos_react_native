@@ -21,6 +21,7 @@
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/SchedulerDelegate.h"
+#include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/UITicker.h"
@@ -51,8 +52,11 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
+    napi_env workerEnv,
+    std::unique_ptr<NapiTaskRunner> workerTaskRunner,
     ArkTSBridge::Shared arkTSBridge,
-    napi_ref arkTSTurboModuleProviderRef,
+    napi_ref mainArkTSTurboModuleProviderRef,
+    napi_ref workerArkTSTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,
@@ -65,8 +69,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableBackgroundExecutor) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
-  auto taskExecutor =
-      std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
+  auto taskExecutor = std::make_shared<TaskExecutor>(
+      env, std::move(workerTaskRunner), shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
 
@@ -156,8 +160,12 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
 
   auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   auto turboModuleFactory = TurboModuleFactory(
-      env,
-      arkTSTurboModuleProviderRef,
+      {
+          // clang-format off
+        {TaskThread::MAIN, {.napiEnv = env, .arkTSTurboModuleProviderRef = mainArkTSTurboModuleProviderRef}},
+        {TaskThread::WORKER, {.napiEnv = workerEnv, .arkTSTurboModuleProviderRef = workerArkTSTurboModuleProviderRef}},
+      }, // clang-format on
+      featureFlagRegistry,
       std::move(componentJSIBinderByName),
       taskExecutor,
       std::move(turboModuleFactoryDelegates),

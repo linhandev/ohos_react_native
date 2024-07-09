@@ -18,15 +18,34 @@
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/RNInstanceInternal.h"
 #include "RNOH/Result.h"
+#include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"
 #include "napi/native_api.h"
 
+template <typename Map, typename K, typename V>
+auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
+    -> std::common_type_t<decltype(map.at(std::forward<K>(key))), V&&> {
+  auto it = map.find(std::forward<K>(key));
+  if (it != map.end()) {
+    return it->second;
+  }
+  return std::forward<V>(defaultValue);
+}
+
 std::mutex RN_INSTANCE_BY_ID_MTX;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
     RN_INSTANCE_BY_ID;
+
 std::unordered_map<int, ArkTSBridge::Shared> ARK_TS_BRIDGE_BY_ENV_ID;
+
+std::unordered_map<int, std::pair<napi_ref, napi_env>>
+    WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID;
+std::unordered_map<int, std::unique_ptr<NapiTaskRunner>>
+    WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID;
+std::mutex WORKER_DATA_MTX;
+
 auto UI_TICKER = std::make_shared<UITicker>();
 static auto CLEANUP_RUNNER = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
@@ -133,6 +152,33 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
   });
 }
 
+/**
+ * @thread: WORKER
+ */
+static napi_value registerWorkerTurboModuleProvider(
+    napi_env env,
+    napi_callback_info info) {
+  return invoke(env, [&] {
+    DLOG(INFO) << "registerWorkerTurboModuleProvider";
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 2);
+    auto workerTurboModuleProviderRef = arkJS.createReference(args[0]);
+    auto rnInstanceId = arkJS.getDouble(args[1]);
+    auto lock = std::lock_guard(WORKER_DATA_MTX);
+    WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID.emplace(
+        rnInstanceId, std::make_pair(workerTurboModuleProviderRef, env));
+    if (WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.find(rnInstanceId) ==
+        WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.end()) {
+      WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.emplace(
+          rnInstanceId,
+          std::make_unique<NapiTaskRunner>(
+              "RNOH_WORKER_" + std::to_string(static_cast<int>(rnInstanceId)),
+              env));
+    }
+    return arkJS.getUndefined();
+  });
+}
+
 static napi_value getNextRNInstanceId(
     napi_env env,
     napi_callback_info /*info*/) {
@@ -152,8 +198,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
     auto args = arkJS.getCallbackArgs(info, 12);
-    size_t instanceId = arkJS.getDouble(args[0]);
-    auto arkTSTurboModuleProviderRef = arkJS.createReference(args[1]);
+    size_t rnInstanceId = arkJS.getDouble(args[0]);
+    auto mainArkTSTurboModuleProviderRef = arkJS.createReference(args[1]);
     auto mutationsListenerRef = arkJS.createReference(args[2]);
     auto commandDispatcherRef = arkJS.createReference(args[3]);
     auto eventDispatcherRef = arkJS.createReference(args[4]);
@@ -169,19 +215,37 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto frameNodeFactoryRef = arkJS.createReference(args[9]);
     auto jsResourceManager = args[10];
     int envId = arkJS.getDouble(args[11]);
+    auto workerLock = std::lock_guard(WORKER_DATA_MTX);
+    std::unique_ptr<NapiTaskRunner> workerTaskRunner = nullptr;
+    auto workerTaskRunnerIt =
+        WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.find(rnInstanceId);
+    if (workerTaskRunnerIt != WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.end()) {
+      workerTaskRunner = std::move(
+          WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.extract(workerTaskRunnerIt)
+              .mapped());
+    }
+    auto workerTurboModuleProviderRefAndEnv = getOrDefault(
+        WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID,
+        rnInstanceId,
+        std::make_pair(nullptr, nullptr));
     auto rnInstance = createRNInstance(
-        instanceId,
+        rnInstanceId,
         env,
-        ARK_TS_BRIDGE_BY_ENV_ID[envId],
-        arkTSTurboModuleProviderRef,
+        workerTurboModuleProviderRefAndEnv.second,
+        std::move(workerTaskRunner),
+        getOrDefault(ARK_TS_BRIDGE_BY_ENV_ID, envId, nullptr),
+        mainArkTSTurboModuleProviderRef,
+        workerTurboModuleProviderRefAndEnv.first,
         frameNodeFactoryRef,
-        [env, instanceId, mutationsListenerRef](
+        [env, rnInstanceId, mutationsListenerRef](
             auto const& mutationsToNapiConverter, auto const& mutations) {
           {
             auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-            if (RN_INSTANCE_BY_ID.find(instanceId) == RN_INSTANCE_BY_ID.end()) {
-              LOG(WARNING) << "RNInstance with the following id " +
-                      std::to_string(instanceId) + " does not exist";
+            if (RN_INSTANCE_BY_ID.find(rnInstanceId) ==
+                RN_INSTANCE_BY_ID.end()) {
+              LOG(WARNING) << "RNInstance with the following id "
+                           << std::to_string(rnInstanceId) << " does not exist";
+              return;
             }
           }
           ArkJS arkJS(env);
@@ -190,13 +254,14 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
           auto listener = arkJS.getReferenceValue(mutationsListenerRef);
           arkJS.call<1>(listener, args);
         },
-        [env, instanceId, commandDispatcherRef](
+        [env, rnInstanceId, commandDispatcherRef](
             auto tag, auto const& commandName, auto args) {
           {
             auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-            if (RN_INSTANCE_BY_ID.find(instanceId) == RN_INSTANCE_BY_ID.end()) {
-              LOG(WARNING) << "RNInstance with the following id " +
-                      std::to_string(instanceId) + " does not exist";
+            if (RN_INSTANCE_BY_ID.find(rnInstanceId) ==
+                RN_INSTANCE_BY_ID.end()) {
+              LOG(WARNING) << "RNInstance with the following id "
+                           << std::to_string(rnInstanceId) << " does not exist";
               return;
             }
           }
@@ -219,12 +284,12 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         shouldEnableBackgroundExecutor);
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    if (RN_INSTANCE_BY_ID.find(instanceId) != RN_INSTANCE_BY_ID.end()) {
-      LOG(FATAL) << "RNInstance with the following id " +
-              std::to_string(instanceId) + " has been already created";
+    if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {
+      LOG(FATAL) << "RNInstance with the following id "
+                 << std::to_string(rnInstanceId) << " has been already created";
     }
     auto [it, _inserted] =
-        RN_INSTANCE_BY_ID.emplace(instanceId, std::move(rnInstance));
+        RN_INSTANCE_BY_ID.emplace(rnInstanceId, std::move(rnInstance));
     it->second->start();
     return arkJS.getNull();
   });
@@ -518,7 +583,7 @@ static void registerNativeXComponent(napi_env env, napi_value exports) {
   if (napi_unwrap(
           env, exportInstance, reinterpret_cast<void**>(&nativeXComponent)) !=
       napi_ok) {
-    LOG(ERROR) << "registerNativeXComponent: napi_get_named_property fail"
+    LOG(ERROR) << "registerNativeXComponent: napi_unwrap fail"
                << "\n";
     return;
   }
@@ -540,8 +605,8 @@ static void registerNativeXComponent(napi_env env, napi_value exports) {
   std::getline(ss, surfaceId, '_');
   size_t instanceIdNum = std::stod(instanceId, nullptr);
   if (RN_INSTANCE_BY_ID.find(instanceIdNum) == RN_INSTANCE_BY_ID.end()) {
-    LOG(ERROR) << "RNInstance with the following id " +
-            std::to_string(instanceIdNum) + " does not exist";
+    LOG(ERROR) << "RNInstance with the following id "
+               << std::to_string(instanceIdNum) << " does not exist";
     return;
   }
   auto& rnInstance = RN_INSTANCE_BY_ID.at(instanceIdNum);
@@ -574,13 +639,20 @@ static napi_value getNativeNodeIdByTag(napi_env env, napi_callback_info info) {
                                     : arkJS.getUndefined();
   });
 }
-
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
       {"onInit",
        nullptr,
        onInit,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"registerWorkerTurboModuleProvider",
+       nullptr,
+       registerWorkerTurboModuleProvider,
        nullptr,
        nullptr,
        nullptr,

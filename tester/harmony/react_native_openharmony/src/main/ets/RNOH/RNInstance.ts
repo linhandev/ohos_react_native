@@ -272,6 +272,10 @@ export interface RNInstance {
 
 export type RNInstanceOptions = {
   /**
+   * Used to identify RNInstance on RNOHWorker thread.
+   */
+  name?: string,
+  /**
    * Creates RNPackages provided by third-party libraries.
    */
   createRNPackages: (ctx: RNPackageContext) => RNPackage[],
@@ -376,6 +380,7 @@ export class RNInstanceImpl implements RNInstance {
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private shouldUseWorkerThread: boolean,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
@@ -472,6 +477,9 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
+    if (this.shouldUseWorkerThread) {
+      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
+    }
     this.napiBridge.onCreateRNInstance(
       this.envId,
       this.id,
@@ -560,17 +568,27 @@ export class RNInstanceImpl implements RNInstance {
         return acc
       }, new Map<string, DescriptorWrapperFactory>()),
       turboModuleProvider: new TurboModuleProvider(
-        await Promise.all(packages.map(async (pkg, idx) => {
+        await Promise.all([...packages.map(async (pkg, idx) => {
           const pkgDebugName = pkg.getDebugName()
           let traceName = `package${idx + 1}`
           if (pkgDebugName) {
             traceName += `: ${pkgDebugName}`
           }
-          logger.clone(traceName).debug("")
+          logger.clone(traceName).debug("createTurboModulesFactory")
           const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
           await turboModuleFactory.prepareEagerTurboModules()
           return turboModuleFactory
-        })),
+        }), ...packages.map(async (pkg, idx) => {
+          const pkgDebugName = pkg.getDebugName()
+          let traceName = `package${idx + 1}`
+          if (pkgDebugName) {
+            traceName += `: ${pkgDebugName}`
+          }
+          logger.clone(traceName).debug("createUITurboModuleFactory")
+          const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
+          await turboModuleFactory.prepareEagerTurboModules()
+          return turboModuleFactory
+        })]),
         this.logger
       )
     }
@@ -611,7 +629,6 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public emitDeviceEvent(eventName: string, params: any) {
-    this.logger.clone(`emitDeviceEvent`).debug(eventName)
     this.callRNFunction("RCTDeviceEventEmitter", "emit", [eventName, params]);
   }
 

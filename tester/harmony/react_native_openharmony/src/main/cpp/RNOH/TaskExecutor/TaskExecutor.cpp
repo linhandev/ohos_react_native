@@ -2,18 +2,26 @@
 #include <glog/logging.h>
 #include <react/renderer/debug/SystraceSection.h>
 #include "NapiTaskRunner.h"
+#include "RNOH/Assert.h"
 #include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
 
 namespace rnoh {
 
-TaskExecutor::TaskExecutor(napi_env mainEnv, bool shouldEnableBackground) {
-  auto mainTaskRunner = std::make_shared<NapiTaskRunner>(mainEnv);
+TaskExecutor::TaskExecutor(
+    napi_env mainEnv,
+    std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
+    bool shouldEnableBackground) {
+  auto mainTaskRunner = std::make_shared<NapiTaskRunner>("RNOH_MAIN", mainEnv);
   auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
   auto backgroundExecutor = shouldEnableBackground
       ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
       : nullptr;
-  m_taskRunners = {mainTaskRunner, jsTaskRunner, backgroundExecutor};
+  m_taskRunners = {
+      mainTaskRunner,
+      jsTaskRunner,
+      backgroundExecutor,
+      std::move(workerTaskRunner)};
   this->runTask(TaskThread::JS, [this]() {
     this->setTaskThreadPriority(QoS_Level::QOS_USER_INTERACTIVE);
   });
@@ -43,7 +51,8 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
   facebook::react::SystraceSection s("#RNOH::TaskExecutor::runTask");
-  m_taskRunners[thread]->runAsyncTask(std::move(task));
+  auto taskRunner = this->getTaskRunner(thread);
+  taskRunner->runAsyncTask(std::move(task));
 }
 
 void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
@@ -57,7 +66,8 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
     m_waitsOnThread[currentThread.value()] = thread;
   }
   std::exception_ptr thrownError;
-  m_taskRunners[thread]->runSyncTask([task = std::move(task), &thrownError]() {
+  auto taskRunner = this->getTaskRunner(thread);
+  taskRunner->runSyncTask([task = std::move(task), &thrownError]() {
     try {
       task();
     } catch (const std::exception& e) {
@@ -77,13 +87,13 @@ TaskExecutor::DelayedTask TaskExecutor::runDelayedTask(
     Task&& task,
     uint64_t delayMs,
     uint64_t repeatMs) {
-  auto runner = m_taskRunners[thread];
+  auto runner = this->getTaskRunner(thread);
   auto id = runner->runDelayedTask(std::move(task), delayMs, repeatMs);
   return {id, thread};
 }
 
 void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
-  auto runner = m_taskRunners[taskId.thread];
+  auto runner = this->getTaskRunner(taskId.thread);
   runner->cancelDelayedTask(taskId.taskId);
 }
 
@@ -102,6 +112,8 @@ std::optional<TaskThread> TaskExecutor::getCurrentTaskThread() const {
     return TaskThread::JS;
   } else if (isOnTaskThread(TaskThread::BACKGROUND)) {
     return TaskThread::BACKGROUND;
+  } else if (isOnTaskThread(TaskThread::WORKER)) {
+    return TaskThread::WORKER;
   } else {
     return std::nullopt;
   }
@@ -115,6 +127,13 @@ void TaskExecutor::setExceptionHandler(ExceptionHandler handler) {
       taskRunner->setExceptionHandler(handler);
     }
   }
+}
+
+AbstractTaskRunner::Shared TaskExecutor::getTaskRunner(
+    TaskThread taskThread) const {
+  auto runner = m_taskRunners[taskThread];
+  RNOH_ASSERT(runner != nullptr);
+  return runner;
 }
 
 } // namespace rnoh
