@@ -55,21 +55,24 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
   }
 }
 
-async function createTurboModuleProvider(rnPackages: RNPackage[], logger: RNOHLogger) {
-  const packages = [...rnPackages]
+async function createTurboModuleProvider(thirdPartyPackages: RNPackage[], logger: RNOHLogger) {
+  const packages = [...thirdPartyPackages]
   packages.unshift(new RNOHCorePackage({}));
-  return new TurboModuleProvider(
-    await Promise.all(rnPackages.map(async (pkg, idx) => {
-      const pkgDebugName = pkg.getDebugName()
-      let loggerName = `package${idx + 1}`
-      if (pkgDebugName) {
-        loggerName += `: ${pkgDebugName}`
-      }
-      logger.clone(loggerName).debug("")
-      const turboModuleFactory = pkg.createWorkerTurboModuleFactory({ logger });
+  const factories = await Promise.all(packages.map(async (pkg, idx) => {
+    const pkgDebugName = pkg.getDebugName()
+    let loggerName = `package${idx + 1}`
+    if (pkgDebugName) {
+      loggerName += `: ${pkgDebugName}`
+    }
+    logger.clone(loggerName).debug("")
+    const turboModuleFactory = pkg.createWorkerTurboModuleFactory({ logger });
+    if (turboModuleFactory != null) {
       await turboModuleFactory.prepareEagerTurboModules()
-      return turboModuleFactory
-    }).filter(tmf => tmf != null)),
+    }
+    return turboModuleFactory
+  }));
+  return new TurboModuleProvider(
+    factories.filter(tmf => tmf != null),
     logger
   )
 }
