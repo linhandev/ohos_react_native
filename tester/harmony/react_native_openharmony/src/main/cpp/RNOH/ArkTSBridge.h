@@ -1,51 +1,41 @@
 #pragma once
 
 #include "ArkJS.h"
+#include "DisplayMetricsManager.h"
+#include "ThreadGuard.h"
 
 namespace rnoh {
 
-struct PhysicalPixels {
-  float width;
-  float height;
-  float scale;
-  float fontScale;
-  float densityDpi;
-
-  static PhysicalPixels fromNapiValue(napi_env env, napi_value value);
+class ArkTSErrorHandler {
+ public:
+  virtual void handleError(std::exception_ptr ex) = 0;
 };
 
-struct DisplayMetrics {
-  PhysicalPixels windowPhysicalPixels;
-  PhysicalPixels screenPhysicalPixels;
-
-  static DisplayMetrics fromNapiValue(napi_env env, napi_value value);
-};
-
-class ArkTSBridge final {
-  static std::shared_ptr<ArkTSBridge> instance;
-  static std::once_flag initFlag;
-  ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
-
+/**
+ * @internal
+ * @thread: MAIN
+ */
+class ArkTSBridge final : public DisplayMetricsManager,
+                          public ArkTSErrorHandler {
  public:
   using Shared = std::shared_ptr<ArkTSBridge>;
 
-  static void initializeInstance(napi_env env, napi_ref arkTSBridgeHandlerRef);
-
-  static ArkTSBridge::Shared getInstance();
+  ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
 
   ArkTSBridge(ArkTSBridge const&) = delete;
   ArkTSBridge& operator=(ArkTSBridge const&) = delete;
 
-  ~ArkTSBridge();
+  ~ArkTSBridge() noexcept;
 
-  void handleError(std::exception_ptr ex);
-  DisplayMetrics getDisplayMetrics();
-  uint32_t getFoldStatus();
-  bool getIsSplitScreenMode();
-  float getFontSizeScale();  
+  void handleError(std::exception_ptr ex) override;
+  DisplayMetrics getDisplayMetrics() override;
+  uint32_t getFoldStatus() override;
+  bool getIsSplitScreenMode() override;
+  float getFontSizeScale() override;
 
  protected:
-  ArkJS m_arkJs;
+  ArkJS m_arkJS;
   napi_ref m_arkTSBridgeRef;
+  ThreadGuard m_threadGuard;
 };
 } // namespace rnoh

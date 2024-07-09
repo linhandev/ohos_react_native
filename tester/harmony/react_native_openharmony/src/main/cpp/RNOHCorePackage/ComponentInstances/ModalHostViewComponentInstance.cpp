@@ -1,6 +1,5 @@
 #include "ModalHostViewComponentInstance.h"
 
-#include <RNOH/Assert.h>
 #include <RNOH/arkui/NativeNodeApi.h>
 #include <RNOH/arkui/TouchEventDispatcher.h>
 #include <glog/logging.h>
@@ -75,8 +74,8 @@ void ModalHostViewComponentInstance::resetModalPosition(
     DisplayMetrics const& displayMetrics,
     SharedConcreteState const& state) {
   auto windowMetrics = displayMetrics.windowPhysicalPixels;
-  FoldStatus foldStatus  = static_cast<FoldStatus>(ArkTSBridge::getInstance()->getFoldStatus());
-  auto isSplitScreenMode = ArkTSBridge::getInstance()->getIsSplitScreenMode();
+   FoldStatus foldStatus  = static_cast<FoldStatus>(this->m_deps->displayMetricsManager->getFoldStatus());
+  auto isSplitScreenMode = this->m_deps->displayMetricsManager->getIsSplitScreenMode();
   if ((foldStatus == FOLD_STATUS_EXPANDED || foldStatus == FOLD_STATUS_HALF_FOLDED) && isSplitScreenMode) {
     m_rootStackNode.setPosition(
         {displayMetrics.screenPhysicalPixels.width / windowMetrics.scale, 0});
@@ -98,9 +97,9 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
       m_touchHandler(std::make_unique<ModalHostTouchHandler>(this)) {
   getLocalRootArkUINode().setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);
-    FoldStatus foldStatus  = static_cast<FoldStatus>(ArkTSBridge::getInstance()->getFoldStatus());
-    auto isSplitScreenMode = ArkTSBridge::getInstance()->getIsSplitScreenMode();
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
+    FoldStatus foldStatus  = static_cast<FoldStatus>(this->m_deps->displayMetricsManager->getFoldStatus());
+    auto isSplitScreenMode = this->m_deps->displayMetricsManager->getIsSplitScreenMode();
+    auto displayMetrics = this->m_deps->displayMetricsManager->getDisplayMetrics();
     if (foldStatus == FOLD_STATUS_EXPANDED && isSplitScreenMode) {
         m_rootStackNode.setPosition({displayMetrics.screenPhysicalPixels.width / displayMetrics.windowPhysicalPixels.scale, 0});
     } else {
@@ -126,7 +125,7 @@ void ModalHostViewComponentInstance::onPropsChanged(
   if (!m_props || props->animationType != m_props->animationType) {
     if (props->animationType == AnimationType::Slide) {
       m_rootStackNode.resetOpacityTransition();
-      auto screenSize = ArkTSBridge::getInstance()->getDisplayMetrics();
+      auto screenSize = m_deps->displayMetricsManager->getDisplayMetrics();
       updateSlideTransition(screenSize);
     } else if (props->animationType == AnimationType::Fade) {
       m_rootStackNode.setTranslateTransition(0, 0, 0);
@@ -143,7 +142,7 @@ void ModalHostViewComponentInstance::onStateChanged(
   CppComponentInstance::onStateChanged(state);
   if (!m_state) {
     // set screen size the first time the component is initialized
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
+    auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
     updateDisplaySize(displayMetrics, state);
   }
 }
@@ -197,7 +196,7 @@ CustomNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
 void ModalHostViewComponentInstance::onMessageReceived(
     ArkTSMessage const& message) {
   if (message.name == "WINDOW_SIZE_CHANGE") {
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
+    auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
     updateDisplaySize(displayMetrics, m_state);
     resetModalPosition(displayMetrics, m_state);
   }

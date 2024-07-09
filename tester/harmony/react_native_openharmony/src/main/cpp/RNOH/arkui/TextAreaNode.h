@@ -44,7 +44,7 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setInputType(ArkUI_TextAreaType keyboardType);
 
-  void setFont(facebook::react::TextAttributes const& textAttributes) override;
+  void setFont(facebook::react::TextAttributes const& textAttributes, float fontSizeScale) override;
 
   void setCaretColor(facebook::react::SharedColor const& color) override;
 

@@ -57,7 +57,7 @@ class TextInputNode : public TextInputNodeBase {
   void setCancelButtonMode(
       facebook::react::TextInputAccessoryVisibilityMode mode);
 
-  void setFont(facebook::react::TextAttributes const& textAttributes) override;
+  void setFont(facebook::react::TextAttributes const& textAttributes, float fontSizeScale) override;
 
   void setCaretColor(facebook::react::SharedColor const& color) override;
 
