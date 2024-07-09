@@ -570,17 +570,27 @@ export class RNInstanceImpl implements RNInstance {
         return acc
       }, new Map<string, DescriptorWrapperFactory>()),
       turboModuleProvider: new TurboModuleProvider(
-        await Promise.all(packages.map(async (pkg, idx) => {
+        await Promise.all([...packages.map(async (pkg, idx) => {
           const pkgDebugName = pkg.getDebugName()
           let traceName = `package${idx + 1}`
           if (pkgDebugName) {
             traceName += `: ${pkgDebugName}`
           }
-          logger.clone(traceName).debug("")
+          logger.clone(traceName).debug("createTurboModulesFactory")
           const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
           await turboModuleFactory.prepareEagerTurboModules()
           return turboModuleFactory
-        })),
+        }), ...packages.map(async (pkg, idx) => {
+          const pkgDebugName = pkg.getDebugName()
+          let traceName = `package${idx + 1}`
+          if (pkgDebugName) {
+            traceName += `: ${pkgDebugName}`
+          }
+          logger.clone(traceName).debug("createUITurboModuleFactory")
+          const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
+          await turboModuleFactory.prepareEagerTurboModules()
+          return turboModuleFactory
+        })]),
         this.logger
       )
     }
@@ -714,11 +724,13 @@ export class RNInstanceImpl implements RNInstance {
   public onForeground() {
     this.lifecycleState = LifecycleState.READY
     this.lifecycleEventEmitter.emit("FOREGROUND")
+    this.postMessageToCpp("FOREGROUND", {})
   }
 
   public onBackground() {
     this.lifecycleState = LifecycleState.PAUSED
     this.lifecycleEventEmitter.emit("BACKGROUND")
+    this.postMessageToCpp("BACKGROUND", {})
   }
 
   public onNewWant(url: string) {

@@ -10,7 +10,7 @@ namespace rnoh {
 
 TaskExecutor::TaskExecutor(
     napi_env mainEnv,
-    std::shared_ptr<AbstractTaskRunner> workerTaskRunner,
+    std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
     bool shouldEnableBackground) {
   auto mainTaskRunner = std::make_shared<NapiTaskRunner>("RNOH_MAIN", mainEnv);
   auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
@@ -50,13 +50,13 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 }
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
-  
-  auto taskRunner = m_taskRunners[thread];
-  RNOH_ASSERT(taskRunner != nullptr);
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runTask");
+  auto taskRunner = this->getTaskRunner(thread);
   taskRunner->runAsyncTask(std::move(task));
 }
 
 void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runSyncTask");
   auto waitsOnThread = m_waitsOnThread[thread];
   if (waitsOnThread.has_value() && isOnTaskThread(waitsOnThread.value())) {
     throw RNOHError("Deadlock detected");
@@ -66,8 +66,7 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
     m_waitsOnThread[currentThread.value()] = thread;
   }
   std::exception_ptr thrownError;
-  auto taskRunner = m_taskRunners[thread];
-  RNOH_ASSERT(taskRunner != nullptr);
+  auto taskRunner = this->getTaskRunner(thread);
   taskRunner->runSyncTask([task = std::move(task), &thrownError]() {
     try {
       task();
@@ -88,39 +87,53 @@ TaskExecutor::DelayedTask TaskExecutor::runDelayedTask(
     Task&& task,
     uint64_t delayMs,
     uint64_t repeatMs) {
-  auto runner = m_taskRunners[thread];
+  auto runner = this->getTaskRunner(thread);
   auto id = runner->runDelayedTask(std::move(task), delayMs, repeatMs);
   return {id, thread};
 }
 
 void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
-  auto runner = m_taskRunners[taskId.thread];
+  auto runner = this->getTaskRunner(taskId.thread);
   runner->cancelDelayedTask(taskId.taskId);
 }
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
+  facebook::react::SystraceSection s("#RNOH::TaskExecutor::isOnTaskThread");
   auto runner = m_taskRunners[thread];
   return runner && runner->isOnCurrentThread();
 }
 
 std::optional<TaskThread> TaskExecutor::getCurrentTaskThread() const {
+  facebook::react::SystraceSection s(
+      "#RNOH::TaskExecutor::getCurrentTaskThread");
   if (isOnTaskThread(TaskThread::MAIN)) {
     return TaskThread::MAIN;
   } else if (isOnTaskThread(TaskThread::JS)) {
     return TaskThread::JS;
   } else if (isOnTaskThread(TaskThread::BACKGROUND)) {
     return TaskThread::BACKGROUND;
+  } else if (isOnTaskThread(TaskThread::WORKER)) {
+    return TaskThread::WORKER;
   } else {
     return std::nullopt;
   }
 }
 
 void TaskExecutor::setExceptionHandler(ExceptionHandler handler) {
+  facebook::react::SystraceSection s(
+      "#RNOH::TaskExecutor::setExceptionHandler");
   for (auto& taskRunner : m_taskRunners) {
     if (taskRunner) {
       taskRunner->setExceptionHandler(handler);
     }
   }
+}
+
+AbstractTaskRunner::Shared TaskExecutor::getTaskRunner(
+    TaskThread taskThread) const {
+  auto runner = m_taskRunners[taskThread];
+  RNOH_ASSERT(runner != nullptr);
+  return runner;
 }
 
 } // namespace rnoh

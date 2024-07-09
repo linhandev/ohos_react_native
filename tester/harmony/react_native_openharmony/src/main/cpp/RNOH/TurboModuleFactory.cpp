@@ -11,18 +11,20 @@ using namespace rnoh;
 using namespace facebook;
 
 TurboModuleFactory::TurboModuleFactory(
-   std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
+    std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
         arkTSTurboModuleEnvironmentByTaskThread,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     const ComponentJSIBinderByString&& componentBinderByString,
-    std::shared_ptr<TaskExecutor> taskExecutor,
-    std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates)
-   : m_arkTSTurboModuleEnvironmentByTaskThread(
+    TaskExecutor::Shared taskExecutor,
+    std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
+    std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
+    : m_arkTSTurboModuleEnvironmentByTaskThread(
           arkTSTurboModuleEnvironmentByTaskThread),
       m_featureFlagRegistry(std::move(featureFlagRegistry)),
       m_componentBinderByString(std::move(componentBinderByString)),
       m_taskExecutor(taskExecutor),
-      m_delegates(delegates) {}
+      m_delegates(delegates),
+      m_arkTSMessageHub(arkTSMessageHub) {}
 
 TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -37,8 +39,10 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   auto arkTSTurboModuleEnvironment =
       this->getArkTSTurboModuleEnvironmentByTaskThread(arkTSTurboModuleThread);
   Context ctx{
-      {.jsInvoker = jsInvoker, .instance = instance},
-     .env = arkTSTurboModuleEnvironment.napiEnv,
+      {.jsInvoker = jsInvoker,
+       .instance = instance,
+       .arkTSMessageHub = m_arkTSMessageHub},
+      .env = arkTSTurboModuleEnvironment.napiEnv,
       .arkTSTurboModuleInstanceRef = arkTSTurboModuleThread == TaskThread::JS
           ? nullptr
           : this->maybeGetArkTsTurboModuleInstanceRef(
@@ -58,7 +62,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
           std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
       if (arkTSTurboModule != nullptr &&
           ctx.arkTSTurboModuleInstanceRef == nullptr) {
-                 std::vector<std::string> suggestions = {
+        std::vector<std::string> suggestions = {
             "Have you linked a package that provides this turbo module on the ArkTS side?"};
         if (!m_featureFlagRegistry->isFeatureFlagOn("WORKER_THREAD_ENABLED")) {
           suggestions.push_back(
@@ -170,7 +174,7 @@ napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
 
 TurboModuleFactory::SharedTurboModule
 TurboModuleFactory::handleUnregisteredModuleRequest(
-    Context ctx,
+    Context /*ctx*/,
     const std::string& name) const {
   LOG(WARNING) << "Turbo Module '" << name << "' not found.";
   return nullptr;

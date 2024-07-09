@@ -1,14 +1,14 @@
 import type {
-  MainTurboModule,
+  UITurboModule,
   WorkerTurboModule,
-  MainTurboModuleContext,
+  UITurboModuleContext,
   WorkerTurboModuleContext
 } from './TurboModule';
 import type { TurboModulesFactory } from './RNPackage';
 import { RNOHLogger } from './RNOHLogger';
 
-export class TurboModuleProvider<TTurboModule extends MainTurboModule | WorkerTurboModule = MainTurboModule,
-TTurboModuleContext extends MainTurboModuleContext | WorkerTurboModuleContext = MainTurboModuleContext> {
+export class TurboModuleProvider<TTurboModule extends UITurboModule | WorkerTurboModule = UITurboModule,
+TTurboModuleContext extends UITurboModuleContext | WorkerTurboModuleContext = UITurboModuleContext> {
   private cachedTurboModuleByName: Record<string, TTurboModule> = {};
   private logger: RNOHLogger
 

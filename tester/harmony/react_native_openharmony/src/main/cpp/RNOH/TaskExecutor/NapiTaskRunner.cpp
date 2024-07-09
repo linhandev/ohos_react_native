@@ -9,18 +9,20 @@
 namespace rnoh {
 
 NapiTaskRunner::NapiTaskRunner(
-    const std::string name,
+    std::string name,
     napi_env env,
     ExceptionHandler exceptionHandler)
-    : EventLoopTaskRunner(name, getLoop(env), std::move(exceptionHandler)),
-      m_env(env),
-      m_name(name) {
+    : EventLoopTaskRunner(
+          std::move(name),
+          getLoop(env),
+          std::move(exceptionHandler)),
+      m_env(env) {
   // NOTE: let's hope the JS runtime doesn't move between system threads...
   m_threadId = std::this_thread::get_id();
 }
 
 NapiTaskRunner::~NapiTaskRunner() {
-  DLOG(INFO) << "NapiTaskRunner::~NapiTaskRunner()";
+  DLOG(INFO) << "NapiTaskRunner(" << m_name << ")::~NapiTaskRunner()";
   cleanup();
 }
 

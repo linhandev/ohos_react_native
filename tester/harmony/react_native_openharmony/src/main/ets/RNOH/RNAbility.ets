@@ -62,8 +62,8 @@ export abstract class RNAbility extends UIAbility {
    * RNOHWorker.ts calls `setupRNOHWorker` which can be imported from RNOH in the following way:
    * import { setupRNOHWorker } from "@rnoh/react-native-openharmony/ts"
    */
-  protected onGetRNOHWorkerScriptUrl(): string {
-    this.logger.clone("onGetRNOHWorkerScriptUrl")
+  protected getRNOHWorkerScriptUrl(): string {
+    this.logger.clone("getRNOHWorkerScriptUrl")
       .warn("WorkerThread is disabled. Some third-party libraries may provide WorkerTurboModules. Please set up the worker thread.")
     return ""
   }
@@ -108,7 +108,7 @@ export abstract class RNAbility extends UIAbility {
       defaultBackPressHandler: () => {
         this.defaultBackPressHandler()
       },
-      rnohWorkerScriptUrl: this.onGetRNOHWorkerScriptUrl(),
+      rnohWorkerScriptUrl: this.getRNOHWorkerScriptUrl(),
     }, {
       disableCleaningRNInstances: this.onShouldDisableCleaningRNInstances(),
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {

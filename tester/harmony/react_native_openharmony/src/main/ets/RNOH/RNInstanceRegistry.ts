@@ -91,7 +91,7 @@ export class RNInstanceRegistry {
     })
 
     postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
-      rnInstanceId, rnInstanceName, envId: this.envId
+      rnInstanceId, rnInstanceName
     })
     logger.info("waiting for workerTurboModuleProvider")
     await workerTurboModuleProviderRegisteredPromise;

@@ -94,7 +94,11 @@ export class NapiBridge {
       getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale()
     } satisfies ArkTSBridgeHandler))
   }
-
+  
+ registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>, rnInstanceId: number) {
+    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId))
+  }
+  
   getNextRNInstanceId(): number {
     return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
   }
@@ -296,10 +300,6 @@ export class NapiBridge {
   postMessageToCpp(name: string, payload: any) {
     const result = this.libRNOHApp?.onArkTSMessage(name, payload)
     return this.unwrapResult(result)
-  }
-
-  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>, rnInstanceId: number, envId: number) {
-    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId, envId))
   }
 
   getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {

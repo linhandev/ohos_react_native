@@ -1,19 +1,18 @@
 import {
   RNPackage,
-  TurboModulesFactory,
   DescriptorWrapperFactoryByDescriptorType,
   DescriptorWrapperFactoryByDescriptorTypeCtx,
-  MainTurboModuleContext,
+  UITurboModuleFactory,
+  UITurboModuleContext,
+  WorkerTurboModuleFactory,
   WorkerTurboModuleContext,
-  WorkerTurboModule
 } from '@rnoh/react-native-openharmony/ts';
-import type { TurboModule, TurboModuleContext, } from '@rnoh/react-native-openharmony/ts';
 import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
 import { SampleWorkerTurboModule } from './SampleWorkerTurboModule';
 
-class SampleTurboModulesFactory extends TurboModulesFactory {
-  createTurboModule(name: string): TurboModule | null {
+class SampleTurboModulesFactory extends UITurboModuleFactory {
+  createTurboModule(name: string) {
     if (name === 'SampleTurboModule' || name === TM.GeneratedSampleTurboModule.NAME || name === TM.GeneratedSampleTurboModule2.NAME) {
       return new SampleTurboModule(this.ctx);
     }
@@ -25,7 +24,7 @@ class SampleTurboModulesFactory extends TurboModulesFactory {
   }
 }
 
-class SampleWorkerTurboModulesFactory extends TurboModulesFactory<WorkerTurboModule, WorkerTurboModuleContext> {
+class SampleWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
   createTurboModule(name: string) {
     if (name === TM.SampleWorkerTurboModule.NAME) {
       return new SampleWorkerTurboModule(this.ctx);
@@ -39,11 +38,11 @@ class SampleWorkerTurboModulesFactory extends TurboModulesFactory<WorkerTurboMod
 }
 
 export class SamplePackage extends RNPackage {
-  createTurboModulesFactory(ctx: MainTurboModuleContext): TurboModulesFactory {
+  createUITurboModuleFactory(ctx: UITurboModuleContext) {
     return new SampleTurboModulesFactory(ctx);
   }
 
-  createWorkerTurboModulesFactory(ctx: WorkerTurboModuleContext) {
+  createWorkerTurboModuleFactory(ctx: WorkerTurboModuleContext) {
     return new SampleWorkerTurboModulesFactory(ctx);
   }
 
