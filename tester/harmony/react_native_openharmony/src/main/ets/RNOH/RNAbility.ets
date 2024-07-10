@@ -106,7 +106,7 @@ export abstract class RNAbility extends UIAbility {
    * @returns HttpClient shared by RNInstances
    */
   protected onCreateDefaultHttpClient(): undefined | HttpClient {
-    return new DefaultHttpClient();
+    return new DefaultHttpClient({logger: this.logger});
   }
 
   onDestroy() {
