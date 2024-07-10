@@ -22,15 +22,22 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
 }
 
 void TextInputComponentInstance::onChange(std::string text) {
+  if (m_content == text) {
+    m_shouldIgnoreNextChangeEvent = false;
+    return;
+  }
   m_content = std::move(text);
   if (m_shouldIgnoreNextChangeEvent) {
     m_shouldIgnoreNextChangeEvent = false;
     return;
   }
+  m_nativeEventCount++;
+  m_eventEmitter->onChange(getTextInputMetrics());
   m_valueChanged = true;
 }
 
 void TextInputComponentInstance::onSubmit() {
+  m_nativeEventCount++;
   m_eventEmitter->onSubmitEditing(getTextInputMetrics());
 }
 
@@ -46,7 +53,9 @@ void TextInputComponentInstance::onBlur() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Always);
   }
+  m_nativeEventCount++;
   m_eventEmitter->onBlur(getTextInputMetrics());
+  m_nativeEventCount++;
   m_eventEmitter->onEndEditing(getTextInputMetrics());
 }
 
@@ -69,6 +78,7 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
+  m_nativeEventCount++;
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -94,19 +104,17 @@ void TextInputComponentInstance::onTextSelectionChange(
           m_selectionLocation, location - m_selectionLocation);
       key = boost::locale::conv::utf_to_utf<char>(wideKey);
     }
+    m_nativeEventCount++;
     auto keyPressMetrics = facebook::react::KeyPressMetrics();
     keyPressMetrics.text = key;
     keyPressMetrics.eventCount = m_nativeEventCount;
     m_eventEmitter->onKeyPress(keyPressMetrics);
-  }
-  if (m_valueChanged) {
     m_valueChanged = false;
-    m_nativeEventCount++;
-    m_eventEmitter->onChange(getTextInputMetrics());
   }
 
   m_selectionLocation = location;
   m_selectionLength = length;
+  m_nativeEventCount++;
   m_eventEmitter->onSelectionChange(getTextInputMetrics());
 }
 
@@ -124,6 +132,14 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
+}
+
+facebook::react::OnChangeMetrics
+TextInputComponentInstance::getOnChangeMetrics() {
+  auto OnChangeMetrics = facebook::react::OnChangeMetrics();
+  OnChangeMetrics.eventCount = this->m_nativeEventCount;
+  OnChangeMetrics.text = this->m_content;
+  return OnChangeMetrics;
 }
 
 void TextInputComponentInstance::onPropsChanged(
