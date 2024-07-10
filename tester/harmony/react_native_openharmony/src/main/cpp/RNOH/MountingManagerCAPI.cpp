@@ -70,7 +70,10 @@ void MountingManagerCAPI::dispatchCommand(
     folly::dynamic const& args) {
   facebook::react::SystraceSection s(
       "RNOH::MountingManagerCAPI::dispatchCommand");
-  m_arkTSMountingManager->dispatchCommand(shadowView, commandName, args);
+
+  if (m_arkTSComponentNames.count(shadowView.componentName)) {
+    m_arkTSMountingManager->dispatchCommand(shadowView, commandName, args);
+  }
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
   if (componentInstance) {

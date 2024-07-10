@@ -239,25 +239,14 @@ jsi::Value removeAnimatedEventFromView(
 NativeAnimatedTurboModule::NativeAnimatedTurboModule(
     const ArkTSTurboModule::Context ctx,
     const std::string name)
-    : rnoh::ArkTSTurboModule(ctx, name),
-      m_animatedNodesManager(
-          [this] {
-            m_vsyncListener->requestFrame(
-                [weakSelf = weak_from_this()](long long _timestamp) {
-                  if (auto self = weakSelf.lock()) {
-                    self->runUpdates();
-                  }
-                });
-          },
-          [this](auto tag, auto props) {
-            if (m_ctx.taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
-              this->setNativeProps(tag, props);
-            } else {
-              m_ctx.taskExecutor->runTask(TaskThread::MAIN, [this, tag, props] {
-                this->setNativeProps(tag, props);
-              });
-            }
-          }) {
+    : rnoh::ArkTSTurboModule(ctx, name), m_animatedNodesManager([this] {
+        m_vsyncListener->requestFrame(
+            [weakSelf = weak_from_this()](long long _timestamp) {
+              if (auto self = weakSelf.lock()) {
+                self->runUpdates();
+              }
+            });
+      }) {
   methodMap_ = {
       {"startOperationBatch", {0, rnoh::startOperationBatch}},
       {"finishOperationBatch", {0, rnoh::finishOperationBatch}},
@@ -440,7 +429,23 @@ void NativeAnimatedTurboModule::runUpdates() {
     auto now = std::chrono::high_resolution_clock::now();
     auto frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(
         now.time_since_epoch());
-    this->m_animatedNodesManager.runUpdates(frameTime.count());
+    auto tagsToUpdate =
+        this->m_animatedNodesManager.runUpdates(frameTime.count());
+
+    if (m_ctx.taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      this->setNativeProps(tagsToUpdate);
+    } else {
+      m_ctx.taskExecutor->runTask(
+          TaskThread::MAIN,
+          [weakSelf = weak_from_this(),
+           tagsToUpdate = std::move(tagsToUpdate)] {
+            auto self = weakSelf.lock();
+            if (!self) {
+              return;
+            }
+            self->setNativeProps(tagsToUpdate);
+          });
+    }
   } catch (std::exception& e) {
     LOG(ERROR) << "Error in animation update: " << e.what();
     m_vsyncListener->requestFrame(
@@ -449,6 +454,16 @@ void NativeAnimatedTurboModule::runUpdates() {
             self->runUpdates();
           }
         });
+  }
+}
+
+void NativeAnimatedTurboModule::setNativeProps(
+    PropUpdatesList const& tagsToUpdate) {
+  if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
+    for (auto const& [tag, props] : tagsToUpdate) {
+      instance->synchronouslyUpdateViewOnUIThread(tag, props);
+    }
+    return;
   }
 }
 

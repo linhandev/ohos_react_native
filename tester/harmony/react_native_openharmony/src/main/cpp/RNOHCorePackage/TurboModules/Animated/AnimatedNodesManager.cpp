@@ -24,10 +24,8 @@ using namespace facebook;
 namespace rnoh {
 
 AnimatedNodesManager::AnimatedNodesManager(
-    std::function<void()>&& scheduleUpdateFn,
-    std::function<void(react::Tag, folly::dynamic)>&& setNativePropsFn)
-    : m_scheduleUpdateFn(std::move(scheduleUpdateFn)),
-      m_setNativePropsFn(std::move(setNativePropsFn)) {}
+    std::function<void()>&& scheduleUpdateFn)
+    : m_scheduleUpdateFn(std::move(scheduleUpdateFn)) {}
 
 void AnimatedNodesManager::createNode(
     facebook::react::Tag tag,
@@ -245,7 +243,7 @@ void AnimatedNodesManager::stopAnimation(facebook::react::Tag animationId) {
   }
 }
 
-void AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
+PropUpdatesList AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
   // we don't want to enter this while updating nodes (which can happen if a
   // tracking node starts a new animation)
   m_isRunningAnimations = true;
@@ -259,7 +257,7 @@ void AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
     }
   }
 
-  updateNodes();
+  auto propUpdatesList = updateNodes();
 
   for (auto animationId : finishedAnimations) {
     m_animationById.at(animationId)->endCallback_(true);
@@ -273,13 +271,14 @@ void AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
     m_isRunningAnimations = true;
     m_scheduleUpdateFn();
   }
+  return propUpdatesList;
 }
 
 void AnimatedNodesManager::setNeedsUpdate(facebook::react::Tag nodeTag) {
   m_nodeTagsToUpdate.insert(nodeTag);
 }
 
-void AnimatedNodesManager::updateNodes() {
+PropUpdatesList AnimatedNodesManager::updateNodes() {
   std::vector<facebook::react::Tag> nodeTags(
       m_nodeTagsToUpdate.begin(), m_nodeTagsToUpdate.end());
   m_nodeTagsToUpdate.clear();
@@ -328,6 +327,8 @@ void AnimatedNodesManager::updateNodes() {
       nodeTagsQueue.push(node);
     }
   }
+
+  PropUpdatesList propUpdatesList;
   while (!nodeTagsQueue.empty()) {
     auto tag = nodeTagsQueue.front();
     nodeTagsQueue.pop();
@@ -338,7 +339,10 @@ void AnimatedNodesManager::updateNodes() {
 
       if (auto propsNode = dynamic_cast<PropsAnimatedNode*>(&node);
           propsNode != nullptr) {
-        propsNode->updateView();
+        auto propUpdate = propsNode->updateView();
+        if (propUpdate.has_value()) {
+          propUpdatesList.push_back(std::move(propUpdate.value()));
+        }
       }
 
       if (auto valueNode = dynamic_cast<ValueAnimatedNode*>(&node);
@@ -370,6 +374,8 @@ void AnimatedNodesManager::updateNodes() {
         " active nodes, but only " + std::to_string(updatedNodesCount) +
         " were updated");
   }
+
+  return propUpdatesList;
 }
 
 void AnimatedNodesManager::stopAnimationsForNode(facebook::react::Tag tag) {
