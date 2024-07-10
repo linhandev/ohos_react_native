@@ -33,11 +33,11 @@ class PropsAnimatedNode : public AnimatedNode {
     m_viewTag = std::nullopt;
   }
 
-  void updateView() {
+  std::optional<PropUpdate> updateView() {
     if (m_viewTag == std::nullopt) {
       LOG(WARNING)
           << "PropsAnimatedNode::updateView() called on unconnected node";
-      return;
+      return std::nullopt;
     }
     folly::dynamic props = folly::dynamic::object;
     for (auto& [key, nodeTag] : m_tagByPropName) {
@@ -52,8 +52,7 @@ class PropsAnimatedNode : public AnimatedNode {
         throw std::runtime_error("Unsupported property animated node type");
       }
     }
-
-    m_nodesManager.m_setNativePropsFn(*m_viewTag, props);
+    return std::make_pair(m_viewTag.value(), props);
   }
 
  private:
