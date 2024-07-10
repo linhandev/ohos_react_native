@@ -48,14 +48,16 @@ export class DefaultHttpClient implements HttpClient {
   protected baseRequestOptions: RequestOptions;
   private logger: RNOHLogger;
 
-  constructor({ baseRequestOptions, responseInterceptors, requestInterceptors }: {
+  constructor({ baseRequestOptions, responseInterceptors, requestInterceptors, logger }: {
     baseRequestOptions?: RequestOptions
     responseInterceptors?: ResponseInterceptor[],
     requestInterceptors?: RequestInterceptor[],
+    logger?: RNOHLogger,
   }={}) {
     this.baseRequestOptions = baseRequestOptions ?? {};
     this.responseInterceptors = responseInterceptors ?? [];
     this.requestInterceptors = requestInterceptors ?? [];
+    this.logger = logger?.clone('DefaultHttpClient') ?? undefined;
   }
 
 
@@ -70,12 +72,12 @@ export class DefaultHttpClient implements HttpClient {
       return;
     }
     //each cookie has to be set separately because of a bug which happens when setting multiple cookies at once
-    try {
-      for (const cookie of cookieHeaders) {
+    for (const cookie of cookieHeaders) {
+      try {
         webview.WebCookieManager.configCookieSync(url, cookie)
+      } catch (err) {
+        this.logger?.error("ConfigCookieSync Error, Cookie: " + JSON.stringify(cookie));
       }
-    } catch(err) {
-      this.logger.clone("ConfigCookieSync Error!").error();
     }
     webview.WebCookieManager.saveCookieAsync();
   }
