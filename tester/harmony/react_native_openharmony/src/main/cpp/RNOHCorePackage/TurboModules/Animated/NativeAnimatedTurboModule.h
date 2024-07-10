@@ -99,6 +99,7 @@ class NativeAnimatedTurboModule
   void runUpdates();
 
   void setNativeProps(facebook::react::Tag tag, folly::dynamic const& props);
+  void setNativeProps(PropUpdatesList const& propUpdatesList);
 
   void emitAnimationEndedEvent(
       facebook::jsi::Runtime& rt,

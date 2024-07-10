@@ -97,7 +97,10 @@ void MountingManagerCAPI::dispatchCommand(
     const facebook::react::ShadowView& shadowView,
     const std::string& commandName,
     folly::dynamic const& args) {
-  m_arkTsMountingManager->dispatchCommand(shadowView, commandName, args);
+
+  if (m_arkTsComponentNames.count(shadowView.componentName)) {
+    m_arkTsMountingManager->dispatchCommand(shadowView, commandName, args);
+  }
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
   if (componentInstance) {

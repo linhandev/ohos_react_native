@@ -11,6 +11,8 @@
 #include "Nodes/AnimatedNode.h"
 
 namespace rnoh {
+using PropUpdate = std::pair<facebook::react::Tag, folly::dynamic>;
+using PropUpdatesList = std::vector<PropUpdate>;
 
 class AnimatedNode;
 class ValueAnimatedNode;
@@ -19,10 +21,7 @@ class EventAnimationDriver;
 
 class AnimatedNodesManager {
  public:
-  AnimatedNodesManager(
-      std::function<void()>&& scheduleUpdateFn,
-      std::function<void(facebook::react::Tag, folly::dynamic)>&&
-          setNativePropsFn);
+  AnimatedNodesManager(std::function<void()>&& scheduleUpdateFn);
 
   void createNode(facebook::react::Tag tag, folly::dynamic const& config);
   void dropNode(facebook::react::Tag tag);
@@ -69,7 +68,7 @@ class AnimatedNodesManager {
       std::function<void(bool)>&& endCallback);
   void stopAnimation(facebook::react::Tag animationId);
 
-  void runUpdates(uint64_t frameTimeNanos);
+  PropUpdatesList runUpdates(uint64_t frameTimeNanos);
 
   void setNeedsUpdate(facebook::react::Tag nodeTag);
 
@@ -81,10 +80,8 @@ class AnimatedNodesManager {
   AnimatedNode& getNodeByTag(facebook::react::Tag tag);
   ValueAnimatedNode& getValueNodeByTag(facebook::react::Tag tag);
 
-  std::function<void(facebook::react::Tag, folly::dynamic)> m_setNativePropsFn;
-
  private:
-  void updateNodes();
+  PropUpdatesList updateNodes();
   void stopAnimationsForNode(facebook::react::Tag tag);
   void maybeStartAnimations();
 
