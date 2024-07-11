@@ -33,12 +33,16 @@ void TextInputComponentInstance::onContentScroll() {
 }
 
 void TextInputComponentInstance::onChange(std::string text) {
+  if (m_content == text) {
+    m_shouldIgnoreNextChangeEvent = false;
+    return;
+  }
   m_content = std::move(text);
   if (m_shouldIgnoreNextChangeEvent) {
     m_shouldIgnoreNextChangeEvent = false;
     return;
   }
-  m_valueChanged = true;
+  m_eventEmitter->onChange(getOnChangeMetrics());
 }
 
 void TextInputComponentInstance::onSubmit() {
@@ -112,11 +116,6 @@ void TextInputComponentInstance::onTextSelectionChange(
     keyPressMetrics.text = boost::locale::conv::utf_to_utf<char>(key);
     keyPressMetrics.eventCount = m_nativeEventCount;
     m_eventEmitter->onKeyPress(keyPressMetrics);
-  }
-  if (m_valueChanged) {
-    m_valueChanged = false;
-    m_nativeEventCount++;
-    m_eventEmitter->onChange(getOnChangeMetrics());
   }
 
   m_selectionLocation = location;
