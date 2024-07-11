@@ -7,6 +7,7 @@
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/ComponentInstanceFactory.h"
+#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/arkui/XComponentSurface.h"
 
@@ -39,6 +40,8 @@ class RNInstanceCAPI : public RNInstanceInternal {
       ArkTSMessageHub::Shared arkTSMessageHub,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
+      ComponentInstancePreallocationRequestQueue::Shared
+          componentInstancePreallocationRequestQueue,
       UniqueNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
@@ -56,6 +59,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
             std::move(arkTSChannel),
             std::move(mountingManager),
             std::move(arkTSMessageHandlers),
+            std::move(componentInstancePreallocationRequestQueue),
             shouldEnableDebugger,
             shouldEnableBackgroundExecutor),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),

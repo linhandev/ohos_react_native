@@ -3,6 +3,8 @@
 #include <react/renderer/mounting/ShadowViewMutation.h>
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/ComponentInstanceFactory.h"
+#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
+#include "RNOH/ComponentInstanceProvider.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/MountingManager.h"
@@ -19,11 +21,11 @@ class MountingManagerCAPI final : public MountingManager {
  public:
   MountingManagerCAPI(
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
-      ComponentInstanceFactory::Shared componentInstanceFactory,
+      ComponentInstanceProvider::Shared componentInstanceProvider,
       MountingManager::Shared arkTSMountingManager,
       FeatureFlagRegistry::Shared featureFlagRegistry)
       : m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
-        m_componentInstanceFactory(std::move(componentInstanceFactory)),
+        m_componentInstanceProvider(std::move(componentInstanceProvider)),
         m_arkTSMountingManager(std::move(arkTSMountingManager)),
         m_featureFlagRegistry(std::move(featureFlagRegistry)){};
 
@@ -61,7 +63,7 @@ class MountingManagerCAPI final : public MountingManager {
   bool isCAPIComponent(facebook::react::ShadowView const& shadowView);
 
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
-  ComponentInstanceFactory::Shared m_componentInstanceFactory;
+  ComponentInstanceProvider::Shared m_componentInstanceProvider;
   facebook::react::ContextContainer::Shared m_contextContainer;
   MountingManager::Shared m_arkTSMountingManager;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;

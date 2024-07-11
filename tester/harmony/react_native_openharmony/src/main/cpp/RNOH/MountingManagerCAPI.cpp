@@ -162,13 +162,17 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
   switch (mutation.type) {
     case facebook::react::ShadowViewMutation::Create: {
       auto newChild = mutation.newChildShadowView;
-      auto componentInstance = m_componentInstanceFactory->create(
-          newChild.tag, newChild.componentHandle, newChild.componentName);
-      if (componentInstance != nullptr) {
-        this->updateComponentWithShadowView(componentInstance, newChild);
-        m_componentInstanceRegistry->insert(componentInstance);
-        m_cApiComponentNames.insert(newChild.componentName);
+      auto componentInstance =
+          m_componentInstanceProvider->getComponentInstance(
+              newChild.tag, newChild.componentHandle, newChild.componentName);
+      if (componentInstance == nullptr) {
+        LOG(ERROR) << "Couldn't create CppComponentInstance for: "
+                   << newChild.componentName;
+        return;
       }
+      m_componentInstanceRegistry->insert(componentInstance);
+      this->updateComponentWithShadowView(componentInstance, newChild);
+      m_cApiComponentNames.insert(newChild.componentName);
       break;
     }
     case facebook::react::ShadowViewMutation::Delete: {
@@ -188,7 +192,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       if (newChildComponentInstance == nullptr &&
           parentComponentInstance != nullptr) {
         newChildComponentInstance =
-            m_componentInstanceFactory->createArkTSComponent(
+            m_componentInstanceProvider->createArkTSComponent(
                 mutation.newChildShadowView.tag,
                 mutation.newChildShadowView.componentHandle,
                 mutation.newChildShadowView.componentName);
@@ -322,7 +326,7 @@ bool MountingManagerCAPI::isCAPIComponent(
   if (m_arkTSComponentNames.count(componentName) > 0) {
     return false;
   }
-  auto componentInstance = m_componentInstanceFactory->create(
+  auto componentInstance = m_componentInstanceProvider->getComponentInstance(
       shadowView.tag, shadowView.componentHandle, componentName);
   if (componentInstance) {
     m_cApiComponentNames.insert(std::move(componentName));

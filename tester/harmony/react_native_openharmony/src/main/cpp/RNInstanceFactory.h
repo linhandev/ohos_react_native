@@ -11,6 +11,7 @@
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSTurboModule.h"
+#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/ImageSourceResolver.h"
@@ -212,9 +213,18 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
+    auto componentInstancePreallocationRequestQueue =
+        std::make_shared<ComponentInstancePreallocationRequestQueue>();
+    auto componentInstanceProvider =
+        std::make_shared<ComponentInstanceProvider>(
+            taskExecutor,
+            componentInstancePreallocationRequestQueue,
+            componentInstanceFactory,
+            uiTicker,
+            componentInstanceRegistry);
     auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
         componentInstanceRegistry,
-        componentInstanceFactory,
+        componentInstanceProvider,
         mountingManager,
         featureFlagRegistry);
     auto nativeResourceManager = UniqueNativeResourceManager(
@@ -237,6 +247,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         arkTSMessageHub,
         componentInstanceRegistry,
         componentInstanceFactory,
+        componentInstancePreallocationRequestQueue,
         std::move(nativeResourceManager),
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
@@ -266,6 +277,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       arkTSChannel,
       std::move(mountingManager),
       std::move(arkTSMessageHandlers),
+      nullptr, // ComponentInstancePreallocationRequestQueue
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor);
 }

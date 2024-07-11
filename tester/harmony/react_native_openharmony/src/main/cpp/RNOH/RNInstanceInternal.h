@@ -2,6 +2,7 @@
 
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 #include "RNOH/ArkTSMessageHandler.h"
+#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/RNInstance.h"
 
@@ -26,6 +27,8 @@ class RNInstanceInternal
       ArkTSChannel::Shared arkTSChannel,
       MountingManager::Shared mountingManager,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
+      ComponentInstancePreallocationRequestQueue::Shared
+          componentInstancePreallocationRequestQueue,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : m_id(id),
@@ -43,10 +46,16 @@ class RNInstanceInternal
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
-        m_arkTSChannel(std::move(arkTSChannel)) {
-    m_unsubscribeUITickListener = m_uiTicker->subscribe(m_id, [this]() {
-      m_taskExecutor->runTask(TaskThread::MAIN, [this]() { onUITick(); });
-    });
+        m_arkTSChannel(std::move(arkTSChannel)),
+        m_componentInstancePreallocationRequestQueue(
+            std::move(componentInstancePreallocationRequestQueue)) {
+    m_unsubscribeUITickListener =
+        m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
+          m_taskExecutor->runTask(
+              TaskThread::MAIN, [this, recentVSyncTimestamp]() {
+                onUITick(recentVSyncTimestamp);
+              });
+        });
   }
 
   virtual ~RNInstanceInternal() noexcept = default;
@@ -115,7 +124,7 @@ class RNInstanceInternal
   void initializeScheduler(
       std::shared_ptr<TurboModuleProvider> turboModuleProvider);
   virtual std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() = 0;
-  void onUITick();
+  void onUITick(UITicker::Timestamp recentVSyncTimestamp);
 
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()
@@ -149,5 +158,7 @@ class RNInstanceInternal
   bool m_shouldEnableBackgroundExecutor;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
+  ComponentInstancePreallocationRequestQueue::Shared
+      m_componentInstancePreallocationRequestQueue;
 };
 } // namespace rnoh

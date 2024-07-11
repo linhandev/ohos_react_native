@@ -1,6 +1,7 @@
 #pragma once
 
 #include <react/renderer/scheduler/SchedulerDelegate.h>
+#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
@@ -22,8 +23,13 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
  public:
   SchedulerDelegate(
       MountingManager::Shared mountingManager,
-      TaskExecutor::Shared taskExecutor)
-      : m_mountingManager(mountingManager), m_taskExecutor(taskExecutor){};
+      TaskExecutor::Shared taskExecutor,
+      ComponentInstancePreallocationRequestQueue::Weak
+          weakPreallocationRequestQueue)
+      : m_mountingManager(mountingManager),
+        m_taskExecutor(taskExecutor),
+        m_weakPreallocationRequestQueue(
+            std::move(weakPreallocationRequestQueue)){};
 
   ~SchedulerDelegate() override;
 
@@ -63,6 +69,8 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
 
   MountingManager::Weak m_mountingManager;
   TaskExecutor::Shared m_taskExecutor;
+  ComponentInstancePreallocationRequestQueue::Weak
+      m_weakPreallocationRequestQueue;
 };
 
 }; // namespace rnoh

@@ -8,19 +8,26 @@
 #include "NativeVsyncHandle.h"
 
 namespace rnoh {
-
+/**
+ * @internal
+ */
 class UITicker {
  public:
-  static void scheduleNextTick(long long timestamp, void* data) {
+  using Timestamp = std::chrono::
+      time_point<std::chrono::steady_clock, std::chrono::nanoseconds>;
+
+  static void onTick(long long _timestamp, void* data) {
     auto self = static_cast<UITicker*>(data);
-    self->tick();
+    self->tick(std::chrono::steady_clock::now());
   }
 
   UITicker() : m_vsyncHandle("UITicker") {}
 
   using Shared = std::shared_ptr<UITicker>;
 
-  std::function<void()> subscribe(int id, std::function<void()>&& listener) {
+  std::function<void()> subscribe(std::function<void(Timestamp)>&& listener) {
+    auto id = m_nextListenerId;
+    m_nextListenerId++;
     std::lock_guard lock(listenersMutex);
     auto listenersCount = m_listenerById.size();
     m_listenerById.insert_or_assign(id, std::move(listener));
@@ -34,18 +41,19 @@ class UITicker {
   }
 
  private:
-  std::unordered_map<int, std::function<void()>> m_listenerById;
+  std::unordered_map<int, std::function<void(Timestamp)>> m_listenerById;
   std::mutex listenersMutex;
   NativeVsyncHandle m_vsyncHandle;
+  int m_nextListenerId = 0;
 
   void requestNextTick() {
-    m_vsyncHandle.requestFrame(scheduleNextTick, this);
+    m_vsyncHandle.requestFrame(onTick, this);
   }
 
-  void tick() {
+  void tick(Timestamp timestamp) {
     std::lock_guard lock(listenersMutex);
     for (const auto& idAndListener : m_listenerById) {
-      idAndListener.second();
+      idAndListener.second(timestamp);
     }
     this->requestNextTick();
   }

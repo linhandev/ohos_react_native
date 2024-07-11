@@ -136,7 +136,9 @@ void RNInstanceInternal::initializeScheduler(
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       m_reactInstance->getRuntimeExecutor(), m_contextContainer, this);
   m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
-      m_mountingManager, m_taskExecutor);
+      m_mountingManager,
+      m_taskExecutor,
+      m_componentInstancePreallocationRequestQueue);
   m_scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
   turboModuleProvider->setScheduler(m_scheduler);
@@ -173,7 +175,7 @@ void RNInstanceInternal::updateState(
         env, componentName, state, newState);
   }
 }
-void RNInstanceInternal::onUITick() {
+void RNInstanceInternal::onUITick(UITicker::Timestamp recentVSyncTimestamp) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
   if (m_shouldRelayUITick.load()) {
     m_scheduler->animationTick();

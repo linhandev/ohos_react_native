@@ -33,7 +33,20 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
 
 void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
     SurfaceId surfaceId,
-    const ShadowNode& shadowView) {}
+    const ShadowNode& shadowNode) {
+  facebook::react::SystraceSection s(
+      "#RNOH::SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation");
+  auto preallocationRequestQueue = m_weakPreallocationRequestQueue.lock();
+  if (preallocationRequestQueue == nullptr) {
+    return;
+  }
+  preallocationRequestQueue->push({
+      shadowNode.getTag(),
+      shadowNode.getComponentHandle(),
+      shadowNode.getComponentName(),
+      shadowNode.getProps(),
+  });
+}
 
 void SchedulerDelegate::schedulerDidDispatchCommand(
     const ShadowView& shadowView,
