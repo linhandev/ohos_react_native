@@ -123,8 +123,7 @@ class ArkUITypography final {
     OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
   }
 
-  std::
-      unique_ptr<OH_Drawing_Typography, decltype(&OH_Drawing_DestroyTypography)>
+  std::shared_ptr<OH_Drawing_Typography>
           m_typography;
   std::shared_ptr<ArkUI_StyledString>
       m_styledStringRef; //  Delete this after API rectification
