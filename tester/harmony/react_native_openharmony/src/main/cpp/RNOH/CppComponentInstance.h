@@ -395,10 +395,10 @@ class CppComponentInstance : public ComponentInstance {
 
     auto clipContentToBounds = props->getClipsContentToBounds();
     if (!old) {
-      // 0 -- Do not clip, 1 -- clip content
-      if (static_cast<uint32_t>(clipContentToBounds) != 0) {
-        m_isClipping = clipContentToBounds;
-        this->getLocalRootArkUINode().setClip(clipContentToBounds);
+      //  0 -- clip content, 1 -- Do not clip,
+      if (static_cast<uint32_t>(clipContentToBounds) == 0) {
+        m_isClipping = !clipContentToBounds;
+        this->getLocalRootArkUINode().setClip(!clipContentToBounds);
         markBoundingBoxAsDirty();
       }
     } else if (old->getClipsContentToBounds() != clipContentToBounds) {
