@@ -97,6 +97,9 @@ void AnimatedNodesManager::connectNodeToView(
   auto& node = dynamic_cast<PropsAnimatedNode&>(getNodeByTag(nodeTag));
   node.connectToView(viewTag);
   m_nodeTagsToUpdate.insert(nodeTag);
+  // make sure the new properties are applied immediately even when they're not
+  // animated
+  maybeStartAnimations();
 }
 
 void AnimatedNodesManager::disconnectNodeFromView(
