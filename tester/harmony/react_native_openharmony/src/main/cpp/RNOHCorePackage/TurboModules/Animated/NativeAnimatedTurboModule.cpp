@@ -468,6 +468,8 @@ void NativeAnimatedTurboModule::runUpdates() {
     m_vsyncListener->requestFrame(
         [weakSelf = weak_from_this()](long long _timestamp) {
           if (auto self = weakSelf.lock()) {
+            facebook::react::SystraceSection s(
+                "NativeAnimatedTurboModule::runUpdates");
             self->runUpdates();
           }
         });
@@ -535,8 +537,7 @@ void NativeAnimatedTurboModule::handleEvent(
   react::Tag tag = ctx.tag;
   auto eventName = ctx.eventName;
 
-  auto lock = acquireLock();
-  m_animatedNodesManager.handleEvent(tag, eventName, payload);
+  handleComponentEvent(tag, eventName, payload);
 }
 
 void NativeAnimatedTurboModule::initializeEventListener() {
@@ -553,6 +554,8 @@ void NativeAnimatedTurboModule::handleComponentEvent(
     std::string const& eventName,
     folly::dynamic payload) {
   auto lock = acquireLock();
-  m_animatedNodesManager.handleEvent(tag, eventName, payload);
+  auto propUpdates =
+      m_animatedNodesManager.handleEvent(tag, eventName, payload);
+  setNativeProps(propUpdates);
 }
 } // namespace rnoh
