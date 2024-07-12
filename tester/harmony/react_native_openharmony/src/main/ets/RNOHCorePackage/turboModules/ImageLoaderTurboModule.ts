@@ -25,9 +25,13 @@ export class ImageLoaderTurboModule extends TurboModule {
   }
 
   public async getSize(uri: string): Promise<number[]> {
-    const imageSource = await this.imageLoader.getImageSource(uri)
-    const imageInfo = await imageSource.getImageSource().getImageInfo()
-    return [imageInfo.size.width, imageInfo.size.height]
+    if (uri && uri.length > 0) {
+      const imageSource = await this.imageLoader.getImageSource(uri)
+      const imageInfo = await imageSource.getImageSource().getImageInfo()
+      return [imageInfo.size.width, imageInfo.size.height]
+    } else {
+      return [0,0]
+    }
   }
 
   public async getSizeWithHeaders(uri: string, headers: Object): Promise<{

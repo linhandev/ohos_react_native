@@ -7,6 +7,7 @@ import {getScrollViewContentHorizontal} from './ScrollViewTest/fixtures';
 const WRONG_IMAGE_SRC = 'not_image';
 const LOCAL_IMAGE_ASSET_ID = require('../assets/pravatar-131.jpg');
 const REMOTE_IMAGE_URL = 'https://i.pravatar.cc/100?img=31';
+const INVALID_IMAGE_URL = '';
 const BASE64_IMAGE_STRING =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC';
 const LARGE_REMOTE_IMAGE_URL =
@@ -67,6 +68,25 @@ export const ImageTest = () => {
               (width, height) => {
                 expect(width).to.be.eq(100);
                 expect(height).to.be.eq(100);
+                resolve();
+              },
+              e => {
+                reject(e);
+              },
+            );
+          });
+        }}
+      />
+      <TestCase.Logical
+        skip={{android: false, harmony: {arkTs: false, cAPI: 'NOT SUPPORTED'}}}
+        itShould="retrieve invalid uri image size"
+        fn={({expect}) => {
+          return new Promise((resolve, reject) => {
+            Image.getSize(
+              INVALID_IMAGE_URL,
+              (width, height) => {
+                expect(width).to.be.eq(0);
+                expect(height).to.be.eq(0);
                 resolve();
               },
               e => {
