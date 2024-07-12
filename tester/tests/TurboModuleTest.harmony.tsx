@@ -75,6 +75,13 @@ export function TurboModuleTest() {
             SampleWorkerTurboModule.runComputeIntensiveTask();
           }}
         />
+        <TestCase.Logical
+          itShould="support async methods"
+          fn={async ({expect}) => {
+            const result = await SampleWorkerTurboModule.runAsyncTask();
+            expect(result).to.be.eq(42);
+          }}
+        />
         <TestCase.Example
           modal
           itShould="not impact the performance of ScrollView when running intensive task">
