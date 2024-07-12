@@ -152,7 +152,7 @@ void AnimatedNodesManager::stopListeningToAnimatedNodeValue(
   node.removeValueListener();
 }
 
-void AnimatedNodesManager::handleEvent(
+PropUpdatesList AnimatedNodesManager::handleEvent(
     facebook::react::Tag targetTag,
     std::string const& eventName,
     folly::dynamic const& eventValue) {
@@ -168,8 +168,9 @@ void AnimatedNodesManager::handleEvent(
   if (someDriverNeedsUpdate) {
     // NOTE: we don't update frame-based drivers here, only the newly-dirty ones
     // from the event
-    updateNodes();
+    return updateNodes();
   }
+  return {};
 }
 
 void AnimatedNodesManager::setValue(facebook::react::Tag tag, double value) {

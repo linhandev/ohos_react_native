@@ -72,7 +72,7 @@ class AnimatedNodesManager {
 
   void setNeedsUpdate(facebook::react::Tag nodeTag);
 
-  void handleEvent(
+  PropUpdatesList handleEvent(
       facebook::react::Tag targetTag,
       std::string const& eventName,
       folly::dynamic const& eventValue);
