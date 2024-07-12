@@ -9,4 +9,10 @@ export class SampleWorkerTurboModule extends WorkerTurboModule implements TM.Sam
       count++;
     }
   }
+
+  runAsyncTask(): Promise<number> {
+    return new Promise(resolve => {
+      setTimeout(() => resolve(42), 3000)
+    })
+  }
 }
