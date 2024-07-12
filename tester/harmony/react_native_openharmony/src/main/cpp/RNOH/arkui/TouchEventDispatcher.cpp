@@ -362,6 +362,9 @@ void TouchEventDispatcher::sendEvent(
   for (auto const& targetTouches : touchByTargetId) {
     auto it =
         m_touchTargetByTouchId.find(targetTouches.second.begin()->identifier);
+    if (it == m_touchTargetByTouchId.end()) {
+      continue;
+    }
     auto eventTarget = it->second.lock();
     if (eventTarget == nullptr) {
       m_touchTargetByTouchId.erase(it);
