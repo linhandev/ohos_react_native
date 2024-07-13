@@ -285,8 +285,8 @@ void ScrollViewComponentInstance::onScroll() {
   auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
                  std::chrono::steady_clock::now().time_since_epoch())
                  .count();
-  if (m_allowNextScrollEvent ||
-      (m_scrollEventThrottle < now - m_lastScrollDispatchTime &&
+  if (m_allowNextScrollEvent || ((m_scrollEventThrottle == 0 ||
+      m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
        scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset))) {
     m_lastScrollDispatchTime = now;
     VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
@@ -302,7 +302,7 @@ void ScrollViewComponentInstance::onScroll() {
     updateStateWithContentOffset(scrollViewMetrics.contentOffset);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
-  };
+  }
 }
 
 void ScrollViewComponentInstance::onScrollStart() {
