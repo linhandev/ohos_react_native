@@ -22,7 +22,6 @@ class PullToRefreshViewComponentInstance
   StackNode m_refreshIndicatorBackgroundNode;
   LoadingProgressNode m_refreshIndicatorSpinnerNode;
   TextNode m_refreshIndicatorTitleNode;
-  bool m_refreshing{false};
   void createRefreshIndicatorTitle(
       const std::string& refreshIndicatorTitleText,
       facebook::react::SharedColor const& refreshIndicatorTitleColor);
