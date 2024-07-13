@@ -106,8 +106,9 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   }
 
   m_refreshIndicatorContainerNode.setOffset(0, props->progressViewOffset);
-  getLocalRootArkUINode().setNativeRefreshing(props->refreshing);
-  m_refreshing = props->refreshing;
+  if (!props->refreshing) {
+    getLocalRootArkUINode().setNativeRefreshing(false);
+  }
   if (facebook::react::isColorMeaningful(props->tintColor)) {
     m_refreshIndicatorSpinnerNode.setColor(props->tintColor);
   }
@@ -122,8 +123,8 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 }
 
 void PullToRefreshViewComponentInstance::onRefresh() {
-  getLocalRootArkUINode().setNativeRefreshing(true);
   m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
+  getLocalRootArkUINode().setNativeRefreshing(true);
   m_eventEmitter->onRefresh({});
 
   auto instance =
@@ -140,7 +141,7 @@ void PullToRefreshViewComponentInstance::onRefresh() {
         auto instance =
             std::static_pointer_cast<RNInstanceInternal>(wInstance.lock());
 
-        if (!ptr || !instance || ptr->m_refreshing) {
+        if (!ptr || !instance || !ptr->m_props || ptr->m_props->refreshing) {
           return;
         }
         instance->getTaskExecutor()->runTask(
@@ -148,7 +149,7 @@ void PullToRefreshViewComponentInstance::onRefresh() {
               auto ptr =
                   std::static_pointer_cast<PullToRefreshViewComponentInstance>(
                       wptr.lock());
-              if (ptr && !ptr->m_refreshing) {
+              if (ptr && ptr->m_props && !ptr->m_props->refreshing) {
                 ptr->getLocalRootArkUINode().setNativeRefreshing(false);
               }
             });
@@ -163,6 +164,7 @@ void PullToRefreshViewComponentInstance::onRefreshStateChanged(RefreshStatus sta
 
     case RefreshStatus::REFRESH_STATUS_INACTIVE:
     case RefreshStatus::REFRESH_STATUS_DONE:
+      getLocalRootArkUINode().setNativeRefreshing(false);
       m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_HIDDEN);
       break;
 
