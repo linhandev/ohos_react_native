@@ -397,7 +397,7 @@ ScrollViewComponentInstance::getFrictionFromDecelerationRate(
   facebook::react::Float IOS_NORMAL = 0.998;
   facebook::react::Float IOS_FAST = 0.99;
   facebook::react::Float ARKUI_FAST = 2;
-  facebook::react::Float ARKUI_NORMAL = 0.6;
+  facebook::react::Float ARKUI_NORMAL = 0.75;
   if (decelerationRate < (IOS_NORMAL + IOS_FAST) / 2) {
     return ARKUI_FAST;
   } else {
