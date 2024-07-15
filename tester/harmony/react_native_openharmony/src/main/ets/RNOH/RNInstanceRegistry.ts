@@ -1,3 +1,4 @@
+import font from '@ohos.font';
 import type { RNInstance, RNInstanceOptions } from './RNInstance';
 import { RNInstanceImpl } from './RNInstance';
 import type { NapiBridge } from './NapiBridge';
@@ -34,6 +35,11 @@ export class RNInstanceRegistry {
     if (this.workerThread !== null) {
       await this.waitForWorkerThread(id, options?.name)
     }
+    const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
+    for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
+      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
+      font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+    }
     const instance = new RNInstanceImpl(
       this.envId,
       id,
@@ -52,6 +58,7 @@ export class RNInstanceRegistry {
       options.assetsDest,
       this.resourceManager,
       this.displayMetricsManager,
+      fontFamilyNameByFontPathRelativeToRawfileDir,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,

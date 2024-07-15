@@ -394,6 +394,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/ArkTSBridge.cpp"
     "${RNOH_CPP_DIR}/RNOH/Inspector.cpp"
     "${RNOH_CPP_DIR}/RNOH/ComponentInstanceProvider.cpp"
+    "${RNOH_CPP_DIR}/RNOH/FontRegistry.cpp"
     "${RNOH_CPP_DIR}/RNOH/MountingManagerArkTS.cpp"
     "${RNOH_CPP_DIR}/RNOH/MountingManagerCAPI.cpp"
     "${RNOH_CPP_DIR}/RNOH/ShadowViewRegistry.cpp"

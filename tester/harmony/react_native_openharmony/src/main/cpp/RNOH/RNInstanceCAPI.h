@@ -16,9 +16,7 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
-using UniqueNativeResourceManager = std::unique_ptr<
-    NativeResourceManager,
-    decltype(&OH_ResourceManager_ReleaseNativeResourceManager)>;
+using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
 
 class RNInstanceCAPI : public RNInstanceInternal {
  public:
@@ -42,7 +40,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
       ComponentInstanceFactory::Shared componentInstanceFactory,
       ComponentInstancePreallocationRequestQueue::Shared
           componentInstancePreallocationRequestQueue,
-      UniqueNativeResourceManager nativeResourceManager,
+      SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : RNInstanceInternal(
@@ -123,7 +121,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
-  UniqueNativeResourceManager m_nativeResourceManager;
+  SharedNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
 };
 

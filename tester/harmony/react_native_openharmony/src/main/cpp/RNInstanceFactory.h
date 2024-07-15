@@ -1,4 +1,5 @@
 #pragma once
+#include <rawfile/raw_file_manager.h>
 #include <react/renderer/components/image/ImageComponentDescriptor.h>
 #include <react/renderer/components/text/ParagraphComponentDescriptor.h>
 #include <react/renderer/mounting/ShadowViewMutation.h>
@@ -67,7 +68,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
-    bool shouldEnableBackgroundExecutor) {
+    bool shouldEnableBackgroundExecutor,
+    std::unordered_map<std::string, std::string>
+        fontPathRelativeToRawfileDirByFontFamily) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
   auto taskExecutor = std::make_shared<TaskExecutor>(
@@ -92,8 +95,16 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       });
 
   auto contextContainer = std::make_shared<facebook::react::ContextContainer>();
+  SharedNativeResourceManager resourceManager(
+      OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
+      OH_ResourceManager_ReleaseNativeResourceManager);
+  auto fontRegistry = std::make_shared<FontRegistry>(resourceManager);
+  for (auto& [fontFamilyName, fontPathRelativeToRawfileDir] :
+       fontPathRelativeToRawfileDirByFontFamily) {
+    fontRegistry->registerFont(fontFamilyName, fontPathRelativeToRawfileDir);
+  }
   auto textMeasurer = std::make_shared<TextMeasurer>(
-      env, measureTextFnRef, taskExecutor, featureFlagRegistry);
+      env, measureTextFnRef, taskExecutor, featureFlagRegistry, fontRegistry);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
   PackageProvider packageProvider;
@@ -227,9 +238,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstanceProvider,
         mountingManager,
         featureFlagRegistry);
-    auto nativeResourceManager = UniqueNativeResourceManager(
-        OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
-        OH_ResourceManager_ReleaseNativeResourceManager);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,
@@ -248,7 +256,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstanceRegistry,
         componentInstanceFactory,
         componentInstancePreallocationRequestQueue,
-        std::move(nativeResourceManager),
+        std::move(resourceManager),
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
     componentInstanceDependencies->rnInstance = rnInstance;

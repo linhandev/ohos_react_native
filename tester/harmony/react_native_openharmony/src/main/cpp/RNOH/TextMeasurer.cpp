@@ -180,7 +180,7 @@ ArkUITypography TextMeasurer::measureTypography(
   }
 
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), fontCollection.get());
+      typographyStyle.get(), m_fontRegistry->createFontCollection());
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }

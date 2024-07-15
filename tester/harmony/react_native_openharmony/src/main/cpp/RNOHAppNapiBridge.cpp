@@ -197,7 +197,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     DLOG(INFO) << "onCreateRNInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJS.getCallbackArgs(info, 12);
+    auto args = arkJS.getCallbackArgs(info, 13);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
     auto mainArkTSTurboModuleProviderRef = arkJS.createReference(args[1]);
     auto mutationsListenerRef = arkJS.createReference(args[2]);
@@ -215,6 +215,16 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto frameNodeFactoryRef = arkJS.createReference(args[9]);
     auto jsResourceManager = args[10];
     int envId = arkJS.getDouble(args[11]);
+    auto n_fontPathRelativeToRawfileDirByFontFamily =
+        arkJS.getObjectProperties(args[12]);
+    std::unordered_map<std::string, std::string>
+        fontPathRelativeToRawfileDirByFontFamily;
+    for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
+         n_fontPathRelativeToRawfileDirByFontFamily) {
+      fontPathRelativeToRawfileDirByFontFamily.emplace(
+          arkJS.getString(fontFamily),
+          arkJS.getString(fontPathRelativeToRawfileDir));
+    }
     auto workerLock = std::lock_guard(WORKER_DATA_MTX);
     std::unique_ptr<NapiTaskRunner> workerTaskRunner = nullptr;
     auto workerTaskRunnerIt =
@@ -281,7 +291,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         UI_TICKER,
         jsResourceManager,
         shouldEnableDebugger,
-        shouldEnableBackgroundExecutor);
+        shouldEnableBackgroundExecutor,
+        std::move(fontPathRelativeToRawfileDirByFontFamily));
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {

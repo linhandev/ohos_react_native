@@ -4,6 +4,7 @@
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
 #include <memory>
+#include "FontRegistry.h"
 
 namespace rnoh {
 
@@ -13,13 +14,6 @@ namespace rnoh {
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
-
-/**
- * @internal
- */
-using UniqueFontCollection = std::unique_ptr<
-    OH_Drawing_FontCollection,
-    decltype(&OH_Drawing_DestroyFontCollection)>;
 
 /**
  * @internal
@@ -121,10 +115,13 @@ class ArkUITypographyBuilder final {
  public:
   ArkUITypographyBuilder(
       OH_Drawing_TypographyStyle* typographyStyle,
-      OH_Drawing_FontCollection* fontCollection)
+      UniqueFontCollection fontCollection)
       : m_typographyHandler(
-            OH_Drawing_CreateTypographyHandler(typographyStyle, fontCollection),
-            OH_Drawing_DestroyTypographyHandler) {}
+            OH_Drawing_CreateTypographyHandler(
+                typographyStyle,
+                fontCollection.get()),
+            OH_Drawing_DestroyTypographyHandler),
+        m_fontCollection(std::move(fontCollection)) {}
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
     if (!isnan(maximumWidth) && maximumWidth > 0) {
@@ -252,6 +249,7 @@ class ArkUITypographyBuilder final {
   std::vector<size_t> m_fragmentLengths{};
   facebook::react::Float m_maximumWidth =
       std::numeric_limits<facebook::react::Float>::max();
+  UniqueFontCollection m_fontCollection;
 };
 
 } // namespace rnoh

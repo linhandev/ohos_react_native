@@ -3,6 +3,7 @@
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
 #include <string>
 #include "ArkUITypography.h"
+#include "FontRegistry.h"
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
@@ -14,11 +15,13 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       napi_env env,
       napi_ref measureTextFnRef,
       TaskExecutor::Shared taskExecutor,
-      FeatureFlagRegistry::Shared featureFlagManager)
+      FeatureFlagRegistry::Shared featureFlagManager,
+      FontRegistry::Shared fontRegistry)
       : m_env(env),
         m_measureTextFnRef(measureTextFnRef),
         m_taskExecutor(taskExecutor),
-        m_featureFlagRegistry(featureFlagManager) {}
+        m_featureFlagRegistry(featureFlagManager),
+        m_fontRegistry(std::move(fontRegistry)) {}
 
   ~TextMeasurer() {
     DLOG(INFO) << "~TextMeasurer";
@@ -39,6 +42,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   napi_ref m_measureTextFnRef;
   TaskExecutor::Shared m_taskExecutor;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
+  FontRegistry::Shared m_fontRegistry;
   int32_t getOHDrawingTextAlign(
       const facebook::react::TextAlignment& textAlign);
 };

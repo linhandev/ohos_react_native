@@ -23,6 +23,9 @@ import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
 import { DisplayMetricsManager } from './DisplayMetricsManager'
+import font from "@ohos.font"
+
+export type Resource = Exclude<font.FontOptions["familySrc"], string>
 
 export type SurfaceContext = {
   width: number
@@ -334,6 +337,11 @@ export type RNInstanceOptions = {
    * where state updates are processed synchronously and separately.
    */
   disableConcurrentRoot?: boolean;
+  /**
+   * Specifies custom fonts used by RN application.
+   * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
+   */
+  fontResourceByFontFamily?: Record<string, Resource>
 }
 
 /**
@@ -390,6 +398,7 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
+    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -511,6 +520,7 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
       this.resourceManager,
+      this.fontFamilyNameByFontPathRelativeToRawfileDir,
     )
     stopTracing()
   }

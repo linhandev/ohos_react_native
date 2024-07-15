@@ -6,12 +6,19 @@ import {TestCase} from '../../components';
 export function TextStyleTest() {
   return (
     <TestSuite name="TextStyle">
-      <TestCase.Example itShould="show text with the Pacifico Regular font">
-        <View style={{height: 30, width: '100%'}}>
+      <TestCase.Example itShould="show text with the Pacifico Regular font on the blue background">
+        <View style={{backgroundColor: 'cyan', alignSelf: 'flex-start'}}>
           <Text
             style={{
-              ...styles.blackText,
               fontFamily: 'Pacifico-Regular',
+              padding: 5,
+            }}>
+            Lorem ipsum dolor sit amet
+          </Text>
+        </View>
+        <View style={{backgroundColor: 'pink', alignSelf: 'flex-start'}}>
+          <Text
+            style={{
               padding: 5,
             }}>
             Lorem ipsum dolor sit amet
