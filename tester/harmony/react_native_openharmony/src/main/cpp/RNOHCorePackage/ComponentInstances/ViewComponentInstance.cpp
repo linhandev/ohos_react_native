@@ -107,7 +107,7 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
 }
 
 void ViewComponentInstance::onFinalizeUpdates() {
-  ComponentInstance::onFinalizeUpdates();
+  CppComponentInstance::onFinalizeUpdates();
 
   updateClippedSubviews();
 }

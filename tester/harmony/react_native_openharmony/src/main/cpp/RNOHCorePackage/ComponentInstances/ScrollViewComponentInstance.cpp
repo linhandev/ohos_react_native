@@ -231,8 +231,8 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
     SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto stateData = state->getData();
-  m_contentContainerNode.setSize(stateData.getContentSize());
   if (m_contentSize != stateData.getContentSize()) {
+    m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
   }
 }
@@ -473,7 +473,7 @@ bool ScrollViewComponentInstance::scrollMovedBySignificantOffset(
 }
 
 void ScrollViewComponentInstance::onFinalizeUpdates() {
-  ComponentInstance::onFinalizeUpdates();
+  CppComponentInstance::onFinalizeUpdates();
 
   // when parent isn't refresh node, set the position
   auto parent = this->getParent().lock();

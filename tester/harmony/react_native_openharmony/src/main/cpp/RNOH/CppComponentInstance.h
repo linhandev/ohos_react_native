@@ -69,7 +69,7 @@ class CppComponentInstance : public ComponentInstance {
  public:
   void setProps(facebook::react::Props::Shared props) final {
     auto newProps = std::dynamic_pointer_cast<const ConcreteProps>(props);
-    if (!newProps) {
+    if (!newProps || m_props == newProps) {
       return;
     }
     this->onPropsChanged(newProps);
@@ -78,7 +78,7 @@ class CppComponentInstance : public ComponentInstance {
 
   void setState(facebook::react::State::Shared state) final {
     auto newState = std::dynamic_pointer_cast<const ConcreteState>(state);
-    if (!newState) {
+    if (!newState || m_state == newState) {
       return;
     }
 
@@ -89,7 +89,7 @@ class CppComponentInstance : public ComponentInstance {
   void setEventEmitter(facebook::react::SharedEventEmitter eventEmitter) final {
     auto newEventEmitter =
         std::dynamic_pointer_cast<const ConcreteEventEmitter>(eventEmitter);
-    if (!newEventEmitter) {
+    if (!newEventEmitter || m_eventEmitter == newEventEmitter) {
       return;
     }
     this->onEventEmitterChanged(newEventEmitter);
@@ -97,6 +97,9 @@ class CppComponentInstance : public ComponentInstance {
   }
 
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
+    if (layoutMetrics == m_layoutMetrics) {
+      return;
+    }
     this->onLayoutChanged(layoutMetrics);
     m_layoutMetrics = layoutMetrics;
   }
@@ -207,25 +210,6 @@ class CppComponentInstance : public ComponentInstance {
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
 
-    facebook::react::BorderMetrics borderMetrics =
-        props->resolveBorderMetrics(this->m_layoutMetrics);
-    if (borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
-      this->getLocalRootArkUINode().setBorderWidth(borderMetrics.borderWidths);
-    }
-    if (borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
-      this->getLocalRootArkUINode().setBorderColor(borderMetrics.borderColors);
-    }
-    if (borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
-        !m_isRadiusSetValid) {
-      if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
-        m_isRadiusSetValid = true;
-      }
-      this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
-    }
-    if (borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
-      this->getLocalRootArkUINode().setBorderStyle(borderMetrics.borderStyles);
-    }
-
     if (props->shadowColor != old->shadowColor ||
         props->shadowOffset != old->shadowOffset ||
         props->shadowOpacity != old->shadowOpacity ||
@@ -283,8 +267,6 @@ class CppComponentInstance : public ComponentInstance {
     }
 
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
-
-    m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
   };
 
   virtual void onStateChanged(SharedConcreteState const& /*state*/) {
@@ -320,6 +302,30 @@ class CppComponentInstance : public ComponentInstance {
     }
     m_boundingBox = newBoundingBox;
   };
+
+  void onFinalizeUpdates() override {
+    ComponentInstance::onFinalizeUpdates();
+
+    facebook::react::BorderMetrics borderMetrics =
+        m_props->resolveBorderMetrics(this->m_layoutMetrics);
+    if (borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
+      this->getLocalRootArkUINode().setBorderWidth(borderMetrics.borderWidths);
+    }
+    if (borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
+      this->getLocalRootArkUINode().setBorderColor(borderMetrics.borderColors);
+    }
+    if (borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
+        !m_isRadiusSetValid) {
+      if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
+        m_isRadiusSetValid = true;
+      }
+      this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
+    }
+    if (borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
+      this->getLocalRootArkUINode().setBorderStyle(borderMetrics.borderStyles);
+    }
+    m_oldBorderMetrics = borderMetrics;
+  }
 
   facebook::react::Rect getHitRect() const {
     facebook::react::Point origin = {0, 0};
