@@ -11,7 +11,7 @@ void ViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
-  if (m_props && m_props->removeClippedSubviews && !m_parent.expired()) {
+  if (m_props->removeClippedSubviews && !m_parent.expired()) {
     updateClippedSubviews(true);
   } else {
     m_stackNode.insertChild(
@@ -62,7 +62,7 @@ bool ViewComponentInstance::isViewClipped(
 
 void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
   auto parent = m_parent.lock();
-  if ((m_props && !m_props->removeClippedSubviews) || !parent) {
+  if (!m_props->removeClippedSubviews || !parent) {
     return;
   }
 

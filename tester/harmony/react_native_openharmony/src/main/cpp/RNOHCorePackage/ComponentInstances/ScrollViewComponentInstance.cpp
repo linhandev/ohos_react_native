@@ -253,8 +253,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
         props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
   }
   double prevParentKeyboardAvoidingViewBottomHeight = 0;
-  if (m_props != nullptr &&
-      m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0 &&
+  if (m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0 &&
       m_props->rawProps["__keyboardAvoidingViewBottomHeight"] > 0) {
     prevParentKeyboardAvoidingViewBottomHeight =
         m_props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
@@ -291,13 +290,13 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               : 0x66000000)
       .setEnablePaging(props->pagingEnabled);
 
-  if (!m_props || props->contentOffset != m_props->contentOffset) {
+  if (props->contentOffset != m_props->contentOffset) {
     m_scrollNode.scrollTo(
         props->contentOffset.x, props->contentOffset.y, false);
     updateStateWithContentOffset(props->contentOffset);
   }
 
-  if (!m_props || props->centerContent != m_props->centerContent) {
+  if (props->centerContent != m_props->centerContent) {
     if (props->centerContent) {
       m_scrollNode.setCenterContent(true);
     } else {
@@ -484,7 +483,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
   if (parent && !isRefresh) {
     this->getLocalRootArkUINode().setPosition(m_layoutMetrics.frame.origin);
   }
-  if (m_props && m_props->maintainVisibleContentPosition.has_value()) {
+  if (m_props->maintainVisibleContentPosition.has_value()) {
     adjustVisibleContentPosition(
         m_props->maintainVisibleContentPosition.value());
     m_firstVisibleView = getFirstVisibleView(
@@ -718,7 +717,7 @@ void ScrollViewComponentInstance::adjustVisibleContentPosition(
 
 std::optional<ScrollViewComponentInstance::ChildTagWithOffset>
 ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
-  if (!m_props || m_children.empty() || m_children[0] == nullptr) {
+  if (m_children.empty() || m_children[0] == nullptr) {
     return std::nullopt;
   }
 

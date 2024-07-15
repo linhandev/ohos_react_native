@@ -148,18 +148,15 @@ void TextInputComponentInstance::onPropsChanged(
   CppComponentInstance::onPropsChanged(props);
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
 
-  if (!m_props ||
-      props->traits.contextMenuHidden != m_props->traits.contextMenuHidden) {
+  if (props->traits.contextMenuHidden != m_props->traits.contextMenuHidden) {
     m_textInputNode.setContextMenuHidden(props->traits.contextMenuHidden);
     m_textAreaNode.setContextMenuHidden(props->traits.contextMenuHidden);
   }
-  if (!m_props ||
-      props->traits.passwordRules != m_props->traits.passwordRules) {
+  if (props->traits.passwordRules != m_props->traits.passwordRules) {
     m_textInputNode.setPasswordRules(props->traits.passwordRules);
   }
-  if (!m_props ||
-      *(props->textAttributes.foregroundColor) !=
-          *(m_props->textAttributes.foregroundColor)) {
+  if (*(props->textAttributes.foregroundColor) !=
+      *(m_props->textAttributes.foregroundColor)) {
     if (props->textAttributes.foregroundColor) {
       m_textAreaNode.setFontColor(props->textAttributes.foregroundColor);
       m_textInputNode.setFontColor(props->textAttributes.foregroundColor);
@@ -168,18 +165,17 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setFontColor(facebook::react::blackColor());
     }
   }
-  if (!m_props || props->textAttributes != m_props->textAttributes) {
+  if (props->textAttributes != m_props->textAttributes) {
     m_textAreaNode.setFont(props->textAttributes);
     m_textInputNode.setFont(props->textAttributes);
   }
-  if (!m_props ||
-      props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
+  if (props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
     if (props->textAttributes.lineHeight) {
       m_textAreaNode.setLineHeight(props->textAttributes.lineHeight);
       m_textInputNode.setLineHeight(props->textAttributes.lineHeight);
     }
   }
-  if (!m_props || *(props->backgroundColor) != *(m_props->backgroundColor)) {
+  if (*(props->backgroundColor) != *(m_props->backgroundColor)) {
     if (props->backgroundColor) {
       m_textAreaNode.setBackgroundColor(props->backgroundColor);
       m_textInputNode.setBackgroundColor(props->backgroundColor);
@@ -189,14 +185,13 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (props->textAttributes.alignment) {
-    if (!m_props ||
-        *(props->textAttributes.alignment) !=
-            *(m_props->textAttributes.alignment)) {
+    if (*(props->textAttributes.alignment) !=
+        *(m_props->textAttributes.alignment)) {
       m_textAreaNode.setTextAlign(props->textAttributes.alignment);
       m_textInputNode.setTextAlign(props->textAttributes.alignment);
     }
   }
-  if (!m_props || *(props->cursorColor) != *(m_props->cursorColor)) {
+  if (*(props->cursorColor) != *(m_props->cursorColor)) {
     if (props->cursorColor) {
       m_textAreaNode.setCaretColor(props->cursorColor);
       m_textInputNode.setCaretColor(props->cursorColor);
@@ -205,7 +200,7 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setCaretColor(facebook::react::blackColor());
     }
   }
-  if (!m_props || props->traits.keyboardType != m_props->traits.keyboardType) {
+  if (props->traits.keyboardType != m_props->traits.keyboardType) {
     m_textAreaNode.setInputType(
         rnoh::convertTextAreaInputType(props->traits.keyboardType));
     m_textInputNode.setInputType(
@@ -214,24 +209,23 @@ void TextInputComponentInstance::onPropsChanged(
             : rnoh::convertInputType(props->traits.keyboardType));
   }
   if (props->maxLength != 0) {
-    if (!m_props || props->maxLength != m_props->maxLength) {
+    if (props->maxLength != m_props->maxLength) {
       m_textAreaNode.setMaxLength(props->maxLength);
       m_textInputNode.setMaxLength(props->maxLength);
     }
   }
-  if (!m_props || props->placeholder != m_props->placeholder) {
+  if (props->placeholder != m_props->placeholder) {
     m_textAreaNode.setPlaceholder(props->placeholder);
     m_textInputNode.setPlaceholder(props->placeholder);
   }
   if (props->placeholderTextColor) {
-    if (!m_props ||
-        *(props->placeholderTextColor) != *(m_props->placeholderTextColor)) {
+    if (*(props->placeholderTextColor) != *(m_props->placeholderTextColor)) {
       m_textAreaNode.setPlaceholderColor(props->placeholderTextColor);
       m_textInputNode.setPlaceholderColor(props->placeholderTextColor);
     }
   }
   if (props->rawProps.count("focusable") > 0) {
-    if (!m_props ||
+    if (m_props->rawProps.count("focusable") == 0 ||
         props->rawProps["focusable"].asBool() !=
             m_props->rawProps["focusable"].asBool()) {
       m_textAreaNode.setFocusable(props->rawProps["focusable"].asBool());
@@ -241,11 +235,11 @@ void TextInputComponentInstance::onPropsChanged(
   m_textAreaNode.setId(getIdFromProps(props));
   m_textInputNode.setId(getIdFromProps(props));
 
-  if (!m_props || props->autoFocus != m_props->autoFocus) {
+  if (props->autoFocus != m_props->autoFocus) {
     m_textAreaNode.setAutoFocus(props->autoFocus);
     m_textInputNode.setAutoFocus(props->autoFocus);
   }
-  if (!m_props || *(props->selectionColor) != *(m_props->selectionColor)) {
+  if (*(props->selectionColor) != *(m_props->selectionColor)) {
     if (props->selectionColor) {
       m_textInputNode.setSelectedBackgroundColor(props->selectionColor);
       if (!props->cursorColor) {
@@ -255,23 +249,20 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.resetSelectedBackgroundColor();
     }
   }
-  if (!m_props ||
-      props->traits.secureTextEntry != m_props->traits.secureTextEntry ||
+  if (props->traits.secureTextEntry != m_props->traits.secureTextEntry ||
       props->traits.keyboardType != m_props->traits.keyboardType) {
     m_textInputNode.setInputType(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
   }
-  if (!m_props || props->traits.caretHidden != m_props->traits.caretHidden) {
+  if (props->traits.caretHidden != m_props->traits.caretHidden) {
     m_textInputNode.setCaretHidden(props->traits.caretHidden);
   }
-  if (!m_props ||
-      props->traits.returnKeyType != m_props->traits.returnKeyType) {
+  if (props->traits.returnKeyType != m_props->traits.returnKeyType) {
     m_textInputNode.setEnterKeyType(props->traits.returnKeyType);
   }
-  if (!m_props ||
-      props->traits.clearButtonMode != m_props->traits.clearButtonMode) {
+  if (props->traits.clearButtonMode != m_props->traits.clearButtonMode) {
     if (m_focused) {
       if (props->traits.clearButtonMode ==
           facebook::react::TextInputAccessoryVisibilityMode::WhileEditing) {
@@ -302,21 +293,18 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setCancelButtonMode(props->traits.clearButtonMode);
     }
   }
-  if (!m_props ||
-      !(props->yogaStyle.padding() == m_props->yogaStyle.padding())) {
+  if (!(props->yogaStyle.padding() == m_props->yogaStyle.padding())) {
     m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
   }
 
-  if (!m_props ||
-      props->traits.textContentType != m_props->traits.textContentType) {
+  if (props->traits.textContentType != m_props->traits.textContentType) {
     m_textInputNode.setTextContentType(props->traits.textContentType);
     m_textAreaNode.setTextContentType(props->traits.textContentType);
   }
   m_textAreaNode.setEnabled(props->traits.editable);
   m_textInputNode.setEnabled(props->traits.editable);
-  if (!m_props ||
-      props->traits.submitBehavior != m_props->traits.submitBehavior) {
+  if (props->traits.submitBehavior != m_props->traits.submitBehavior) {
     m_textInputNode.setBlurOnSubmit(
         props->traits.submitBehavior ==
         facebook::react::SubmitBehavior::BlurAndSubmit);

@@ -49,9 +49,8 @@ void ModalHostViewComponentInstance::updateDisplaySize(
       .width = windowMetrics.width / windowMetrics.scale,
       .height = windowMetrics.height / windowMetrics.scale};
   state->updateState({screenSize});
-  if (m_props != nullptr &&
-      m_props->animationType ==
-          facebook::react::ModalHostViewAnimationType::Slide) {
+  if (m_props->animationType ==
+      facebook::react::ModalHostViewAnimationType::Slide) {
     updateSlideTransition(displayMetrics);
   }
 }
@@ -76,10 +75,7 @@ void ModalHostViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   using AnimationType = facebook::react::ModalHostViewAnimationType;
   CppComponentInstance::onPropsChanged(props);
-  if (!props) {
-    return;
-  }
-  if (!m_props || props->animationType != m_props->animationType) {
+  if (props->animationType != m_props->animationType) {
     if (props->animationType == AnimationType::Slide) {
       m_rootStackNode.resetOpacityTransition();
       auto screenSize = m_deps->displayMetricsManager->getDisplayMetrics();

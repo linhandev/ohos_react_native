@@ -15,6 +15,8 @@ const static float DEFAULT_LINE_SPACING = 0.15f;
 TextComponentInstance::TextComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   m_stackNode.insertChild(m_textNode, 0);
+  // set attributes which have different default values in RN and ArkUI
+  m_stackNode.setAlign(ARKUI_ALIGNMENT_TOP_START);
 }
 
 TextComponentInstance::~TextComponentInstance() {
@@ -81,17 +83,17 @@ void TextComponentInstance::onPropsChanged(
     facebook::react::TextAlignment alignHorizonOld =
         facebook::react::TextAlignment::Left;
     std::string alignVerticalOld = "top";
-    if (m_props && m_props->rawProps.count("textAlignVertical") != 0 &&
+    if (m_props->rawProps.count("textAlignVertical") != 0 &&
         m_props->rawProps["textAlignVertical"].isString()) {
       alignVerticalOld = m_props->rawProps["textAlignVertical"].asString();
     }
-    if (m_props && m_props->textAttributes.alignment.has_value()) {
+    if (m_props->textAttributes.alignment.has_value()) {
       alignHorizonOld = m_props->textAttributes.alignment.value();
     }
     int32_t stackAlignOld =
         TextConversions::getStackAlign(alignHorizonOld, alignVerticalOld);
 
-    if (!m_props || stackAlign != stackAlignOld) {
+    if (stackAlign != stackAlignOld) {
       VLOG(3) << "[text-debug] stackAlign=" << stackAlign
               << ", stackAlignOld=" << stackAlignOld;
       m_stackNode.setAlign(stackAlign);

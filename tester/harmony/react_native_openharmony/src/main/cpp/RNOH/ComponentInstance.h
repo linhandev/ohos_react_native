@@ -234,11 +234,9 @@ class ComponentInstance
 
   Tag m_tag;
   bool m_isRadiusSetValid = 0;
-  float m_oldPointScaleFactor = 0.0f;
   ComponentHandle m_componentHandle;
   std::vector<ComponentInstance::Shared> m_children;
   ComponentInstance::Weak m_parent;
-  facebook::react::BorderMetrics m_oldBorderMetrics;
   facebook::react::LayoutMetrics m_layoutMetrics;
   Dependencies::Shared m_deps;
   std::unordered_set<std::string> m_ignoredPropKeys;

@@ -15,10 +15,10 @@ void ActivityIndicatorComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   auto old = m_props;
   CppComponentInstance::onPropsChanged(props);
-  if (!old || props->animating != old->animating) {
+  if (props->animating != old->animating) {
     getLocalRootArkUINode().setAnimating(props->animating);
   }
-  if (props->color && (!old || *(props->color) != *(old->color))) {
+  if (props->color && (*(props->color) != *(old->color))) {
     getLocalRootArkUINode().setColor(props->color);
   }
 }

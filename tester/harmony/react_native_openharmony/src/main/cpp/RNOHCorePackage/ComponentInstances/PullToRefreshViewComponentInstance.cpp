@@ -74,7 +74,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
-  if (!m_props || m_props->title != props->title ||
+  if (m_props->title != props->title ||
       m_props->titleColor != props->titleColor) {
     this->createOrUpdateRefreshIndicatorTitle(props->title, props->titleColor);
   };

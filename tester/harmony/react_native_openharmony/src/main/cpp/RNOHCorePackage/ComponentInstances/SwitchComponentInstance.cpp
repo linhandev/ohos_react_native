@@ -15,18 +15,18 @@ SwitchComponentInstance::SwitchComponentInstance(Context context)
 
 void SwitchComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
-  if (!m_props || props->onTintColor != m_props->onTintColor) {
+  if (props->onTintColor != m_props->onTintColor) {
     getLocalRootArkUINode().setSelectedColor(props->onTintColor);
   }
-  if (!m_props || props->tintColor != m_props->tintColor) {
+  if (props->tintColor != m_props->tintColor) {
     getLocalRootArkUINode().setUnselectedColor(props->tintColor);
   }
-  if (!m_props || props->thumbTintColor != m_props->thumbTintColor) {
+  if (props->thumbTintColor != m_props->thumbTintColor) {
     getLocalRootArkUINode().setThumbColor(props->thumbTintColor);
   }
   getLocalRootArkUINode().setEnabled(!props->disabled);
   if (props->rawProps.count("focusable") > 0) {
-    if (!m_props ||
+    if (m_props->rawProps.count("focusable") == 0 ||
         props->rawProps["focusable"].asBool() !=
             m_props->rawProps["focusable"].asBool()) {
       getLocalRootArkUINode().setFocusable(
@@ -43,7 +43,7 @@ ToggleNode& SwitchComponentInstance::getLocalRootArkUINode() {
 }
 
 void SwitchComponentInstance::onValueChange(int32_t& value) {
-  if (m_props == nullptr || m_props->value == value) {
+  if (m_props->value == value) {
     // NOTE: when the value is changed via props,
     // we should not send the event back
     return;

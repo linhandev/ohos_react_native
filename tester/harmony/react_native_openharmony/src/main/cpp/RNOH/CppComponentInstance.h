@@ -11,6 +11,7 @@
 #include <react/renderer/core/State.h>
 #include <react/renderer/debug/SystraceSection.h>
 #include <vector>
+#include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
 
 namespace rnoh {
@@ -199,36 +200,36 @@ class CppComponentInstance : public ComponentInstance {
         concreteProps);
     auto old =
         std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
+    RNOH_ASSERT(old != nullptr);
     auto isTransformManagedByAnimated =
         getIgnoredPropKeys().count("transform") > 0;
-    if (!old || *(props->backgroundColor) != *(old->backgroundColor)) {
+    if (*(props->backgroundColor) != *(old->backgroundColor)) {
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
 
     facebook::react::BorderMetrics borderMetrics =
         props->resolveBorderMetrics(this->m_layoutMetrics);
-    if (!old || borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
+    if (borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
       this->getLocalRootArkUINode().setBorderWidth(borderMetrics.borderWidths);
     }
-    if (!old || borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
+    if (borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
       this->getLocalRootArkUINode().setBorderColor(borderMetrics.borderColors);
     }
-    if (!old || borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
+    if (borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
         !m_isRadiusSetValid) {
       if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
         m_isRadiusSetValid = true;
       }
       this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
     }
-    if (!old || borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
+    if (borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
       this->getLocalRootArkUINode().setBorderStyle(borderMetrics.borderStyles);
     }
 
-    if (!old ||
-        props->shadowColor != old->shadowColor &&
-            props->shadowOffset != old->shadowOffset &&
-            props->shadowOpacity != old->shadowOpacity &&
-            props->shadowRadius != old->shadowRadius) {
+    if (props->shadowColor != old->shadowColor ||
+        props->shadowOffset != old->shadowOffset ||
+        props->shadowOpacity != old->shadowOpacity ||
+        props->shadowRadius != old->shadowRadius) {
       this->getLocalRootArkUINode().setShadow(
           props->shadowColor,
           props->shadowOffset,
@@ -237,7 +238,7 @@ class CppComponentInstance : public ComponentInstance {
     }
 
     if (!isTransformManagedByAnimated &&
-        (!old || props->transform != old->transform ||
+        (props->transform != old->transform ||
          abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
              0.001f)) {
       m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
@@ -247,36 +248,35 @@ class CppComponentInstance : public ComponentInstance {
       markBoundingBoxAsDirty();
     }
 
-    if (!old || props->pointerEvents != old->pointerEvents) {
+    if (props->pointerEvents != old->pointerEvents) {
       this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
       this->getLocalRootArkUINode().setEnabled(
           props->pointerEvents != facebook::react::PointerEventsMode::None);
     }
 
-    if (!old || props->accessibilityHint != old->accessibilityHint) {
+    if (props->accessibilityHint != old->accessibilityHint) {
       this->getLocalRootArkUINode().setAccessibilityDescription(
           props->accessibilityHint);
     }
 
-    if (!old ||
-        props->importantForAccessibility != old->importantForAccessibility) {
+    if (props->importantForAccessibility != old->importantForAccessibility) {
       this->getLocalRootArkUINode().setAccessibilityLevel(
           props->importantForAccessibility);
     }
 
-    if (!old || props->accessibilityLabel != old->accessibilityLabel) {
+    if (props->accessibilityLabel != old->accessibilityLabel) {
       this->getLocalRootArkUINode().setAccessibilityText(
           props->accessibilityLabel);
     }
 
-    if (!old || props->accessible != old->accessible) {
+    if (props->accessible != old->accessible) {
       this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
     }
 
     this->setOpacity(props);
 
     auto newOverflow = props->getClipsContentToBounds();
-    if (!old || (old->getClipsContentToBounds() != newOverflow)) {
+    if ((old->getClipsContentToBounds() != newOverflow)) {
       m_isClipping = newOverflow;
       this->getLocalRootArkUINode().setClip(newOverflow);
       markBoundingBoxAsDirty();
@@ -287,7 +287,7 @@ class CppComponentInstance : public ComponentInstance {
     m_oldBorderMetrics = props->resolveBorderMetrics(this->m_layoutMetrics);
   };
 
-  virtual void onStateChanged(SharedConcreteState const& state) {
+  virtual void onStateChanged(SharedConcreteState const& /*state*/) {
     facebook::react::SystraceSection s(std::string(
                                            "#RNOH::CppComponentInstance(" +
                                            this->getComponentName() +
@@ -384,11 +384,13 @@ class CppComponentInstance : public ComponentInstance {
     }
   }
 
-  SharedConcreteProps m_props;
+  SharedConcreteProps m_props = ShadowNodeT::defaultSharedProps();
   SharedConcreteState m_state;
   SharedConcreteEventEmitter m_eventEmitter;
   std::optional<facebook::react::Rect> m_boundingBox;
   bool m_isClipping = false;
+  facebook::react::BorderMetrics m_oldBorderMetrics = {};
+  float m_oldPointScaleFactor = 0.0f;
 };
 
 inline facebook::react::Rect transformRectAroundPoint(

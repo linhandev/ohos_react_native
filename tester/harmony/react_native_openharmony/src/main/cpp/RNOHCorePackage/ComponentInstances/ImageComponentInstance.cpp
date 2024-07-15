@@ -32,27 +32,27 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
-  if (!m_props || m_props->sources != props->sources) {
+  if (m_props->sources != props->sources) {
     setSources(props->sources);
     if (!this->getLocalRootArkUINode().getUri().empty()) {
       onLoadStart();
     }
   }
 
-  if (!m_props || m_props->tintColor != props->tintColor) {
+  if (m_props->tintColor != props->tintColor) {
     this->getLocalRootArkUINode().setTintColor(props->tintColor);
   }
 
-  if (!m_props || m_props->blurRadius != props->blurRadius) {
+  if (m_props->blurRadius != props->blurRadius) {
     this->getLocalRootArkUINode().setBlur(props->blurRadius);
   }
 
-  if (!m_props || m_props->resizeMode != props->resizeMode) {
+  if (m_props->resizeMode != props->resizeMode) {
     this->getLocalRootArkUINode().setObjectRepeat(props->resizeMode);
     this->getLocalRootArkUINode().setResizeMode(props->resizeMode);
   }
 
-  if (!m_props || m_props->defaultSources != props->defaultSources) {
+  if (m_props->defaultSources != props->defaultSources) {
     if (!(props->defaultSources.empty())) {
       this->getLocalRootArkUINode().setAlt(props->defaultSources[0].uri);
     }
