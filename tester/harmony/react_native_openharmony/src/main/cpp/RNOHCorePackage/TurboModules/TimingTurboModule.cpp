@@ -20,7 +20,7 @@ class TimingArkTSMessageHandler: public ArkTSMessageHandler {
         turboModule->createTimer(ctx.messagePayload["id"].asDouble(),
                                 ctx.messagePayload["duration"].asDouble(),
                                 0,
-                                ctx.messagePayload["repeat"].asBool());
+                                ctx.messagePayload["repeats"].asBool());
       }
     }
   }
