@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.72.32
+- deprecated `TurboModule` and `TurboModuleContext` in favor of `UITurboModule` and `UITurboModuleContext` or `WorkerTurboModule` and `WorkerTurboModuleContext` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- deprecated `TurboModulesFactory` in favor of `UITurboModuleFactory` and `WorkerTurboModuleFactory` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `TextInput::passwordRules` experimental support ([6d4effb93c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6d4effb93c2a0d0b880d662b4adc984672fbb00d))
+- added `WorkerTurboModule` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `RNPackage::createWorkerTurboModuleFactory` — this method is expected to be overridden by library developers if a library provides Turbo Modules that can run on the WorkerThread ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `setupRNOHWorker` — this function is expected to be used by app developers and it is expected to be called in the worker script ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `RNAbility::getRNOHWorkerScriptUrl` (and `RNInstancesCoordinatorDependencies::rnohWorkerScriptUrl`) — app developers are expected to override `getRNOHWorkerScriptUrl` to enable worker thread and WorkerTurboModules. Currently, WorkerThread is opt-in feature. ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- fixed a crash which could happen when a touch was cancelled while another is active ([b5bf4d383f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b5bf4d383f9d9745ee58b50f1b5fe67eb1eeac9f))
+- fixed animated events not updating views when no other animations are running ([16b7c2f0b2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/16b7c2f0b2c8804606cddf02278afd66966d5199))
+- fixes native responder blocking not taking place ([cf1c104b4b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf1c104b4b20a4cb24c2bab85646f5683fdcabb5))
+- removed throttling from StandardRNOHLogger ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- optimized ComponentInstance allocation ([183106af39](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/183106af399adc69372a9cef8970dd149e2fa25d))
+- optimized native animations by batching multiple updates in single task ([9a9672fbbb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a9672fbbb36dcdaea40f220ccaedddc18e8c371))
+
+
 ## v0.72.31
 - added support for `TextInput::inputMode`  ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
 - added support for `TextInput::contextMenuHidden` ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
