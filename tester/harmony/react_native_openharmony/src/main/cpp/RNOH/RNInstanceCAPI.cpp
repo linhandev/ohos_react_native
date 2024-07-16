@@ -12,7 +12,10 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
   }
   // clear non-thread-safe objects on the main thread
   // by moving them into a task
-  m_taskExecutor->runTask(
+  // NOTE: we need to run this synchronously, because we need to make sure the
+  // SchedulerDelegate is destroyed after the Scheduler, which itself must be
+  // destroyed after the Surfaces.
+  m_taskExecutor->runSyncTask(
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
        componentInstanceRegistry = std::move(m_componentInstanceRegistry),
@@ -20,7 +23,13 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
        // NOTE: `XComponentSurface` is not copyable, but `std::function` is, so
        // we need to move the map into a shared_ptr first in order to capture it
        surfaces = std::make_shared<decltype(m_surfaceById)>(
-           std::move(m_surfaceById))] {});
+           std::move(m_surfaceById))] {
+        DLOG(INFO) << "~RNInstanceCAPI::MAIN";
+        if (!surfaces->empty()) {
+          LOG(WARNING)
+              << "Not all React Native surfaces were destroyed before the Instance they are running in.";
+        }
+      });
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
 

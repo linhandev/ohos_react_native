@@ -93,11 +93,13 @@ void EventLoopTaskRunner::executeTask() {
     try {
       facebook::react::SystraceSection s("#RNOH::TaskRunner::task");
       task();
-      if (isSyncTask) {
-        m_syncTaskCv.notify_all();
-      }
+      // ensure the resources captured by the task are cleaned up
+      task = nullptr;
     } catch (...) {
       m_exceptionHandler(std::current_exception());
+    }
+    if (isSyncTask) {
+      m_syncTaskCv.notify_all();
     }
   }
   {
@@ -112,7 +114,12 @@ void EventLoopTaskRunner::waitForSyncTask(Task&& task) {
   std::unique_lock<std::mutex> lock(m_mutex);
   std::atomic_bool done{false};
   m_syncTaskQueue.push([task = std::move(task), &done] {
-    task();
+    try {
+      task();
+    } catch (...) {
+      done = true;
+      throw;
+    }
     done = true;
   });
   m_asyncHandle->send();

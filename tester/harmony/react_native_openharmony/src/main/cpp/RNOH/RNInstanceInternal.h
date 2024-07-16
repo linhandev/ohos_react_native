@@ -133,9 +133,9 @@ class RNInstanceInternal
   int m_id;
   TaskExecutor::Shared m_taskExecutor;
   facebook::react::ContextContainer::Shared m_contextContainer;
-  std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =
       nullptr;
+  std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
   MountingManager::Shared m_mountingManager;
   std::shared_ptr<facebook::react::Instance> m_reactInstance =
       std::make_shared<facebook::react::Instance>();
