@@ -1,14 +1,14 @@
 #pragma once
 
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/arkui/StackNode.h"
+#include "RNOH/arkui/CustomNode.h"
 #include "RNOH/arkui/TextNode.h"
 #include "SampleViewComponentDescriptor.h"
 
 namespace rnoh {
 class SampleViewComponentInstance
     : public CppComponentInstance<facebook::react::SampleViewShadowNode>,
-      public StackNodeDelegate {
+      public CustomNodeDelegate {
  public:
   SampleViewComponentInstance(Context context);
 
@@ -25,10 +25,10 @@ class SampleViewComponentInstance
   ArkUINode& getLocalRootArkUINode() override;
 
   // StackNodeDelegate
-  void onClick() override;
+  void onClick(CustomNodeDelegate*) override;
 
  private:
-  StackNode m_stackNode{};
+  CustomNode m_customNode{};
   TextNode m_textNode{};
   int32_t m_fontSize = 12;
 };

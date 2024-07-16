@@ -31,6 +31,7 @@
 #include "RNOHCorePackage/ComponentInstances/ImageComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ModalHostViewComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/PullToRefreshViewComponentInstance.h"
+#include "RNOHCorePackage/ComponentInstances/RootViewComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ScrollViewComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/SwitchComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/TextComponentInstance.h"
@@ -154,7 +155,10 @@ class RNOHCorePackage : public Package {
 
   ComponentInstance::Shared createComponentInstance(
       const ComponentInstance::Context& ctx) override {
-    if (ctx.componentName == "RootView" || ctx.componentName == "View") {
+    if (ctx.componentName == "RootView") {
+      return std::make_shared<RootViewComponentInstance>(std::move(ctx));
+    }
+    if (ctx.componentName == "View") {
       return std::make_shared<ViewComponentInstance>(std::move(ctx));
     }
     if (ctx.componentName == "Paragraph") {

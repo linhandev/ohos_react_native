@@ -4,7 +4,7 @@
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.setStackNodeDelegate(this);
+  m_customNode.setCustomNodeDelegate(this);
 }
 
 void ViewComponentInstance::onChildInserted(
@@ -14,7 +14,7 @@ void ViewComponentInstance::onChildInserted(
   if (m_props->removeClippedSubviews && !m_parent.expired()) {
     updateClippedSubviews(true);
   } else {
-    m_stackNode.insertChild(
+    m_customNode.insertChild(
         childComponentInstance->getLocalRootArkUINode(), index);
   }
 }
@@ -22,11 +22,11 @@ void ViewComponentInstance::onChildInserted(
 void ViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  m_customNode.removeChild(childComponentInstance->getLocalRootArkUINode());
   updateClippedSubviews(true);
 };
 
-void ViewComponentInstance::onHoverIn() {
+void ViewComponentInstance::onHoverIn(CustomNodeDelegate*) {
   m_eventEmitter->dispatchEvent(
       "pointerEnter", [=](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
@@ -34,7 +34,7 @@ void ViewComponentInstance::onHoverIn() {
       });
 }
 
-void ViewComponentInstance::onHoverOut() {
+void ViewComponentInstance::onHoverOut(CustomNodeDelegate*) {
   m_eventEmitter->dispatchEvent(
       "pointerLeave", [=](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
@@ -82,11 +82,11 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
     bool childClipped = isViewClipped(child, currentOffset, parentBoundingBox);
 
     if (remakeVector) {
-      m_stackNode.removeChild(child->getLocalRootArkUINode());
+      m_customNode.removeChild(child->getLocalRootArkUINode());
       m_childrenClippedState.push_back(childClipped);
 
       if (!childClipped) {
-        m_stackNode.insertChild(child->getLocalRootArkUINode(), -1);
+        m_customNode.insertChild(child->getLocalRootArkUINode(), -1);
       }
     }
 
@@ -94,9 +94,10 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
       m_childrenClippedState[i] = childClipped;
 
       if (childClipped) {
-        m_stackNode.removeChild(child->getLocalRootArkUINode());
+        m_customNode.removeChild(child->getLocalRootArkUINode());
       } else {
-        m_stackNode.insertChild(child->getLocalRootArkUINode(), nextChildIndex);
+        m_customNode.insertChild(
+            child->getLocalRootArkUINode(), nextChildIndex);
         nextChildIndex++;
       }
     } else if (!childClipped) {
@@ -112,7 +113,7 @@ void ViewComponentInstance::onFinalizeUpdates() {
   updateClippedSubviews();
 }
 
-void ViewComponentInstance::onClick() {
+void ViewComponentInstance::onClick(CustomNodeDelegate*) {
   if (m_eventEmitter != nullptr) {
     m_eventEmitter->dispatchEvent(
         "click", [=](facebook::jsi::Runtime& runtime) {
@@ -122,7 +123,7 @@ void ViewComponentInstance::onClick() {
   }
 }
 
-StackNode& ViewComponentInstance::getLocalRootArkUINode() {
-  return m_stackNode;
+CustomNode& ViewComponentInstance::getLocalRootArkUINode() {
+  return m_customNode;
 }
 } // namespace rnoh

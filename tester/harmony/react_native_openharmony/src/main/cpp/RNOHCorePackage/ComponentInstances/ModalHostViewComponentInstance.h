@@ -5,7 +5,7 @@
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUIDialogHandler.h"
-#include "RNOH/arkui/StackNode.h"
+#include "RNOH/arkui/CustomNode.h"
 #include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
@@ -16,8 +16,8 @@ class ModalHostViewComponentInstance
  private:
   using ScreenOrientation = facebook::react::ModalHostViewEventEmitter::
       OnOrientationChangeOrientation;
-  StackNode m_virtualNode;
-  StackNode m_rootStackNode;
+  CustomNode m_virtualNode{};
+  CustomNode m_rootCustomNode{};
   ArkUIDialogHandler m_dialogHandler;
   std::unique_ptr<UIInputEventHandler> m_touchHandler;
   std::shared_ptr<ArkTSMessageHandler> m_displaySizeChangeHandler;
@@ -35,6 +35,7 @@ class ModalHostViewComponentInstance
 
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;
+  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
@@ -50,7 +51,7 @@ class ModalHostViewComponentInstance
 
   void onRequestClose() override;
 
-  StackNode& getLocalRootArkUINode() override;
+  CustomNode& getLocalRootArkUINode() override;
 
   // ArkTSMessageHub::Observer
   void onMessageReceived(ArkTSMessage const& message) override;

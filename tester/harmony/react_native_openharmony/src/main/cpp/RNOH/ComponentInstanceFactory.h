@@ -69,10 +69,15 @@ class ComponentInstanceFactory {
               frameNodeHandleAndBuilderNodeDestroyer.first)
         // use Stack as a fallback when no frame node was created
         : std::make_unique<StackNode>();
-    return std::make_shared<FallbackComponentInstance>(
+    auto arkUIComponentInstance = std::make_shared<FallbackComponentInstance>(
         ctx,
         std::move(arkUINode),
         std::move(frameNodeHandleAndBuilderNodeDestroyer.second));
+    // Wrapped by RootViewComponentInstance
+    // some ArkTS components depend on default measurement
+    auto rootComponentInstance = this->create(tag, componentHandle, "RootView");
+    rootComponentInstance->insertChild(arkUIComponentInstance, 0);
+    return rootComponentInstance;
   }
 
   ComponentInstance::Shared create(

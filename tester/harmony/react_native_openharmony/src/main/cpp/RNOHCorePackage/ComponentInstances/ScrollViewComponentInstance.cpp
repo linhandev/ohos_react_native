@@ -481,7 +481,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
       std::dynamic_pointer_cast<const PullToRefreshViewComponentInstance>(
           this->getParent().lock()) != nullptr;
   if (parent && !isRefresh) {
-    this->getLocalRootArkUINode().setPosition(m_layoutMetrics.frame.origin);
+    this->getLocalRootArkUINode().setLayoutRect(m_layoutMetrics);
   }
   if (m_props->maintainVisibleContentPosition.has_value()) {
     adjustVisibleContentPosition(

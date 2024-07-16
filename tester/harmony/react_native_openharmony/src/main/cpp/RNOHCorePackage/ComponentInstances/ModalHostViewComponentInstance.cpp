@@ -24,7 +24,7 @@ class ModalHostTouchHandler : public UIInputEventHandler {
   ModalHostTouchHandler& operator=(ModalHostTouchHandler&& other) = delete;
 
   ModalHostTouchHandler(ModalHostViewComponentInstance* rootView)
-      : UIInputEventHandler(rootView->m_rootStackNode), m_rootView(rootView) {}
+      : UIInputEventHandler(rootView->m_rootCustomNode), m_rootView(rootView) {}
 
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     m_touchEventDispatcher.dispatchTouchEvent(
@@ -58,7 +58,7 @@ void ModalHostViewComponentInstance::updateDisplaySize(
 void ModalHostViewComponentInstance::updateSlideTransition(
     DisplayMetrics const& displayMetrics) {
   auto screenSize = displayMetrics.windowPhysicalPixels;
-  m_rootStackNode.setTranslateTransition(
+  m_rootCustomNode.setTranslateTransition(
       0, float(screenSize.height / screenSize.scale), ANIMATION_DURATION);
 }
 
@@ -68,7 +68,17 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
       m_touchHandler(std::make_unique<ModalHostTouchHandler>(this)) {
   m_virtualNode.setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);
-  m_rootStackNode.setPosition({0, 0});
+  m_rootCustomNode.setPosition({0, 0});
+}
+
+void ModalHostViewComponentInstance::setLayout(
+    facebook::react::LayoutMetrics layoutMetrics) {
+  CppComponentInstance::setLayout(layoutMetrics);
+  int32_t width = static_cast<int32_t>(
+      layoutMetrics.frame.size.width * layoutMetrics.pointScaleFactor + 0.5);
+  int32_t height = static_cast<int32_t>(
+      layoutMetrics.frame.size.height * layoutMetrics.pointScaleFactor + 0.5);
+  m_rootCustomNode.updateMeasuredSize(width, height);
 }
 
 void ModalHostViewComponentInstance::onPropsChanged(
@@ -77,15 +87,15 @@ void ModalHostViewComponentInstance::onPropsChanged(
   CppComponentInstance::onPropsChanged(props);
   if (props->animationType != m_props->animationType) {
     if (props->animationType == AnimationType::Slide) {
-      m_rootStackNode.resetOpacityTransition();
+      m_rootCustomNode.resetOpacityTransition();
       auto screenSize = m_deps->displayMetricsManager->getDisplayMetrics();
       updateSlideTransition(screenSize);
     } else if (props->animationType == AnimationType::Fade) {
-      m_rootStackNode.setTranslateTransition(0, 0, 0);
-      m_rootStackNode.setOpacityTransition(ANIMATION_DURATION);
+      m_rootCustomNode.setTranslateTransition(0, 0, 0);
+      m_rootCustomNode.setOpacityTransition(ANIMATION_DURATION);
     } else {
-      m_rootStackNode.setTranslateTransition(0, 0, 0);
-      m_rootStackNode.resetOpacityTransition();
+      m_rootCustomNode.setTranslateTransition(0, 0, 0);
+      m_rootCustomNode.resetOpacityTransition();
     }
   }
 }
@@ -104,14 +114,14 @@ void ModalHostViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
-  m_rootStackNode.insertChild(
+  m_rootCustomNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
 }
 
 void ModalHostViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_rootStackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+  m_rootCustomNode.removeChild(childComponentInstance->getLocalRootArkUINode());
 };
 
 void ModalHostViewComponentInstance::onFinalizeUpdates() {
@@ -126,7 +136,7 @@ void ModalHostViewComponentInstance::onFinalizeUpdates() {
 }
 
 void ModalHostViewComponentInstance::showDialog() {
-  m_dialogHandler.setContent(m_rootStackNode);
+  m_dialogHandler.setContent(m_rootCustomNode);
   m_dialogHandler.show();
 }
 
@@ -142,7 +152,7 @@ void ModalHostViewComponentInstance::onRequestClose() {
   }
 }
 
-StackNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
+CustomNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
   return m_virtualNode;
 }
 

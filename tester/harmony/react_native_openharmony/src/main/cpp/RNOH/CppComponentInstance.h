@@ -188,8 +188,10 @@ class CppComponentInstance : public ComponentInstance {
  protected:
   virtual void onLayoutChanged(
       facebook::react::LayoutMetrics const& layoutMetrics) {
-    this->getLocalRootArkUINode().setPosition(layoutMetrics.frame.origin);
-    this->getLocalRootArkUINode().setSize(layoutMetrics.frame.size);
+    this->getLocalRootArkUINode().setLayoutRect(
+        layoutMetrics.frame.origin,
+        layoutMetrics.frame.size,
+        layoutMetrics.pointScaleFactor);
     markBoundingBoxAsDirty();
   }
 

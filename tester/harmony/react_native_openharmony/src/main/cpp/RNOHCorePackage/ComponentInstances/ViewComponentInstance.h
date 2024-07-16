@@ -1,15 +1,15 @@
 #pragma once
 #include <react/renderer/components/view/ViewShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/arkui/StackNode.h"
+#include "RNOH/arkui/CustomNode.h"
 
 namespace rnoh {
 class ViewComponentInstance
     : public CppComponentInstance<facebook::react::ViewShadowNode>,
-      public StackNodeDelegate {
+      public CustomNodeDelegate {
  private:
   facebook::react::Size m_contentSize;
-  StackNode m_stackNode;
+  CustomNode m_customNode;
   std::vector<bool> m_childrenClippedState;
 
   bool isViewClipped(
@@ -32,9 +32,9 @@ class ViewComponentInstance
 
   void onFinalizeUpdates() override;
 
-  void onClick() override;
-  void onHoverIn() override;
-  void onHoverOut() override;
-  StackNode& getLocalRootArkUINode() override;
+  void onClick(CustomNodeDelegate*) override;
+  void onHoverIn(CustomNodeDelegate*) override;
+  void onHoverOut(CustomNodeDelegate*) override;
+  CustomNode& getLocalRootArkUINode() override;
 };
 } // namespace rnoh
