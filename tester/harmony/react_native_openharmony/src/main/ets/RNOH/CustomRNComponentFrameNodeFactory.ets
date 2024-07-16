@@ -29,6 +29,8 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     const stopTracing = logger.startTracing()
     if (this.componentContext === undefined) {
       this.componentContext = this.getRNComponentContext();
+    }
+    if (this.componentContext === undefined) {
       logger.fatal("ComponentContext is undefined")
     }
     const builderCtx = new ComponentBuilderContextImpl(

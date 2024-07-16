@@ -12,6 +12,7 @@
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
 #include <stdexcept>
+#include "RNOH/Assert.h"
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
 
@@ -132,6 +133,13 @@ class ArkUINode {
  protected:
   void maybeThrow(int32_t status) {
     // TODO: map status to error message, maybe add a new error type
+    static const auto ARKUI_ERROR_CODE_NOT_SUPPORTED_FOR_ARKTS_NODE = 106103;
+    if (status == ARKUI_ERROR_CODE_NOT_SUPPORTED_FOR_ARKTS_NODE) {
+      // This is a quick fix for a problem that has arisen after updating the
+      // ROM and SDK.
+      LOG(WARNING) << "Couldn't set a property on ArkTS node";
+      return;
+    }
     if (status != 0) {
       auto message = std::string("ArkUINode operation failed with status: ") +
           std::to_string(status);
