@@ -41,6 +41,10 @@ class ComponentInstanceFactory {
         m_customComponentArkUINodeHandleFactory(
             customComponentArkUINodeHandleFactory) {}
 
+  ~ComponentInstanceFactory() {
+    m_threadGuard.assertThread();
+  }
+
   ComponentInstance::Shared createArkTSComponent(
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,

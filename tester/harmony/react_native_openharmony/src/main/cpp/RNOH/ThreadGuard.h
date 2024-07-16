@@ -17,9 +17,7 @@ class ThreadGuard final {
   }
 
   ThreadGuard() = default;
-  ~ThreadGuard() {
-    assertThread();
-  }
+  ~ThreadGuard() = default;
 
   // rule-of-five constructors and assignment operators
   ThreadGuard(ThreadGuard const&) = default;

@@ -4,7 +4,6 @@
 #include <queue>
 #include "ComponentInstanceFactory.h"
 #include "ComponentInstanceRegistry.h"
-#include "ThreadGuard.h"
 #include "react/renderer/core/ReactPrimitives.h"
 #include "react/renderer/core/ShadowNode.h"
 

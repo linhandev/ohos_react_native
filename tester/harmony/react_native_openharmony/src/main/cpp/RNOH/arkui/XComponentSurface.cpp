@@ -150,6 +150,7 @@ XComponentSurface& XComponentSurface::operator=(
 }
 
 XComponentSurface::~XComponentSurface() noexcept {
+  m_threadGuard.assertThread();
   if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
     LOG(WARNING) << "Tried to unregister a running surface with id "
                  << m_surfaceId;
