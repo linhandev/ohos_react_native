@@ -328,7 +328,9 @@ TextNode& TextNode::setFontVariant(const std::string& fontVariants) {
   return *this;
 }
 
-TextNode& TextNode::setTextContentWithStyledString(ArkUI_StyledString* styledString) {
+TextNode& TextNode::setTextContentWithStyledString(std::shared_ptr<TextMeasureInfo> info) {
+  m_measureInfo = info;
+  auto styledString = info->builder.getTextStyleString();
   ArkUI_AttributeItem item = {.object = styledString};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item));

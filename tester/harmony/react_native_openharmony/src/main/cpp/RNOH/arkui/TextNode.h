@@ -3,7 +3,7 @@
 #include <arkui/styled_string.h>
 #include "ArkUINode.h"
 #include "react/renderer/attributedstring/primitives.h"
-
+#include "RNOH/TextMeasureRegistry.h"
 namespace rnoh {
 
 class TextNodeDelegate {
@@ -32,6 +32,7 @@ class TextNode : public ArkUINode {
   float m_right = 0.0;
   float m_bottom = 0.0;
   float m_left = 0.0;
+  std::shared_ptr<TextMeasureInfo> m_measureInfo;
 
  public:
   TextNode();
@@ -80,7 +81,7 @@ class TextNode : public ArkUINode {
   TextNode& setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]);
   TextNode& setWritingDirection(int32_t direction);
   TextNode& setFontVariant(const std::string& fontVariants);
-  TextNode& setTextContentWithStyledString(ArkUI_StyledString* styledString);
+  TextNode& setTextContentWithStyledString(std::shared_ptr<TextMeasureInfo> info);
   TextNode& resetTextContentWithStyledString();
 };
 
