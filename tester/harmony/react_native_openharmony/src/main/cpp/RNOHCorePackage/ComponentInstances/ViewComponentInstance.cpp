@@ -36,19 +36,23 @@ void ViewComponentInstance::onChildRemoved(
 }
 
 void ViewComponentInstance::onHoverIn() {
-  m_eventEmitter->dispatchEvent(
-      "pointerEnter", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        return payload;
-      });
+  if(m_eventEmitter != nullptr){
+        m_eventEmitter->dispatchEvent(
+          "pointerEnter", [=](facebook::jsi::Runtime& runtime) {
+            auto payload = facebook::jsi::Object(runtime);
+            return payload;
+          });
+      }
 }
 
 void ViewComponentInstance::onHoverOut() {
-  m_eventEmitter->dispatchEvent(
-      "pointerLeave", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        return payload;
-      });
+    if(m_eventEmitter != nullptr){
+        m_eventEmitter->dispatchEvent(
+          "pointerLeave", [=](facebook::jsi::Runtime& runtime) {
+            auto payload = facebook::jsi::Object(runtime);
+            return payload;
+          });
+    }
 }
 
 void ViewComponentInstance::onClick() {
