@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ReactCommon/RuntimeExecutor.h>
-#include <react/renderer/core/EventBeat.h>
 #include <react/renderer/imagemanager/primitives.h>
 #include "RNInstance.h"
 #include "RNOH/ArkTSMessageHub.h"

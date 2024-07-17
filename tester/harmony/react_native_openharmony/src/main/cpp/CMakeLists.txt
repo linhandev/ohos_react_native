@@ -408,6 +408,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/VSyncListener.cpp"
     "${RNOH_CPP_DIR}/RNOH/TouchTarget.cpp"
     "${RNOH_CPP_DIR}/RNOH/TextMeasurer.cpp"
+    "${RNOH_CPP_DIR}/RNOH/AsynchronousEventBeat.cpp"
     "${RNOH_CPP_DIR}/RNOH/TaskExecutor/TaskExecutor.cpp"
     "${RNOH_CPP_DIR}/RNOH/TaskExecutor/NapiTaskRunner.cpp"
     "${RNOH_CPP_DIR}/RNOH/TaskExecutor/EventLoopTaskRunner.cpp"

@@ -8,7 +8,7 @@
 #include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "NativeLogger.h"
-#include "RNOH/EventBeat.h"
+#include "RNOH/AsynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/RNOHError.h"
@@ -118,8 +118,10 @@ void RNInstanceInternal::initializeScheduler(
   };
 
   react::EventBeat::Factory eventBeatFactory =
-      [runtimeExecutor = m_reactInstance->getRuntimeExecutor()](auto ownerBox) {
-        return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
+      [runtimeExecutor = m_reactInstance->getRuntimeExecutor(),
+       uiTicker = m_uiTicker](auto ownerBox) {
+        return std::make_unique<AsynchronousEventBeat>(
+            ownerBox, runtimeExecutor, uiTicker);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =
