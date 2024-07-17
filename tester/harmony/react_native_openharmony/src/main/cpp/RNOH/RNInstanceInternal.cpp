@@ -167,19 +167,10 @@ void RNInstanceInternal::callJSFunction(
     std::string module,
     std::string method,
     folly::dynamic params) {
-  m_taskExecutor->runTask(
-      TaskThread::JS,
-      [weakInstance = std::weak_ptr(m_reactInstance),
-       module = std::move(module),
-       method = std::move(method),
-       params = std::move(params)]() mutable {
-        if (auto instance = weakInstance.lock()) {
-          facebook::react::SystraceSection s(
-              "#RNOH::RNInstanceInternal::callJSFunction::lambda");
-          instance->callJSFunction(
-              std::move(module), std::move(method), std::move(params));
-        }
-      });
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceInternal::callJSFunction");
+  m_reactInstance->callJSFunction(
+      std::move(module), std::move(method), std::move(params));
 }
 void RNInstanceInternal::updateState(
     napi_env env,
