@@ -1,6 +1,6 @@
 #pragma once
-
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+#include <react/renderer/runtimescheduler/RuntimeScheduler.h>
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
@@ -160,5 +160,7 @@ class RNInstanceInternal
   ArkTSChannel::Shared m_arkTSChannel;
   ComponentInstancePreallocationRequestQueue::Shared
       m_componentInstancePreallocationRequestQueue;
+  std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
+      nullptr;
 };
 } // namespace rnoh

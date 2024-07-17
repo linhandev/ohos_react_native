@@ -1,5 +1,6 @@
 #include "RNInstanceCAPI.h"
 
+#include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
 #include "RNOH/Assert.h"
 
 using namespace facebook;
@@ -216,7 +217,8 @@ RNInstanceCAPI::createTurboModuleProvider() {
   DLOG(INFO) << "RNInstanceCAPI::createTurboModuleProvider";
   auto sharedInstance = shared_from_this();
   auto turboModuleProvider = std::make_shared<TurboModuleProvider>(
-      m_reactInstance->getJSCallInvoker(),
+      std::make_shared<facebook::react::RuntimeSchedulerCallInvoker>(
+          m_runtimeScheduler),
       std::move(m_turboModuleFactory),
       m_eventDispatcher,
       std::move(m_jsQueue),

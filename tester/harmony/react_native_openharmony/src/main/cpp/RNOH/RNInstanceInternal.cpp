@@ -5,6 +5,7 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+#include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "NativeLogger.h"
 #include "RNOH/EventBeat.h"
@@ -56,12 +57,22 @@ void RNInstanceInternal::postMessageToArkTS(
 void RNInstanceInternal::start() {
   DLOG(INFO) << "RNInstanceInternal::start";
   initialize();
+
+  m_runtimeScheduler = std::make_shared<react::RuntimeScheduler>(
+      m_reactInstance->getRuntimeExecutor(), std::chrono::steady_clock::now);
+
+  m_contextContainer->insert<std::weak_ptr<react::RuntimeScheduler>>(
+      "RuntimeScheduler", m_runtimeScheduler);
+
   m_turboModuleProvider = createTurboModuleProvider();
   initializeScheduler(m_turboModuleProvider);
   m_reactInstance->getRuntimeExecutor()(
-      [binders = m_globalJSIBinders,
+      [runtimeScheduler = m_runtimeScheduler,
+       binders = m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
+        react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
+            rt, runtimeScheduler);
         for (auto& binder : binders) {
           binder->createBindings(rt, turboModuleProvider);
         }
@@ -101,6 +112,11 @@ void RNInstanceInternal::initializeScheduler(
   auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
   m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
 
+  auto runtimeExecutor = [runtimeScheduler =
+                              m_runtimeScheduler](auto&& rawCallback) {
+    runtimeScheduler->scheduleWork(std::move(rawCallback));
+  };
+
   react::EventBeat::Factory eventBeatFactory =
       [runtimeExecutor = m_reactInstance->getRuntimeExecutor()](auto ownerBox) {
         return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
@@ -116,7 +132,7 @@ void RNInstanceInternal::initializeScheduler(
   react::SchedulerToolbox schedulerToolbox{
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
-      .runtimeExecutor = m_reactInstance->getRuntimeExecutor(),
+      .runtimeExecutor = runtimeExecutor,
       .asynchronousEventBeatFactory = eventBeatFactory,
       .synchronousEventBeatFactory = eventBeatFactory,
   };
@@ -134,7 +150,7 @@ void RNInstanceInternal::initializeScheduler(
   }
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
-      m_reactInstance->getRuntimeExecutor(), m_contextContainer, this);
+      runtimeExecutor, m_contextContainer, this);
   m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
       m_mountingManager,
       m_taskExecutor,
@@ -175,7 +191,8 @@ void RNInstanceInternal::updateState(
         env, componentName, state, newState);
   }
 }
-void RNInstanceInternal::onUITick(UITicker::Timestamp recentVSyncTimestamp) {
+void RNInstanceInternal::onUITick(
+    UITicker::Timestamp /*recentVSyncTimestamp*/) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
   if (m_shouldRelayUITick.load()) {
     m_scheduler->animationTick();
