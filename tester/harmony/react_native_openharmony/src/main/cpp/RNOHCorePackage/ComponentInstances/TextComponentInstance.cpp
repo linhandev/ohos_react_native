@@ -201,11 +201,11 @@ void TextComponentInstance::onStateChanged(
     m_key = std::to_string(m_rnInstanceId) + "_" + 
       std::to_string(fragments[0].parentShadowView.tag) + "_" + 
       std::to_string(fragments[0].parentShadowView.surfaceId);
-    ArkUI_StyledString* styledString = TextMeasureRegistry::getTextMeasureRegistry().getTextStyledString(m_key);
+    auto info = TextMeasureRegistry::getTextMeasureRegistry().getTextMeasureInfoByKey(m_key);
     m_textNode.resetTextContentWithStyledString();
-    if (styledString != nullptr) {
+    if (*info != nullptr) {
       VLOG(3) << "[text-debug] setTextContentWithStyledString";
-      m_textNode.setTextContentWithStyledString(styledString);
+      m_textNode.setTextContentWithStyledString(*info);
       std::string textContent;
       for (auto& fragment: fragments) {
         textContent += fragment.string;
