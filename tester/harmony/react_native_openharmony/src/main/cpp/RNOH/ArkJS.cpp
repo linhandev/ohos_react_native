@@ -115,20 +115,8 @@ std::vector<napi_value> ArkJS::createFromDynamics(
 }
 
 napi_value ArkJS::createFromDynamic(folly::dynamic dyn) {
-  if (dyn.isBool()) {
-    return this->createBoolean(dyn.asBool());
-  } else if (dyn.isInt()) {
-    return this->createDouble(dyn.asInt());
-  } else if (dyn.isDouble()) {
-    return this->createDouble(dyn.asDouble());
-  } else if (dyn.isString()) {
+  if (dyn.isString()) {
     return this->createString(dyn.asString());
-  } else if (dyn.isArray()) {
-    std::vector<napi_value> n_values(dyn.size());
-    for (size_t i = 0; i < dyn.size(); ++i) {
-      n_values[i] = this->createFromDynamic(dyn[i]);
-    }
-    return this->createArray(n_values);
   } else if (dyn.isObject()) {
     auto objectBuilder = this->createObjectBuilder();
     for (const auto& pair : dyn.items()) {
@@ -136,6 +124,18 @@ napi_value ArkJS::createFromDynamic(folly::dynamic dyn) {
           pair.first.asString().c_str(), this->createFromDynamic(pair.second));
     }
     return objectBuilder.build();
+  } else if (dyn.isDouble()) {
+    return this->createDouble(dyn.asDouble());
+  } else if (dyn.isBool()) {
+    return this->createBoolean(dyn.asBool());
+  } else if (dyn.isArray()) {
+    std::vector<napi_value> n_values(dyn.size());
+    for (size_t i = 0; i < dyn.size(); ++i) {
+      n_values[i] = this->createFromDynamic(dyn[i]);
+    }
+    return this->createArray(n_values);
+  } else if (dyn.isInt()) {
+    return this->createDouble(dyn.asInt());
   } else {
     return this->getUndefined();
   }
