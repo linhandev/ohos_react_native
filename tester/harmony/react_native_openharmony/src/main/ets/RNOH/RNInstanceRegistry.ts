@@ -10,11 +10,11 @@ import { HttpClient } from '../HttpClient/ts';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
+import { RNOHError } from "./RNOHError"
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
-  private unregisterMessageListener = () => {
-  }
+  private unregisterMessageListeners: (() => void)[] = []
 
   constructor(
     private envId: number,
@@ -28,6 +28,15 @@ export class RNInstanceRegistry {
     private displayMetricsManager: DisplayMetricsManager,
     private workerThread: WorkerThread | null,
   ) {
+    if (this.workerThread) {
+      this.unregisterMessageListeners.push(this.workerThread.subscribeToMessages((type, payload) => {
+        if (type === "RNOH_ERROR") {
+          const rnohError = new RNOHError({ whatHappened: payload.message, howCanItBeFixed: [], customStack: payload.stack});
+          this.devToolsController.setLastError(rnohError)
+          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+        }
+      }))
+    }
   }
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
@@ -46,7 +55,8 @@ export class RNInstanceRegistry {
       fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
       font.registerFont({ familyName: fontFamily, familySrc: fontResource })
     }
-    const instance = new RNInstanceImpl(
+
+    const rnInstance = new RNInstanceImpl(
       this.envId,
       id,
       this.logger,
@@ -55,7 +65,7 @@ export class RNInstanceRegistry {
       { concurrentRoot: options.disableConcurrentRoot !== undefined ? !options.disableConcurrentRoot : true },
       this.devToolsController,
       this.createRNOHContext,
-      this.workerThread !== null, /* shouldUseWorkerThread */
+      this.workerThread,
       options.enableDebugger ?? false,
       options.enableBackgroundExecutor ?? false,
       options.enableNDKTextMeasuring ?? false,
@@ -70,9 +80,10 @@ export class RNInstanceRegistry {
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,
     );
-    await instance.initialize(options.createRNPackages({}));
-    this.instanceMap.set(id, instance);
-    return instance;
+    await rnInstance.initialize(options.createRNPackages({}));
+
+    this.instanceMap.set(id, rnInstance);
+    return rnInstance;
   }
 
   private async waitForWorkerThread(rnInstanceId: number, rnInstanceName: string) {
@@ -90,7 +101,7 @@ export class RNInstanceRegistry {
     logger.info("waiting for worker readiness")
     await new Promise((resolve) => {
       const readinessProb = setInterval(() => postMessage("RNOH_WORKER_THREAD_READY"), 100);
-      this.unregisterMessageListener = this.workerThread.subscribeToMessages((type, payload) => {
+      this.unregisterMessageListeners.push(this.workerThread.subscribeToMessages((type, payload) => {
         logger.info(`receivedMessage: ${type}`)
         if (type === "RNOH_WORKER_THREAD_READY_ACK") {
           clearInterval(readinessProb);
@@ -98,7 +109,7 @@ export class RNInstanceRegistry {
         } else if (type === "RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK") {
           resolveWorkerTurboModuleProviderRegisteredPromise(undefined)
         }
-      })
+      }))
 
     })
 
@@ -130,6 +141,6 @@ export class RNInstanceRegistry {
   }
 
   onDestroy() {
-    this.unregisterMessageListener()
+    this.unregisterMessageListeners.forEach(unregister => unregister())
   }
 }
