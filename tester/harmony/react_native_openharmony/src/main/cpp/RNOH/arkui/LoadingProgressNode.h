@@ -3,7 +3,9 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class LoadingProgressNode : public ArkUINode {
  public:
   LoadingProgressNode();

@@ -6,7 +6,9 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class ImageNodeDelegate {
  public:
   virtual ~ImageNodeDelegate() = default;
@@ -15,6 +17,9 @@ class ImageNodeDelegate {
   virtual void onProgress(uint32_t loaded, uint32_t total) {};
 };
 
+/**
+ * @api
+ */
 class ImageNode : public ArkUINode {
  protected:
   ArkUI_NodeHandle m_childArkUINodeHandle;

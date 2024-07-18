@@ -3,7 +3,9 @@
 #include <arkui/native_node.h>
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class NativeNodeApi {
  public:
   static ArkUI_NativeNodeAPI_1* getInstance();

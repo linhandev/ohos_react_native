@@ -4,6 +4,9 @@
 #include "NativeNodeApi.h"
 
 namespace rnoh {
+/**
+ * @api
+ */
 class ScrollNodeDelegate {
  public:
   virtual ~ScrollNodeDelegate() = default;
@@ -16,6 +19,9 @@ class ScrollNodeDelegate {
   virtual void onAppear(){};
 };
 
+/**
+ * @api
+ */
 class ScrollNode : public ArkUINode {
  protected:
   using Point = facebook::react::Point;

@@ -7,7 +7,9 @@
 #include "react/renderer/graphics/Color.h"
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class TextAreaNodeDelegate {
  public:
   virtual ~TextAreaNodeDelegate() = default;
@@ -20,6 +22,9 @@ class TextAreaNodeDelegate {
   virtual void onContentSizeChange(float width, float height, bool multiline) {};
 };
 
+/**
+ * @api
+ */
 class TextAreaNode : public TextInputNodeBase {
  protected:
   TextAreaNodeDelegate* m_textAreaNodeDelegate;
