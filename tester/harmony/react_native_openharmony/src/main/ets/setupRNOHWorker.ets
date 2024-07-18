@@ -80,7 +80,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
 
 
   const postMessage = (type: string, payload: Object | undefined = undefined) => {
-    logger.info(`postMessage: ${type}`)
+    logger.debug(`postMessage: ${type}`)
     workerPort.postMessage({ type, payload })
   }
 
@@ -89,7 +89,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
       const messageType = e.data?.type as string
       const messagePayload = e.data?.payload as Object
       if (messageType && typeof messageType === "string") {
-        logger.info(`receivedMessage: ${messageType}`)
+        logger.debug(`receivedMessage: ${messageType}`)
         switch (messageType) {
           case "RNOH_WORKER_THREAD_READY":
             postMessage("RNOH_WORKER_THREAD_READY_ACK")

@@ -25,6 +25,7 @@ import { WorkerThread } from "./WorkerThread"
 export interface RNInstancesCoordinatorDependencies {
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
+
   /**
    * If the string is empty, worker thread will be disabled.
    */
@@ -57,11 +58,11 @@ const RNOH_BANNER = '\n\n\n' +
   '██╔══██╗██║╚██╗██║██║   ██║██╔══██║' + '\n' +
   '██║  ██║██║ ╚████║╚██████╔╝██║  ██║' + '\n' +
   '╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝' + '\n\n' +
-"█____ — MAIN" + "\n" +
-"_█___ — BACKGROUND" + "\n" +
-"__█__ — JS" + "\n" +
-"___█_ — WORKER" + "\n" +
-"____█ — CLEANUP" + "\n==================\n"
+  "█____ — MAIN" + "\n" +
+  "_█___ — BACKGROUND" + "\n" +
+  "__█__ — JS" + "\n" +
+  "___█_ — WORKER" + "\n" +
+  "____█ — CLEANUP" + "\n==================\n"
 
 type AppState = "FOREGROUND" | "BACKGROUND"
 
@@ -73,7 +74,7 @@ export class RNInstancesCoordinator {
   private static isInitialized = false
 
   static create(dependencies: RNInstancesCoordinatorDependencies,
-                options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
+    options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
     if (RNInstancesCoordinator.isInitialized) {
       dependencies.logger.fatal(new RNOHError({
         whatHappened: "RNInstancesCoordinator was already created",
@@ -85,18 +86,21 @@ export class RNInstancesCoordinator {
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
     const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
-    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, {
-      handleError: (rnohError) => {
-        devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-      }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
-    });
+    const envInfo =
+      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true,
+        {
+          handleError: (rnohError) => {
+            devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+          }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
+        });
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
       devToolsController,
       devMenu
     )
-    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
+    const jsPackagerClientConfig =
+      options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
     }
@@ -131,17 +135,17 @@ export class RNInstancesCoordinator {
   private envId: number;
 
   private constructor(napiBridge: NapiBridge,
-                      logger: RNOHLogger,
-                      displayMetricsManager: DisplayMetricsManager,
-                      isDebugModeEnabled: boolean,
-                      envId: number,
-                      uiAbilityContext: common.UIAbilityContext,
-                      devToolsController: DevToolsController,
-                      devMenu: DevMenu,
-                      jsPackagerClient: JSPackagerClient,
-                      defaultBackPressHandler: () => void,
-                      rnohWorkerScriptUrl: string,
-                      options?: RNInstancesCoordinatorOptions) {
+    logger: RNOHLogger,
+    displayMetricsManager: DisplayMetricsManager,
+    isDebugModeEnabled: boolean,
+    envId: number,
+    uiAbilityContext: common.UIAbilityContext,
+    devToolsController: DevToolsController,
+    devMenu: DevMenu,
+    jsPackagerClient: JSPackagerClient,
+    defaultBackPressHandler: () => void,
+    rnohWorkerScriptUrl: string,
+    options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
@@ -165,7 +169,15 @@ export class RNInstancesCoordinator {
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
-      rnohWorkerScriptUrl !== "" ? WorkerThread.create({ scriptUrl: rnohWorkerScriptUrl, name: "RNOHWorker"}) : null
+      rnohWorkerScriptUrl !== "" ? WorkerThread.create({
+        scriptUrl: rnohWorkerScriptUrl,
+        name: "RNOHWorker",
+        logger: logger,
+        onWorkerError: (rnohError) => {
+          this.devToolsController.setLastError(rnohError)
+          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+        }
+      }) : null
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,
