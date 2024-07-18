@@ -47,6 +47,8 @@ export class SamplePackage extends RNPackage {
   }
 
   createDescriptorWrapperFactoryByDescriptorType(ctx: DescriptorWrapperFactoryByDescriptorTypeCtx): DescriptorWrapperFactoryByDescriptorType {
-    return { [RNC.GeneratedSampleViewArkTS.NAME]: (ctx2) => new RNC.GeneratedSampleViewArkTS.DescriptorWrapper(ctx2.descriptor) }
+    const result: DescriptorWrapperFactoryByDescriptorType = {}
+    result[RNC.GeneratedSampleViewArkTS.NAME] = (ctx2) => new RNC.GeneratedSampleViewArkTS.DescriptorWrapper(ctx2.descriptor)
+    return result
   }
 }

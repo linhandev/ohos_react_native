@@ -10,7 +10,7 @@ import {
   SomeEnum3,
 } from 'react-native-sample-package/src/specs/v2/NativeGeneratedSampleTurboModule';
 import {Button, TestCase} from '../components';
-import {ScrollView} from 'react-native';
+import {ScrollView, Platform} from 'react-native';
 
 export function TurboModuleTest() {
   return (
@@ -96,6 +96,27 @@ export function TurboModuleTest() {
             />
           </ScrollView>
         </TestCase.Example>
+        <TestSuite name="runOnUIThread">
+          <TestCase.Logical
+            itShould="support running tasks on UI thread from worker"
+            fn={async ({expect}) => {
+              const result =
+                await SampleWorkerTurboModule.getRNVersionFromUIContext('RN ');
+              const rnVersion = Platform.constants.reactNativeVersion;
+              expect(result).to.be.eq(
+                `RN ${rnVersion.major}.${rnVersion.minor}.${rnVersion.patch}`,
+              );
+            }}
+          />
+          <TestCase.Example itShould="show alert">
+            <Button
+              label="Show Alert"
+              onPress={() => {
+                SampleWorkerTurboModule.showAlert();
+              }}
+            />
+          </TestCase.Example>
+        </TestSuite>
       </TestSuite>
     </TestSuite>
   );
