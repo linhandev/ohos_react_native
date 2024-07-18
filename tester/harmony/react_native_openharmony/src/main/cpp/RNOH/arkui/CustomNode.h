@@ -3,6 +3,9 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
+/**
+ * @api
+ */
 class CustomNodeDelegate {
  public:
   virtual ~CustomNodeDelegate() = default;
@@ -11,6 +14,9 @@ class CustomNodeDelegate {
   virtual void onHoverOut(CustomNodeDelegate*){};
 };
 
+/**
+ * @api
+ */
 class CustomNode : public ArkUINode {
  protected:
   CustomNodeDelegate* m_customNodeDelegate;

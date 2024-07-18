@@ -6,6 +6,9 @@
 
 namespace rnoh {
 
+/**
+ * @internal
+ */
 class TextInputNodeBase : public ArkUINode {
  protected:
   TextInputNodeBase(ArkUI_NodeType nodeType);

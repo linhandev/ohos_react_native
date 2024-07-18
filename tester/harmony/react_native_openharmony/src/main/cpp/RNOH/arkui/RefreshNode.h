@@ -2,13 +2,16 @@
 #include "ArkUINode.h"
 #include "NativeNodeApi.h"
 
+/**
+ * @api
+ */
+namespace rnoh {
 class RefreshNodeDelegate {
  public:
   virtual ~RefreshNodeDelegate() = default;
   virtual void onRefresh(){};
 };
 
-namespace rnoh {
 class RefreshNode : public ArkUINode {
  protected:
   RefreshNodeDelegate* m_refreshNodeDelegate;

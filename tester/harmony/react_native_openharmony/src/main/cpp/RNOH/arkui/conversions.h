@@ -8,6 +8,9 @@
 #include "react/renderer/components/view/primitives.h"
 
 namespace rnoh {
+/**
+ * @api
+ */
 inline ArkUI_BorderStyle convertReactBorderStyleToArk(
     facebook::react::BorderStyle rnBorder) {
   switch (rnBorder) {
@@ -23,6 +26,9 @@ inline ArkUI_BorderStyle convertReactBorderStyleToArk(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextAreaType convertTextAreaInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
@@ -39,6 +45,9 @@ inline ArkUI_TextAreaType convertTextAreaInputType(
   }
 }
 
+/**
+ * @api
+ */
 inline uint32_t convertColorToTranslucent(
     facebook::react::SharedColor const& color) {
   auto colorComponents = colorComponentsFromColor(color);
@@ -50,6 +59,9 @@ inline uint32_t convertColorToTranslucent(
   return colorValue;
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextInputType convertInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
@@ -67,6 +79,9 @@ inline ArkUI_TextInputType convertInputType(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_EnterKeyType convertEnterKeyType(
     facebook::react::ReturnKeyType returnKeyType) {
   switch (returnKeyType) {
@@ -85,6 +100,9 @@ inline ArkUI_EnterKeyType convertEnterKeyType(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextAlignment convertTextAlign(
     facebook::react::TextAlignment alignment) {
   switch (alignment) {
@@ -102,6 +120,9 @@ inline ArkUI_TextAlignment convertTextAlign(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_FontWeight convertFontWeight(
     facebook::react::FontWeight fontWeight) {
   auto fontWeightInt = static_cast<int32_t>(fontWeight);
@@ -132,6 +153,9 @@ inline ArkUI_FontWeight convertFontWeight(
   return ARKUI_FONT_WEIGHT_W900;
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextInputContentType convertContentType(
     std::string const& textContentType) {
   if (textContentType == "addressCity") {

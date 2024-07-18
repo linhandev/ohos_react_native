@@ -5,6 +5,9 @@
 
 namespace rnoh {
 
+/**
+ * @api
+ */
 class TextNode : public ArkUINode {
  private:
   enum {

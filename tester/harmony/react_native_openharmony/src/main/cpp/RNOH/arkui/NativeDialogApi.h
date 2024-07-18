@@ -3,7 +3,9 @@
 #include <arkui/native_interface.h>
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class NativeDialogApi {
  public:
   static ArkUI_NativeDialogAPI_1* getInstance();

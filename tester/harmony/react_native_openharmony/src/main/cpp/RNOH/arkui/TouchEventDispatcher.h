@@ -5,6 +5,9 @@
 #include "RNOH/TouchTarget.h"
 
 namespace rnoh {
+/**
+ * @internal
+ */
 struct TouchPoint {
   int32_t id;
   float force;
@@ -13,6 +16,10 @@ struct TouchPoint {
   int32_t screenX;
   int32_t screenY;
 };
+
+/**
+ * @api
+ */
 class TouchEventDispatcher {
  public:
   using TouchId = int;

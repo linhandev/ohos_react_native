@@ -3,6 +3,9 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
+/**
+ * @api
+ */
 class StackNodeDelegate {
  public:
   virtual ~StackNodeDelegate() = default;
@@ -11,6 +14,9 @@ class StackNodeDelegate {
   virtual void onHoverOut(){};
 };
 
+/**
+ * @api
+ */
 class StackNode : public ArkUINode {
  protected:
   StackNodeDelegate* m_stackNodeDelegate;
