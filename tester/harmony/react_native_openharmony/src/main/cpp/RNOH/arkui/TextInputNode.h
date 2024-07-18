@@ -5,7 +5,9 @@
 #include "react/renderer/graphics/Color.h"
 
 namespace rnoh {
-
+/**
+ * @api
+ */
 class TextInputNodeDelegate {
  public:
   virtual ~TextInputNodeDelegate() = default;
@@ -20,6 +22,9 @@ class TextInputNodeDelegate {
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
 };
 
+/**
+ * @api
+ */
 class TextInputNode : public TextInputNodeBase {
  private:
   uint32_t m_caretColorValue;

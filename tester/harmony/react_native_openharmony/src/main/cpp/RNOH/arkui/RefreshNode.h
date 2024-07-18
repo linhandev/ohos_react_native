@@ -2,6 +2,10 @@
 #include "ArkUINode.h"
 #include "NativeNodeApi.h"
 
+/**
+ * @api
+ */
+namespace rnoh {
 class RefreshNodeDelegate {
  public:
   virtual ~RefreshNodeDelegate() = default;
@@ -17,7 +21,6 @@ class RefreshNodeDelegate {
   virtual void onRefreshStateChanged(RefreshStatus state) {};
 };
 
-namespace rnoh {
 class RefreshNode : public ArkUINode {
  protected:
   RefreshNodeDelegate* m_refreshNodeDelegate;

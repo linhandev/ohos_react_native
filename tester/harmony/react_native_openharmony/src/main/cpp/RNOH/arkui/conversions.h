@@ -8,6 +8,9 @@
 #include "react/renderer/components/view/primitives.h"
 
 namespace rnoh {
+/**
+ * @api
+ */
 inline ArkUI_BorderStyle convertReactBorderStyleToArk(
     facebook::react::BorderStyle rnBorder) {
   switch (rnBorder) {
@@ -23,6 +26,9 @@ inline ArkUI_BorderStyle convertReactBorderStyleToArk(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextAreaType convertTextAreaInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
@@ -60,6 +66,9 @@ inline uint32_t convertColorToTranslucentSelection(
   return colorValue;
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextInputType convertInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
@@ -77,6 +86,9 @@ inline ArkUI_TextInputType convertInputType(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_EnterKeyType convertEnterKeyType(
     facebook::react::ReturnKeyType returnKeyType) {
   switch (returnKeyType) {
@@ -128,6 +140,9 @@ inline ArkUI_EnterKeyType convertTextAreaEnterKeyLabel(
   return convertEnterKeyLabel(returnKeyLabel);
 }
 
+/**
+ * @api
+ */
 inline ArkUI_TextAlignment convertTextAlign(
     facebook::react::TextAlignment alignment) {
   switch (alignment) {
@@ -145,6 +160,9 @@ inline ArkUI_TextAlignment convertTextAlign(
   }
 }
 
+/**
+ * @api
+ */
 inline ArkUI_FontWeight convertFontWeight(
     facebook::react::FontWeight fontWeight) {
   auto fontWeightInt = static_cast<int32_t>(fontWeight);

@@ -4,6 +4,9 @@
 
 namespace rnoh {
 
+/**
+ * @api
+ */
 class ArkUIDialogDelegate {
  public:
   virtual ~ArkUIDialogDelegate() = default;
@@ -11,6 +14,9 @@ class ArkUIDialogDelegate {
   virtual void onRequestClose(){};
 };
 
+/**
+ * @api
+ */
 class ArkUIDialogHandler {
  public:
   ArkUIDialogHandler();
