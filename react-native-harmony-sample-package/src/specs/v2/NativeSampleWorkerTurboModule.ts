@@ -6,6 +6,7 @@ export interface Spec extends TurboModule {
   runAsyncTask(): Promise<number>;
   getRNVersionFromUIContext(prefix: string): Promise<string>;
   showAlert(): void;
+  emitDeviceEvent(eventName: string, payload: number): void;
 }
 
 export default TurboModuleRegistry.get<Spec>('SampleWorkerTurboModule')!;

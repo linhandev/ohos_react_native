@@ -28,6 +28,14 @@ export class EtsWorkerTurboModuleContext implements WorkerTurboModuleContext {
     return this.workerTurboModuleContext.logger
   }
 
+  get uiAbilityContext() {
+    return this.workerTurboModuleContext.uiAbilityContext
+  }
+
+  get rnInstance() {
+    return this.workerTurboModuleContext.rnInstance
+  }
+
   async runOnUIThread<TParams extends SupportedUITaskParams, TResult extends lang.ISendable | void, TRunnable extends UITaskRunnable<TParams, TResult>>(runnable: TRunnable,
     params: TParams): Promise<TResult> {
     return this.uiTaskRunner.run(runnable, params) as Promise<TResult>
