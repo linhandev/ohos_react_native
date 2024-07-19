@@ -7,11 +7,13 @@ import {
   RNOHLogger,
   RNPackageContext,
   WorkerTurboModuleFactory,
-  RNOHError
+  RNOHError,
+  WorkerRNInstance
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/ts"
 import { EtsWorkerTurboModuleContext, } from "./RNOH/EtsWorkerTurboModule"
 import { UITaskRunner, UITask } from "./RNOH/UITaskRunner"
+import common from '@ohos.app.ability.common'
 
 
 /**
@@ -25,6 +27,7 @@ interface RNOHWorkerConfig {
 interface CreateRNInstanceWorkerEnvPayload {
   rnInstanceName: string,
   rnInstanceId: number
+  uiAbilityContext: common.UIAbilityContext
 }
 
 interface TurboModuleUITaskResultPayload {
@@ -98,6 +101,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             const typedMessagePayload = messagePayload as CreateRNInstanceWorkerEnvPayload
             const rnInstanceName = typedMessagePayload.rnInstanceName;
             const rnInstanceId = typedMessagePayload.rnInstanceId;
+            const uiAbilityContext = typedMessagePayload.uiAbilityContext
             if (uiTaskRunnerByRNInstanceId.has(rnInstanceId)) {
               throw new RNOHError({ whatHappened: `Tried to re-create UITaskRunner (rnInstanceId=${rnInstanceId})`, howCanItBeFixed: []})
             }
@@ -114,7 +118,9 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
               createPackages = config.thirdPartyPackagesFactoryByRNInstanceName[rnInstanceName]
             }
             const packages = createPackages({})
-            createTurboModuleProvider(uiTaskRunner, packages, logger).then((turboModuleProvider) => {
+            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge)
+            const etsWorkerTurboModuleContext = new EtsWorkerTurboModuleContext({ logger, uiAbilityContext, rnInstance }, uiTaskRunner)
+            createTurboModuleProvider(etsWorkerTurboModuleContext, packages, logger).then((turboModuleProvider) => {
               napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
               logger.info("registered WorkerTurboModuleProvider")
               postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")
@@ -144,7 +150,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
   }
 }
 
-async function createTurboModuleProvider(uiTaskRunner: UITaskRunner, thirdPartyPackages: RNPackage[],
+async function createTurboModuleProvider(etsWorkerTurboModuleContext: EtsWorkerTurboModuleContext, thirdPartyPackages: RNPackage[],
   logger: RNOHLogger) {
   const packages = [...thirdPartyPackages]
   packages.unshift(new RNOHCorePackage({}));
@@ -155,7 +161,6 @@ async function createTurboModuleProvider(uiTaskRunner: UITaskRunner, thirdPartyP
       loggerName += `: ${pkgDebugName}`
     }
     logger.clone(loggerName).debug("")
-    const etsWorkerTurboModuleContext = new EtsWorkerTurboModuleContext({ logger }, uiTaskRunner)
     const turboModuleFactory = pkg.createWorkerTurboModuleFactory(etsWorkerTurboModuleContext);
     if (turboModuleFactory != null) {
       await turboModuleFactory.prepareEagerTurboModules()
