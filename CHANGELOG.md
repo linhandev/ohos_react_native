@@ -2,6 +2,7 @@
 
 ## v0.72.33
 - [breaking] changed `setupRNOHWorker.ts` to `setupRNOHWorker.ets` — `setupRNOHWorker` can't be imported from TypeScript files anymore ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
+- [breaking] changed compatibleSdkVersion to 5.0.0(12) ([23a0506e75](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/23a0506e75a21b558eca408cb4b6a810e8c8dedc))
 - added Surface class and RNInstance::getSurfaceByRootTag ([4fa36118c7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4fa36118c789f9d793314b8b72a0c0126957ad25))
 - added (Worker)RNInstance and UIAbilityContext to WorkerTurboModuleContext ([6226da81fc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6226da81fc5ebca3fd96e6d2dd047261bbbbed44))
 - added `EtsWorkerTurboModule` and `EtsWorkerTurboModuleContext` — this context provides a function `runOnUIThread` which allows WorkerTurboModules to run tasks on UI thread and access `UITurboModuleContext` ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
@@ -15,9 +16,8 @@
 - fixed crash when an Instance with running Surfaces is destroyed ([45e360bd19](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/45e360bd198f3ed6397b2b642748b5338d2a1278))
 - fixed crashes when timers trigger during Instance destruction ([0babd5c77f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0babd5c77f9d3795bd21eabc6a3fbaa6f6bc26ed))
 - fixed text measurements for custom fonts ([4c22864ce8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4c22864ce8ba128be41374f68136cd5649ac8f9f))
-- changed compatibleSdkVersion to 5.0.0(12) ([23a0506e75](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/23a0506e75a21b558eca408cb4b6a810e8c8dedc))
 - optimized task scheduling on JS thread for better responsiveness ([1287256cd4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1287256cd42c2b7ef2d439ba6d4991bf1d539170))
-- optimized `onPropsChanged`/`onStateChanged`/`onLayoutChanged` by calling them when the `Props`/`State`/`LayoutMetrics` actually changed ([3718106ec6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3718106ec6fd1047dfbfbcc3f7e3581c8232f7c8))
+- optimized `onPropsChanged`/`onStateChanged`/`onLayoutChanged`/`onEventEmitterChanged` by calling them they actually changed ([3718106ec6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3718106ec6fd1047dfbfbcc3f7e3581c8232f7c8))
 - optimized first core components rendering by skipping setting default props ([1dac41647e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1dac41647ed42cc6b776be7bf954d0482a5c82a6))
 
 

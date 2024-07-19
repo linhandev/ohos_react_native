@@ -6,6 +6,7 @@ import { lang } from '@kit.ArkTS';
 import { RNOHLogger } from './RNOHLogger'
 import { WorkerTurboModuleContext, WorkerTurboModule } from "./TurboModule"
 import { SupportedUITaskParams, UITaskRunnable, UITaskRunner } from "./UITaskRunner"
+import type { WorkerRNInstance } from "./WorkerRNInstance"
 
 
 /**
@@ -32,7 +33,7 @@ export class EtsWorkerTurboModuleContext implements WorkerTurboModuleContext {
     return this.workerTurboModuleContext.uiAbilityContext
   }
 
-  get rnInstance() {
+  get rnInstance(): WorkerRNInstance {
     return this.workerTurboModuleContext.rnInstance
   }
 
