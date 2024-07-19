@@ -10,7 +10,7 @@ static constexpr auto infinity =
 auto rnoh::TouchTarget::computeChildPoint(
     Point const& point,
     TouchTarget::Shared const& child) const -> Point {
-  facebook::react::SystraceSection s("RNOH::MountingManagerCAPI::updateView");
+  facebook::react::SystraceSection s("RNOH::TouchTarget::computeChildPoint");
   auto childLayout = child->getLayoutMetrics();
   auto childTransform = child->getTransform();
 
