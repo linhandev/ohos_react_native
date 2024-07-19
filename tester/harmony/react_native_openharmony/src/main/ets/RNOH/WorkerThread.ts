@@ -57,7 +57,7 @@ export class WorkerThread {
 
   postMessage(type: string, payload: any = undefined) {
     this.logger.clone("postMessage").debug(type)
-    this.rawWorkerThread.postMessage({ type, payload })
+    this.rawWorkerThread.postMessageWithSharedSendable({ type, payload })
   }
 
   async waitForMessage(expectedMsgType: string) {

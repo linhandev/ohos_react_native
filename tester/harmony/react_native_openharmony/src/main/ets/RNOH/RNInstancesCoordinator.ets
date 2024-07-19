@@ -160,6 +160,7 @@ export class RNInstancesCoordinator {
     this.defaultBackPressHandler = defaultBackPressHandler;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     this.rnInstanceRegistry = new RNInstanceRegistry(
+      uiAbilityContext,
       this.envId,
       this.rawLogger,
       napiBridge,

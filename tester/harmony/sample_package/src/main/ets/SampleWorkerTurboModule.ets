@@ -63,4 +63,8 @@ export class SampleWorkerTurboModule extends EtsWorkerTurboModule implements TM.
   showAlert(): void {
     this.ctx.runOnUIThread(new ShowAlertRunnable(), undefined)
   }
+
+  emitDeviceEvent(eventName: string, payload: number): void {
+    this.ctx.rnInstance.emitDeviceEvent(eventName, payload)
+  }
 }

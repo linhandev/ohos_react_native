@@ -10,12 +10,14 @@ import { HttpClient } from '../HttpClient/ts';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
+import common from '@ohos.app.ability.common'
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
   private unregisterMessageListeners: (() => void)[] = []
 
   constructor(
+    private uiAbilityContext: common.UIAbilityContext,
     private envId: number,
     private logger: RNOHLogger,
     private napiBridge: NapiBridge,
@@ -65,7 +67,6 @@ export class RNInstanceRegistry {
       options.backPressHandler,
     );
     await rnInstance.initialize(options.createRNPackages({}));
-
     this.instanceMap.set(id, rnInstance);
     return rnInstance;
   }
@@ -75,7 +76,7 @@ export class RNInstanceRegistry {
     logger.info("waiting for worker's rnInstance environment")
     setTimeout(() => {
       workerThread.postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
-        rnInstanceId, rnInstanceName
+        rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
       })
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")

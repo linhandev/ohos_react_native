@@ -10,7 +10,7 @@ import {
   SomeEnum3,
 } from 'react-native-sample-package/src/specs/v2/NativeGeneratedSampleTurboModule';
 import {Button, TestCase} from '../components';
-import {ScrollView, Platform} from 'react-native';
+import {ScrollView, Platform, DeviceEventEmitter} from 'react-native';
 
 export function TurboModuleTest() {
   return (
@@ -96,6 +96,25 @@ export function TurboModuleTest() {
             />
           </ScrollView>
         </TestCase.Example>
+        <TestCase.Logical
+          itShould="emit device event"
+          fn={async ({expect}) => {
+            const result = await new Promise(resolve => {
+              const subscription = DeviceEventEmitter.addListener(
+                'WORKER_TURBO_MODULE_TEST',
+                p => {
+                  resolve(p);
+                  subscription.remove();
+                },
+              );
+              SampleWorkerTurboModule.emitDeviceEvent(
+                'WORKER_TURBO_MODULE_TEST',
+                42,
+              );
+            });
+            expect(result).to.be.eq(42);
+          }}
+        />
         <TestSuite name="runOnUIThread">
           <TestCase.Logical
             itShould="support running tasks on UI thread from worker"

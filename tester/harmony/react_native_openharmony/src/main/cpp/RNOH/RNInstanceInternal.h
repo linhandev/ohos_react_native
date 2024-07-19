@@ -100,6 +100,9 @@ class RNInstanceInternal
   virtual void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) = 0;
+  /**
+   * @threadSafe
+   */
   void callJSFunction(
       std::string module,
       std::string method,
