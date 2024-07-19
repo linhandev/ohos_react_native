@@ -8,9 +8,179 @@
 #include "conversions.h"
 
 namespace rnoh {
+ScrollViewInternalState::ScrollViewInternalState(
+    ScrollViewComponentInstance* instance)
+    : m_instance(instance) {}
+
+void IdleScrollViewInternalState::onScrollStart() {
+  m_instance->onChangeInternalState(
+      std::make_unique<SettlingScrollViewInternalState>(m_instance));
+};
+
+void IdleScrollViewInternalState::onDragStart() {
+  m_instance->onEmitOnScrollBeginDragEvent();
+  m_instance->onChangeInternalState(
+      std::make_unique<DraggingScrollViewInternalState>(m_instance));
+};
+
+void DraggingScrollViewInternalState::onDragStop() {
+  m_instance->onEmitOnScrollEndDragEvent();
+  m_instance->onChangeInternalState(
+      std::make_unique<SettlingScrollViewInternalState>(m_instance));
+};
+
+void DraggingScrollViewInternalState::onScroll() {
+  m_instance->onEmitOnScrollEvent();
+};
+
+void DraggingScrollViewInternalState::onScrollStop() {
+  m_instance->onEmitOnScrollEndDragEvent();
+  m_instance->onChangeInternalState(
+      std::make_unique<IdleScrollViewInternalState>(m_instance));
+};
+
+void SettlingScrollViewInternalState::onDragStart() {
+  m_instance->onEmitOnScrollBeginDragEvent();
+  m_instance->onChangeInternalState(
+      std::make_unique<DraggingScrollViewInternalState>(m_instance));
+};
+
+void SettlingScrollViewInternalState::onDragStop() {
+  // noop — This method can be triggered by a hack responsible for detecting
+  // onDragStop.
+  return;
+};
+
+void SettlingScrollViewInternalState::onScroll() {
+  if (!m_hasOnScrollBeenCalled) {
+    m_instance->onEmitMomentumScrollBegin();
+    m_hasOnScrollBeenCalled = true;
+  }
+  m_instance->onEmitOnScrollEvent();
+};
+
+void SettlingScrollViewInternalState::onScrollStop() {
+  m_instance->onEmitOnMomentumScrollEndEvent();
+  m_instance->onChangeInternalState(
+      std::make_unique<IdleScrollViewInternalState>(m_instance));
+};
+
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// ScrollViewInternalStateDelegate
+
+void ScrollViewComponentInstance::onChangeInternalState(
+    std::unique_ptr<ScrollViewInternalState> internalState) {
+  LOG(INFO) << "ScrollViewComponentInstance(" << m_tag
+            << ")::onChangeInternalState (" << m_internalState->getDebugName()
+            << " => " << internalState->getDebugName() << ")";
+  m_internalState = std::move(internalState);
+}
+
+void ScrollViewComponentInstance::onEmitMomentumScrollBegin() {
+  m_eventEmitter->onMomentumScrollBegin(this->getScrollViewMetrics());
+}
+
+void ScrollViewComponentInstance::onEmitOnMomentumScrollEndEvent() {
+  auto scrollViewMetrics = getScrollViewMetrics();
+  m_eventEmitter->onMomentumScrollEnd(scrollViewMetrics);
+  updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+}
+
+void ScrollViewComponentInstance::onEmitOnScrollBeginDragEvent() {
+  m_eventEmitter->onScrollBeginDrag(this->getScrollViewMetrics());
+}
+
+void ScrollViewComponentInstance::onEmitOnScrollEvent() {
+  auto scrollViewMetrics = getScrollViewMetrics();
+  if (!isContentSmallerThanContainer() && m_allowScrollPropagation &&
+      !isAtEnd(scrollViewMetrics.contentOffset)) {
+    m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
+    m_allowScrollPropagation = false;
+  }
+  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+                 std::chrono::steady_clock::now().time_since_epoch())
+                 .count();
+  m_movedBySignificantOffset =
+      scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset);
+  if (m_allowNextScrollEvent || (m_scrollEventThrottle == 0 ||
+      (m_scrollEventThrottle < now - m_lastScrollDispatchTime &&
+       m_movedBySignificantOffset))) {
+    m_lastScrollDispatchTime = now;
+    VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
+            << ", " << scrollViewMetrics.contentOffset.y
+            << "; contentSize: " << scrollViewMetrics.contentSize.width << ", "
+            << scrollViewMetrics.contentSize.height
+            << "; containerSize: " << scrollViewMetrics.containerSize.width
+            << ", " << scrollViewMetrics.containerSize.height << ")";
+    if (m_childComponent != nullptr) {
+      m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
+    }
+    m_eventEmitter->onScroll(scrollViewMetrics);
+    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+    sendEventForNativeAnimations(scrollViewMetrics);
+    m_currentOffset = scrollViewMetrics.contentOffset;
+  };
+}
+
+void ScrollViewComponentInstance::onEmitOnScrollEndDragEvent() {
+  if (m_disableIntervalMomentum) {
+    disableIntervalMomentum();
+  }
+  auto scrollViewMetrics = getScrollViewMetrics();
+  m_eventEmitter->onScrollEndDrag(scrollViewMetrics);
+  updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+}
+
+// ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//  ScrollNodeDelegate
+
+void ScrollViewComponentInstance::onScrollStart() {
+  m_internalState->onScrollStart();
+  m_allowNextScrollEvent = false;
+}
+
+void ScrollViewComponentInstance::onScroll() {
+  if (m_onScrollCallsAfterFrameBeginCallCounter == 1) {
+    m_internalState->onDragStop();
+  }
+  m_internalState->onScroll();
+  m_onScrollCallsAfterFrameBeginCallCounter++;
+}
+
+float ScrollViewComponentInstance::onScrollFrameBegin(
+    float offset,
+    int32_t scrollNodeState) {
+  m_onScrollCallsAfterFrameBeginCallCounter = 0;
+  m_recentScrollFrameOffset = offset;
+  auto newScrollNodeState = static_cast<ScrollNodeState>(scrollNodeState);
+  if (m_internalState->asScrollNodeState() != newScrollNodeState) {
+    if (newScrollNodeState == ScrollNodeState::DRAGGING) {
+      m_internalState->onDragStart();
+    } else if (
+        m_internalState->asScrollNodeState() == ScrollNodeState::DRAGGING) {
+      m_internalState->onDragStop();
+    }
+  }
+  return offset;
+}
+
+void ScrollViewComponentInstance::onScrollStop() {
+  m_internalState->onScrollStop();
+  m_allowNextScrollEvent = true;
+
+  if (!isContentSmallerThanContainer() && !m_allowScrollPropagation &&
+      isAtEnd(m_currentOffset)) {
+    m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
+    m_allowScrollPropagation = true;
+  }
+}
+
+// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// CppComponentInstance overrides
 
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
+  m_internalState = std::make_unique<IdleScrollViewInternalState>(this);
   getLocalRootArkUINode().insertChild(m_scrollNode, 0);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?
@@ -272,93 +442,7 @@ ScrollViewComponentInstance::getScrollViewMetrics() {
 }
 
 bool ScrollViewComponentInstance::isHandlingTouches() const {
-  return m_scrollState != IDLE;
-}
-
-void ScrollViewComponentInstance::onScroll() {
-  auto scrollViewMetrics = getScrollViewMetrics();
-  if (!isContentSmallerThanContainer() && m_allowScrollPropagation &&
-      !isAtEnd(scrollViewMetrics.contentOffset)) {
-    m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
-    m_allowScrollPropagation = false;
-  }
-  auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
-                 std::chrono::steady_clock::now().time_since_epoch())
-                 .count();
-  if (m_allowNextScrollEvent || ((m_scrollEventThrottle == 0 ||
-      m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
-       scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset))) {
-    m_lastScrollDispatchTime = now;
-    VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
-            << ", " << scrollViewMetrics.contentOffset.y
-            << "; contentSize: " << scrollViewMetrics.contentSize.width << ", "
-            << scrollViewMetrics.contentSize.height
-            << "; containerSize: " << scrollViewMetrics.containerSize.width
-            << ", " << scrollViewMetrics.containerSize.height << ")";
-    if (m_childComponent != nullptr) {
-      m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-    }
-    m_eventEmitter->onScroll(scrollViewMetrics);
-    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-    sendEventForNativeAnimations(scrollViewMetrics);
-    m_currentOffset = scrollViewMetrics.contentOffset;
-  }
-}
-
-void ScrollViewComponentInstance::onScrollStart() {
-  m_allowNextScrollEvent = false;
-}
-
-void ScrollViewComponentInstance::onScrollStop() {
-  m_allowNextScrollEvent = true;
-
-  if (m_scrollState == ScrollState::FLING) {
-    emitOnMomentumScrollEndEvent();
-  } else if (m_scrollState == ScrollState::SCROLL) {
-    emitOnScrollEndDragEvent();
-  }
-  m_scrollState = ScrollState::IDLE;
-  if (!isContentSmallerThanContainer() && !m_allowScrollPropagation &&
-      isAtEnd(m_currentOffset)) {
-    m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
-    m_allowScrollPropagation = true;
-  }
-}
-
-float ScrollViewComponentInstance::onScrollFrameBegin(
-    float offset,
-    int32_t scrollState) {
-  m_recentScrollFrameOffset = offset;
-  auto newScrollState = static_cast<ScrollState>(scrollState);
-  if (m_scrollState != newScrollState) {
-    if (m_scrollState == ScrollState::SCROLL) {
-      emitOnScrollEndDragEvent();
-    } else if (m_scrollState == ScrollState::FLING) {
-      emitOnMomentumScrollEndEvent();
-    }
-    auto scrollViewMetrics = getScrollViewMetrics();
-    if (scrollState == ScrollState::SCROLL) {
-      m_eventEmitter->onScrollBeginDrag(scrollViewMetrics);
-    } else if (scrollState == ScrollState::FLING) {
-      m_eventEmitter->onMomentumScrollBegin(scrollViewMetrics);
-    }
-  }
-  m_scrollState = newScrollState;
-  return offset;
-}
-
-void ScrollViewComponentInstance::emitOnScrollEndDragEvent() {
-  if (m_disableIntervalMomentum) {
-    disableIntervalMomentum();
-  }
-  auto scrollViewMetrics = getScrollViewMetrics();
-  m_eventEmitter->onScrollEndDrag(scrollViewMetrics);
-  updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-}
-void ScrollViewComponentInstance::emitOnMomentumScrollEndEvent() {
-  auto scrollViewMetrics = getScrollViewMetrics();
-  m_eventEmitter->onMomentumScrollEnd(scrollViewMetrics);
-  updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+  return m_internalState->asScrollNodeState() != ScrollNodeState::IDLE;
 }
 
 facebook::react::Float
