@@ -1,6 +1,7 @@
 #include "RNInstanceCAPI.h"
 
 #include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
+#include "RNInstance.h"
 #include "RNOH/Assert.h"
 
 using namespace facebook;
@@ -81,7 +82,7 @@ void RNInstanceCAPI::registerNativeXComponentHandle(
           LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
           return;
         }
-        it->second.attachNativeXComponent(nativeXComponent);
+        it->second->attachNativeXComponent(nativeXComponent);
       });
 }
 
@@ -91,7 +92,7 @@ void RNInstanceCAPI::createSurface(
   DLOG(INFO) << "RNInstanceCAPI::createSurface";
   m_surfaceById.emplace(
       surfaceId,
-      XComponentSurface(
+      std::make_shared<XComponentSurface>(
           m_scheduler,
           m_componentInstanceRegistry,
           m_componentInstanceFactory,
@@ -116,7 +117,7 @@ void RNInstanceCAPI::updateSurfaceConstraints(
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second.updateConstraints(
+  it->second->updateConstraints(
       width, height, viewportOffsetX, viewportOffsetY, pixelRatio, isRTL);
 }
 
@@ -134,7 +135,7 @@ void RNInstanceCAPI::startSurface(
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second.start(
+  it->second->start(
       width,
       height,
       viewportOffsetX,
@@ -154,7 +155,7 @@ void RNInstanceCAPI::setSurfaceProps(
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second.setProps(std::move(props));
+  it->second->setProps(std::move(props));
 }
 
 void RNInstanceCAPI::stopSurface(facebook::react::Tag surfaceId) {
@@ -163,7 +164,7 @@ void RNInstanceCAPI::stopSurface(facebook::react::Tag surfaceId) {
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second.stop();
+  it->second->stop();
 }
 
 void RNInstanceCAPI::destroySurface(facebook::react::Tag surfaceId) {
@@ -185,7 +186,7 @@ void RNInstanceCAPI::setSurfaceDisplayMode(
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second.setDisplayMode(displayMode);
+  it->second->setDisplayMode(displayMode);
 }
 
 ComponentInstance::Shared RNInstanceCAPI::findComponentInstanceByTag(
@@ -226,4 +227,13 @@ RNInstanceCAPI::createTurboModuleProvider() {
   turboModuleProvider->installJSBindings(m_reactInstance->getRuntimeExecutor());
   return turboModuleProvider;
 }
+
+std::optional<Surface::Weak> RNInstanceCAPI::getSurfaceByRootTag(
+    facebook::react::Tag rootTag) {
+  auto it = m_surfaceById.find(rootTag);
+  if (it == m_surfaceById.end()) {
+    return std::nullopt;
+  }
+  return it->second;
+};
 } // namespace rnoh

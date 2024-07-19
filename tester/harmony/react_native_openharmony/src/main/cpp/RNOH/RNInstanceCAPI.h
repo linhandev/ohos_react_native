@@ -2,13 +2,12 @@
 
 #include <ace/xcomponent/native_interface_xcomponent.h>
 
-#include "RNOH/RNInstanceInternal.h"
-
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/ComponentInstanceRegistry.h"
+#include "RNOH/RNInstanceInternal.h"
 #include "RNOH/arkui/XComponentSurface.h"
 
 namespace rnoh {
@@ -114,10 +113,13 @@ class RNInstanceCAPI : public RNInstanceInternal {
 
   NativeResourceManager const* getNativeResourceManager() const override;
 
+  std::optional<Surface::Weak> getSurfaceByRootTag(
+      facebook::react::Tag rootTag) override;
+
  protected:
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() override;
 
-  std::unordered_map<facebook::react::SurfaceId, XComponentSurface>
+  std::unordered_map<facebook::react::SurfaceId, XComponentSurface::Shared>
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;

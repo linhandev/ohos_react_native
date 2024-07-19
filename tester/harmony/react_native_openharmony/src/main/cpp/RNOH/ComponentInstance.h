@@ -232,13 +232,37 @@ class ComponentInstance
    */
   virtual void onNativeResponderBlockChange(bool isBlocked) {}
 
-  Tag m_tag;
+  /**
+   * @internal
+   */
   bool m_isRadiusSetValid = 0;
+  /**
+   * @api
+   */
+  Tag m_tag;
+  /**
+   * @api
+   */
   ComponentHandle m_componentHandle;
+  /**
+   * @api
+   */
   std::vector<ComponentInstance::Shared> m_children;
+  /**
+   * @api
+   */
   ComponentInstance::Weak m_parent;
+  /**
+   * @api
+   */
   facebook::react::LayoutMetrics m_layoutMetrics;
+  /**
+   * @api
+   */
   Dependencies::Shared m_deps;
+  /**
+   * @internal
+   */
   std::unordered_set<std::string> m_ignoredPropKeys;
 };
 

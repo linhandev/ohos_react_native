@@ -230,4 +230,8 @@ void XComponentSurface::setDisplayMode(
   m_surfaceHandler.setDisplayMode(displayMode);
 }
 
+Surface::LayoutContext XComponentSurface::getLayoutContext() {
+  m_threadGuard.assertThread();
+  return Surface::LayoutContext::from(m_surfaceHandler.getLayoutContext());
+}
 } // namespace rnoh

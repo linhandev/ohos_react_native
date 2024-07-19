@@ -14,6 +14,7 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/scheduler/Scheduler.h>
 
+#include "Assert.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/GlobalJSIBinder.h"
@@ -29,6 +30,35 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
+/**
+ * @api
+ * @thread: MAIN
+ */
+class Surface {
+ public:
+  /**
+   * @api
+   */
+  struct LayoutContext {
+    /**
+     * @internal
+     */
+    static LayoutContext from(facebook::react::LayoutContext layoutContext) {
+      return {.viewportOffset = layoutContext.viewportOffset};
+    }
+
+    facebook::react::Point viewportOffset{};
+  };
+
+  using Weak = std::weak_ptr<Surface>;
+
+  virtual LayoutContext getLayoutContext() = 0;
+};
+
+/**
+ * @api
+ * @thread: MAIN
+ */
 class RNInstance {
   using ContextContainer = facebook::react::ContextContainer;
 
@@ -55,6 +85,11 @@ class RNInstance {
       std::string module,
       std::string method,
       folly::dynamic params) = 0;
+  virtual std::optional<Surface::Weak> getSurfaceByRootTag(
+      facebook::react::Tag rootTag) {
+    RNOH_ASSERT_MSG(false, "Not implemented");
+    return std::nullopt;
+  };
 };
 
 } // namespace rnoh
