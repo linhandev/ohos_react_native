@@ -24,7 +24,7 @@ export async function fetchDataFromUrl(url: string, options: FetchOptions = { us
     }
 
     function maybeResolve() {
-      if (result !== undefined && headers !== undefined) {
+      if (result !== undefined && headers !== undefined && responseCode !== undefined) {
         resolve({ headers, result, responseCode });
         cleanUp();
       }
@@ -68,6 +68,8 @@ export async function fetchDataFromUrl(url: string, options: FetchOptions = { us
           if (err) {
             reject(new Error(`Couldn't fetch data from ${url}, ${err.message}`));
             cleanUp();
+          } else {
+            maybeResolve();
           }
         }
       );
