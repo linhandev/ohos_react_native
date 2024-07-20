@@ -136,7 +136,7 @@ export class NetworkingTurboModule extends TurboModule {
     throw new Error("Unsupported query response type");
   }
 
-  private encodeBody(data: Object): string | ArrayBuffer | Object {
+  private encodeBody(data: Object): string | ArrayBuffer | Object | undefined {
     if ('trackingName' in data) {
       delete data.trackingName;
     }
@@ -148,6 +148,9 @@ export class NetworkingTurboModule extends TurboModule {
       const textEncoder = new util.TextEncoder();
       const byteArray = textEncoder.encodeInto(base64);
       return byteArray.buffer;
+    }
+    if (!Object.keys(data).length) {
+      return undefined;
     }
     return data;
   }
