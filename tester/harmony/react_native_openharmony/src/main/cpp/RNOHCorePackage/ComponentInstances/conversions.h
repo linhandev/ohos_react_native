@@ -75,4 +75,23 @@ inline facebook::react::RectangleEdges<facebook::react::Float> resolveEdges(
   return {leftEdge, topEdge, rightEdge, bottomEdge};
 }
 
+inline facebook::react::Point getEndPoint(const facebook::react::Rect& rect) {
+  return facebook::react::Point{
+      rect.origin.x + rect.size.width, rect.origin.y + rect.size.height};
+}
+
+inline bool rectIntersects(
+    const facebook::react::Rect& rect1,
+    const facebook::react::Rect& rect2) {
+  return !(
+      ((rect2.origin.x < rect1.origin.x &&
+        getEndPoint(rect2).x < rect1.origin.x) ||
+       (rect2.origin.x > getEndPoint(rect1).x &&
+        getEndPoint(rect2).x > getEndPoint(rect1).x)) ||
+      ((rect2.origin.y < rect1.origin.y &&
+        getEndPoint(rect2).y < rect1.origin.y) ||
+       (rect2.origin.y > getEndPoint(rect1).y &&
+        getEndPoint(rect2).y > getEndPoint(rect1).y)));
+}
+
 } // namespace rnoh

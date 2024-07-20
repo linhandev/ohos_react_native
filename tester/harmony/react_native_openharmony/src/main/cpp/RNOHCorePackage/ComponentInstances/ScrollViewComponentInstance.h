@@ -120,7 +120,6 @@ class ScrollViewComponentInstance
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
   StackNode m_scrollContainerNode;
-  std::shared_ptr<ComponentInstance> m_childComponent; 
   bool m_horizontal = false;
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
