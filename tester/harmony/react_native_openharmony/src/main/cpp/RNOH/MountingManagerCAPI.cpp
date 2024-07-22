@@ -198,6 +198,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
                 mutation.newChildShadowView.componentName);
         if (newChildComponentInstance != nullptr) {
           m_componentInstanceRegistry->insert(newChildComponentInstance);
+          newChildComponentInstance->setLayout(mutation.newChildShadowView.layoutMetrics);
         } else {
           LOG(FATAL) << "Couldn't create ArkTSComponentInstance for: "
                      << mutation.newChildShadowView.componentName;
@@ -311,7 +312,9 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
         break;
     }
     if (isArkTSMutation) {
-      arkTSMutations.push_back(mutation);
+      auto copyMutation = mutation;       
+      copyMutation.newChildShadowView.layoutMetrics.frame.origin = {0, 0};
+      arkTSMutations.push_back(copyMutation);
     }
   }
   return arkTSMutations;
