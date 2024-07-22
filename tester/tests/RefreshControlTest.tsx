@@ -185,6 +185,11 @@ export const RefreshControlTest = () => {
           }
         />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="Render RefreshControl on top of the scrollview">
+        <RefreshControlZIndex />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -597,6 +602,40 @@ function RefreshControlInsideFlatListWithStylesExample() {
     </View>
   );
 }
+
+const RefreshControlZIndex = () => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  return (
+    <View style={{height: 300}}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={50}
+          />
+        }>
+        <View style={{height: 100, width: 100, backgroundColor: 'lightblue'}}>
+          <Text>First Content Component</Text>
+        </View>
+        <View style={{height: 100, width: 100, backgroundColor: 'lightgreen'}}>
+          <Text>Second Content Component</Text>
+        </View>
+        <View style={{height: 100, width: 100, backgroundColor: 'lightblue'}}>
+          <Text>Third Content Component</Text>
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -516,6 +516,13 @@ ArkUINode& ArkUINode::setVisibility(ArkUI_Visibility visibility) {
   return *this;
 }
 
+ArkUINode& ArkUINode::setZIndex(float index) {
+  std::array<ArkUI_NumberValue, 1> values = {{{.f32 = index}}};
+  ArkUI_AttributeItem item = {values.data(), values.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_Z_INDEX, &item));
+  return *this;
+}
 ArkUI_IntOffset ArkUINode::getLayoutPosition() {
   return NativeNodeApi::getInstance()->getLayoutPosition(m_nodeHandle);
 }

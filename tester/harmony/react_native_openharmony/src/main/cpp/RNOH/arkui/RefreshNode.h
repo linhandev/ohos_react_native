@@ -10,6 +10,15 @@ class RefreshNodeDelegate {
  public:
   virtual ~RefreshNodeDelegate() = default;
   virtual void onRefresh(){};
+
+  enum class RefreshStatus {
+    REFRESH_STATUS_INACTIVE = 0,
+    REFRESH_STATUS_DRAG = 1,
+    REFRESH_STATUS_OVERDRAG = 2,
+    REFRESH_STATUS_REFRESH = 3,
+    REFRESH_STATUS_DONE = 4,
+  };
+  virtual void onRefreshStateChanged(RefreshStatus state){};
 };
 
 class RefreshNode : public ArkUINode {

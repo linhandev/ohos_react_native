@@ -6,6 +6,9 @@ using namespace rnoh;
 PullToRefreshViewComponentInstance::PullToRefreshViewComponentInstance(
     Context context)
     : CppComponentInstance(std::move(context)) {
+  m_refreshIndicatorContainerNode.setZIndex(1.0);
+  m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_HIDDEN);
+
   m_refreshIndicatorContainerNode.insertChild(
       m_refreshIndicatorBackgroundNode, 0);
   m_refreshIndicatorBackgroundNode.insertChild(
@@ -102,7 +105,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
     }
   }
 
-  m_refreshIndicatorSpinnerNode.setOffset(0, -props->progressViewOffset);
+  m_refreshIndicatorContainerNode.setOffset(0, props->progressViewOffset);
   m_refreshNode.setNativeRefreshing(props->refreshing);
 
   if (facebook::react::isColorMeaningful(props->tintColor)) {
@@ -123,6 +126,22 @@ void PullToRefreshViewComponentInstance::onRefresh() {
   m_eventEmitter->onRefresh({});
 }
 
+void PullToRefreshViewComponentInstance::onRefreshStateChanged(
+    RefreshStatus state) {
+  switch (state) {
+    case RefreshStatus::REFRESH_STATUS_DRAG:
+      m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
+      break;
+
+    case RefreshStatus::REFRESH_STATUS_INACTIVE:
+    case RefreshStatus::REFRESH_STATUS_DONE:
+      m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_HIDDEN);
+      break;
+
+    default:
+      break;
+  }
+}
 facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
     const {
   if (!this->getChildren().empty() && this->getChildren()[0] != nullptr) {
