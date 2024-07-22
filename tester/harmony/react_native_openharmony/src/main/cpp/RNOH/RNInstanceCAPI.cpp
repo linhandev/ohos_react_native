@@ -34,6 +34,7 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
         componentInstanceRegistry = std::move(m_componentInstanceRegistry),
+        componentInstanceFactory = std::move(m_componentInstanceFactory),
        // NOTE: `XComponentSurface` is not copyable, but `std::function` is, so
        // we need to move the map into a shared_ptr first in order to capture it
        surfaces = std::make_shared<decltype(m_surfaceById)>(
