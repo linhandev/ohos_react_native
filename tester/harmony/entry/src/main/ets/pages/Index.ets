@@ -73,7 +73,6 @@ struct Index {
         RNApp({
           rnInstanceConfig: {
             createRNPackages,
-            enableNDKTextMeasuring: true,
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
             enablePartialSyncOfDescriptorRegistryInCAPI: true,

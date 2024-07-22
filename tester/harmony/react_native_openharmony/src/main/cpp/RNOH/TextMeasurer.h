@@ -12,15 +12,9 @@ namespace rnoh {
 class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
  public:
   TextMeasurer(
-      napi_env env,
-      napi_ref measureTextFnRef,
-      TaskExecutor::Shared taskExecutor,
       FeatureFlagRegistry::Shared featureFlagManager,
       FontRegistry::Shared fontRegistry)
-      : m_env(env),
-        m_measureTextFnRef(measureTextFnRef),
-        m_taskExecutor(taskExecutor),
-        m_featureFlagRegistry(featureFlagManager),
+      : m_featureFlagRegistry(featureFlagManager),
         m_fontRegistry(std::move(fontRegistry)) {}
 
   ~TextMeasurer() {
@@ -38,9 +32,6 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::LayoutConstraints const& layoutConstraints);
 
  private:
-  napi_env m_env;
-  napi_ref m_measureTextFnRef;
-  TaskExecutor::Shared m_taskExecutor;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   FontRegistry::Shared m_fontRegistry;
   int32_t getOHDrawingTextAlign(

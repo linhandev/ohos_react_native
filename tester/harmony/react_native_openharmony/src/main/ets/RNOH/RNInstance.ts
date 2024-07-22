@@ -87,7 +87,7 @@ const rootDescriptor = {
 
 const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
-type FeatureFlagName = "ENABLE_RN_INSTANCE_CLEAN_UP" | "NDK_TEXT_MEASUREMENTS" | "IMAGE_LOADER" | "C_API_ARCH"
+type FeatureFlagName = "ENABLE_RN_INSTANCE_CLEAN_UP" | "IMAGE_LOADER" | "C_API_ARCH"
 
 /**
  * Coordinates information flow by passing information to other objects to facilitate their operations.
@@ -295,12 +295,6 @@ export type RNInstanceOptions = {
   enableBackgroundExecutor?: boolean,
   /**
    * @architecture: ArkTS
-   * Enables text measurement using NDK (C++) interface.
-   * The NDK approach is faster and relatively stable, and will become the default in future versions.
-   */
-  enableNDKTextMeasuring?: boolean,
-  /**
-   * @architecture: ArkTS
    * Manages image loading and caching. When enabled, RNOH takes responsibility; when disabled, it delegates to ArkUI's Image component.
    * Each approach presents issues under different scenarios.
    */
@@ -394,7 +388,6 @@ export class RNInstanceImpl implements RNInstance {
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
-    private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
     private shouldUseCAPIArchitecture: boolean,
     private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
@@ -411,9 +404,6 @@ export class RNInstanceImpl implements RNInstance {
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
     this.backPressHandler = backPressHandler;
-    if (this.shouldUseNDKToMeasureText) {
-      this.enableFeatureFlag("NDK_TEXT_MEASUREMENTS")
-    }
     if (this.shouldUseImageLoader) {
       this.enableFeatureFlag("IMAGE_LOADER")
     }
@@ -484,9 +474,6 @@ export class RNInstanceImpl implements RNInstance {
     const cppFeatureFlags: CppFeatureFlag[] = []
     if (this.shouldUseCAPIArchitecture) {
       cppFeatureFlags.push("C_API_ARCH")
-    }
-    if (this.shouldUseNDKToMeasureText) {
-      cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
     if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")

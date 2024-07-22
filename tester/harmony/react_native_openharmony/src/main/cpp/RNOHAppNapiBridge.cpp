@@ -197,26 +197,25 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     DLOG(INFO) << "onCreateRNInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJS.getCallbackArgs(info, 13);
+    auto args = arkJS.getCallbackArgs(info, 12);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
     auto mainArkTSTurboModuleProviderRef = arkJS.createReference(args[1]);
     auto mutationsListenerRef = arkJS.createReference(args[2]);
     auto commandDispatcherRef = arkJS.createReference(args[3]);
     auto eventDispatcherRef = arkJS.createReference(args[4]);
-    auto measureTextFnRef = arkJS.createReference(args[5]);
-    auto shouldEnableDebugger = arkJS.getBoolean(args[6]);
-    auto shouldEnableBackgroundExecutor = arkJS.getBoolean(args[7]);
+    auto shouldEnableDebugger = arkJS.getBoolean(args[5]);
+    auto shouldEnableBackgroundExecutor = arkJS.getBoolean(args[6]);
     auto featureFlagRegistry = std::make_shared<FeatureFlagRegistry>();
-    for (auto featureFlagNameAndStatus : arkJS.getObjectProperties(args[8])) {
+    for (auto featureFlagNameAndStatus : arkJS.getObjectProperties(args[7])) {
       featureFlagRegistry->setFeatureFlagStatus(
           arkJS.getString(featureFlagNameAndStatus.first),
           arkJS.getBoolean(featureFlagNameAndStatus.second));
     }
-    auto frameNodeFactoryRef = arkJS.createReference(args[9]);
-    auto jsResourceManager = args[10];
-    int envId = arkJS.getDouble(args[11]);
+    auto frameNodeFactoryRef = arkJS.createReference(args[8]);
+    auto jsResourceManager = args[9];
+    int envId = arkJS.getDouble(args[10]);
     auto n_fontPathRelativeToRawfileDirByFontFamily =
-        arkJS.getObjectProperties(args[12]);
+        arkJS.getObjectProperties(args[11]);
     std::unordered_map<std::string, std::string>
         fontPathRelativeToRawfileDirByFontFamily;
     for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
@@ -285,7 +284,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
               arkJS.getReferenceValue(commandDispatcherRef);
           arkJS.call<3>(commandDispatcher, napiArgsArray);
         },
-        measureTextFnRef,
         eventDispatcherRef,
         featureFlagRegistry,
         UI_TICKER,

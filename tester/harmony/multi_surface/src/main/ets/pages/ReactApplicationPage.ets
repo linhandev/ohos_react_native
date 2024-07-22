@@ -48,7 +48,6 @@ struct ReactApplicationPage {
       RNApp({
         rnInstanceConfig: {
           createRNPackages,
-          enableNDKTextMeasuring: true,
           enableBackgroundExecutor: false,
           enableCAPIArchitecture: true,
           backPressHandler: () => {

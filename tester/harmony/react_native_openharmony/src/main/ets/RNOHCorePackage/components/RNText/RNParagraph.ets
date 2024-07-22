@@ -4,23 +4,22 @@ import {
   convertColorSegmentsToString,
   Tag,
   CustomComponentBuilder,
-  DescriptorWrapper
-} from '../../../RNOH'
-import { RNViewBase } from '../RNViewBase'
-import { PositionedFragment } from '../../../ParagraphMeasurer';
+  DescriptorWrapper} from '../../../RNOH'
+import { RNViewBaseAttributeModifier } from '../RNViewBase'
+import { PLACEHOLDER_SYMBOL } from '../../../ParagraphMeasurer';
 import { PositionedLine, Size, } from '../../../ParagraphMeasurer'
 import { RNParagraphManager } from './RNParagraphManager'
 import { RNComponentFactory } from '../RNComponentFactory'
 import { TextDescriptor, TextFragmentExtraData } from './types'
-import { ViewDescriptorWrapper } from "../RNViewBase"
-import {
-  capitalizeTextIfNecessary,
-  getLetterSpacing,
-  getTextDecorationLine,
-  getTextShadow,
-  stringToFontStyle,
-  stringToTextTransform
+import { getTextShadow,
+  stringToStackAlignment,
 } from './conversions'
+import { TextDescriptorWrapper } from './TextDescriptorWrapper';
+import {
+  RNParagraphTextAttributeModifier,
+  RNParagraphSpanAttributeModifier
+} from './AttributeModifiers';
+
 
 @Component
 export struct RNParagraph {
@@ -32,7 +31,11 @@ export struct RNParagraph {
   @State descriptor: TextDescriptor = {} as TextDescriptor
   @State positionedLines: PositionedLine<TextFragmentExtraData>[] = []
   @State paragraphSize: Size = { width: 0, height: 0 }
-  @State descriptorWrapper: ViewDescriptorWrapper | undefined = undefined
+  @State descriptorWrapper: TextDescriptorWrapper | undefined = undefined
+  @State private rnViewBaseAttributeModifier: RNViewBaseAttributeModifier | undefined = undefined
+  @State private textAttributeModifier: RNParagraphTextAttributeModifier | undefined = undefined
+  @State private spanAttributeModifiers: RNParagraphSpanAttributeModifier[] | undefined = undefined;
+  // @State private fragmentWrappers: FragmentWrapper[] | undefined = undefined;
   private componentManager!: RNParagraphManager
   private cleanUpCallbacks: (() => void)[] = []
 
@@ -50,11 +53,17 @@ export struct RNParagraph {
   }
 
   onDescriptorChange(newDescriptor: TextDescriptor) {
-    const layout = this.componentManager.createLayout(newDescriptor)
-    this.positionedLines = layout.positionedLines
-    this.paragraphSize = layout.size
     this.descriptor = newDescriptor
-    this.descriptorWrapper = new ViewDescriptorWrapper(newDescriptor)
+    this.descriptorWrapper = new TextDescriptorWrapper(newDescriptor)
+    this.spanAttributeModifiers = []
+    if (this.ctx instanceof RNComponentContext) {
+      this.rnViewBaseAttributeModifier = new RNViewBaseAttributeModifier(this.descriptorWrapper, this.ctx)
+      this.textAttributeModifier = new RNParagraphTextAttributeModifier(this.descriptorWrapper)
+      this.descriptor.props.fragments.forEach(fragment => {
+        const mod = new RNParagraphSpanAttributeModifier(fragment, this.descriptor.rawProps.allowFontScaling)
+        this.spanAttributeModifiers?.push(mod);
+      });
+    }
   }
 
   getVerticalAlignmentOffset() {
@@ -70,46 +79,31 @@ export struct RNParagraph {
   }
 
   build() {
-    RNViewBase({
-      ctx: this.ctx,
-      tag: this.tag,
-      componentManager: this.componentManager,
-    }) {
-      ForEach(this.positionedLines, (line: PositionedLine) => {
-        ForEach(line.positionedFragments, (positionedFragment: PositionedFragment<TextFragmentExtraData>) => {
-          if (positionedFragment.fragment.type === "text") {
-            Text(capitalizeTextIfNecessary(positionedFragment.fragment.content, positionedFragment.fragment.extraData.textTransform))
-              .fontColor(positionedFragment.fragment.extraData.fontColor)
-              .fontFamily(positionedFragment.fragment.extraData.fontFamily)
-              .fontWeight(positionedFragment.fragment.extraData.fontWeight)
-              .fontSize(positionedFragment.fragment.extraData.fontSize)
-              .fontStyle(stringToFontStyle(positionedFragment.fragment.extraData.fontStyle))
-              .decoration({
-                type: getTextDecorationLine(positionedFragment.fragment.extraData.textDecorationLine),
-                color: positionedFragment.fragment.extraData.textDecorationColor
-                  ? convertColorSegmentsToString(positionedFragment.fragment.extraData.textDecorationColor)
-                  : positionedFragment.fragment.extraData.fontColor
+    Stack() {
+      /**
+       * Focus hack: container components cannot be focused if they don't contain focusable children.
+       * An invisible button is added to a focusable View to avoid this problem.
+       */
+      if (this.descriptor.rawProps.focusable) {
+        Button().width(0).height(0).padding(0).margin(0)
+      }
+      Text() {
+        ForEach(this.spanAttributeModifiers, (attributeModifier: RNParagraphSpanAttributeModifier) => {
+          if (attributeModifier.propertyHolder.text !== PLACEHOLDER_SYMBOL) {
+            Span(attributeModifier.propertyHolder.text)
+              .attributeModifier(attributeModifier)//The 2 following properties aren't supported yet by attributeModifier
+              .textBackgroundStyle({
+                color: convertColorSegmentsToString(attributeModifier.propertyHolder.backgroundColor)
               })
-              .backgroundColor(positionedFragment.fragment.extraData.backgroundColor)
-              .letterSpacing(getLetterSpacing(positionedFragment.fragment.extraData.letterSpacing))
-              .textCase(stringToTextTransform(positionedFragment.fragment.extraData.textTransform))
-              .textShadow(getTextShadow(positionedFragment.fragment.extraData?.textShadowProps))
-              .position({
-                x: line.positionRelativeToParagraph.x + positionedFragment.positionRelativeToLine.x,
-                y: line.positionRelativeToParagraph.y + positionedFragment.positionRelativeToLine.y + this.getVerticalAlignmentOffset()
-              })
-              .width(positionedFragment.size.width)
-              .height(line.size.height)
-              .maxLines(1)
-              .copyOption(this.descriptor.rawProps.selectable ? CopyOptions.LocalDevice : CopyOptions.None)
-              .enabled(!this.descriptor.rawProps.disabled)
-              .accessibilityGroup(this.descriptorWrapper?.accessibilityGroup)
-              .accessibilityText(this.descriptorWrapper?.accessibilityText)
-              .accessibilityLevel(this.descriptorWrapper?.accessibilityLevel)
-              .accessibilityDescription(this.descriptorWrapper?.accessibilityDescription)
+              .textShadow(getTextShadow(attributeModifier.propertyHolder.textShadowProps))
+          } else {
+            ImageSpan('')
+              .width(attributeModifier.propertyHolder.parentShadowView?.layoutMetrics.frame.size.width)
+              .height(attributeModifier.propertyHolder.parentShadowView?.layoutMetrics.frame.size.height)
           }
         })
-      })
+      }
+      .attributeModifier(this.textAttributeModifier)
       if (this.ctx instanceof RNComponentContext) {
         LazyForEach(this.ctx.createComponentDataSource({ tag: this.tag }),
           (descriptorWrapper: DescriptorWrapper) => {
@@ -123,5 +117,8 @@ export struct RNParagraph {
         }, (childrenTag: Tag) => childrenTag.toString())
       }
     }
+    .id(this.tag.toString())
+    .align(stringToStackAlignment(this.descriptor.props.textAlign, this.descriptor.props.textAlignVertical))
+    .attributeModifier(this.rnViewBaseAttributeModifier)
   }
 }

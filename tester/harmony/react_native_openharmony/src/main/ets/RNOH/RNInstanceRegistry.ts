@@ -54,7 +54,6 @@ export class RNInstanceRegistry {
       workerThread,
       options.enableDebugger ?? false,
       options.enableBackgroundExecutor ?? false,
-      options.enableNDKTextMeasuring ?? false,
       options.enableImageLoader ?? false,
       options.enableCAPIArchitecture ?? false,
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,

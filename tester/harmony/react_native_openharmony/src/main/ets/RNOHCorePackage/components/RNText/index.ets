@@ -1,4 +1,2 @@
 export * from './RNText'
-export * from './RNSimpleText'
-export * from './RNParagraph'
-export * from "./RNParagraphExperimental"
+export * from "./RNParagraph"

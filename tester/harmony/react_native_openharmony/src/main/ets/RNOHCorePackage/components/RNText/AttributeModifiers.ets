@@ -14,7 +14,7 @@ import {
 } from './conversions'
 import { TextDescriptorWrapper } from './TextDescriptorWrapper'
 
-export class RNParagraphExperimentalTextAttributeModifier extends BaseAttributeModifier<TextDescriptorWrapper, TextAttribute> {
+export class RNParagraphTextAttributeModifier extends BaseAttributeModifier<TextDescriptorWrapper, TextAttribute> {
   applyNormalAttribute(instance: TextAttribute): void {
     this.maybeAssignAttribute((dw => dw.width), (val) => instance.width(val), 0)
     this.maybeAssignAttribute((dw => dw.height), (val) => instance.height(val), 0)
@@ -41,7 +41,7 @@ interface DecorationWrapper {
   textDecorationColor: ColorSegments | undefined,
 }
 
-export class RNParagraphExperimentalSpanAttributeModifier extends BaseAttributeModifier<AttributedFragment, SpanAttribute> {
+export class RNParagraphSpanAttributeModifier extends BaseAttributeModifier<AttributedFragment, SpanAttribute> {
   protected allowFontScaling?: boolean;
 
   applyNormalAttribute(instance: SpanAttribute): void {

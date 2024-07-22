@@ -62,7 +62,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,
-    napi_ref measureTextFnRef,
     napi_ref napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
@@ -103,8 +102,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
        fontPathRelativeToRawfileDirByFontFamily) {
     fontRegistry->registerFont(fontFamilyName, fontPathRelativeToRawfileDir);
   }
-  auto textMeasurer = std::make_shared<TextMeasurer>(
-      env, measureTextFnRef, taskExecutor, featureFlagRegistry, fontRegistry);
+  auto textMeasurer =
+      std::make_shared<TextMeasurer>(featureFlagRegistry, fontRegistry);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
   PackageProvider packageProvider;

@@ -3,8 +3,6 @@ import libRNOHApp from 'librnoh_app.so';
 import type { TurboModuleProvider } from "./TurboModuleProvider";
 import type { Mutation } from "./Mutation";
 import type { Tag } from "./DescriptorBase";
-import type { AttributedString, ParagraphAttributes, LayoutConstrains } from "./TextLayoutManager";
-import { measureParagraph } from "./TextLayoutManager"
 import type { DisplayMode } from './CppBridgeUtils'
 import { RNOHLogger } from "./RNOHLogger"
 import type { InspectorInstance, DisplayMetrics } from './types'
@@ -14,7 +12,7 @@ import ohosResourceManager from '@ohos.resourceManager';
 import { WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
 
 
-export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
+export type CppFeatureFlag =  "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
 
 type RawRNOHError = {
   message: string,
@@ -123,18 +121,6 @@ export class NapiBridge {
       mutationsListener,
       componentCommandsListener,
       onCppMessage,
-      (attributedString: AttributedString, paragraphAttributes: ParagraphAttributes,
-       layoutConstraints: LayoutConstrains) => {
-        try {
-          const stopTracing = this.logger.clone("measureParagraph").startTracing()
-          const result = measureParagraph(attributedString, paragraphAttributes, layoutConstraints)
-          stopTracing()
-          return result
-        } catch (err) {
-          console.error(err)
-          throw err
-        }
-      },
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor,
       cppFeatureFlagStatusByName,
