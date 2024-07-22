@@ -13,7 +13,7 @@ import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
 import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule } from './TurboModule'
+import type { TurboModule, UITurboModuleContext } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -22,6 +22,7 @@ import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
+import { WorkerThread } from "./WorkerThread"
 import font from '@ohos.font'
 import { DisplayMetricsManager } from './DisplayMetricsManager'
 
@@ -355,7 +356,8 @@ export class RNInstanceImpl implements RNInstance {
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>()
   private initialBundleUrl: string | undefined = undefined
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
-
+  private unregisterWorkerMessageListener = () => {
+  }
   /**
    * @deprecated
    */
@@ -371,7 +373,7 @@ export class RNInstanceImpl implements RNInstance {
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
-    private shouldUseWorkerThread: boolean,
+    private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
@@ -421,6 +423,7 @@ export class RNInstanceImpl implements RNInstance {
 
   public async onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
+    this.unregisterWorkerMessageListener()
     for (const surfaceHandle of this.surfaceHandles) {
       if (surfaceHandle.isRunning()) {
         this.logger.warn("Destroying instance with running surface with tag: " + surfaceHandle.getTag());
@@ -467,7 +470,7 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
-    if (this.shouldUseWorkerThread) {
+    if (this.workerThread != null) {
       cppFeatureFlags.push("WORKER_THREAD_ENABLED")
     }
     const fontOptions: FontOptions[] = []
@@ -476,9 +479,6 @@ export class RNInstanceImpl implements RNInstance {
         familyName: fontOption.familyName as string,
         familySrc: fontOption.familySrc as string
       });
-    }
-    if (this.shouldUseWorkerThread) {
-      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
     }
     this.napiBridge.onCreateRNInstance(
       this.envId,
@@ -594,12 +594,25 @@ export class RNInstanceImpl implements RNInstance {
         this.logger
       )
     }
+    if (this.workerThread) {
+      this.unregisterWorkerMessageListener = this.workerThread.subscribeToMessages(async (type, payload) => {
+        if (type === "RNOH_TURBO_MODULE_UI_TASK") {
+          const task = payload.task
+          if (payload.rnInstanceId !== this.id) {
+            return;
+          }
+          const result =
+            await (task.runnable.run(turboModuleContext, task.params) as Promise<any>)
+          this.workerThread!.postMessage("RNOH_TURBO_MODULE_UI_TASK_RESULT", { result, taskId: task.id, rnInstanceId: this.id })
+        }
+      })
+    }
     stopTracing()
     return result
   }
 
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-                                                                                            listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
+    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
     return this.lifecycleEventEmitter.subscribe(type, listener)
   }
 
