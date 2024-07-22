@@ -71,3 +71,9 @@ yarn-error.log
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 *.htrace
+
+# Performance Measurment utils
+scripts/performance_measurement/trace_streamer
+scripts/performance_measurement/tmp
+performance_reports
+

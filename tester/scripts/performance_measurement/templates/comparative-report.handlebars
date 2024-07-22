@@ -1,0 +1,139 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Performance report</title>
+    <link
+      rel='stylesheet'
+      href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown.min.css'
+    />
+    <style>
+      .markdown-body { box-sizing: border-box; min-width: 200px; max-width:
+      1100px; margin: 0 auto; padding: 45px; } @media (max-width: 767px) {
+      .markdown-body { padding: 15px; } }
+    </style>
+  </head>
+  <body>
+    <article class='markdown-body'>
+      <h1>Performance comparative report</h1>
+      <h2 id="report-date">{{date}}</h2>
+      <p>Report for {{processName}}, compared with a report from {{prevReportDate}}.</p>
+  
+      <h2>Common Data</h2>
+      <table id="common-data">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CPU Time</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.cpuTime}};" data-key="cpuTime">{{commonData.cpuTime}}</td>
+          </tr>
+          <tr>
+            <td>CPU Usage</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.cpuUsage}};" data-key="cpuUsage">{{commonData.cpuUsage}}</td>
+          </tr>
+          <tr>
+            <td>Thread number (median)</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.threadNumber}};" data-key="threadNumber">{{commonData.threadNumber}}</td>
+          </tr>
+          <tr>
+            <td>Disk writes</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.diskWrites}};" data-key="diskWrites">{{commonData.diskWrites}}</td>
+          </tr>
+          <tr>
+            <td>Disk reads</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.diskReads}};" data-key="diskReads">{{commonData.diskReads}}</td>
+          </tr>
+          <tr>
+            <td>Number of instructions sent by the App process</td>
+            <td style="background-color: {{tableDataBackgroundColorInverted commonData.instructionsSent}};" data-key="instructionsSent">{{commonData.instructionsSent}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Performance data per test</h2>
+      <p>Test duration tolerance: 200ms</p>
+      {{#each testData}}
+        <h3>Test {{this.id}}</h3>
+        <h4>Basic data</h4>
+        <table id="basic-data-{{this.id}}">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Test duration [ms]</td>
+              <td style="background-color: {{tableDataBackgroundColorInverted this.basicData.testDuration 200}};" data-key="testDuration">{{this.basicData.testDuration}}</td>
+            </tr>
+            <tr>
+              <td>FPS</td>
+              {{#if this.basicData.fps includeZero=true}}
+                <td style="background-color: {{tableDataBackgroundColor this.basicData.fps}};" data-key="fps">{{this.basicData.fps}}</td>
+              {{else}}
+                <td data-key="fps">Not available</td>
+              {{/if}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>RNOH method duration data</h4>
+        <p>Tolerance: 0.5ms</p>
+        <table id="rnoh-method-data-{{this.id}}">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Call count</th>
+              <th>Median [ns]</th>
+              <th>Max [ns]</th>
+              <th>Min [ns]</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.rnohMethodDuration}}
+              <tr>
+                <td data-key="name">{{this.name}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.callCount}};" data-key="callCount">{{this.callCount}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.median 500000}};" data-key="median">{{this.median}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.max 500000}};" data-key="max">{{this.max}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.min 500000}};" data-key="min">{{this.min}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+
+        <h4>RN method duration data</h4>
+        <p>Tolerance: 0.5ms</p>
+        <table id="rn-method-data-{{this.id}}">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Call count</th>
+              <th>Median [ns]</th>
+              <th>Max [ns]</th>
+              <th>Min [ns]</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.rnMethodDuration}}
+              <tr>
+                <td data-key="name">{{this.name}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.callCount}};" data-key="callCount">{{this.callCount}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.median 500000}};" data-key="median">{{this.median}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.max 500000}};" data-key="max">{{this.max}}</td>
+                <td style="background-color: {{tableDataBackgroundColorInverted this.min 500000}};" data-key="min">{{this.min}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{/each}}
+    </article>
+  </body>
+</html>

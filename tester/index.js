@@ -18,7 +18,8 @@ import {
   TextScrollExample,
   TogglingComponentExample,
 } from './examples';
-import { TextTestsExample } from './examples/TestTextsExample';
+import {TextTestsExample} from './examples/TestTextsExample';
+import PerformanceMeasurement from './tests/Performance/PerformanceMeasurement';
 
 AppRegistry.setWrapperComponentProvider(appParams => {
   return ({children, ..._otherProps}) => (
@@ -35,6 +36,7 @@ ReactNativeFeatureFlags.shouldPressibilityUseW3CPointerEventsForHover = () =>
 AppRegistry.registerComponent(appName, () => App);
 
 AppRegistry.registerComponent('tester', () => TesterExample);
+AppRegistry.registerComponent('performance_measurement', () => PerformanceMeasurement);
 AppRegistry.registerComponent('animations', () => AnimationsExample);
 AppRegistry.registerComponent('text_tests', () => TextTestsExample);
 AppRegistry.registerComponent('checkerboard', () => CheckerboardExample);
