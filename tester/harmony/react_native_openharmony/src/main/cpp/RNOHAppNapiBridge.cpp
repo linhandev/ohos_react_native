@@ -504,20 +504,23 @@ static napi_value emitComponentEvent(napi_env env, napi_callback_info info) {
   });
 }
 
+/**
+ * @thread: MAIN/WORKER
+ */
 static napi_value callRNFunction(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 4);
     size_t instanceId = arkJS.getDouble(args[0]);
+    auto moduleString = arkJS.getString(args[1]);
+    auto nameString = arkJS.getString(args[2]);
+    auto argsDynamic = arkJS.getDynamic(args[3]);
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     auto it = RN_INSTANCE_BY_ID.find(instanceId);
     if (it == RN_INSTANCE_BY_ID.end()) {
       return arkJS.getUndefined();
     }
     auto& rnInstance = it->second;
-    auto moduleString = arkJS.getString(args[1]);
-    auto nameString = arkJS.getString(args[2]);
-    auto argsDynamic = arkJS.getDynamic(args[3]);
     rnInstance->callFunction(
         std::move(moduleString), std::move(nameString), std::move(argsDynamic));
     return arkJS.getNull();
