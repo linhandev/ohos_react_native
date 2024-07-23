@@ -265,14 +265,8 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
   }
   ArkUITypographyBuilder typographyBuilder(
       typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading, typographyStyle); //  Revert this after API rectification
-  bool isHighlighted = false;
   for (auto const& fragment : attributedString.getFragments()) {
-    if (fragment.textAttributes.isHighlighted.has_value()) {
-      isHighlighted = isHighlighted || fragment.textAttributes.isHighlighted.value();
-    }
-  }
-  for (auto const& fragment : attributedString.getFragments()) {
-    typographyBuilder.addFragment(fragment, isHighlighted);
+    typographyBuilder.addFragment(fragment);
   }
   typographyBuilder.setMaximumWidth(layoutConstraints.maximumSize.width * m_scale);
   return typographyBuilder;

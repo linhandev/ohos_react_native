@@ -160,10 +160,9 @@ class ArkUITypographyBuilder final {
   }
 
   void addFragment(
-      const facebook::react::AttributedString::Fragment& fragment,
-      bool isHighlighted) {
+      const facebook::react::AttributedString::Fragment& fragment) {
     if (!fragment.isAttachment()) {
-      addTextFragment(fragment, isHighlighted);
+      addTextFragment(fragment);
     } else {
       addAttachment(fragment);
     }
@@ -201,8 +200,7 @@ class ArkUITypographyBuilder final {
   }
   
   void addTextFragment(
-      const facebook::react::AttributedString::Fragment& fragment,
-      bool isHighlighted) {
+      const facebook::react::AttributedString::Fragment& fragment) {
 //    std::
 //        unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>
 //            textStyle(
@@ -259,7 +257,7 @@ class ArkUITypographyBuilder final {
         OH_Drawing_Brush,
         decltype(&OH_Drawing_BrushDestroy)>
         brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (isHighlighted) {
+    if (fragment.textAttributes.isHighlighted.has_value() && fragment.textAttributes.isHighlighted.value()) {
       OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
       OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     } else if (fragment.textAttributes.backgroundColor) {
