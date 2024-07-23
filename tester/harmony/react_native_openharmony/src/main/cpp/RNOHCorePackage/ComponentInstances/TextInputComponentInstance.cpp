@@ -42,6 +42,7 @@ void TextInputComponentInstance::onChange(std::string text) {
     m_shouldIgnoreNextChangeEvent = false;
     return;
   }
+  m_nativeEventCount++;
   m_eventEmitter->onChange(getOnChangeMetrics());
 }
 
