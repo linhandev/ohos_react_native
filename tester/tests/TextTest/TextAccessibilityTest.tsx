@@ -95,7 +95,6 @@ export function TextAccessibilityTest() {
       </TestCase>
       <TestCase
         modal
-        skip // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/586
         itShould="render Text with different text decoration styles">
         <View>
           <Text style={[styles.styledBox, {textDecorationStyle: 'dashed'}]}>

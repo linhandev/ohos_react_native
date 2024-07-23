@@ -286,4 +286,12 @@ TextNode& TextNode::setWordBreak(ArkUI_WordBreak wordBreak) {
   return *this;
 }
 
+TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
+  ArkUI_NumberValue value = {.u32 = color};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_SELECTED_BACKGROUND_COLOR, &item));
+  return *this;
+}
+
 } // namespace rnoh

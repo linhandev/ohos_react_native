@@ -113,6 +113,15 @@ void TextComponentInstance::onPropsChanged(
       m_textNode.setMinFontSize(minFontSize.value());
       VLOG(3) << "[text-debug] minFontSize=" << minFontSize.value();
     }
+
+    // selectionColor
+    if (textProps->rawProps.count("selectionColor") != 0 &&
+        !textProps->rawProps["selectionColor"].isNull()) {
+      uint32_t selectionColor = textProps->rawProps["selectionColor"].asInt();
+      selectionColor = (selectionColor & 0x00ffffff) | 0x33000000;
+      VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
+      m_textNode.setSelectedBackgroundColor(selectionColor);
+    }
   }
   this->setParagraphAttributes(textProps->paragraphAttributes);
   VLOG(3) << "[text-debug] setProps end";
@@ -192,6 +201,19 @@ void TextComponentInstance::setFragment(
     spanNode->setFontWeight(realFontWeight);
   }
 
+  // allowFontScaling
+  bool allowFontScaling = !textAttributes.allowFontScaling.has_value() ||
+      textAttributes.allowFontScaling.value();
+  VLOG(3) << "[text-debug] textAttributes.allowFontScaling=" << allowFontScaling
+          << ", index=" << index;
+  if (allowFontScaling) {
+    spanNode->setLengthMetricUnit(
+        ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP);
+  } else {
+    spanNode->setLengthMetricUnit(
+        ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP);
+  }
+
   // FontSize
   float fontSize = isnan(textAttributes.fontSize)
       ? DEFAULT_FONT_SIZE
@@ -208,13 +230,11 @@ void TextComponentInstance::setFragment(
   }
 
   // TextDecoration
+  int32_t type = ARKUI_TEXT_DECORATION_TYPE_NONE;
+  uint32_t color = 0xFF000000;
+  int32_t style = ARKUI_TEXT_DECORATION_STYLE_SOLID;
   if (textAttributes.textDecorationLineType.has_value()) {
-    auto type = (int32_t)textAttributes.textDecorationLineType.value();
-    VLOG(3) << "[text-debug] textAttributes.textDecorationLineType=" << type
-            << ", textAttributes.textDecorationColor="
-            << (uint32_t)(*textAttributes.textDecorationColor)
-            << ", index=" << index;
-    uint32_t color = 0xFF000000;
+    type = (int32_t)textAttributes.textDecorationLineType.value();
     if (textAttributes.textDecorationColor) {
       color = (uint32_t)(*textAttributes.textDecorationColor);
     } else if (textAttributes.foregroundColor) {
@@ -227,8 +247,16 @@ void TextComponentInstance::setFragment(
                 UnderlineStrikethrough) {
       type = ARKUI_TEXT_DECORATION_TYPE_LINE_THROUGH;
     }
-    spanNode->setTextDecoration(type, color);
   }
+
+  if (textAttributes.textDecorationStyle.has_value()) {
+    style = (int32_t)textAttributes.textDecorationStyle.value();
+  }
+  VLOG(3) << "[text-debug] textAttributes.textDecorationLineType=" << type
+          << ", textAttributes.textDecorationColor=" << color
+          << ", textAttributes.textDecorationStyle=" << style
+          << ", index=" << index;
+  spanNode->setTextDecoration(type, color, style);
 
   // TextLineHeight
   float lineHeight = isnan(textAttributes.lineHeight)

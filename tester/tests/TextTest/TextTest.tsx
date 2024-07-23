@@ -1,4 +1,4 @@
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../../components';
 import {useState} from 'react';
@@ -139,16 +139,12 @@ export function TextTest() {
           expect(state).to.have.all.keys('x', 'y', 'width', 'height');
         }}
       />
-      <TestCase.Example
-        itShould="display text with a selection color of Indian Red"
-        skip={Platform.select({harmony: 'Missing prop on ArkUI side'})}>
+      <TestCase.Example itShould="display text with a selection color of Indian Red">
         <Text selectionColor="#F15156" selectable>
           Text with indian red selection color
         </Text>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="display text with a selection color of Blue"
-        skip={Platform.select({harmony: 'Missing prop on ArkUI side'})}>
+      <TestCase.Example itShould="display text with a selection color of Blue">
         <Text selectionColor="blue" selectable>
           Text with blue selection color but on longer text. In React Native,
           the selectionColor prop in the Text component is used to customize the

@@ -58,12 +58,15 @@ SpanNode& SpanNode::setTextLineHeight(float textLineHeight) {
 }
 
 SpanNode& SpanNode::setTextDecoration(
-    int32_t decorationStyle,
-    uint32_t decorationColor /*= 0xFFFF0000*/) {
-  ArkUI_NumberValue value[] = {
-      {.i32 = decorationStyle}, {.u32 = decorationColor}};
-  ArkUI_AttributeItem item = {
-      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+    int32_t decorationType,
+    uint32_t decorationColor, /*= 0xFFFF0000*/
+    int32_t decorationStyle) {
+  std::array<ArkUI_NumberValue, 3> value = {
+      {{.i32 = decorationType},
+       {.u32 = decorationColor},
+       {.i32 = decorationStyle}}};
+  ArkUI_AttributeItem item = {.value = value.data(), .size = value.size()};
+
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_DECORATION, &item));
   return *this;
@@ -120,4 +123,9 @@ SpanNode& SpanNode::setBackgroundStyle(uint32_t color) {
   return *this;
 }
 
+SpanNode& SpanNode::setLengthMetricUnit(ArkUI_LengthMetricUnit unit) {
+  maybeThrow(
+      NativeNodeApi::getInstance()->setLengthMetricUnit(m_nodeHandle, unit));
+  return *this;
+}
 } // namespace rnoh
