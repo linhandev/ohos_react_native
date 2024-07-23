@@ -33,6 +33,18 @@ auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
   return std::forward<V>(defaultValue);
 }
 
+template <typename Map, typename K, typename V>
+auto extractOrDefault(Map& map, K&& key, V&& defaultValue)
+    -> std::common_type_t<decltype(map.at(std::forward<K>(key))), V&&> {
+  auto it = map.find(std::forward<K>(key));
+  if (it != map.end()) {
+    auto value = std::move(it->second);
+    map.erase(it);
+    return value;
+  }
+  return std::forward<V>(defaultValue);
+}
+
 std::mutex RN_INSTANCE_BY_ID_MTX;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
     RN_INSTANCE_BY_ID;
@@ -198,7 +210,7 @@ static napi_value onCreateRNInstance(
           WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.extract(workerTaskRunnerIt)
               .mapped());
     }
-    auto workerTurboModuleProviderRefAndEnv = getOrDefault(
+    auto workerTurboModuleProviderRefAndEnv = extractOrDefault(
         WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID,
         instanceId,
         std::make_pair(nullptr, nullptr));
