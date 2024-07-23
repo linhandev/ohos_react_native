@@ -67,4 +67,8 @@ export class SampleWorkerTurboModule extends EtsWorkerTurboModule implements TM.
   emitDeviceEvent(eventName: string, payload: number): void {
     this.ctx.rnInstance.emitDeviceEvent(eventName, payload)
   }
+
+  __onDestroy__() {
+    this.ctx.logger.info("SampleWorkerTurboModule::__onDestroy__")
+  }
 }

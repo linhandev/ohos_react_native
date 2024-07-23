@@ -36,9 +36,9 @@ export class WorkerThread {
     this.logger = logger.clone("WorkerThread")
     this.rawWorkerThread.onmessage = (ev) => {
       const messageType = ev.data?.type
-      const messagePayload = ev.data?.payload
+      const messagePayload = ev.data?.payload ?? {}
       if (messageType) {
-        this.logger.clone("receivedMessage").debug(messageType)
+        this.logger.clone("receivedMessage").debug(`${messageType} ${JSON.stringify(messagePayload)}`)
         for (const listener of this.listeners) {
           listener(messageType, messagePayload)
         }
@@ -56,14 +56,14 @@ export class WorkerThread {
   }
 
   postMessage(type: string, payload: any = undefined) {
-    this.logger.clone("postMessage").debug(type)
+    this.logger.clone("postMessage").debug(`${type} ${payload ? JSON.stringify(payload) : "undefined"}`)
     this.rawWorkerThread.postMessageWithSharedSendable({ type, payload })
   }
 
-  async waitForMessage(expectedMsgType: string) {
+  async waitForMessage(expectedMsgType: string, filter: undefined | ((payload: any) => boolean) = undefined) {
     return new Promise(resolve => {
-      const unsubscribe = this.subscribeToMessages((type) => {
-        if (type === expectedMsgType) {
+      const unsubscribe = this.subscribeToMessages((type, payload) => {
+        if (type === expectedMsgType && (filter === undefined || filter(payload ?? {}))) {
           resolve(undefined)
           unsubscribe()
         }
