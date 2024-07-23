@@ -14,6 +14,7 @@ import {MiscPropsTest} from './MiscPropsTest';
 import {ScrollToTest} from './ScrollToTest';
 import {CenterContentTest} from './CenterContentTest';
 import RemoveClippedTest from './RemoveClippedTest';
+import {NestedScrollWithDisabledParentTest} from './NestedScrollWithDisabledParentTest';
 
 export function ScrollViewTest() {
   return (
@@ -30,6 +31,7 @@ export function ScrollViewTest() {
       <ScrollToTest />
       <MiscPropsTest />
       <CenterContentTest />
+      <NestedScrollWithDisabledParentTest />
       <TestCase
         modal
         itShould="maintain scroll position when adding/removing elements">
