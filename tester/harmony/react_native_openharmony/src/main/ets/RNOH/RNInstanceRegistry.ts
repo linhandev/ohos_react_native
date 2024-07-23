@@ -74,20 +74,27 @@ export class RNInstanceRegistry {
     const logger = this.logger.clone(["RNInstanceRegistry", "createRNInstanceEnvOnWorker"])
     logger.info("waiting for worker's rnInstance environment")
     setTimeout(() => {
-      workerThread.postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
+      workerThread.postMessage("RNOH_CREATE_WORKER_RN_INSTANCE", {
         rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
       })
     }, 0)
-    await workerThread.waitForMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")
+    await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
+      (payload) => payload.rnInstanceId === rnInstanceId)
   }
 
   public getInstance(id: number): RNInstance {
     return this.instanceMap.get(id);
   }
 
-  public deleteInstance(id: number): boolean {
+  public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
       this.instanceMap.delete(id);
+      if (this.workerThreadPromise) {
+        const worker = await this.workerThreadPromise;
+        const ack = worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", {rnInstanceId: id})
+        await ack;
+      }
       return true;
     }
     return false;

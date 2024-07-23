@@ -40,12 +40,12 @@ export class RNOHCoreContext {
         return result
       },
       // destroyAndUnregisterRNInstance
-      (rnInstance) => {
+      async (rnInstance) => {
         const stopTracing = logger.clone("destroyAndUnregisterRNInstance").startTracing()
         if (rnInstance instanceof RNInstanceImpl) {
           rnInstance.onDestroy()
         }
-        rnInstanceRegistry.deleteInstance(rnInstance.getId())
+        await rnInstanceRegistry.deleteInstance(rnInstance.getId())
         stopTracing()
       },
       logger,
@@ -82,7 +82,7 @@ export class RNOHCoreContext {
     /**
      * Destroys RNInstance and unregisters it from RNOH's internal registries.
      */
-    public destroyAndUnregisterRNInstance: (rnInstance: RNInstance) => void,
+    public destroyAndUnregisterRNInstance: (rnInstance: RNInstance) => Promise<void>,
     public logger: RNOHLogger,
     /**
      * Returns current display metrics.
