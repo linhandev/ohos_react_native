@@ -301,7 +301,6 @@ ArkUI_WordBreak TextConversions::getArkUIWordBreakStrategy(
     case facebook::react::TextBreakStrategy::Simple:
       return ArkUI_WordBreak::ARKUI_WORD_BREAK_BREAK_ALL;
     case facebook::react::TextBreakStrategy::HighQuality:
-      return ArkUI_WordBreak::ARKUI_WORD_BREAK_NORMAL;
     case facebook::react::TextBreakStrategy::Balanced:
       return ArkUI_WordBreak::ARKUI_WORD_BREAK_BREAK_WORD;
   }
