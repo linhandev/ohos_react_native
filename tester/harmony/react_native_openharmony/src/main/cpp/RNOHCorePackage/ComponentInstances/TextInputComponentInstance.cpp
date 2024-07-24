@@ -48,7 +48,6 @@ void TextInputComponentInstance::onChange(std::string text) {
 
 void TextInputComponentInstance::onSubmit() {
   m_eventEmitter->onSubmitEditing(getTextInputMetrics());
-  blur();  
 }
 
 void TextInputComponentInstance::onBlur() {
