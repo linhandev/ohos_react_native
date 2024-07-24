@@ -8,7 +8,6 @@ import {
 } from 'rnoh/ts';
 import { RNAbility } from 'rnoh';
 import { createRNPackages } from '../RNPackagesFactory';
-import router from '@ohos.router';
 
 
 export default class EntryAbility extends RNAbility {
