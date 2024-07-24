@@ -98,7 +98,7 @@ export class RNComponentContext extends RNOHContext {
     rnComponentDataSourceFactoriesByDescriptorType: Map<string, RNComponentDataSourceFactory>
   ) {
     super(
-      rnohContext.__rnohContextDeps__
+      rnohContext._rnohContextDeps
     )
     this.wrappedCustomRNComponentBuilder = wrappedCustomRNComponentBuilder
     this.wrappedRNChildrenBuilder = wrapBuilder(buildRNChildren)
