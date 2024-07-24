@@ -6,23 +6,23 @@
  */
 
 #pragma once
-#include "hitrace/trace.h"
-#include <string>
 #include <sstream>
+#include <string>
+#include "hitrace/trace.h"
 
 struct HiTraceSystraceSection {
  public:
   template <typename... ConvertsToStringPiece>
   explicit HiTraceSystraceSection(
-      const char *name,
-      ConvertsToStringPiece &&...args) {
-        std::ostringstream oss;
-        (oss << ... << args);
-        std::string result = std::string(name) + oss.str();
-        OH_HiTrace_StartTrace(result.c_str());
-      }
+      const char* name,
+      ConvertsToStringPiece&&... args) {
+    std::ostringstream oss;
+    (void)(oss << name);
+    ([&] { oss << "[" << args << "]"; }(), ...);
+    OH_HiTrace_StartTrace(oss.str().c_str());
+  }
 
-      ~HiTraceSystraceSection() {
-        OH_HiTrace_FinishTrace();
-      }
+  ~HiTraceSystraceSection() {
+    OH_HiTrace_FinishTrace();
+  }
 };
