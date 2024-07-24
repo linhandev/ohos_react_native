@@ -42,11 +42,11 @@ export class RNOHCoreContext {
   /**
    * @internal
    */
-  constructor(public __rnohCoreContextDeps__: RNOHCoreContextDependencies) {
+  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {
   }
 
   get reactNativeVersion() {
-    return this.__rnohCoreContextDeps__.reactNativeVersion
+    return this._rnohCoreContextDeps.reactNativeVersion
   }
 
   public reportRNOHError(rnohError: RNOHError) {
@@ -55,31 +55,31 @@ export class RNOHCoreContext {
   }
 
   async createAndRegisterRNInstance(options: RNInstanceOptions): Promise<RNInstance> {
-    const stopTracing = this.__rnohCoreContextDeps__.logger.clone("createAndRegisterRNInstance").startTracing();
-    const result = await this.__rnohCoreContextDeps__.rnInstanceRegistry.createInstance(options);
+    const stopTracing = this._rnohCoreContextDeps.logger.clone("createAndRegisterRNInstance").startTracing();
+    const result = await this._rnohCoreContextDeps.rnInstanceRegistry.createInstance(options);
     stopTracing();
     return result;
   }
 
   async destroyAndUnregisterRNInstance(rnInstance: RNInstance): Promise<void> {
-    const stopTracing = this.__rnohCoreContextDeps__.logger.clone("destroyAndUnregisterRNInstance").startTracing();
+    const stopTracing = this._rnohCoreContextDeps.logger.clone("destroyAndUnregisterRNInstance").startTracing();
     if (rnInstance instanceof RNInstanceImpl) {
       rnInstance.onDestroy();
     }
-    await this.__rnohCoreContextDeps__.rnInstanceRegistry.deleteInstance(rnInstance.getId());
+    await this._rnohCoreContextDeps.rnInstanceRegistry.deleteInstance(rnInstance.getId());
     stopTracing();
   }
 
   getDisplayMetrics(): DisplayMetrics {
-    return this.__rnohCoreContextDeps__.displayMetricsProvider();
+    return this._rnohCoreContextDeps.displayMetricsProvider();
   }
 
   getUIAbilityState(): UIAbilityState {
-    return this.__rnohCoreContextDeps__.uiAbilityStateProvider();
+    return this._rnohCoreContextDeps.uiAbilityStateProvider();
   }
 
   dispatchBackPress(): void {
-    this.__rnohCoreContextDeps__.rnInstanceRegistry.forEach(rnInstance => rnInstance.onBackPress());
+    this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance => rnInstance.onBackPress());
   }
 
   /**
@@ -90,41 +90,41 @@ export class RNOHCoreContext {
   }
 
   cancelTouches(): void {
-    this.__rnohCoreContextDeps__.rnInstanceRegistry.forEach((rnInstance) => {
+    this._rnohCoreContextDeps.rnInstanceRegistry.forEach((rnInstance) => {
       rnInstance.cancelTouches();
     });
   }
 
   get logger(): RNOHLogger {
-    return this.__rnohCoreContextDeps__.logger;
+    return this._rnohCoreContextDeps.logger;
   }
 
   get uiAbilityContext(): common.UIAbilityContext {
-    return this.__rnohCoreContextDeps__.uiAbilityContext;
+    return this._rnohCoreContextDeps.uiAbilityContext;
   }
 
   get isDebugModeEnabled(): boolean {
-    return this.__rnohCoreContextDeps__.isDebugModeEnabled;
+    return this._rnohCoreContextDeps.isDebugModeEnabled;
   }
 
   get launchUri(): string | undefined {
-    return this.__rnohCoreContextDeps__.launchUri;
+    return this._rnohCoreContextDeps.launchUri;
   }
 
   get devToolsController(): DevToolsController {
-    return this.__rnohCoreContextDeps__.devToolsController!;
+    return this._rnohCoreContextDeps.devToolsController!;
   }
 
   get devMenu(): DevMenu {
-    return this.__rnohCoreContextDeps__.devMenu!;
+    return this._rnohCoreContextDeps.devMenu!;
   }
 
   get defaultBackPressHandler(): () => void {
-    return this.__rnohCoreContextDeps__.defaultBackPressHandler;
+    return this._rnohCoreContextDeps.defaultBackPressHandler;
   }
 
   get safeAreaInsetsProvider() {
-    return this.__rnohCoreContextDeps__.safeAreaInsetsProvider;
+    return this._rnohCoreContextDeps.safeAreaInsetsProvider;
   }
 }
 
@@ -143,21 +143,21 @@ export class RNOHContext extends RNOHCoreContext {
    */
   static fromRNOHCoreContext(rnohCoreContext: RNOHCoreContext, rnInstance: RNInstance) {
     return new RNOHContext({
-      rnohCoreContextDependencies: rnohCoreContext.__rnohCoreContextDeps__,
+      rnohCoreContextDependencies: rnohCoreContext._rnohCoreContextDeps,
       rnInstance: rnInstance,
     })
   }
 
   protected constructor(
-    public __rnohContextDeps__: RNOHContextDependencies,
+    public _rnohContextDeps: RNOHContextDependencies,
   ) {
     super(
-      __rnohContextDeps__.rnohCoreContextDependencies
+      _rnohContextDeps.rnohCoreContextDependencies
     )
   }
 
   protected get rnInstanceImpl() {
-    return this.__rnohContextDeps__.rnInstance as RNInstanceImpl
+    return this._rnohContextDeps.rnInstance as RNInstanceImpl
   }
 
 
@@ -204,7 +204,7 @@ export class RNOHContext extends RNOHCoreContext {
     if (this.rnInstanceImpl.backPressHandler) {
       this.rnInstanceImpl.backPressHandler();
     } else {
-      this.__rnohCoreContextDeps__.defaultBackPressHandler();
+      this._rnohCoreContextDeps.defaultBackPressHandler();
     }
   }
 }
@@ -238,19 +238,19 @@ export class WorkerTurboModuleContext {
   /**
    * @internal
    */
-  constructor(public __workerTurboModuleContextDeps__: WorkerTurboModuleContextDependencies) {
+  constructor(public _workerTurboModuleContextDeps: WorkerTurboModuleContextDependencies) {
   }
 
   get logger() {
-    return this.__workerTurboModuleContextDeps__.logger
+    return this._workerTurboModuleContextDeps.logger
   }
 
   get uiAbilityContext() {
-    return this.__workerTurboModuleContextDeps__.uiAbilityContext
+    return this._workerTurboModuleContextDeps.uiAbilityContext
   }
 
   get rnInstance() {
-    return this.__workerTurboModuleContextDeps__.rnInstance
+    return this._workerTurboModuleContextDeps.rnInstance
   }
 }
 
