@@ -384,7 +384,7 @@ export class RNInstanceImpl implements RNInstance {
     private napiBridge: NapiBridge,
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,

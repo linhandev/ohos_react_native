@@ -1,6 +1,6 @@
 import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI';
 import { Tag, Descriptor } from "./DescriptorBase"
-import { RNComponentContext, ComponentBuilderContext, ComponentBuilderContextImpl } from "./RNComponentContext"
+import { RNComponentContext, ComponentBuilderContext } from "./EtsRNOHContext"
 import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
 
@@ -33,7 +33,7 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     if (this.componentContext === undefined) {
       logger.fatal("ComponentContext is undefined")
     }
-    const builderCtx = new ComponentBuilderContextImpl(
+    const builderCtx = new ComponentBuilderContext(
       this.componentContext!,
       this.componentContext!,
       tag,

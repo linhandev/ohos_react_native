@@ -22,7 +22,7 @@ export class RNInstanceRegistry {
     private logger: RNOHLogger,
     private napiBridge: NapiBridge,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
     private httpClientProvider: HttpClientProvider,
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
