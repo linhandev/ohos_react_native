@@ -66,6 +66,22 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     }
   }
 
+  if (m_props->capInsets != props->capInsets) {
+    this->getLocalRootArkUINode().setCapInsets(
+        props->capInsets, m_layoutMetrics.pointScaleFactor);
+  }
+
+  if (m_rawProps.fadeDuration != rawProps.fadeDuration) {
+    m_rawProps.fadeDuration = rawProps.fadeDuration;
+    if (m_rawProps.fadeDuration.has_value()) {
+      this->getLocalRootArkUINode().setFadeDuration(
+          m_rawProps.fadeDuration.value());
+    } else {
+      // reset if no value passed
+      this->getLocalRootArkUINode().setFadeDuration(0);
+    }
+  }
+
   if (m_rawProps.resizeMethod != rawProps.resizeMethod) {
     m_rawProps.resizeMethod = rawProps.resizeMethod;
     if (m_rawProps.resizeMethod.has_value()) {
@@ -153,6 +169,20 @@ void ImageComponentInstance::onError(int32_t errorCode) {
   m_eventEmitter->onLoadEnd();
 }
 
+void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
+  if (m_eventEmitter == nullptr) {
+    return;
+  }
+
+  m_eventEmitter->dispatchEvent(
+      "progress", [=](facebook::jsi::Runtime& runtime) {
+        auto payload = facebook::jsi::Object(runtime);
+        payload.setProperty(runtime, "loaded", (int32_t)loaded);
+        payload.setProperty(runtime, "total", (int32_t)total);
+        return payload;
+      });
+}
+
 void ImageComponentInstance::onLoadStart() {
   if (m_eventEmitter) {
     m_eventEmitter->onLoadStart();
@@ -172,8 +202,11 @@ ImageComponentInstance::ImageRawProps::getFromDynamic(folly::dynamic value) {
   auto loadingIndicatorSource = (value.count("loadingIndicatorSource") > 0)
       ? std::optional(value["loadingIndicatorSource"].at("uri").getString())
       : std::nullopt;
+  auto fadeDuration = (value.count("fadeDuration") > 0)
+      ? std::optional(value["fadeDuration"].asInt())
+      : std::nullopt;
 
-  return {resizeMethod, focusable, alt, loadingIndicatorSource};
+  return {resizeMethod, focusable, alt, loadingIndicatorSource, fadeDuration};
 }
 
 } // namespace rnoh

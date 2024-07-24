@@ -203,6 +203,12 @@ export const ImageTest = () => {
           style={{overlayColor: 'red', borderRadius: Number.MAX_SAFE_INTEGER}}
         />
       </TestCase.Example>
+      <TestCase.Example itShould="Image should have 10 edge insertion area on four edges.">
+        <Image
+          source={LOCAL_IMAGE_ASSET_ID}
+          capInsets={{top: 10, left: 10, bottom: 10, right: 10}}
+        />
+      </TestCase.Example>
       <TestCase.Manual
         itShould="call onLoadStart"
         initialState={'not called'}
@@ -211,6 +217,21 @@ export const ImageTest = () => {
             <Image
               source={LOCAL_IMAGE_ASSET_ID}
               onLoadStart={() => setState('called')}
+            />
+          );
+        }}
+        assert={({expect, state}) => {
+          expect(state).to.be.eq('called');
+        }}
+      />
+      <TestCase.Manual
+        itShould="call onProgress"
+        initialState={'not called'}
+        arrange={({setState}) => {
+          return (
+            <Image
+              source={LOCAL_IMAGE_ASSET_ID}
+              onProgress={() => setState('called')}
             />
           );
         }}
