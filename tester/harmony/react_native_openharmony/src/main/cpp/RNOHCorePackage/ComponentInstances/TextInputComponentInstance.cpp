@@ -43,6 +43,7 @@ void TextInputComponentInstance::onChange(std::string text) {
     return;
   }
   m_nativeEventCount++;
+  m_valueChanged = true;
   m_eventEmitter->onChange(getOnChangeMetrics());
 }
 
@@ -116,6 +117,9 @@ void TextInputComponentInstance::onTextSelectionChange(
     keyPressMetrics.text = boost::locale::conv::utf_to_utf<char>(key);
     keyPressMetrics.eventCount = m_nativeEventCount;
     m_eventEmitter->onKeyPress(keyPressMetrics);
+  }
+  if (m_valueChanged) {
+    m_valueChanged = false;
   }
 
   m_selectionLocation = location;
