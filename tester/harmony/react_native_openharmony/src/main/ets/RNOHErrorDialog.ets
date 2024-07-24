@@ -1,5 +1,5 @@
 import { Edges, RNOHError, FatalRNOHError, SafeAreaInsetsProvider } from "./RNOH"
-import { RNOHCoreContext } from './RNOH/RNOHCoreContext'
+import { RNOHCoreContext } from './RNOH/RNOHContext'
 import { DevToolsController } from './RNOH/DevToolsController'
 
 /**

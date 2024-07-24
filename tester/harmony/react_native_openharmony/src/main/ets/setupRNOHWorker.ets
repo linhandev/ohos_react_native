@@ -13,7 +13,7 @@ import {
   WorkerTurboModuleContext
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/ts"
-import { EtsWorkerTurboModuleContext, } from "./RNOH/EtsWorkerTurboModule"
+import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
 import { UITaskRunner, UITask } from "./RNOH/UITaskRunner"
 import common from '@ohos.app.ability.common'
 
@@ -149,7 +149,10 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             const packages = createPackages({})
             const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge)
             const etsWorkerTurboModuleContext =
-              new EtsWorkerTurboModuleContext({ logger, uiAbilityContext, rnInstance }, uiTaskRunner)
+              new EtsWorkerTurboModuleContext({
+                workerTurboModuleContextDependencies: { logger, uiAbilityContext, rnInstance },
+                uiTaskRunner: uiTaskRunner
+              })
             const turboModuleProvider = await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, logger)
             turboModuleDepsByRNInstanceId.set(rnInstanceId, { uiTaskRunner, rnInstance, turboModuleProvider })
             napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
@@ -171,10 +174,14 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             const destroyWorkerRNInstancePayload = messagePayload as DestroyWorkerRNInstancePayload
             const deps = turboModuleDepsByRNInstanceId.get(destroyWorkerRNInstancePayload.rnInstanceId)
             if (!deps) {
-              throw new RNOHError({ whatHappened: "Tried to destroy not existing WorkerRNInstance", howCanItBeFixed: [] })
+              throw new RNOHError({
+                whatHappened: "Tried to destroy not existing WorkerRNInstance",
+                howCanItBeFixed: []
+              })
             }
             deps.turboModuleProvider.onDestroy()
-            postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", new DestroyWorkerRNInstanceAckPayload(destroyWorkerRNInstancePayload.rnInstanceId))
+            postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
+              new DestroyWorkerRNInstanceAckPayload(destroyWorkerRNInstancePayload.rnInstanceId))
             break;
         }
       }
