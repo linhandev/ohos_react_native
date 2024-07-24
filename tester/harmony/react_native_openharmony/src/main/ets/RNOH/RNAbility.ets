@@ -1,7 +1,7 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import type { RNOHLogger } from './RNOHLogger';
 import { StandardRNOHLogger } from './RNOHLogger';
-import { RNOHCoreContext } from "./RNOHCoreContext"
+import { RNOHCoreContext } from "./RNOHContext"
 import window from '@ohos.window';
 import Want from '@ohos.app.ability.Want';
 import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
