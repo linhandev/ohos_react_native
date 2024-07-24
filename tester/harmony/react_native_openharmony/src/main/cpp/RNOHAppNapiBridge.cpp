@@ -52,7 +52,7 @@ std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
 
 std::unordered_map<int, ArkTSBridge::Shared> ARK_TS_BRIDGE_BY_ENV_ID;
 
-std::unordered_map<int, std::pair<napi_ref, napi_env>>
+std::unordered_map<int, std::pair<NapiRef, napi_env>>
     WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID;
 std::unordered_map<int, std::unique_ptr<NapiTaskRunner>>
     WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID;
@@ -153,7 +153,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #ifdef REACT_NATIVE_DEBUG
     isDebugModeEnabled = true;
 #endif
-    auto arkTSBridgeHandler = arkJS.createReference(args[1]);
+    auto arkTSBridgeHandler = arkJS.createNapiRef(args[1]);
     ARK_TS_BRIDGE_BY_ENV_ID.emplace(
         nextEnvId,
         std::make_shared<ArkTSBridge>(env, std::move(arkTSBridgeHandler)));
@@ -174,11 +174,12 @@ static napi_value registerWorkerTurboModuleProvider(
     DLOG(INFO) << "registerWorkerTurboModuleProvider";
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 2);
-    auto workerTurboModuleProviderRef = arkJS.createReference(args[0]);
+    auto workerTurboModuleProviderRef = arkJS.createNapiRef(args[0]);
     auto rnInstanceId = arkJS.getDouble(args[1]);
     auto lock = std::lock_guard(WORKER_DATA_MTX);
     WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID.emplace(
-        rnInstanceId, std::make_pair(workerTurboModuleProviderRef, env));
+        rnInstanceId,
+        std::make_pair(std::move(workerTurboModuleProviderRef), env));
     if (WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.find(rnInstanceId) ==
         WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.end()) {
       WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.emplace(
@@ -211,10 +212,10 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         facebook::react::JSExecutor::performanceNow());
     auto args = arkJS.getCallbackArgs(info, 12);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
-    auto mainArkTSTurboModuleProviderRef = arkJS.createReference(args[1]);
-    auto mutationsListenerRef = arkJS.createReference(args[2]);
-    auto commandDispatcherRef = arkJS.createReference(args[3]);
-    auto eventDispatcherRef = arkJS.createReference(args[4]);
+    auto mainArkTSTurboModuleProviderRef = arkJS.createNapiRef(args[1]);
+    auto mutationsListenerRef = arkJS.createNapiRef(args[2]);
+    auto commandDispatcherRef = arkJS.createNapiRef(args[3]);
+    auto eventDispatcherRef = arkJS.createNapiRef(args[4]);
     auto shouldEnableDebugger = arkJS.getBoolean(args[5]);
     auto shouldEnableBackgroundExecutor = arkJS.getBoolean(args[6]);
     auto featureFlagRegistry = std::make_shared<FeatureFlagRegistry>();
@@ -223,7 +224,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
           arkJS.getString(featureFlagNameAndStatus.first),
           arkJS.getBoolean(featureFlagNameAndStatus.second));
     }
-    auto frameNodeFactoryRef = arkJS.createReference(args[8]);
+    auto frameNodeFactoryRef = arkJS.createNapiRef(args[8]);
     auto jsResourceManager = args[9];
     int envId = arkJS.getDouble(args[10]);
     auto n_fontPathRelativeToRawfileDirByFontFamily =
@@ -245,20 +246,22 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
           WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.extract(workerTaskRunnerIt)
               .mapped());
     }
-    auto workerTurboModuleProviderRefAndEnv = extractOrDefault(
+    auto [workerTurboModuleProviderRef, workerEnv] = extractOrDefault(
         WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID,
         rnInstanceId,
-        std::make_pair(nullptr, nullptr));
+        std::make_pair(NapiRef{}, nullptr));
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,
-        workerTurboModuleProviderRefAndEnv.second,
+        workerEnv,
         std::move(workerTaskRunner),
         getOrDefault(ARK_TS_BRIDGE_BY_ENV_ID, envId, nullptr),
-        mainArkTSTurboModuleProviderRef,
-        workerTurboModuleProviderRefAndEnv.first,
-        frameNodeFactoryRef,
-        [env, rnInstanceId, mutationsListenerRef](
+        std::move(mainArkTSTurboModuleProviderRef),
+        std::move(workerTurboModuleProviderRef),
+        std::move(frameNodeFactoryRef),
+        [env,
+         rnInstanceId,
+         mutationsListenerRef = std::move(mutationsListenerRef)](
             auto const& mutationsToNapiConverter, auto const& mutations) {
           {
             auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
@@ -275,7 +278,9 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
           auto listener = arkJS.getReferenceValue(mutationsListenerRef);
           arkJS.call<1>(listener, args);
         },
-        [env, rnInstanceId, commandDispatcherRef](
+        [env,
+         rnInstanceId,
+         commandDispatcherRef = std::move(commandDispatcherRef)](
             auto tag, auto const& commandName, auto args) {
           {
             auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
@@ -296,7 +301,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
               arkJS.getReferenceValue(commandDispatcherRef);
           arkJS.call<3>(commandDispatcher, napiArgsArray);
         },
-        eventDispatcherRef,
+        std::move(eventDispatcherRef),
         featureFlagRegistry,
         UI_TICKER,
         jsResourceManager,
@@ -349,18 +354,20 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
       return arkJS.getUndefined();
     }
     auto& rnInstance = it->second;
-    auto onFinishRef = arkJS.createReference(args[3]);
+    auto onFinishRef = arkJS.createNapiRef(args[3]);
     rnInstance->loadScript(
         arkJS.getArrayBuffer(args[1]),
         arkJS.getString(args[2]),
-        [taskExecutor = rnInstance->getTaskExecutor(), env, onFinishRef](
-            const std::string& errorMsg) {
+        [taskExecutor = rnInstance->getTaskExecutor(),
+         env,
+         onFinishRef =
+             std::move(onFinishRef)](const std::string& errorMsg) mutable {
           taskExecutor->runTask(
-              TaskThread::MAIN, [env, onFinishRef, errorMsg]() {
+              TaskThread::MAIN,
+              [env, onFinishRef = std::move(onFinishRef), errorMsg]() {
                 ArkJS arkJS(env);
                 auto listener = arkJS.getReferenceValue(onFinishRef);
                 arkJS.call<1>(listener, {arkJS.createString(errorMsg)});
-                arkJS.deleteReference(onFinishRef);
               });
         });
     return arkJS.getNull();

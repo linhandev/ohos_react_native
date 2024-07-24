@@ -22,12 +22,12 @@ class CustomComponentArkUINodeHandleFactory final {
 
   CustomComponentArkUINodeHandleFactory(
       napi_env env,
-      napi_ref customRNComponentFrameNodeFactoryRef,
+      NapiRef customRNComponentFrameNodeFactoryRef,
       TaskExecutor::Shared taskExecutor)
       : m_env(env),
         m_taskExecutor(taskExecutor),
         m_customRNComponentFrameNodeFactoryRef(
-            customRNComponentFrameNodeFactoryRef) {}
+            std::move(customRNComponentFrameNodeFactoryRef)) {}
 
   ~CustomComponentArkUINodeHandleFactory() {
     m_threadGuard.assertThread();
@@ -51,7 +51,7 @@ class CustomComponentArkUINodeHandleFactory final {
     auto n_arkTSNodeHandle = arkJS.getObjectProperty(n_result, "frameNode");
     auto n_destroyBuilderNode =
         arkJS.getObjectProperty(n_result, "destroyBuilderNode");
-    auto n_destroyBuilderNodeRef = arkJS.createReference(n_destroyBuilderNode);
+    auto n_destroyBuilderNodeRef = arkJS.createNapiRef(n_destroyBuilderNode);
     ArkUI_NodeHandle arkTSNodeHandle = nullptr;
     auto errorCode = OH_ArkUI_GetNodeHandleFromNapiValue(
         m_env, n_arkTSNodeHandle, &arkTSNodeHandle);
@@ -60,11 +60,12 @@ class CustomComponentArkUINodeHandleFactory final {
       return std::make_pair(nullptr, [] {});
     }
     return std::make_pair(
-        arkTSNodeHandle, [env = m_env, n_destroyBuilderNodeRef] {
+        arkTSNodeHandle,
+        [env = m_env,
+         destroyBuilderNodeRef = std::move(n_destroyBuilderNodeRef)] {
           ArkJS arkJS(env);
-          auto n_destroy = arkJS.getReferenceValue(n_destroyBuilderNodeRef);
+          auto n_destroy = arkJS.getReferenceValue(destroyBuilderNodeRef);
           arkJS.call(n_destroy, {});
-          arkJS.deleteReference(n_destroyBuilderNodeRef);
         });
 #else
     return std::make_pair(nullptr, [] {});
@@ -74,7 +75,7 @@ class CustomComponentArkUINodeHandleFactory final {
  private:
   TaskExecutor::Shared m_taskExecutor;
   napi_env m_env;
-  napi_ref m_customRNComponentFrameNodeFactoryRef;
+  NapiRef m_customRNComponentFrameNodeFactoryRef;
   ThreadGuard m_threadGuard{};
 };
 } // namespace rnoh
