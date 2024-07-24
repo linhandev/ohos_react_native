@@ -36,7 +36,7 @@ export class RNInstanceRegistry {
     let workerThread: WorkerThread | null = null
     if (this.workerThreadPromise !== null) {
       workerThread = await this.workerThreadPromise
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options?.name)
+      await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     }
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
     for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
@@ -70,12 +70,16 @@ export class RNInstanceRegistry {
     return rnInstance;
   }
 
-  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number, rnInstanceName: string) {
+  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number,
+    options: RNInstanceOptions) {
     const logger = this.logger.clone(["RNInstanceRegistry", "createRNInstanceEnvOnWorker"])
     logger.info("waiting for worker's rnInstance environment")
     setTimeout(() => {
       workerThread.postMessage("RNOH_CREATE_WORKER_RN_INSTANCE", {
-        rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
+        rnInstanceId,
+        rnInstanceName: options.name,
+        uiAbilityContext: this.uiAbilityContext,
+        architecture: options.enableCAPIArchitecture ? "C_API" : "ARK_TS"
       })
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
@@ -91,8 +95,9 @@ export class RNInstanceRegistry {
       this.instanceMap.delete(id);
       if (this.workerThreadPromise) {
         const worker = await this.workerThreadPromise;
-        const ack = worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
-        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", {rnInstanceId: id})
+        const ack =
+          worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
         await ack;
       }
       return true;

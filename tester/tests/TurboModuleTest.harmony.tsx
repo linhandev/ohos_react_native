@@ -70,6 +70,22 @@ export function TurboModuleTest() {
       </TestSuite>
       <TestSuite name="WorkerTurboModule">
         <TestCase.Logical
+          itShould="support worker -> cpp communication (WorkerRNInstance::postMessageToCpp)"
+          fn={async ({expect}) => {
+            expect(
+              await SampleWorkerTurboModule.testCommunicationBetweenWorkerAndCpp(),
+            ).to.be.true;
+          }}
+        />
+        <TestCase.Logical
+          itShould="support WorkerRNInstance::getArchitecture"
+          fn={({expect}) => {
+            expect(SampleWorkerTurboModule.getArchitecture()).to.be.eq(
+              (Platform.constants as any).rnohArchitecture,
+            );
+          }}
+        />
+        <TestCase.Logical
           itShould="not crash"
           fn={({}) => {
             SampleWorkerTurboModule.runComputeIntensiveTask();
