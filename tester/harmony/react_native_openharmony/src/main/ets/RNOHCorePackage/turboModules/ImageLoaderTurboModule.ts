@@ -17,7 +17,7 @@ export class ImageLoaderTurboModule extends TurboModule {
   constructor(protected ctx: TurboModuleContext) {
     super(ctx)
     this.imageLoader = new RemoteImageLoader(
-      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext, ctx.rnInstance)
+      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext, () => {})
   }
 
   public getConstants() {

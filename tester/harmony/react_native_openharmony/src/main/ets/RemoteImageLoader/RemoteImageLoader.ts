@@ -7,7 +7,6 @@ import fs from '@ohos.file.fs';
 import { fetchDataFromUrl, FetchOptions, FetchResult } from '../RNOH/HttpRequestHelper';
 import { RemoteImageSource } from './RemoteImageSource';
 import { common } from '@kit.AbilityKit';
-import { RNInstance } from '../RNOH/ts';
 
 export class RemoteImageLoader {
   private activeRequestByUrl: Map<string, Promise<FetchResult>> = new Map();
@@ -17,7 +16,7 @@ export class RemoteImageLoader {
     private memoryCache: RemoteImageMemoryCache,
     private diskCache: RemoteImageDiskCache,
     private context: common.UIAbilityContext,
-    private rnInstance: RNInstance,
+    private onDiskCacheUpdate: (e: {remoteUri: string, fileUri: string}) => void,
   ) {
   }
 
@@ -149,10 +148,7 @@ export class RemoteImageLoader {
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
       const fileUri = `file://${this.diskCache.getLocation(uri)}`;
-      this.rnInstance.postMessageToCpp('UPDATE_IMAGE_SOURCE_MAP', {        
-        remoteUri: uri,
-        fileUri,
-      });
+      this.onDiskCacheUpdate({remoteUri: uri, fileUri})
     });
 
     return await promise;
