@@ -123,7 +123,7 @@ const rnMethodPerformanceMetricsQuery = (
     LEFT JOIN thread ON callstack.callid = thread.itid
     WHERE ts >= ${startRange} AND ts + (dur/1000000) <= ${endRange} AND thread.name = "RNOH_JS"
     GROUP BY callstack.name
-    HAVING callstack.name NOT LIKE "H:#RNOH%" AND callstack.name LIKE "H:%" AND callstack.name NOT LIKE "%JS_require%"
+    HAVING callstack.name NOT LIKE "H:#RNOH%" AND callstack.name LIKE "H:%" AND callstack.name NOT LIKE "%JS_require%" AND callstack.name NOT LIKE "%JSTimers%"
     ORDER BY callCount DESC
 `;
 
@@ -317,25 +317,26 @@ const main = async () => {
   };
 
   for (let id = 0; id < ranges.length; id++) {
-    const range = ranges[id];
+    const {
+      startTimestamp,
+      endTimestamp,
+      testName,
+      duration: testDuration,
+    } = ranges[id];
     const rnohMethodDuration = await getRows(
-      rnohMethodPerformanceMetricsQuery(
-        range.startTimestamp,
-        range.endTimestamp,
-      ),
+      rnohMethodPerformanceMetricsQuery(startTimestamp, endTimestamp),
     );
     const rnMethodDuration = await getRows(
-      rnMethodPerformanceMetricsQuery(range.startTimestamp, range.endTimestamp),
+      rnMethodPerformanceMetricsQuery(startTimestamp, endTimestamp),
     );
-    const fpsData = await getRow(
-      fpsQuery(range.startTimestamp, range.endTimestamp),
-    );
+    const fpsData = await getRow(fpsQuery(startTimestamp, endTimestamp));
 
     data.testData.push({
       id,
+      testName,
       basicData: {
         fps: fpsData?.fps,
-        testDuration: range.duration,
+        testDuration,
       },
       rnohMethodDuration,
       rnMethodDuration,

@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 export type TestCaseProps = {
+  onStart: () => void;
   onComplete: () => void;
 };
 
 type TestPerformerProps = {
   onComplete: (data: {
+    testName: string;
     startTimestamp: number;
     endTimestamp: number;
     duration: number;
@@ -18,25 +20,29 @@ export default function TestPerformer({
   testComponent: Test,
 }: TestPerformerProps) {
   const [initialMount, setInitialMount] = useState(true);
-  const [startTimestamp, setStartTimestamp] = useState(0);
+  const startTimestamp = useRef<number>(0);
+
+  // Method for overwriting the start timestamp
+  const onStartHandler = () => {
+    startTimestamp.current = Date.now();
+  };
+
+  const onCompleteHandler = () => {
+    const endTimestamp = Date.now();
+    onComplete({
+      testName: Test.name,
+      startTimestamp: startTimestamp.current,
+      endTimestamp,
+      duration: endTimestamp - startTimestamp.current,
+    });
+    setInitialMount(true);
+  };
 
   if (initialMount) {
     setInitialMount(false);
-    setStartTimestamp(Date.now());
+    startTimestamp.current = Date.now();
     return null;
   }
 
-  return (
-    <Test
-      onComplete={() => {
-        const endTimestamp = Date.now();
-        onComplete({
-          startTimestamp,
-          endTimestamp,
-          duration: endTimestamp - startTimestamp,
-        });
-        setInitialMount(true);
-      }}
-    />
-  );
+  return <Test onStart={onStartHandler} onComplete={onCompleteHandler} />;
 }

@@ -1,5 +1,5 @@
 APP_BUNDLE_ID="com.rnoh.tester" # TODO: detect that automatically
-TEST_TIME="10" # TODO: detect that automatically
+TEST_TIME="190" # TODO: detect that automatically
 MAIN_DIR="./scripts/performance_measurement"
 REPORTS_DIR="performance_reports"
 TIMESTAMP_FILE_PATH=/data/app/el2/100/base/$APP_BUNDLE_ID/temp/test-timestamps.json
@@ -64,8 +64,10 @@ tmux wait measure-perf-done
 # Stop the app
 hdc shell aa force-stop com.rnoh.tester
 
-# Convert the data
+echo "Retrieving the trace data..."
 hdc file recv /data/local/tmp/hiprofiler_data.htrace ./tmp/
+
+echo "Converting the trace data..."
 ./trace_streamer ./tmp/hiprofiler_data.htrace -e ./tmp/sqlite.db
 
 # Remove unnecessary ts file

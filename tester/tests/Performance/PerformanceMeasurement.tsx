@@ -1,11 +1,13 @@
-import {View} from 'react-native';
 import React, {useCallback, useState} from 'react';
-import Test0 from './Test0';
-import Test1 from './Test1';
+import * as testComponents from './tests';
 import TestPerformer from './TestPerformer';
+import NextTestScreen from './NextTestScreen';
 
 const timestampFileName = 'test-timestamps.json';
-const tests = [Test0, Test1];
+
+const tests = Object.values(testComponents).flatMap((element, index, array) =>
+  index < array.length - 1 ? [element, NextTestScreen] : [element],
+);
 
 export default function PerformanceMeasurement() {
   const [currentTestIndex, setCurrentTestIndex] = useState(0);
@@ -13,9 +15,14 @@ export default function PerformanceMeasurement() {
 
   const onCompleteHandler = useCallback(
     async (data: any) => {
+      if (data.testName === 'NextTestScreen') {
+        setCurrentTestIndex(currentTestIndex + 1);
+        return;
+      }
       setTimestamps([...timestamps, data]);
-      console.log('Test completed, duration: ', data.duration);
-
+      console.log(
+        `Test ${data.testName} completed, duration: ${(data.duration / 1000).toFixed(2)}s`,
+      );
       if (currentTestIndex === tests.length - 1) {
         try {
           // @ts-ignore
@@ -27,7 +34,7 @@ export default function PerformanceMeasurement() {
           );
           console.log('All tests completed!');
         } catch (error) {
-          console.error('Failed to write timestamps to file', error);
+          console.error('Failed to write timestamps to file ', error);
         }
         return;
       }
@@ -38,11 +45,9 @@ export default function PerformanceMeasurement() {
   );
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <TestPerformer
-        testComponent={tests[currentTestIndex]}
-        onComplete={onCompleteHandler}
-      />
-    </View>
+    <TestPerformer
+      testComponent={tests[currentTestIndex]}
+      onComplete={onCompleteHandler}
+    />
   );
 }
