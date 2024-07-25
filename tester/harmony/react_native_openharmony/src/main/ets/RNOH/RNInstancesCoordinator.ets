@@ -26,10 +26,6 @@ export interface RNInstancesCoordinatorDependencies {
   fontSizeScale : number | undefined
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
-
-  /**
-   * If the string is empty, worker thread will be disabled.
-   */
   rnohWorkerScriptUrl: string,
 
   /**
@@ -177,7 +173,7 @@ export class RNInstancesCoordinator {
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
-      rnohWorkerScriptUrl !== "" ? WorkerThread.create({
+      WorkerThread.create({
         scriptUrl: rnohWorkerScriptUrl,
         name: "RNOHWorker",
         logger: logger,
@@ -185,7 +181,7 @@ export class RNInstancesCoordinator {
           this.devToolsController.setLastError(rnohError)
           this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
         }
-      }) : null
+      })
     )
     this.rnohCoreContext = new RNOHCoreContext({
       reactNativeVersion: "0.72.5",
