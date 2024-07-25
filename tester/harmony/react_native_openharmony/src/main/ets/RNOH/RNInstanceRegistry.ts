@@ -27,17 +27,14 @@ export class RNInstanceRegistry {
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
-    private workerThreadPromise: Promise<WorkerThread> | null,
+    private workerThreadPromise: Promise<WorkerThread>,
   ) {
   }
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
-    let workerThread: WorkerThread | null = null
-    if (this.workerThreadPromise !== null) {
-      workerThread = await this.workerThreadPromise
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options)
-    }
+    const workerThread = await this.workerThreadPromise
+    await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
     for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
       fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
@@ -93,13 +90,11 @@ export class RNInstanceRegistry {
   public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
       this.instanceMap.delete(id);
-      if (this.workerThreadPromise) {
-        const worker = await this.workerThreadPromise;
-        const ack =
-          worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
-        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
-        await ack;
-      }
+      const worker = await this.workerThreadPromise;
+      const ack =
+        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+      worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
+      await ack;
       return true;
     }
     return false;

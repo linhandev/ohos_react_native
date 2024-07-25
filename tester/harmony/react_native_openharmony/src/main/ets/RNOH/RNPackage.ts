@@ -67,7 +67,6 @@ export abstract class RNPackage {
   };
 
   /**
-   * @experimental
    * Turbo Models created by provided factory will be used only if workerTurboModule feature flag is enabled by the application developer.
    * RNOH tries to load Turbo Modules in the following order:
    * 1. WorkerTurboModules (ArkTS)
