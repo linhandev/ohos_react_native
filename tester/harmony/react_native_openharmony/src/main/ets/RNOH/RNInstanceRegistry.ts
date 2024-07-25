@@ -10,7 +10,6 @@ import { HttpClient } from '../HttpClient/ts';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
-import { RNOHError } from "./RNOHError"
 import common from '@ohos.app.ability.common'
 
 export class RNInstanceRegistry {
@@ -28,7 +27,7 @@ export class RNInstanceRegistry {
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
-    private workerThreadPromise: Promise<WorkerThread> | null,
+    private workerThreadPromise: Promise<WorkerThread>,
   ) {
   }
 
@@ -37,14 +36,11 @@ export class RNInstanceRegistry {
     if (options.enableBackgroundExecutor) {
       this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated");
     }
-    let workerThread: WorkerThread | null = null
-    if (this.workerThreadPromise !== null) {
-      workerThread = await this.workerThreadPromise
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options?.name)
-    }
     if (options.enableCAPIArchitecture && !options.fontResourceByFontFamily) {
       this.logger.warn("No custom fonts registered");
     }
+    const workerThread = await this.workerThreadPromise
+    await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
     for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
       fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
@@ -79,12 +75,16 @@ export class RNInstanceRegistry {
     return rnInstance;
   }
 
-  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number, rnInstanceName: string) {
+  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number,
+    options: RNInstanceOptions) {
     const logger = this.logger.clone(["RNInstanceRegistry", "createRNInstanceEnvOnWorker"])
     logger.info("waiting for worker's rnInstance environment")
     setTimeout(() => {
       workerThread.postMessage("RNOH_CREATE_WORKER_RN_INSTANCE", {
-        rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
+        rnInstanceId,
+        rnInstanceName: options.name,
+        uiAbilityContext: this.uiAbilityContext,
+        architecture: options.enableCAPIArchitecture ? "C_API" : "ARK_TS"
       })
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
@@ -98,12 +98,11 @@ export class RNInstanceRegistry {
   public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
       this.instanceMap.delete(id);
-      if (this.workerThreadPromise) {
-        const worker = await this.workerThreadPromise;
-        const ack = worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
-        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", {rnInstanceId: id})
-        await ack;
-      }
+      const worker = await this.workerThreadPromise;
+      const ack =
+        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+      worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
+      await ack;
       return true;
     }
     return false;

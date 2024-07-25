@@ -27,7 +27,6 @@ export class TurboModule extends UITurboModule {
 
 /**
  * @api
- * @experimental
  * @thread: WORKER
  */
 export class WorkerTurboModule {

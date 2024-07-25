@@ -8,10 +8,8 @@ import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClient, DefaultHttpClient } from "../HttpClient"
-import worker from '@ohos.worker';
 import { EnvironmentCallback } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
-
 /**
  Application developers are expected to extend this class. RNAbility aims to move much of the code to the RNOH side in order to improve stability.
  RNInstancesCoordinator can be used if more control is needed.
@@ -58,16 +56,15 @@ export abstract class RNAbility extends UIAbility {
 
   /**
    * Override to specify the worker script URL and enable the RNOHWorker thread and WorkerTurboModules.
-   * @example return "entry/ets/workers/RNOHWorker.ts"
+   * @example return "entry/ets/workers/RNOHWorker.ets"
    *
-   * RNOHWorker.ts calls `setupRNOHWorker` which can be imported from RNOH in the following way:
-   * import { setupRNOHWorker } from "@rnoh/react-native-openharmony/ts"
+   * RNOHWorker.ets calls `setupRNOHWorker` which can be imported from RNOH in the following way:
+   * import { setupRNOHWorker } from "@rnoh/react-native-openharmony/src/main/ets/setupRNOHWorker"
+   *
+   * You may need to import setupRNOHWorker directly from its file, because ETS seem to struggle when
+   * importing this function from the package level.
    */
-  protected getRNOHWorkerScriptUrl(): string {
-    this.logger.clone("getRNOHWorkerScriptUrl")
-      .warn("WorkerThread is disabled. Some third-party libraries may provide WorkerTurboModules. Please set up the worker thread.")
-    return ""
-  }
+  protected abstract getRNOHWorkerScriptUrl(): string
 
   /**
    * Invoked when the React application doesn't handle the device back press.
@@ -125,7 +122,7 @@ export abstract class RNAbility extends UIAbility {
    * @returns HttpClient shared by RNInstances
    */
   protected onCreateDefaultHttpClient(): undefined | HttpClient {
-    return new DefaultHttpClient();
+    return new DefaultHttpClient({logger: this.logger});
   }
 
   onDestroy() {
