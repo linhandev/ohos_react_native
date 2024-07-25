@@ -43,7 +43,7 @@ class PullToRefreshViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
-  void onRefresh() override;
+  void onRefresh(bool enableOnRefreshNativeEvent) override;
   void onRefreshStateChanged(RefreshStatus state) override;
   facebook::react::Point getCurrentOffset() const override;
 
