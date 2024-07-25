@@ -17,8 +17,10 @@ namespace rnoh {
  * Wraps the `react::SurfaceHandle` and attaches the root component of the
  * React Native `Surface` to the native `XComponent`
  */
-class XComponentSurface {
+class XComponentSurface : public Surface {
  public:
+  using Shared = std::shared_ptr<XComponentSurface>;
+
   XComponentSurface(
       std::shared_ptr<facebook::react::Scheduler> scheduler,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
@@ -58,6 +60,8 @@ class XComponentSurface {
   void setProps(folly::dynamic const& props);
   void stop();
   void setDisplayMode(facebook::react::DisplayMode displayMode);
+    
+  Surface::LayoutContext getLayoutContext() override;  
 
  private:
   facebook::react::SurfaceId m_surfaceId;

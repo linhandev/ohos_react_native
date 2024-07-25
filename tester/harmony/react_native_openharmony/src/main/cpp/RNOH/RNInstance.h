@@ -29,8 +29,35 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
+class Surface {
+ public:
+  /**
+   * @api
+   */
+  struct LayoutContext {
+    /**
+     * @internal
+     */
+    static LayoutContext from(facebook::react::LayoutContext layoutContext) {
+      return {.viewportOffset = layoutContext.viewportOffset};
+    }
+
+    facebook::react::Point viewportOffset{};
+  };
+
+  using Weak = std::weak_ptr<Surface>;
+
+  virtual LayoutContext getLayoutContext() = 0;
+};
+
 class RNInstance {
   using ContextContainer = facebook::react::ContextContainer;
+
+  virtual std::optional<Surface::Weak> getSurfaceByRootTag(
+      facebook::react::Tag rootTag) {
+    RNOH_ASSERT_MSG(false, "Not implemented");
+    return std::nullopt;
+  };
 
  public:
   using Weak = std::weak_ptr<RNInstance>;

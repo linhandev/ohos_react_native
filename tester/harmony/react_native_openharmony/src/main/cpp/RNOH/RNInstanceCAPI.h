@@ -185,6 +185,10 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   int getId() override { return m_id; }
   NativeResourceManager const* getNativeResourceManager() const override;
+    
+  std::optional<Surface::Weak> getSurfaceByRootTag(
+      facebook::react::Tag rootTag) override;
+    
   std::optional<std::string> getNativeNodeIdByTag(
       facebook::react::Tag tag) const;
 
@@ -211,7 +215,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   std::shared_ptr<MessageQueueThread> m_jsQueue;
   bool m_shouldEnableDebugger;
   bool m_shouldEnableBackgroundExecutor;
-  std::unordered_map<facebook::react::SurfaceId, XComponentSurface>
+  std::unordered_map<facebook::react::SurfaceId, XComponentSurface::Shared>
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
