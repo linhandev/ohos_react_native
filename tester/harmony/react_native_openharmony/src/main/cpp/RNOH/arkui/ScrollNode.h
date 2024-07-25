@@ -56,8 +56,11 @@ class ScrollNode : public ArkUINode {
   ScrollNode& setCenterContent(bool centerContent);
 
   ScrollNode& resetScrollSnap();
-
-  void scrollTo(float x, float y, bool animated);
+  void scrollTo(
+      float x,
+      float y,
+      bool animated,
+      bool scrollToOverflowEnabled = false);
   void setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode);
 };
 

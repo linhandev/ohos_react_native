@@ -154,6 +154,7 @@ class ScrollViewComponentInstance
   std::weak_ptr<NativeAnimatedTurboModule> m_nativeAnimatedTurboModule{};
   bool m_allowScrollPropagation = true;
   bool m_disableIntervalMomentum = false;
+  bool m_scrollToOverflowEnabled = false;
   bool m_movedBySignificantOffset = false;
   float m_recentScrollFrameOffset = 0;
   bool m_shouldAdjustScrollPositionOnNextRender = false;
@@ -168,6 +169,12 @@ class ScrollViewComponentInstance
   int m_onScrollCallsAfterFrameBeginCallCounter = 0;
 
   // ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+  struct ScrollViewRawProps {
+    std::optional<std::string> overScrollMode;
+    std::optional<uint32_t> endFillColor;
+    static ScrollViewRawProps getFromDynamic(folly::dynamic value);
+  };
+  ScrollViewRawProps m_rawProps;
   // (implicit) ScrollViewInternalStateDelegate
 
   void onChangeInternalState(

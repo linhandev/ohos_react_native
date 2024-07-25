@@ -134,14 +134,19 @@ ScrollNode& ScrollNode::setEdgeEffect(bool bounces, bool alwaysBounce) {
       m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));
   return *this;
 }
-void ScrollNode::scrollTo(float x, float y, bool animated) {
+void ScrollNode::scrollTo(
+    float x,
+    float y,
+    bool animated,
+    bool scrollToOverflowEnabled) {
   ArkUI_AttributeItem item;
   ArkUI_NumberValue value[] = {
       {.f32 = x},
       {.f32 = y},
       {.i32 = animated ? 250 : 0},
       {.i32 = ArkUI_AnimationCurve::ARKUI_CURVE_LINEAR},
-      {.i32 = 0}};
+      {.i32 = 0},
+      {.i32 = (int32_t)scrollToOverflowEnabled}};
   item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_SCROLL_OFFSET, &item));

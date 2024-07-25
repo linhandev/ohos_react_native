@@ -257,7 +257,8 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
         props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
   }
   double prevParentKeyboardAvoidingViewBottomHeight = 0;
-  if (m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0 &&
+  if (m_props != nullptr &&
+      m_props->rawProps.count("__keyboardAvoidingViewBottomHeight") > 0 &&
       m_props->rawProps["__keyboardAvoidingViewBottomHeight"] > 0) {
     prevParentKeyboardAvoidingViewBottomHeight =
         m_props->rawProps["__keyboardAvoidingViewBottomHeight"].asDouble();
@@ -269,11 +270,14 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     m_shouldAdjustScrollPositionOnNextRender = true;
   }
 
+  auto rawProps = ScrollViewRawProps::getFromDynamic(props->rawProps);
+
   if (props->rawProps.count("persistentScrollbar") > 0) {
     m_persistentScrollbar = props->rawProps["persistentScrollbar"].asBool();
   }
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
+  m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setEnableScrollInteraction(
           !m_isNativeResponderBlocked && props->scrollEnabled)
@@ -294,9 +298,45 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               : 0x66000000)
       .setEnablePaging(props->pagingEnabled);
 
-  if (props->contentOffset != m_props->contentOffset) {
+  if (rawProps.overScrollMode.has_value() &&
+      m_rawProps.overScrollMode != rawProps.overScrollMode) {
+    m_rawProps.overScrollMode = rawProps.overScrollMode;
+    bool alwaysBounce = false;
+    bool bounces = false;
+    if (m_rawProps.overScrollMode.value() == "auto") {
+      bounces = true;
+    } else if (m_rawProps.overScrollMode.value() == "always") {
+      bounces = true;
+      alwaysBounce = true;
+    }
+    m_scrollNode.setEdgeEffect(bounces, alwaysBounce);
+  } else {
+    if (!m_props || props->bounces != m_props->bounces ||
+        (isHorizontal(props) &&
+         props->alwaysBounceHorizontal != m_props->alwaysBounceHorizontal) ||
+        (!isHorizontal(props) &&
+         props->alwaysBounceVertical != m_props->alwaysBounceVertical)) {
+      m_scrollNode.setEdgeEffect(
+          props->bounces,
+          isHorizontal(props) ? props->alwaysBounceHorizontal
+                              : props->alwaysBounceVertical);
+    }
+  }
+
+  if (m_rawProps.endFillColor != rawProps.endFillColor) {
+    m_rawProps.endFillColor = rawProps.endFillColor;
+    if (m_rawProps.endFillColor.has_value()) {
+      m_scrollNode.setBackgroundColor(m_rawProps.endFillColor.value());
+    }
+  }
+
+  if (!m_props || props->contentOffset != m_props->contentOffset ||
+      props->scrollToOverflowEnabled != m_props->scrollToOverflowEnabled) {
     m_scrollNode.scrollTo(
-        props->contentOffset.x, props->contentOffset.y, false);
+        props->contentOffset.x,
+        props->contentOffset.y,
+        false,
+        m_scrollToOverflowEnabled);
     updateStateWithContentOffset(props->contentOffset);
   }
 
@@ -336,7 +376,10 @@ void ScrollViewComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
     m_scrollNode.scrollTo(
-        args[0].asDouble(), args[1].asDouble(), args[2].asBool());
+        args[0].asDouble(),
+        args[1].asDouble(),
+        args[2].asBool(),
+        m_scrollToOverflowEnabled);
   } else if (commandName == "scrollToEnd") {
     scrollToEnd(args[0].asBool());
   }
@@ -610,10 +653,16 @@ void ScrollViewComponentInstance::disableIntervalMomentum() {
   if (nextSnapTarget.has_value()) {
     if (isHorizontal(m_props)) {
       m_scrollNode.scrollTo(
-          nextSnapTarget.value(), static_cast<float>(m_currentOffset.y), true);
+          nextSnapTarget.value(),
+          static_cast<float>(m_currentOffset.y),
+          true,
+          m_scrollToOverflowEnabled);
     } else {
       m_scrollNode.scrollTo(
-          static_cast<float>(m_currentOffset.x), nextSnapTarget.value(), true);
+          static_cast<float>(m_currentOffset.x),
+          nextSnapTarget.value(),
+          true,
+          m_scrollToOverflowEnabled);
     }
   }
 }
@@ -651,6 +700,19 @@ std::optional<float> ScrollViewComponentInstance::getNextSnapTarget() {
     nextSnapTarget = static_cast<float>(intervalIndex * interval);
   }
   return nextSnapTarget;
+}
+
+ScrollViewComponentInstance::ScrollViewRawProps
+ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(
+    folly::dynamic value) {
+  auto overScrollMode = (value.count("overScrollMode") > 0)
+      ? std::optional(value["overScrollMode"].asString())
+      : std::nullopt;
+  auto endFillColor = (value.count("endFillColor") > 0)
+      ? std::optional(value["endFillColor"].asInt())
+      : std::nullopt;
+
+  return {overScrollMode, endFillColor};
 }
 
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()
@@ -721,7 +783,7 @@ void ScrollViewComponentInstance::adjustVisibleContentPosition(
 
 std::optional<ScrollViewComponentInstance::ChildTagWithOffset>
 ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
-  if (m_children.empty() || m_children[0] == nullptr) {
+  if (!m_props || m_children.empty() || m_children[0] == nullptr) {
     return std::nullopt;
   }
 

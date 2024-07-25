@@ -5,7 +5,6 @@
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkUITypography.h"
 #include "RNOHCorePackage/ComponentInstances/TextConversions.h"
-#include "TextMeasurer.h"
 
 namespace rnoh {
 
