@@ -26,6 +26,7 @@ class MountingManagerCAPI;
  */
 class ComponentInstance
     : public TouchTarget,
+        public ClippingComponent,
       public std::enable_shared_from_this<ComponentInstance> {
  private:
   std::string m_componentName;
