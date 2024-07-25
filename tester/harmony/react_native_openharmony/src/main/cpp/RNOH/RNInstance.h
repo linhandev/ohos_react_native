@@ -53,13 +53,13 @@ class Surface {
 class RNInstance {
   using ContextContainer = facebook::react::ContextContainer;
 
+  public:
   virtual std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) {
     RNOH_ASSERT_MSG(false, "Not implemented");
     return std::nullopt;
   };
 
- public:
   using Weak = std::weak_ptr<RNInstance>;
 
   virtual ~RNInstance() = default;
