@@ -8,30 +8,32 @@ class CustomNodeComponentInstance
     : public CppComponentInstance<facebook::react::ViewShadowNode>,
       public CustomNodeDelegate {
  private:
-  CustomNode m_customNode;
-  std::vector<bool> m_childrenClippedState;
-
-  bool isViewClipped(
-      const ComponentInstance::Shared& child,
-      facebook::react::Point currentOffset,
-      facebook::react::Rect parentBoundingBox);
+  CustomNode *m_customNode;
+  void getChildViewRect(std::shared_ptr<ComponentInstance> const& child, facebook::react::Rect &rect);
+  void updateVisibleFirst(std::vector<ComponentInstance::Shared> &childNodes);
+  void updateVisibleDown(std::vector<ComponentInstance::Shared> &childNodes);
+  void updateVisibleUp(std::vector<ComponentInstance::Shared> &childNodes);
+  void updateClippingIndex(bool isInsert, std::size_t index) override;
+  void initSortChildren() override;
+  void clearSortChildren() override;
+  void insertSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
+  void removeSortChild(std::shared_ptr<ComponentInstance> child, std::size_t &index) override;
+  void restoreRsTree() override; 
  public:
   CustomNodeComponentInstance(Context context);
+  ~CustomNodeComponentInstance();
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
       std::size_t index) override;
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
-
-  void onPropsChanged(SharedConcreteProps const& props) override;
-
-  void updateClippedSubviews(bool childrenChange = false);
-
-  void onFinalizeUpdates() override;
+  void onChildLayoutChange(std::shared_ptr<ComponentInstance> child) override;
   void onClick() override;
   void onHoverIn() override;
   void onHoverOut() override;
   CustomNode& getLocalRootArkUINode() override;
+  void insertNodeWithRemoveClipping(std::shared_ptr<ComponentInstance> const& child, std::size_t index) override;
+  void updateVisible(bool isFirst) override;
 };
 } // namespace rnoh

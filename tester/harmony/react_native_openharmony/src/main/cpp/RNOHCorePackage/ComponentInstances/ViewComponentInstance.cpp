@@ -12,16 +12,27 @@ ViewComponentInstance::ViewComponentInstance(Context context)
 void ViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance, std::size_t index) {
     CppComponentInstance::onChildInserted(childComponentInstance, index);
-    getLocalRootArkUINode().insertChild(
-        childComponentInstance->getLocalRootArkUINode(), index);
+    if (m_removeClippedSubviews){
+        insertNodeWithRemoveClipping(childComponentInstance, index);
+    } else {
+        childComponentInstance->setIsClipped(false);
+        getLocalRootArkUINode().insertChild(childComponentInstance->getLocalRootArkUINode(), index);
+    }
 }
 
 void ViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance)
 {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  getLocalRootArkUINode().removeChild(
-      childComponentInstance->getLocalRootArkUINode());
+    if (m_removeClippedSubviews) {
+        if (!childComponentInstance->getIsClipped()) {
+            getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
+        childComponentInstance->setIsClipped(true);
+  }
+    } else {
+        getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
+        childComponentInstance->setIsClipped(true);
+    } 
 }
 
 void ViewComponentInstance::onHoverIn() {
