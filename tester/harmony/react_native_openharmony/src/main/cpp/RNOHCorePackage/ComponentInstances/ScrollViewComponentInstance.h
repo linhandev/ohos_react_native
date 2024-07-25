@@ -7,116 +7,16 @@
 #include "RNOHCorePackage/TurboModules/Animated/NativeAnimatedTurboModule.h"
 
 namespace rnoh {
-enum ScrollNodeState : int32_t { IDLE, DRAGGING, SETTLING };
-
-class ScrollViewComponentInstance;
-
-/**
- * Represents a state in the State design pattern. The term "Internal"
- * distinguishes it from ScrollViewState — a React Native class.
- */
-class ScrollViewInternalState {
- protected:
-  ScrollViewComponentInstance* m_instance;
-
- public:
-  using Unique = std::unique_ptr<ScrollViewInternalState>;
-
-  ScrollViewInternalState(ScrollViewComponentInstance* instance);
-
-  virtual ~ScrollViewInternalState() {}
-
-  virtual std::string getDebugName() {
-    return "ScrollViewInternalState";
-  };
-
-  virtual ScrollNodeState asScrollNodeState() = 0;
-
-  virtual void onScroll() {
-    LOG(WARNING) << "ScrollViewInternalState::" << this->getDebugName()
-                 << "::onScroll";
-  };
-  virtual void onScrollStart() {
-    LOG(WARNING) << "ScrollViewInternalState::" << this->getDebugName()
-                 << "::onScrollStart";
-  };
-  virtual void onScrollStop() {
-    LOG(WARNING) << "ScrollViewInternalState::" << this->getDebugName()
-                 << "::onScrollStop";
-  };
-  virtual void onDragStart() {
-    LOG(WARNING) << "ScrollViewInternalState::" << this->getDebugName()
-                 << "::onDragStart";
-  };
-  virtual void onDragStop() {
-    LOG(WARNING) << "ScrollViewInternalState::" << this->getDebugName()
-                 << "::onDragStop";
-  };
-};
-
-class IdleScrollViewInternalState : public ScrollViewInternalState {
- public:
-  using ScrollViewInternalState::ScrollViewInternalState;
-  std::string getDebugName() override {
-    return "IDLE";
-  }
-
-  ScrollNodeState asScrollNodeState() override {
-    return ScrollNodeState::IDLE;
-  }
-
-  void onScrollStart() override;
-  void onDragStart() override;
-};
-
-class DraggingScrollViewInternalState : public ScrollViewInternalState {
- public:
-  using ScrollViewInternalState::ScrollViewInternalState;
-
-  std::string getDebugName() override {
-    return "DRAGGING";
-  }
-
-  ScrollNodeState asScrollNodeState() override {
-    return ScrollNodeState::DRAGGING;
-  }
-
-  void onDragStop() override;
-  void onScroll() override;
-  void onScrollStop() override;
-};
-
-class SettlingScrollViewInternalState : public ScrollViewInternalState {
-  bool m_hasOnScrollBeenCalled = false;
-
- public:
-  using ScrollViewInternalState::ScrollViewInternalState;
-
-  std::string getDebugName() override {
-    return "SETTLING";
-  }
-
-  ScrollNodeState asScrollNodeState() override {
-    return ScrollNodeState::SETTLING;
-  }
-
-  void onDragStart() override;
-  void onDragStop() override;
-  void onScroll() override;
-  void onScrollStop() override;
-};
-
-// —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 class ScrollViewComponentInstance
     : public CppComponentInstance<facebook::react::ScrollViewShadowNode>,
       public ScrollNodeDelegate {
  private:
+  enum ScrollState : int32_t { IDLE, SCROLL, FLING };
   struct ChildTagWithOffset {
     facebook::react::Tag tag;
     facebook::react::Float offset;
   };
-  ScrollViewInternalState::Unique m_internalState;
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
   StackNode m_scrollContainerNode;
@@ -124,6 +24,7 @@ class ScrollViewComponentInstance
   bool m_horizontal = false;
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
+  ScrollState m_scrollState = IDLE;
   facebook::react::Point m_currentOffset = {0, 0};
   bool m_persistentScrollbar = false;
   long long m_lastScrollDispatchTime = 0;
@@ -133,7 +34,6 @@ class ScrollViewComponentInstance
   std::weak_ptr<NativeAnimatedTurboModule> m_nativeAnimatedTurboModule{};
   bool m_allowScrollPropagation = true;
   bool m_disableIntervalMomentum = false;
-  bool m_movedBySignificantOffset = false;
   bool m_scrollToOverflowEnabled = false;
   float m_recentScrollFrameOffset = 0;
   bool m_shouldAdjustScrollPositionOnNextRender = false;
@@ -152,6 +52,8 @@ class ScrollViewComponentInstance
 
   facebook::react::Float getFrictionFromDecelerationRate(
       facebook::react::Float decelerationRate);
+  void emitOnScrollEndDragEvent();
+  void emitOnMomentumScrollEndEvent();
   void scrollToEnd(bool animated);
   ArkUI_ScrollBarDisplayMode getScrollBarDisplayMode(
       bool horizontal,
@@ -178,31 +80,8 @@ class ScrollViewComponentInstance
           scrollViewMaintainVisibleContentPosition);
   std::optional<ChildTagWithOffset> getFirstVisibleView(
       int32_t minIndexForVisible);
-  /**
-   * `onScrollFrameBegin` is not called in certain situations, but it's needed
-   * to detect when the user stops dragging. This property is used by a hacky
-   * fix. The fix assumes `onScrollFrameBegin` is always called after `onScroll`
-   * when the user is actively scrolling.
-   */
-  int m_onScrollCallsAfterFrameBeginCallCounter = 0;
-
-  // ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-  // (implicit) ScrollViewInternalStateDelegate
-
-  void onChangeInternalState(
-      std::unique_ptr<ScrollViewInternalState> internalState);
-  void onEmitMomentumScrollBegin();
-  void onEmitOnMomentumScrollEndEvent();
-  void onEmitOnScrollBeginDragEvent();
-  void onEmitOnScrollEndDragEvent();
-  void onEmitOnScrollEvent();
-  // ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
  public:
-  friend ScrollViewInternalState;
-  friend IdleScrollViewInternalState;
-  friend DraggingScrollViewInternalState;
-  friend SettlingScrollViewInternalState;
   ScrollViewComponentInstance(Context context);
 
   StackNode& getLocalRootArkUINode() override;
