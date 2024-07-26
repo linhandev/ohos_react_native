@@ -2,10 +2,24 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React from 'react';
 import {Button, TestCase} from '../components';
+import {useEnvironment} from '../contexts';
+// @ts-ignore
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+
 const RCTNetworking =
   require('react-native/Libraries/Network/RCTNetworking').default;
 
 const FILE_URI = '/data/storage/el2/base/files/testFile.txt';
+const SVG_TEXT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348">
+  <title>React Logo</title>
+  <circle cx="0" cy="0" r="2.05" fill="#61dafb"/>
+  <g stroke="#61dafb" stroke-width="1" fill="none">
+    <ellipse rx="11" ry="4.2"/>
+    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
+    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+  </g>
+</svg>
+`;
 
 export const NetworkingTest = () => {
   const canFetch = async (url: string) => {
@@ -52,6 +66,26 @@ export const NetworkingTest = () => {
             const response = await fetch('https://reactnative.dev/movies.json');
             const result = await response.blob();
             expect(result.size).to.be.eq(458);
+          }}
+        />
+        <TestCase.Logical
+          itShould="fetch local assets correctly (test needs to be run without metro)"
+          fn={async ({expect}) => {
+            const uri = require('../assets/react-icon.svg');
+            const source = resolveAssetSource(uri);
+            const response = await fetch(source.uri);
+            const result = await response.text();
+            expect(result).to.be.eq(SVG_TEXT);
+          }}
+        />
+        <TestCase.Logical
+          itShould="fetch local assets correctly (test needs to be run without metro)"
+          fn={async ({expect}) => {
+            const uri = require('../assets/react-icon.svg');
+            const source = resolveAssetSource(uri);
+            const response = await fetch(source.uri);
+            const result = await response.text();
+            expect(result).to.be.eq(SVG_TEXT);
           }}
         />
         <TestCase.Logical
