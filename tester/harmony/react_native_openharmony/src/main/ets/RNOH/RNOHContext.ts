@@ -12,7 +12,6 @@ import type { WorkerRNInstance } from "./WorkerRNInstance"
 import type { DevMenu } from './DevMenu'
 import type { DevToolsController } from './DevToolsController'
 import type { DisplayMetrics } from './types'
-import type { RNInstanceRegistry } from './RNInstanceRegistry'
 import type { RNInstanceOptions } from './RNInstance'
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider'
 
@@ -21,7 +20,11 @@ export type UIAbilityState = "FOREGROUND" | "BACKGROUND"
 
 type RNOHCoreContextDependencies = {
   reactNativeVersion: string,
-  rnInstanceRegistry: RNInstanceRegistry;
+  rnInstanceRegistry: {
+    createInstance(options: RNInstanceOptions): Promise<RNInstance>
+    deleteInstance(id: number): Promise<boolean>
+    forEach(cb: (rnInstance: RNInstanceImpl) => void)
+  };
   displayMetricsProvider: () => DisplayMetrics;
   uiAbilityStateProvider: () => UIAbilityState;
   logger: RNOHLogger;
@@ -142,7 +145,7 @@ export class RNOHContext extends RNOHCoreContext {
   /**
    * @internal
    */
-  static fromRNOHCoreContext(rnohCoreContext: RNOHCoreContext, rnInstance: RNInstance) {
+  static fromRNOHCoreContext(rnohCoreContext: RNOHCoreContext, rnInstance: RNInstance): RNOHContext {
     return new RNOHContext({
       rnohCoreContextDependencies: rnohCoreContext._rnohCoreContextDeps,
       rnInstance: rnInstance,

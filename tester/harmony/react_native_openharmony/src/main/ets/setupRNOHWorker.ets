@@ -12,7 +12,7 @@ import {
   WorkerTurboModule,
   WorkerTurboModuleContext
 } from "./RNOH/ts"
-import { RNOHCorePackage } from "./RNOHCorePackage/ts"
+import { RNOHCorePackage } from "./RNOHCorePackage/Package"
 import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
 import { UITaskRunner, UITask } from "./RNOH/UITaskRunner"
 import common from '@ohos.app.ability.common'
