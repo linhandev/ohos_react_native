@@ -5,7 +5,12 @@ import { TurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
-import { CancelRequestCallback, HttpErrorResponse, ReceivingProgress, SendingProgress } from '../../../HttpClient/types';
+import {
+  CancelRequestCallback,
+  HttpErrorResponse,
+  ReceivingProgress,
+  SendingProgress
+} from '../../../HttpClient/types';
 
 type ResponseType =
 | 'base64'
@@ -25,7 +30,7 @@ interface Query {
 
 export type UriHandler = {
   supports: (query: Query) => boolean;
-  fetch: (query: Query) => Object;
+  fetch: (query: Query) => Promise<Object>;
 }
 
 export type JsFormPart = {
@@ -186,15 +191,25 @@ export class NetworkingTurboModule extends TurboModule {
     }
     return encodeURI(str);
   }
-  
-  async sendRequest(query: Query, callback: (requestId: number) => void) {
+
+  async sendRequest(query: Query, onRequestRegistered: (requestId: number) => void) {
     const httpClient = this.ctx.rnInstance.httpClient;
     const requestId = this.createId();
+    onRequestRegistered(requestId);
     for (const handler of this.uriHandlers) {
       if (handler.supports(query)) {
-        const response = handler.fetch(query);
-        this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, response);
-        this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
+        try {
+          const response = await handler.fetch(query);
+          this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, 200, {}, query.url)
+          this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, response);
+          this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
+        } catch (error) {
+          this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, 400, {},
+            query.url)
+          this.networkEventDispatcher.dispatchDidCompleteNetworkResponseWithError(requestId,
+            error.toString(), false);
+        }
+
         return;
       }
     }
@@ -289,7 +304,6 @@ export class NetworkingTurboModule extends TurboModule {
     });
 
 
-    callback(requestId)
   }
 
   abortRequest(requestId: number) {
