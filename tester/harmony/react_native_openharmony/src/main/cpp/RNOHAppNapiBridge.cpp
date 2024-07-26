@@ -34,6 +34,18 @@ auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
   return std::forward<V>(defaultValue);
 }
 
+template <typename Map, typename K, typename V>
+auto extractOrDefault(Map& map, K&& key, V&& defaultValue)
+    -> std::common_type_t<decltype(map.at(std::forward<K>(key))), V&&> {
+  auto it = map.find(std::forward<K>(key));
+  if (it != map.end()) {
+    auto value = std::move(it->second);
+    map.erase(it);
+    return value;
+  }
+  return std::forward<V>(defaultValue);
+}
+
 std::mutex RN_INSTANCE_BY_ID_MTX;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
     RN_INSTANCE_BY_ID;
@@ -235,7 +247,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
           WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID.extract(workerTaskRunnerIt)
               .mapped());
     }
-    auto workerTurboModuleProviderRefAndEnv = getOrDefault(
+    auto workerTurboModuleProviderRefAndEnv = extractOrDefault(
         WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID,
         rnInstanceId,
         std::make_pair(nullptr, nullptr));
@@ -562,6 +574,9 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
   });
 }
 
+/**
+ * @thread: MAIN/WORKER
+ */
 static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
@@ -576,7 +591,20 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
       return arkJS.getUndefined();
     }
     auto& rnInstance = it->second;
-    rnInstance->handleArkTSMessage(messageName, messagePayload);
+    std::weak_ptr<RNInstanceInternal> weakRNInstance = rnInstance;
+    auto taskExecutor = rnInstance->getTaskExecutor();
+    if (taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      rnInstance->handleArkTSMessage(messageName, messagePayload);
+    } else {
+      taskExecutor->runTask(
+          TaskThread::MAIN, [weakRNInstance, messageName, messagePayload] {
+            auto rnInstance = weakRNInstance.lock();
+            if (rnInstance == nullptr) {
+              return;
+            }
+            rnInstance->handleArkTSMessage(messageName, messagePayload);
+          });
+    }
     return arkJS.getNull();
   });
 }

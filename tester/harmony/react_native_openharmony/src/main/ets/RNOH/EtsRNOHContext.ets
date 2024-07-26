@@ -1,27 +1,39 @@
+import type { lang } from '@kit.ArkTS';
+import { WorkerTurboModuleContext } from "./RNOHContext"
+import type { SupportedUITaskParams, UITaskRunnable, UITaskRunner } from "./UITaskRunner"
+import type { WorkerTurboModuleContextDependencies } from "./RNOHContext"
 import { RNOHContext } from "./RNOHContext"
 import { DescriptorWrapper, Tag } from "./DescriptorBase"
-import { RNInstanceImpl } from "./RNInstance"
 import { RNComponentDataSource } from './RNComponentDataSource'
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @internal
  */
-export interface ComponentBuilderContext {
-  /**
-   * @deprecated Use `rnComponentContext` instead. (latestRNOHVersion: 0.72.27)
-   */
-  rnohContext: RNOHContext
-  /**
-   * @deprecated: Use tag and componentName instead. (latestRNOHVersion: 0.72.27)
-   */
-  descriptor: DescriptorEssence
-  tag: Tag
-  componentName: string
-  /**
-   * rnComponentContext will replace
-   */
-  rnComponentContext: RNComponentContext
+export interface EtsWorkerTurboModuleContextDependencies {
+  workerTurboModuleContextDependencies: WorkerTurboModuleContextDependencies
+  uiTaskRunner: UITaskRunner
 }
+
+/**
+ * @api
+ */
+export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
+  private deps: EtsWorkerTurboModuleContextDependencies
+
+  /**
+   * @internal
+   */
+  constructor(deps: EtsWorkerTurboModuleContextDependencies) {
+    super(deps.workerTurboModuleContextDependencies)
+    this.deps = deps
+  }
+
+  async runOnUIThread<TParams extends SupportedUITaskParams, TResult extends lang.ISendable | void, TRunnable extends UITaskRunnable<TParams, TResult>>(runnable: TRunnable,
+    params: TParams): Promise<TResult> {
+    return this.deps.uiTaskRunner.run(runnable, params) as Promise<TResult>
+  }
+}
+
 
 /**
  * @api
@@ -32,20 +44,41 @@ interface DescriptorEssence {
   type: string
 }
 
+/**
+ * @api
+ */
 export type CustomComponentBuilder = (ctx: ComponentBuilderContext) => void
 
+/**
+ * @api
+ */
 export type WrappedCustomRNComponentBuilder = WrappedBuilder<[ComponentBuilderContext]>
 
+/**
+ * @api
+ */
 export type WrappedRNChildrenBuilder = WrappedBuilder<[RNComponentContext, Tag]>
 
+/**
+ * @api
+ */
 export type WrappedRNComponentBuilder = WrappedBuilder<[RNComponentContext, Tag]>
 
+/**
+ * @api
+ */
 export interface RNComponentDataSourceFactoryContext {
   tag: Tag
 }
 
+/**
+ * @api
+ */
 export type RNComponentDataSourceFactory = (ctx: RNComponentDataSourceFactoryContext) => RNComponentDataSource
 
+/**
+ * @api
+ */
 export class RNComponentContext extends RNOHContext {
   public wrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder
   public wrappedRNChildrenBuilder: WrappedRNChildrenBuilder
@@ -65,9 +98,7 @@ export class RNComponentContext extends RNOHContext {
     rnComponentDataSourceFactoriesByDescriptorType: Map<string, RNComponentDataSourceFactory>
   ) {
     super(
-      rnohContext.reactNativeVersion,
-      rnohContext.rnInstance as RNInstanceImpl,
-      rnohContext,
+      rnohContext._rnohContextDeps
     )
     this.wrappedCustomRNComponentBuilder = wrappedCustomRNComponentBuilder
     this.wrappedRNChildrenBuilder = wrapBuilder(buildRNChildren)
@@ -88,15 +119,27 @@ function buildRNChildren(ctx: RNComponentContext, parentTag: Tag) {
   }
 }
 
-export class ComponentBuilderContextImpl implements ComponentBuilderContext {
+/**
+ * @api: RN_APP_DEVELOPER
+ */
+export class ComponentBuilderContext {
   public rnComponentContext: RNComponentContext
-  /** @deprecated: use rnComponentContext instead  */
+  /**
+   * @deprecated Use `rnComponentContext` instead. (latestRNOHVersion: 0.72.27)
+   */
   public rnohContext: RNOHContext
   public tag: Tag
   public componentName: string
+  /**
+   * @deprecated: Use tag and componentName instead. (latestRNOHVersion: 0.72.27)
+   */
   public descriptor: DescriptorEssence
 
-  constructor(rnComponentContext: RNComponentContext, rnohContext: RNOHContext, tag: Tag, componentName: string, descriptor: DescriptorEssence) {
+  /**
+   * @internal
+   */
+  constructor(rnComponentContext: RNComponentContext, rnohContext: RNOHContext, tag: Tag, componentName: string,
+    descriptor: DescriptorEssence) {
     this.rnComponentContext = rnComponentContext
     this.rnohContext = rnohContext
     this.tag = tag
