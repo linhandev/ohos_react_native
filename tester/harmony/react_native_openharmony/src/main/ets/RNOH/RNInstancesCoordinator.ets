@@ -195,7 +195,9 @@ export class RNInstancesCoordinator {
   public onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
     this.jsPackagerClient.onDestroy()
-    this.rnInstanceRegistry.forEach(instance => instance.onDestroy())
+    this.rnInstanceRegistry.forEach(instance => {
+      instance.onDestroy()
+    })
     stopTracing()
   }
 
@@ -209,7 +211,9 @@ export class RNInstancesCoordinator {
 
   public onForeground() {
     this.setAppState("FOREGROUND")
-    this.rnInstanceRegistry.forEach(instance => instance.onForeground())
+    this.rnInstanceRegistry.forEach(instance => {
+      instance.onForeground()
+    })
   }
 
   private setAppState(appState: AppState) {
@@ -219,21 +223,29 @@ export class RNInstancesCoordinator {
 
   public onBackground() {
     this.setAppState("BACKGROUND")
-    this.rnInstanceRegistry.forEach(instance => instance.onBackground())
+    this.rnInstanceRegistry.forEach(instance => {
+      instance.onBackground()
+    })
   }
 
   public onWindowStageChange(windowStageEvent: window.WindowStageEventType) {
-    this.rnInstanceRegistry.forEach((rnInstance) => rnInstance.onWindowStageChange(windowStageEvent))
+    this.rnInstanceRegistry.forEach((rnInstance) => {
+      rnInstance.onWindowStageChange(windowStageEvent)
+    })
   }
 
   public onWindowSizeChange(windowSize: window.Size) {
     this.displayMetricsManager.updateWindowSize(windowSize);
-    this.rnInstanceRegistry.forEach((rnInstance) => rnInstance.onWindowSizeChange(windowSize))
+    this.rnInstanceRegistry.forEach((rnInstance) => {
+      rnInstance.onWindowSizeChange(windowSize)
+    })
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
     this.displayMetricsManager?.updateDisplayMetrics()
-    this.rnInstanceRegistry?.forEach((rnInstance) => rnInstance.onConfigurationUpdate(systemConfiguration))
+    this.rnInstanceRegistry?.forEach((rnInstance) => {
+      rnInstance.onConfigurationUpdate(systemConfiguration)
+    })
   }
 
   public onMemoryLevel(memoryLevel: number) {

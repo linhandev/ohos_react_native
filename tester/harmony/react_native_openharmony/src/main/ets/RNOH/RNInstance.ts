@@ -8,7 +8,6 @@ import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
 import type { RNOHContext } from './RNOHContext'
-import { RNOHCorePackage } from '../RNOHCorePackage/ts'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
@@ -85,7 +84,6 @@ const rootDescriptor = {
   }
 }
 
-const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
 type FeatureFlagName = "ENABLE_RN_INSTANCE_CLEAN_UP" | "IMAGE_LOADER" | "C_API_ARCH"
 
@@ -376,13 +374,13 @@ export class RNInstanceImpl implements RNInstance {
   public get commandDispatcher() {
     return this.componentCommandHub
   }
-
+  private defaultProps: Record<string, any>
   constructor(
     private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
-    private defaultProps: Record<string, any>,
+    disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
     private workerThread: WorkerThread,
@@ -400,6 +398,7 @@ export class RNInstanceImpl implements RNInstance {
     backPressHandler: () => void,
 
   ) {
+    this.defaultProps = { concurrentRoot: !disableConcurrentRoot }
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this)
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
@@ -418,7 +417,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public getAssetsDest(): string {
-    return this.assetsDest ?? DEFAULT_ASSETS_DEST
+    return this.assetsDest
   }
 
   public onCreate() {
@@ -558,7 +557,6 @@ export class RNInstanceImpl implements RNInstance {
   private async processPackages(packages: RNPackage[]) {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
-    packages.unshift(new RNOHCorePackage({}));
     const turboModuleContext = this.createRNOHContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {

@@ -11,24 +11,57 @@ import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
 import common from '@ohos.app.ability.common'
+import { RNOHCorePackage } from '../RNOHCorePackage/Package'
+
+const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
+
+interface CreateWorkerRNInstanceAckPayload {
+  rnInstanceId: number
+}
+
+interface DestroyWorkerRNInstanceAckPayload {
+  rnInstanceId: number
+}
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
   private unregisterMessageListeners: (() => void)[] = []
+  private uiAbilityContext: common.UIAbilityContext
+  private envId: number
+  private logger: RNOHLogger
+  private napiBridge: NapiBridge
+  private devToolsController: DevToolsController
+  private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext
+  private httpClientProvider: HttpClientProvider
+  private defaultHttpClient: HttpClient | undefined
+  private resourceManager: resourceManager.ResourceManager
+  private displayMetricsManager: DisplayMetricsManager
+  private workerThreadPromise: Promise<WorkerThread>
 
   constructor(
-    private uiAbilityContext: common.UIAbilityContext,
-    private envId: number,
-    private logger: RNOHLogger,
-    private napiBridge: NapiBridge,
-    private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
-    private httpClientProvider: HttpClientProvider,
-    private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
-    private resourceManager: resourceManager.ResourceManager,
-    private displayMetricsManager: DisplayMetricsManager,
-    private workerThreadPromise: Promise<WorkerThread>,
+    uiAbilityContext: common.UIAbilityContext,
+    envId: number,
+    logger: RNOHLogger,
+    napiBridge: NapiBridge,
+    devToolsController: DevToolsController,
+    createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    httpClientProvider: HttpClientProvider,
+    defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
+    resourceManager: resourceManager.ResourceManager,
+    displayMetricsManager: DisplayMetricsManager,
+    workerThreadPromise: Promise<WorkerThread>,
   ) {
+    this.uiAbilityContext = uiAbilityContext
+    this.envId = envId
+    this.logger = logger
+    this.napiBridge = napiBridge
+    this.devToolsController = devToolsController
+    this.createRNOHContext = createRNOHContext
+    this.httpClientProvider = httpClientProvider
+    this.defaultHttpClient = defaultHttpClient
+    this.resourceManager = resourceManager
+    this.displayMetricsManager = displayMetricsManager
+    this.workerThreadPromise = workerThreadPromise
   }
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
@@ -36,8 +69,10 @@ export class RNInstanceRegistry {
     const workerThread = await this.workerThreadPromise
     await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
-    for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
-      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
+    for (const fontFamilyAndResource of Object.entries(options.fontResourceByFontFamily ?? {})) {
+      const fontFamily = fontFamilyAndResource[0]
+      const fontResource = fontFamilyAndResource[1]
+      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params![0]
       font.registerFont({ familyName: fontFamily, familySrc: fontResource })
     }
     const rnInstance = new RNInstanceImpl(
@@ -45,7 +80,7 @@ export class RNInstanceRegistry {
       id,
       this.logger,
       this.napiBridge,
-      { concurrentRoot: options.disableConcurrentRoot !== undefined ? !options.disableConcurrentRoot : true },
+      options.disableConcurrentRoot,
       this.devToolsController,
       this.createRNOHContext,
       workerThread,
@@ -54,15 +89,18 @@ export class RNInstanceRegistry {
       options.enableImageLoader ?? false,
       options.enableCAPIArchitecture ?? false,
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
-      options.assetsDest,
+      options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
       this.displayMetricsManager,
       fontFamilyNameByFontPathRelativeToRawfileDir,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
-      options.backPressHandler,
+      options.backPressHandler ?? (() => {
+      }),
     );
-    await rnInstance.initialize(options.createRNPackages({}));
+    const packages = options.createRNPackages({})
+    packages.unshift(new RNOHCorePackage({}));
+    await rnInstance.initialize(packages);
     this.instanceMap.set(id, rnInstance);
     return rnInstance;
   }
@@ -80,11 +118,11 @@ export class RNInstanceRegistry {
       })
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
-      (payload) => payload.rnInstanceId === rnInstanceId)
+      (payload: CreateWorkerRNInstanceAckPayload) => payload.rnInstanceId === rnInstanceId)
   }
 
   public getInstance(id: number): RNInstance {
-    return this.instanceMap.get(id);
+    return this.instanceMap.get(id)!;
   }
 
   public async deleteInstance(id: number): Promise<boolean> {
@@ -92,7 +130,8 @@ export class RNInstanceRegistry {
       this.instanceMap.delete(id);
       const worker = await this.workerThreadPromise;
       const ack =
-        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
+          (payload: DestroyWorkerRNInstanceAckPayload) => payload.rnInstanceId === id)
       worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
       await ack;
       return true;
