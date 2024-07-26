@@ -36,5 +36,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   FontRegistry::Shared m_fontRegistry;
   int32_t getOHDrawingTextAlign(
       const facebook::react::TextAlignment& textAlign);
+  int32_t getOHDrawingTextDirection(
+      const facebook::react::WritingDirection& writingDirection);
 };
 } // namespace rnoh

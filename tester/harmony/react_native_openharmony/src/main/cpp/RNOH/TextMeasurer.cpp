@@ -47,11 +47,17 @@ ArkUITypography TextMeasurer::measureTypography(
           paragraphAttributes.textBreakStrategy));
 
   if (!attributedString.getFragments().empty()) {
-    auto textAlign =
-        attributedString.getFragments()[0].textAttributes.alignment;
+    auto fragment = attributedString.getFragments()[0];
+    auto textAlign = fragment.textAttributes.alignment;
     if (textAlign.has_value()) {
       OH_Drawing_SetTypographyTextAlign(
           typographyStyle.get(), getOHDrawingTextAlign(textAlign.value()));
+    }
+    auto textDirection = fragment.textAttributes.baseWritingDirection;
+    if (textDirection.has_value()) {
+      OH_Drawing_SetTypographyTextDirection(
+          typographyStyle.get(),
+          getOHDrawingTextDirection(textDirection.value()));
     }
   }
 
@@ -85,6 +91,23 @@ int32_t TextMeasurer::getOHDrawingTextAlign(
       break;
   }
   return align;
+}
+
+int32_t TextMeasurer::getOHDrawingTextDirection(
+    const facebook::react::WritingDirection& writingDirection) {
+  int32_t direction = OH_Drawing_TextDirection::TEXT_DIRECTION_LTR;
+  switch (writingDirection) {
+    case facebook::react::WritingDirection::Natural:
+    case facebook::react::WritingDirection::LeftToRight:
+      direction = OH_Drawing_TextDirection::TEXT_DIRECTION_LTR;
+      break;
+    case facebook::react::WritingDirection::RightToLeft:
+      direction = OH_Drawing_TextDirection::TEXT_DIRECTION_RTL;
+      break;
+    default:
+      break;
+  }
+  return direction;
 }
 
 } // namespace rnoh

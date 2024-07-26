@@ -69,6 +69,10 @@ void TextComponentInstance::onPropsChanged(
     // stack align
     facebook::react::TextAlignment alignHorizon =
         facebook::react::TextAlignment::Left;
+    if (textProps->rawProps.count("writingDirection") != 0 &&
+        textProps->rawProps["writingDirection"] == "rtl") {
+      alignHorizon = facebook::react::TextAlignment::Right;
+    }
     std::string alignVertical = "top";
     if (textProps->rawProps.count("textAlignVertical") != 0 &&
         textProps->rawProps["textAlignVertical"].isString()) {
