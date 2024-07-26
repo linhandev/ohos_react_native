@@ -22,22 +22,19 @@ export class RNInstanceRegistry {
     private logger: RNOHLogger,
     private napiBridge: NapiBridge,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
     private httpClientProvider: HttpClientProvider,
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
-    private workerThreadPromise: Promise<WorkerThread> | null,
+    private workerThreadPromise: Promise<WorkerThread>,
   ) {
   }
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
-    let workerThread: WorkerThread | null = null
-    if (this.workerThreadPromise !== null) {
-      workerThread = await this.workerThreadPromise
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options?.name)
-    }
+    const workerThread = await this.workerThreadPromise
+    await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     const rnInstance  = new RNInstanceImpl(
       this.envId,
       id,
@@ -68,24 +65,34 @@ export class RNInstanceRegistry {
     return rnInstance;
   }
 
-  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number, rnInstanceName: string) {
+  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number,
+    options: RNInstanceOptions) {
     const logger = this.logger.clone(["RNInstanceRegistry", "createRNInstanceEnvOnWorker"])
     logger.info("waiting for worker's rnInstance environment")
     setTimeout(() => {
-      workerThread.postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
-        rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
+      workerThread.postMessage("RNOH_CREATE_WORKER_RN_INSTANCE", {
+        rnInstanceId,
+        rnInstanceName: options.name,
+        uiAbilityContext: this.uiAbilityContext,
+        architecture: options.enableCAPIArchitecture ? "C_API" : "ARK_TS"
       })
 
     }, 0)
-    await workerThread.waitForMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")
+    await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
+      (payload) => payload.rnInstanceId === rnInstanceId)
   }
 
   public getInstance(id: number): RNInstance {
     return this.instanceMap.get(id);
   }
 
-  public deleteInstance(id: number): boolean {
+  public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
+      const worker = await this.workerThreadPromise;
+      const ack =
+        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK", (payload) => payload.rnInstanceId === id)
+      worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
+      await ack;
       this.instanceMap.delete(id);
       return true;
     }

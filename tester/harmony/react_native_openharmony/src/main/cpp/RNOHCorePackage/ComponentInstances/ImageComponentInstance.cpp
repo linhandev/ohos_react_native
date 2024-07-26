@@ -10,7 +10,9 @@ const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 const std::string INVALID_PATH_PREFIX = "invalidpathprefix/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)) {
+    : CppComponentInstance(std::move(context)),
+      ImageSourceResolver::ImageSourceUpdateListener(
+          m_deps->imageSourceResolver) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);
@@ -45,7 +47,7 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
   if (!cache.isString()) {
     return uri;
   }
-
+    
   return cache.asString();
 }
 
@@ -172,6 +174,12 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   }
 }
 
+void ImageComponentInstance::onImageSourceCacheUpdate() {
+  auto source = m_state->getData().getImageSource();
+  this->getLocalRootArkUINode().setSources(
+      FindLocalCacheByUri(source.uri), getAbsolutePathPrefix(getBundlePath()));
+}
+
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto source = state->getData().getImageSource();
@@ -218,7 +226,9 @@ void ImageComponentInstance::onError(int32_t errorCode) {
   m_eventEmitter->dispatchEvent(
       "error", [errMsg](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
-        payload.setProperty(runtime, "error", errMsg);
+        auto source = facebook::jsi::Object(runtime);
+        source.setProperty(runtime, "error", errMsg);
+        payload.setProperty(runtime, "source", source);
         return payload;
       });
   m_eventEmitter->onLoadEnd();
@@ -230,12 +240,12 @@ void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
   }
 
   m_eventEmitter->dispatchEvent(
-    "progress", [=](facebook::jsi::Runtime& runtime) {
-      auto payload = facebook::jsi::Object(runtime);
-      payload.setProperty(runtime, "loaded", (int32_t)loaded);
-      payload.setProperty(runtime, "total", (int32_t)total);
-      return payload;
-    });
+      "progress", [=](facebook::jsi::Runtime& runtime) {
+        auto payload = facebook::jsi::Object(runtime);
+        payload.setProperty(runtime, "loaded", (int32_t)loaded);
+        payload.setProperty(runtime, "total", (int32_t)total);
+        return payload;
+      });
 }
 
 void ImageComponentInstance::onLoadStart() {
@@ -254,7 +264,6 @@ ImageComponentInstance::ImageRawProps::getFromDynamic(folly::dynamic value) {
       : std::nullopt;
   auto alt = (value.count("alt") > 0) ? std::optional(value["alt"].asString())
                                       : std::nullopt;
-                        
   auto loadingIndicatorSource = (value.count("loadingIndicatorSource") > 0)
       ? std::optional(value["loadingIndicatorSource"].at("uri").getString())
       : std::nullopt;

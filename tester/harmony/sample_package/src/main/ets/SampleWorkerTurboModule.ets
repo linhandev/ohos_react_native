@@ -67,4 +67,25 @@ export class SampleWorkerTurboModule extends EtsWorkerTurboModule implements TM.
   emitDeviceEvent(eventName: string, payload: number): void {
     this.ctx.rnInstance.emitDeviceEvent(eventName, payload)
   }
+
+  private resolvePayloadProvidedToInvokeFromCpp: (payload: number) => void = () => {}
+  async testCommunicationBetweenWorkerAndCpp(): Promise<boolean> {
+    const receivedPayload = new Promise<number>(resolve => {
+      this.resolvePayloadProvidedToInvokeFromCpp = resolve
+    })
+    this.ctx.rnInstance.postMessageToCpp("SAMPLE_WORKER_MESSAGE", 42)
+    return (await receivedPayload) == 42
+  }
+
+  protected onInvokeFromCpp(messagePayload: number) {
+    this.resolvePayloadProvidedToInvokeFromCpp(messagePayload)
+  }
+
+  getArchitecture(): string {
+    return this.ctx.rnInstance.getArchitecture()
+  }
+
+  __onDestroy__() {
+    this.ctx.logger.info("SampleWorkerTurboModule::__onDestroy__")
+  }
 }
