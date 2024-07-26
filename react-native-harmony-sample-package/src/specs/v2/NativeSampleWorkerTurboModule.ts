@@ -7,6 +7,8 @@ export interface Spec extends TurboModule {
   getRNVersionFromUIContext(prefix: string): Promise<string>;
   showAlert(): void;
   emitDeviceEvent(eventName: string, payload: number): void;
+  testCommunicationBetweenWorkerAndCpp(): Promise<boolean>;
+  getArchitecture(): string;
 }
 
 export default TurboModuleRegistry.get<Spec>('SampleWorkerTurboModule')!;
