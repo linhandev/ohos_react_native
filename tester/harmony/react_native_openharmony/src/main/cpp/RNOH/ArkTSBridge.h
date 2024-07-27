@@ -29,6 +29,8 @@ class ArkTSBridge final : public DisplayMetricsManager,
 
   void handleError(std::exception_ptr ex) override;
   DisplayMetrics getDisplayMetrics() override;
+  void setCacheDir(std::string const& cacheDir);
+  std::string getCacheDir() override ;
   uint32_t getFoldStatus() override;
   bool getIsSplitScreenMode() override;
   float getFontSizeScale() override;
@@ -37,5 +39,8 @@ class ArkTSBridge final : public DisplayMetricsManager,
   ArkJS m_arkJS;
   napi_ref m_arkTSBridgeRef;
   ThreadGuard m_threadGuard;
+    
+  private:
+   std::string m_cacheDir;
 };
 } // namespace rnoh

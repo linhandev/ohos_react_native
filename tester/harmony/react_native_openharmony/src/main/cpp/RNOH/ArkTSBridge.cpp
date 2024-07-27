@@ -105,4 +105,11 @@ auto ArkTSBridge::getFontSizeScale() -> float  {
     return m_arkJS.getDouble(napiResult);
 }
 
+void ArkTSBridge::setCacheDir(std::string const& cacheDir) {
+    m_cacheDir = cacheDir;
+}
+
+std::string ArkTSBridge::getCacheDir() {
+    return m_cacheDir;
+}
 } // namespace rnoh
