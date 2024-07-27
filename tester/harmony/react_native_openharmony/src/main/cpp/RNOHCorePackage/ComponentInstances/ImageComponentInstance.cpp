@@ -2,6 +2,8 @@
 #include <react/renderer/components/image/ImageProps.h>
 #include <react/renderer/components/image/ImageState.h>
 #include <react/renderer/core/ConcreteState.h>
+#include <filesystem>
+#include <regex>
 #include <sstream>
 
 namespace rnoh {
@@ -24,31 +26,55 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
     return uri;
   }
 
-  if (!m_deps) {
+  std::string cache = getCacheFilePath(uri);
+  if (cache.empty()) {
     return uri;
   }
 
-  auto rnInstance = m_deps->rnInstance.lock();
-  if (!rnInstance) {
-    return uri;
+  return cache;
+}
+
+std::string ImageComponentInstance::getCacheFilePath(std::string const& uri) {
+  if (has(uri)) {
+    return "file://" + getLocation(uri);
+  }
+  return uri;
+}
+
+bool ImageComponentInstance::has(std::string const& key) {
+  std::string cachedKey = getCacheKey(key);
+  try {
+    std::filesystem::path filePath = getFilePath(cachedKey);
+    if (std::filesystem::exists(filePath)) {
+      return true;
+    }
+  } catch (const std::exception& e) {
+    LOG(INFO) << "no cache";
   }
 
-  auto turboModule = rnInstance->getTurboModule("ImageLoader");
-  if (!turboModule) {
-    return uri;
-  }
+  return false;
+}
 
-  auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
-  if (!arkTsTurboModule) {
-    return uri;
-  }
+// this method does not check if the file exists and is also used to determine
+// file path for prefetch
+std::string ImageComponentInstance::getLocation(std::string const& key) {
+  std::string cachedKey = getCacheKey(key);
+  return getFilePath(cachedKey);
+}
 
-  auto cache = arkTsTurboModule->callSync("getCacheFilePath", {uri});
-  if (!cache.isString()) {
-    return uri;
+std::string ImageComponentInstance::getFilePath(std::string const& key) {
+  return m_deps->displayMetricsManager->getCacheDir() + '/' + key;
+}
+
+std::string ImageComponentInstance::getCacheKey(std::string const& uri) {
+  if (uri == "") {
+    // if multiple images would have the same uri, they would overwrite each
+    // other but it's better than crashing the app
+    LOG(INFO) << "Cache key not provided, defaulting to empty cache key";
+    return "";
   }
-    
-  return cache.asString();
+  std::regex pattern("[^a-zA-Z0-9 -]");
+  return std::regex_replace(uri, pattern, "");
 }
 
 std::string ImageComponentInstance::getBundlePath() {

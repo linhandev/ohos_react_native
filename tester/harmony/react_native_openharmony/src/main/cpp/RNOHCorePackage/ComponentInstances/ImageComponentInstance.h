@@ -25,7 +25,12 @@ class ImageComponentInstance
 
   // used for find local cache of uri, if not find return uri
   std::string FindLocalCacheByUri(std::string const& uri);
-
+  std::string getCacheFilePath(std::string const& uri);
+  bool has(std::string const& key);
+  std::string getLocation(std::string const& key);
+  std::string getFilePath(std::string const& key);
+  std::string getCacheKey(std::string const& uri);
+    
   std::string getBundlePath();
   std::string getAbsolutePathPrefix(std::string const& bundlePath);
 
