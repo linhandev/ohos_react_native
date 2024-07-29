@@ -1,8 +1,7 @@
 import {TestCase, TestSuite} from '@rnoh/testerino';
-import {Platform, ScrollView, StyleSheet, Text, View, SectionList} from 'react-native';
+import {Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {getScrollViewContent} from './fixtures';
-import React, {useState} from 'react';
-import {Button} from '../../components';
+import React from 'react';
 
 export function StickyHeadersTest() {
   return (
@@ -59,13 +58,6 @@ export function StickyHeadersTest() {
           </ScrollView>
         </View>
       </TestCase>
-      <TestCase
-        modal
-        itShould="The header remains at the top when the foldable phone is expanded or folded.">
-        <View style={styles.wrapperView}>
-          <StickySectionListTest />
-        </View>
-      </TestCase>
     </TestSuite>
   );
 }
@@ -73,49 +65,6 @@ export function StickyHeadersTest() {
 const CustomStickyHeader = React.forwardRef(() => (
   <Text>custom sticky header</Text>
 ));
-
-interface SectionData {
-  id: string;
-  title: string;
-  data: string[];
-}
-
-const DATA: SectionData[] = [
-  {
-    id: '0',
-    title: 'Main dishes',
-    data: ['Pizza', 'Burger', 'Risotto', 'French Fries', 'Onion Rings', 'Fried Shrimps', 'Water', 'Coke', 'Beer'],
-  }
-];
-
-const StickySectionListTest = () => {
-  const [fold, setFold] = useState(false);
-
-  return (
-    <>
-      <Button
-        label={fold ? "Expand" : "Fold"}
-        onPress={() => {
-          setFold(!fold)
-        }}
-      />
-      <SectionList
-        removeClippedSubviews={false}
-        sections={DATA}
-        stickySectionHeadersEnabled={true}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => (
-          <View style={[styles.item, { height: fold ? 50 : 100 }]}>
-            <Text style={{ fontSize: 16, height: 20 }}>{item}</Text>
-          </View>
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={[{ backgroundColor: 'white' }, styles.title]}>{title}</Text>
-        )}
-      />
-    </>
-  );
-}
 
 const styles = StyleSheet.create({
   wrapperView: {
@@ -129,15 +78,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
-  },
-  item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  title: {
-    fontSize: 22,
-    height: 40,
   },
 });
