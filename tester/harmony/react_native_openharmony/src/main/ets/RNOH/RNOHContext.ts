@@ -217,6 +217,13 @@ export class RNOHContext extends RNOHCoreContext {
  * @api
  */
 export class UITurboModuleContext extends RNOHContext {
+  constructor(rnohContext: RNOHContext) {
+    super(rnohContext._rnohContextDeps);
+  }
+
+  getUIContext(): UIContext | null {
+    return this._rnohContextDeps.rnInstance.getUIContext()
+  }
 }
 
 /**
