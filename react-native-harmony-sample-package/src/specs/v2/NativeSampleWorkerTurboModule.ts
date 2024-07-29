@@ -9,6 +9,7 @@ export interface Spec extends TurboModule {
   emitDeviceEvent(eventName: string, payload: number): void;
   testCommunicationBetweenWorkerAndCpp(): Promise<boolean>;
   getArchitecture(): string;
+  testCommunicatingWithOtherWorkerTurboModules(): Promise<boolean>;
 }
 
 export default TurboModuleRegistry.get<Spec>('SampleWorkerTurboModule')!;

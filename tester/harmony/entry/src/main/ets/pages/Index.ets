@@ -72,6 +72,7 @@ struct Index {
         }
         RNApp({
           rnInstanceConfig: {
+            name: "app_name",
             createRNPackages,
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,

@@ -423,7 +423,6 @@ export const NetworkingTest = () => {
       </TestSuite>
       <TestSuite name="WebSocket">
         <TestCase.Logical
-          tags={['dev']}
           skip={noInternetSkipMsg}
           itShould="receive back submitted data"
           fn={async ({expect}) => {
@@ -465,7 +464,6 @@ export const NetworkingTest = () => {
         />
         <TestCase.Logical
           skip={noInternetSkipMsg}
-          tags={['dev']}
           itShould="send and receive arraybuffer through websocket"
           fn={async ({expect}) => {
             const input = 'Hello World - arraybuffer!';
@@ -503,7 +501,6 @@ export const NetworkingTest = () => {
         />
 
         <TestCase.Logical
-          tags={['dev']}
           skip={noInternetSkipMsg}
           itShould="send and receive blob through websocket"
           fn={async ({expect}) => {
