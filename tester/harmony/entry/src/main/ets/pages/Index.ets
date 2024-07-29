@@ -74,6 +74,7 @@ struct Index {
         }
         RNApp({
           rnInstanceConfig: {
+            name: "app_name",
             createRNPackages,
             enableNDKTextMeasuring: true,
             enableBackgroundExecutor: false,
