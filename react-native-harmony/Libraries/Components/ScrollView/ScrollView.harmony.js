@@ -684,8 +684,6 @@ type State = {|
   // RNOH patch - resolving flashScrollIndicators command on the JS side
   // as it is currently not feasible on the native side
   showScrollIndicator: boolean,
-  contentOffset: ?number,
-  contentHeight: ?number,
 |};
 
 const IS_ANIMATING_TOUCH_START_THRESHOLD_MS = 16;
@@ -774,8 +772,6 @@ class ScrollView extends React.Component<Props, State> {
     // RNOH patch - resolving flashScrollIndicators command on the JS side
     // as it is currently not feasible on the native side
     showScrollIndicator: false,
-    contentOffset: null,
-    contentHeight: null,
   };
 
   componentDidMount() {
@@ -1192,15 +1188,14 @@ class ScrollView extends React.Component<Props, State> {
         );
       }
     }
-    this.setState({
-      contentOffset: e.nativeEvent.contentOffset.y
-    });
     this._observedScrollSinceBecomingResponder = true;
     this.props.onScroll && this.props.onScroll(e);
   };
 
   _handleLayout = (e: LayoutEvent) => {
-    this.setState({ layoutHeight: e.nativeEvent.layout.height });
+    if (this.props.invertStickyHeaders === true) {
+      this.setState({ layoutHeight: e.nativeEvent.layout.height });
+    }
     if (this.props.onLayout) {
       this.props.onLayout(e);
     }
@@ -1208,26 +1203,6 @@ class ScrollView extends React.Component<Props, State> {
 
   _handleContentOnLayout = (e: LayoutEvent) => {
     const { width, height } = e.nativeEvent.layout;
-    /**
-     * RNOH patch - Fixed the issue where sticky headers are in disordered position after foldable phone is expanded/folded.
-     * When a foldable phone is expanded/folded, the height of the list items often changes,
-     * causing the content height of the ScrollView to change.
-     * But since the scroll event is not triggered, the position of the sticky headers is 
-     * still offset according to the original content height.
-     * So we should recalculate the contentOffset based on the new contentHeight and trigger 
-     * the scroll event to fix the position of sticky headers
-     */
-    let { contentOffset, contentHeight, layoutHeight } = this.state;
-    if (contentOffset && contentHeight) {
-      contentOffset *= (height - layoutHeight) / (contentHeight - layoutHeight);
-      (contentOffset < 0) && (contentOffset = 0);
-      this.scrollTo({ y: contentOffset, animated: false });
-      this._scrollAnimatedValue.setValue(contentOffset);
-    }
-    this.setState({
-      contentOffset,
-      contentHeight: height
-    });
     this.props.onContentSizeChange &&
       this.props.onContentSizeChange(width, height);
   };
