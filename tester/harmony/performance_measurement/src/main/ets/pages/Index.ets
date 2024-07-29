@@ -97,6 +97,7 @@ struct Index {
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
             enablePartialSyncOfDescriptorRegistryInCAPI: true,
+            name: "performance_measurement"
           },
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "performance_measurement",

@@ -17,7 +17,8 @@ export default class EntryAbility extends RNAbility {
       createRNPackages,
       enableCAPIArchitecture: true,
       backPressHandler: () => {
-      }
+      },
+      name: "app_name"
     })
     rnInstance.runJSBundle(new AnyJSBundleProvider([new MetroJSBundleProvider(),
       new ResourceJSBundleProvider(this.context.resourceManager, 'bundle.harmony.js')]))
@@ -29,5 +30,9 @@ export default class EntryAbility extends RNAbility {
 
   protected getPagePath() {
     return 'pages/Index';
+  }
+
+  getRNOHWorkerScriptUrl() {
+    return "multi_surface/ets/workers/RNOHWorker.ets"
   }
 }
