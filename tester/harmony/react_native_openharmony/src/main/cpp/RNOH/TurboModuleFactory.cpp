@@ -48,7 +48,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       .arkTSTurboModuleInstanceRef = arkTSTurboModuleThread == TaskThread::JS
           ? nullptr
           : this->maybeGetArkTsTurboModuleInstanceRef(
-                name, arkTSTurboModuleEnvironment),
+                name, arkTSTurboModuleThread, arkTSTurboModuleEnvironment),
       .turboModuleThread = arkTSTurboModuleThread,
       .taskExecutor = m_taskExecutor,
       .eventDispatcher = eventDispatcher,
@@ -170,12 +170,13 @@ TurboModuleFactory::delegateCreatingTurboModule(
 
 napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
     const std::string& name,
+    TaskThread thread,
     ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const {
   VLOG(3) << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: start";
   RNOH_ASSERT(arkTSTurboModuleEnv.arkTSTurboModuleProviderRef != nullptr);
   napi_ref result = nullptr;
   m_taskExecutor->runSyncTask(
-      TaskThread::MAIN, [tmEnv = arkTSTurboModuleEnv, name, &result]() {
+      thread, [tmEnv = arkTSTurboModuleEnv, name, &result]() {
         VLOG(3)
             << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: started calling hasModule";
         ArkJS arkJS(tmEnv.napiEnv);

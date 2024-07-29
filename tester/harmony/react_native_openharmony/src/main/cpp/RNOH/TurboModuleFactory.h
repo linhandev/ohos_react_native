@@ -63,6 +63,7 @@ class TurboModuleFactory {
 
   napi_ref maybeGetArkTsTurboModuleInstanceRef(
       const std::string& name,
+      TaskThread thread,
       ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const;
 
   ArkTSTurboModuleEnvironment getArkTSTurboModuleEnvironmentByTaskThread(
