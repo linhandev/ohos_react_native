@@ -52,7 +52,8 @@ struct ReactApplicationPage {
           enableCAPIArchitecture: true,
           backPressHandler: () => {
             router.back();
-          }
+          },
+          name: "app_name"
         },
         appKey: "app_name",
         wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
