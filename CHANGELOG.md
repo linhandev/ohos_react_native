@@ -1,5 +1,31 @@
 # Changelog
 
+## v0.72.34
+- [breaking] changed setupRNOHWorker params ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- [breaking] made RNInstanceOptions::name required ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- [breaking] made `RNAbility::getRNOHWorkerScriptUrl` abstract — RNOHWorker is now required because some core Turbo Modules are going to be moved to the Worker thread ([a8d200324d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a8d200324d59a58cb79d300f95d0a0c3e52ae716))
+- [breaking] changed the type of `ArkTSTurboModule::Context::arkTSTurboModuleInstanceRef` ([f286a844e0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f286a844e00f55d2d63de1d546113bee8ba97f4f))
+- [breaking] changed RNOHCoreContext::destroyAndUnregisterRNInstance to be async ([2d123b4cc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d123b4cc59ea0647a4cb60e1bbd72c69d28647f))
+- [breaking] removed enableNDKTextMeasuring feature flag ([efe644bd9d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/efe644bd9dbe242257c00db78bb9fcb737fa0803))
+- deprecated RNInstance::getTurboModule in favor of RNInstance::getUITurboModule ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- added WorkerRNInstance::getWorkerTurboModule ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- added support for writing directions ([00b1ae1067](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00b1ae106795ee1a18b983021913c51ba74bde67))
+- added WorkerRNInstance::postMessage ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- added WorkerRNInstance::getArchitecture ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- added decorationType ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- added lengthMetricUnit ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- added selectedBackgroundColor ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- fixed a bug where worker TurboModules were created on a wrong thread ([5302f38e35](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5302f38e3532c61c5bab66a8c9a2b420a1c656bf))
+- fixed incorrect prefix used by WorkerTurboModuleContext::logger ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- fixed WorkerTurboModule::__onDestroy__ not being called ([2d123b4cc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d123b4cc59ea0647a4cb60e1bbd72c69d28647f))
+- fixed not working lint:js:fix script ([f2396f5f72](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f2396f5f72c334b3f53342cf13ed4a5c7d0fd8fa))
+- changed default textBreakStrategy to Balanced ([1c58d37759](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c58d37759e69ebf463fc0c067f1b6a1bb0e5fcd))
+- rearranged ArkJS::createFromDynamic branches by frequency decreasing order ([90357cd6a2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/90357cd6a26b1c4edf591a6a55d1eb55c68a1dcd))
+- optimized main thread usage by moving AppearanceTM on the worker thread ([d98c568f97](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d98c568f976d98766bb2129dd165d77b531b200c))
+- optimized image prefetching by moving ImageLoaderTurboModule on the worker thread ([874d3e719f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/874d3e719fb32a4cae38b5654f1dde7725f06c6d))
+- early return in onScrollFrameBegin function for scroll components with scrollEnabled false ([0d24b2f01e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0d24b2f01ede99fe5679acf6321ff82a2af22406))
+
+
 ## v0.72.33
 - [breaking] changed `setupRNOHWorker.ts` to `setupRNOHWorker.ets` — `setupRNOHWorker` can't be imported from TypeScript files anymore ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
 - [breaking] changed compatibleSdkVersion to 5.0.0(12) ([23a0506e75](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/23a0506e75a21b558eca408cb4b6a810e8c8dedc))
