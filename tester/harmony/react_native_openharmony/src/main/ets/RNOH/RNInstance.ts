@@ -279,6 +279,11 @@ export interface RNInstance {
    * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
    */
   getNativeNodeIdByTag(tag: Tag): string | undefined
+
+  /**
+   * @returns UIContext
+   */
+  getUIContext(): UIContext
 }
 
 export type RNInstanceOptions = {
@@ -372,6 +377,7 @@ export class RNInstanceImpl implements RNInstance {
   private uiCtx: UIContext;
   private unregisterWorkerMessageListener = () => {
   }
+  private uiCtx: UIContext;
 
   /**
    * @deprecated
@@ -387,7 +393,7 @@ export class RNInstanceImpl implements RNInstance {
     private napiBridge: NapiBridge,
     disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
@@ -570,7 +576,7 @@ export class RNInstanceImpl implements RNInstance {
   private async processPackages(packages: RNPackage[]) {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
-    const turboModuleContext = this.createRNOHContext(this)
+    const turboModuleContext = this.createUITurboModuleContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
