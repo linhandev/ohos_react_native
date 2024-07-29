@@ -65,6 +65,7 @@ class TurboModuleFactory final {
 
   NapiRef maybeGetArkTsTurboModuleInstanceRef(
       const std::string& name,
+      TaskThread thread,
       ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const;
 
   ArkTSTurboModuleEnvironment getArkTSTurboModuleEnvironmentByTaskThread(
