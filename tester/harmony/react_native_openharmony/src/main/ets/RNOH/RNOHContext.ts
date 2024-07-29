@@ -1,6 +1,7 @@
 import { RNInstanceImpl } from "./RNInstance"
 import { RNOHError } from "./RNOHError"
 import type common from '@ohos.app.ability.common'
+import { UIContext } from '@kit.ArkUI'
 import type { DescriptorRegistry } from './DescriptorRegistry';
 import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
 import type { RNInstance } from './RNInstance';
@@ -216,6 +217,13 @@ export class RNOHContext extends RNOHCoreContext {
  * @api
  */
 export class UITurboModuleContext extends RNOHContext {
+  constructor(rnohContext: RNOHContext) {
+    super(rnohContext._rnohContextDeps);
+  }
+
+  getUIContext(): UIContext | null {
+    return this._rnohContextDeps.rnInstance.getUIContext()
+  }
 }
 
 /**

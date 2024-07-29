@@ -4,6 +4,7 @@ import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
 import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
+import { UITurboModuleContext } from './TurboModule'
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -161,7 +162,7 @@ export class RNInstancesCoordinator {
       this.rawLogger,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance),
+      (rnInstance) => new UITurboModuleContext(RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)),
       httpClientProvider,
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,

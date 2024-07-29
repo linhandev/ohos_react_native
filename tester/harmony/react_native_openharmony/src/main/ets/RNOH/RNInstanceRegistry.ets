@@ -2,7 +2,7 @@ import font from '@ohos.font';
 import type { RNInstance, RNInstanceOptions } from './RNInstance';
 import { RNInstanceImpl } from './RNInstance';
 import type { NapiBridge } from './NapiBridge';
-import type { RNOHContext } from './RNOHContext';
+import type { UITurboModuleContext } from './TurboModule'
 import type { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from './DevToolsController';
 import { HttpClientProvider } from './HttpClientProvider';
@@ -31,7 +31,7 @@ export class RNInstanceRegistry {
   private logger: RNOHLogger
   private napiBridge: NapiBridge
   private devToolsController: DevToolsController
-  private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext
+  private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext
   private httpClientProvider: HttpClientProvider
   private defaultHttpClient: HttpClient | undefined
   private resourceManager: resourceManager.ResourceManager
@@ -44,7 +44,7 @@ export class RNInstanceRegistry {
     logger: RNOHLogger,
     napiBridge: NapiBridge,
     devToolsController: DevToolsController,
-    createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
     httpClientProvider: HttpClientProvider,
     defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     resourceManager: resourceManager.ResourceManager,
@@ -56,7 +56,7 @@ export class RNInstanceRegistry {
     this.logger = logger
     this.napiBridge = napiBridge
     this.devToolsController = devToolsController
-    this.createRNOHContext = createRNOHContext
+    this.createUITurboModuleContext = createUITurboModuleContext
     this.httpClientProvider = httpClientProvider
     this.defaultHttpClient = defaultHttpClient
     this.resourceManager = resourceManager
@@ -82,7 +82,7 @@ export class RNInstanceRegistry {
       this.napiBridge,
       options.disableConcurrentRoot,
       this.devToolsController,
-      this.createRNOHContext,
+      this.createUITurboModuleContext,
       workerThread,
       options.enableDebugger ?? false,
       options.enableBackgroundExecutor ?? false,

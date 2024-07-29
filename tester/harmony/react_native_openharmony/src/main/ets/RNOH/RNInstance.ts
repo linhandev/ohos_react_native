@@ -1,4 +1,5 @@
 import type UIAbility from '@ohos.app.ability.UIAbility'
+import { UIContext } from '@kit.ArkUI'
 import { CommandDispatcher, RNComponentCommandHub } from './RNComponentCommandHub'
 import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegistry'
 import { ComponentManagerRegistry } from './ComponentManagerRegistry'
@@ -276,6 +277,11 @@ export interface RNInstance {
    * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
    */
   getNativeNodeIdByTag(tag: Tag): string | undefined
+
+  /**
+   * @returns UIContext
+   */
+  getUIContext(): UIContext
 }
 
 export type RNInstanceOptions = {
@@ -373,6 +379,7 @@ export class RNInstanceImpl implements RNInstance {
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
   private unregisterWorkerMessageListener = () => {
   }
+  private uiCtx: UIContext;
 
   /**
    * @deprecated
@@ -388,7 +395,7 @@ export class RNInstanceImpl implements RNInstance {
     private napiBridge: NapiBridge,
     disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
@@ -563,7 +570,7 @@ export class RNInstanceImpl implements RNInstance {
   private async processPackages(packages: RNPackage[]) {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
-    const turboModuleContext = this.createRNOHContext(this)
+    const turboModuleContext = this.createUITurboModuleContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
@@ -825,6 +832,14 @@ export class RNInstanceImpl implements RNInstance {
 
   public getNativeNodeIdByTag(tag: Tag): string | undefined {
     return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
+  }
+
+  public setUIContext(uiCtx: UIContext): void {
+    this.uiCtx = uiCtx;
+  }
+
+  public getUIContext(): UIContext {
+    return this.uiCtx;
   }
 }
 
