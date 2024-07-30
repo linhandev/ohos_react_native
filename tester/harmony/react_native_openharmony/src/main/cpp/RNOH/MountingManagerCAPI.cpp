@@ -300,6 +300,7 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
     bool isArkTSMutation = false;
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create:
+        // fallthrough
       case facebook::react::ShadowViewMutation::Update:
         isArkTSMutation = !isCAPIComponent(mutation.newChildShadowView);
         break;
@@ -307,7 +308,19 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
         isArkTSMutation = !isCAPIComponent(mutation.oldChildShadowView);
         break;
       case facebook::react::ShadowViewMutation::Insert:
+        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView);
+        if (isArkTSMutation && isCAPIComponent(mutation.newChildShadowView)) {
+          LOG(WARNING) << "Inserting CAPI component \""
+                       << mutation.newChildShadowView.componentName
+                       << "\" into ArkTS parent \""
+                       << mutation.parentShadowView.componentName
+                       << "\" is not supported. "
+                       << "The component will not be rendered correctly.";
+        }
+        break;
       case facebook::react::ShadowViewMutation::Remove:
+        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView);
+        break;
       case facebook::react::ShadowViewMutation::RemoveDeleteTree:
         isArkTSMutation = false;
         break;
