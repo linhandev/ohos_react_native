@@ -192,6 +192,10 @@ class CppComponentInstance : public ComponentInstance {
         layoutMetrics.frame.origin,
         layoutMetrics.frame.size,
         layoutMetrics.pointScaleFactor);
+    if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
+      this->getLocalRootArkUINode().setTransform(
+          m_transform, layoutMetrics.pointScaleFactor);
+    }
     markBoundingBoxAsDirty();
   }
 
@@ -223,11 +227,7 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowRadius);
     }
 
-    if (!isTransformManagedByAnimated &&
-        (props->transform != old->transform ||
-         abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
-             0.001f)) {
-      m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+    if (!isTransformManagedByAnimated && props->transform != old->transform) {
       this->setTransform(props->transform);
       this->getLocalRootArkUINode().setTransform(
           props->transform, m_layoutMetrics.pointScaleFactor);
@@ -398,7 +398,6 @@ class CppComponentInstance : public ComponentInstance {
   std::optional<facebook::react::Rect> m_boundingBox;
   bool m_isClipping = false;
   facebook::react::BorderMetrics m_oldBorderMetrics = {};
-  float m_oldPointScaleFactor = 0.0f;
 };
 
 inline facebook::react::Rect transformRectAroundPoint(
