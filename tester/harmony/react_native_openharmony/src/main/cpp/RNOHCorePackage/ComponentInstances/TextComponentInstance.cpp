@@ -132,11 +132,7 @@ void TextComponentInstance::onPropsChanged(
       std::string dataDetectorType = textProps->rawProps["dataDetectorType"].asString();
       VLOG(3) << "[text-debug] dataDetectorType: " << dataDetectorType;
       if (dataDetectorType == "all") {
-        ArkUI_NumberValue types[] = {
-            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_PHONE_NUMBER},
-            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS},
-            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL},
-            {.i32 = ARKUI_TEXT_DATA_DETECTOR_TYPE_URL}};
+        ArkUI_NumberValue types[] = {};
         m_textNode.setTextDataDetectorType(true, types);
       } else if (dataDetectorType == "address") {
         ArkUI_NumberValue types[] = {
