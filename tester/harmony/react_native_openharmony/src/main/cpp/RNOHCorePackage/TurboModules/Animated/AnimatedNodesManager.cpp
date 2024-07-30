@@ -1,6 +1,5 @@
 #include "AnimatedNodesManager.h"
 
-#include <glog/logging.h>
 #include <functional>
 #include <queue>
 

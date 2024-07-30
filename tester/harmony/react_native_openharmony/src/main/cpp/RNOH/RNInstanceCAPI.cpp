@@ -45,9 +45,6 @@ void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
 
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
   if (componentInstance == nullptr) {
-    LOG(ERROR)
-        << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: could not find componentInstance for tag: "
-        << tag;
     return;
   }
 

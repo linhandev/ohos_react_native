@@ -1,7 +1,5 @@
 #include "FrameBasedAnimationDriver.h"
 
-#include <glog/logging.h>
-
 namespace rnoh {
 
 // 60 FPS is hardcoded in React Native

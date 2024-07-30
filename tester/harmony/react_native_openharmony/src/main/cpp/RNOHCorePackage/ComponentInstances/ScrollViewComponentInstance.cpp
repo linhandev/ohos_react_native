@@ -71,9 +71,9 @@ void SettlingScrollViewInternalState::onScrollStop() {
 
 void ScrollViewComponentInstance::onChangeInternalState(
     std::unique_ptr<ScrollViewInternalState> internalState) {
-  LOG(INFO) << "ScrollViewComponentInstance(" << m_tag
-            << ")::onChangeInternalState (" << m_internalState->getDebugName()
-            << " => " << internalState->getDebugName() << ")";
+  VLOG(2) << "ScrollViewComponentInstance(" << m_tag
+          << ")::onChangeInternalState (" << m_internalState->getDebugName()
+          << " => " << internalState->getDebugName() << ")";
   m_internalState = std::move(internalState);
 }
 

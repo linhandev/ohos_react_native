@@ -1,6 +1,5 @@
 #include "InterpolationAnimatedNode.h"
 #include "RNOH/Color.h"
-#include "glog/logging.h"
 
 using namespace facebook;
 
