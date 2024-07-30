@@ -61,14 +61,14 @@ export class DisplayMetricsManager {
           width: displayInstance.width,
           height: displayInstance.height,
           scale: displayInstance.densityPixels,
-          fontScale: 1,
+          fontScale: this.getFontSizeScale(),
           densityDpi: displayInstance.densityDPI,
         },
         windowPhysicalPixels: {
           width: this.displayMetrics.windowPhysicalPixels.width,
           height: this.displayMetrics.windowPhysicalPixels.height,
           scale: displayInstance.densityPixels,
-          fontScale: 1,
+          fontScale: this.getFontSizeScale(),
           densityDpi: displayInstance.densityDPI,
         }
       };
