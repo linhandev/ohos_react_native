@@ -306,7 +306,7 @@ TextNode& TextNode::setTextDataDetectorType(int32_t enable, ArkUI_NumberValue ty
   
   ArkUI_NumberValue value[] = {{.i32 = enable}};
   ArkUI_AttributeItem item2 = {
-      .value = types, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item2));
   return *this;
