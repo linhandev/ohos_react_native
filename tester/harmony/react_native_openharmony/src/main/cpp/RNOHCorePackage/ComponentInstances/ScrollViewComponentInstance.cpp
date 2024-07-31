@@ -103,8 +103,8 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
                  .count();
   m_movedBySignificantOffset =
       scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset);
-  if (m_allowNextScrollEvent ||
-      (m_scrollEventThrottle < now - m_lastScrollDispatchTime &&
+  if (m_allowNextScrollEvent || ((m_scrollEventThrottle == 0 ||
+      m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
        m_movedBySignificantOffset)) {
     m_lastScrollDispatchTime = now;
     VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
@@ -115,7 +115,7 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
             << ", " << scrollViewMetrics.containerSize.height << ")";
     m_eventEmitter->onScroll(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
-  };
+  }
   sendEventForNativeAnimations(scrollViewMetrics);
 }
 
