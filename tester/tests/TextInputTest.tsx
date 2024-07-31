@@ -185,17 +185,6 @@ export function TextInputTest() {
           }}
         />
       </TestSuite>
-      <TestCase.Example
-        modal
-        itShould="render textInput with blue underline"
-        skip={{android: false, harmony: true}}
-        //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/404
-      >
-        <TextInputWithText
-          style={styles.textInput}
-          underlineColorAndroid={'blue'}
-        />
-      </TestCase.Example>
       <TestCase.Example itShould="render textinput with red placeholder">
         <TextInputWithText
           style={styles.textInput}
@@ -208,6 +197,18 @@ export function TextInputTest() {
       </TestCase.Example>
       <TestCase.Example itShould="render textinput with green selection color">
         <TextInputWithText style={styles.textInput} selectionColor="green" />
+      </TestCase.Example>
+      <TestCase.Example itShould="render textinput with blue underline color">
+        <TextInputWithText
+          style={styles.textInput}
+          underlineColorAndroid={'blue'}
+        />
+      </TestCase.Example>
+      <TestCase.Example itShould="not open the keyboard after focusing">
+        <TextInputWithText
+          style={styles.textInput}
+          showSoftInputOnFocus={false}
+        />
       </TestCase.Example>
       <TestCase.Example itShould="render multiline text input">
         <TextInputWithText style={styles.textInputBigger} multiline />

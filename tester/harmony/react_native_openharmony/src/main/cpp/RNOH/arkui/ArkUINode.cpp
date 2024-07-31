@@ -545,4 +545,17 @@ void ArkUINode::unregisterNodeEvent(ArkUI_NodeEventType eventType) {
   NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
 }
 
+const ArkUI_AttributeItem& ArkUINode::getAttribute(
+    ArkUI_NodeAttributeType attribute) const {
+  auto item =
+      NativeNodeApi::getInstance()->getAttribute(m_nodeHandle, attribute);
+  if (!item) {
+    auto message = std::string("ArkUINode getAttribute failed: ") +
+        std::to_string((attribute));
+    LOG(ERROR) << message;
+    throw std::runtime_error(std::move(message));
+  }
+  return *item;
+}
+
 } // namespace rnoh

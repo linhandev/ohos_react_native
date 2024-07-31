@@ -29,25 +29,6 @@ inline ArkUI_BorderStyle convertReactBorderStyleToArk(
 /**
  * @api
  */
-inline ArkUI_TextAreaType convertTextAreaInputType(
-    facebook::react::KeyboardType keyboardType) {
-  switch (keyboardType) {
-    case facebook::react::KeyboardType::DecimalPad:
-    case facebook::react::KeyboardType::Numeric:
-    case facebook::react::KeyboardType::NumberPad:
-      return ARKUI_TEXTAREA_TYPE_NUMBER;
-    case facebook::react::KeyboardType::PhonePad:
-      return ARKUI_TEXTAREA_TYPE_PHONE_NUMBER;
-    case facebook::react::KeyboardType::EmailAddress:
-      return ARKUI_TEXTAREA_TYPE_EMAIL;
-    default:
-      return ARKUI_TEXTAREA_TYPE_NORMAL;
-  }
-}
-
-/**
- * @api
- */
 inline uint32_t convertColorToTranslucent(
     facebook::react::SharedColor const& color) {
   auto colorComponents = colorComponentsFromColor(color);
@@ -57,47 +38,6 @@ inline uint32_t convertColorToTranslucent(
   uint32_t alpha = 0x55;
   auto colorValue = (alpha << 24) | (red << 16) | (green << 8) | blue;
   return colorValue;
-}
-
-/**
- * @api
- */
-inline ArkUI_TextInputType convertInputType(
-    facebook::react::KeyboardType keyboardType) {
-  switch (keyboardType) {
-    case facebook::react::KeyboardType::Numeric:
-    case facebook::react::KeyboardType::NumberPad:
-      return ARKUI_TEXTINPUT_TYPE_NUMBER;
-    case facebook::react::KeyboardType::DecimalPad:
-      return ARKUI_TEXTINPUT_TYPE_NUMBER_DECIMAL;
-    case facebook::react::KeyboardType::PhonePad:
-      return ARKUI_TEXTINPUT_TYPE_PHONE_NUMBER;
-    case facebook::react::KeyboardType::EmailAddress:
-      return ARKUI_TEXTINPUT_TYPE_EMAIL;
-    default:
-      return ARKUI_TEXTINPUT_TYPE_NORMAL;
-  }
-}
-
-/**
- * @api
- */
-inline ArkUI_EnterKeyType convertEnterKeyType(
-    facebook::react::ReturnKeyType returnKeyType) {
-  switch (returnKeyType) {
-    case facebook::react::ReturnKeyType::Done:
-      return ARKUI_ENTER_KEY_TYPE_DONE;
-    case facebook::react::ReturnKeyType::Go:
-      return ARKUI_ENTER_KEY_TYPE_GO;
-    case facebook::react::ReturnKeyType::Next:
-      return ARKUI_ENTER_KEY_TYPE_NEXT;
-    case facebook::react::ReturnKeyType::Search:
-      return ARKUI_ENTER_KEY_TYPE_SEARCH;
-    case facebook::react::ReturnKeyType::Send:
-      return ARKUI_ENTER_KEY_TYPE_SEND;
-    default:
-      return ARKUI_ENTER_KEY_TYPE_DONE;
-  }
 }
 
 /**
@@ -151,103 +91,5 @@ inline ArkUI_FontWeight convertFontWeight(
     return ARKUI_FONT_WEIGHT_W800;
   }
   return ARKUI_FONT_WEIGHT_W900;
-}
-
-/**
- * @api
- */
-inline ArkUI_TextInputContentType convertContentType(
-    std::string const& textContentType) {
-  if (textContentType == "addressCity") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_CITY_ADDRESS;
-  } else if (textContentType == "addressState") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PROVINCE_ADDRESS;
-  } else if (textContentType == "countryName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_COUNTRY_ADDRESS;
-  } else if (textContentType == "creditCardNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_BANK_CARD_NUMBER;
-  } else if (textContentType == "fullStreetAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_FULL_STREET_ADDRESS;
-  } else if (textContentType == "sublocality") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_DISTRICT_ADDRESS;
-  } else if (textContentType == "telephoneNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_NUMBER;
-  } else if (textContentType == "username") {
-    return ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_USER_NAME;
-  } else if (textContentType == "password") {
-    return ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_PASSWORD;
-  } else if (textContentType == "newPassword") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_NEW_PASSWORD;
-  } else if (textContentType == "houseNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_HOUSE_NUMBER;
-  } else if (textContentType == "districtAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_DISTRICT_ADDRESS;
-  } else if (textContentType == "cityAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_CITY_ADDRESS;
-  } else if (textContentType == "provinceAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PROVINCE_ADDRESS;
-  } else if (textContentType == "countryAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_COUNTRY_ADDRESS;
-  } else if (textContentType == "personFullName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FULL_NAME;
-  } else if (textContentType == "personLastName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_LAST_NAME;
-  } else if (textContentType == "personFirstName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FIRST_NAME;
-  } else if (textContentType == "phoneNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_NUMBER;
-  } else if (textContentType == "phoneCountryCode") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PHONE_COUNTRY_CODE;
-  } else if (textContentType == "fullPhoneNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_FULL_PHONE_NUMBER;
-  } else if (textContentType == "emailAddress") {
-    return ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_EMAIL_ADDRESS;
-  } else if (textContentType == "bankCardNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_BANK_CARD_NUMBER;
-  } else if (textContentType == "idCardNumber") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_ID_CARD_NUMBER;
-  } else if (textContentType == "nickName") {
-    return ArkUI_TextInputContentType::ARKUI_TEXTINPUT_CONTENT_TYPE_NICKNAME;
-  } else if (textContentType == "name") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FULL_NAME;
-  } else if (textContentType == "familyName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_LAST_NAME;
-  } else if (textContentType == "givenName") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_PERSON_FIRST_NAME;
-  } else if (textContentType == "detailInfoWithoutStreet") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_DETAIL_INFO_WITHOUT_STREET;
-  } else if (textContentType == "formatAddress") {
-    return ArkUI_TextInputContentType::
-        ARKUI_TEXTINPUT_CONTENT_TYPE_FORMAT_ADDRESS;
-  } else if (textContentType == "none") {
-    return static_cast<ArkUI_TextInputContentType>(-1);
-  } else {
-    return static_cast<ArkUI_TextInputContentType>(-2);
-  }
 }
 } // namespace rnoh

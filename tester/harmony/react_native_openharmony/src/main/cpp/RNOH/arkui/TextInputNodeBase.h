@@ -13,7 +13,8 @@ class TextInputNodeBase : public ArkUINode {
  protected:
   TextInputNodeBase(ArkUI_NodeType nodeType);
   void setCommonFontAttributes(
-      facebook::react::TextAttributes const& textAttributes);
+      facebook::react::TextAttributes const& textAttributes,
+      float fontSizeScale);
 
  public:
   void setPadding(
@@ -34,7 +35,8 @@ class TextInputNodeBase : public ArkUINode {
   void setFontColor(facebook::react::SharedColor const& color);
 
   virtual void setFont(
-      facebook::react::TextAttributes const& textAttributes) = 0;
+      facebook::react::TextAttributes const& textAttributes,
+      float fontSizeScale) = 0;
 
   virtual void setCaretColor(facebook::react::SharedColor const& color) = 0;
 
@@ -45,10 +47,33 @@ class TextInputNodeBase : public ArkUINode {
   virtual void setPlaceholderColor(
       facebook::react::SharedColor const& color) = 0;
 
+  void setTextInputLineHeight(
+      facebook::react::TextAttributes const& textAttributes,
+      float fontSizeScale);
+
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);
 
   std::string virtual getTextContent() = 0;
+
+  virtual facebook::react::Rect getTextContentRect() const = 0;
+
+  static uint32_t convertColorToTranslucentUnderline(
+      facebook::react::SharedColor const& color);
+
+  static uint32_t convertColorToTranslucentSelection(
+      facebook::react::SharedColor const& color);
+
+  static ArkUI_NumberValue convertContentType(
+      std::string const& textContentType);
+
+  static ArkUI_EnterKeyType convertEnterKeyType(
+      facebook::react::ReturnKeyType returnKeyType);
+
+  static ArkUI_EnterKeyType convertEnterKeyLabel(std::string returnKeyLabel);
+
+  static ArkUI_TextInputType convertInputType(
+      facebook::react::KeyboardType keyboardType);
 };
 
 } // namespace rnoh

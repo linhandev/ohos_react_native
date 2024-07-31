@@ -157,6 +157,8 @@ class ArkUINode {
 
   void registerNodeEvent(ArkUI_NodeEventType eventType);
   void unregisterNodeEvent(ArkUI_NodeEventType eventType);
+  const ArkUI_AttributeItem& getAttribute(
+      ArkUI_NodeAttributeType attribute) const;
 
   ArkUI_NodeHandle m_nodeHandle;
 };

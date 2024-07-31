@@ -29,6 +29,7 @@ class ArkTSBridge final : public DisplayMetricsManager,
 
   void handleError(std::exception_ptr ex) override;
   DisplayMetrics getDisplayMetrics() override;
+  float getFontSizeScale() override;
 
  protected:
   ArkJS m_arkJS;

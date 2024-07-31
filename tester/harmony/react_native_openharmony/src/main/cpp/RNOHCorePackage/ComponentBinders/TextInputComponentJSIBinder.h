@@ -30,6 +30,10 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "textContentType", "string");
     nativeProps.setProperty(rt, "submitBehavior", "string");
     nativeProps.setProperty(rt, "passwordRules", "string");
+    nativeProps.setProperty(rt, "underlineColorAndroid", "Color");
+    nativeProps.setProperty(rt, "returnKeyLabel", "string");
+    nativeProps.setProperty(rt, "blurOnSubmit", "boolean");
+    nativeProps.setProperty(rt, "showSoftInputOnFocus", "boolean");
 
     return nativeProps;
   };
@@ -46,6 +50,11 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     events.setProperty(rt, "topKeyPress", createDirectEvent(rt, "onKeyPress"));
     events.setProperty(
         rt, "topSelectionChange", createDirectEvent(rt, "onSelectionChange"));
+    events.setProperty(
+        rt,
+        "topContentSizeChange",
+        createDirectEvent(rt, "onContentSizeChange"));
+    events.setProperty(rt, "topScroll", createDirectEvent(rt, "onScroll"));
 
     return events;
   }

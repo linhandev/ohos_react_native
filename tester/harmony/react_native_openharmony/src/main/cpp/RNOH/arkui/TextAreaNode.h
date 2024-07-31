@@ -18,6 +18,8 @@ class TextAreaNodeDelegate {
   virtual void onFocus(){};
   virtual void onPasteOrCut(){};
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
+  virtual void onContentScroll(){};
+  virtual void onContentSizeChange(float width, float height){};
 };
 
 /**
@@ -33,6 +35,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   facebook::react::Point getTextAreaOffset() const;
 
+  facebook::react::Rect getTextContentRect() const override;
+
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
 
@@ -43,9 +47,11 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setTextContent(std::string const& textContent);
 
-  void setInputType(ArkUI_TextAreaType keyboardType);
+  void setInputType(facebook::react::KeyboardType keyboardType);
 
-  void setFont(facebook::react::TextAttributes const& textAttributes) override;
+  void setFont(
+      facebook::react::TextAttributes const& textAttributes,
+      float fontSizeScale) override;
 
   void setCaretColor(facebook::react::SharedColor const& color) override;
 
@@ -65,7 +71,28 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setLineHeight(float lineHeight);
 
+  void setEnterKeyType(
+      facebook::react::ReturnKeyType returnKeyType,
+      std::string returnKeyLabel);
+
+  void setUnderlineColor(facebook::react::SharedColor const& underlineColor);
+
+  void setAutoFill(bool autoFill);
+
+  void setShowKeyboardOnFocus(bool enable);
+
+  void setInputFilter(std::string const& inputFilter);
+
   std::string getTextContent() override;
+
+  static ArkUI_EnterKeyType convertTextAreaEnterKeyType(
+      facebook::react::ReturnKeyType returnKeyType);
+
+  static ArkUI_EnterKeyType convertTextAreaEnterKeyLabel(
+      std::string returnKeyLabel);
+
+  static ArkUI_TextAreaType convertTextAreaInputType(
+      facebook::react::KeyboardType keyboardType);
 };
 
 } // namespace rnoh

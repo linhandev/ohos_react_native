@@ -24,6 +24,7 @@ import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
+  fontSizeScale : number | undefined,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl: string,
@@ -82,14 +83,13 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
-    const envInfo =
-      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true,
-        {
-          handleError: (rnohError) => {
-            devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-          }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
-        });
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
+    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, {
+      handleError: (rnohError) => {
+        devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+      }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
+      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
+    });
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
@@ -100,6 +100,7 @@ export class RNInstancesCoordinator {
       options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
+      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
     }
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
@@ -243,10 +244,8 @@ export class RNInstancesCoordinator {
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
-    this.displayMetricsManager?.updateDisplayMetrics()
-    this.rnInstanceRegistry?.forEach((rnInstance) => {
-      rnInstance.onConfigurationUpdate(systemConfiguration)
-    })
+    this.displayMetricsManager?.updateDisplayMetrics(systemConfiguration.fontSizeScale);
+    this.rnInstanceRegistry?.forEach((rnInstance): void => rnInstance.onConfigurationUpdate(systemConfiguration))
   }
 
   public onMemoryLevel(memoryLevel: number) {

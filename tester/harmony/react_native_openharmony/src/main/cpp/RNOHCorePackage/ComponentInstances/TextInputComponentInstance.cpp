@@ -5,6 +5,7 @@
 #include <react/renderer/components/textinput/TextInputProps.h>
 #include <react/renderer/components/textinput/TextInputState.h>
 #include <react/renderer/core/ConcreteState.h>
+#include <algorithm>
 #include <sstream>
 #include <utility>
 #include "RNOH/arkui/conversions.h"
@@ -118,17 +119,38 @@ void TextInputComponentInstance::onTextSelectionChange(
   m_eventEmitter->onSelectionChange(getTextInputMetrics());
 }
 
+void TextInputComponentInstance::onContentSizeChange(
+    float width,
+    float height) {
+  m_contentSizeWidth = width;
+  m_contentSizeHeight = height;
+  m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+}
+
+void TextInputComponentInstance::onContentScroll() {
+  m_eventEmitter->onScroll(getTextInputMetrics());
+}
+
 facebook::react::TextInputMetrics
 TextInputComponentInstance::getTextInputMetrics() {
   auto textInputMetrics = facebook::react::TextInputMetrics();
-  textInputMetrics.contentOffset = m_multiline
-      ? m_textAreaNode.getTextAreaOffset()
-      : m_textInputNode.getTextInputOffset();
+  auto contentOffset = m_multiline
+      ? m_textAreaNode.getTextContentRect().origin
+      : m_textInputNode.getTextContentRect().origin;
+  float pointScaleFactor = m_layoutMetrics.pointScaleFactor;
+  auto padding = m_layoutMetrics.contentInsets - m_layoutMetrics.borderWidth;
+  contentOffset.x = contentOffset.x / pointScaleFactor - padding.left;
+  contentOffset.y = contentOffset.y / pointScaleFactor - padding.top;
+  contentOffset.x = std::max<float>(-contentOffset.x, 0.0f);
+  contentOffset.y = std::max<float>(-contentOffset.y, 0.0f);
+  textInputMetrics.contentOffset = contentOffset;
   textInputMetrics.containerSize = m_layoutMetrics.frame.size;
 
   textInputMetrics.eventCount = this->m_nativeEventCount;
   textInputMetrics.selectionRange.location = this->m_selectionLocation;
   textInputMetrics.selectionRange.length = this->m_selectionLength;
+  textInputMetrics.contentSize.width = this->m_contentSizeWidth;
+  textInputMetrics.contentSize.height = this->m_contentSizeHeight;
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
@@ -140,6 +162,14 @@ TextInputComponentInstance::getOnChangeMetrics() {
   OnChangeMetrics.eventCount = this->m_nativeEventCount;
   OnChangeMetrics.text = this->m_content;
   return OnChangeMetrics;
+}
+
+facebook::react::Size
+TextInputComponentInstance::getOnContentSizeChangeMetrics() {
+  auto OnContentSizeChangeMetrics = facebook::react::Size();
+  OnContentSizeChangeMetrics.width = this->m_contentSizeWidth;
+  OnContentSizeChangeMetrics.height = this->m_contentSizeHeight;
+  return OnContentSizeChangeMetrics;
 }
 
 void TextInputComponentInstance::onPropsChanged(
@@ -166,13 +196,20 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (props->textAttributes != m_props->textAttributes) {
-    m_textAreaNode.setFont(props->textAttributes);
-    m_textInputNode.setFont(props->textAttributes);
+    auto fontSizeScale =
+        this->m_deps->displayMetricsManager->getFontSizeScale();
+    m_textAreaNode.setFont(props->textAttributes, fontSizeScale);
+    m_textInputNode.setFont(props->textAttributes, fontSizeScale);
   }
-  if (props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
+  if (!m_props ||
+      props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
     if (props->textAttributes.lineHeight) {
-      m_textAreaNode.setLineHeight(props->textAttributes.lineHeight);
-      m_textInputNode.setLineHeight(props->textAttributes.lineHeight);
+      auto fontSizeScale =
+          this->m_deps->displayMetricsManager->getFontSizeScale();
+      m_textAreaNode.setTextInputLineHeight(
+          props->textAttributes, fontSizeScale);
+      m_textInputNode.setTextInputLineHeight(
+          props->textAttributes, fontSizeScale);
     }
   }
   if (*(props->backgroundColor) != *(m_props->backgroundColor)) {
@@ -201,12 +238,13 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (props->traits.keyboardType != m_props->traits.keyboardType) {
-    m_textAreaNode.setInputType(
-        rnoh::convertTextAreaInputType(props->traits.keyboardType));
-    m_textInputNode.setInputType(
-        props->traits.secureTextEntry
-            ? ARKUI_TEXTINPUT_TYPE_PASSWORD
-            : rnoh::convertInputType(props->traits.keyboardType));
+    if (m_multiline) {
+      m_textAreaNode.setInputType(props->traits.keyboardType);
+    } else {
+      m_textInputNode.setInputType(
+          props->traits.keyboardType, props->traits.secureTextEntry);
+      ;
+    }
   }
   if (props->maxLength != 0) {
     if (props->maxLength != m_props->maxLength) {
@@ -244,6 +282,7 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setSelectedBackgroundColor(props->selectionColor);
       if (!props->cursorColor) {
         m_textInputNode.setCaretColor(props->selectionColor);
+        m_textAreaNode.setCaretColor(props->selectionColor);
       }
     } else {
       m_textInputNode.resetSelectedBackgroundColor();
@@ -252,15 +291,18 @@ void TextInputComponentInstance::onPropsChanged(
   if (props->traits.secureTextEntry != m_props->traits.secureTextEntry ||
       props->traits.keyboardType != m_props->traits.keyboardType) {
     m_textInputNode.setInputType(
-        props->traits.secureTextEntry
-            ? ARKUI_TEXTINPUT_TYPE_PASSWORD
-            : rnoh::convertInputType(props->traits.keyboardType));
+        props->traits.keyboardType, props->traits.secureTextEntry);
   }
   if (props->traits.caretHidden != m_props->traits.caretHidden) {
     m_textInputNode.setCaretHidden(props->traits.caretHidden);
   }
-  if (props->traits.returnKeyType != m_props->traits.returnKeyType) {
-    m_textInputNode.setEnterKeyType(props->traits.returnKeyType);
+  if (!m_props ||
+      props->traits.returnKeyType != m_props->traits.returnKeyType ||
+      props->traits.returnKeyLabel != m_props->traits.returnKeyLabel) {
+    m_textInputNode.setEnterKeyType(
+        props->traits.returnKeyType, props->traits.returnKeyLabel);
+    m_textAreaNode.setEnterKeyType(
+        props->traits.returnKeyType, props->traits.returnKeyLabel);
   }
   if (props->traits.clearButtonMode != m_props->traits.clearButtonMode) {
     if (m_focused) {
@@ -298,12 +340,27 @@ void TextInputComponentInstance::onPropsChanged(
     m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
   }
 
+  if (!m_props) {
+    m_textInputNode.setInputFilter(".*");
+    m_textAreaNode.setInputFilter(".*");
+  }
+  if (!m_props ||
+      props->traits.showSoftInputOnFocus !=
+          m_props->traits.showSoftInputOnFocus) {
+    m_textAreaNode.setShowKeyboardOnFocus(props->traits.showSoftInputOnFocus);
+    m_textInputNode.setShowKeyboardOnFocus(props->traits.showSoftInputOnFocus);
+  }
+  if (!m_props ||
+      *(props->underlineColorAndroid) != *(m_props->underlineColorAndroid)) {
+    m_textInputNode.setUnderlineColor(props->underlineColorAndroid);
+    m_textAreaNode.setUnderlineColor(props->underlineColorAndroid);
+  }
+
   if (props->traits.textContentType != m_props->traits.textContentType) {
     m_textInputNode.setTextContentType(props->traits.textContentType);
     m_textAreaNode.setTextContentType(props->traits.textContentType);
   }
-  m_textAreaNode.setEnabled(props->traits.editable);
-  m_textInputNode.setEnabled(props->traits.editable);
+
   if (props->traits.submitBehavior != m_props->traits.submitBehavior) {
     m_textInputNode.setBlurOnSubmit(
         props->traits.submitBehavior ==
@@ -312,15 +369,31 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.submitBehavior ==
         facebook::react::SubmitBehavior::BlurAndSubmit);
   }
+
+  if (!m_props || props->blurOnSubmit != m_props->blurOnSubmit) {
+    m_textInputNode.setBlurOnSubmit(props->blurOnSubmit);
+    m_textAreaNode.setBlurOnSubmit(props->blurOnSubmit);
+  }
+
+  if (!m_props || props->traits.editable != m_props->traits.editable) {
+    m_textAreaNode.setEnabled(props->traits.editable);
+    m_textInputNode.setEnabled(props->traits.editable);
+  }
 }
 
 void TextInputComponentInstance::onLayoutChanged(
     facebook::react::LayoutMetrics const& layoutMetrics) {
   CppComponentInstance::onLayoutChanged(layoutMetrics);
   if (m_multiline) {
-    m_textInputNode.setLayoutRect(layoutMetrics);
+    m_textInputNode.setLayoutRect(
+        layoutMetrics.frame.origin,
+        layoutMetrics.frame.size,
+        layoutMetrics.pointScaleFactor);
   } else {
-    m_textAreaNode.setLayoutRect(layoutMetrics);
+    m_textAreaNode.setLayoutRect(
+        layoutMetrics.frame.origin,
+        layoutMetrics.frame.size,
+        layoutMetrics.pointScaleFactor);
   }
 }
 

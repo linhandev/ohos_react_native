@@ -74,4 +74,12 @@ auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
   return displayMetricsFromNapiValue(m_arkJS.getEnv(), napiResult);
 }
 
+auto ArkTSBridge::getFontSizeScale() -> float {
+  auto napiBridgeObject = m_arkJS.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJS.getObjectProperty(napiBridgeObject, "getFontSizeScale");
+  auto napiResult = m_arkJS.call<0>(methodImpl, {});
+  return m_arkJS.getDouble(napiResult);
+}
+
 } // namespace rnoh

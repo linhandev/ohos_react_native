@@ -24,6 +24,7 @@ class TextInputComponentInstance
   facebook::react::TextInputMetrics getTextInputMetrics();
   facebook::react::TextInputMetrics getTextInputMetrics(std::string text);
   facebook::react::OnChangeMetrics getOnChangeMetrics();
+  facebook::react::Size getOnContentSizeChangeMetrics();
 
   bool m_secureInput{false};
 
@@ -34,6 +35,9 @@ class TextInputComponentInstance
   int32_t m_selectionLocation = 0;
 
   int32_t m_selectionLength = 0;
+
+  float m_contentSizeWidth = 0;
+  float m_contentSizeHeight = 0;
 
   bool m_textWasPastedOrCut = false;
   bool m_valueChanged = false;
@@ -69,6 +73,10 @@ class TextInputComponentInstance
   void onPasteOrCut() override;
 
   void onTextSelectionChange(int32_t location, int32_t length) override;
+
+  void onContentScroll() override;
+
+  void onContentSizeChange(float width, float height) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 

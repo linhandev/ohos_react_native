@@ -20,5 +20,6 @@ class DisplayMetricsManager {
   using Shared = std::shared_ptr<DisplayMetricsManager>;
 
   virtual DisplayMetrics getDisplayMetrics() = 0;
+  virtual float getFontSizeScale() = 0;
 };
 } // namespace rnoh

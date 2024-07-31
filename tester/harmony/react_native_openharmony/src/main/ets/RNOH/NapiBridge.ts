@@ -31,6 +31,7 @@ type Result<TOK = null> = {
 export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
   handleError: (rnohError: RNOHError) => void
+  getFontSizeScale: () => number
 }
 
 export class NapiBridge {
@@ -83,7 +84,8 @@ export class NapiBridge {
           customStack: (err.stacktrace ?? []).join("\n"),
         }))
       },
-      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics()
+      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics(),
+      getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale()
     } satisfies ArkTSBridgeHandler))
   }
 

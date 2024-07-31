@@ -69,6 +69,12 @@ TextInputProps::TextInputProps(
           sourceProps.underlineColorAndroid,
           {})),
       text(convertRawProp(context, rawProps, "text", sourceProps.text, {})),
+      blurOnSubmit(convertRawProp( // RNOH: patch
+          context, 
+          rawProps, 
+          "blurOnSubmit", 
+          sourceProps.blurOnSubmit,
+          {})),
       mostRecentEventCount(convertRawProp(
           context,
           rawProps,
