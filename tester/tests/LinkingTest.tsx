@@ -63,9 +63,9 @@ export function LinkingTest() {
           label="Call 1234567890"
         />
       </TestCase.Example>
-      <TestCase.Example itShould="open sms app (sms app doesn't accept parameters)">
+      <TestCase.Example itShould="open sms app and  write content automatically">
         <Button
-          onPress={() => Linking.openURL('sms:1234567890')}
+          onPress={() => Linking.openURL('sms:+15105550101?body=hello%20there')}
           label="Send SMS to 1234567890"
         />
       </TestCase.Example>
