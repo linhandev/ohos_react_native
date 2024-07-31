@@ -190,26 +190,23 @@ void TextComponentInstance::onStateChanged(
   uint32_t childIndex = 0;
   auto const& fragments = textState->getData().attributedString.getFragments();
   VLOG(3) << "[text-debug] getFragments size:" << fragments.size();
+  m_textNode.resetTextContentWithStyledString();
   if (fragments.empty()) {
+    m_key = "";
     return;
   }
-  if (!fragments.empty()) {
-    m_key = std::to_string(m_rnInstanceId) + "_" + 
-      std::to_string(fragments[0].parentShadowView.tag) + "_" + 
-      std::to_string(fragments[0].parentShadowView.surfaceId);
-    auto info = TextMeasureRegistry::getTextMeasureRegistry().getTextMeasureInfoByKey(m_key);
-    m_textNode.resetTextContentWithStyledString();
-    if (*info != nullptr) {
-      VLOG(3) << "[text-debug] setTextContentWithStyledString";
-      m_textNode.setTextContentWithStyledString(*info);
-      std::string textContent;
-      for (auto& fragment: fragments) {
-        textContent += fragment.string;
-      }
-      m_textNode.setTextContent(textContent);
+  m_key = std::to_string(m_rnInstanceId) + "_" + 
+    std::to_string(fragments[0].parentShadowView.tag) + "_" + 
+    std::to_string(fragments[0].parentShadowView.surfaceId);
+  auto info = TextMeasureRegistry::getTextMeasureRegistry().getTextMeasureInfoByKey(m_key);
+  if (*info != nullptr) {
+    VLOG(3) << "[text-debug] setTextContentWithStyledString";
+    m_textNode.setTextContentWithStyledString(*info);
+    std::string textContent;
+    for (auto& fragment: fragments) {
+      textContent += fragment.string;
     }
-  } else {
-    m_key = "";
+    m_textNode.setTextContent(textContent);
   }
   this->setTextAttributes(fragments[0].textAttributes);
 }
