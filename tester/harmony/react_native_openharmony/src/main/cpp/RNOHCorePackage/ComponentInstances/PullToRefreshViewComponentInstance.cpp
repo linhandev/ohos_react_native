@@ -108,7 +108,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   m_refreshIndicatorContainerNode.setOffset(0, props->progressViewOffset);
 
   if (props->refreshing) {
-    getLocalRootArkUINode().setEnableOnRefreshNativeEvent(false);
+    m_enableOnRefreshNativeEvent = false;
   }
   getLocalRootArkUINode().setNativeRefreshing(props->refreshing);
 
@@ -125,13 +125,13 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   }
 }
 
-void PullToRefreshViewComponentInstance::onRefresh(bool enableOnRefreshNativeEvent) {
+void PullToRefreshViewComponentInstance::onRefresh() {
   m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
   getLocalRootArkUINode().setNativeRefreshing(true);
-  if (enableOnRefreshNativeEvent) {
+  if (m_enableOnRefreshNativeEvent) {
     m_eventEmitter->onRefresh({});
   }
-
+  m_enableOnRefreshNativeEvent = true;
   auto instance =
       std::static_pointer_cast<RNInstanceInternal>(m_deps->rnInstance.lock());
   if (!instance) {

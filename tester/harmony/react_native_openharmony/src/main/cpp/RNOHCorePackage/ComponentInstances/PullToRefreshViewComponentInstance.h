@@ -17,6 +17,7 @@ class PullToRefreshViewComponentInstance
   static constexpr float REFRESH_INDICATOR_SIZE = 29;
 
   RefreshNode m_refreshNode;
+  bool m_enableOnRefreshNativeEvent{true};
 
   ColumnNode m_refreshIndicatorContainerNode;
   StackNode m_refreshIndicatorBackgroundNode;
@@ -43,7 +44,7 @@ class PullToRefreshViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
-  void onRefresh(bool enableOnRefreshNativeEvent) override;
+  void onRefresh() override;
   void onRefreshStateChanged(RefreshStatus state) override;
   facebook::react::Point getCurrentOffset() const override;
 
