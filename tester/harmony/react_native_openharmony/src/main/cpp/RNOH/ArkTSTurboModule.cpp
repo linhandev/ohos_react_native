@@ -4,11 +4,8 @@
 #include <jsi/JSIDynamic.h>
 #include <react/renderer/debug/SystraceSection.h>
 #include <exception>
-#include <optional>
-#include <variant>
 
 #include "ArkTSTurboModule.h"
-#include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/JsiConversions.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
@@ -63,6 +60,8 @@ folly::dynamic ArkTSTurboModule::callSync(
                                "#RNOH::ArkTSTurboModule::callSync (" +
                                this->name_ + "::" + methodName + ")")
                                .c_str());
+  auto start = std::chrono::high_resolution_clock::now();
+
   if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -79,6 +78,14 @@ folly::dynamic ArkTSTurboModule::callSync(
         auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
         result = arkJS.getDynamic(napiResult);
       });
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+  if (duration.count() > 2) {
+    DLOG(WARNING) << "ArkTSTurboModule::callSync: execution time — "
+                  << duration.count()
+                  << " ms (" + this->name_ + "::" + methodName + ")";
+  }
   return result;
 }
 
