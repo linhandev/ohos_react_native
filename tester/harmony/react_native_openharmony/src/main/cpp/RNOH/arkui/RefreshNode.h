@@ -5,7 +5,7 @@
 class RefreshNodeDelegate {
  public:
   virtual ~RefreshNodeDelegate() = default;
-  virtual void onRefresh(bool enableOnRefreshNativeEvent){};
+  virtual void onRefresh(){};
   
   enum class RefreshStatus {
     REFRESH_STATUS_INACTIVE = 0,
@@ -30,12 +30,9 @@ class RefreshNode : public ArkUINode {
   void insertChild(ArkUINode& child, std::size_t index);
   void removeChild(ArkUINode& child);
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs);
-  void setEnableOnRefreshNativeEvent(bool enableOnRefreshNativeEvent);
   RefreshNode& setNativeRefreshing(bool isRefreshing);
   RefreshNode& setRefreshNodeDelegate(RefreshNodeDelegate* refreshNodeDelegate);
   RefreshNode& setRefreshContent(ArkUINode& refreshContent);
   RefreshNode& setRefreshPullDownRation(float pullDownRatio);
- private:
-  bool m_enableOnRefreshNativeEvent{true}; 
 };
 } // namespace rnoh
