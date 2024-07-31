@@ -44,9 +44,6 @@ void RefreshNode::removeChild(ArkUINode& child) {
       m_nodeHandle, child.getArkUINodeHandle()));
 }
 
-void RefreshNode::setEnableOnRefreshNativeEvent(bool enableOnRefreshNativeEvent) {
-  m_enableOnRefreshNativeEvent = enableOnRefreshNativeEvent;
-}
 RefreshNode& RefreshNode::setNativeRefreshing(bool isRefreshing) {
   ArkUI_NumberValue refreshingValue[] = {{.u32 = isRefreshing}};
   ArkUI_AttributeItem refreshingItem = {
@@ -71,13 +68,11 @@ void RefreshNode::onNodeEvent(
     EventArgs& eventArgs) {
   if (eventType == ArkUI_NodeEventType::NODE_REFRESH_ON_REFRESH &&
       m_refreshNodeDelegate) {
-    m_refreshNodeDelegate->onRefresh(m_enableOnRefreshNativeEvent);
-    setEnableOnRefreshNativeEvent(true);
+    m_refreshNodeDelegate->onRefresh();
   }
   if (eventType == ArkUI_NodeEventType::NODE_REFRESH_STATE_CHANGE &&
       m_refreshNodeDelegate) {
     auto state = static_cast<RefreshNodeDelegate::RefreshStatus>(eventArgs[0].i32);
-    setEnableOnRefreshNativeEvent(true);
     m_refreshNodeDelegate->onRefreshStateChanged(state);
   }
 }
