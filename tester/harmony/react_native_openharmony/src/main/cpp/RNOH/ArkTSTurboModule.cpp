@@ -82,9 +82,9 @@ folly::dynamic ArkTSTurboModule::callSync(
   auto duration =
       std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
   if (duration.count() > 2) {
-    DLOG(WARNING) << "ArkTSTurboModule::callSync: execution time — "
-                  << duration.count()
-                  << " ms (" + this->name_ + "::" + methodName + ")";
+    LOG(WARNING) << "ArkTSTurboModule::callSync: execution time — "
+                 << duration.count()
+                 << " ms (" + this->name_ + "::" + methodName + ")";
   }
   return result;
 }
