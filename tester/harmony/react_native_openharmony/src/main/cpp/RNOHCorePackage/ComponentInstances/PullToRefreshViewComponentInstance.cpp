@@ -106,6 +106,9 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   }
 
   m_refreshIndicatorContainerNode.setOffset(0, props->progressViewOffset);
+  if (props->refreshing) {
+    m_enableOnRefreshNativeEvent = false;
+  }
   m_refreshNode.setNativeRefreshing(props->refreshing);
 
   if (facebook::react::isColorMeaningful(props->tintColor)) {
@@ -122,8 +125,12 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 }
 
 void PullToRefreshViewComponentInstance::onRefresh() {
+  m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
   m_refreshNode.setNativeRefreshing(true);
-  m_eventEmitter->onRefresh({});
+  if (m_enableOnRefreshNativeEvent) {
+    m_eventEmitter->onRefresh({});
+  }
+  m_enableOnRefreshNativeEvent = true;
 }
 
 void PullToRefreshViewComponentInstance::onRefreshStateChanged(

@@ -17,6 +17,7 @@ class PullToRefreshViewComponentInstance
   static constexpr float REFRESH_INDICATOR_SIZE = 29;
 
   RefreshNode m_refreshNode;
+  bool m_enableOnRefreshNativeEvent{true}; 
 
   ColumnNode m_refreshIndicatorContainerNode;
   StackNode m_refreshIndicatorBackgroundNode;
