@@ -32,6 +32,13 @@ std::string preparePromiseRejectionResult(
 ArkTSTurboModule::ArkTSTurboModule(Context ctx, std::string name)
     : m_ctx(ctx), TurboModule(ctx, name) {}
 
+ArkTSTurboModule::~ArkTSTurboModule() noexcept {
+  auto taskExecutor = m_ctx.taskExecutor;
+  taskExecutor->runTask(
+      m_ctx.turboModuleThread,
+      [ref = std::move(m_ctx.arkTSTurboModuleInstanceRef)] {});
+}
+
 // calls a TurboModule method and blocks until it returns, returning its result
 jsi::Value ArkTSTurboModule::call(
     jsi::Runtime& runtime,
@@ -64,7 +71,7 @@ folly::dynamic ArkTSTurboModule::callSync(
   }
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
-      m_ctx.turboModuleThread, [ctx = m_ctx, &methodName, &args, &result]() {
+      m_ctx.turboModuleThread, [&ctx = m_ctx, &methodName, &args, &result]() {
         ArkJS arkJS(ctx.env);
         auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
@@ -132,75 +139,52 @@ jsi::Value ArkTSTurboModule::callAsync(
   }
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
-  napi_ref napiResultRef;
-  try {
-    m_ctx.taskExecutor->runSyncTask(
-        m_ctx.turboModuleThread,
-        [ctx = m_ctx,
-         name = name_,
-         &methodName,
-         &args,
-         &runtime,
-         &napiResultRef]() {
-          ArkJS arkJS(ctx.env);
-          auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
-          auto napiTurboModuleObject =
-              arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
-
-          auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
-          napiResultRef = arkJS.createReference(napiResult);
-        });
-  } catch (const std::exception& e) {
-    return react::createPromiseAsJSIValue(
-        runtime, [ctx = m_ctx, message = e.what()](auto& rt, auto jsiPromise) {
-          ctx.jsInvoker->invokeAsync([message, jsiPromise] {
-            jsiPromise->reject(message);
-            jsiPromise->allowRelease();
-          });
-        });
-  }
   return react::createPromiseAsJSIValue(
       runtime,
-      [weakExecutor = std::weak_ptr(m_ctx.taskExecutor),
-       jsInvoker = jsInvoker_,
-       turboModuleThread = m_ctx.turboModuleThread,
-       env = m_ctx.env,
-       napiResultRef](
-          jsi::Runtime& rt2, std::shared_ptr<react::Promise> jsiPromise) {
-        auto taskExecutor = weakExecutor.lock();
-        if (!taskExecutor) {
-          jsiPromise->reject(
-              "TurboModule was called after the instance was "
-              "destroyed.");
-          jsiPromise->allowRelease();
-          return;
-        }
-        taskExecutor->runTask(
-            turboModuleThread,
-            [env, jsInvoker, napiResultRef, &rt2, jsiPromise]() {
+      [&, args = std::move(args)](
+          jsi::Runtime& runtime2, std::shared_ptr<react::Promise> jsiPromise) {
+        m_ctx.taskExecutor->runTask(
+            m_ctx.turboModuleThread,
+            [name = this->name_,
+             methodName,
+             args = std::move(args),
+             env = m_ctx.env,
+             arkTSTurboModuleInstanceRef = m_ctx.arkTSTurboModuleInstanceRef,
+             jsInvoker = m_ctx.jsInvoker,
+             &runtime2,
+             jsiPromise] {
               ArkJS arkJS(env);
-              auto napiResult = arkJS.getReferenceValue(napiResultRef);
-              Promise(env, napiResult)
-                  .then([&rt2, jsiPromise, env, jsInvoker, napiResultRef](
-                            auto args) {
-                    jsInvoker->invokeAsync(
-                        [&rt2, jsiPromise, args = std::move(args)]() {
-                          jsiPromise->resolve(
-                              preparePromiseResolverResult(rt2, args));
-                          jsiPromise->allowRelease();
-                        });
-                    ArkJS arkJS(env);
-                    arkJS.deleteReference(napiResultRef);
-                  })
-                  .catch_([&rt2, jsiPromise, env, jsInvoker, napiResultRef](
-                              auto args) {
-                    jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
-                      jsiPromise->reject(preparePromiseRejectionResult(args));
+              try {
+                auto n_promisedResult =
+                    arkJS.getObject(arkTSTurboModuleInstanceRef)
+                        .call(
+                            methodName,
+                            arkJS.convertIntermediaryValuesToNapiValues(args));
+                Promise(env, n_promisedResult)
+                    .then([&runtime2, jsiPromise, env, jsInvoker](auto args) {
+                      jsInvoker->invokeAsync(
+                          [&runtime2, jsiPromise, args = std::move(args)]() {
+                            jsiPromise->resolve(
+                                preparePromiseResolverResult(runtime2, args));
+                            jsiPromise->allowRelease();
+                          });
+                    })
+                    .catch_([&runtime2, jsiPromise, env, jsInvoker](auto args) {
+                      jsInvoker->invokeAsync([&runtime2,
+                                              jsiPromise,
+                                              args = std::move(args)]() {
+                        jsiPromise->reject(preparePromiseRejectionResult(args));
+                        jsiPromise->allowRelease();
+                      });
+                    });
+              } catch (const std::exception& e) {
+                jsInvoker->invokeAsync(
+                    [message = std::string(e.what()), jsiPromise] {
+                      jsiPromise->reject(message);
                       jsiPromise->allowRelease();
                     });
-                    ArkJS arkJS(env);
-                    arkJS.deleteReference(napiResultRef);
-                  });
+                return;
+              }
             });
       });
 }
