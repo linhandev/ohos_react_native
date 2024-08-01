@@ -1,6 +1,6 @@
 import webSocket from '@ohos.net.webSocket'
 import util from '@ohos.util'
-import { TurboModule, TurboModuleContext, RNOHLogger, RNOHError } from "../../RNOH/ts";
+import { WorkerTurboModule, WorkerTurboModuleContext, RNOHLogger } from "../../RNOH/ts";
 import { BusinessError } from '@ohos.base';
 import { BlobMetadata as BlobMetadata } from './Blob';
 
@@ -17,7 +17,7 @@ export type ContentHandler = {
   processByteMessage: (bytes: ArrayBuffer, params: MessageParams) => MessageParams;
 }
 
-export class WebSocketTurboModule extends TurboModule {
+export class WebSocketTurboModule extends WorkerTurboModule {
   public static readonly NAME = 'WebSocketModule';
 
   private socketById: Map<number, webSocket.WebSocket> = new Map();
@@ -25,7 +25,7 @@ export class WebSocketTurboModule extends TurboModule {
   private base64 = new util.Base64Helper();
   private contentHandlerBySocketId: Map<number, ContentHandler> = new Map();
 
-  constructor(ctx: TurboModuleContext) {
+  constructor(ctx: WorkerTurboModuleContext) {
     super(ctx)
     this.logger = ctx.logger.clone("WebSocketTurboModule")
   }
