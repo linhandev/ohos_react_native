@@ -1,7 +1,5 @@
 export * from "./AccessibilityManagerTurboModule";
 
-export * from "./AppearanceTurboModule";
-
 export * from "./AppStateTurboModule";
 
 export * from "./Blob";

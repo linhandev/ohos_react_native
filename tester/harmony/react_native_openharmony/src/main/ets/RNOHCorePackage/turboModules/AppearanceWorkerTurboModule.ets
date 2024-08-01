@@ -1,11 +1,28 @@
-import type { TurboModuleContext } from "../../RNOH/TurboModule";
-import { TurboModule } from "../../RNOH/TurboModule";
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import type EnvironmentCallback from '@ohos.app.ability.EnvironmentCallback';
+import { EtsWorkerTurboModule } from "../../RNOH/EtsWorkerTurboModule";
+import type { RNOHLogger, UITurboModuleContext, WorkerTurboModuleContext } from "../../RNOH/ts"
+import { UITaskRunnable } from '../../RNOH/UITaskRunner';
+
+@Sendable
+class ChangeColorSchemeRunnableParams {
+  public colorMode: number
+
+  constructor(colorMode: ConfigurationConstant.ColorMode) {
+    this.colorMode = colorMode
+  }
+}
+
+@Sendable
+class ChangeColorSchemeRunnable implements UITaskRunnable<ChangeColorSchemeRunnableParams> {
+  run(uiTurboModuleContext: UITurboModuleContext, params: ChangeColorSchemeRunnableParams): void {
+    uiTurboModuleContext.uiAbilityContext.getApplicationContext().setColorMode(params.colorMode);
+  }
+}
 
 type JSColorScheme = 'light' | 'dark' | null;
 
-export class AppearanceTurboModule extends TurboModule {
+export class AppearanceWorkerTurboModule extends EtsWorkerTurboModule {
   public static readonly NAME = 'Appearance';
   private lastColorScheme: JSColorScheme = null;
   /**
@@ -15,10 +32,13 @@ export class AppearanceTurboModule extends TurboModule {
    * the colorMode which is set in the system settings should be used).
    * Refer to RN docs: https://reactnative.dev/docs/appearance
    */
-  private initialColorMode: ConfigurationConstant.ColorMode = null;
+  private initialColorMode: ConfigurationConstant.ColorMode = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
+  private logger: RNOHLogger
 
-  constructor(protected ctx: TurboModuleContext) {
+  constructor(ctx: WorkerTurboModuleContext) {
     super(ctx);
+    this.logger = ctx.logger.clone("AppearanceTurboModule")
+    this.logger.info("constructor")
     this.setup();
   }
 
@@ -37,12 +57,13 @@ export class AppearanceTurboModule extends TurboModule {
   }
 
   setup(): void {
-    this.initialColorMode = this.ctx.uiAbilityContext.config.colorMode
+    this.initialColorMode =
+      this.ctx.uiAbilityContext.config.colorMode ?? ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET
     this.lastColorScheme = this.colorModeToJSColorScheme(this.initialColorMode);
 
     let envCallback: EnvironmentCallback = {
       onConfigurationUpdated: (config) => {
-        const colorMode = config.colorMode;
+        const colorMode = config.colorMode ?? ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
         this.lastColorScheme = this.colorModeToJSColorScheme(colorMode);
 
         this.ctx.rnInstance.emitDeviceEvent("appearanceChanged", {
@@ -60,7 +81,6 @@ export class AppearanceTurboModule extends TurboModule {
   }
 
   setColorScheme(colorScheme: string): void {
-    const applicationContext = this.ctx.uiAbilityContext.getApplicationContext();
     let colorMode: ConfigurationConstant.ColorMode;
     if (colorScheme === 'light') {
       colorMode = ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT;
@@ -70,8 +90,6 @@ export class AppearanceTurboModule extends TurboModule {
       //for null we want to use the colorMode set in the system settings
       colorMode = this.initialColorMode;
     }
-
-
-    applicationContext.setColorMode(colorMode);
+    this.ctx.runOnUIThread(new ChangeColorSchemeRunnable(), new ChangeColorSchemeRunnableParams(colorMode))
   };
 }
