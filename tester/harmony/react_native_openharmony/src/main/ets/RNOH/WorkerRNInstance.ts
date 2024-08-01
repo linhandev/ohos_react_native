@@ -4,17 +4,25 @@ import { RNOHError } from './RNOHError'
 import type { WorkerTurboModule, WorkerTurboModuleContext } from "./TurboModule"
 import type { TurboModuleProvider } from "./TurboModuleProvider"
 
+
 /**
  * @api
  * @thread: WORKER
  */
 export class WorkerRNInstance implements Partial<RNInstance> {
+  protected canCallRNFunction = false;
+  protected rnFunctionCallsQueue: {
+    moduleName: string,
+    functionName: string,
+    args: unknown[]
+  }[] = []
+
   constructor(
-    private id: number,
-    private napiBridge: NapiBridge,
-    private architecture: "ARK_TS" | "C_API",
-    private assetsDest: string,
-    private getTurboModuleProvider: () => TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
+    protected id: number,
+    protected napiBridge: NapiBridge,
+    protected architecture: "ARK_TS" | "C_API",
+    protected assetsDest: string,
+    protected getTurboModuleProvider: () => TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
   ) {
   }
 
@@ -23,6 +31,10 @@ export class WorkerRNInstance implements Partial<RNInstance> {
   }
 
   callRNFunction(moduleName: string, functionName: string, args: unknown[]): void {
+    if (!this.canCallRNFunction) {
+      this.rnFunctionCallsQueue.push({ moduleName, functionName, args })
+      return;
+    }
     this.napiBridge.callRNFunction(this.id, moduleName, functionName, args)
   }
 
@@ -50,3 +62,15 @@ export class WorkerRNInstance implements Partial<RNInstance> {
   }
 }
 
+/**
+ * @internal
+ */
+export class WorkerRNInstanceInternal extends WorkerRNInstance {
+  flushRNFunctionCalls() {
+    this.rnFunctionCallsQueue.forEach(({ moduleName, functionName, args }) => {
+      this.napiBridge.callRNFunction(this.id, moduleName, functionName, args)
+    })
+    this.rnFunctionCallsQueue = []
+    this.canCallRNFunction = true;
+  }
+}

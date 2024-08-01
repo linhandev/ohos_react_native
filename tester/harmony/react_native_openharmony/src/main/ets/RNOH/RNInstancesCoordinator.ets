@@ -24,7 +24,7 @@ import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
-  fontSizeScale : number | undefined
+  fontSizeScale : number | undefined,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl: string,
