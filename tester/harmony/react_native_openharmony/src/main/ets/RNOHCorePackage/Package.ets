@@ -87,12 +87,6 @@ class CoreUITurboModulesFactory extends UITurboModuleFactory {
       .set(ToastAndroidTurboModule.NAME, (ctx) => new ToastAndroidTurboModule(ctx))
 
   async prepareEagerTurboModules() {
-    const statusBarTurboModule = new StatusBarTurboModule(this.ctx);
-    this.eagerTurboModuleByName.set(SafeAreaTurboModule.NAME, await SafeAreaTurboModule.create(
-      this.ctx,
-      statusBarTurboModule,
-    ))
-    this.eagerTurboModuleByName.set(StatusBarTurboModule.NAME, statusBarTurboModule)
     this.eagerTurboModuleByName.set(DeviceInfoTurboModule.NAME, await DeviceInfoTurboModule.create(this.ctx))
   }
 
@@ -118,6 +112,7 @@ class CoreUITurboModulesFactory extends UITurboModuleFactory {
 
 
 class CoreWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
+  private eagerTurboModuleByName: Map<string, WorkerTurboModule> = new Map();
   private turboModuleFactoryByName = new Map<string, ((ctx: WorkerTurboModuleContext) => WorkerTurboModule)>()
     .set(ImageLoaderWorkerTurboModule.NAME, (ctx) => new ImageLoaderWorkerTurboModule(ctx))
     .set(AppearanceWorkerTurboModule.NAME, (ctx) => new AppearanceWorkerTurboModule(ctx))
@@ -126,11 +121,24 @@ class CoreWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
     .set(BlobTurboModule.NAME, (ctx) => new BlobTurboModule(ctx))
     .set(FileReaderTurboModule.NAME, (ctx) => new FileReaderTurboModule(ctx))
 
+  async prepareEagerTurboModules(): Promise<void> {
+    const statusBarTurboModule = new StatusBarTurboModule(this.ctx);
+    this.eagerTurboModuleByName.set(SafeAreaTurboModule.NAME, await SafeAreaTurboModule.create(
+      this.ctx,
+      statusBarTurboModule,
+    ))
+    this.eagerTurboModuleByName.set(StatusBarTurboModule.NAME, statusBarTurboModule)
+  }
+
   createTurboModule(name: string): WorkerTurboModule | null {
     const logger = this.ctx.logger.clone(["CoreWorkerTurboModulesFactory", "createTurboModule"])
     logger.info(`Creating ${name} TurboModule`)
     if (!this.hasTurboModule(name)) {
+      logger.info(`Couldn't create ${name} TurboModule`)
       return null;
+    }
+    if (this.eagerTurboModuleByName.has(name)) {
+      return this.eagerTurboModuleByName.get(name)!;
     }
     return this.turboModuleFactoryByName.get(name)!(this.ctx);
   }
@@ -140,7 +148,7 @@ class CoreWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
       // fallback to UI version of ImageLoaderTurboModule in ArkTS architecture because RNImage uses it
       return false;
     }
-    return this.turboModuleFactoryByName.has(name);
+    return this.turboModuleFactoryByName.has(name) || this.eagerTurboModuleByName.has(name);
   }
 }
 
