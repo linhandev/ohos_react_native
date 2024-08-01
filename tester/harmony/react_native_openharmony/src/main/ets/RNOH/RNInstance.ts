@@ -387,7 +387,9 @@ export class RNInstanceImpl implements RNInstance {
   public get commandDispatcher() {
     return this.componentCommandHub
   }
+
   private defaultProps: Record<string, any>
+
   constructor(
     private envId: number,
     private id: number,
@@ -614,7 +616,8 @@ export class RNInstanceImpl implements RNInstance {
           }
           const result =
             await (task.runnable.run(turboModuleContext, task.params) as Promise<any>)
-          this.workerThread!.postMessage("RNOH_TURBO_MODULE_UI_TASK_RESULT", { result, taskId: task.id, rnInstanceId: this.id })
+          this.workerThread!.postMessage("RNOH_TURBO_MODULE_UI_TASK_RESULT",
+            { result, taskId: task.id, rnInstanceId: this.id })
         }
       })
     }
@@ -692,6 +695,7 @@ export class RNInstanceImpl implements RNInstance {
         jsBundleUrl: bundleURL,
         appKeys: jsBundleProvider.getAppKeys()
       })
+      this.workerThread.postMessage("JS_BUNDLE_EXECUTION_FINISH", { rnInstanceId: this.id })
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL)
       if (err instanceof JSBundleProviderError) {

@@ -9,9 +9,10 @@ import {
   RNPackageContext,
   WorkerTurboModuleFactory,
   RNOHError,
-  WorkerRNInstance,
+  WorkerRNInstanceInternal,
   WorkerTurboModule,
   WorkerTurboModuleContext,
+  SafeAreaInsetsProvider
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/Package"
 import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
@@ -61,6 +62,10 @@ interface DestroyWorkerRNInstancePayload {
   rnInstanceId: number
 }
 
+interface JSBundleExecutionFinish {
+  rnInstanceId: number
+}
+
 class DestroyWorkerRNInstanceAckPayload {
   rnInstanceId: number
 
@@ -104,7 +109,7 @@ class SendableRNOHError {
 
 interface WorkerTurboModuleDeps {
   uiTaskRunner: UITaskRunner
-  rnInstance: WorkerRNInstance
+  rnInstance: WorkerRNInstanceInternal
   turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>
 }
 
@@ -135,7 +140,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
           case "RNOH_WORKER_THREAD_READY":
             postMessage("RNOH_WORKER_THREAD_READY_ACK")
             break;
-          case "RNOH_CREATE_WORKER_RN_INSTANCE":
+          case "RNOH_CREATE_WORKER_RN_INSTANCE": {
             const typedMessagePayload = messagePayload as CreateRNInstanceWorkerEnvPayload
             const rnInstanceName = typedMessagePayload.rnInstanceName;
             const rnInstanceId = typedMessagePayload.rnInstanceId;
@@ -160,28 +165,41 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             const rnInstanceConfig = config.workerRNInstanceConfigByRNInstanceName[rnInstanceName]!
             const packages = rnInstanceConfig.thirdPartyPackagesFactory({})
             let turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
-            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture,
+            const rnInstance = new WorkerRNInstanceInternal(rnInstanceId, napiBridge, typedMessagePayload.architecture,
               typedMessagePayload.assetsDest,
               () => turboModuleProvider)
-        const etsWorkerTurboModuleContext =
-        new EtsWorkerTurboModuleContext({
-        workerTurboModuleContextDependencies: {
-        logger: workerLogger,
-        uiAbilityContext,
-        rnInstance,
-        httpClient: rnInstanceConfig.httpClient ??  new DefaultHttpClient()
-        },
-        uiTaskRunner: uiTaskRunner
-        })
-        turboModuleProvider =
-        await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
-        turboModuleDepsByRNInstanceId.set(rnInstanceId, {
-        uiTaskRunner, rnInstance, turboModuleProvider
-        })
-        napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
-        localLogger.info("registered WorkerTurboModuleProvider")
-        postMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK", new CreateRNInstanceWorkerEnvAckPayload(rnInstanceId))
-        break;
+            const etsWorkerTurboModuleContext =
+              new EtsWorkerTurboModuleContext({
+                workerTurboModuleContextDependencies: {
+                  logger: workerLogger,
+                  uiAbilityContext,
+                  rnInstance,
+                  httpClient: rnInstanceConfig.httpClient ?? new DefaultHttpClient(),
+                  safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
+                },
+                uiTaskRunner: uiTaskRunner
+              })
+            turboModuleProvider =
+              await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
+            turboModuleDepsByRNInstanceId.set(rnInstanceId, {
+              uiTaskRunner, rnInstance, turboModuleProvider
+            })
+            napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
+            localLogger.info("registered WorkerTurboModuleProvider")
+            postMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK", new CreateRNInstanceWorkerEnvAckPayload(rnInstanceId))
+            break;
+          }
+          case "JS_BUNDLE_EXECUTION_FINISH": {
+            const jsBundleExecutionFinishPayload = (messagePayload as JSBundleExecutionFinish)
+            if (!turboModuleDepsByRNInstanceId.has(jsBundleExecutionFinishPayload.rnInstanceId)) {
+              localLogger.error("Couldn't find tmDeps (JS_BUNDLE_EXECUTION_FINISH)")
+              return;
+            }
+            const rnInstance =
+              turboModuleDepsByRNInstanceId.get(jsBundleExecutionFinishPayload.rnInstanceId)!.rnInstance
+            rnInstance.flushRNFunctionCalls()
+            break;
+          }
           case "RNOH_TURBO_MODULE_UI_TASK_RESULT":
             const taskResultMessagePayload = messagePayload as TurboModuleUITaskResultPayload
             if (!turboModuleDepsByRNInstanceId.has(taskResultMessagePayload.rnInstanceId)) {

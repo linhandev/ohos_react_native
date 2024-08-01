@@ -1,5 +1,5 @@
-import type { TurboModuleContext } from "../../RNOH/TurboModule";
-import { TurboModule } from "../../RNOH/TurboModule";
+import type { WorkerTurboModuleContext } from "../../RNOH/TurboModule";
+import { WorkerTurboModule } from "../../RNOH/TurboModule";
 import window from '@ohos.window';
 
 import { convertColorValueToHex, EventEmitter } from '../../RNOH/ts';
@@ -67,7 +67,7 @@ function rgbToHex(r: number, g: number, b: number, a: number): string {
   return `#${aHex}${rHex}${gHex}${bHex}`;
 }
 
-export class StatusBarTurboModule extends TurboModule {
+export class StatusBarTurboModule extends WorkerTurboModule {
   public static readonly NAME = 'StatusBarManager';
 
   private constants?: StatusBarConstants = null;
@@ -75,7 +75,7 @@ export class StatusBarTurboModule extends TurboModule {
   private _isStatusBarHidden = false;
   private _currentColor = "#00000000";
 
-  constructor(protected ctx: TurboModuleContext) {
+  constructor(protected ctx: WorkerTurboModuleContext) {
     super(ctx);
     this.setConstants();
   }

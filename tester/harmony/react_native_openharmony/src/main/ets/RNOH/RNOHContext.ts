@@ -241,6 +241,7 @@ export type WorkerTurboModuleContextDependencies = {
   uiAbilityContext: common.UIAbilityContext
   rnInstance: WorkerRNInstance
   httpClient: HttpClient
+  safeAreaInsetsProvider: SafeAreaInsetsProvider
 }
 
 /**
@@ -267,6 +268,10 @@ export class WorkerTurboModuleContext {
 
   get httpClient() {
     return this._workerTurboModuleContextDeps.httpClient
+  }
+
+  get safeAreaInsetsProvider() {
+    return this._workerTurboModuleContextDeps.safeAreaInsetsProvider
   }
 }
 
