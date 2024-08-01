@@ -37,15 +37,14 @@ auto displayMetricsFromNapiValue(napi_env env, napi_value value)
   };
 }
 
-ArkTSBridge::ArkTSBridge(napi_env env, napi_ref napiBridgeRef)
-    : m_arkJS(ArkJS(env)), m_arkTSBridgeRef(napiBridgeRef) {
+ArkTSBridge::ArkTSBridge(napi_env env, NapiRef napiBridgeRef)
+    : m_arkJS(ArkJS(env)), m_arkTSBridgeRef(std::move(napiBridgeRef)) {
   LOG(INFO) << "ArkTSBridge::ArkTSBridge";
 }
 
 ArkTSBridge::~ArkTSBridge() noexcept {
   LOG(INFO) << "ArkTSBridge::~ArkTSBridge";
   m_threadGuard.assertThread();
-  m_arkJS.deleteReference(m_arkTSBridgeRef);
 }
 
 void ArkTSBridge::handleError(std::exception_ptr ex) {

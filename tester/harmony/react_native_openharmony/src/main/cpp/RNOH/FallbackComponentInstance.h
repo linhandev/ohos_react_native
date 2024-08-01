@@ -13,8 +13,8 @@ class FallbackComponentInstance
     : public CppComponentInstance<facebook::react::ViewShadowNode>,
       public ArkUINodeDelegate {
  private:
-  std::unique_ptr<ArkUINode> m_arkUINode;
   std::function<void()> m_arkUIBuilderNodeDestroyer;
+  std::unique_ptr<ArkUINode> m_arkUINode;
 
  public:
   FallbackComponentInstance(

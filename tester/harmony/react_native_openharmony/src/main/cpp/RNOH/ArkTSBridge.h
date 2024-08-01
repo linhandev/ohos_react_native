@@ -20,7 +20,7 @@ class ArkTSBridge final : public DisplayMetricsManager,
  public:
   using Shared = std::shared_ptr<ArkTSBridge>;
 
-  ArkTSBridge(napi_env env, napi_ref napiBridgeRef);
+  ArkTSBridge(napi_env env, NapiRef napiBridgeRef);
 
   ArkTSBridge(ArkTSBridge const&) = delete;
   ArkTSBridge& operator=(ArkTSBridge const&) = delete;
@@ -37,7 +37,7 @@ class ArkTSBridge final : public DisplayMetricsManager,
 
  protected:
   ArkJS m_arkJS;
-  napi_ref m_arkTSBridgeRef;
+  NapiRef m_arkTSBridgeRef;
   ThreadGuard m_threadGuard;
     
   private:
