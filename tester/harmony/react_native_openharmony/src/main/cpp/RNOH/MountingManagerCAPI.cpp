@@ -71,6 +71,7 @@ facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(
   for (auto mutation : mutations) {
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create:
+      case facebook::react::ShadowViewMutation::Insert:
       case facebook::react::ShadowViewMutation::Update: {
         auto newChild = mutation.newChildShadowView;
         if (m_arkTsComponentNames.count(newChild.componentName)) {
@@ -79,6 +80,7 @@ facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(
         }
         break;
       }
+      case facebook::react::ShadowViewMutation::Remove:
       case facebook::react::ShadowViewMutation::Delete: {
         auto oldChild = mutation.oldChildShadowView;
         if (m_arkTsComponentNames.count(oldChild.componentName)) {
