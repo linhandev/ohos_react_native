@@ -61,7 +61,7 @@ export class WorkerThread {
   }
 
   async waitForMessage(expectedMsgType: string, filter: undefined | ((payload: any) => boolean) = undefined) {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const unsubscribe = this.subscribeToMessages((type, payload) => {
         if (type === expectedMsgType && (filter === undefined || filter(payload ?? {}))) {
           resolve(undefined)

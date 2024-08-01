@@ -1,4 +1,5 @@
 import type UIAbility from '@ohos.app.ability.UIAbility'
+import { UIContext } from '@kit.ArkUI'
 import { CommandDispatcher, RNComponentCommandHub } from './RNComponentCommandHub'
 import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegistry'
 import { ComponentManagerRegistry } from './ComponentManagerRegistry'
@@ -7,8 +8,7 @@ import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
-import type { RNOHContext } from './RNOHContext'
-import { RNOHCorePackage } from '../RNOHCorePackage/ts'
+import type { UITurboModuleContext } from './RNOHContext'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
@@ -85,7 +85,6 @@ const rootDescriptor = {
   }
 }
 
-const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
 type FeatureFlagName = "ENABLE_RN_INSTANCE_CLEAN_UP" | "NDK_TEXT_MEASUREMENTS" | "IMAGE_LOADER" | "C_API_ARCH"
 
@@ -170,6 +169,11 @@ export interface RNInstance {
    */
   getTurboModule<T extends TurboModule>(name: string): T;
   /**
+   * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
+   */
+  getUITurboModule<T extends UITurboModule>(name: string): T;
+
+  /**
    * Used by RNSurface. It creates a surface somewhere in React Native.
    */
   createSurface(appKey: string): SurfaceHandle;
@@ -185,11 +189,6 @@ export interface RNInstance {
    * @returns RNInstance ID.
    */
   getId(): number;
-
-  /**
-   * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
-   */
-  getUITurboModule<T extends UITurboModule>(name: string): T;
 
   /**
    * This method can be used to replace a core component with a custom one.
@@ -258,6 +257,16 @@ export interface RNInstance {
    * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
    */
   getNativeNodeIdByTag(tag: Tag): string | undefined
+
+  /**
+   * set UIContext
+   */
+  setUIContext(uiCtx: UIContext): void
+
+  /**
+   * @returns UIContext
+   */
+  getUIContext(): UIContext
 }
 
 export type RNInstanceOptions = {
@@ -324,13 +333,18 @@ export type RNInstanceOptions = {
   /**
    * config the fonts to be use
    */
-  fontOptions?: font.FontOptions[],
+  fontOptions?: font.FontOptions[] ,
   /**
    * Disables advanced React 18 features, such as Automatic Batching.
    * Setting this to `true` will revert to the behavior of React 17,
    * where state updates are processed synchronously and separately.
    */
   disableConcurrentRoot?: boolean;
+  /**
+   * Specifies custom fonts used by RN application.
+   * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
+   */
+  fontResourceByFontFamily?: Record<string, Resource>
 }
 
 /**
@@ -371,21 +385,23 @@ export class RNInstanceImpl implements RNInstance {
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
   private unregisterWorkerMessageListener = () => {
   }
+  private uiCtx: UIContext;
+
   /**
    * @deprecated
    */
   public get commandDispatcher() {
     return this.componentCommandHub
   }
-
+  private defaultProps: Record<string, any>
   constructor(
     private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
-    private defaultProps: Record<string, any>,
+    disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
@@ -396,12 +412,14 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
+    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     private arkTsComponentNames: Array<string>,
-    private fontOptions: font.FontOptions[],
+    private fontOptions: font.FontOptions[] | undefined,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
   ) {
+    this.defaultProps = { concurrentRoot: !disableConcurrentRoot }
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this)
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
@@ -423,7 +441,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public getAssetsDest(): string {
-    return this.assetsDest ?? DEFAULT_ASSETS_DEST
+    return this.assetsDest
   }
 
   public onCreate() {
@@ -571,8 +589,7 @@ export class RNInstanceImpl implements RNInstance {
   private async processPackages(packages: RNPackage[]) {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
-    packages.unshift(new RNOHCorePackage({}));
-    const turboModuleContext = this.createRNOHContext(this)
+    const turboModuleContext = this.createUITurboModuleContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
@@ -836,6 +853,14 @@ export class RNInstanceImpl implements RNInstance {
 
   public getNativeNodeIdByTag(tag: Tag): string | undefined {
     return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
+  }
+
+  public setUIContext(uiCtx: UIContext): void {
+    this.uiCtx = uiCtx;
+  }
+
+  public getUIContext(): UIContext {
+    return this.uiCtx;
   }
 }
 

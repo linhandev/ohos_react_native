@@ -176,7 +176,6 @@ export class RemoteImageLoader {
   }
 
   public async prefetch(uri: string): Promise<boolean> {
-    console.log("wxjer======prefetch");
     if (this.diskCache.has(uri)) {
       return true;
     }
