@@ -1,4 +1,5 @@
 import { lang, worker, MessageEvents } from '@kit.ArkTS';
+import { HttpClient, DefaultHttpClient } from "./HttpClient/HttpClient"
 import {
   RNPackage,
   StandardRNOHLogger,
@@ -10,7 +11,7 @@ import {
   RNOHError,
   WorkerRNInstance,
   WorkerTurboModule,
-  WorkerTurboModuleContext
+  WorkerTurboModuleContext,
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/Package"
 import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
@@ -23,6 +24,8 @@ import common from '@ohos.app.ability.common'
  */
 export interface WorkerRNInstanceConfig {
   thirdPartyPackagesFactory: (ctx: RNPackageContext) => RNPackage[]
+  httpClient?: HttpClient
+
 }
 
 /**
@@ -37,6 +40,7 @@ interface CreateRNInstanceWorkerEnvPayload {
   rnInstanceId: number
   uiAbilityContext: common.UIAbilityContext
   architecture: "C_API" | "ARK_TS"
+  assetsDest: string
 }
 
 class CreateRNInstanceWorkerEnvAckPayload {
@@ -148,24 +152,36 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             })
 
             if (!Object.keys(config.workerRNInstanceConfigByRNInstanceName).includes(rnInstanceName)) {
-              throw new RNOHError({ whatHappened: `Couldn't find WorkerRNInstanceConfig for RNInstance named "${rnInstanceName}"`, howCanItBeFixed: [`Verify WorkerRNInstanceConfig is defined for rnInstanceName: "${rnInstanceName}"`] });
+              throw new RNOHError({
+                whatHappened: `Couldn't find WorkerRNInstanceConfig for RNInstance named "${rnInstanceName}"`,
+                howCanItBeFixed: [`Verify WorkerRNInstanceConfig is defined for rnInstanceName: "${rnInstanceName}"`]
+              });
             }
             const rnInstanceConfig = config.workerRNInstanceConfigByRNInstanceName[rnInstanceName]!
             const packages = rnInstanceConfig.thirdPartyPackagesFactory({})
             let turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
-            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture, () => turboModuleProvider)
-            const etsWorkerTurboModuleContext =
-              new EtsWorkerTurboModuleContext({
-                workerTurboModuleContextDependencies: { logger: workerLogger, uiAbilityContext, rnInstance },
-                uiTaskRunner: uiTaskRunner
-              })
-            turboModuleProvider =
-              await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
-            turboModuleDepsByRNInstanceId.set(rnInstanceId, { uiTaskRunner, rnInstance, turboModuleProvider })
-            napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
-            localLogger.info("registered WorkerTurboModuleProvider")
-            postMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK", new CreateRNInstanceWorkerEnvAckPayload(rnInstanceId))
-            break;
+            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture,
+              typedMessagePayload.assetsDest,
+              () => turboModuleProvider)
+        const etsWorkerTurboModuleContext =
+        new EtsWorkerTurboModuleContext({
+        workerTurboModuleContextDependencies: {
+        logger: workerLogger,
+        uiAbilityContext,
+        rnInstance,
+        httpClient: rnInstanceConfig.httpClient ??  new DefaultHttpClient()
+        },
+        uiTaskRunner: uiTaskRunner
+        })
+        turboModuleProvider =
+        await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
+        turboModuleDepsByRNInstanceId.set(rnInstanceId, {
+        uiTaskRunner, rnInstance, turboModuleProvider
+        })
+        napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
+        localLogger.info("registered WorkerTurboModuleProvider")
+        postMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK", new CreateRNInstanceWorkerEnvAckPayload(rnInstanceId))
+        break;
           case "RNOH_TURBO_MODULE_UI_TASK_RESULT":
             const taskResultMessagePayload = messagePayload as TurboModuleUITaskResultPayload
             if (!turboModuleDepsByRNInstanceId.has(taskResultMessagePayload.rnInstanceId)) {

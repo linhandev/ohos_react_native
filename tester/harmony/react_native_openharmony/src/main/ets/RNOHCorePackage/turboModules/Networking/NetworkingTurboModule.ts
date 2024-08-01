@@ -1,7 +1,7 @@
 import http from '@ohos.net.http'
 import util from "@ohos.util";
 
-import { TurboModule } from "../../../RNOH/TurboModule";
+import { WorkerTurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
@@ -64,9 +64,11 @@ export type ResponseBodyHandler = {
  * It also exposes handlers which can be used to customize how requests are handled.
  */
 
-export class NetworkingTurboModule extends TurboModule {
+export class NetworkingTurboModule extends WorkerTurboModule {
   public static readonly NAME = 'Networking';
-  private networkEventDispatcher: NetworkEventsDispatcher = new NetworkEventsDispatcher(this.ctx.rnInstance)
+  private networkEventDispatcher: NetworkEventsDispatcher = new NetworkEventsDispatcher((eventName, params) => {
+    this.ctx.rnInstance.emitDeviceEvent(eventName, params)
+  })
   private base64Helper: util.Base64Helper = new util.Base64Helper();
   private uriHandlers: ArrayList<UriHandler> = new ArrayList();
   private requestCancellersById: Map<number, CancelRequestCallback> = new Map();
@@ -175,7 +177,7 @@ export class NetworkingTurboModule extends TurboModule {
   }
 
   async clearCookies(callback: (didDeleteAnyCookies: boolean) => void) {
-    const didDeleteAnyCookies = await this.ctx.rnInstance.httpClient.clearCookies();
+    const didDeleteAnyCookies = await this.ctx.httpClient.clearCookies();
     callback(didDeleteAnyCookies);
   }
 
@@ -196,7 +198,7 @@ export class NetworkingTurboModule extends TurboModule {
   }
 
   async sendRequest(query: Query, onRequestRegistered: (requestId: number) => void) {
-    const httpClient = this.ctx.rnInstance.httpClient;
+    const httpClient = this.ctx.httpClient;
     const requestId = this.createId();
     onRequestRegistered(requestId);
     for (const handler of this.uriHandlers) {

@@ -13,6 +13,7 @@ export class WorkerRNInstance implements Partial<RNInstance> {
     private id: number,
     private napiBridge: NapiBridge,
     private architecture: "ARK_TS" | "C_API",
+    private assetsDest: string,
     private getTurboModuleProvider: () => TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
   ) {
   }
@@ -42,6 +43,10 @@ export class WorkerRNInstance implements Partial<RNInstance> {
       })
     }
     return tmProvider.getModule<T>(name)
+  }
+
+  getAssetsDest(): string {
+    return this.assetsDest
   }
 }
 

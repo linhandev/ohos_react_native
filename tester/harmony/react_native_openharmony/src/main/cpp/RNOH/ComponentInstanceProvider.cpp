@@ -91,7 +91,7 @@ void ComponentInstanceProvider::onUITick(
       m_preallocatedComponentInstanceByTag.emplace(
           request.tag, componentInstance);
     } else {
-      VLOG(1) << "Couldn't preallocate CppComponentInstance for: "
+      VLOG(2) << "Couldn't preallocate CppComponentInstance for: "
               << request.componentName;
     }
   }

@@ -240,6 +240,7 @@ export type WorkerTurboModuleContextDependencies = {
   logger: RNOHLogger
   uiAbilityContext: common.UIAbilityContext
   rnInstance: WorkerRNInstance
+  httpClient: HttpClient
 }
 
 /**
@@ -262,6 +263,10 @@ export class WorkerTurboModuleContext {
 
   get rnInstance() {
     return this._workerTurboModuleContextDeps.rnInstance
+  }
+
+  get httpClient() {
+    return this._workerTurboModuleContextDeps.httpClient
   }
 }
 
