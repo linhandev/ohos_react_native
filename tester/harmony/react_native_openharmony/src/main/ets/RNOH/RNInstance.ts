@@ -13,7 +13,7 @@ import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
 import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule, UITurboModuleContext } from './TurboModule'
+import type { TurboModule, UITurboModule } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -165,6 +165,7 @@ export interface RNInstance {
    */
   runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
   /**
+   * @deprecated: Use getUITurboModule instead (latestRNOHVersion: 0.72.33)
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
   getTurboModule<T extends TurboModule>(name: string): T;
@@ -184,6 +185,11 @@ export interface RNInstance {
    * @returns RNInstance ID.
    */
   getId(): number;
+
+  /**
+   * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
+   */
+  getUITurboModule<T extends UITurboModule>(name: string): T;
 
   /**
    * This method can be used to replace a core component with a custom one.
@@ -258,7 +264,7 @@ export type RNInstanceOptions = {
   /**
    * Used to identify RNInstance on RNOHWorker thread.
    */
-  name?: string,
+  name: string,
   /**
    * Creates RNPackages provided by third-party libraries.
    */
@@ -712,7 +718,12 @@ export class RNInstanceImpl implements RNInstance {
     }
   }
 
+  /** @deprecated Use getUITurboModule instead (latestRNOHVersion: 0.72.33) */
   public getTurboModule<T extends TurboModule>(name: string): T {
+    return this.getUITurboModule<T>(name)
+  }
+
+  public getUITurboModule<T extends UITurboModule>(name: string): T {
     return this.turboModuleProvider.getModule(name);
   }
 

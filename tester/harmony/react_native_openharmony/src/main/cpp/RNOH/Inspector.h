@@ -1,6 +1,6 @@
 #include <jsinspector/InspectorInterfaces.h>
-#include <napi/native_api.h>
 #include <string>
+#include "RNOH/ArkJS.h"
 
 namespace rnoh {
 
@@ -14,7 +14,7 @@ class RemoteConnection : public facebook::react::IRemoteConnection {
 
  private:
   napi_env m_env;
-  napi_ref m_connectionRef;
+  NapiRef m_connectionRef;
 };
 
 napi_value getInspectorWrapper(napi_env env, napi_callback_info info);

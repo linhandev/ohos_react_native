@@ -19,11 +19,17 @@ import common from '@ohos.app.ability.common'
 
 
 /**
+ * @api
+ */
+export interface WorkerRNInstanceConfig {
+  thirdPartyPackagesFactory: (ctx: RNPackageContext) => RNPackage[]
+}
+
+/**
  * @api: RN_APP_DEVELOPER
  */
 interface RNOHWorkerConfig {
-  thirdPartyPackagesFactoryByRNInstanceName?: Record<string, (ctx: RNPackageContext) => RNPackage[]>
-  defaultThirdPartyPackagesFactory: (ctx: RNPackageContext) => RNPackage[]
+  workerRNInstanceConfigByRNInstanceName: Record<string, WorkerRNInstanceConfig>
 }
 
 interface CreateRNInstanceWorkerEnvPayload {
@@ -140,22 +146,21 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
               workerPort.postMessageWithSharedSendable(new SendableMessage("RNOH_TURBO_MODULE_UI_TASK",
                 new UITaskMessagePayload(uiTask, rnInstanceId)));
             })
-            let createPackages: (ctx: RNPackageContext) => RNPackage[] = (ctx: RNPackageContext) => []
-            if (rnInstanceName === undefined || config.thirdPartyPackagesFactoryByRNInstanceName === undefined ||
-              !(Object.keys(config.thirdPartyPackagesFactoryByRNInstanceName)
-                .includes(rnInstanceName))) {
-              createPackages = config.defaultThirdPartyPackagesFactory
-            } else {
-              createPackages = config.thirdPartyPackagesFactoryByRNInstanceName[rnInstanceName]
+
+            if (!Object.keys(config.workerRNInstanceConfigByRNInstanceName).includes(rnInstanceName)) {
+              throw new RNOHError({ whatHappened: `Couldn't find WorkerRNInstanceConfig for RNInstance named "${rnInstanceName}"`, howCanItBeFixed: [`Verify WorkerRNInstanceConfig is defined for rnInstanceName: "${rnInstanceName}"`] });
             }
-            const packages = createPackages({})
-            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture)
+            const rnInstanceConfig = config.workerRNInstanceConfigByRNInstanceName[rnInstanceName]!
+            const packages = rnInstanceConfig.thirdPartyPackagesFactory({})
+            let turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
+            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture, () => turboModuleProvider)
             const etsWorkerTurboModuleContext =
               new EtsWorkerTurboModuleContext({
                 workerTurboModuleContextDependencies: { logger: workerLogger, uiAbilityContext, rnInstance },
                 uiTaskRunner: uiTaskRunner
               })
-            const turboModuleProvider = await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
+            turboModuleProvider =
+              await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
             turboModuleDepsByRNInstanceId.set(rnInstanceId, { uiTaskRunner, rnInstance, turboModuleProvider })
             napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
             localLogger.info("registered WorkerTurboModuleProvider")
