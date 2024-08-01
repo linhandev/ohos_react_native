@@ -266,7 +266,16 @@ class ScrollViewComponentInstance
   void updateStateWithContentOffset(facebook::react::Point contentOffset);
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
+  /**
+   * When the `onEndReachedThreshold` of VirtualizedList is set to 0,
+   * due to the rebound effect of the Scroll component, 
+   * after calling `scrollToEnd`, the last remaining position deviates from the bottom,
+   * causing `onEndReached` to not be triggered.
+   * So when `isCloseToTargetOffset` returns true, you need to actively emit the `onScroll` event.
+   */
+  bool isCloseToTargetOffset(facebook::react::Point currentOffset);
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;
+  std::optional<facebook::react::Point> m_targetOffsetOfScrollToCommand = std::nullopt;
 };
 } // namespace rnoh

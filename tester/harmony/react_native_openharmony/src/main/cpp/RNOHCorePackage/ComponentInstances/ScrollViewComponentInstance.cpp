@@ -103,7 +103,8 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
                  .count();
   m_movedBySignificantOffset =
       scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset);
-  if (m_allowNextScrollEvent || ((m_scrollEventThrottle == 0 ||
+  if (m_allowNextScrollEvent || isCloseToTargetOffset(scrollViewMetrics.contentOffset) || 
+    ((m_scrollEventThrottle == 0 ||
       m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
        m_movedBySignificantOffset)) {
     m_lastScrollDispatchTime = now;
@@ -375,9 +376,12 @@ void ScrollViewComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
+    facebook::react::Float x = args[0].asDouble();
+    facebook::react::Float y = args[1].asDouble();
+    m_targetOffsetOfScrollToCommand = {x, y};
     m_scrollNode.scrollTo(
-        args[0].asDouble(),
-        args[1].asDouble(),
+        x,
+        y,
         args[2].asBool(),
         m_scrollToOverflowEnabled);
   } else if (commandName == "scrollToEnd") {
@@ -634,6 +638,19 @@ bool ScrollViewComponentInstance::isAtEnd(
     return currentOffset.y <= 0.001 ||
         m_contentSize.height - m_containerSize.height - currentOffset.y < 0.001;
   }
+}
+
+bool ScrollViewComponentInstance::isCloseToTargetOffset(
+    facebook::react::Point currentOffset) {
+  if (m_targetOffsetOfScrollToCommand.has_value()) {
+    auto flag = std::abs(m_targetOffsetOfScrollToCommand->x - currentOffset.x) < 0.001 &&
+      std::abs(m_targetOffsetOfScrollToCommand->y - currentOffset.y) < 0.001;
+    if (flag) {
+      m_targetOffsetOfScrollToCommand = std::nullopt;
+    }
+    return flag;
+  }
+  return false;
 }
 
 bool ScrollViewComponentInstance::isHorizontal(
