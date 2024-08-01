@@ -114,8 +114,8 @@ void MountingManagerCAPI::setIsJsResponder(
     const facebook::react::ShadowView& shadowView,
     bool isJsResponder,
     bool blockNativeResponder) {
-  if (m_arkTSComponentNames.count(shadowView.componentName)) {
-    m_arkTSMountingManager->setIsJsResponder(
+  if (m_arkTsComponentNames.count(shadowView.componentName)) {
+    m_arkTsMountingManager->setIsJsResponder(
         shadowView, isJsResponder, blockNativeResponder);
   }
 
