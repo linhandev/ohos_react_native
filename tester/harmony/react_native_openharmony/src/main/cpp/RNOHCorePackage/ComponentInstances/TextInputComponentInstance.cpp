@@ -401,6 +401,12 @@ void TextInputComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "focus") {
     focus();
+    if (m_selectionStart >= 0 && m_selectionEnd >= 0) {
+      m_textInputNode.setTextSelection(
+        m_selectionStart, m_selectionEnd);
+      m_textAreaNode.setTextSelection(
+        m_selectionStart, m_selectionEnd);
+    }
   } else if (commandName == "blur") {
     blur();
   } else if (
@@ -411,6 +417,8 @@ void TextInputComponentInstance::onCommandReceived(
     if (args[2].asInt() >= 0 && args[3].asInt() >= 0) {
       m_textInputNode.setTextSelection(args[2].asInt(), args[3].asInt());
       m_textAreaNode.setTextSelection(args[2].asInt(), args[3].asInt());
+      m_selectionStart = args[2].asInt();
+      m_selectionEnd = args[3].asInt();
     }
   }
 }
