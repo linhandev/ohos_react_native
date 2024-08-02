@@ -103,9 +103,10 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
                  .count();
   m_movedBySignificantOffset =
       scrollMovedBySignificantOffset(scrollViewMetrics.contentOffset);
-  if (m_allowNextScrollEvent || isCloseToTargetOffset(scrollViewMetrics.contentOffset) || 
-    ((m_scrollEventThrottle == 0 ||
-      m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
+  if (m_allowNextScrollEvent ||
+      isCloseToTargetOffset(scrollViewMetrics.contentOffset) ||
+      ((m_scrollEventThrottle == 0 ||
+        m_scrollEventThrottle < now - m_lastScrollDispatchTime) &&
        m_movedBySignificantOffset)) {
     m_lastScrollDispatchTime = now;
     VLOG(2) << "onScroll (contentOffset: " << scrollViewMetrics.contentOffset.x
@@ -379,11 +380,7 @@ void ScrollViewComponentInstance::onCommandReceived(
     facebook::react::Float x = args[0].asDouble();
     facebook::react::Float y = args[1].asDouble();
     m_targetOffsetOfScrollToCommand = {x, y};
-    m_scrollNode.scrollTo(
-        x,
-        y,
-        args[2].asBool(),
-        m_scrollToOverflowEnabled);
+    m_scrollNode.scrollTo(x, y, args[2].asBool(), m_scrollToOverflowEnabled);
   } else if (commandName == "scrollToEnd") {
     scrollToEnd(args[0].asBool());
   }
@@ -412,13 +409,21 @@ void rnoh::ScrollViewComponentInstance::updateStateWithContentOffset(
   if (!m_state) {
     return;
   }
-  m_state->updateState([contentOffset](auto const& stateData) {
-    auto newData = stateData;
-    newData.contentOffset = contentOffset;
-    return std::make_shared<
-        facebook::react::ScrollViewShadowNode::ConcreteState::Data const>(
-        newData);
-  });
+  if (m_state->getData().contentOffset != contentOffset) {
+    m_state->updateState(
+        [contentOffset](auto const& stateData)
+            -> std::shared_ptr<facebook::react::ScrollViewShadowNode::
+                                   ConcreteState::Data const> {
+          if (stateData.contentOffset == contentOffset) {
+            return nullptr;
+          }
+          auto newData = stateData;
+          newData.contentOffset = contentOffset;
+          return std::make_shared<
+              facebook::react::ScrollViewShadowNode::ConcreteState::Data const>(
+              newData);
+        });
+  }
 }
 
 facebook::react::ScrollViewMetrics
@@ -643,8 +648,9 @@ bool ScrollViewComponentInstance::isAtEnd(
 bool ScrollViewComponentInstance::isCloseToTargetOffset(
     facebook::react::Point currentOffset) {
   if (m_targetOffsetOfScrollToCommand.has_value()) {
-    auto flag = std::abs(m_targetOffsetOfScrollToCommand->x - currentOffset.x) < 0.001 &&
-      std::abs(m_targetOffsetOfScrollToCommand->y - currentOffset.y) < 0.001;
+    auto flag = std::abs(m_targetOffsetOfScrollToCommand->x - currentOffset.x) <
+            0.001 &&
+        std::abs(m_targetOffsetOfScrollToCommand->y - currentOffset.y) < 0.001;
     if (flag) {
       m_targetOffsetOfScrollToCommand = std::nullopt;
     }
