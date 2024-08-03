@@ -360,7 +360,7 @@ void rnoh::RNInstanceArkTS::updateState(
   }
 }
 
-void RNInstanceArkTS::callFunction(
+void RNInstanceArkTS::callJSFunction(
     std::string&& module,
     std::string&& method,
     folly::dynamic&& params) {

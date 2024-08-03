@@ -5,7 +5,12 @@ import { TurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
-import { CancelRequestCallback, HttpErrorResponse, ReceivingProgress, SendingProgress } from '../../../HttpClient/types';
+import {
+  CancelRequestCallback,
+  HttpErrorResponse,
+  ReceivingProgress,
+  SendingProgress
+} from '../../../HttpClient/types';
 
 type ResponseType =
 | 'base64'
@@ -25,7 +30,7 @@ interface Query {
 
 export type UriHandler = {
   supports: (query: Query) => boolean;
-  fetch: (query: Query) => Object;
+  fetch: (query: Query) => Promise<Object>;
 }
 
 export type JsFormPart = {

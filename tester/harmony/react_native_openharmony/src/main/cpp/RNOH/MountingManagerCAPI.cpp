@@ -113,7 +113,19 @@ void MountingManagerCAPI::dispatchCommand(
 void MountingManagerCAPI::setIsJsResponder(
     const facebook::react::ShadowView& shadowView,
     bool isJsResponder,
-    bool blockNativeResponder) {}
+    bool blockNativeResponder) {
+  if (m_arkTsComponentNames.count(shadowView.componentName)) {
+    m_arkTsMountingManager->setIsJsResponder(
+        shadowView, isJsResponder, blockNativeResponder);
+  }
+
+  auto componentInstance =
+      m_componentInstanceRegistry->findByTag(shadowView.tag);
+  while (componentInstance != nullptr) {
+    componentInstance->setNativeResponderBlocked(blockNativeResponder);
+    componentInstance = componentInstance->getParent().lock();
+  }
+}
 
 void MountingManagerCAPI::updateView(
     facebook::react::Tag tag,
