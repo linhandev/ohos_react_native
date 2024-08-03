@@ -14,6 +14,7 @@ using TextMeasurement = facebook::react::TextMeasurement;
 using AttributedString = facebook::react::AttributedString;
 using ParagraphAttributes = facebook::react::ParagraphAttributes;
 using LayoutConstraints = facebook::react::LayoutConstraints;
+UniqueFontCollection TextMeasurer::m_fontCollection(OH_Drawing_CreateSharedFontCollection(), OH_Drawing_DestroyFontCollection);
 
 TextMeasurement TextMeasurer::measure(
     AttributedString attributedString,

@@ -24,9 +24,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
         m_measureTextFnRef(measureTextFnRef),
         m_taskExecutor(taskExecutor),
         m_featureFlagRegistry(featureFlagManager),
-        m_rnInstanceId(id),
-        m_fontCollection(OH_Drawing_CreateSharedFontCollection(), OH_Drawing_DestroyFontCollection){}
-
+        m_rnInstanceId(id){}
   facebook::react::TextMeasurement measure(
       facebook::react::AttributedString attributedString,
       facebook::react::ParagraphAttributes paragraphAttributes,
@@ -68,6 +66,6 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   float m_scale = 1.0;
   int m_rnInstanceId = 0;
   bool m_halfleading = false;
-  UniqueFontCollection m_fontCollection;
+  static UniqueFontCollection m_fontCollection;
 };
 } // namespace rnoh
