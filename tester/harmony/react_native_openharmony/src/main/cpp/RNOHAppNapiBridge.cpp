@@ -541,7 +541,7 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
       return arkJS.getUndefined();
     }
     auto& rnInstance = it->second;
-    rnInstance->callFunction(
+    rnInstance->callJSFunction(
         std::move(moduleString), std::move(nameString), std::move(argsDynamic));
     return arkJS.getNull();
   });
