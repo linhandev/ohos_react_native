@@ -142,7 +142,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) override;
-  void callFunction(
+  void callJSFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) override;
