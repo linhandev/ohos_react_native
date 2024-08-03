@@ -78,7 +78,7 @@ class RNInstance {
   virtual void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) = 0;
-  virtual void callFunction(
+  virtual void callJSFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) = 0;
