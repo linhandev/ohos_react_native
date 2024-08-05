@@ -122,6 +122,7 @@ class ArkUINode {
   setPadding(float left, float top, float right, float bottom);
   virtual ArkUINode& setVisibility(ArkUI_Visibility visibility);
   virtual ArkUINode& setZIndex(float index);
+  virtual ArkUINode& setRenderGroup(bool renderOffscreen);
 
   virtual ArkUINode& resetAccessibilityText();
 

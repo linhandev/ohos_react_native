@@ -268,6 +268,12 @@ class CppComponentInstance : public ComponentInstance {
       markBoundingBoxAsDirty();
     }
 
+    auto rawProps = ViewRawProps::getFromDynamic(props->rawProps);
+    if (m_rawProps.needsOffscreenAlphaCompositing != rawProps.needsOffscreenAlphaCompositing) {
+      m_rawProps.needsOffscreenAlphaCompositing = rawProps.needsOffscreenAlphaCompositing;
+      this->getLocalRootArkUINode().setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing);
+    }
+
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
   };
 
@@ -391,6 +397,19 @@ class CppComponentInstance : public ComponentInstance {
       return id.str();
     }
   }
+
+   struct ViewRawProps {
+    bool needsOffscreenAlphaCompositing = false;
+    static ViewRawProps getFromDynamic(folly::dynamic value) {
+      auto needsOffscreenAlphaCompositing = (value.count("needsOffscreenAlphaCompositing") > 0)
+        ? value["needsOffscreenAlphaCompositing"].asBool()
+        : false;
+
+      return {needsOffscreenAlphaCompositing};
+    }
+  };
+
+  ViewRawProps m_rawProps;
 
   SharedConcreteProps m_props = ShadowNodeT::defaultSharedProps();
   SharedConcreteState m_state;

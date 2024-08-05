@@ -523,6 +523,15 @@ ArkUINode& ArkUINode::setZIndex(float index) {
       m_nodeHandle, NODE_Z_INDEX, &item));
   return *this;
 }
+
+ArkUINode& ArkUINode::setRenderGroup(bool renderOffscreen) {
+  ArkUI_NumberValue value[] = {{.i32 = (int32_t)renderOffscreen}};
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_RENDER_GROUP, &item));
+  return *this;
+}
+
 ArkUI_IntOffset ArkUINode::getLayoutPosition() {
   return NativeNodeApi::getInstance()->getLayoutPosition(m_nodeHandle);
 }
