@@ -1,24 +1,32 @@
 #pragma once
 
 #include <memory>
-#include "EventLoopTaskRunner.h"
-#include "uv/EventLoop.h"
+#include <thread>
+#include "AbstractTaskRunner.h"
+#include "DefaultExceptionHandler.h"
 
 namespace rnoh {
 
-class ThreadTaskRunner : public EventLoopTaskRunner {
+class EventLoopTaskRunner;
+
+class ThreadTaskRunner : public AbstractTaskRunner {
  public:
   ThreadTaskRunner(
       std::string name,
-      std::unique_ptr<uv::EventLoop> eventLoop =
-          std::make_unique<uv::EventLoop>(),
       ExceptionHandler exceptionHandler = defaultExceptionHandler);
   ~ThreadTaskRunner() override;
 
+  void runAsyncTask(Task&& task) override;
+  void runSyncTask(Task&& task) override;
+  DelayedTaskId
+  runDelayedTask(Task&& task, uint64_t delayMs, uint64_t repeatMs = 0) override;
+  void cancelDelayedTask(DelayedTaskId taskId) override;
+
   bool isOnCurrentThread() const override;
+  void setExceptionHandler(ExceptionHandler handler) override;
 
  protected:
-  std::unique_ptr<uv::EventLoop> m_eventLoop;
   std::thread m_thread;
+  std::unique_ptr<EventLoopTaskRunner> m_wrappedTaskRunner{};
 };
 } // namespace rnoh

@@ -2,6 +2,7 @@
 
 #include <folly/Function.h>
 #include <exception>
+#include "RNOH/Assert.h"
 
 class AbstractTaskRunner {
  public:
@@ -16,7 +17,10 @@ class AbstractTaskRunner {
   runDelayedTask(Task&& task, uint64_t delayMs, uint64_t repeatMs = 0) = 0;
   virtual void cancelDelayedTask(DelayedTaskId taskId) = 0;
 
-  virtual bool isOnCurrentThread() const = 0;
+  virtual bool isOnCurrentThread() const {
+    RNOH_ASSERT("isOnCurrentThread() is not implemented");
+    return false;
+  };
 
   virtual void setExceptionHandler(ExceptionHandler handler) = 0;
 

@@ -51,5 +51,7 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
   std::unordered_map<DelayedTaskId, uv::Timer> m_timerByTaskId;
   ExceptionHandler m_exceptionHandler;
   bool cleanedUp = false;
+
+  friend class ThreadTaskRunner;
 };
 } // namespace rnoh
