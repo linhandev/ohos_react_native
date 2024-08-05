@@ -42,12 +42,12 @@ EventLoopTaskRunner::DelayedTaskId EventLoopTaskRunner::runDelayedTask(
     uint64_t delayMs,
     uint64_t repeatMs) {
   auto id = m_nextTaskId++;
-  runAsyncTask([this, id, delayMs, repeatMs, task = std::move(task)] {
+  runAsyncTask([this, id, delayMs, repeatMs, task = std::move(task)]() mutable {
     auto [it, inserted] = m_timerByTaskId.emplace(
         id,
         uv::Timer(
             m_loop,
-            [this, id, repeatMs, task = std::move(task)] {
+            [this, id, repeatMs, task = std::move(task)]() mutable {
               task();
               if (repeatMs == 0) {
                 m_timerByTaskId.erase(id);
@@ -113,7 +113,7 @@ void EventLoopTaskRunner::executeTask() {
 void EventLoopTaskRunner::waitForSyncTask(Task&& task) {
   std::unique_lock<std::mutex> lock(m_mutex);
   std::atomic_bool done{false};
-  m_syncTaskQueue.push([task = std::move(task), &done] {
+  m_syncTaskQueue.push([task = std::move(task), &done]() mutable {
     try {
       task();
     } catch (...) {

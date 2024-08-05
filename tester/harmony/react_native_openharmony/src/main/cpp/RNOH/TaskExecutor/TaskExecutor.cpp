@@ -67,7 +67,7 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
   }
   std::exception_ptr thrownError;
   auto taskRunner = this->getTaskRunner(thread);
-  taskRunner->runSyncTask([task = std::move(task), &thrownError]() {
+  taskRunner->runSyncTask([task = std::move(task), &thrownError]() mutable {
     try {
       task();
     } catch (const std::exception& e) {
