@@ -79,6 +79,7 @@ void ModalHostViewComponentInstance::setLayout(
   int32_t height = static_cast<int32_t>(
       layoutMetrics.frame.size.height * layoutMetrics.pointScaleFactor + 0.5);
   m_rootCustomNode.updateMeasuredSize(width, height);
+  m_rootCustomNode.setSize(layoutMetrics.frame.size);
 }
 
 void ModalHostViewComponentInstance::onPropsChanged(
