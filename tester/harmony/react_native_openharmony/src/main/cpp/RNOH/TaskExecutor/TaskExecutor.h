@@ -1,8 +1,6 @@
 #pragma once
 #include <js_native_api.h>
 #include <js_native_api_types.h>
-#include <napi/native_api.h>
-#include <uv.h>
 #include <array>
 #include <memory>
 #include <optional>
