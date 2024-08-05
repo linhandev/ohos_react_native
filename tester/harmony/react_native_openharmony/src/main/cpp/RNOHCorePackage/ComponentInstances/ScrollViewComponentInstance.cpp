@@ -339,6 +339,10 @@ void ScrollViewComponentInstance::onScrollStop() {
 float ScrollViewComponentInstance::onScrollFrameBegin(
     float offset,
     int32_t scrollState) {
+  if (!m_props->scrollEnabled) {
+    m_recentScrollFrameOffset = 0;
+    return 0;
+  }
   m_recentScrollFrameOffset = offset;
   auto newScrollState = static_cast<ScrollState>(scrollState);
   if (m_scrollState != newScrollState) {
