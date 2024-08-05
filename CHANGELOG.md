@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.72.35
+- added assertions for Napi reference use ([f7bddd2b14](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f7bddd2b149d3f1536c8ec1808fbdc45dcd225be))
+- added `WorkerRNInstanceConfig::httpClient` ([c93b50f494](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c93b50f494f1d2d17e9df4d85c394856a7c64c06))
+- added warning logs for sync TM calls that take long time to execute ([a35101f875](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a35101f875eb55ce91ae9eb14fd5a4ea35c455cd))
+- fixed a possible deadlock during `RNInstance` initialization ([e90806a7da](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e90806a7da42b8bdf6e6924b46b3cb9e3ef0baba))
+- fixed reporting errors emitted from C++ side (sometimes errors weren't displayed in the ErrorBox and not logged properly) ([80fab398e1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/80fab398e119fc0b0a92cf31b7d2144af6422288))
+- fixed issue with mutlitouch scenarios cancelling touches ([96db756646](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/96db756646e7371cc72be9c3069c289172032c72))
+- fixed `VirtualizedList::onEndReached` not being called after calling `ref.scrollToEnd()` ([b558534d62](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b558534d62204085c147a474121b0c6d2a8a2775))
+- fixed `transform` not being set correctly on first render ([eb8040bf06](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eb8040bf068a02f8853c07d380c9ee6c53d02e17))
+- fixed insert/remove mutations not being passed to ArkTS components in C-API architecture ([f30acafebb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f30acafebbc3418d0390378999497d448f6a4bbd))
+- changed `TaskExecutor::Task` to only require the passed object to be moveable, not copyable ([4e22bff9e9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4e22bff9e9c1efe4d78052b5555385887a78a4f8))
+- optimized number of ScrollView state updates ([9ef1005983](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9ef10059838ac42323f06d8c4e113e1904e7db4f))
+- optimized JS runtime responsiveness by moving SafeAreaTM and StatusBarTM to the worker thread ([80fab398e1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/80fab398e119fc0b0a92cf31b7d2144af6422288))
+- optimized main thread utilization by moving Networking, WebSocket, Blob and FileReader Turbo Modules to the worker thread ([c93b50f494](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c93b50f494f1d2d17e9df4d85c394856a7c64c06))
+- optimized async Turbo Module calls by removing unnecessary synchronization and calls to TaskExecutor ([af66e80497](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/af66e80497535e3747c61d1f42d00fc9f3eda5d1))
+
+
 ## v0.72.34
 - [breaking] changed setupRNOHWorker params ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
 - [breaking] made RNInstanceOptions::name required ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
