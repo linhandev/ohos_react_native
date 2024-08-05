@@ -224,10 +224,8 @@ void ArkJS::deleteReference(napi_ref reference) {
 }
 
 napi_value ArkJS::getReferenceValue(NapiRef const& ref) {
-  napi_value result;
-  auto status = napi_get_reference_value(m_env, ref.m_ref.get(), &result);
-  this->maybeThrowFromStatus(status, "Couldn't get a reference value");
-  return result;
+  RNOH_ASSERT(ref.m_env == m_env);
+  return getReferenceValue(ref.m_ref.get());
 }
 
 NapiRef ArkJS::createNapiRef(napi_value value) {
