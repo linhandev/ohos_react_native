@@ -1,5 +1,7 @@
 #include "TextMeasurer.h"
 #include <native_drawing/drawing_register_font.h>
+#include <filesystem>
+#include <fstream>
 #include "RNInstance.h"
 #include "RNInstanceCAPI.h"
 #include "RNOH/ArkJS.h"
@@ -265,7 +267,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading, typographyStyle); //  Revert this after API rectification
+      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading, m_defaultFontFamilyName, typographyStyle); //  Revert this after API rectification
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
@@ -428,6 +430,7 @@ void TextMeasurer::setTextMeasureParams(float fontScale, float scale, bool halfl
   m_fontScale = fontScale;
   m_scale = scale;
   m_halfleading = halfleading;
+  updateDefaultFont();
 }
 
 void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, const std::string familyName, const std::string familySrc) {
@@ -435,15 +438,72 @@ void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, co
   auto file = OH_ResourceManager_OpenRawFile(
       nativeResourceManager, fontPath.c_str());
   auto length = OH_ResourceManager_GetRawFileSize(file);
-  auto buffer = malloc(length);
-  OH_ResourceManager_ReadRawFile(file, buffer, length);
+  std::unique_ptr<char[]> buffer = std::make_unique<char[]>(length);
+  OH_ResourceManager_ReadRawFile(file, buffer.get(), length);
   OH_ResourceManager_CloseRawFile(file);
   OH_Drawing_RegisterFontBuffer(
         m_fontCollection.get(),
         familyName.c_str(),
-        (uint8_t*)buffer,
+        (uint8_t*)buffer.get(),
         length
      );
-  free(buffer);
+}
+
+void TextMeasurer::updateDefaultFont() {
+  m_defaultFontFamilyName.clear();
+  std::string path = "/data/themes/a/app";
+  if (!existDefaultFont(path)) {
+    path = "/data/themes/b/app";
+    if (!existDefaultFont(path)) {
+      return;
+    }
+  }
+  path = path.append("/fonts/");
+  for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+    auto entryPath = entry.path();
+    if (entry.is_regular_file() && entryPath.has_extension() && entryPath.extension() == ".ttf") {
+      m_defaultFontFamilyName = entryPath.stem();
+      path = entryPath;
+      break;
+    }
+  }
+  if (m_defaultFontFamilyName.empty()) {
+    return;
+  }
+  std::ifstream ifs(path, std::ios_base::in);
+  ifs.seekg(0, ifs.end);
+  auto size = ifs.tellg();
+  ifs.seekg(ifs.beg);
+  std::unique_ptr<char[]> buffer = std::make_unique<char[]>(size);
+  ifs.read(buffer.get(), size);
+  bool isGood = ifs.good();
+  ifs.close();
+  if (isGood) {
+    OH_Drawing_RegisterFontBuffer(
+        m_fontCollection.get(),
+        m_defaultFontFamilyName.c_str(),
+        (uint8_t*)buffer.get(),
+        size
+    );
+  }
+}
+
+
+bool TextMeasurer::existDefaultFont(std::string path) {
+  bool isFlagFileExist = false;
+  bool isFontDirExist = false;
+  try {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+      auto entryPath = entry.path();
+      isFlagFileExist = isFlagFileExist || (entry.is_regular_file() && entryPath.filename() == "flag");
+      isFontDirExist = isFontDirExist || (entry.is_directory() && entryPath.filename() == "fonts");
+      if (isFlagFileExist && isFontDirExist) {
+        break;
+      }
+    }
+  } catch (...) {
+    return false;
+  }
+  return isFlagFileExist && isFontDirExist;
 }
 } // namespace rnoh

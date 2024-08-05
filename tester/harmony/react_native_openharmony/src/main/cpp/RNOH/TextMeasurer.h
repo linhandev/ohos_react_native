@@ -55,6 +55,8 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   
   std::string stringCapitalize(const std::string& strInput);
   void textCaseTransform(std::string& textContent, facebook::react::TextTransform type);
+  bool existDefaultFont(std::string path);
+  void updateDefaultFont();
   
   napi_env m_env;
   napi_ref m_measureTextFnRef;
@@ -66,6 +68,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   float m_scale = 1.0;
   int m_rnInstanceId = 0;
   bool m_halfleading = false;
+  std::string m_defaultFontFamilyName;
   static UniqueFontCollection m_fontCollection;
 };
 } // namespace rnoh

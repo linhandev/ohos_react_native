@@ -145,10 +145,12 @@ class ArkUITypographyBuilder final {
       OH_Drawing_FontCollection* fontCollection,
       float scale,
       bool halfleading,
+      std::string defaultFontFamilyName,
       const std::shared_ptr<OH_Drawing_TypographyStyle> typographyStyleRef) //  Delete this after API rectification
       : m_styledString(OH_ArkUI_StyledString_Create(typographyStyle, fontCollection), OH_ArkUI_StyledString_Destroy),
         m_scale(scale),
         m_halfleading(halfleading),
+        m_defaultFontFamilyName(defaultFontFamilyName),
         m_typographyStyleRef (std::move(typographyStyleRef)) {}  //  Delete this after API rectification
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
@@ -187,6 +189,7 @@ class ArkUITypographyBuilder final {
  private:
   float m_scale;
   bool m_halfleading;
+  std::string m_defaultFontFamilyName;
   std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
   
   size_t utf8Length(const std::string& str) {
@@ -290,6 +293,9 @@ class ArkUITypographyBuilder final {
     }
     if (!fragment.textAttributes.fontFamily.empty()) {
       const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
+      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+    } else if (!m_defaultFontFamilyName.empty()) {
+      const char* fontFamilies[] = {m_defaultFontFamilyName.c_str()};
       OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
     }
     // push text and corresponding textStyle to handler
