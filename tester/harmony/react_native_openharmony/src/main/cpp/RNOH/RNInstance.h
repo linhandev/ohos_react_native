@@ -23,6 +23,7 @@
 #include "RNOH/TurboModule.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOH/UITicker.h"
+#include "RNOH/Assert.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
