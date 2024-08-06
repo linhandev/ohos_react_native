@@ -147,13 +147,11 @@ export struct RNApp {
         }
       })()
       stopTracing()
-    } catch (err) {
-      if (err instanceof RNOHError) {
-        this.rnohCoreContext!.logger.error(err)
-      } else if (typeof err === "string") {
-        this.rnohCoreContext!.logger.error(err)
-      } else if (err instanceof Error) {
-        this.rnohCoreContext!.logger.error(err.message)
+    } catch (reason) {
+      if (typeof reason === "string") {
+        this.rnohCoreContext!.logger.error(reason)
+      } else if (reason instanceof Error) {
+        this.rnohCoreContext!.logger.error(reason.message)
       } else {
         this.rnohCoreContext!.logger.error("Fatal exception")
       }

@@ -218,9 +218,8 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (!m_props || props->textAttributes != m_props->textAttributes) {
-    auto fontSizeScale = this->m_deps->displayMetricsManager->getFontSizeScale();
-    m_textAreaNode.setFont(props->textAttributes,fontSizeScale);
-    m_textInputNode.setFont(props->textAttributes,fontSizeScale);
+    m_textAreaNode.setFont(props->textAttributes);
+    m_textInputNode.setFont(props->textAttributes);
   }
   if (!m_props ||
     props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {

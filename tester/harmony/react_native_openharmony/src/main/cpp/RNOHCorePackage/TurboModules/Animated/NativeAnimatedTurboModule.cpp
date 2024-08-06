@@ -510,7 +510,7 @@ void NativeAnimatedTurboModule::setNativeProps(
   auto napiProps = arkJs.createFromDynamic(clonedProps);
 
   auto napiTurboModuleObject =
-      arkJs.getObject(m_ctx.arkTSTurboModuleInstanceRef);
+      arkJs.getObject(m_ctx.arkTsTurboModuleInstanceRef);
   napiTurboModuleObject.call("setViewProps", {napiTag, napiProps});
 }
 

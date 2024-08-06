@@ -23,8 +23,6 @@ import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
 import font from '@ohos.font'
-import { DisplayMetricsManager } from './DisplayMetricsManager'
-
 
 export type SurfaceContext = {
   width: number
@@ -254,10 +252,6 @@ export interface RNInstance {
 
 export type RNInstanceOptions = {
   /**
-   * Used to identify RNInstance on RNOHWorker thread.
-   */
-  name?: string,
-  /**
    * Creates RNPackages provided by third-party libraries.
    */
   createRNPackages: (ctx: RNPackageContext) => RNPackage[],
@@ -289,14 +283,6 @@ export type RNInstanceOptions = {
    */
   enableCAPIArchitecture?: boolean,
   /**
-   * @architecture: C-API
-   * When enabled, RNOH will send mutations that affect only Descriptors of custom components implemented on the ArkUI side.
-   * If disabled, RNOH will send all mutations to DescriptorRegistry, even if a component is a CppComponentInstance.
-   * Enabling this feature flag may improve performance, but it may break some libraries built on top of the ArkTS architecture
-   * and that operate on the tree of descriptors.
-   */
-  enablePartialSyncOfDescriptorRegistryInCAPI?: boolean
-  /**
    * Specifies the path for RN to locate assets. Necessary in production environments where assets are not hosted by the Metro server.
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
    */
@@ -316,13 +302,7 @@ export type RNInstanceOptions = {
   /**
    * config the fonts to be use
    */
-  fontOptions?: font.FontOptions[],
-  /**
-   * Disables advanced React 18 features, such as Automatic Batching.
-   * Setting this to `true` will revert to the behavior of React 17,
-   * where state updates are processed synchronously and separately.
-   */
-  disableConcurrentRoot?: boolean;
+  fontOptions?: font.FontOptions[]
 }
 
 /**
@@ -370,23 +350,19 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   constructor(
-    private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
     private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
-    private shouldUseWorkerThread: boolean,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
-    private shouldUseCAPIArchitecture: boolean,
-    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
+    private shouldUseCApiArchitecture: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
-    private displayMetricsManager: DisplayMetricsManager,
     private arkTsComponentNames: Array<string>,
     private fontOptions: font.FontOptions[],
     httpClientProvider: HttpClientProvider,
@@ -403,14 +379,14 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseImageLoader) {
       this.enableFeatureFlag("IMAGE_LOADER")
     }
-    if (this.shouldUseCAPIArchitecture) {
+    if (this.shouldUseCApiArchitecture) {
       this.enableFeatureFlag("C_API_ARCH")
     }
     this.onCreate()
   }
 
   public getArchitecture() {
-    return this.shouldUseCAPIArchitecture ? "C_API" : "ARK_TS"
+    return this.shouldUseCApiArchitecture ? "C_API" : "ARK_TS"
   }
 
   public getAssetsDest(): string {
@@ -435,7 +411,7 @@ export class RNInstanceImpl implements RNInstance {
       surfaceHandle.destroy()
     }
     if (this.isFeatureFlagEnabled("ENABLE_RN_INSTANCE_CLEAN_UP")) {
-      this.napiBridge.onDestroyRNInstance(this.id)
+      this.napiBridge.destroyReactNativeInstance(this.id)
     }
     this.turboModuleProvider.onDestroy()
     stopTracing()
@@ -467,14 +443,11 @@ export class RNInstanceImpl implements RNInstance {
       this.logger,
     );
     const cppFeatureFlags: CppFeatureFlag[] = []
-    if (this.shouldUseCAPIArchitecture) {
+    if (this.shouldUseCApiArchitecture) {
       cppFeatureFlags.push("C_API_ARCH")
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
-    }
-    if (this.shouldUseWorkerThread) {
-      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
     }
     const fontOptions: FontOptions[] = []
     for (const fontOption of this.fontOptions ?? []) {
@@ -483,11 +456,7 @@ export class RNInstanceImpl implements RNInstance {
         familySrc: fontOption.familySrc as string
       });
     }
-    if (this.shouldUseWorkerThread) {
-      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
-    }
-    this.napiBridge.onCreateRNInstance(
-      this.envId,
+    this.napiBridge.createReactNativeInstance(
       this.id,
       this.turboModuleProvider,
       this.frameNodeFactoryRef,
@@ -627,6 +596,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public emitDeviceEvent(eventName: string, params: any) {
+    this.logger.clone(`emitDeviceEvent`).debug(eventName)
     this.callRNFunction("RCTDeviceEventEmitter", "emit", [eventName, params]);
   }
 
@@ -727,10 +697,6 @@ export class RNInstanceImpl implements RNInstance {
     this.lifecycleEventEmitter.emit("BACKGROUND")
   }
 
-  public onNewWant(url: string) {
-    this.emitDeviceEvent("url", { url: url })
-  }
-
   public onConfigurationUpdate(...args: Parameters<UIAbility["onConfigurationUpdate"]>) {
     this.lifecycleEventEmitter.emit("CONFIGURATION_UPDATE", ...args)
   }
@@ -794,10 +760,6 @@ export class RNInstanceImpl implements RNInstance {
 
   public cancelTouches() {
     this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
-  }
-
-  public getNativeNodeIdByTag(tag: Tag): string | undefined {
-    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 }
 

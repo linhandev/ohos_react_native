@@ -9,11 +9,6 @@ namespace rnoh {
 
 class RNInstance;
 
-/**
- * @api
- * Extend this class if your TurboModule is intended to be a C++ only
- * TurboModule.
- */
 class TurboModule : public facebook::react::TurboModule {
  public:
   struct Context {

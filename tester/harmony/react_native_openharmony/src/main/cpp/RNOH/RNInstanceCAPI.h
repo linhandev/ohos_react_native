@@ -187,8 +187,6 @@ class RNInstanceCAPI : public RNInstanceInternal,
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
     
-  std::optional<std::string> getNativeNodeIdByTag(
-      facebook::react::Tag tag) const;
 
  protected:
   int m_id;

@@ -92,7 +92,6 @@ class ArkUINode {
       std::string const& accessibilityLabel);
   virtual ArkUINode& setAccessibilityGroup(bool accessible);
   virtual ArkUINode& setId(std::string const& id);
-  virtual std::string getId() const;
   virtual ArkUINode& setOpacity(facebook::react::Float opacity);
   virtual ArkUINode& setClip(bool clip);
   virtual ArkUINode& setAlignment(Alignment alignment);

@@ -7,7 +7,7 @@
 
 namespace rnoh {
 class ArkTSChannel {
-  ArkJS m_arkJS;
+  ArkJS m_arkJs;
   napi_ref m_napi_event_dispatcher_ref;
   TaskExecutor::Shared m_taskExecutor;
 
@@ -16,19 +16,19 @@ class ArkTSChannel {
 
   ArkTSChannel(
       TaskExecutor::Shared taskExecutor,
-      ArkJS arkJS,
+      ArkJS arkJs,
       napi_ref napiEventDispatcherRef)
-      : m_arkJS(arkJS),
+      : m_arkJs(arkJs),
         m_napi_event_dispatcher_ref(napiEventDispatcherRef),
         m_taskExecutor(taskExecutor) {}
 
   void postMessage(std::string type, folly::dynamic payload) {
     m_taskExecutor->runTask(TaskThread::MAIN, [=]() {
       auto napi_event_handler =
-          m_arkJS.getReferenceValue(m_napi_event_dispatcher_ref);
-      m_arkJS.call<2>(
+          m_arkJs.getReferenceValue(m_napi_event_dispatcher_ref);
+      m_arkJs.call<2>(
           napi_event_handler,
-          {m_arkJS.createString(type), m_arkJS.createFromDynamic(payload)});
+          {m_arkJs.createString(type), m_arkJs.createFromDynamic(payload)});
     });
   }
 };
