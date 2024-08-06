@@ -707,22 +707,7 @@ static napi_value setBundlePath(napi_env env, napi_callback_info info) {
     rnInstance->setBundlePath(arkJs.getString(args[1]));
     return arkJs.getUndefined();
 }
-
-static napi_value setCacheDir(napi_env env, napi_callback_info info) {
-    LOG(INFO) << "setCacheDir";
-    ArkJS arkJs(env);
-    auto args = arkJs.getCallbackArgs(info, 2);
-    size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = ARK_TS_BRIDGE_BY_ENV_ID.find(instanceId + 1);
-    if (it == ARK_TS_BRIDGE_BY_ENV_ID.end()) {
-      return arkJs.getUndefined();
-    }
-    auto& arkTSBridge = it->second;
-    arkTSBridge->setCacheDir(arkJs.getString(args[1]));
-    return arkJs.getUndefined();
-}
-        
+    
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
@@ -737,14 +722,6 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"setBundlePath",
        nullptr,
        setBundlePath,
-       nullptr,
-       nullptr,
-       nullptr,
-       napi_default,
-       nullptr},
-      {"setCacheDir",
-       nullptr,
-       setCacheDir,
        nullptr,
        nullptr,
        nullptr,
