@@ -1,5 +1,4 @@
 import hilog from '@ohos.hilog';
-import hiTrace from '@ohos.hiTraceMeter';
 import { RNOHError } from "./RNOHError"
 
 export interface RNOHLogger {
@@ -22,10 +21,8 @@ export class Tracer {
   private activeTracesCount: number = 0
 
   public startTrace(name: string) {
-    hiTrace.startTrace(`#RNOH::` + name, 0)
     this.activeTracesCount++
     return () => {
-      hiTrace.finishTrace(`#RNOH::` + name, 0)
       this.activeTracesCount--
     }
   }

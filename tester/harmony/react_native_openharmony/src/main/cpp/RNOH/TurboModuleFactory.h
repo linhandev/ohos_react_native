@@ -35,9 +35,8 @@ class TurboModuleFactory {
           arkTSTurboModuleEnvironmentByTaskThread,
       FeatureFlagRegistry::Shared featureFlagRegistry,
       const ComponentJSIBinderByString&&,
-      TaskExecutor::Shared,
-      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
-      std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
+      std::shared_ptr<TaskExecutor>,
+      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>);
 
   virtual SharedTurboModule create(
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -75,9 +74,8 @@ class TurboModuleFactory {
   const ComponentJSIBinderByString m_componentBinderByString;
   std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
       m_arkTSTurboModuleEnvironmentByTaskThread;
-  TaskExecutor::Shared m_taskExecutor;
+  std::shared_ptr<TaskExecutor> m_taskExecutor;
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> m_delegates;
-  std::shared_ptr<ArkTSMessageHub> m_arkTSMessageHub;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
 };
 

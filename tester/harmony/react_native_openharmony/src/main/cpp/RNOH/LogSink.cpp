@@ -2,9 +2,6 @@
 #include <hilog/log.h>
 #include <pthread.h>
 
-#undef LOG_DOMAIN
-#undef LOG_TAG
-
 #define LOG_DOMAIN 0xBEEF
 #define LOG_TAG "#RNOH_CPP"
 
