@@ -221,6 +221,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
               })
             }
             deps.turboModuleProvider.onDestroy()
+            turboModuleDepsByRNInstanceId.delete(destroyWorkerRNInstancePayload.rnInstanceId)
             postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
               new DestroyWorkerRNInstanceAckPayload(destroyWorkerRNInstancePayload.rnInstanceId))
             break;
