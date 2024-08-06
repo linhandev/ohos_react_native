@@ -468,8 +468,8 @@ void NativeAnimatedTurboModule::runUpdates() {
     m_vsyncListener->requestFrame(
         [weakSelf = weak_from_this()](long long _timestamp) {
           if (auto self = weakSelf.lock()) {
-            facebook::react::SystraceSection s(
-                "NativeAnimatedTurboModule::runUpdates");
+            // facebook::react::SystraceSection s(
+            //     "NativeAnimatedTurboModule::runUpdates");
             self->runUpdates();
           }
         });
