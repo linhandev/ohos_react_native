@@ -14,6 +14,7 @@
 #include "RNOH/Inspector.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/OHReactMarkerListener.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/RNInstanceInternal.h"
@@ -73,7 +74,8 @@ napi_value invoke(napi_env env, std::function<napi_value()> operation) {
 static napi_value onInit(napi_env env, napi_callback_info info) {
   static int nextEnvId = 0;
   return invoke(env, [&] {
-    HarmonyReactMarker::setLogPerfMarkerIfNeeded();
+    HarmonyReactMarker::setLogMarkerIfNeeded();
+    HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
     if (!ArkUINodeRegistry::isInitialized()) {

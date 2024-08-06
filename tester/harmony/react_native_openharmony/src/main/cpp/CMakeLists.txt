@@ -492,6 +492,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/PullToRefreshViewComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/HarmonyReactMarker.cpp"
+    "${RNOH_CPP_DIR}/RNOH/Performance/OHReactMarkerListener.cpp"
 )
 target_include_directories(rnoh PUBLIC
     "${RNOH_CPP_DIR}"
