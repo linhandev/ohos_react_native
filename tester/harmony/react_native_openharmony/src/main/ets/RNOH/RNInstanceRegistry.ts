@@ -9,15 +9,13 @@ import { HttpClient } from '../HttpClient/ts';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
-import common from '@ohos.app.ability.common'
-
 
 export class RNInstanceRegistry {
   private instanceMap: Map<number, RNInstanceImpl> = new Map();
-  private unregisterMessageListeners: (() => void)[] = []
+  private unregisterMessageListener = () => {
+  }
 
   constructor(
-    private uiAbilityContext: common.UIAbilityContext,
     private envId: number,
     private logger: RNOHLogger,
     private napiBridge: NapiBridge,
@@ -27,18 +25,16 @@ export class RNInstanceRegistry {
     private defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
-    private workerThreadPromise: Promise<WorkerThread> | null,
+    private workerThread: WorkerThread | null,
   ) {
   }
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
-    let workerThread: WorkerThread | null = null
-    if (this.workerThreadPromise !== null) {
-      workerThread = await this.workerThreadPromise
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options?.name)
+    if (this.workerThread !== null) {
+      await this.waitForWorkerThread(id, options?.name)
     }
-    const rnInstance  = new RNInstanceImpl(
+    const instance = new RNInstanceImpl(
       this.envId,
       id,
       this.logger,
@@ -46,7 +42,7 @@ export class RNInstanceRegistry {
       { concurrentRoot: options.disableConcurrentRoot !== undefined ? !options.disableConcurrentRoot : true },
       this.devToolsController,
       this.createRNOHContext,
-      workerThread, /* shouldUseWorkerThread */
+      this.workerThread !== null, /* shouldUseWorkerThread */
       options.enableDebugger ?? false,
       options.enableBackgroundExecutor ?? false,
       options.enableNDKTextMeasuring ?? false,
@@ -62,22 +58,43 @@ export class RNInstanceRegistry {
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,
     );
-    await rnInstance.initialize(options.createRNPackages({}));
-
-    this.instanceMap.set(id, rnInstance);
-    return rnInstance;
+    await instance.initialize(options.createRNPackages({}));
+    this.instanceMap.set(id, instance);
+    return instance;
   }
 
-  private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number, rnInstanceName: string) {
-    const logger = this.logger.clone(["RNInstanceRegistry", "createRNInstanceEnvOnWorker"])
-    logger.info("waiting for worker's rnInstance environment")
-    setTimeout(() => {
-      workerThread.postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
-        rnInstanceId, rnInstanceName, uiAbilityContext: this.uiAbilityContext
+  private async waitForWorkerThread(rnInstanceId: number, rnInstanceName: string) {
+    const logger = this.logger.clone(["RNInstanceRegistry", "waitForWorkerThread"])
+    let resolveWorkerTurboModuleProviderRegisteredPromise = (value: undefined) => undefined
+    const workerTurboModuleProviderRegisteredPromise = new Promise((resolve) => {
+      resolveWorkerTurboModuleProviderRegisteredPromise = resolve
+    })
+
+    const postMessage = (type: string, payload: any = undefined) => {
+      logger.info(`postMessage: ${type}`)
+      this.workerThread.postMessage(type, payload)
+    }
+
+    logger.info("waiting for worker readiness")
+    await new Promise((resolve) => {
+      const readinessProb = setInterval(() => postMessage("RNOH_WORKER_THREAD_READY"), 100);
+      this.unregisterMessageListener = this.workerThread.subscribeToMessages((type, payload) => {
+        logger.info(`receivedMessage: ${type}`)
+        if (type === "RNOH_WORKER_THREAD_READY_ACK") {
+          clearInterval(readinessProb);
+          resolve(undefined)
+        } else if (type === "RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK") {
+          resolveWorkerTurboModuleProviderRegisteredPromise(undefined)
+        }
       })
 
-    }, 0)
-    await workerThread.waitForMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")
+    })
+
+    postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV", {
+      rnInstanceId, rnInstanceName
+    })
+    logger.info("waiting for workerTurboModuleProvider")
+    await workerTurboModuleProviderRegisteredPromise;
   }
 
   public getInstance(id: number): RNInstance {
@@ -97,6 +114,6 @@ export class RNInstanceRegistry {
   }
 
   onDestroy() {
-    this.unregisterMessageListeners.forEach(unregister => unregister())
+    this.unregisterMessageListener()
   }
 }

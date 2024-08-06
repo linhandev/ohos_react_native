@@ -1,7 +1,6 @@
 import type { RNOHContext } from './RNOHContext';
 import type { RNOHLogger } from "./RNOHLogger"
-import type { WorkerRNInstance } from "./WorkerRNInstance"
-import common from '@ohos.app.ability.common'
+
 /**
  * @api
  */
@@ -39,8 +38,6 @@ export class TurboModule extends UITurboModule {
  */
 export type WorkerTurboModuleContext = {
   logger: RNOHLogger
-  uiAbilityContext: common.UIAbilityContext
-  rnInstance: WorkerRNInstance
 }
 
 /**
