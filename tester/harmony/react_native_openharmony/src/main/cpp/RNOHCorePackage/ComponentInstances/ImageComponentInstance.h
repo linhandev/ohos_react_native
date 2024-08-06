@@ -3,14 +3,12 @@
 #include <react/renderer/components/image/ImageEventEmitter.h>
 #include <react/renderer/components/image/ImageShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/arkui/ImageNode.h"
 
 namespace rnoh {
 class ImageComponentInstance
     : public CppComponentInstance<facebook::react::ImageShadowNode>,
-      public ImageNodeDelegate,
-      public ImageSourceResolver::ImageSourceUpdateListener {
+      public ImageNodeDelegate {
  private:
   ImageNode m_imageNode;
   struct ImageRawProps {
@@ -40,8 +38,5 @@ class ImageComponentInstance
   void onLoadStart();
 
   ImageNode& getLocalRootArkUINode() override;
-
-  // ImageSourceResolver::ImageSourceUpdateListener
-  void onImageSourceCacheUpdate() override;
 };
 } // namespace rnoh

@@ -3,7 +3,8 @@ import window from '@ohos.window';
 import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
-import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
+import { RNOHContext } from "./RNOHContext"
+import { RNOHCoreContext } from "./RNOHCoreContext"
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -15,7 +16,6 @@ import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvi
 import type { HttpClient } from "../HttpClient/ts"
 import { AbilityConstant, Want } from '@kit.AbilityKit';
 import { WorkerThread } from "./WorkerThread"
-import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -26,6 +26,9 @@ export interface RNInstancesCoordinatorDependencies {
   fontSizeScale : number | undefined
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
+  /**
+   * If the string is empty, worker thread will be disabled.
+   */
   rnohWorkerScriptUrl: string,
 
   /**
@@ -164,12 +167,12 @@ export class RNInstancesCoordinator {
       this.rawLogger,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance),
+      (rnInstance) => RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
-      WorkerThread.create({
+      rnohWorkerScriptUrl !== "" ? WorkerThread.create({
         scriptUrl: rnohWorkerScriptUrl,
         name: "RNOHWorker",
         logger: logger,
@@ -177,22 +180,20 @@ export class RNInstancesCoordinator {
           this.devToolsController.setLastError(rnohError)
           this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
         }
-      })
+      }) : null
     )
-    this.rnohCoreContext = new RNOHCoreContext({
-      reactNativeVersion: "0.72.5",
-      safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
-      logger: this.rawLogger,
-      uiAbilityContext: this.uiAbilityContext,
-      isDebugModeEnabled: this.isDebugModeEnabled,
-      rnInstanceRegistry: this.rnInstanceRegistry,
-      displayMetricsProvider: () => this.displayMetricsManager.getDisplayMetrics(),
-      uiAbilityStateProvider: () => this.appState,
-      launchUri: this.options?.launchURI,
-      defaultBackPressHandler: this.defaultBackPressHandler,
-      devToolsController: this.devToolsController,
-      devMenu: this.devMenu
-    });
+    this.rnohCoreContext = RNOHCoreContext.create(
+      this.rnInstanceRegistry,
+      () => this.displayMetricsManager.getDisplayMetrics(),
+      () => this.appState,
+      this.options?.launchURI,
+      this.rawLogger,
+      this.uiAbilityContext,
+      this.isDebugModeEnabled,
+      this.defaultBackPressHandler,
+      this.devToolsController,
+      this.devMenu,
+    );
   }
 
   public onDestroy() {

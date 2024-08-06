@@ -1,7 +1,11 @@
-export { UITurboModuleContext, TurboModuleContext, WorkerTurboModuleContext } from './RNOHContext';
-
-import { UITurboModuleContext, WorkerTurboModuleContext } from './RNOHContext';
-
+import type { RNOHContext } from './RNOHContext';
+import type { RNOHLogger } from "./RNOHLogger"
+import type { WorkerRNInstance } from "./WorkerRNInstance"
+import common from '@ohos.app.ability.common'
+/**
+ * @api
+ */
+export type UITurboModuleContext = RNOHContext;
 
 /**
  * @thread: MAIN
@@ -19,14 +23,29 @@ export class UITurboModule {
 
 /**
  * @api
+ * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
+ */
+export type TurboModuleContext = UITurboModuleContext
+
+/**
+ * @api
  * @deprecated Use UITurboModule or WorkerTurboModule instead (latestRNOHVersion: 0.72.30)
  */
 export class TurboModule extends UITurboModule {
 }
 
+/**
+ * @api
+ */
+export type WorkerTurboModuleContext = {
+  logger: RNOHLogger
+  uiAbilityContext: common.UIAbilityContext
+  rnInstance: WorkerRNInstance
+}
 
 /**
  * @api
+ * @experimental
  * @thread: WORKER
  */
 export class WorkerTurboModule {

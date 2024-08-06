@@ -1,191 +1,46 @@
-import { RNInstanceImpl } from "./RNInstance"
-import { RNOHError } from "./RNOHError"
-import type common from '@ohos.app.ability.common'
 import type { DescriptorRegistry } from './DescriptorRegistry';
 import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
-import type { RNInstance } from './RNInstance';
+import { RNInstance, RNInstanceImpl } from './RNInstance';
 import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
-import type { HttpClient } from '../HttpClient/HttpClient';
-import type { RNOHLogger } from "./RNOHLogger"
-import type { WorkerRNInstance } from "./WorkerRNInstance"
-import type { DevMenu } from './DevMenu'
-import type { DevToolsController } from './DevToolsController'
-import type { DisplayMetrics } from './types'
-import type { RNInstanceRegistry } from './RNInstanceRegistry'
-import type { RNInstanceOptions } from './RNInstance'
-import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider'
-
-
-export type UIAbilityState = "FOREGROUND" | "BACKGROUND"
-
-type RNOHCoreContextDependencies = {
-  reactNativeVersion: string,
-  rnInstanceRegistry: RNInstanceRegistry;
-  displayMetricsProvider: () => DisplayMetrics;
-  uiAbilityStateProvider: () => UIAbilityState;
-  logger: RNOHLogger;
-  uiAbilityContext: common.UIAbilityContext;
-  isDebugModeEnabled: boolean;
-  defaultBackPressHandler: () => void;
-  devToolsController: DevToolsController;
-  devMenu: DevMenu;
-  safeAreaInsetsProvider: SafeAreaInsetsProvider
-  launchUri?: string;
-};
+import { RNOHCoreContext } from './RNOHCoreContext';
+import { HttpClient } from '../HttpClient/HttpClient';
 
 /**
- * @thread: MAIN
- * Provides dependencies and utilities shareable across RNInstances. Also includes methods for creating and destroying
- * RNInstances. For utilities or dependencies specific to an RNInstance, refer to RNOHContext.
- */
-export class RNOHCoreContext {
-  /**
-   * @internal
-   */
-  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {
-  }
-
-  get reactNativeVersion() {
-    return this._rnohCoreContextDeps.reactNativeVersion
-  }
-
-  public reportRNOHError(rnohError: RNOHError) {
-    this.devToolsController.setLastError(rnohError)
-    this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-  }
-
-  async createAndRegisterRNInstance(options: RNInstanceOptions): Promise<RNInstance> {
-    const stopTracing = this._rnohCoreContextDeps.logger.clone("createAndRegisterRNInstance").startTracing();
-    const result = await this._rnohCoreContextDeps.rnInstanceRegistry.createInstance(options);
-    stopTracing();
-    return result;
-  }
-
-  async destroyAndUnregisterRNInstance(rnInstance: RNInstance): Promise<void> {
-    const stopTracing = this._rnohCoreContextDeps.logger.clone("destroyAndUnregisterRNInstance").startTracing();
-    if (rnInstance instanceof RNInstanceImpl) {
-      rnInstance.onDestroy();
-    }
-    await this._rnohCoreContextDeps.rnInstanceRegistry.deleteInstance(rnInstance.getId());
-    stopTracing();
-  }
-
-  getDisplayMetrics(): DisplayMetrics {
-    return this._rnohCoreContextDeps.displayMetricsProvider();
-  }
-
-  getUIAbilityState(): UIAbilityState {
-    return this._rnohCoreContextDeps.uiAbilityStateProvider();
-  }
-
-  dispatchBackPress(): void {
-    this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance => rnInstance.onBackPress());
-  }
-
-  /**
-   * @deprecated - This function shouldn't be in RNOHCoreContext because readiness is relative to a RNInstance and this context is shared across instances.
-   * @depreciationDate 2024-04-08
-   */
-  markReadiness(): void {
-  }
-
-  cancelTouches(): void {
-    this._rnohCoreContextDeps.rnInstanceRegistry.forEach((rnInstance) => {
-      rnInstance.cancelTouches();
-    });
-  }
-
-  get logger(): RNOHLogger {
-    return this._rnohCoreContextDeps.logger;
-  }
-
-  get uiAbilityContext(): common.UIAbilityContext {
-    return this._rnohCoreContextDeps.uiAbilityContext;
-  }
-
-  get isDebugModeEnabled(): boolean {
-    return this._rnohCoreContextDeps.isDebugModeEnabled;
-  }
-
-  get launchUri(): string | undefined {
-    return this._rnohCoreContextDeps.launchUri;
-  }
-
-  get devToolsController(): DevToolsController {
-    return this._rnohCoreContextDeps.devToolsController!;
-  }
-
-  get devMenu(): DevMenu {
-    return this._rnohCoreContextDeps.devMenu!;
-  }
-
-  get defaultBackPressHandler(): () => void {
-    return this._rnohCoreContextDeps.defaultBackPressHandler;
-  }
-
-  get safeAreaInsetsProvider() {
-    return this._rnohCoreContextDeps.safeAreaInsetsProvider;
-  }
-}
-
-type RNOHContextDependencies = {
-  rnInstance: RNInstance,
-  rnohCoreContextDependencies: RNOHCoreContextDependencies,
-}
-
-/**
- * @thread: MAIN
  * Provides dependencies and utility functions in context of RNInstance.
  */
 export class RNOHContext extends RNOHCoreContext {
-  /**
-   * @internal
-   */
-  static fromRNOHCoreContext(rnohCoreContext: RNOHCoreContext, rnInstance: RNInstance) {
-    return new RNOHContext({
-      rnohCoreContextDependencies: rnohCoreContext._rnohCoreContextDeps,
-      rnInstance: rnInstance,
-    })
+  static fromCoreContext(coreContext: RNOHCoreContext, rnInstance: RNInstance) {
+    if (!(rnInstance instanceof RNInstanceImpl)) {
+      throw new Error("RNInstance must extend RNInstanceImpl")
+    }
+    return new RNOHContext("0.72.5", rnInstance, coreContext);
   }
-
-  protected constructor(
-    public _rnohContextDeps: RNOHContextDependencies,
-  ) {
-    super(
-      _rnohContextDeps.rnohCoreContextDependencies
-    )
-  }
-
-  protected get rnInstanceImpl() {
-    return this._rnohContextDeps.rnInstance as RNInstanceImpl
-  }
-
 
   /**
    * Check DescriptorRegistry documentation for more information.
    */
-  get descriptorRegistry(): DescriptorRegistry {
-    return this.rnInstanceImpl.descriptorRegistry;
+  public get descriptorRegistry(): DescriptorRegistry {
+    return this.rnInstance.descriptorRegistry;
   }
 
   /**
    * Check RNComponentCommandReceiver documentation for more information.
    */
-  get componentCommandReceiver(): RNComponentCommandReceiver {
+  public get componentCommandReceiver(): RNComponentCommandReceiver {
     return this.rnInstanceImpl.componentCommandHub;
   }
 
   /**
    * Check ComponentManagerRegistry documentation for more information.
    */
-  get componentManagerRegistry(): ComponentManagerRegistry {
-    return this.rnInstanceImpl.componentManagerRegistry;
+  public get componentManagerRegistry(): ComponentManagerRegistry {
+    return this.rnInstance.componentManagerRegistry;
   }
 
   /**
    * Check RNInstance documentation for more information.
    */
-  get rnInstance(): RNInstance {
+  public get rnInstance(): RNInstance {
     return this.rnInstanceImpl
   }
 
@@ -193,64 +48,52 @@ export class RNOHContext extends RNOHCoreContext {
    * Check RNInstance::httpClient documentation
    * @returns
    */
-  get httpClient(): HttpClient {
+  public get httpClient(): HttpClient {
     return this.rnInstance.httpClient;
   }
 
   /**
    * Invoked by React Native when the React application doesn't want to handle the device back press. This method may be relocated in the future.
    */
-  invokeDefaultBackPressHandler() {
+  public invokeDefaultBackPressHandler() {
     if (this.rnInstanceImpl.backPressHandler) {
       this.rnInstanceImpl.backPressHandler();
     } else {
-      this._rnohCoreContextDeps.defaultBackPressHandler();
+      this._defaultBackPressHandler();
     }
   }
-}
 
-/**
- * @api
- */
-export class UITurboModuleContext extends RNOHContext {
-}
-
-/**
- * @api
- * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
- */
-export class TurboModuleContext extends UITurboModuleContext {
-}
-
-/**
- * @internal
- */
-export type WorkerTurboModuleContextDependencies = {
-  logger: RNOHLogger
-  uiAbilityContext: common.UIAbilityContext
-  rnInstance: WorkerRNInstance
-}
-
-/**
- * @api
- */
-export class WorkerTurboModuleContext {
-  /**
-   * @internal
-   */
-  constructor(public _workerTurboModuleContextDeps: WorkerTurboModuleContextDependencies) {
-  }
-
-  get logger() {
-    return this._workerTurboModuleContextDeps.logger
-  }
-
-  get uiAbilityContext() {
-    return this._workerTurboModuleContextDeps.uiAbilityContext
-  }
-
-  get rnInstance() {
-    return this._workerTurboModuleContextDeps.rnInstance
+  protected constructor(
+    /**
+     * Current React Native (not React Native OpenHarmony) version
+     */
+    public reactNativeVersion: string,
+    private rnInstanceImpl: RNInstanceImpl,
+    coreContext: RNOHCoreContext
+  ) {
+    super(
+      coreContext.createAndRegisterRNInstance,
+      coreContext.destroyAndUnregisterRNInstance,
+      coreContext.logger,
+      coreContext.getDisplayMetrics,
+      coreContext.getUIAbilityState,
+      coreContext.dispatchBackPress,
+      coreContext.markReadiness,
+      coreContext.uiAbilityContext,
+      coreContext.devToolsController,
+      coreContext.devMenu,
+      coreContext.safeAreaInsetsProvider,
+      coreContext.isDebugModeEnabled,
+      coreContext.launchUri,
+      coreContext.cancelTouches,
+      coreContext._defaultBackPressHandler
+    )
+    this.devToolsController = coreContext.devToolsController
+    this.devMenu = coreContext.devMenu
+    this.safeAreaInsetsProvider = coreContext.safeAreaInsetsProvider
+    this.launchUri = coreContext.launchUri
+    this.getDisplayMetrics = () => coreContext.getDisplayMetrics()
+    this.getUIAbilityState = () => coreContext.getUIAbilityState()
+    this.markReadiness = () => coreContext.markReadiness()
   }
 }
-

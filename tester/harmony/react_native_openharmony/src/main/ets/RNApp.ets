@@ -99,10 +99,7 @@ export struct RNApp {
         }
         this.rnInstance = await this.getOrCreateRNInstance()
         this.ctx = new RNComponentContext(
-          RNOHContext.fromRNOHCoreContext(
-            this.rnohCoreContext,
-            this.rnInstance
-          ),
+          RNOHContext.fromCoreContext(this.rnohCoreContext!, this.rnInstance),
           this.wrappedCustomRNComponentBuilder,
           wrapBuilder(buildRNComponentForTag),
           new Map(),

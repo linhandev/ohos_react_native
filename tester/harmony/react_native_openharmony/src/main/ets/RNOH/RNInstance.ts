@@ -22,11 +22,10 @@ import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
-import { DisplayMetricsManager } from './DisplayMetricsManager'
 import { WorkerThread } from "./WorkerThread"
-import font from "@ohos.font"
+import font from '@ohos.font'
+import { DisplayMetricsManager } from './DisplayMetricsManager'
 
-export type Resource = Exclude<font.FontOptions["familySrc"], string>
 
 export type SurfaceContext = {
   width: number
@@ -379,7 +378,7 @@ export class RNInstanceImpl implements RNInstance {
     private napiBridge: NapiBridge,
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstanceImpl) => RNOHContext,
+    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
     private workerThread: WorkerThread,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,

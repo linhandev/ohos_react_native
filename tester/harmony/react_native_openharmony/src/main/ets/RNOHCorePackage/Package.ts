@@ -1,7 +1,5 @@
-import { DescriptorWrapperFactoryByDescriptorType, UITurboModuleFactory, WorkerTurboModuleFactory, WorkerTurboModule } from '../RNOH/ts';
-import { RNPackage } from "../RNOH/RNPackage"
-import type { UITurboModule } from '../RNOH/TurboModule';
-import type { UITurboModuleContext, WorkerTurboModuleContext } from "../RNOH/RNOHContext"
+import { DescriptorWrapperFactoryByDescriptorType, RNPackage, TurboModulesFactory, } from '../RNOH/RNPackage';
+import type { TurboModule, TurboModuleContext } from '../RNOH/TurboModule';
 import {
   AccessibilityManagerTurboModule,
   AlertManagerTurboModule,
@@ -31,18 +29,13 @@ import {
   ToastAndroidTurboModule,
   VibrationTurboModule,
   WebSocketTurboModule,
-  ImageLoaderWorkerTurboModule
 } from './turboModules';
 import { LinkingManagerTurboModule } from './turboModules/LinkingManagerTurboModule';
 import { ViewDescriptorWrapper } from './components/ts';
 
 export class RNOHCorePackage extends RNPackage {
-  createUITurboModuleFactory(ctx: UITurboModuleContext): UITurboModuleFactory {
-    return new CoreUITurboModulesFactory(ctx);
-  }
-
-  createWorkerTurboModuleFactory(ctx: WorkerTurboModuleContext): WorkerTurboModuleFactory | null {
-    return new CoreWorkerTurboModulesFactory(ctx)
+  createTurboModulesFactory(ctx: TurboModuleContext): TurboModulesFactory {
+    return new CoreTurboModulesFactory(ctx);
   }
 
   createDescriptorWrapperFactoryByDescriptorType({}): DescriptorWrapperFactoryByDescriptorType {
@@ -54,7 +47,7 @@ export class RNOHCorePackage extends RNPackage {
   }
 }
 
-const UI_TURBO_MODULE_CLASS_BY_NAME: Record<string, typeof UITurboModule> = {
+const TURBO_MODULE_CLASS_BY_NAME: Record<string, typeof TurboModule> = {
   [AccessibilityManagerTurboModule.NAME]: AccessibilityManagerTurboModule,
   [AlertManagerTurboModule.NAME]: AlertManagerTurboModule,
   [AppearanceTurboModule.NAME]: AppearanceTurboModule,
@@ -83,14 +76,14 @@ const UI_TURBO_MODULE_CLASS_BY_NAME: Record<string, typeof UITurboModule> = {
   [ToastAndroidTurboModule.NAME]: ToastAndroidTurboModule,
 };
 
-const EAGER_UI_TURBO_MODULE_CLASS_BY_NAME = {
+const EAGER_TURBO_MODULE_CLASS_BY_NAME = {
   [DeviceInfoTurboModule.NAME]: DeviceInfoTurboModule,
   [StatusBarTurboModule.NAME]: StatusBarTurboModule,
   [SafeAreaTurboModule.NAME]: SafeAreaTurboModule,
 } as const;
 
-class CoreUITurboModulesFactory extends UITurboModuleFactory {
-  private eagerTurboModuleByName: Partial<Record<keyof typeof EAGER_UI_TURBO_MODULE_CLASS_BY_NAME, UITurboModule>> = {};
+class CoreTurboModulesFactory extends TurboModulesFactory {
+  private eagerTurboModuleByName: Partial<Record<keyof typeof EAGER_TURBO_MODULE_CLASS_BY_NAME, TurboModule>> = {};
 
   async prepareEagerTurboModules() {
     const statusBarTurboModule = new StatusBarTurboModule(this.ctx);
@@ -106,44 +99,19 @@ class CoreUITurboModulesFactory extends UITurboModuleFactory {
     };
   }
 
-  createTurboModule(name: string): UITurboModule {
+  createTurboModule(name: string): TurboModule {
     if (this.eagerTurboModuleByName[name]) {
       return this.eagerTurboModuleByName[name];
     }
     if (this.hasTurboModule(name)) {
-      return new UI_TURBO_MODULE_CLASS_BY_NAME[name](this.ctx);
+      return new TURBO_MODULE_CLASS_BY_NAME[name](this.ctx);
     }
     return null;
   }
 
   hasTurboModule(name: string): boolean {
     return (
-      name in UI_TURBO_MODULE_CLASS_BY_NAME || name in this.eagerTurboModuleByName
+      name in TURBO_MODULE_CLASS_BY_NAME || name in this.eagerTurboModuleByName
     );
   }
 }
-
-const WORKER_TURBO_MODULE_CLASS_BY_NAME: Record<string, typeof WorkerTurboModule> = {
-  [ImageLoaderWorkerTurboModule.NAME]: ImageLoaderWorkerTurboModule,
-};
-
-class CoreWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
-  createTurboModule(name: string): WorkerTurboModule {
-    if (this.hasTurboModule(name)) {
-      return new WORKER_TURBO_MODULE_CLASS_BY_NAME[name](this.ctx);
-    }
-    return null;
-  }
-
-  hasTurboModule(name: string): boolean {
-    if (this.ctx.rnInstance.getArchitecture() === "ARK_TS" && name == ImageLoaderWorkerTurboModule.NAME) {
-      // fallback to UI version of ImageLoaderTurboModule in ArkTS architecture because RNImage uses it
-      return false;
-    }
-    return (
-      name in WORKER_TURBO_MODULE_CLASS_BY_NAME
-    );
-  }
-}
-
-
