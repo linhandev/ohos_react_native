@@ -150,6 +150,7 @@ jsi::Value ArkTSTurboModule::callAsync(
       runtime,
       [&, args = std::move(args)](
           jsi::Runtime& runtime2, std::shared_ptr<react::Promise> jsiPromise) {
+        react::LongLivedObjectCollection::get().add(jsiPromise);
         m_ctx.taskExecutor->runTask(
             m_ctx.turboModuleThread,
             [name = this->name_,
@@ -159,7 +160,7 @@ jsi::Value ArkTSTurboModule::callAsync(
              arkTSTurboModuleInstanceRef = m_ctx.arkTSTurboModuleInstanceRef,
              jsInvoker = m_ctx.jsInvoker,
              &runtime2,
-             jsiPromise] {
+             weakJsiPromise = std::weak_ptr<react::Promise>(jsiPromise)] {
               ArkJS arkJS(env);
               try {
                 auto n_promisedResult =
@@ -168,25 +169,40 @@ jsi::Value ArkTSTurboModule::callAsync(
                             methodName,
                             arkJS.convertIntermediaryValuesToNapiValues(args));
                 Promise(env, n_promisedResult)
-                    .then([&runtime2, jsiPromise, env, jsInvoker](auto args) {
-                      jsInvoker->invokeAsync(
-                          [&runtime2, jsiPromise, args = std::move(args)]() {
+                    .then(
+                        [&runtime2, weakJsiPromise, env, jsInvoker](auto args) {
+                          jsInvoker->invokeAsync([&runtime2,
+                                                  weakJsiPromise,
+                                                  args = std::move(args)]() {
+                            auto jsiPromise = weakJsiPromise.lock();
+                            if (!jsiPromise) {
+                              return;
+                            }
                             jsiPromise->resolve(
                                 preparePromiseResolverResult(runtime2, args));
                             jsiPromise->allowRelease();
                           });
-                    })
-                    .catch_([&runtime2, jsiPromise, env, jsInvoker](auto args) {
+                        })
+                    .catch_([&runtime2, weakJsiPromise, env, jsInvoker](
+                                auto args) {
                       jsInvoker->invokeAsync([&runtime2,
-                                              jsiPromise,
+                                              weakJsiPromise,
                                               args = std::move(args)]() {
+                        auto jsiPromise = weakJsiPromise.lock();
+                        if (!jsiPromise) {
+                          return;
+                        }
                         jsiPromise->reject(preparePromiseRejectionResult(args));
                         jsiPromise->allowRelease();
                       });
                     });
               } catch (const std::exception& e) {
                 jsInvoker->invokeAsync(
-                    [message = std::string(e.what()), jsiPromise] {
+                    [message = std::string(e.what()), weakJsiPromise] {
+                      auto jsiPromise = weakJsiPromise.lock();
+                      if (!jsiPromise) {
+                        return;
+                      }
                       jsiPromise->reject(message);
                       jsiPromise->allowRelease();
                     });
