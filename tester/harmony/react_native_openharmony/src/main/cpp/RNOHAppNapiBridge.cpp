@@ -319,7 +319,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
       LOG(FATAL) << "RNInstance with the following id "
                  << std::to_string(rnInstanceId) << " has been already created";
     }
-        LOG(INFO)<<"wxjer=====onCreateRNInstance";
     auto [it, _inserted] =
         RN_INSTANCE_BY_ID.emplace(rnInstanceId, std::move(rnInstance));
     it->second->start();

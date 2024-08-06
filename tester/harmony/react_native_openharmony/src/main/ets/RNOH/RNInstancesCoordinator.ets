@@ -4,7 +4,6 @@ import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
 import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
-import { UITurboModuleContext } from './TurboModule'
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -24,7 +23,7 @@ import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
-  fontSizeScale : number | undefined,
+  fontSizeScale : number | undefined
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl: string,
@@ -135,17 +134,17 @@ export class RNInstancesCoordinator {
   private envId: number;
 
   private constructor(napiBridge: NapiBridge,
-    logger: RNOHLogger,
-    displayMetricsManager: DisplayMetricsManager,
-    isDebugModeEnabled: boolean,
-    envId: number,
-    uiAbilityContext: common.UIAbilityContext,
-    devToolsController: DevToolsController,
-    devMenu: DevMenu,
-    jsPackagerClient: JSPackagerClient,
-    defaultBackPressHandler: () => void,
-    rnohWorkerScriptUrl: string,
-    options?: RNInstancesCoordinatorOptions) {
+  logger: RNOHLogger,
+  displayMetricsManager: DisplayMetricsManager,
+  isDebugModeEnabled: boolean,
+  envId: number,
+  uiAbilityContext: common.UIAbilityContext,
+  devToolsController: DevToolsController,
+  devMenu: DevMenu,
+  jsPackagerClient: JSPackagerClient,
+  defaultBackPressHandler: () => void,
+  rnohWorkerScriptUrl: string,
+  options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
@@ -165,7 +164,7 @@ export class RNInstancesCoordinator {
       this.rawLogger,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => new UITurboModuleContext(RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)),
+      (rnInstance) => RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance),
       httpClientProvider,
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
@@ -199,9 +198,7 @@ export class RNInstancesCoordinator {
   public onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
     this.jsPackagerClient.onDestroy()
-    this.rnInstanceRegistry.forEach(instance => {
-      instance.onDestroy()
-    })
+    this.rnInstanceRegistry.forEach(instance => instance.onDestroy())
     stopTracing()
   }
 
@@ -215,9 +212,7 @@ export class RNInstancesCoordinator {
 
   public onForeground() {
     this.setAppState("FOREGROUND")
-    this.rnInstanceRegistry.forEach(instance => {
-      instance.onForeground()
-    })
+    this.rnInstanceRegistry.forEach(instance => instance.onForeground())
   }
 
   private setAppState(appState: AppState) {
@@ -227,29 +222,21 @@ export class RNInstancesCoordinator {
 
   public onBackground() {
     this.setAppState("BACKGROUND")
-    this.rnInstanceRegistry.forEach(instance => {
-      instance.onBackground()
-    })
+    this.rnInstanceRegistry.forEach(instance => instance.onBackground())
   }
 
   public onWindowStageChange(windowStageEvent: window.WindowStageEventType) {
-    this.rnInstanceRegistry.forEach((rnInstance) => {
-      rnInstance.onWindowStageChange(windowStageEvent)
-    })
+    this.rnInstanceRegistry.forEach((rnInstance) => rnInstance.onWindowStageChange(windowStageEvent))
   }
 
   public onWindowSizeChange(windowSize: window.Size) {
     this.displayMetricsManager.updateWindowSize(windowSize);
-    this.rnInstanceRegistry.forEach((rnInstance) => {
-      rnInstance.onWindowSizeChange(windowSize)
-    })
+    this.rnInstanceRegistry.forEach((rnInstance) => rnInstance.onWindowSizeChange(windowSize))
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
     this.displayMetricsManager?.updateDisplayMetrics()
-    this.rnInstanceRegistry?.forEach((rnInstance) => {
-      rnInstance.onConfigurationUpdate(systemConfiguration)
-    })
+    this.rnInstanceRegistry?.forEach((rnInstance) => rnInstance.onConfigurationUpdate(systemConfiguration))
   }
 
   public onMemoryLevel(memoryLevel: number) {

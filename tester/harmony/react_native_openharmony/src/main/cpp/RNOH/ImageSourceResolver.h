@@ -124,6 +124,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
   virtual void onMessageReceived(const ArkTSMessage& message) override {
     if (message.name == "UPDATE_IMAGE_SOURCE_MAP") {
       assertMainThread();
+      LOG(INFO)<<"wxjer ====UPDATE_IMAGE_SOURCE_MAP";
       auto remoteUri = message.payload["remoteUri"].asString();
       auto fileUri = message.payload["fileUri"].asString();
       auto it = uriListenersMap.find(remoteUri);
