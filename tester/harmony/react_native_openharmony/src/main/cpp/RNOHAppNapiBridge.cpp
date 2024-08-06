@@ -420,7 +420,7 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
     auto moduleString = arkJs.getString(args[1]);
     auto nameString = arkJs.getString(args[2]);
     auto argsDynamic = arkJs.getDynamic(args[3]);
-    rnInstance->callJSFunction(
+    rnInstance->callFunction(
         std::move(moduleString), std::move(nameString), std::move(argsDynamic));
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());

@@ -296,7 +296,7 @@ rnoh::RNInstanceCAPI::getContextContainer() const {
   return *m_contextContainer;
 }
 
-void RNInstanceCAPI::callJSFunction(
+void RNInstanceCAPI::callFunction(
     std::string&& module,
     std::string&& method,
     folly::dynamic&& params) {
@@ -490,6 +490,18 @@ void RNInstanceCAPI::handleArkTSMessage(
         {.messageName = name,
          .messagePayload = payload,
          .rnInstance = this->shared_from_this()});
+  }
+}
+
+void RNInstanceCAPI::addArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
+  m_arkTSMessageHandlers.push_back(handler);
+}
+
+void RNInstanceCAPI::removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
+  for (auto it = m_arkTSMessageHandlers.begin(); it != m_arkTSMessageHandlers.end();it++) {
+    if (*it == handler) {
+      m_arkTSMessageHandlers.erase(it);
+    }
   }
 }
 
