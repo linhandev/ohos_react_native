@@ -14,6 +14,7 @@
 #include "RNOH/Inspector.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/OHReactMarkerListener.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
@@ -27,9 +28,11 @@ auto uiTicker = std::make_shared<UITicker>();
 static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
 static napi_value onInit(napi_env env, napi_callback_info info) {
-  HarmonyReactMarker::setLogPerfMarkerIfNeeded();
+  HarmonyReactMarker::setLogMarkerIfNeeded();
+  HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
   LogSink::initializeLogging();
   auto logVerbosityLevel = 0;
+
 #ifdef LOG_VERBOSITY_LEVEL
   FLAGS_v = LOG_VERBOSITY_LEVEL;
   logVerbosityLevel = LOG_VERBOSITY_LEVEL;
