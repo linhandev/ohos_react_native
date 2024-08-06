@@ -8,17 +8,10 @@
 namespace rnoh {
 
 std::unique_ptr<ArkUINodeRegistry> ArkUINodeRegistry::instance = nullptr;
-std::function<void(std::exception_ptr)> ArkUINodeRegistry::ON_ERROR =
-    [](std::exception_ptr) {};
 
-bool ArkUINodeRegistry::isInitialized() {
-  return instance != nullptr;
-}
-
-void ArkUINodeRegistry::initialize(
-    std::function<void(std::exception_ptr)> onError) {
-  ArkUINodeRegistry::ON_ERROR = onError;
-  instance = std::unique_ptr<ArkUINodeRegistry>(new ArkUINodeRegistry());
+void ArkUINodeRegistry::initialize(ArkTSBridge::Shared arkTSBridge) {
+  instance = std::unique_ptr<ArkUINodeRegistry>(
+      new ArkUINodeRegistry(std::move(arkTSBridge)));
 }
 
 ArkUINodeRegistry& ArkUINodeRegistry::getInstance() {
@@ -71,7 +64,8 @@ void ArkUINodeRegistry::unregisterTouchHandler(ArkUINode* node) {
   m_touchHandlerByNodeHandle.erase(it);
 }
 
-ArkUINodeRegistry::ArkUINodeRegistry() {
+ArkUINodeRegistry::ArkUINodeRegistry(ArkTSBridge::Shared arkTSBridge)
+    : m_arkTSBridge(std::move(arkTSBridge)) {
   NativeNodeApi::getInstance()->registerNodeEventReceiver(
       [](ArkUI_NodeEvent* event) {
         ArkUINodeRegistry::getInstance().receiveEvent(event);
@@ -121,7 +115,7 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
     }
 
   } catch (std::exception& e) {
-    ArkUINodeRegistry::ON_ERROR(std::current_exception());
+    m_arkTSBridge->handleError(std::current_exception());
   }
 #endif
 }

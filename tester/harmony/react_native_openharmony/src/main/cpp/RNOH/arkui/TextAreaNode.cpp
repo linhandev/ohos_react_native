@@ -122,8 +122,8 @@ void TextAreaNode::setInputType(ArkUI_TextAreaType  keyboardType) {
 }
 
 void TextAreaNode::setFont(
-    facebook::react::TextAttributes const& textAttributes, float fontSizeScale) {
-  TextInputNodeBase::setCommonFontAttributes(textAttributes, fontSizeScale);
+    facebook::react::TextAttributes const& textAttributes) {
+  TextInputNodeBase::setCommonFontAttributes(textAttributes);
 
   std::string fontFamily = "HarmonyOS Sans";
   if (!textAttributes.fontFamily.empty()) {
@@ -150,7 +150,9 @@ void TextAreaNode::setFont(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   if (!allowFontScaling) {
-        fontSize /= fontSizeScale;
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
   }
   std::array<ArkUI_NumberValue, 3> value = {
       {{.f32 = fontSize},

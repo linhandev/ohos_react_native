@@ -67,11 +67,11 @@ void TextInputNodeBase::setTextInputLineHeight(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   float lineHeight = static_cast<float>(textAttributes.lineHeight);
-//   if (!allowFontScaling) {
-//       float scale = ArkTSBridge::getInstance()
-//                             ->getFontSizeScale();
-//       lineHeight /= scale;
-//   }
+  if (!allowFontScaling) {
+      float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+      lineHeight /= scale;
+  }
    ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
    ArkUI_AttributeItem item = {.value = value, .size = 1};
    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -79,7 +79,7 @@ void TextInputNodeBase::setTextInputLineHeight(
  }
 
 void TextInputNodeBase::setCommonFontAttributes(
-    facebook::react::TextAttributes const& textAttributes ,float fontSizeScale) {
+    facebook::react::TextAttributes const& textAttributes) {
   if (textAttributes.fontFamily.empty()) {
     maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_FONT_FAMILY));
@@ -100,7 +100,9 @@ void TextInputNodeBase::setCommonFontAttributes(
 
     float fontSize = static_cast<float>(textAttributes.fontSize);
     if (!allowFontScaling) {
-        fontSize /= fontSizeScale;
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
     }
     std::array<ArkUI_NumberValue, 1> value = {
         {{.f32 = fontSize}}};

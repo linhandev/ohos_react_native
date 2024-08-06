@@ -124,7 +124,7 @@ static napi_value getPages(napi_env env, napi_callback_info info) {
 
 napi_value getInspectorWrapper(napi_env env, napi_callback_info info) {
   if (mainThreadTaskRunner == nullptr) {
-    mainThreadTaskRunner = std::make_unique<NapiTaskRunner>("RNOH_MAIN_2", env);
+    mainThreadTaskRunner = std::make_unique<NapiTaskRunner>(env);
   }
 
   ArkJS arkJs(env);
