@@ -74,7 +74,7 @@ export class RNInstancesCoordinator {
   private static isInitialized = false
 
   static create(dependencies: RNInstancesCoordinatorDependencies,
-    options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
+                options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
     if (RNInstancesCoordinator.isInitialized) {
       dependencies.logger.fatal(new RNOHError({
         whatHappened: "RNInstancesCoordinator was already created",
@@ -101,8 +101,7 @@ export class RNInstancesCoordinator {
       devToolsController,
       devMenu
     )
-    const jsPackagerClientConfig =
-      options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
+    const jsPackagerClientConfig = options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
     }
@@ -137,17 +136,17 @@ export class RNInstancesCoordinator {
   private envId: number;
 
   private constructor(napiBridge: NapiBridge,
-  logger: RNOHLogger,
-  displayMetricsManager: DisplayMetricsManager,
-  isDebugModeEnabled: boolean,
-  envId: number,
-  uiAbilityContext: common.UIAbilityContext,
-  devToolsController: DevToolsController,
-  devMenu: DevMenu,
-  jsPackagerClient: JSPackagerClient,
-  defaultBackPressHandler: () => void,
-  rnohWorkerScriptUrl: string,
-  options?: RNInstancesCoordinatorOptions) {
+                      logger: RNOHLogger,
+                      displayMetricsManager: DisplayMetricsManager,
+                      isDebugModeEnabled: boolean,
+                      envId: number,
+                      uiAbilityContext: common.UIAbilityContext,
+                      devToolsController: DevToolsController,
+                      devMenu: DevMenu,
+                      jsPackagerClient: JSPackagerClient,
+                      defaultBackPressHandler: () => void,
+                      rnohWorkerScriptUrl: string,
+                      options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
@@ -162,7 +161,6 @@ export class RNInstancesCoordinator {
     this.defaultBackPressHandler = defaultBackPressHandler;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     this.rnInstanceRegistry = new RNInstanceRegistry(
-      uiAbilityContext,
       this.envId,
       this.rawLogger,
       napiBridge,
@@ -172,15 +170,7 @@ export class RNInstancesCoordinator {
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
-      rnohWorkerScriptUrl !== "" ? WorkerThread.create({
-        scriptUrl: rnohWorkerScriptUrl,
-        name: "RNOHWorker",
-        logger: logger,
-        onWorkerError: (rnohError) => {
-          this.devToolsController.setLastError(rnohError)
-          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-        }
-      }) : null
+      rnohWorkerScriptUrl !== "" ? WorkerThread.create({ scriptUrl: rnohWorkerScriptUrl, name: "RNOHWorker"}) : null
     )
     this.rnohCoreContext = RNOHCoreContext.create(
       this.rnInstanceRegistry,
