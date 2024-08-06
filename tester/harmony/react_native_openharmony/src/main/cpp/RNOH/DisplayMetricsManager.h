@@ -22,7 +22,6 @@ class DisplayMetricsManager {
   virtual DisplayMetrics getDisplayMetrics() = 0;
   virtual uint32_t getFoldStatus() = 0;
   virtual bool getIsSplitScreenMode() = 0;
-  virtual float getFontSizeScale() = 0;
-  virtual std::string getCacheDir() = 0;
+  virtual float getFontSizeScale() = 0;  
 };
 } // namespace rnoh

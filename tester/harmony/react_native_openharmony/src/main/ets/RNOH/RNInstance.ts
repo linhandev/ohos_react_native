@@ -637,7 +637,6 @@ export class RNInstanceImpl implements RNInstance {
         }
       })
     }
-    this.napiBridge.setCacheDir(this.id, turboModuleContext.uiAbilityContext.cacheDir);
     stopTracing()
     return result
   }

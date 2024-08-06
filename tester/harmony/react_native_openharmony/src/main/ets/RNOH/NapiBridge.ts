@@ -103,10 +103,6 @@ export class NapiBridge {
     return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
   }
 
-  setCacheDir(instanceId: number, cacheDir: string): void {
-    this.libRNOHApp?.setCacheDir(instanceId, cacheDir);
-  }
-
   onCreateRNInstance(
     envId: number,
     instanceId: number,
