@@ -1,5 +1,4 @@
 #include "Inspector.h"
-
 #include <glog/logging.h>
 #include <memory>
 #include <vector>
@@ -12,10 +11,16 @@ static std::unique_ptr<NapiTaskRunner> mainThreadTaskRunner = nullptr;
 
 // Constructor must always be called on the main thread
 RemoteConnection::RemoteConnection(napi_env env, napi_value connection)
-    : m_env(env), m_connectionRef(ArkJS(env).createNapiRef(connection)) {}
+    : m_env(env) {
+  napi_create_reference(env, connection, 1, &m_connectionRef);
+}
 
 RemoteConnection::~RemoteConnection() {
-  mainThreadTaskRunner->runAsyncTask([ref = std::move(m_connectionRef)] {});
+  mainThreadTaskRunner->runAsyncTask(
+      [env = this->m_env, ref = this->m_connectionRef] {
+        ArkJS arkJS(env);
+        arkJS.deleteReference(ref);
+      });
 }
 
 void RemoteConnection::onMessage(std::string message) {

@@ -91,7 +91,7 @@ class ArkTSTurboModule : public TurboModule {
  public:
   struct Context : public TurboModule::Context {
     napi_env env;
-    NapiRef arkTSTurboModuleInstanceRef;
+    napi_ref arkTSTurboModuleInstanceRef;
     TaskThread turboModuleThread;
     TaskExecutor::Shared taskExecutor;
     std::shared_ptr<EventDispatcher> eventDispatcher;
@@ -100,7 +100,6 @@ class ArkTSTurboModule : public TurboModule {
   };
 
   ArkTSTurboModule(Context ctx, std::string name);
-  ~ArkTSTurboModule() noexcept override;
 
   facebook::jsi::Value call(
       facebook::jsi::Runtime& runtime,
