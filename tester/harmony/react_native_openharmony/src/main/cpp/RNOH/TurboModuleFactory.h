@@ -20,11 +20,11 @@ class TurboModuleFactoryDelegate {
       const std::string& name) const = 0;
 };
 
-class TurboModuleFactory final {
+class TurboModuleFactory {
  public:
   struct ArkTSTurboModuleEnvironment {
     napi_env napiEnv;
-    NapiRef arkTSTurboModuleProviderRef;
+    napi_ref arkTSTurboModuleProviderRef;
   };
 
   using Context = ArkTSTurboModule::Context;
@@ -38,8 +38,6 @@ class TurboModuleFactory final {
       TaskExecutor::Shared,
       std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
       std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
-
-  ~TurboModuleFactory() noexcept;
 
   virtual SharedTurboModule create(
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -57,15 +55,14 @@ class TurboModuleFactory final {
       const std::string& turboModuleName,
       TaskThread thread,
       napi_env env,
-      NapiRef const& turboModuleProviderRef) const;
+      napi_ref turboModuleProviderRef) const;
 
   SharedTurboModule delegateCreatingTurboModule(
       Context ctx,
       const std::string& name) const;
 
-  NapiRef maybeGetArkTsTurboModuleInstanceRef(
+  napi_ref maybeGetArkTsTurboModuleInstanceRef(
       const std::string& name,
-      TaskThread thread,
       ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const;
 
   ArkTSTurboModuleEnvironment getArkTSTurboModuleEnvironmentByTaskThread(

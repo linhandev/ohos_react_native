@@ -40,7 +40,6 @@ class ShowAlertRunnable implements UITaskRunnable {
 
 
 export class SampleWorkerTurboModule extends EtsWorkerTurboModule implements TM.SampleWorkerTurboModule.Spec {
-
   runComputeIntensiveTask(): void {
     const endTime = Date.now() + 1000;
     let count = 0;
@@ -84,19 +83,6 @@ export class SampleWorkerTurboModule extends EtsWorkerTurboModule implements TM.
 
   getArchitecture(): string {
     return this.ctx.rnInstance.getArchitecture()
-  }
-
-  private resolvePromisedCallFromOtherTM = () => {}
-  async testCommunicatingWithOtherWorkerTurboModules(): Promise<boolean> {
-    await new Promise<void>((resolve) => {
-      this.resolvePromisedCallFromOtherTM = resolve
-      this.ctx.rnInstance.getWorkerTurboModule<SampleWorkerTurboModule>(TM.SampleWorkerTurboModule.NAME).onCallFromOtherTM()
-    })
-    return true;
-  }
-
-  onCallFromOtherTM() {
-    this.resolvePromisedCallFromOtherTM()
   }
 
   __onDestroy__() {

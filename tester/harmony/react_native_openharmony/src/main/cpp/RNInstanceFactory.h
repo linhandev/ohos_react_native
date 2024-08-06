@@ -57,13 +57,13 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_env workerEnv,
     std::unique_ptr<NapiTaskRunner> workerTaskRunner,
     ArkTSBridge::Shared arkTSBridge,
-    NapiRef mainArkTSTurboModuleProviderRef,
-    NapiRef workerArkTSTurboModuleProviderRef,
-    NapiRef frameNodeFactoryRef,
+    napi_ref mainArkTSTurboModuleProviderRef,
+    napi_ref workerArkTSTurboModuleProviderRef,
+    napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,
     napi_ref measureTextFnRef,
-    NapiRef napiEventDispatcherRef,
+    napi_ref napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
@@ -167,8 +167,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   auto turboModuleFactory = TurboModuleFactory(
      {
           // clang-format off
-        {TaskThread::MAIN, {.napiEnv = env, .arkTSTurboModuleProviderRef = std::move(mainArkTSTurboModuleProviderRef)}},
-        {TaskThread::WORKER, {.napiEnv = workerEnv, .arkTSTurboModuleProviderRef = std::move(workerArkTSTurboModuleProviderRef)}},
+        {TaskThread::MAIN, {.napiEnv = env, .arkTSTurboModuleProviderRef = mainArkTSTurboModuleProviderRef}},
+        {TaskThread::WORKER, {.napiEnv = workerEnv, .arkTSTurboModuleProviderRef = workerArkTSTurboModuleProviderRef}},
       }, // clang-format on
       featureFlagRegistry,
       std::move(componentJSIBinderByName),

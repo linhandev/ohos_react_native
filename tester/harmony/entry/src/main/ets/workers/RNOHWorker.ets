@@ -8,9 +8,4 @@
 import { setupRNOHWorker } from "@rnoh/react-native-openharmony/src/main/ets/setupRNOHWorker"
 import { createRNPackages } from "../RNPackagesFactory"
 
-setupRNOHWorker({
-  workerRNInstanceConfigByRNInstanceName: {
-    "app_name": { thirdPartyPackagesFactory: createRNPackages },
-  }
-})
-
+setupRNOHWorker({ defaultThirdPartyPackagesFactory: createRNPackages })

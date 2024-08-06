@@ -12,9 +12,10 @@ maybeThrowFromStatus(napi_env env, napi_status status, const char* message) {
     std::string error_code_msg_str = ". Error code: ";
     std::string status_str = error_info->error_message;
     std::string full_msg = msg_str + error_code_msg_str + status_str;
+    auto c_str = full_msg.c_str();
     napi_throw_error(env, nullptr, message);
     // stops a code execution after throwing napi_error
-    throw std::runtime_error(full_msg);
+    throw std::runtime_error(message);
   }
 }
 
@@ -223,17 +224,6 @@ void ArkJS::deleteReference(napi_ref reference) {
   this->maybeThrowFromStatus(status, "Couldn't delete a reference");
 }
 
-napi_value ArkJS::getReferenceValue(NapiRef const& ref) {
-  napi_value result;
-  auto status = napi_get_reference_value(m_env, ref.m_ref.get(), &result);
-  this->maybeThrowFromStatus(status, "Couldn't get a reference value");
-  return result;
-}
-
-NapiRef ArkJS::createNapiRef(napi_value value) {
-  return {m_env, createReference(value)};
-}
-
 std::function<napi_value(napi_env, std::vector<napi_value>)>*
 createNapiCallback(
     std::function<void(std::vector<folly::dynamic>)>&& callback) {
@@ -315,11 +305,7 @@ RNOHNapiObject ArkJS::getObject(napi_value object) {
 }
 
 RNOHNapiObject ArkJS::getObject(napi_ref objectRef) {
-  return getObject(getReferenceValue(objectRef));
-}
-
-RNOHNapiObject ArkJS::getObject(NapiRef const& objectRef) {
-  return getObject(getReferenceValue(objectRef));
+  return RNOHNapiObject(*this, this->getReferenceValue(objectRef));
 }
 
 napi_value ArkJS::getObjectProperty(napi_value object, std::string const& key) {
