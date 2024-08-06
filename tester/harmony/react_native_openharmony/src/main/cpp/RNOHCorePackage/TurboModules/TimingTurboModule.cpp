@@ -172,13 +172,10 @@ void TimingTurboModule::LifecycleObserver::onMessageReceived(
 
 void TimingTurboModule::triggerTimer(double id) {
   assertJSThread();
-  auto instance = m_ctx.instance.lock();
-  if (instance) {
-    instance->callJSFunction(
-        "JSTimers",
-        "callTimers",
-        folly::dynamic::array(folly::dynamic::array(id)));
-  }
+  m_ctx.instance.lock()->callJSFunction(
+      "JSTimers",
+      "callTimers",
+      folly::dynamic::array(folly::dynamic::array(id)));
   auto it = m_activeTimerById.find(id);
   if (it == m_activeTimerById.end()) {
     return;
