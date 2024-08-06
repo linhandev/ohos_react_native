@@ -16,7 +16,8 @@ using IntermediaryArg = ArkJS::IntermediaryArg;
 using IntermediaryCallback = ArkJS::IntermediaryCallback;
 
 IntermediaryCallback createIntermediaryCallback(
-    std::shared_ptr<react::CallbackWrapper>);
+    std::weak_ptr<react::CallbackWrapper> weakCallback,
+    std::shared_ptr<react::CallInvoker> const& jsInvoker);
 const std::vector<facebook::jsi::Value> convertDynamicsToJSIValues(
     facebook::jsi::Runtime& rt,
     const std::vector<folly::dynamic>& dynamics);
@@ -225,8 +226,8 @@ ArkTSTurboModule::convertJSIValuesToIntermediaryValues(
       if (obj.isFunction(runtime)) {
         args[argIdx] = createIntermediaryCallback(
             react::CallbackWrapper::createWeak(
-                std::move(obj.getFunction(runtime)), runtime, jsInvoker)
-                .lock());
+                std::move(obj.getFunction(runtime)), runtime, jsInvoker),
+            jsInvoker);
         continue;
       }
     }
@@ -236,15 +237,29 @@ ArkTSTurboModule::convertJSIValuesToIntermediaryValues(
 }
 
 IntermediaryCallback createIntermediaryCallback(
-    std::shared_ptr<react::CallbackWrapper> cbCtx) {
-  return std::function([cbCtx](std::vector<folly::dynamic> cbArgs) -> void {
-    cbCtx->jsInvoker().invokeAsync([cbCtx, callbackArgs = std::move(cbArgs)]() {
-      const auto jsArgs =
-          convertDynamicsToJSIValues(cbCtx->runtime(), callbackArgs);
-      cbCtx->callback().call(cbCtx->runtime(), jsArgs.data(), jsArgs.size());
-      cbCtx->allowRelease();
-    });
-  });
+    std::weak_ptr<react::CallbackWrapper> weakCallback,
+    std::shared_ptr<react::CallInvoker> const& jsInvoker) {
+  auto weakInvoker = std::weak_ptr(jsInvoker);
+  return std::function(
+      [weakCallback, weakInvoker](std::vector<folly::dynamic> cbArgs) -> void {
+        auto jsInvoker = weakInvoker.lock();
+        if (!jsInvoker) {
+          return;
+        }
+        jsInvoker->invokeAsync(
+            [weakCallback, callbackArgs = std::move(cbArgs)]() {
+              auto callbackWrapper = weakCallback.lock();
+              if (!callbackWrapper) {
+                return;
+              }
+
+              const auto jsArgs = convertDynamicsToJSIValues(
+                  callbackWrapper->runtime(), callbackArgs);
+              callbackWrapper->callback().call(
+                  callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
+              callbackWrapper->allowRelease();
+            });
+      });
 }
 
 const std::vector<jsi::Value> convertDynamicsToJSIValues(
