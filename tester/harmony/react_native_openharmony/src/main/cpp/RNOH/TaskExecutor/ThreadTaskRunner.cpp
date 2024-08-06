@@ -1,5 +1,4 @@
 #include "ThreadTaskRunner.h"
-#include "RNOH/Assert.h"
 
 namespace rnoh {
 ThreadTaskRunner::ThreadTaskRunner(
@@ -14,11 +13,7 @@ ThreadTaskRunner::ThreadTaskRunner(
       m_thread([this] { m_eventLoop->run(); }) {}
 
 ThreadTaskRunner::~ThreadTaskRunner() {
-  RNOH_ASSERT(!isOnCurrentThread());
-  DLOG(INFO) << "ThreadTaskRunner::~ThreadTaskRunner()::start";
-  cleanup();
-  m_thread.join();
-  DLOG(INFO) << "ThreadTaskRunner::~ThreadTaskRunner()::stop";
+  m_thread.detach();
 }
 
 bool ThreadTaskRunner::isOnCurrentThread() const {

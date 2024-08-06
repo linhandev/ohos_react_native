@@ -5,7 +5,7 @@
 #undef LOG_TAG
 #define LOG_DOMAIN 0xBEEF
 #define LOG_TAG "#RNOH_JS"
-#define LOG_PATTERN "__█__ %{public}s"
+#define LOG_PATTERN "__█ %{public}s"
 
 void rnoh::nativeLogger(const std::string& message, unsigned int logLevel) {
   switch (logLevel) {

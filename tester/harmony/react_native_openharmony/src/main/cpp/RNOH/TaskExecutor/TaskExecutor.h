@@ -45,7 +45,7 @@ class TaskExecutor {
 
   TaskExecutor(
       napi_env mainEnv,
-      std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
+      std::shared_ptr<AbstractTaskRunner> workerTaskRunner,
       bool shouldEnableBackground = false);
   ~TaskExecutor() noexcept;
 
@@ -65,8 +65,6 @@ class TaskExecutor {
   void setExceptionHandler(ExceptionHandler handler);
 
  private:
-  AbstractTaskRunner::Shared getTaskRunner(TaskThread taskThread) const;
-
   void setTaskThreadPriority(QoS_Level);
   std::array<std::shared_ptr<AbstractTaskRunner>, TaskThread::WORKER + 1>
       m_taskRunners;
