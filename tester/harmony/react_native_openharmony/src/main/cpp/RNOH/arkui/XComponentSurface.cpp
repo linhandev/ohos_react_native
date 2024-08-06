@@ -4,6 +4,7 @@
 #include <react/renderer/debug/SystraceSection.h>
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TouchEventDispatcher.h"
 #include "UIInputEventHandler.h"
 
@@ -21,9 +22,18 @@ void maybeAttachRootNode(
         << "Attaching native root node to nativeXComponent for surface with id: "
         << rootView.getTag();
 #ifdef C_API_ARCH
-    OH_NativeXComponent_AttachNativeRootNode(
+    auto result = OH_NativeXComponent_AttachNativeRootNode(
         nativeXComponent,
         rootView.getLocalRootArkUINode().getArkUINodeHandle());
+    if (result == ARKUI_ERROR_CODE_NO_ERROR) {
+      HarmonyReactMarker::logMarker(
+          HarmonyReactMarker::HarmonyReactMarkerId::CONTENT_APPEARED,
+          rootView.getTag());
+    } else {
+      LOG(ERROR) << "Failed to attach native root node to nativeXComponent for "
+                    "surface with id: "
+                 << rootView.getTag();
+    }
 #endif
   }
 }

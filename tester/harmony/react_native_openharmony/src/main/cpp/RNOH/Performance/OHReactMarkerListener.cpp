@@ -39,6 +39,9 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::REGISTER_JS_SEGMENT_STOP:
       logMarkerFinish("REGISTER_JS_SEGMENT", tag);
       break;
+    case HarmonyReactMarkerId::CONTENT_APPEARED:
+      logMarker("CONTENT_APPEARED", tag);
+      break;
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
     case HarmonyReactMarkerId::REACT_INSTANCE_INIT_START:
