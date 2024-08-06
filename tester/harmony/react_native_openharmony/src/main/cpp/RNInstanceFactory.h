@@ -1,5 +1,4 @@
 #pragma once
-#include <rawfile/raw_file_manager.h>
 #include <react/renderer/components/image/ImageComponentDescriptor.h>
 #include <react/renderer/components/text/ParagraphComponentDescriptor.h>
 #include <react/renderer/mounting/ShadowViewMutation.h>
@@ -14,7 +13,6 @@
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
-#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/MountingManagerArkTS.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
@@ -251,9 +249,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
     componentInstanceDependencies->rnInstance = rnInstance;
-    auto imageSourceResolver =
-        std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
-    componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
     return rnInstance;
 #else
     LOG(FATAL)

@@ -8,15 +8,12 @@ import {
   RNPackageContext,
   WorkerTurboModuleFactory,
   RNOHError,
-  WorkerRNInstance,
-  WorkerTurboModule,
-  WorkerTurboModuleContext
+  WorkerRNInstance
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/ts"
-import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
+import { EtsWorkerTurboModuleContext, } from "./RNOH/EtsWorkerTurboModule"
 import { UITaskRunner, UITask } from "./RNOH/UITaskRunner"
 import common from '@ohos.app.ability.common'
-
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -30,33 +27,12 @@ interface CreateRNInstanceWorkerEnvPayload {
   rnInstanceName: string,
   rnInstanceId: number
   uiAbilityContext: common.UIAbilityContext
-  architecture: "C_API" | "ARK_TS"
-}
-
-class CreateRNInstanceWorkerEnvAckPayload {
-  rnInstanceId: number
-
-  constructor(rnInstanceId: number) {
-    this.rnInstanceId = rnInstanceId
-  }
 }
 
 interface TurboModuleUITaskResultPayload {
   taskId: string
   rnInstanceId: number
   result: Object
-}
-
-interface DestroyWorkerRNInstancePayload {
-  rnInstanceId: number
-}
-
-class DestroyWorkerRNInstanceAckPayload {
-  rnInstanceId: number
-
-  constructor(rnInstanceId: number) {
-    this.rnInstanceId = rnInstanceId
-  }
 }
 
 @Sendable
@@ -92,11 +68,6 @@ class SendableRNOHError {
   }
 }
 
-interface WorkerTurboModuleDeps {
-  uiTaskRunner: UITaskRunner
-  rnInstance: WorkerRNInstance
-  turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>
-}
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -104,42 +75,39 @@ interface WorkerTurboModuleDeps {
  */
 export async function setupRNOHWorker(config: RNOHWorkerConfig) {
   const workerPort = worker.workerPort
-  const workerLogger = new StandardRNOHLogger().setThreadPrefix("___█_")
-  const localLogger = workerLogger.clone(`setupRNOHWorker`)
-  localLogger.info(`initializing`)
-  const napiBridge = new NapiBridge(localLogger)
-  const turboModuleDepsByRNInstanceId = new Map<number, WorkerTurboModuleDeps>()
+  const logger = new StandardRNOHLogger().setThreadPrefix("___█_").clone(`setupRNOHWorker`)
+  logger.info(`initializing`)
+  const napiBridge = new NapiBridge(logger)
+  const uiTaskRunnerByRNInstanceId = new Map<number, UITaskRunner>()
+
 
   const postMessage = (type: string, payload: Object | undefined = undefined) => {
-    localLogger.debug(`postMessage: ${type}`)
+    logger.debug(`postMessage: ${type}`)
     workerPort.postMessage({ type, payload })
   }
 
-  workerPort.onmessage = async (e: MessageEvents) => {
+  workerPort.onmessage = (e: MessageEvents) => {
     try {
       const messageType = e.data?.type as string
       const messagePayload = e.data?.payload as Object
       if (messageType && typeof messageType === "string") {
-        localLogger.debug(`receivedMessage: ${messageType}`)
+        logger.debug(`receivedMessage: ${messageType}`)
         switch (messageType) {
           case "RNOH_WORKER_THREAD_READY":
             postMessage("RNOH_WORKER_THREAD_READY_ACK")
             break;
-          case "RNOH_CREATE_WORKER_RN_INSTANCE":
+          case "RNOH_CREATE_RN_INSTANCE_WORKER_ENV":
             const typedMessagePayload = messagePayload as CreateRNInstanceWorkerEnvPayload
             const rnInstanceName = typedMessagePayload.rnInstanceName;
             const rnInstanceId = typedMessagePayload.rnInstanceId;
             const uiAbilityContext = typedMessagePayload.uiAbilityContext
-            if (turboModuleDepsByRNInstanceId.has(rnInstanceId)) {
-              throw new RNOHError({
-                whatHappened: `Tried to re-create UITaskRunner (rnInstanceId=${rnInstanceId})`,
-                howCanItBeFixed: []
-              })
+            if (uiTaskRunnerByRNInstanceId.has(rnInstanceId)) {
+              throw new RNOHError({ whatHappened: `Tried to re-create UITaskRunner (rnInstanceId=${rnInstanceId})`, howCanItBeFixed: []})
             }
             const uiTaskRunner = new UITaskRunner(rnInstanceId.toString(), (uiTask) => {
-              workerPort.postMessageWithSharedSendable(new SendableMessage("RNOH_TURBO_MODULE_UI_TASK",
-                new UITaskMessagePayload(uiTask, rnInstanceId)));
+              workerPort.postMessageWithSharedSendable(new SendableMessage("RNOH_TURBO_MODULE_UI_TASK", new UITaskMessagePayload(uiTask, rnInstanceId)));
             })
+            uiTaskRunnerByRNInstanceId.set(rnInstanceId, uiTaskRunner)
             let createPackages: (ctx: RNPackageContext) => RNPackage[] = (ctx: RNPackageContext) => []
             if (rnInstanceName === undefined || config.thirdPartyPackagesFactoryByRNInstanceName === undefined ||
               !(Object.keys(config.thirdPartyPackagesFactoryByRNInstanceName)
@@ -149,47 +117,29 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
               createPackages = config.thirdPartyPackagesFactoryByRNInstanceName[rnInstanceName]
             }
             const packages = createPackages({})
-            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge, typedMessagePayload.architecture)
-            const etsWorkerTurboModuleContext =
-              new EtsWorkerTurboModuleContext({
-                workerTurboModuleContextDependencies: { logger: workerLogger, uiAbilityContext, rnInstance },
-                uiTaskRunner: uiTaskRunner
-              })
-            const turboModuleProvider = await createTurboModuleProvider(etsWorkerTurboModuleContext, packages, localLogger)
-            turboModuleDepsByRNInstanceId.set(rnInstanceId, { uiTaskRunner, rnInstance, turboModuleProvider })
-            napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
-            localLogger.info("registered WorkerTurboModuleProvider")
-            postMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK", new CreateRNInstanceWorkerEnvAckPayload(rnInstanceId))
+            const rnInstance = new WorkerRNInstance(rnInstanceId, napiBridge)
+            const etsWorkerTurboModuleContext = new EtsWorkerTurboModuleContext({ logger, uiAbilityContext, rnInstance }, uiTaskRunner)
+            createTurboModuleProvider(etsWorkerTurboModuleContext, packages, logger).then((turboModuleProvider) => {
+              napiBridge.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
+              logger.info("registered WorkerTurboModuleProvider")
+              postMessage("RNOH_CREATE_RN_INSTANCE_WORKER_ENV_ACK")
+            })
             break;
           case "RNOH_TURBO_MODULE_UI_TASK_RESULT":
             const taskResultMessagePayload = messagePayload as TurboModuleUITaskResultPayload
-            if (!turboModuleDepsByRNInstanceId.has(taskResultMessagePayload.rnInstanceId)) {
+            if (!uiTaskRunnerByRNInstanceId.has(taskResultMessagePayload.rnInstanceId)) {
               throw new RNOHError({
                 whatHappened: "Received UI Task result but UITaskRunner isn't created",
                 howCanItBeFixed: []
               })
             }
-            turboModuleDepsByRNInstanceId.get(taskResultMessagePayload.rnInstanceId)!.uiTaskRunner.resolve(taskResultMessagePayload.taskId,
-              taskResultMessagePayload.result as lang.ISendable)
-            break;
-          case "RNOH_DESTROY_WORKER_RN_INSTANCE":
-            const destroyWorkerRNInstancePayload = messagePayload as DestroyWorkerRNInstancePayload
-            const deps = turboModuleDepsByRNInstanceId.get(destroyWorkerRNInstancePayload.rnInstanceId)
-            if (!deps) {
-              throw new RNOHError({
-                whatHappened: "Tried to destroy not existing WorkerRNInstance",
-                howCanItBeFixed: []
-              })
-            }
-            deps.turboModuleProvider.onDestroy()
-            postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
-              new DestroyWorkerRNInstanceAckPayload(destroyWorkerRNInstancePayload.rnInstanceId))
+            uiTaskRunnerByRNInstanceId.get(taskResultMessagePayload.rnInstanceId)!.resolve(taskResultMessagePayload.taskId, taskResultMessagePayload.result as lang.ISendable)
             break;
         }
       }
     } catch (err) {
       if (err instanceof RNOHError) {
-        localLogger.error(err)
+        logger.error(err)
         workerPort.postMessageWithSharedSendable(new SendableMessage("RNOH_ERROR", new SendableRNOHError(err)))
         return;
       } else {
@@ -199,8 +149,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
   }
 }
 
-async function createTurboModuleProvider(etsWorkerTurboModuleContext: EtsWorkerTurboModuleContext,
-  thirdPartyPackages: RNPackage[],
+async function createTurboModuleProvider(etsWorkerTurboModuleContext: EtsWorkerTurboModuleContext, thirdPartyPackages: RNPackage[],
   logger: RNOHLogger) {
   const packages = [...thirdPartyPackages]
   packages.unshift(new RNOHCorePackage({}));

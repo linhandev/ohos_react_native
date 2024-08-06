@@ -1,6 +1,9 @@
+/**
+ * Only used in C-API architecture.
+ */
 import { BuilderNode, FrameNode, UIContext } from '@kit.ArkUI';
 import { Tag, Descriptor } from "./DescriptorBase"
-import { RNComponentContext, ComponentBuilderContext } from "./EtsRNOHContext"
+import { RNComponentContext, ComponentBuilderContext, ComponentBuilderContextImpl } from "./RNComponentContext"
 import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
 
@@ -29,11 +32,9 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     const stopTracing = logger.startTracing()
     if (this.componentContext === undefined) {
       this.componentContext = this.getRNComponentContext();
-    }
-    if (this.componentContext === undefined) {
       logger.fatal("ComponentContext is undefined")
     }
-    const builderCtx = new ComponentBuilderContext(
+    const builderCtx = new ComponentBuilderContextImpl(
       this.componentContext!,
       this.componentContext!,
       tag,

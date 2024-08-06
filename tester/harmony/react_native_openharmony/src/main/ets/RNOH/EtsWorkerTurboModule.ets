@@ -1,11 +1,46 @@
 /**
  * This file location relative to the package root shouldn't change to avoid introducing breaking changes.
  */
-import { WorkerTurboModule } from "./TurboModule"
-import { FatalRNOHError } from "./RNOHError"
-import { WorkerTurboModuleContext } from "./RNOHContext"
-import { EtsWorkerTurboModuleContext } from "./EtsRNOHContext"
 
+import { lang } from '@kit.ArkTS';
+import { RNOHLogger } from './RNOHLogger'
+import { WorkerTurboModuleContext, WorkerTurboModule } from "./TurboModule"
+import { SupportedUITaskParams, UITaskRunnable, UITaskRunner } from "./UITaskRunner"
+import type { WorkerRNInstance } from "./WorkerRNInstance"
+
+/**
+ * @api
+ */
+export class EtsWorkerTurboModuleContext implements WorkerTurboModuleContext {
+  private workerTurboModuleContext: WorkerTurboModuleContext
+  private uiTaskRunner: UITaskRunner
+
+  /**
+   * @internal
+   */
+  constructor(workerTurboModuleContext: WorkerTurboModuleContext,
+    onRunOnUIThread: UITaskRunner) {
+    this.workerTurboModuleContext = workerTurboModuleContext
+    this.uiTaskRunner = onRunOnUIThread
+  }
+
+  get logger(): RNOHLogger {
+    return this.workerTurboModuleContext.logger
+  }
+
+  get uiAbilityContext() {
+    return this.workerTurboModuleContext.uiAbilityContext
+  }
+
+  get rnInstance(): WorkerRNInstance {
+    return this.workerTurboModuleContext.rnInstance
+  }
+
+  async runOnUIThread<TParams extends SupportedUITaskParams, TResult extends lang.ISendable | void, TRunnable extends UITaskRunnable<TParams, TResult>>(runnable: TRunnable,
+    params: TParams): Promise<TResult> {
+    return this.uiTaskRunner.run(runnable, params) as Promise<TResult>
+  }
+}
 
 /**
  * @api
@@ -16,12 +51,6 @@ export class EtsWorkerTurboModule extends WorkerTurboModule {
 
   constructor(ctx: WorkerTurboModuleContext) {
     super(ctx)
-    if (!(ctx instanceof EtsWorkerTurboModuleContext)) {
-      throw new FatalRNOHError({
-        whatHappened: "Received context not compatible with EtsWorkerTurboModule",
-        howCanItBeFixed: []
-      });
-    }
     this.ctx = ctx as EtsWorkerTurboModuleContext;
   }
 }

@@ -12,7 +12,6 @@
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/DisplayMetricsManager.h"
-#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
@@ -47,7 +46,6 @@ class ComponentInstance
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
     DisplayMetricsManager::Shared displayMetricsManager;
-    ImageSourceResolver::Shared imageSourceResolver;
   };
 
   struct Context {

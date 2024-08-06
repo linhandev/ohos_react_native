@@ -6,7 +6,7 @@ import { RNInstance } from "./RNInstance"
  * @thread: WORKER
  */
 export class WorkerRNInstance implements Partial<RNInstance> {
-  constructor(private id: number, private napiBridge: NapiBridge, private architecture: "ARK_TS" | "C_API") {
+  constructor(private id: number, private napiBridge: NapiBridge) {
   }
 
   emitDeviceEvent(eventName: string, payload: any): void {
@@ -15,13 +15,5 @@ export class WorkerRNInstance implements Partial<RNInstance> {
 
   callRNFunction(moduleName: string, functionName: string, args: unknown[]): void {
     this.napiBridge.callRNFunction(this.id, moduleName, functionName, args)
-  }
-
-  postMessageToCpp(name: string, payload: any): void {
-    this.napiBridge.postMessageToCpp(name, { rnInstanceId: this.id, payload });
-  }
-
-  getArchitecture() {
-    return this.architecture
   }
 }
