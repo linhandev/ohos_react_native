@@ -336,6 +336,22 @@ export function TextStyleTest() {
           </Text>
         </View>
       </TestCase.Example>
+      <TestCase.Example itShould="show text with different dataDetectorType">
+        <Text>phoneNumber:</Text>
+        <Text dataDetectorType={'phoneNumber'}>13612345678</Text>
+        <Text>link:</Text>
+        <Text dataDetectorType={'link'}>www.huawei.com</Text>
+        <Text>email:</Text>
+        <Text dataDetectorType={'email'}>huawei@huawei.com</Text>
+        <Text>all:</Text>
+        <Text dataDetectorType={'all'}>
+          13612345678 www.huawei.com huawei@huawei.com
+        </Text>
+        <Text>none:</Text>
+        <Text dataDetectorType={'none'}>
+          13612345678 www.huawei.com huawei@huawei.com
+        </Text>
+      </TestCase.Example>
     </TestSuite>
   );
 }

@@ -269,9 +269,12 @@ class CppComponentInstance : public ComponentInstance {
     }
 
     auto rawProps = ViewRawProps::getFromDynamic(props->rawProps);
-    if (m_rawProps.needsOffscreenAlphaCompositing != rawProps.needsOffscreenAlphaCompositing) {
-      m_rawProps.needsOffscreenAlphaCompositing = rawProps.needsOffscreenAlphaCompositing;
-      this->getLocalRootArkUINode().setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing);
+    if (m_rawProps.needsOffscreenAlphaCompositing !=
+        rawProps.needsOffscreenAlphaCompositing) {
+      m_rawProps.needsOffscreenAlphaCompositing =
+          rawProps.needsOffscreenAlphaCompositing;
+      this->getLocalRootArkUINode().setRenderGroup(
+          m_rawProps.needsOffscreenAlphaCompositing);
     }
 
     this->getLocalRootArkUINode().setId(getIdFromProps(props));
@@ -398,12 +401,13 @@ class CppComponentInstance : public ComponentInstance {
     }
   }
 
-   struct ViewRawProps {
+  struct ViewRawProps {
     bool needsOffscreenAlphaCompositing = false;
     static ViewRawProps getFromDynamic(folly::dynamic value) {
-      auto needsOffscreenAlphaCompositing = (value.count("needsOffscreenAlphaCompositing") > 0)
-        ? value["needsOffscreenAlphaCompositing"].asBool()
-        : false;
+      auto needsOffscreenAlphaCompositing =
+          (value.count("needsOffscreenAlphaCompositing") > 0)
+          ? value["needsOffscreenAlphaCompositing"].asBool()
+          : false;
 
       return {needsOffscreenAlphaCompositing};
     }

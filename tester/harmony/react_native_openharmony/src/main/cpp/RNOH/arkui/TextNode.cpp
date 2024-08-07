@@ -294,4 +294,20 @@ TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   return *this;
 }
 
+TextNode& TextNode::setTextDataDetectorEnable(int32_t enableFlag) {
+  ArkUI_NumberValue value = {.i32 = enableFlag};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item));
+  return *this;
+}
+
+TextNode& TextNode::setTextDataDetectorType(ArkUI_TextDataDetectorType type) {
+  ArkUI_NumberValue value = {.i32 = type};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+  return *this;
+}
+
 } // namespace rnoh

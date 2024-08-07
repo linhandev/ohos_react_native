@@ -74,6 +74,8 @@ class TextNode : public ArkUINode {
   TextNode& setPadding(float top, float right, float bottom, float left);
   TextNode& setWordBreak(ArkUI_WordBreak wordBreak);
   TextNode& setSelectedBackgroundColor(uint32_t color);
+  TextNode& setTextDataDetectorEnable(int32_t enableFlag);
+  TextNode& setTextDataDetectorType(ArkUI_TextDataDetectorType type);
 };
 
 } // namespace rnoh

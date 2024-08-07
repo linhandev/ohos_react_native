@@ -42,6 +42,9 @@ class TextConversions {
       const std::string& alignVertical);
   static ArkUI_WordBreak getArkUIWordBreakStrategy(
       facebook::react::TextBreakStrategy textBreakStrategy);
+  static bool getArkUITextDataDetectorEnable(folly::dynamic dataDetectorType);
+  static std::optional<ArkUI_TextDataDetectorType>
+  getArkUITextDataDetectorTypes(folly::dynamic dataDetectorType);
 
  private:
   static std::pair<std::optional<float>, std::optional<float>>

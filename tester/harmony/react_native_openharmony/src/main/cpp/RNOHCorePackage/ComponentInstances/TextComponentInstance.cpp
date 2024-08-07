@@ -126,6 +126,26 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] selectionColor: " << selectionColor;
       m_textNode.setSelectedBackgroundColor(selectionColor);
     }
+
+    // dataDetectorType
+    if (textProps->rawProps.count("dataDetectorType") != 0) {
+      auto dataDetectorType = textProps->rawProps["dataDetectorType"];
+      VLOG(3) << "[text-debug] dataDetectorType: "
+              << dataDetectorType.asString();
+      auto dataDetectorEnable =
+          TextConversions::getArkUITextDataDetectorEnable(dataDetectorType);
+      VLOG(3) << "[text-debug] dataDetectorEnable: " << dataDetectorEnable;
+      m_textNode.setTextDataDetectorEnable(dataDetectorEnable);
+      if (dataDetectorEnable) {
+        auto arkUIDataDetectorType =
+            TextConversions::getArkUITextDataDetectorTypes(dataDetectorType);
+        if (arkUIDataDetectorType.has_value()) {
+          VLOG(3) << "[text-debug] arkUIDataDetectorType: "
+                  << arkUIDataDetectorType.value();
+          m_textNode.setTextDataDetectorType(arkUIDataDetectorType.value());
+        }
+      }
+    }
   }
   this->setParagraphAttributes(textProps->paragraphAttributes);
   VLOG(3) << "[text-debug] setProps end";

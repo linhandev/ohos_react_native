@@ -305,3 +305,26 @@ ArkUI_WordBreak TextConversions::getArkUIWordBreakStrategy(
       return ArkUI_WordBreak::ARKUI_WORD_BREAK_BREAK_WORD;
   }
 }
+
+bool TextConversions::getArkUITextDataDetectorEnable(
+    folly::dynamic dataDetectorType) {
+  return dataDetectorType == "all" || dataDetectorType == "phoneNumber" ||
+      dataDetectorType == "link" || dataDetectorType == "email" ||
+      dataDetectorType == "address";
+}
+
+std::optional<ArkUI_TextDataDetectorType>
+TextConversions::getArkUITextDataDetectorTypes(
+    folly::dynamic dataDetectorType) {
+  if (dataDetectorType == "phoneNumber") {
+    return ARKUI_TEXT_DATA_DETECTOR_TYPE_PHONE_NUMBER;
+  } else if (dataDetectorType == "link") {
+    return ARKUI_TEXT_DATA_DETECTOR_TYPE_URL;
+  } else if (dataDetectorType == "email") {
+    return ARKUI_TEXT_DATA_DETECTOR_TYPE_EMAIL;
+  } else if (dataDetectorType == "address") {
+    return ARKUI_TEXT_DATA_DETECTOR_TYPE_ADDRESS;
+  } else {
+    return std::nullopt;
+  }
+}
