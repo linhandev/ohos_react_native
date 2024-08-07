@@ -36,6 +36,7 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
  protected:
   virtual void executeTask();
 
+  Task popNextTask();
   void waitForSyncTask(Task&& task);
   void cleanup();
 
@@ -46,7 +47,6 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
   std::queue<Task> m_asyncTaskQueue{};
   std::queue<Task> m_syncTaskQueue{};
   std::mutex m_mutex;
-  std::condition_variable m_syncTaskCv;
   std::unique_ptr<uv::Async> m_asyncHandle;
   std::unordered_map<DelayedTaskId, uv::Timer> m_timerByTaskId;
   ExceptionHandler m_exceptionHandler;

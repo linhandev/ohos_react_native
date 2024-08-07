@@ -2,6 +2,7 @@
 #include <glog/logging.h>
 #include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Assert.h"
+#include "RNOH/RNOHError.h"
 
 namespace rnoh {
 EventLoopTaskRunner::EventLoopTaskRunner(
@@ -73,22 +74,7 @@ void EventLoopTaskRunner::setExceptionHandler(ExceptionHandler handler) {
 }
 
 void EventLoopTaskRunner::executeTask() {
-  Task task = nullptr;
-  bool isSyncTask = false;
-  if (!m_running) {
-    return;
-  }
-  {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    if (!m_syncTaskQueue.empty()) {
-      task = std::move(m_syncTaskQueue.front());
-      m_syncTaskQueue.pop();
-      isSyncTask = true;
-    } else if (!m_asyncTaskQueue.empty()) {
-      task = std::move(m_asyncTaskQueue.front());
-      m_asyncTaskQueue.pop();
-    }
-  }
+  Task task = popNextTask();
   if (task) {
     try {
       facebook::react::SystraceSection s("#RNOH::TaskRunner::task");
@@ -98,33 +84,55 @@ void EventLoopTaskRunner::executeTask() {
     } catch (...) {
       m_exceptionHandler(std::current_exception());
     }
-    if (isSyncTask) {
-      m_syncTaskCv.notify_all();
-    }
   }
-  {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    if (!m_syncTaskQueue.empty() || !m_asyncTaskQueue.empty()) {
-      m_asyncHandle->send();
-    }
+  std::lock_guard<std::mutex> lock(m_mutex);
+  if (!m_syncTaskQueue.empty() || !m_asyncTaskQueue.empty()) {
+    m_asyncHandle->send();
   }
 }
 
+auto EventLoopTaskRunner::popNextTask() -> Task {
+  std::lock_guard<std::mutex> queueLock(m_mutex);
+  Task task{};
+  if (!m_running) {
+    return {};
+  }
+  if (!m_syncTaskQueue.empty()) {
+    task = std::move(m_syncTaskQueue.front());
+    m_syncTaskQueue.pop();
+  } else if (!m_asyncTaskQueue.empty()) {
+    task = std::move(m_asyncTaskQueue.front());
+    m_asyncTaskQueue.pop();
+  }
+  return task;
+}
+
 void EventLoopTaskRunner::waitForSyncTask(Task&& task) {
-  std::unique_lock<std::mutex> lock(m_mutex);
+  std::mutex mtx;
+  std::condition_variable cv;
   std::atomic_bool done{false};
-  m_syncTaskQueue.push([task = std::move(task), &done]() mutable {
+
+  // Wrap the task to notify the waiting thread when it's done
+  auto wrappedTask = [task = std::move(task), &done, &cv, &mtx]() mutable {
+    auto doneLock = std::unique_lock(mtx);
     try {
       task();
     } catch (...) {
       done = true;
+      cv.notify_one();
       throw;
     }
     done = true;
-  });
+    cv.notify_one();
+  };
+
+  {
+    std::unique_lock<std::mutex> queueLock(m_mutex);
+    m_syncTaskQueue.push(std::move(wrappedTask));
+  }
   m_asyncHandle->send();
-  m_syncTaskCv.wait(
-      lock, [this, &done] { return !m_running.load() || done.load(); });
+  auto doneLock = std::unique_lock(mtx);
+  cv.wait(doneLock, [this, &done] { return done.load(); });
 }
 
 void EventLoopTaskRunner::cleanup() {
@@ -133,10 +141,11 @@ void EventLoopTaskRunner::cleanup() {
   }
   runSyncTask([this] {
     m_running = false;
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_syncTaskCv.notify_all();
+    std::lock_guard<std::mutex> queueLock(m_mutex);
     m_asyncHandle.reset();
-    m_syncTaskQueue = {};
+    RNOH_ASSERT_MSG(
+        m_syncTaskQueue.empty(),
+        "Task runner was destroyed while there were pending sync tasks");
     m_asyncTaskQueue = {};
     m_timerByTaskId.clear();
   });
