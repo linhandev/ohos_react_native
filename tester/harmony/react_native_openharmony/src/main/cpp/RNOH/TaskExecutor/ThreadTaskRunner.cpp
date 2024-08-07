@@ -9,16 +9,17 @@ ThreadTaskRunner::ThreadTaskRunner(
   std::mutex mtx;
   std::condition_variable cv;
   std::unique_lock lock(mtx);
-  std::atomic_bool initialized = false;
   m_thread = std::thread{[&] {
     uv::EventLoop eventLoop;
-    this->m_wrappedTaskRunner = std::make_unique<EventLoopTaskRunner>(
-        name, eventLoop.handle(), exceptionHandler);
-    initialized = true;
-    cv.notify_all();
+    {
+      std::unique_lock lock(mtx);
+      this->m_wrappedTaskRunner = std::make_unique<EventLoopTaskRunner>(
+          name, eventLoop.handle(), exceptionHandler);
+      cv.notify_one();
+    }
     eventLoop.run();
   }};
-  cv.wait(lock, [&] { return initialized.load(); });
+  cv.wait(lock, [&] { return this->m_wrappedTaskRunner != nullptr; });
   auto handle = m_thread.native_handle();
   pthread_setname_np(handle, name.c_str());
 }
