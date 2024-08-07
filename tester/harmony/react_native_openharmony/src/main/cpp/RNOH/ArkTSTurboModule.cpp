@@ -71,7 +71,7 @@ folly::dynamic ArkTSTurboModule::callSync(
   }
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
-      m_ctx.turboModuleThread, [&ctx = m_ctx, &methodName, &args, &result]() {
+      m_ctx.turboModuleThread, [ctx = m_ctx, &methodName, &args, &result]() {
         ArkJS arkJS(ctx.env);
         auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
