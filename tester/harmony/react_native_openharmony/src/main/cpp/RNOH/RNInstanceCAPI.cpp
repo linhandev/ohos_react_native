@@ -3,6 +3,7 @@
 #include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
 #include "RNInstance.h"
 #include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -59,7 +60,15 @@ void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     return;
   }
 
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_START,
+      tag);
   m_mountingManager->updateView(tag, std::move(props), *componentDescriptor);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_END,
+      tag);
 }
 
 void RNInstanceCAPI::registerNativeXComponentHandle(

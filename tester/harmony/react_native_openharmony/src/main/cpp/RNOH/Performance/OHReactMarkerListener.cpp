@@ -42,6 +42,43 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::CONTENT_APPEARED:
       logMarker("CONTENT_APPEARED", tag);
       break;
+    case HarmonyReactMarkerId::FABRIC_COMMIT_START:
+      logMarkerStart("FABRIC_COMMIT", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_COMMIT_END:
+      logMarkerFinish("FABRIC_COMMIT", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_START:
+      logMarkerStart("FABRIC_FINISH_TRANSACTION", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END:
+      logMarkerFinish("FABRIC_FINISH_TRANSACTION", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_DIFF_START:
+      logMarkerStart("FABRIC_DIFF", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_DIFF_END:
+      logMarkerFinish("FABRIC_DIFF", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_LAYOUT_START:
+      logMarkerStart("FABRIC_LAYOUT", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_LAYOUT_END:
+      logMarkerFinish("FABRIC_LAYOUT", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START:
+      logMarkerStart("FABRIC_BATCH_EXECUTION", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END:
+      logMarkerFinish("FABRIC_BATCH_EXECUTION", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_START:
+      logMarkerStart("FABRIC_UPDATE_UI_MAIN_THREAD", std::to_string(timestamp));
+      break;
+    case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_END:
+      logMarkerFinish(
+          "FABRIC_UPDATE_UI_MAIN_THREAD", std::to_string(timestamp));
+      break;
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
     case HarmonyReactMarkerId::REACT_INSTANCE_INIT_START:
