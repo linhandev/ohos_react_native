@@ -43,20 +43,28 @@ EventLoopTaskRunner::DelayedTaskId EventLoopTaskRunner::runDelayedTask(
     uint64_t delayMs,
     uint64_t repeatMs) {
   auto id = m_nextTaskId++;
-  runAsyncTask([this, id, delayMs, repeatMs, task = std::move(task)]() mutable {
+
+  auto timerCallback = [this, id, repeatMs, task = std::move(task)]() mutable {
+    task();
+    if (repeatMs == 0) {
+      m_timerByTaskId.erase(id);
+    }
+  };
+
+  auto createTimer = [this,
+                      id,
+                      delayMs,
+                      repeatMs,
+                      timerCallback = std::move(timerCallback)]() mutable {
     auto [it, inserted] = m_timerByTaskId.emplace(
-        id,
-        uv::Timer(
-            m_loop,
-            [this, id, repeatMs, task = std::move(task)]() mutable {
-              task();
-              if (repeatMs == 0) {
-                m_timerByTaskId.erase(id);
-              }
-            },
-            delayMs,
-            repeatMs));
-  });
+        id, uv::Timer(m_loop, std::move(timerCallback), delayMs, repeatMs));
+  };
+
+  if (isOnCurrentThread()) {
+    createTimer();
+  } else {
+    runAsyncTask(std::move(createTimer));
+  }
   return id;
 }
 

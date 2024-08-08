@@ -40,7 +40,7 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
   void waitForSyncTask(Task&& task);
   void cleanup();
 
-  DelayedTaskId m_nextTaskId = 0;
+  std::atomic<DelayedTaskId> m_nextTaskId = 0;
   std::string m_name;
   uv_loop_t* m_loop;
   std::atomic_bool m_running{true};
