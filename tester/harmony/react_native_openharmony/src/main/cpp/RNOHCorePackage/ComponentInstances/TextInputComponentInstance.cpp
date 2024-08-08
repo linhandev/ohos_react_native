@@ -296,7 +296,13 @@ void TextInputComponentInstance::onPropsChanged(
   m_textAreaNode.setId(getIdFromProps(props));
   m_textInputNode.setId(getIdFromProps(props));
 
-  if (!m_props || props->autoFocus != m_props->autoFocus) {
+  if (!m_props){//When setting autofocus for the first time, it should only be set when its value is true
+    if (props->autoFocus == true){
+      m_textAreaNode.setAutoFocus(props->autoFocus);
+      m_textInputNode.setAutoFocus(props->autoFocus);
+    }
+  }
+  else if (props->autoFocus != m_props->autoFocus) {
     m_textAreaNode.setAutoFocus(props->autoFocus);
     m_textInputNode.setAutoFocus(props->autoFocus);
   }
