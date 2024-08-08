@@ -34,6 +34,10 @@ TaskExecutor::TaskExecutor(
 
 TaskExecutor::~TaskExecutor() noexcept {
   DLOG(INFO) << "TaskExecutor::~TaskExecutor()";
+  std::thread cleanupThread(
+      [](std::array<AbstractTaskRunner::Shared, 4> taskRunners) {},
+      std::move(m_taskRunners));
+  cleanupThread.detach();
 }
 
 void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
