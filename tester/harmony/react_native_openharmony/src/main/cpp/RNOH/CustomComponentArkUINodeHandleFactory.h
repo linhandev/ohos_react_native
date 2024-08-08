@@ -22,10 +22,8 @@ class CustomComponentArkUINodeHandleFactory final {
 
   CustomComponentArkUINodeHandleFactory(
       napi_env env,
-      NapiRef customRNComponentFrameNodeFactoryRef,
-      TaskExecutor::Shared taskExecutor)
+      NapiRef customRNComponentFrameNodeFactoryRef)
       : m_env(env),
-        m_taskExecutor(taskExecutor),
         m_customRNComponentFrameNodeFactoryRef(
             std::move(customRNComponentFrameNodeFactoryRef)) {}
 
@@ -73,7 +71,6 @@ class CustomComponentArkUINodeHandleFactory final {
   }
 
  private:
-  TaskExecutor::Shared m_taskExecutor;
   napi_env m_env;
   NapiRef m_customRNComponentFrameNodeFactoryRef;
   ThreadGuard m_threadGuard{};
