@@ -20,6 +20,7 @@
 #include "hermes/executor/HermesExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/RNInstance.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -292,7 +293,15 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     return;
   }
 
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_START,
+      tag);
   m_mountingManager->updateView(tag, std::move(props), *componentDescriptor);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_END,
+      tag);
 }
 
 facebook::react::ContextContainer const&

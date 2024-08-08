@@ -1,4 +1,6 @@
 #include "MountingManagerCAPI.h"
+#include <cxxreact/SystraceSection.h>
+#include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
 
@@ -59,6 +61,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
 
 facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(
