@@ -10,6 +10,7 @@
 #include "NativeLogger.h"
 #include "RNOH/AsynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/RNOHError.h"
 #include "RNOH/SchedulerDelegate.h"
@@ -99,11 +100,15 @@ void RNInstanceInternal::initialize() {
   m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
   m_reactInstance->initializeBridge(
       std::move(instanceCallback),
       std::move(jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
 void RNInstanceInternal::initializeScheduler(

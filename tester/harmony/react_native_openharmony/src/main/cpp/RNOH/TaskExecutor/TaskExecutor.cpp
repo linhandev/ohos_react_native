@@ -3,6 +3,7 @@
 #include <react/renderer/debug/SystraceSection.h>
 #include "NapiTaskRunner.h"
 #include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
 
@@ -47,6 +48,9 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
   pthread_getname_np(pthread_self(), buffer.data(), buffer.size());
   DLOG(INFO) << "TaskExecutor::setTaskThreadPriority " << buffer.data()
              << (ret == 0 ? " SUCCESSFUL" : " FAILED");
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CHANGE_THREAD_PRIORITY,
+      buffer.data());
 #else
   DLOG(WARNING)
       << "TaskExecutor::setTaskThreadPriority available only with C-API";

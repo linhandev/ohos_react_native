@@ -19,6 +19,7 @@
 #include "RNOH/MountingManagerArkTS.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
@@ -70,6 +71,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableBackgroundExecutor,
     std::unordered_map<std::string, std::string>
         fontPathRelativeToRawfileDirByFontFamily) {
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
   auto taskExecutor = std::make_shared<TaskExecutor>(
@@ -262,6 +265,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     auto imageSourceResolver =
         std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
     componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
     return rnInstance;
 #else
     LOG(FATAL)
@@ -270,6 +275,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
            "run Build > Clean Project?";
 #endif
   }
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
   return std::make_shared<RNInstanceArkTS>(
       id,
       contextContainer,

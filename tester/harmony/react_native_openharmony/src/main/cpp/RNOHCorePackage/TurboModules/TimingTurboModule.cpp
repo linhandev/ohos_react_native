@@ -1,5 +1,6 @@
 #include "TimingTurboModule.h"
 #include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 
 namespace rnoh {
@@ -192,6 +193,8 @@ void TimingTurboModule::triggerTimer(double id) {
 
 void TimingTurboModule::resumeTimers() {
   assertJSThread();
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_RESUME_START);
   for (auto& it : m_activeTimerById) {
     createTimer(
         it.second.id,
@@ -199,14 +202,20 @@ void TimingTurboModule::resumeTimers() {
         it.second.jsSchedulingTime,
         it.second.repeats);
   }
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_RESUME_END);
 }
 
 void TimingTurboModule::pauseTimers() {
   assertJSThread();
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_PAUSE_START);
   for (auto& [id, task] : m_timerTaskById) {
     m_ctx.taskExecutor->cancelDelayedTask(task);
   }
   m_timerTaskById.clear();
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_PAUSE_END);
 }
 
 void TimingTurboModule::assertJSThread() const {
