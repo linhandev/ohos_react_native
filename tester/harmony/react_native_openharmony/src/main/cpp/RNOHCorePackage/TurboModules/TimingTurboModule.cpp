@@ -1,5 +1,8 @@
 #include "TimingTurboModule.h"
+
 #include <thread>
+#include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 #include <chrono>
 #include <functional>
@@ -191,5 +194,4 @@ TimingTurboModule::~TimingTurboModule() {
     }
   });
 }
-
 } // namespace rnoh

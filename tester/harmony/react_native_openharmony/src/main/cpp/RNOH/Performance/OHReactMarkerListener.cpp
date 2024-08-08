@@ -79,10 +79,32 @@ void OHReactMarkerListener::logMarker(
       logMarkerFinish(
           "FABRIC_UPDATE_UI_MAIN_THREAD", std::to_string(timestamp));
       break;
+    case HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START:
+      logMarkerStart("REACT_BRIDGE_LOADING", tag);
+      break;
+    case HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END:
+      logMarkerFinish("REACT_BRIDGE_LOADING", tag);
+      break;
+    case HarmonyReactMarkerId::ON_HOST_RESUME_START:
+      logMarkerStart("ON_HOST_RESUME", tag);
+      break;
+    case HarmonyReactMarkerId::ON_HOST_RESUME_END:
+      logMarkerFinish("ON_HOST_RESUME", tag);
+      break;
+    case HarmonyReactMarkerId::ON_HOST_PAUSE_START:
+      logMarkerStart("ON_HOST_PAUSE", tag);
+      break;
+    case HarmonyReactMarkerId::ON_HOST_PAUSE_END:
+      logMarkerFinish("ON_HOST_PAUSE", tag);
+      break;
+    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_START:
+      logMarkerStart("REACT_INSTANCE_INIT", tag);
+      break;
+    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP:
+      logMarkerFinish("REACT_INSTANCE_INIT", tag);
+      break;
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
-    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_START:
-    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP:
       break;
   }
 }
