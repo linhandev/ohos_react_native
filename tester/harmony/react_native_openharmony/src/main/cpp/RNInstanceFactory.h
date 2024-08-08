@@ -91,12 +91,18 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       env, measureTextFnRef, taskExecutor, featureFlagRegistry, id);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_START);
   PackageProvider packageProvider;
   auto packages = packageProvider.getPackages({});
+  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
+                                    PROCESS_CORE_REACT_PACKAGE_START);
   packages.insert(
       packages.begin(),
       std::make_shared<RNOHCorePackage>(
           Package::Context{.shadowViewRegistry = shadowViewRegistry}));
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END);
   auto componentDescriptorProviderRegistry =
       std::make_shared<facebook::react::ComponentDescriptorProviderRegistry>();
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>
@@ -153,7 +159,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       arkTSMessageHandlers.push_back(arkTSMessageHandler);
     }
   }
-
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_END);
   auto turboModuleFactory = TurboModuleFactory(
       env,
       arkTsTurboModuleProviderRef,

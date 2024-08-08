@@ -103,6 +103,36 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP:
       logMarkerFinish("REACT_INSTANCE_INIT", tag);
       break;
+    case HarmonyReactMarkerId::INITIALIZE_MODULE_START:
+      logMarkerStart("INITIALIZE_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::INITIALIZE_MODULE_END:
+      logMarkerFinish("INITIALIZE_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::PROCESS_PACKAGES_START:
+      logMarkerStart("PROCESS_PACKAGES", tag);
+      break;
+    case HarmonyReactMarkerId::PROCESS_PACKAGES_END:
+      logMarkerFinish("PROCESS_PACKAGES", tag);
+      break;
+    case HarmonyReactMarkerId::CREATE_UI_MANAGER_MODULE_START:
+      logMarkerStart("CREATE_UI_MANAGER_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::CREATE_UI_MANAGER_MODULE_END:
+      logMarkerFinish("CREATE_UI_MANAGER_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::CREATE_MODULE_START:
+      logMarkerStart("CREATE_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::CREATE_MODULE_END:
+      logMarkerFinish("CREATE_MODULE", tag);
+      break;
+    case HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_START:
+      logMarkerStart("PROCESS_CORE_REACT_PACKAGE", tag);
+      break;
+    case HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END:
+      logMarkerFinish("PROCESS_CORE_REACT_PACKAGE", tag);
+      break;
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
       break;
