@@ -50,7 +50,7 @@ folly::dynamic ArkTSTurboModule::callSync(
     std::vector<IntermediaryArg> args) {
   facebook::react::SystraceSection s(
     "ArkTSTurboModule::callSync moduleName: ", name_, " methodName: ", methodName);
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -62,7 +62,7 @@ folly::dynamic ArkTSTurboModule::callSync(
         ArkJS arkJs(ctx.env);
         auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
-            arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+            arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
         auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
         result = arkJs.getDynamic(napiResult);
       });
@@ -77,7 +77,7 @@ void rnoh::ArkTSTurboModule::scheduleCall(
     size_t argsCount) {
   facebook::react::SystraceSection s(
     "ArkTSTurboModule::scheduleCall moduleName: ", name_, " methodName: ", methodName);
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -96,7 +96,7 @@ void rnoh::ArkTSTurboModule::scheduleCall(
           ArkJS arkJs(ctx.env);
           auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
           auto napiTurboModuleObject =
-              arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+              arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
           napiTurboModuleObject.call(methodName, napiArgs);
         } catch (const std::exception& e) {
           LOG(ERROR) << "Exception thrown while calling " << name
@@ -114,7 +114,7 @@ jsi::Value ArkTSTurboModule::callAsync(
     size_t argsCount) {
   facebook::react::SystraceSection s(
       "ArkTSTurboModule::callAsync moduleName: ", name_, " methodName: ", methodName);
-  if (!m_ctx.arkTsTurboModuleInstanceRef) {
+  if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
     LOG(FATAL) << errorMsg;
@@ -136,7 +136,7 @@ jsi::Value ArkTSTurboModule::callAsync(
                 auto napiArgs =
                     arkJs.convertIntermediaryValuesToNapiValues(args);
                 auto napiTurboModuleObject =
-                    arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+                    arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
 
                 auto napiResult =
                     napiTurboModuleObject.call(methodName, napiArgs);

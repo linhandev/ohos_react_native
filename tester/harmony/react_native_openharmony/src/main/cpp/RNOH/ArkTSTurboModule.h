@@ -62,7 +62,7 @@ class ArkTSTurboModule : public TurboModule {
  public:
   struct Context : public TurboModule::Context {
     napi_env env;
-    napi_ref arkTsTurboModuleInstanceRef;
+    napi_ref arkTSTurboModuleInstanceRef;
     std::shared_ptr<TaskExecutor> taskExecutor;
     std::shared_ptr<EventDispatcher> eventDispatcher;
     std::shared_ptr<MessageQueueThread> jsQueue;
