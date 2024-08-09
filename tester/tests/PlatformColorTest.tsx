@@ -143,6 +143,21 @@ export function PlatformColorTest() {
           }}
         />
       </TestCase.Example>
+      <TestCase.Logical
+        itShould="get customs colors from color.json in resources"
+        skip={Platform.select({
+          android: 'Works only for Open Harmony system colors',
+          ios: 'Works only for Open Harmony system colors',
+        })}
+        fn={({expect}) => {
+          expect(PlatformColor('start_window_background')).to.be.eq(
+            'rgba(255, 255, 255, 1)',
+          );
+          expect(PlatformColor('color_software_mansion')).to.be.eq(
+            'rgba(0, 26, 114, 1)',
+          );
+        }}
+      />
     </TestSuite>
   );
 }
