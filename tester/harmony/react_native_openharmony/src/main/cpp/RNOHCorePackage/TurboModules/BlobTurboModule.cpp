@@ -31,7 +31,7 @@ void BlobTurboModule::release(std::string blobId) {
           std::vector<napi_value> napiArgs;
           napiArgs.push_back(arkJs.createString(blobId));
           auto napiTurboModuleObject =
-              arkJs.getObject(ctx.arkTsTurboModuleInstanceRef);
+              arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
           napiTurboModuleObject.call(methodName, napiArgs);
         } catch (const std::exception& e) {
           LOG(ERROR) << "Exception thrown while calling " << name

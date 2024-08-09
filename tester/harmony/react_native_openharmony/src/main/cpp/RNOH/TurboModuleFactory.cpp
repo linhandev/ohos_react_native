@@ -31,7 +31,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   Context ctx{
       {.jsInvoker = jsInvoker, .instance = instance},
       .env = m_env,
-      .arkTsTurboModuleInstanceRef =
+      .arkTSTurboModuleInstanceRef =
           this->maybeGetArkTsTurboModuleInstanceRef(name),
       .taskExecutor = m_taskExecutor,
       .eventDispatcher = eventDispatcher,
@@ -46,7 +46,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       auto arkTSTurboModule =
           std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
       if (arkTSTurboModule != nullptr &&
-          ctx.arkTsTurboModuleInstanceRef == nullptr) {
+          ctx.arkTSTurboModuleInstanceRef == nullptr) {
         throw FatalRNOHError(
             std::move(std::string("Couldn't find turbo module '")
                           .append(name)
@@ -75,7 +75,7 @@ TurboModuleFactory::delegateCreatingTurboModule(
 
 napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
     const std::string& name) const {
-  VLOG(3) << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: start";
+  VLOG(3) << "TurboModuleFactory::maybeGetarkTSTurboModuleInstanceRef: start";
   napi_ref result = nullptr;
   m_taskExecutor->runSyncTask(
       TaskThread::MAIN,
@@ -84,7 +84,7 @@ napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
        name,
        &result]() {
         VLOG(3)
-            << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: started calling hasModule";
+            << "TurboModuleFactory::maybeGetarkTSTurboModuleInstanceRef: started calling hasModule";
         ArkJS arkJs(env);
         {
           auto result = arkJs.getObject(arkTsTurboModuleProviderRef)
@@ -98,7 +98,7 @@ napi_ref TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef(
                 .call("getModule", {arkJs.createString(name)});
         result = arkJs.createReference(n_turboModuleInstance);
       });
-  VLOG(3) << "TurboModuleFactory::maybeGetArkTsTurboModuleInstanceRef: stop";
+  VLOG(3) << "TurboModuleFactory::maybeGetarkTSTurboModuleInstanceRef: stop";
   return result;
 }
 
