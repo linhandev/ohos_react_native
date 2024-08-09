@@ -190,7 +190,10 @@ class CppComponentInstance : public ComponentInstance {
   }
 
   facebook::react::Transform getTransform() const override {
-    return m_transform;    
+    if (m_props != nullptr) {
+      return m_props->transform;
+    }
+    return facebook::react::Transform::Identity();
   }
 
   facebook::react::Rect getBoundingBox() override {
@@ -321,7 +324,6 @@ class CppComponentInstance : public ComponentInstance {
          abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
              0.001f) {
         m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
-        this->setTransform(props->transform);
         this->getLocalRootArkUINode().setTransform(
           props->transform, m_layoutMetrics.pointScaleFactor);
         markBoundingBoxAsDirty();
@@ -448,13 +450,6 @@ class CppComponentInstance : public ComponentInstance {
   };
 
  private:
-  facebook::react::Transform m_transform =
-      facebook::react::Transform::Identity();  
-    
-  void setTransform(facebook::react::Transform const& transform) {
-    m_transform = transform;
-  }
-    
   void setOpacity(facebook::react::SharedViewProps const& props) {
     auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
     auto isTransformManagedByAnimated =
