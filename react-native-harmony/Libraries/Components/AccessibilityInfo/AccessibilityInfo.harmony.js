@@ -58,16 +58,11 @@ const EventNames: Map<
       ["screenReaderChanged", "touchExplorationDidChange"],
       ["accessibilityServiceChanged", "accessibilityServiceDidChange"],
     ])
-  : new Map([
-      ["announcementFinished", "announcementFinished"],
-      ["boldTextChanged", "boldTextChanged"],
-      ["change", "screenReaderChanged"],
-      ["grayscaleChanged", "grayscaleChanged"],
-      ["invertColorsChanged", "invertColorsChanged"],
-      ["reduceMotionChanged", "reduceMotionChanged"],
-      ["reduceTransparencyChanged", "reduceTransparencyChanged"],
-      ["screenReaderChanged", "screenReaderChanged"],
-    ]);
+    :
+      new Map([
+        // RNOH patch:
+        ["accessibilityServiceChanged", "accessibilityServiceChanged"],
+      ]);
 
 /**
  * Sometimes it's useful to know whether or not the device has a screen reader
