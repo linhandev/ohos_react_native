@@ -12,7 +12,6 @@ void ViewComponentInstance::onChildInserted(
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
   if (m_props->removeClippedSubviews && !m_parent.expired()) {
-    updateClippedSubviews(true);
   } else {
     m_customNode.insertChild(
         childComponentInstance->getLocalRootArkUINode(), index);
@@ -23,7 +22,6 @@ void ViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
   m_customNode.removeChild(childComponentInstance->getLocalRootArkUINode());
-  updateClippedSubviews(true);
 };
 
 void ViewComponentInstance::onHoverIn(CustomNodeDelegate*) {
@@ -48,7 +46,6 @@ void ViewComponentInstance::onHoverOut(CustomNodeDelegate*) {
 
 void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
-
   updateClippedSubviews();
 }
 
@@ -71,8 +68,13 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
   }
 
   auto currentOffset = parent->getCurrentOffset();
-
   auto parentBoundingBox = parent->getBoundingBox();
+
+  if (m_previousOffset == currentOffset && !childrenChange) {
+    return;
+  }
+
+  m_previousOffset = currentOffset;
 
   bool remakeVector = false;
   if (childrenChange || m_childrenClippedState.empty()) {
@@ -113,8 +115,7 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
 
 void ViewComponentInstance::onFinalizeUpdates() {
   CppComponentInstance::onFinalizeUpdates();
-
-  updateClippedSubviews();
+  updateClippedSubviews(true);
 }
 
 void ViewComponentInstance::onClick(CustomNodeDelegate*) {

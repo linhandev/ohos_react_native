@@ -117,6 +117,7 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
             << ", " << scrollViewMetrics.containerSize.height << ")";
     m_eventEmitter->onScroll(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
+    updateContentClippedSubviews();
   }
   sendEventForNativeAnimations(scrollViewMetrics);
 }
@@ -144,15 +145,6 @@ void ScrollViewComponentInstance::onScroll() {
   }
   m_internalState->onScroll();
   m_onScrollCallsAfterFrameBeginCallCounter++;
-
-  if (m_movedBySignificantOffset && !m_children.empty() &&
-      m_children[0] != nullptr) {
-    auto contentContainer =
-        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
-    if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews();
-    }
-  }
 }
 
 float ScrollViewComponentInstance::onScrollFrameBegin(
@@ -364,13 +356,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       0.f,
       0.f);
 
-  if (!m_children.empty() && m_children[0] != nullptr) {
-    auto contentContainer =
-        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
-    if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews();
-    }
-  }
+  updateContentClippedSubviews();
 }
 
 void ScrollViewComponentInstance::onCommandReceived(
@@ -442,6 +428,16 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 }
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+void ScrollViewComponentInstance::updateContentClippedSubviews() {
+  if (!m_children.empty() && m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews();
+    }
+  }
+}
 
 facebook::react::Float
 ScrollViewComponentInstance::getFrictionFromDecelerationRate(
@@ -545,14 +541,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     m_firstVisibleView = getFirstVisibleView(
         m_props->maintainVisibleContentPosition.value().minIndexForVisible);
   }
-
-  if (!m_children.empty() && m_children[0] != nullptr) {
-    auto contentContainer =
-        std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
-    if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews();
-    }
-  }
+  updateContentClippedSubviews();
 
   if (m_shouldAdjustScrollPositionOnNextRender) {
     auto maybeKeyboardAvoider = m_keyboardAvoider.lock();

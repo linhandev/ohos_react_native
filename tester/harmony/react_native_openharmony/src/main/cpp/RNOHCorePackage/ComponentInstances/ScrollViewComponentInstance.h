@@ -215,6 +215,8 @@ class ScrollViewComponentInstance
   std::optional<ChildTagWithOffset> getFirstVisibleView(
       int32_t minIndexForVisible);
 
+  void updateContentClippedSubviews();
+
  public:
   friend ScrollViewInternalState;
   friend IdleScrollViewInternalState;
