@@ -13,6 +13,7 @@ import {KeyboardTest} from './KeyboardTest';
 import {MiscPropsTest} from './MiscPropsTest';
 import {ScrollToTest} from './ScrollToTest';
 import {CenterContentTest} from './CenterContentTest';
+import RemoveClippedTest from './RemoveClippedTest';
 import {OverScrollTest} from './OverScrollTest';
 
 export function ScrollViewTest() {
@@ -23,6 +24,7 @@ export function ScrollViewTest() {
       <ScrollBarsTest />
       <StickyHeadersTest />
       <PointerEventsTest />
+      <RemoveClippedTest />
       <SnapTest />
       <MomentumCallbacksTest />
       <KeyboardTest />

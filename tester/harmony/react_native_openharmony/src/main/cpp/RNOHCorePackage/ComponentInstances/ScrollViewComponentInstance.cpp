@@ -4,6 +4,7 @@
 #include <react/renderer/core/ConcreteState.h>
 #include <cmath>
 #include <optional>
+#include "CustomNodeComponentInstance.h"
 #include "PullToRefreshViewComponentInstance.h"
 #include "conversions.h"
 
@@ -26,9 +27,6 @@ StackNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
 void ScrollViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
-  m_childComponent = childComponentInstance;
-  m_childComponent->setRemoveClippedSubviews(getRemoveClippedSubviews(), m_horizontal);
-  m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   CppComponentInstance::onChildInserted(childComponentInstance, index);
   m_contentContainerNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
@@ -37,7 +35,6 @@ void ScrollViewComponentInstance::onChildInserted(
 void ScrollViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_childComponent = nullptr;
   m_contentContainerNode.removeChild(
       childComponentInstance->getLocalRootArkUINode());
 }
@@ -49,9 +46,6 @@ void ScrollViewComponentInstance::setLayout(
   m_layoutMetrics = layoutMetrics;
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
-  }
-  if (m_childComponent != nullptr) {
-    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   }
   markBoundingBoxAsDirty();
 }
@@ -102,8 +96,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
-  m_removeClippedSubviews = props->removeClippedSubviews;
-  m_horizontal = isHorizontal(props);
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
@@ -132,10 +124,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     }
   }
 
-  if (m_childComponent != nullptr) {
-    m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews, m_horizontal);
-    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-  }
     
   if (rawProps.nestedScrollEnabled.has_value()) {
      m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
@@ -179,6 +167,8 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       -borderMetrics.borderWidths.top,
       0.f,
       0.f);
+
+  updateContentClippedSubviews();
 }
 
 void ScrollViewComponentInstance::onCommandReceived(
@@ -302,13 +292,11 @@ void ScrollViewComponentInstance::onScroll() {
             << scrollViewMetrics.contentSize.height
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
-    if (m_childComponent != nullptr) {
-      m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-    }
     m_eventEmitter->onScroll(scrollViewMetrics);
     updateStateWithContentOffset(scrollViewMetrics.contentOffset);
     sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
+    updateContentClippedSubviews();
   }
 }
 
@@ -375,6 +363,16 @@ void ScrollViewComponentInstance::emitOnMomentumScrollEndEvent() {
   auto scrollViewMetrics = getScrollViewMetrics();
   m_eventEmitter->onMomentumScrollEnd(scrollViewMetrics);
   updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+}
+
+void ScrollViewComponentInstance::updateContentClippedSubviews() {
+  if (!m_children.empty() && m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<CustomNodeComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews();
+    }
+  }
 }
 
 facebook::react::Float
@@ -507,6 +505,8 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     }
     m_shouldAdjustScrollPositionOnNextRender = false;
   }
+
+  updateContentClippedSubviews();
 }
 
 folly::dynamic ScrollViewComponentInstance::getScrollEventPayload(
