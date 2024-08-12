@@ -14,15 +14,13 @@ class TextComponentInstance
       std::unordered_map<facebook::react::Tag, std::shared_ptr<TouchTarget>>;
 
   TextNode m_textNode{};
-  StackNode m_stackNode{};
   std::vector<std::shared_ptr<ArkUINode>> m_childNodes{};
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
 
  public:
   TextComponentInstance(Context context);
-  ~TextComponentInstance() override;
-  StackNode& getLocalRootArkUINode() override;
+  TextNode& getLocalRootArkUINode() override;
   std::vector<TouchTarget::Shared> getTouchTargetChildren() override;
 
  protected:

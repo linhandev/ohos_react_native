@@ -230,7 +230,7 @@ std::optional<float> TextConversions::getMaxFontSize(
   return fontSize;
 }
 
-int32_t TextConversions::getStackAlign(
+ArkUI_Alignment TextConversions::getAlignment(
     const facebook::react::TextAlignment& alignHorizon,
     const std::string& alignVertical) {
   const static std::map<

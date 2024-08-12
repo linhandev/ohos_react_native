@@ -14,27 +14,18 @@ const static float DEFAULT_LINE_SPACING = 0.15f;
 
 TextComponentInstance::TextComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  m_stackNode.insertChild(m_textNode, 0);
-  // set attributes which have different default values in RN and ArkUI
-  m_stackNode.setAlign(ARKUI_ALIGNMENT_TOP_START);
-}
-
-TextComponentInstance::~TextComponentInstance() {
-  for (auto const& item : m_childNodes) {
-    m_textNode.removeChild(*item);
-  }
+  m_textNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
 }
 
 void TextComponentInstance::onChildInserted(
-    ComponentInstance::Shared const& childComponentInstance,
-    std::size_t index) {
-  m_stackNode.insertChild(
-      childComponentInstance->getLocalRootArkUINode(), index + 1);
+    ComponentInstance::Shared const& /*childComponentInstance*/,
+    std::size_t /*index*/) {
+  throw RNOHError("TextComponentInstance does not support children");
 }
 
 void TextComponentInstance::onChildRemoved(
-    ComponentInstance::Shared const& childComponentInstance) {
-  m_stackNode.removeChild(childComponentInstance->getLocalRootArkUINode());
+    ComponentInstance::Shared const& /*childComponentInstance*/) {
+  throw RNOHError("TextComponentInstance does not support children");
 }
 
 void TextComponentInstance::onPropsChanged(
@@ -81,8 +72,7 @@ void TextComponentInstance::onPropsChanged(
     if (textProps->textAttributes.alignment.has_value()) {
       alignHorizon = textProps->textAttributes.alignment.value();
     }
-    int32_t stackAlign =
-        TextConversions::getStackAlign(alignHorizon, alignVertical);
+    auto alignment = TextConversions::getAlignment(alignHorizon, alignVertical);
 
     facebook::react::TextAlignment alignHorizonOld =
         facebook::react::TextAlignment::Left;
@@ -94,13 +84,13 @@ void TextComponentInstance::onPropsChanged(
     if (m_props->textAttributes.alignment.has_value()) {
       alignHorizonOld = m_props->textAttributes.alignment.value();
     }
-    int32_t stackAlignOld =
-        TextConversions::getStackAlign(alignHorizonOld, alignVerticalOld);
+    auto oldAlignment =
+        TextConversions::getAlignment(alignHorizonOld, alignVerticalOld);
 
-    if (stackAlign != stackAlignOld) {
-      VLOG(3) << "[text-debug] stackAlign=" << stackAlign
-              << ", stackAlignOld=" << stackAlignOld;
-      m_stackNode.setAlign(stackAlign);
+    if (alignment != oldAlignment) {
+      VLOG(3) << "[text-debug] alignment=" << alignment
+              << ", oldAlignment=" << oldAlignment;
+      m_textNode.setAlignment(alignment);
     }
 
     // enable
@@ -440,8 +430,8 @@ std::string TextComponentInstance::stringCapitalize(
   return strRes;
 }
 
-StackNode& TextComponentInstance::getLocalRootArkUINode() {
-  return m_stackNode;
+TextNode& TextComponentInstance::getLocalRootArkUINode() {
+  return m_textNode;
 }
 
 class TextFragmentTouchTarget : public TouchTarget {

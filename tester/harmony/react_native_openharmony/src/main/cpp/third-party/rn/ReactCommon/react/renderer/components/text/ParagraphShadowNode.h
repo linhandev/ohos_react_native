@@ -47,6 +47,9 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
     traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
 #endif
 
+// RNOH patch: remove `FormsStackingContext` trait
+    traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
+
     return traits;
   }
 

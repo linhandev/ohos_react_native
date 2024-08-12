@@ -37,7 +37,7 @@ class TextConversions {
       std::shared_ptr<const facebook::react::ParagraphProps> props);
   static std::optional<float> getMaxFontSize(
       std::shared_ptr<const facebook::react::ParagraphProps> props);
-  static int32_t getStackAlign(
+  static ArkUI_Alignment getAlignment(
       const facebook::react::TextAlignment& alignHorizon,
       const std::string& alignVertical);
   static ArkUI_WordBreak getArkUIWordBreakStrategy(
