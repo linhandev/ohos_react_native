@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.72.36
+- added Text::dataDetectorType (email, phoneNumber, etc.) feature ([67035f4e5d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/67035f4e5d3979dd512e8ec244c0a931564c372e))
+- added support for adding custom listeners in HarmonyReactMarker ([93833d25c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/93833d25c1358f25411c2b8f7f52cceec1246760))
+- fixed possible deadlock when destroying a RNInstance ([3fe266423a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3fe266423a2135dbe75f446556c0acc417b307dd))
+- fixed a deadlock when an ArkTSTurboModule waiting on the ArkTS thread is dropped ([766d7922c9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/766d7922c98735ceee85c0dcbbd8754264ca308c))
+- fixed occasional crashes due to JS callbacks being freed on a wrong thread ([dea1d9dd31](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dea1d9dd316482ed3d2ed5def98b661c72fbd79c))
+- fixed not cleaning WorkerRNInstance environment ([c92d8555b4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c92d8555b44f5b5b1df8c35fabfc11a7b2ef83fe))
+- fixed crashes when cleaning up TurboModules with pending promises ([b318477e0e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b318477e0e2cc3d922bea91646ca67fa26ecb071))
+- maybe fixed potential deadlock when creating a `ThreadTaskRunner` ([3a623fbc62](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3a623fbc626ebe3342c30f9b123743b1ec320c47))
+- maybe fixed potential deadlocks when scheduling sync tasks caused by incorrect use of condition variables ([a489a3f395](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a489a3f3953f793edcb5b42980981d8581ccd173))
+- optimized rendering components nested in the `Text` component ([4db5657c65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4db5657c65a383e75466eeec7db8e633e01959ca))
+- optimized ScrollView::removeClippedSubviews ([e6b90968b3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e6b90968b3d3f7aa792465fea39947fa2ec12d39))
+- reduced the delay when scheduling delayed task on current thread ([21d45fbc5f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/21d45fbc5f2f5018887d2ed71d6c8a8b7f0f4434))
+
+
 ## v0.72.35
 - added assertions for Napi reference use ([f7bddd2b14](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f7bddd2b149d3f1536c8ec1808fbdc45dcd225be))
 - added `WorkerRNInstanceConfig::httpClient` ([c93b50f494](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c93b50f494f1d2d17e9df4d85c394856a7c64c06))
