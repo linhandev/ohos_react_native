@@ -49,7 +49,7 @@ jsi::Value ArkTSTurboModule::call(
                                .c_str());
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
-  return jsi::valueFromDynamic(runtime, callSync(methodName, args));
+  return jsi::valueFromDynamic(runtime, callSync(methodName, std::move(args)));
 }
 
 // the cpp side calls a ArkTs TurboModule method and blocks until it returns,
@@ -73,7 +73,8 @@ folly::dynamic ArkTSTurboModule::callSync(
   m_ctx.taskExecutor->runSyncTask(
       m_ctx.turboModuleThread, [ctx = m_ctx, &methodName, &args, &result]() {
         ArkJS arkJS(ctx.env);
-        auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
+        auto napiArgs =
+            arkJS.convertIntermediaryValuesToNapiValues(std::move(args));
         auto napiTurboModuleObject =
             arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
         auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
@@ -114,10 +115,11 @@ void rnoh::ArkTSTurboModule::scheduleCall(
        name = name_,
        methodName,
        args = std::move(args),
-       &runtime]() {
+       &runtime]() mutable {
         try {
           ArkJS arkJS(ctx.env);
-          auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
+          auto napiArgs =
+              arkJS.convertIntermediaryValuesToNapiValues(std::move(args));
           auto napiTurboModuleObject =
               arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
           napiTurboModuleObject.call(methodName, napiArgs);
@@ -150,7 +152,8 @@ jsi::Value ArkTSTurboModule::callAsync(
   return react::createPromiseAsJSIValue(
       runtime,
       [&, args = std::move(args)](
-          jsi::Runtime& runtime2, std::shared_ptr<react::Promise> jsiPromise) {
+          jsi::Runtime& runtime2,
+          std::shared_ptr<react::Promise> jsiPromise) mutable {
         react::LongLivedObjectCollection::get().add(jsiPromise);
         m_ctx.taskExecutor->runTask(
             m_ctx.turboModuleThread,
@@ -161,14 +164,16 @@ jsi::Value ArkTSTurboModule::callAsync(
              arkTSTurboModuleInstanceRef = m_ctx.arkTSTurboModuleInstanceRef,
              jsInvoker = m_ctx.jsInvoker,
              &runtime2,
-             weakJsiPromise = std::weak_ptr<react::Promise>(jsiPromise)] {
+             weakJsiPromise =
+                 std::weak_ptr<react::Promise>(jsiPromise)]() mutable {
               ArkJS arkJS(env);
               try {
                 auto n_promisedResult =
                     arkJS.getObject(arkTSTurboModuleInstanceRef)
                         .call(
                             methodName,
-                            arkJS.convertIntermediaryValuesToNapiValues(args));
+                            arkJS.convertIntermediaryValuesToNapiValues(
+                                std::move(args)));
                 Promise(env, n_promisedResult)
                     .then(
                         [&runtime2, weakJsiPromise, env, jsInvoker](auto args) {
