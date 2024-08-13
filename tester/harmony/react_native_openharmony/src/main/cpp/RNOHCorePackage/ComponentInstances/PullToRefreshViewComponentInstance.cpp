@@ -126,8 +126,8 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
 
 void PullToRefreshViewComponentInstance::onRefresh() {
   m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
-  m_refreshNode.setNativeRefreshing(true);
   if (m_enableOnRefreshNativeEvent) {
+    m_refreshNode.setNativeRefreshing(m_props->refreshing);
     m_eventEmitter->onRefresh({});
   }
   m_enableOnRefreshNativeEvent = true;
