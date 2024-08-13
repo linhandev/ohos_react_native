@@ -15,6 +15,7 @@
 #include "RNOH/RNOHError.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
+#include "RNOH/SynchronousEventBeat.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "hermes/executor/HermesExecutorFactory.h"
@@ -122,11 +123,18 @@ void RNInstanceInternal::initializeScheduler(
     runtimeScheduler->scheduleWork(std::move(rawCallback));
   };
 
-  react::EventBeat::Factory eventBeatFactory =
+  react::EventBeat::Factory asyncEventBeatFactory =
       [runtimeExecutor = m_reactInstance->getRuntimeExecutor(),
        uiTicker = m_uiTicker](auto ownerBox) {
         return std::make_unique<AsynchronousEventBeat>(
             ownerBox, runtimeExecutor, uiTicker);
+      };
+
+  react::EventBeat::Factory syncEventBeatFactory =
+      [runtimeScheduler = m_runtimeScheduler,
+       taskExecutor = m_taskExecutor](auto ownerBox) {
+        return std::make_unique<SynchronousEventBeat>(
+            ownerBox, runtimeScheduler, taskExecutor);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =
@@ -140,8 +148,8 @@ void RNInstanceInternal::initializeScheduler(
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
       .runtimeExecutor = runtimeExecutor,
-      .asynchronousEventBeatFactory = eventBeatFactory,
-      .synchronousEventBeatFactory = eventBeatFactory,
+      .asynchronousEventBeatFactory = asyncEventBeatFactory,
+      .synchronousEventBeatFactory = syncEventBeatFactory,
   };
 
   if (m_shouldEnableBackgroundExecutor) {
