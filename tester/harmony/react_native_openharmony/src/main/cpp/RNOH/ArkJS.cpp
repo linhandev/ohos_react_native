@@ -105,7 +105,7 @@ RNOHNapiObjectBuilder ArkJS::createObjectBuilder() {
 }
 
 std::vector<napi_value> ArkJS::createFromDynamics(
-    std::vector<folly::dynamic> dynamics) {
+    std::vector<folly::dynamic> const& dynamics) {
   std::vector<napi_value> results(dynamics.size());
   for (size_t i = 0; i < dynamics.size(); ++i) {
     results[i] = this->createFromDynamic(dynamics[i]);
@@ -113,14 +113,14 @@ std::vector<napi_value> ArkJS::createFromDynamics(
   return results;
 }
 
-napi_value ArkJS::createFromDynamic(folly::dynamic dyn) {
+napi_value ArkJS::createFromDynamic(folly::dynamic const& dyn) {
   if (dyn.isString()) {
     return this->createString(dyn.asString());
   } else if (dyn.isObject()) {
     auto objectBuilder = this->createObjectBuilder();
-    for (const auto& pair : dyn.items()) {
+    for (const auto& [key, value] : dyn.items()) {
       objectBuilder.addProperty(
-          pair.first.asString().c_str(), this->createFromDynamic(pair.second));
+          key.asString().c_str(), this->createFromDynamic(value));
     }
     return objectBuilder.build();
   } else if (dyn.isDouble()) {
@@ -141,8 +141,7 @@ napi_value ArkJS::createFromDynamic(folly::dynamic dyn) {
 }
 
 napi_value ArkJS::createFromException(std::exception const& e) {
-  folly::dynamic errData = folly::dynamic::object;
-  errData["message"] = e.what();
+  folly::dynamic errData = folly::dynamic::object("message", e.what());
   return this->createFromDynamic(errData);
 }
 
@@ -156,6 +155,7 @@ napi_value ArkJS::createFromJSError(facebook::jsi::JSError const& e) {
   }
   folly::dynamic dynStacktrace = folly::dynamic::array;
   dynStacktrace.push_back(e.getStack());
+  errData["stacktrace"] = std::move(dynStacktrace);
   return this->createFromDynamic(errData);
 }
 
@@ -238,7 +238,7 @@ createNapiCallback(
   return new std::function(
       [callback = std::move(callback)](
           napi_env env,
-          std::vector<napi_value> callbackNapiArgs) -> napi_value {
+          std::vector<napi_value> callbackNapiArgs) mutable -> napi_value {
         ArkJS arkJS(env);
         callback(arkJS.getDynamics(callbackNapiArgs));
         return arkJS.getUndefined();
@@ -460,23 +460,28 @@ std::vector<folly::dynamic> ArkJS::getDynamics(std::vector<napi_value> values) {
 std::vector<napi_value> ArkJS::convertIntermediaryValuesToNapiValues(
     std::vector<IntermediaryArg> args) {
   std::vector<napi_value> napiArgs;
-  for (auto arg : args) {
-    napiArgs.push_back(convertIntermediaryValueToNapiValue(arg));
+  for (auto& arg : args) {
+    napiArgs.push_back(convertIntermediaryValueToNapiValue(std::move(arg)));
   }
   return napiArgs;
 }
 
 napi_value ArkJS::convertIntermediaryValueToNapiValue(IntermediaryArg arg) {
-  try {
-    return this->createFromDynamic(std::get<folly::dynamic>(arg));
-  } catch (const std::bad_variant_access& e) {
-  }
-  try {
-    return this->createSingleUseCallback(
-        std::move(std::get<IntermediaryCallback>(arg)));
-  } catch (const std::bad_variant_access& e) {
-    return this->getUndefined();
-  }
+  return std::visit(
+      [this](auto&& arg) {
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, folly::dynamic>) {
+          return this->createFromDynamic(std::move(arg));
+        } else if constexpr (std::is_same_v<T, IntermediaryCallback>) {
+          return this->createSingleUseCallback(std::move(arg));
+        } else {
+          static_assert(
+              std::is_same_v<T, folly::dynamic> ||
+                  std::is_same_v<T, IntermediaryCallback>,
+              "invalid type passed!");
+        }
+      },
+      std::move(arg));
 }
 
 RNOHNapiObjectBuilder::RNOHNapiObjectBuilder(napi_env env, ArkJS arkJS)

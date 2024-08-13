@@ -1,6 +1,7 @@
 #ifndef native_ArkJS_H
 #define native_ArkJS_H
 
+#include <folly/Function.h>
 #include <folly/dynamic.h>
 #include <jsi/jsi.h>
 #include <react/renderer/graphics/Color.h>
@@ -75,9 +76,10 @@ class ArkJS {
 
   napi_value createArray(std::vector<napi_value>);
 
-  std::vector<napi_value> createFromDynamics(std::vector<folly::dynamic>);
+  std::vector<napi_value> createFromDynamics(
+      std::vector<folly::dynamic> const&);
 
-  napi_value createFromDynamic(folly::dynamic);
+  napi_value createFromDynamic(folly::dynamic const&);
 
   napi_value createFromException(std::exception const&);
 
