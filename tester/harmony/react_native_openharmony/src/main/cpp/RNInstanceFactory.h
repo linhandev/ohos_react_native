@@ -1,4 +1,5 @@
 #pragma once
+#include <rawfile/raw_file_manager.h>
 #include <react/renderer/components/image/ImageComponentDescriptor.h>
 #include <react/renderer/components/text/ParagraphComponentDescriptor.h>
 #include <react/renderer/mounting/ShadowViewMutation.h>
@@ -62,7 +63,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor,
     std::unordered_set<std::string> arkTsComponentNames,
-    std::unordered_map<std::string, std::string> fontFamilySrcByName
+    std::unordered_map<std::string, std::string> fontPathRelativeToRawfileDirByFontFamily
     ) {
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->getFeatureFlagStatus("C_API_ARCH");
@@ -205,12 +206,13 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         arkTsComponentNames,
 		preAllocationBuffer,
         featureFlagRegistry);
-    auto nativeResourceManager = UniqueNativeResourceManager(
-        OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
-        OH_ResourceManager_ReleaseNativeResourceManager);
-    for (auto& [familyName, familySrc] : fontFamilySrcByName) {
-      textMeasurer->registerFont(nativeResourceManager.get(), familyName, familySrc);
-    }  
+    SharedNativeResourceManager nativeResourceManager(
+      OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
+      OH_ResourceManager_ReleaseNativeResourceManager);
+    for (auto& [fontFamilyName, fontPathRelativeToRawfileDir] :
+       fontPathRelativeToRawfileDirByFontFamily) {
+      textMeasurer->registerFont(nativeResourceManager, fontFamilyName, fontPathRelativeToRawfileDir);
+    }
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,

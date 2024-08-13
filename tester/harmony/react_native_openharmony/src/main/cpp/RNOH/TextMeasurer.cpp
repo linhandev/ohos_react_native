@@ -433,20 +433,35 @@ void TextMeasurer::setTextMeasureParams(float fontScale, float scale, bool halfl
   updateDefaultFont();
 }
 
-void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, const std::string familyName, const std::string familySrc) {
-  const std::string fontPath = "assets" + familySrc;
-  auto file = OH_ResourceManager_OpenRawFile(
-      nativeResourceManager, fontPath.c_str());
-  auto length = OH_ResourceManager_GetRawFileSize(file);
-  std::unique_ptr<char[]> buffer = std::make_unique<char[]>(length);
-  OH_ResourceManager_ReadRawFile(file, buffer.get(), length);
-  OH_ResourceManager_CloseRawFile(file);
+void TextMeasurer::registerFont(std::weak_ptr<NativeResourceManager> weakResourceManager, const std::string name, const std::string fontFilePathRelativeToRawfileDir) {
+  auto resourceManager = weakResourceManager.lock();
+  if (resourceManager == nullptr) {
+    LOG(ERROR) << "Couldn't register font " << name
+               << " — resourceManager is nullptr";
+    return;
+  };
+  auto fontFile =
+      std::unique_ptr<RawFile, decltype(&OH_ResourceManager_CloseRawFile)>(
+          OH_ResourceManager_OpenRawFile(
+              resourceManager.get(), fontFilePathRelativeToRawfileDir.c_str()),
+          OH_ResourceManager_CloseRawFile);
+  if (!fontFile) {
+    throw RNOHError(
+        "Failed to open font fontFile: " + fontFilePathRelativeToRawfileDir);
+  }
+  auto length = OH_ResourceManager_GetRawFileSize(fontFile.get());
+  std::vector<uint8_t> buffer(length);
+  if (OH_ResourceManager_ReadRawFile(fontFile.get(), buffer.data(), length) !=
+      length) {
+    throw RNOHError(
+        "Failed to read fontFile: " + fontFilePathRelativeToRawfileDir);
+  }
   OH_Drawing_RegisterFontBuffer(
-        m_fontCollection.get(),
-        familyName.c_str(),
-        (uint8_t*)buffer.get(),
-        length
-     );
+    m_fontCollection.get(),
+    name.c_str(),
+    buffer.data(),
+    length
+  );
 }
 
 void TextMeasurer::updateDefaultFont() {

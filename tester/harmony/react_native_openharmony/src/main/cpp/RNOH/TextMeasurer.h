@@ -42,9 +42,10 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   
   void setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfleading);
   void registerFont(
-      NativeResourceManager* nativeResourceManager,
-      const std::string familyName,
-      const std::string familySrc);
+    std::weak_ptr<NativeResourceManager> weakResourceManager,
+    const std::string name,
+    const std::string fontFilePathRelativeToRawfileDir
+  );
 
  private:
   

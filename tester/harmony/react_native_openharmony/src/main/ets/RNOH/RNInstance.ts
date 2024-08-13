@@ -24,6 +24,7 @@ import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
 import font from '@ohos.font'
 
+export type Resource = Exclude<font.FontOptions["familySrc"], string>
 export type SurfaceContext = {
   width: number
   height: number
@@ -294,9 +295,10 @@ export type RNInstanceOptions = {
    */
   httpClient?: HttpClient,
   /**
-   * config the fonts to be use
+   * Specifies custom fonts used by RN application.
+   * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
    */
-  fontOptions?: font.FontOptions[]
+  fontResourceByFontFamily?: Record<string, Resource>
 }
 
 /**
@@ -304,14 +306,6 @@ export type RNInstanceOptions = {
  */
 export interface FrameNodeFactory {
   create(tag: Tag, componentName: string);
-}
-
-/**
- * Used in the C-API architecture
- */
-export type FontOptions = {
-  familyName: string,
-  familySrc: string
 }
 
 
@@ -358,7 +352,7 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
-    private fontOptions: font.FontOptions[],
+    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -443,13 +437,6 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
-    const fontOptions: FontOptions[] = []
-    for (const fontOption of this.fontOptions ?? []) {
-      fontOptions.push({
-        familyName: fontOption.familyName as string,
-        familySrc: fontOption.familySrc as string
-      });
-    }
     this.napiBridge.createReactNativeInstance(
       this.id,
       this.turboModuleProvider,
@@ -481,7 +468,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags,
       this.resourceManager,
       this.arkTsComponentNames,
-      fontOptions
+      this.fontFamilyNameByFontPathRelativeToRawfileDir,
     )
     stopTracing()
   }
