@@ -117,13 +117,15 @@ static napi_value createReactNativeInstance(
     for (size_t i = 0; i < arkTsComponentNamesDynamic.size(); ++i) {
         arkTsComponentNames.emplace(arkTsComponentNamesDynamic[i].asString());
     }
-    auto fontOptionsDynamic = arkJs.getDynamic(args[12]);
-    std::unordered_map<std::string, std::string> fontFamilySrcByName;
-    for (size_t i = 0; i < fontOptionsDynamic.size(); ++i) {
-      fontFamilySrcByName.emplace(
-            fontOptionsDynamic[i]["familyName"].asString(),
-            fontOptionsDynamic[i]["familySrc"].asString()
-            );
+    auto n_fontPathRelativeToRawfileDirByFontFamily =
+        arkJs.getObjectProperties(args[12]);
+    std::unordered_map<std::string, std::string>
+        fontPathRelativeToRawfileDirByFontFamily;
+    for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
+         n_fontPathRelativeToRawfileDirByFontFamily) {
+      fontPathRelativeToRawfileDirByFontFamily.emplace(
+          arkJs.getString(fontFamily),
+          arkJs.getString(fontPathRelativeToRawfileDir));
     }
     auto rnInstance = createRNInstance(
         instanceId,
@@ -174,7 +176,7 @@ static napi_value createReactNativeInstance(
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor,
         arkTsComponentNames,
-        fontFamilySrcByName);
+        std::move(fontPathRelativeToRawfileDirByFontFamily));
 
     auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
     if (rnInstanceById.find(instanceId) != rnInstanceById.end()) {

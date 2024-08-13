@@ -1,3 +1,4 @@
+import font from '@ohos.font';
 import type { RNInstance, RNInstanceOptions } from './RNInstance';
 import { RNInstanceImpl } from './RNInstance';
 import type { NapiBridge } from './NapiBridge';
@@ -27,8 +28,13 @@ export class RNInstanceRegistry {
     if (options.enableBackgroundExecutor) {
       this.logger.warn("'enableBackgroundExecutor' feature flag is deprecated");
     }
-    if (options.enableCAPIArchitecture && !options.fontOptions) {
+    if (options.enableCAPIArchitecture && !options.fontResourceByFontFamily) {
       this.logger.warn("No custom fonts registered");
+    }
+    const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
+    for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
+      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
+      font.registerFont({ familyName: fontFamily, familySrc: fontResource })
     }
     const instance = new RNInstanceImpl(
       id,
@@ -45,7 +51,7 @@ export class RNInstanceRegistry {
       options.assetsDest,
       this.resourceManager,
       options.arkTsComponentNames,
-      options.fontOptions,
+      fontFamilyNameByFontPathRelativeToRawfileDir,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,

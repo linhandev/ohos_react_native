@@ -11,7 +11,6 @@ import {
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
 import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-package';
-import font from '@ohos.font';
 import { createRNPackages } from '../RNPackagesFactory';
 
 const arkTsComponentNames: Array<string> = [SampleView.NAME, GeneratedSampleView.NAME, PropsDisplayer.NAME];
@@ -44,21 +43,6 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
 
 const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)
 
-/**
- * If you want to use custom fonts, you need to register them here.
- * We should support react-native-asset to handle registering fonts automatically.
- */
-const fonts: font.FontOptions[] = [
-  {
-    familyName: 'Pacifico-Regular',
-    familySrc: '/assets/fonts/Pacifico-Regular.ttf'
-  },
-  {
-    familyName: 'StintUltraCondensed-Regular',
-    familySrc: '/assets/fonts/StintUltraCondensed-Regular.ttf'
-  }
-]
-
 @Entry
 @Component
 struct Index {
@@ -70,10 +54,6 @@ struct Index {
   aboutToAppear() {
     this.logger = this.rnohCoreContext!.logger.clone("Index")
     const stopTracing = this.logger.clone("aboutToAppear").startTracing()
-    for (const customFont of fonts) {
-      font.registerFont(customFont)
-    }
-
     this.shouldShow = true
     stopTracing()
   }
@@ -99,7 +79,10 @@ struct Index {
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
             arkTsComponentNames: arkTsComponentNames,
-            fontOptions: fonts
+            fontResourceByFontFamily: {
+              'Pacifico-Regular': $rawfile("fonts/Pacifico-Regular.ttf"),
+              "StintUltraCondensed-Regular": $rawfile('fonts/StintUltraCondensed-Regular.ttf'),
+            }
           },
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "app_name",
