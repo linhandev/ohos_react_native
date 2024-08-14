@@ -256,14 +256,11 @@ class ArkUITypographyBuilder final {
     OH_Drawing_SetTextStyleDecorationStyle(textStyle.get(), textDecorationStyle);
     
     // backgroundColor
-    std::unique_ptr<
-        OH_Drawing_Brush,
-        decltype(&OH_Drawing_BrushDestroy)>
-        brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (fragment.textAttributes.isHighlighted.has_value() && fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    } else if (fragment.textAttributes.backgroundColor) {
+    if (fragment.textAttributes.backgroundColor) {
+      std::unique_ptr<
+          OH_Drawing_Brush,
+          decltype(&OH_Drawing_BrushDestroy)>
+          brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
       OH_Drawing_BrushSetColor(brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
       OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     }
