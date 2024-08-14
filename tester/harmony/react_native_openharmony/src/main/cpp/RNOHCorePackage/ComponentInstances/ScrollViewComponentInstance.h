@@ -277,6 +277,7 @@ class ScrollViewComponentInstance
    * `onScroll` event.
    */
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
+  void onContentSizeChanged();
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;
   std::optional<facebook::react::Point> m_targetOffsetOfScrollToCommand =
