@@ -200,7 +200,7 @@ void RNInstanceInternal::updateState(
 void RNInstanceInternal::onUITick(
     UITicker::Timestamp /*recentVSyncTimestamp*/) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
-  if (m_shouldRelayUITick.load()) {
+  if (m_shouldRelayUITick.load() && m_scheduler != nullptr) {
     m_scheduler->animationTick();
   }
 }
