@@ -585,7 +585,7 @@ bool ScrollViewComponentInstance::isCloseToTargetOffset(
 
 void ScrollViewComponentInstance::onContentSizeChanged() {
   auto maxScrollY = m_contentSize.height - m_containerSize.height;
-  if (m_currentOffset.y > maxScrollY) {
+  if (maxScrollY > 0 && m_currentOffset.y > maxScrollY) {
     /**
      * When `scrollTo` is called, ArkUI emits `NODE_SCROLL_EVENT_ON_SCROLL`
      * and then `NODE_SCROLL_EVENT_ON_SCROLL_START`.
@@ -593,7 +593,6 @@ void ScrollViewComponentInstance::onContentSizeChanged() {
      * (or "dragging") state.
      */
     onScrollStart();
-    maxScrollY = (maxScrollY > 0 : maxScrollY : 0);
     m_scrollNode.scrollTo(m_currentOffset.x, maxScrollY, false);
   }
 }
