@@ -1,4 +1,5 @@
 import uri from '@ohos.uri';
+import Url from '@ohos.url';
 import call from '@ohos.telephony.call';
 import type { TurboModuleContext } from "../../RNOH/TurboModule";
 import { TurboModule } from "../../RNOH/TurboModule";
@@ -86,14 +87,11 @@ export class LinkingManagerTurboModule extends TurboModule {
   }
 
   private createSMSWant(urlString: string): Want {
-    const result = urlString.split('&')
-    const telephone = result[0].replace(/^sms:/, '');
-    let content = ''
-    for (let i = 0, len = result.length; i < len; i++) {
-      if (/^body/.test(result[i])) {
-        content = result[i].replace(/^body=/, '')
-      }
-    }
+    urlString = urlString.replace('&body', '?body');
+    const smsUri = Url.URL.parseURL(urlString);
+    const searchParams = new Url.URLParams(smsUri.search);
+    const telephone = smsUri.pathname;
+    const content = searchParams.get('body');
     const parameters = telephone ? {
       contactObjects: JSON.stringify([{ telephone }]),
       pageFlag: 'conversation',
@@ -102,7 +100,6 @@ export class LinkingManagerTurboModule extends TurboModule {
     // NOTE: the default sms app doesn't handle the `sendSms` action...
     // see https://gitee.com/openharmony/applications_mms/blob/master/entry/src/main/module.json5
     return {
-      // "action": "ohos.want.action.sendSms",
       bundleName: "com.ohos.mms",
       abilityName: "com.ohos.mms.MainAbility",
       parameters,
