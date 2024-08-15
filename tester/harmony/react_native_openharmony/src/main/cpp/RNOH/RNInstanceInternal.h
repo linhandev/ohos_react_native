@@ -138,10 +138,18 @@ class RNInstanceInternal
   facebook::react::ContextContainer::Shared m_contextContainer;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =
       nullptr;
-  std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
   MountingManager::Shared m_mountingManager;
+
+  /**
+   * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.
+   * These values must be destructed before the runtime.
+   * The runtime is destructed when `m_reactInstance` is destructed.
+   * Therefore, `m_scheduler` must be declared after `m_reactInstance`.
+   */
   std::shared_ptr<facebook::react::Instance> m_reactInstance =
       std::make_shared<facebook::react::Instance>();
+  std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
+
   TurboModuleProvider::Shared m_turboModuleProvider = nullptr;
   std::shared_ptr<facebook::react::ComponentDescriptorProviderRegistry>
       m_componentDescriptorProviderRegistry;
