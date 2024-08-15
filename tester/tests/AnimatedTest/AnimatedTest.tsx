@@ -11,73 +11,125 @@ import {
 } from 'react-native';
 
 import {TestSuite} from '@rnoh/testerino';
-import {Button, TestCase} from '../components';
+import {Button, Effect, TestCase} from '../../components';
+import {AnimatedCoreTest} from './AnimatedCoreTest';
+import {AnimatedEasingTest} from './AnimatedEasingTest';
+import {AnimatedValueTest} from './AnimatedValueTest';
 
 export function AnimatedTest() {
   return (
     <TestSuite name="Animated">
-      <TestCase.Example itShould="update the button label after a delay">
-        <AnimatedEndCallbackTest />
-      </TestCase.Example>
-      <TestCase.Example itShould="animate width">
-        <AnimatedRectangle />
-      </TestCase.Example>
-      <TestCase.Example itShould="move red square horizontally relatively to the scroll offset">
-        <AnimatedScrollViewTestCase />
-      </TestCase.Example>
-      <TestCase.Example itShould="fade in and out when clicked">
-        <FadeInOut />
-        <FadeInOut nativeDriver />
-      </TestCase.Example>
-      <TestCase.Example itShould="rotate grey square after red square with 0.5 second delay">
-        <Delay />
-      </TestCase.Example>
-      <TestCase.Example itShould="rotate red square in a loop">
-        <Loop />
-      </TestCase.Example>
-      <TestCase.Example itShould="rotate both squares in paralell">
-        <Parallel />
-      </TestCase.Example>
-      <TestCase.Example itShould="rotate button on press">
-        <AnimatedPressableView />
-      </TestCase.Example>
-      <TestCase.Example itShould="rotate squares with different stiffness/mass">
-        <Spring />
-      </TestCase.Example>
-      <TestCase.Example itShould="move squares with different initial velocity and deceleration values">
-        <Decay />
-      </TestCase.Example>
-      <TestCase.Example itShould="move square immediately after pressing button">
-        <DiffClamp />
-      </TestCase.Example>
-      <TestCase.Example itShould="move grey square 2x further horizontally than red">
-        <Multiply />
-      </TestCase.Example>
-      <TestCase.Example itShould="move grey twice but half the total distance of red">
-        <Modulo />
-      </TestCase.Example>
-      <TestCase.Example itShould="move red square closer">
-        <Perspective />
-      </TestCase.Example>
-      <TestCase.Example itShould="move square both vertically and horizontally">
-        <ValueXY />
-      </TestCase.Example>
-      <TestCase.Example
-        skip="tracking value doesn't seem to work anywhere"
-        itShould="(broken everywhere) move both squares, with blue square following the red with a spring">
-        <TrackingValue />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="gradually change color from green to red when scrolling down (color interpolation)">
-        <ColorInterpolationExample />
-      </TestCase.Example>
-      <TestCase.Example itShould="stop updating current offset after detachching listener (fork/unfork event)">
-        <AnimatedForkUnforkEventTest />
-      </TestCase.Example>
-      <TestCase.Example itShould="move red square horizontally relatively to the scroll offset (attachNativeEvent)">
-        <AnimatedAttachNativeEventTest />
-      </TestCase.Example>
+      <AnimatedCoreTest />
+      <AnimatedEasingTest />
+      <AnimatedValueTest />
+      <TestSuite name="timing">
+        <TestSuite name="start">
+          <TestCase.Manual
+            itShould="call start callback"
+            initialState={-1}
+            arrange={({setState, state}) => {
+              return (
+                <Effect
+                  onMount={() => {
+                    setState(0);
+                    Animated.timing(new Animated.Value(20), {
+                      toValue: 0,
+                      useNativeDriver: true,
+                      duration: 1000,
+                    }).start(() => {
+                      setState(c => c + 1);
+                    });
+                  }}>
+                  <Text>{state}</Text>
+                </Effect>
+              );
+            }}
+            assert={async ({expect, state}) => {
+              const result = await new Promise(resolve => {
+                if (state > 0) {
+                  resolve(state);
+                }
+              });
+              expect(result).to.be.greaterThan(0);
+            }}
+          />
+        </TestSuite>
+      </TestSuite>
+      <TestSuite name="animating various style properties">
+        <TestSuite name="opacity">
+          <TestCase.Example itShould="fade in and out when clicked">
+            <FadeInOut />
+            <FadeInOut nativeDriver />
+          </TestCase.Example>
+        </TestSuite>
+        <TestSuite name="perspective">
+          <TestCase.Example itShould="move red square closer">
+            <Perspective />
+          </TestCase.Example>
+        </TestSuite>
+      </TestSuite>
+      <TestSuite name="delay">
+        <TestCase.Example itShould="rotate grey square after red square with 0.5 second delay">
+          <Delay />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="loop">
+        <TestCase.Example itShould="rotate red square in a loop">
+          <Loop />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="parallel">
+        <TestCase.Example itShould="rotate both squares in parallel">
+          <Parallel />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="createAnimatedComponent">
+        <TestCase.Example itShould="rotate button on press">
+          <AnimatedPressableView />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="spring">
+        <TestCase.Example itShould="rotate squares with different stiffness/mass">
+          <Spring />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="decay">
+        <TestCase.Example itShould="move squares with different initial velocity and deceleration values">
+          <Decay />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="diffClamp">
+        <TestCase.Example itShould="move square immediately after pressing button">
+          <DiffClamp />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="multiply">
+        <TestCase.Example itShould="move grey square 2x further horizontally than red">
+          <Multiply />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="modulo">
+        <TestCase.Example itShould="move grey twice but half the total distance of red">
+          <Modulo />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="event">
+        <TestCase.Example
+          modal
+          itShould="gradually change color from green to red when scrolling down (color interpolation)">
+          <ColorInterpolationExample />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="forkEvent + unforkEvent">
+        <TestCase.Example itShould="stop updating current offset after detaching listener (fork/unfork event)">
+          <AnimatedForkUnforkEventTest />
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="attachNativeEvent">
+        <TestCase.Example itShould="move red square horizontally relatively to the scroll offset (attachNativeEvent)">
+          <AnimatedAttachNativeEventTest />
+        </TestCase.Example>
+      </TestSuite>
     </TestSuite>
   );
 }
@@ -163,7 +215,7 @@ const AnimatedForkUnforkEventTest = () => {
     setOffset(event.nativeEvent.contentOffset.y);
   };
 
-  const detachchOffsetListener = () => {
+  const detachOffsetListener = () => {
     // @ts-ignore
     Animated.unforkEvent(animatedEvent, handleScroll);
   };
@@ -178,8 +230,8 @@ const AnimatedForkUnforkEventTest = () => {
       }}>
       <Text>{`Offset: ${offset}`}</Text>
       <Button
-        label={'detachch offset listener from onScroll'}
-        onPress={detachchOffsetListener}
+        label={'detach offset listener from onScroll'}
+        onPress={detachOffsetListener}
       />
       <Animated.ScrollView
         style={{width: '100%', height: '100%'}}
@@ -187,93 +239,6 @@ const AnimatedForkUnforkEventTest = () => {
         scrollEventThrottle={16}
         // @ts-ignore
         onScroll={Animated.forkEvent(animatedEvent, handleScroll)}>
-        {new Array(3).fill(0).map((_, idx) => {
-          return (
-            <View
-              key={idx}
-              style={{
-                width: '100%',
-                height: 50,
-                backgroundColor: 'gray',
-                marginBottom: 50,
-              }}
-            />
-          );
-        })}
-      </Animated.ScrollView>
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            bottom: 0,
-            transform: [{translateX: translation}],
-            width: 32,
-            height: 32,
-            backgroundColor: 'red',
-          },
-        ]}
-      />
-    </View>
-  );
-};
-function AnimatedRectangle() {
-  const animWidth = React.useRef(new Animated.Value(100)).current;
-
-  const animation = React.useMemo(() => {
-    const expand = Animated.timing(animWidth, {
-      toValue: 300,
-      duration: 1000,
-      useNativeDriver: false,
-    });
-    const contract = Animated.timing(animWidth, {
-      toValue: 100,
-      duration: 1000,
-      useNativeDriver: false,
-    });
-    return Animated.sequence([expand, contract]);
-  }, []);
-
-  return (
-    <Animated.View
-      style={{
-        height: 100,
-        width: animWidth,
-        backgroundColor: 'red',
-      }}
-      onTouchEnd={() => {
-        animation.reset();
-        animation.start();
-      }}
-    />
-  );
-}
-
-const AnimatedScrollViewTestCase = () => {
-  const scrollY = new Animated.Value(0);
-  const translation = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [0, 200],
-    extrapolate: 'clamp',
-  });
-
-  return (
-    <View
-      style={{
-        width: '100%',
-        height: 100,
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-      <Animated.ScrollView
-        style={{width: '100%', height: '100%'}}
-        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
-          {
-            useNativeDriver: true,
-          },
-        )}>
         {new Array(3).fill(0).map((_, idx) => {
           return (
             <View
@@ -709,139 +674,6 @@ const DiffClamp = () => {
           ],
         }}
       />
-      <Text style={{height: 20}}>Press me to start animation</Text>
-    </Pressable>
-  );
-};
-
-const ValueXY = () => {
-  const square1Anim = useRef(new Animated.ValueXY({x: 50, y: 50})).current;
-
-  const animation = Animated.sequence([
-    Animated.timing(square1Anim, {
-      toValue: {x: 0, y: 0},
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: {x: 0, y: 50},
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: {x: 50, y: 0},
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: {x: 50, y: 50},
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-  ]);
-  const handleAnimation = () => {
-    animation.reset();
-    animation.start();
-  };
-
-  return (
-    <Pressable style={{height: 120, width: '100%'}} onPress={handleAnimation}>
-      <View style={{height: 100}}>
-        <Animated.View
-          style={{
-            height: 40,
-            width: 40,
-            backgroundColor: 'red',
-            transform: [
-              {
-                translateX: square1Anim.x,
-              },
-              {
-                translateY: square1Anim.y,
-              },
-            ],
-          }}
-        />
-      </View>
-      <Text style={{height: 20}}>Press me to start animation</Text>
-    </Pressable>
-  );
-};
-
-const AnimatedEndCallbackTest = () => {
-  const [count, setCount] = React.useState(0);
-  const increase = () => {
-    Animated.timing(new Animated.Value(20), {
-      toValue: 0,
-      useNativeDriver: true,
-      duration: 1000,
-    }).start(() => {
-      setCount(c => c + 1);
-    });
-  };
-
-  return <Button onPress={increase} label={JSON.stringify(count)} />;
-};
-
-const TrackingValue = () => {
-  const square1Anim = useRef(new Animated.Value(50)).current;
-  const square2Anim = useRef(new Animated.Value(50)).current;
-
-  const animation = Animated.sequence([
-    Animated.timing(square1Anim, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: 50,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-    Animated.timing(square1Anim, {
-      toValue: 50,
-      duration: 1000,
-      useNativeDriver: true,
-    }),
-  ]);
-
-  const handleAnimation = () => {
-    animation.reset();
-    animation.start();
-
-    const tracking = Animated.spring(square2Anim, {
-      toValue: square1Anim,
-      useNativeDriver: true,
-      mass: 10,
-    });
-    tracking.start();
-  };
-
-  return (
-    <Pressable style={{height: 120, width: '100%'}} onPress={handleAnimation}>
-      <View style={{height: 100}}>
-        <Animated.View
-          style={{
-            height: 40,
-            width: 40,
-            backgroundColor: 'red',
-            transform: [{translateX: square1Anim}],
-          }}
-        />
-        <Animated.View
-          style={{
-            height: 40,
-            width: 40,
-            backgroundColor: 'blue',
-            transform: [{translateX: square2Anim}],
-          }}
-        />
-      </View>
       <Text style={{height: 20}}>Press me to start animation</Text>
     </Pressable>
   );

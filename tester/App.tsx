@@ -25,10 +25,13 @@ function App() {
           <NavigationContainer>
             <PortalProvider>
               <View id="__harmony::ready" />
-              <Page name="_DEV Tests">
+              <Page name="_DEV TESTS">
                 <TesterExample filter={{tags: ['dev']}} />
               </Page>
-              <Page name="AUTOMATED & MANUAL Tests">
+              <Page name="ALL TESTS">
+                <TesterExample filter={{}} />
+              </Page>
+              <Page name="AUTOMATED & MANUAL TESTS">
                 <TesterExample filter={{types: ['automated', 'manual']}} />
               </Page>
               {Object.keys(testSuiteByName).map(testSuiteName => {
