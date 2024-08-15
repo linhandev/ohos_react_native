@@ -493,16 +493,9 @@ class CppComponentInstance : public ComponentInstance {
  protected:
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
-    if (props->testId != "") {
-      return props->testId;
-    } else if (props->nativeId != "") {
-      return props->nativeId;
-    } else {
-      std::ostringstream id;
-      id << ShadowNodeT::Name() << "(" << m_tag << ")"
-         << "@" << this;
-      return id.str();
-    }
+    std::ostringstream id;
+    id << m_tag;
+    return id.str();
   }
 
   struct ViewRawProps {
