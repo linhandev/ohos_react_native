@@ -116,7 +116,7 @@ static jsi::Value __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithPr
     size_t count) {
     bool error = args[0].asBool();
     return createPromiseAsJSIValue(
-      rt, [error](jsi::Runtime &rt2, std::shared_ptr<Promise> promise) {
+      rt, [error](jsi::Runtime &rt2, std::shared_ptr<facebook::react::Promise> promise) {
         if (error) {
           promise->reject("intentional promise rejection");
         } else {
