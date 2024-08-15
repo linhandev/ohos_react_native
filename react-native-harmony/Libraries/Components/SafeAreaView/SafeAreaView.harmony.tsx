@@ -1,5 +1,5 @@
 import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
-import { TurboModuleRegistry, View, ViewProps } from "react-native";
+import { Dimensions, TurboModuleRegistry, View, ViewProps } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
 
@@ -22,21 +22,55 @@ const safeAreaTurboModule = TurboModuleRegistry.get<Spec>(
   "SafeAreaTurboModule"
 )!;
 
+const getPaddingTop = (inset: number, pageY: number) => {
+  return Math.max(0, inset - pageY);
+}
+
+const getPaddingBottom = (insetBottom: number, insetTop: number, paddingTop: number, height: number, windowHeight: number, pageY: number, positionY: number): number => {
+  // if SafeArea is not visible or outside the viewport or topped and not full height
+  if (height === 0 || pageY >= windowHeight || (pageY === 0 && height < windowHeight)) {
+    return 0;
+  }
+
+  // if SafeAreaView is topped, check for full height
+  if (Math.round(height) >= Math.round(windowHeight) && pageY === 0) {
+    // if SafeAreaView is full height and at the top without any offset
+    return positionY === 0 ? insetBottom : 0;
+  }
+
+  // if SafeAreaView is topped with margin and not full height
+  if (height < windowHeight && positionY === 0 && pageY <= insetTop) {
+    return Math.max(0, insetBottom - (windowHeight - (height + pageY)));
+  }
+
+  // if SafeAreaView is not topped and not full height and is nested
+  if (height < windowHeight && pageY > 0) {
+    return Math.max(0, insetBottom - (windowHeight - pageY));
+  }
+
+  
+  // Default case handling scenarios not captured above
+  return Math.max(0, insetBottom - (windowHeight - height + paddingTop));
+}
+
 export default React.forwardRef<View, ViewProps>(
   ({ children, style, ...otherProps }, ref) => {
-    const [topInset, setTopInset] = useState(
-      safeAreaTurboModule.getInitialInsets().top
-    );
-    const [leftInset, setLeftInset] = useState(
-      safeAreaTurboModule.getInitialInsets().left
-    );
-    const [rightInset, setRightInset] = useState(
-      safeAreaTurboModule.getInitialInsets().right
-    );
-    const [bottomInset, setBottomInset] = useState(
-      safeAreaTurboModule.getInitialInsets().bottom
-    );
+    const safeAreaViewRef = React.useRef<View>(null);
 
+    const [topInset, setTopInset] = useState(safeAreaTurboModule.getInitialInsets().top);
+    const [leftInset, setLeftInset] = useState(safeAreaTurboModule.getInitialInsets().left);
+    const [rightInset, setRightInset] = useState(safeAreaTurboModule.getInitialInsets().right);
+    const [bottomInset, setBottomInset] = useState(safeAreaTurboModule.getInitialInsets().bottom);
+
+    const [measurement, setMeasurement] = useState({ x: 0, y: 0, width: 0, height: 0, pageX: 0, pageY: 0 });
+    const [layout, setLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+
+    const measureView = () => {
+      safeAreaViewRef?.current?.measure((x, y, width, height, pageX, pageY) => {
+        setMeasurement({ x, y, width, height, pageX, pageY });
+      });
+    }
+  
     useEffect(
       function subscribeToSafeAreaChanges() {
         const subscription = (RCTDeviceEventEmitter as any).addListener(
@@ -55,18 +89,32 @@ export default React.forwardRef<View, ViewProps>(
       [setTopInset, setLeftInset, setRightInset, setBottomInset]
     );
 
+    useEffect(() => {
+      measureView();
+    }, []);
+
+    
+    const windowHeight = Dimensions.get('window').height;
+    const paddingTop = getPaddingTop(topInset, measurement.pageY);
+    const paddingBottom = getPaddingBottom(bottomInset, topInset, paddingTop, measurement.height, windowHeight, measurement.pageY, layout.y);
+    
     return (
       <View
-        ref={ref}
+        ref={safeAreaViewRef}
         style={[
           style,
           {
-            paddingTop: topInset,
+            paddingTop: paddingTop,
             paddingLeft: leftInset,
             paddingRight: rightInset,
-            paddingBottom: bottomInset,
+            paddingBottom: paddingBottom,
           },
         ]}
+        onLayout={(event) => {
+          setLayout(event.nativeEvent.layout);
+          measureView();
+          otherProps?.onLayout && otherProps.onLayout(event);
+        }}
         {...otherProps}
       >
         {children}
