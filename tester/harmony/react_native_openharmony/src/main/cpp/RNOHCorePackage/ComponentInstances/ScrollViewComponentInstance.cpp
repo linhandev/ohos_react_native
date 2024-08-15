@@ -57,6 +57,7 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
   m_contentContainerNode.setSize(stateData.getContentSize());
   if (m_contentSize != stateData.getContentSize()) {
     m_contentSize = stateData.getContentSize();
+    onContentSizeChanged();
   }
 }
 
@@ -580,6 +581,20 @@ bool ScrollViewComponentInstance::isCloseToTargetOffset(
     return flag;
   }
   return false;
+}
+
+void ScrollViewComponentInstance::onContentSizeChanged() {
+  auto maxScrollY = m_contentSize.height - m_containerSize.height;
+  if (maxScrollY > 0 && m_currentOffset.y > maxScrollY) {
+    /**
+     * When `scrollTo` is called, ArkUI emits `NODE_SCROLL_EVENT_ON_SCROLL`
+     * and then `NODE_SCROLL_EVENT_ON_SCROLL_START`.
+     * To emit `onScroll` events, the internal state must be in the "setting"
+     * (or "dragging") state.
+     */
+    onScrollStart();
+    m_scrollNode.scrollTo(m_currentOffset.x, maxScrollY, false);
+  }
 }
 
 bool ScrollViewComponentInstance::isHorizontal(

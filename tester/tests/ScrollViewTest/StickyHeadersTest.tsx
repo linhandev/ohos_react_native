@@ -1,5 +1,12 @@
 import {TestCase, TestSuite} from '@rnoh/testerino';
-import {Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  SectionList,
+} from 'react-native';
 import {getScrollViewContent} from './fixtures';
 import React from 'react';
 
@@ -58,6 +65,27 @@ export function StickyHeadersTest() {
           </ScrollView>
         </View>
       </TestCase>
+      <TestCase
+        modal
+        itShould="make the 'Main dishes' header stick to the top when the foldable phone is expanded or folded">
+        <View style={styles.wrapperView}>
+          <SectionList
+            sections={DATA}
+            stickySectionHeadersEnabled={true}
+            keyExtractor={(item, index) => item + index}
+            renderItem={() => (
+              <View style={styles.item}>
+                <Text style={{fontSize: 16}}>888888888888888888888888</Text>
+              </View>
+            )}
+            renderSectionHeader={({section: {title}}) => (
+              <Text style={[{backgroundColor: 'white'}, styles.title]}>
+                {title}
+              </Text>
+            )}
+          />
+        </View>
+      </TestCase>
     </TestSuite>
   );
 }
@@ -65,6 +93,20 @@ export function StickyHeadersTest() {
 const CustomStickyHeader = React.forwardRef(() => (
   <Text>custom sticky header</Text>
 ));
+
+interface SectionData {
+  id: string;
+  title: string;
+  data: string[];
+}
+
+const DATA: SectionData[] = [
+  {
+    id: '0',
+    title: 'Main dishes',
+    data: [...Array(10).fill('1')],
+  },
+];
 
 const styles = StyleSheet.create({
   wrapperView: {
@@ -78,5 +120,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
+  },
+  item: {
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 22,
+    height: 40,
   },
 });

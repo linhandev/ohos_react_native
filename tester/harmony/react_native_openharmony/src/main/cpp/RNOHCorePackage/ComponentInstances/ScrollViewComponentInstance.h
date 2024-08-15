@@ -135,6 +135,7 @@ class ScrollViewComponentInstance
    * So when `isCloseToTargetOffset` returns true, you need to actively emit the `onScroll` event.
    */
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
+  void onContentSizeChanged();
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;
   bool isNestedScroll();
