@@ -757,27 +757,6 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
       {lastChild->getTag(), position});
 }
 
-void ScrollViewComponentInstance::onAppear() {
-  if (!m_state || !m_props) {
-    return;
-  }
-
-  auto stateData = m_state->getData();
-  bool isContentOffsetZero =
-      stateData.contentOffset == facebook::react::Point{0, 0};
-
-  if (isContentOffsetZero) {
-    m_scrollNode.scrollTo(
-        m_props->contentOffset.x, m_props->contentOffset.y, false);
-    updateStateWithContentOffset(m_props->contentOffset);
-  }
-
-  if (!isContentOffsetZero) {
-    m_scrollNode.scrollTo(
-        stateData.contentOffset.x, stateData.contentOffset.y, false);
-  }
-}
-
 bool ScrollViewComponentInstance::setKeyboardAvoider(
     ComponentInstance::Weak keyboardAvoidingComponentInstance) {
   m_keyboardAvoider = keyboardAvoidingComponentInstance;

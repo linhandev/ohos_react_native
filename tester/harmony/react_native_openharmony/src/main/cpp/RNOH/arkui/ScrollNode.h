@@ -13,7 +13,6 @@ class ScrollNodeDelegate {
   virtual float onScrollFrameBegin(float offset, int32_t scrollState) {
     return offset;
   };
-  virtual void onAppear(){};
 };
 
 class ScrollNode : public ArkUINode {
