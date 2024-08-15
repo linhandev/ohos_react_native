@@ -109,6 +109,22 @@ static jsi::Value __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithCa
     return jsi::String::createFromUtf8(rt, result);
 }
 
+static jsi::Value __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithPromise(
+    jsi::Runtime &rt,
+    react::TurboModule &turboModule,
+    const jsi::Value *args, 
+    size_t count) {
+    bool error = args[0].asBool();
+    return createPromiseAsJSIValue(
+      rt, [error](jsi::Runtime &rt2, std::shared_ptr<Promise> promise) {
+        if (error) {
+          promise->reject("intentional promise rejection");
+        } else {
+          promise->resolve(jsi::String::createFromUtf8(rt2, "result!"));
+        }
+    });
+}
+
 std::map<std::string,std::optional<int32_t>> NativeCxxModuleExampleCxxSpecJSI::getMap(
     jsi::Runtime& rt,
     std::map<std::string,std::optional<int32_t>> arg) {
@@ -350,4 +366,6 @@ NativeCxxModuleExampleCxxSpecJSI::NativeCxxModuleExampleCxxSpecJSI(
            0, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_voidFunc};
     methodMap_["getValueWithCallback"] = MethodMetadata{
            1, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithCallback};
+    methodMap_["getValueWithPromise"] = MethodMetadata{
+           1, __hostFunction_NativeCxxModuleExampleCxxSpecJSI_getValueWithPromise};
 }
