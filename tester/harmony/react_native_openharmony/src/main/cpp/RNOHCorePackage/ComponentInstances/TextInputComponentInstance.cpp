@@ -266,6 +266,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+      m_textInputNode.setPasswordIconVisibility(false);      
     }
   }
   if (props->maxLength != 0) {
@@ -324,6 +325,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+    m_textInputNode.setPasswordIconVisibility(false);        
   }
   if (!m_props || props->traits.caretHidden != m_props->traits.caretHidden) {
     m_textInputNode.setCaretHidden(props->traits.caretHidden);
