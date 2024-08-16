@@ -321,13 +321,6 @@ TextNode& TextNode::setWritingDirection(int32_t direction) {
   return *this;
 }
 
-TextNode& TextNode::setFontVariant(const std::string& fontVariants) {
-  ArkUI_AttributeItem item = {.string = fontVariants.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FONT_FEATURE, &item));
-  return *this;
-}
-
 TextNode& TextNode::setTextContentWithStyledString(std::shared_ptr<TextMeasureInfo> info) {
   m_measureInfo = info;
   auto styledString = info->builder.getTextStyleString();
