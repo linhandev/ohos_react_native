@@ -43,7 +43,6 @@ class TextConversions {
   static ArkUI_WordBreak getArkUIWordBreakStrategy(
       facebook::react::TextBreakStrategy textBreakStrategy);
   static ArkUI_Direction getArkUIDirection(std::string writingDirection);
-  static std::string getArkUIFontVariant(const std::string& fontVariant);
 
  private:
   static std::pair<std::optional<float>, std::optional<float>>

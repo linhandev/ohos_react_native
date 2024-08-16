@@ -162,19 +162,6 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] writingDirection=" << writingDirection;
       m_textNode.setWritingDirection(writingDirection);
     }
-    
-    // fontVariant
-    if (textProps->rawProps.count("fontVariant") != 0) {
-      std::string fontVariants;
-      for(const auto& fontVariant : textProps->rawProps["fontVariant"]) {
-        fontVariants += TextConversions::getArkUIFontVariant(fontVariant.asString());
-      }
-      if(!fontVariants.empty()) {
-        fontVariants = fontVariants.substr(0, fontVariants.length() - 1);
-        VLOG(3) << "[text-debug] fontVariant=" << fontVariants;
-        m_textNode.setFontVariant(fontVariants);
-      }
-    }
   }
   VLOG(3) << "[text-debug] setProps end";
 }

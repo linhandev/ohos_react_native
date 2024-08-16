@@ -295,6 +295,11 @@ class ArkUITypographyBuilder final {
       const char* fontFamilies[] = {m_defaultFontFamilyName.c_str()};
       OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
     }
+    if (fragment.textAttributes.fontVariant.has_value()) {
+      for (auto& [tag, value] : mapValueToFontVariant(int(fragment.textAttributes.fontVariant.value()))) {
+        OH_Drawing_TextStyleAddFontFeature(textStyle.get(), tag.c_str(), value);
+      }
+    }
     // push text and corresponding textStyle to handler
     OH_ArkUI_StyledString_PushTextStyle(
         m_styledString.get(), textStyle.get());
@@ -347,7 +352,25 @@ class ArkUITypographyBuilder final {
     }
   }
 
-
+  std::map<std::string, int> mapValueToFontVariant(int value) {
+    std::map<std::string, int> fontVariant{};
+    if (value & (int)facebook::react::FontVariant::SmallCaps) {
+      fontVariant.emplace("smcp", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::OldstyleNums) {
+      fontVariant.emplace("onum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::LiningNums) {
+      fontVariant.emplace("lnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::TabularNums) {
+      fontVariant.emplace("tnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::ProportionalNums) {
+      fontVariant.emplace("pnum", 1);
+    }
+    return fontVariant;
+  }
 
 //  std::unique_ptr<
 //    ArkUI_StyledString,
