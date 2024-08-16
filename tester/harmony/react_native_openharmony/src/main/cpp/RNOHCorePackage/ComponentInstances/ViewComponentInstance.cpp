@@ -46,7 +46,7 @@ void ViewComponentInstance::onHoverOut(CustomNodeDelegate*) {
 
 void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
-  updateClippedSubviews();
+  updateClippedSubviews(true);
 }
 
 bool ViewComponentInstance::isViewClipped(
@@ -115,6 +115,9 @@ void ViewComponentInstance::updateClippedSubviews(bool childrenChange) {
 
 void ViewComponentInstance::onFinalizeUpdates() {
   CppComponentInstance::onFinalizeUpdates();
+  if (!m_props->removeClippedSubviews) {
+    return;
+  }
   updateClippedSubviews(true);
 }
 

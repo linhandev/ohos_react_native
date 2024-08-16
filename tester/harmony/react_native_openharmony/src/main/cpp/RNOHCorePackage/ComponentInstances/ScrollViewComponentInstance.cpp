@@ -222,7 +222,44 @@ void ScrollViewComponentInstance::setLayout(
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
   }
+
   markBoundingBoxAsDirty();
+}
+
+void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
+    facebook::react::Point offset,
+    double diff) {
+  if (diff <= 0) {
+    return;
+  }
+
+  if (isHorizontal(m_props)) {
+    if (offset.x + m_containerSize.width <= m_contentSize.width) {
+      return;
+    }
+  } else {
+    if (offset.y + m_containerSize.height <= m_contentSize.height) {
+      return;
+    }
+  }
+
+  facebook::react::Point targetOffset = {offset.x, offset.y};
+  if (isHorizontal(m_props)) {
+    targetOffset.x = m_contentSize.width - m_containerSize.width;
+  } else {
+    targetOffset.y = m_contentSize.height - m_containerSize.height;
+  }
+
+  if (targetOffset.x < 0) {
+    targetOffset.x = 0;
+  }
+  if (targetOffset.y < 0) {
+    targetOffset.y = 0;
+  }
+
+  onScrollStart();
+  m_scrollNode.scrollTo(
+      targetOffset.x, targetOffset.y, false, m_scrollToOverflowEnabled);
 }
 
 void rnoh::ScrollViewComponentInstance::onStateChanged(
@@ -230,9 +267,12 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
   CppComponentInstance::onStateChanged(state);
   auto stateData = state->getData();
   if (m_contentSize != stateData.getContentSize()) {
+    double diff = isHorizontal(m_props)
+        ? m_contentSize.width - stateData.getContentSize().width
+        : m_contentSize.height - stateData.getContentSize().height;
     m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
-    onContentSizeChanged();
+    updateOffsetAfterChildChange(getCurrentOffset(), diff);
   }
 }
 
@@ -356,8 +396,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       -borderMetrics.borderWidths.top,
       0.f,
       0.f);
-
-  updateContentClippedSubviews();
 }
 
 void ScrollViewComponentInstance::onCommandReceived(
@@ -388,6 +426,7 @@ facebook::react::Point rnoh::ScrollViewComponentInstance::getCurrentOffset()
     const {
   auto offset = m_scrollNode.getScrollOffset();
   auto contentViewOffset = getContentViewOffset();
+
   return offset - contentViewOffset;
 }
 
@@ -430,12 +469,13 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ScrollViewComponentInstance::updateContentClippedSubviews() {
+void ScrollViewComponentInstance::updateContentClippedSubviews(
+    bool childrenChange) {
   if (!m_children.empty() && m_children[0] != nullptr) {
     auto contentContainer =
         std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
     if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews();
+      contentContainer->updateClippedSubviews(childrenChange);
     }
   }
 }
@@ -542,7 +582,6 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     m_firstVisibleView = getFirstVisibleView(
         m_props->maintainVisibleContentPosition.value().minIndexForVisible);
   }
-  updateContentClippedSubviews();
 
   if (m_shouldAdjustScrollPositionOnNextRender) {
     auto maybeKeyboardAvoider = m_keyboardAvoider.lock();
@@ -647,20 +686,6 @@ bool ScrollViewComponentInstance::isCloseToTargetOffset(
     return flag;
   }
   return false;
-}
-
-void ScrollViewComponentInstance::onContentSizeChanged() {
-  auto maxScrollY = m_contentSize.height - m_containerSize.height;
-  if (maxScrollY > 0 && m_currentOffset.y > maxScrollY) {
-    /**
-     * When `scrollTo` is called, ArkUI emits `NODE_SCROLL_EVENT_ON_SCROLL`
-     * and then `NODE_SCROLL_EVENT_ON_SCROLL_START`.
-     * To emit `onScroll` events, the internal state must be in the "setting"
-     * (or "dragging") state.
-     */
-    onScrollStart();
-    m_scrollNode.scrollTo(m_currentOffset.x, maxScrollY, false);
-  }
 }
 
 bool ScrollViewComponentInstance::isHorizontal(
@@ -861,6 +886,8 @@ void ScrollViewComponentInstance::onAppear() {
     m_scrollNode.scrollTo(
         stateData.contentOffset.x, stateData.contentOffset.y, false);
   }
+
+  updateContentClippedSubviews(true);
 }
 
 bool ScrollViewComponentInstance::setKeyboardAvoider(
