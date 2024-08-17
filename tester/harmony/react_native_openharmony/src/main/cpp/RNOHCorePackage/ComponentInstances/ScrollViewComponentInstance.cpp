@@ -696,7 +696,7 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic v
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()
     const {
   facebook::react::Point contentViewOffset = {0, 0};
-  if (m_props->centerContent) {
+  if (m_props && m_props->centerContent) {
     if (m_contentSize.width < m_containerSize.width) {
       contentViewOffset.x = (m_containerSize.width - m_contentSize.width) / 2;
     }
