@@ -80,7 +80,7 @@ class ScrollViewComponentInstance
   std::optional<ChildTagWithOffset> getFirstVisibleView(
       int32_t minIndexForVisible);
 
-  void updateContentClippedSubviews();
+  void updateContentClippedSubviews(bool childrenChange = false);
 
  public:
   ScrollViewComponentInstance(Context context);
@@ -107,6 +107,7 @@ class ScrollViewComponentInstance
   void onScrollStart() override;
   void onScrollStop() override;
   float onScrollFrameBegin(float offset, int32_t scrollState) override;
+  void onAppear() override;
 
   void onFinalizeUpdates() override;
 
@@ -125,6 +126,7 @@ class ScrollViewComponentInstance
 
  private:
   void updateStateWithContentOffset(facebook::react::Point contentOffset);
+  void updateOffsetAfterChildChange(facebook::react::Point offset, double diff);
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
   /**
