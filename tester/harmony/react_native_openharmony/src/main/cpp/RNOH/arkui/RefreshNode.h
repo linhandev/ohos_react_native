@@ -36,5 +36,6 @@ class RefreshNode : public ArkUINode {
   RefreshNode& setNativeRefreshing(bool isRefreshing);
   RefreshNode& setRefreshNodeDelegate(RefreshNodeDelegate* refreshNodeDelegate);
   RefreshNode& setRefreshContent(ArkUINode& refreshContent);
+  RefreshNode& setRefreshPullDownRatio(float pullDownRatio);
 };
 } // namespace rnoh

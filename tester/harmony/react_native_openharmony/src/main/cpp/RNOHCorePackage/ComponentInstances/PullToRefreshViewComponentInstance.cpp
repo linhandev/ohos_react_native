@@ -164,3 +164,7 @@ facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
 
   return {0, 0};
 }
+void PullToRefreshViewComponentInstance::onNativeResponderBlockChange(
+    bool isBlocked) {
+  getLocalRootArkUINode().setRefreshPullDownRatio(isBlocked ? 0.0 : 1.0);
+}

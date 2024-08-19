@@ -34,6 +34,9 @@ class PullToRefreshViewComponentInstance
       const std::string& title,
       facebook::react::SharedColor const& color);
 
+ protected:
+  void onNativeResponderBlockChange(bool isBlocked) override;
+
  public:
   PullToRefreshViewComponentInstance(Context context);
 

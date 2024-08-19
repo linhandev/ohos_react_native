@@ -5,9 +5,11 @@ import {
   StyleSheet,
   Text,
   View,
+  PanResponder,
+  Animated,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, TestCase} from '../components';
 
 export const RefreshControlTest = () => {
@@ -189,6 +191,9 @@ export const RefreshControlTest = () => {
         modal
         itShould="Render RefreshControl on top of the scrollview">
         <RefreshControlZIndex />
+      </TestCase.Example>
+      <TestCase.Example modal itShould="RefreshControlBlockNativeExample">
+        <RefreshControlBlockNativeExample />
       </TestCase.Example>
     </TestSuite>
   );
@@ -637,10 +642,57 @@ const RefreshControlZIndex = () => {
   );
 };
 
+function RefreshControlBlockNativeExample() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  return (
+    <View style={{padding: 20, height: 300, backgroundColor: 'lightblue'}}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <Text>Pull down to see RefreshControl indicator</Text>
+        <Animated.View
+          style={{marginTop: 200}}
+          {...PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onStartShouldSetPanResponderCapture: () => true,
+            onMoveShouldSetPanResponder: (_evt, gestureState) => {
+              const {dx, dy} = gestureState;
+              return Math.abs(dx) > 2 || Math.abs(dy) > 2;
+            },
+            onMoveShouldSetPanResponderCapture: (_evt, gestureState) => {
+              const {dx, dy} = gestureState;
+              return Math.abs(dx) > 2 || Math.abs(dy) > 2;
+            },
+            onShouldBlockNativeResponder: () => true,
+          }).panHandlers}>
+          <View
+            style={{
+              width: '70%',
+              height: 300,
+              borderWidth: 1,
+              overflow: 'hidden',
+              backgroundColor: 'yellow',
+            }}>
+            <Text style={{textAlign: 'center', fontSize: 20}}>
+              Sliding in the yellow area will not trigger a dropdown refresh
+            </Text>
+          </View>
+        </Animated.View>
+      </ScrollView>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   scrollView: {
     flex: 1,
     width: '100%',
