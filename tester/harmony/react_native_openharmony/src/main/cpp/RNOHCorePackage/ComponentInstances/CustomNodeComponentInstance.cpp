@@ -48,8 +48,11 @@ void CustomNodeComponentInstance::onHoverOut() {
 
 void CustomNodeComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
-
-  updateClippedSubviews(true);
+  if (props->removeClippedSubviews) {
+    updateClippedSubviews(true);
+  } else if (!m_childrenClippedState.empty()) {
+    restoreClippedSubviews();
+  }
 }
 
 bool CustomNodeComponentInstance::isViewClipped(
@@ -62,6 +65,17 @@ bool CustomNodeComponentInstance::isViewClipped(
       facebook::react::Rect{scrollRectOrigin, parentBoundingBox.size};
 
   return !rnoh::rectIntersects(scrollRect, child->getLayoutMetrics().frame);
+}
+
+void CustomNodeComponentInstance::restoreClippedSubviews() {
+  size_t i = 0;
+  for (const auto& child : m_children) {
+    if (m_childrenClippedState[i]) {
+      m_customNode.insertChild(child->getLocalRootArkUINode(), i);
+      m_childrenClippedState[i] = false;
+    }
+    i++;
+  }
 }
 
 void CustomNodeComponentInstance::updateClippedSubviews(bool childrenChange) {
