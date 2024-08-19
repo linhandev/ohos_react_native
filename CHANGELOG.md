@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.72.37
+- [breaking] replaced workerRNInstanceConfigByRNInstanceName with createWorkerRNInstanceConfig to support creating configs dynamically ([e4885b2041](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e4885b2041e0cc9840b83756e77d7276230f88c9))
+- [breaking] optimized creating napi values from dynamics by changing the signature of `ArkJS::createFromDynamics` to take the vector of dynamics by const reference ([96d7cef977](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/96d7cef9779391b9618930790bbfd8760a3ea2be))
+- added string interpolation for native animations ([73610a29eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/73610a29eb8020ba7b040af5db8e0da07d574618))
+- fixed disabling removeClippedSubviews ([860adaf0cc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/860adaf0cc2f44e919de830a805b6f3c6573707e))
+- fixed sticky headers when screen is rotated or folding screen is expanded/collapsed ([ef3be2da79](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef3be2da794eb08b0467b1d5ddf1630fc43d8f95))
+- optimized removeClippedSubviews performance by removing redundant RemoveClipped calls ([73f7978b8d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/73f7978b8d5995e4e59c38ec5735f86c03282350))
+- optimized text measuring ([f0e01edede](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f0e01edede74c4e24d2ff0780e82a9d44017ad3c))
+- maybe fixed EventTarget destruction crash ([c2f00e8781](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c2f00e878120cf3b1f1fd2cc5859dfdc9e66dee1))
+- maybe fixed nullptr dereference crash originating from `RNInstanceInternal::onUITick` ([971dab6676](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/971dab6676e335cff0e2c8d0a0803a64981aa973))
+- improved responsiveness by dispatching certain events as soon as possible instead of waiting for the next vsync ([00deaad18a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00deaad18afbf003ace617b37130702cd5ff1362))
+
+
 ## v0.72.36
 - added Text::dataDetectorType (email, phoneNumber, etc.) feature ([67035f4e5d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/67035f4e5d3979dd512e8ec244c0a931564c372e))
 - added support for adding custom listeners in HarmonyReactMarker ([93833d25c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/93833d25c1358f25411c2b8f7f52cceec1246760))
