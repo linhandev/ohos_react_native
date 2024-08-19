@@ -1,4 +1,6 @@
 #include "InterpolationAnimatedNode.h"
+#include <regex>
+#include "RNOH/Assert.h"
 #include "RNOH/Color.h"
 
 using namespace facebook;
@@ -14,6 +16,45 @@ size_t findRangeIndex(double value, folly::dynamic const& inputRange) {
   return index - 1;
 }
 
+std::vector<double> parseNumericValues(const std::string& str) {
+  std::vector<double> values;
+  std::regex regex("([-+]?[0-9]*\\.?[0-9]+)");
+  auto begin = std::sregex_iterator(str.begin(), str.end(), regex);
+  auto end = std::sregex_iterator();
+
+  for (auto it = begin; it != end; ++it) {
+    auto match = *it;
+    values.push_back(std::stod(match.str()));
+  }
+
+  return values;
+}
+
+std::string interpolateString(
+    const std::string& start,
+    const std::string& end,
+    double ratio) {
+  auto startValues = parseNumericValues(start);
+  auto endValues = parseNumericValues(end);
+
+  std::string result = start;
+  std::regex regex("([-+]?[0-9]*\\.?[0-9]+)");
+  auto begin = std::sregex_iterator(start.begin(), start.end(), regex);
+  auto endIter = std::sregex_iterator();
+
+  int index = 0;
+  for (std::sregex_iterator it = begin; it != endIter; ++it) {
+    std::smatch match = *it;
+    double interpolatedValue =
+        startValues[index] + ratio * (endValues[index] - startValues[index]);
+    result.replace(
+        match.position(), match.length(), std::to_string(interpolatedValue));
+    ++index;
+  }
+
+  return result;
+}
+
 InterpolationAnimatedNode::InterpolationAnimatedNode(
     folly::dynamic const& config,
     AnimatedNodesManager& nodesManager)
@@ -24,8 +65,7 @@ InterpolationAnimatedNode::InterpolationAnimatedNode(
       extrapolateTypeFromString(config["extrapolateLeft"].asString());
   m_extrapolateRight =
       extrapolateTypeFromString(config["extrapolateRight"].asString());
-
-  m_outputType = OutputType::Number;
+  m_outputType = OutputType::Unknown;
   if (!config["outputType"].empty()) {
     auto outputType = config["outputType"].asString();
     if (outputType == "number") {
@@ -34,6 +74,16 @@ InterpolationAnimatedNode::InterpolationAnimatedNode(
       m_outputType = OutputType::Color;
     } else if (outputType == "string") {
       m_outputType = OutputType::String;
+    }
+  }
+  /**
+   * Code on JS side responsible for detecting outputType is buggy.
+   */
+  if (m_outputType == OutputType::Unknown) {
+    if (m_outputRange[0].isString()) {
+      m_outputType = OutputType::String;
+    } else if (m_outputRange[0].isNumber()) {
+      m_outputType = OutputType::Number;
     }
   }
 }
@@ -46,35 +96,31 @@ void InterpolationAnimatedNode::update() {
   }
 
   auto& parentNode = getParentNode();
-  double value = parentNode.getValue();
+  double value = parentNode.getOutputAsDouble();
 
   auto rangeIndex = findRangeIndex(value, m_inputRange);
 
-  m_value = interpolate(
-      value,
-      m_inputRange[rangeIndex].asDouble(),
-      m_inputRange[rangeIndex + 1].asDouble(),
-      m_outputRange[rangeIndex].asDouble(),
-      m_outputRange[rangeIndex + 1].asDouble(),
-      m_extrapolateLeft,
-      m_extrapolateRight);
-
   switch (m_outputType) {
     case OutputType::Number:
-      m_value = interpolate(
+      this->setValue(interpolate(
           value,
           m_inputRange[rangeIndex].asDouble(),
           m_inputRange[rangeIndex + 1].asDouble(),
           m_outputRange[rangeIndex].asDouble(),
           m_outputRange[rangeIndex + 1].asDouble(),
           m_extrapolateLeft,
-          m_extrapolateRight);
+          m_extrapolateRight));
       break;
-    case OutputType::String:
-      // TODO: implement
-      m_value = value;
+    case OutputType::String: {
+      double rangeStart = m_inputRange[rangeIndex].asDouble();
+      double rangeEnd = m_inputRange[rangeIndex + 1].asDouble();
+      double ratio = (value - rangeStart) / (rangeEnd - rangeStart);
+      auto startString = m_outputRange[rangeIndex].asString();
+      auto endString = m_outputRange[rangeIndex + 1].asString();
+      this->setValue(interpolateString(startString, endString, ratio));
       break;
-    case OutputType::Color:
+    }
+    case OutputType::Color: {
       auto colorA = Color::from(m_outputRange[rangeIndex].asInt());
       auto colorB = Color::from(m_outputRange[rangeIndex + 1].asInt());
       auto mixValue = (value - m_inputRange[rangeIndex].asDouble()) /
@@ -82,8 +128,11 @@ void InterpolationAnimatedNode::update() {
            m_inputRange[rangeIndex].asDouble());
       auto clampedMixValue = std::max(std::min(mixValue, 1.0), 0.0);
       auto newColor = colorA * (1 - clampedMixValue) + colorB * clampedMixValue;
-      m_value = newColor.asColorValue();
+      this->setValue(newColor.asColorValue());
       break;
+    }
+    default:
+      LOG(WARNING) << "Unknown output type";
   }
 }
 

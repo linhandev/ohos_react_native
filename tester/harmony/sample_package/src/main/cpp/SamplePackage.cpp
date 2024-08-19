@@ -9,6 +9,7 @@
 #include "SampleTurboModuleSpec.h"
 #include "SampleViewComponentDescriptor.h"
 #include "SampleViewComponentInstance.h"
+#include "SimpleTextComponentInstance.h"
 
 using namespace facebook;
 
@@ -138,6 +139,8 @@ ComponentInstance::Shared SamplePackage::createComponentInstance(
     const ComponentInstance::Context& ctx) {
   if (ctx.componentName == "GeneratedSampleView") {
     return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
+  } else if (ctx.componentName == "SimpleText") {
+    return std::make_shared<SimpleTextComponentInstance>(ctx);
   }
   return nullptr;
 };

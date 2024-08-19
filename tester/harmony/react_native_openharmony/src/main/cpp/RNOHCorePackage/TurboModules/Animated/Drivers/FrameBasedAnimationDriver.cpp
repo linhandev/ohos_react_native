@@ -43,7 +43,7 @@ void FrameBasedAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
     if (m_startTimeNanos < 0) {
       m_startTimeNanos = frameTimeNanos;
       if (m_currentLoop == 1) {
-        m_fromValue = animatedValue.m_value;
+        m_fromValue = animatedValue.getValueAsDouble();
       }
     }
 
