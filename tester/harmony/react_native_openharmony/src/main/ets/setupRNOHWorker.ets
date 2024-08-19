@@ -33,7 +33,7 @@ export interface WorkerRNInstanceConfig {
  * @api: RN_APP_DEVELOPER
  */
 interface RNOHWorkerConfig {
-  workerRNInstanceConfigByRNInstanceName: Record<string, WorkerRNInstanceConfig>
+  createWorkerRNInstanceConfig: ((rnInstanceName: string) => WorkerRNInstanceConfig)
 }
 
 interface CreateRNInstanceWorkerEnvPayload {
@@ -155,14 +155,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
               workerPort.postMessageWithSharedSendable(new SendableMessage("RNOH_TURBO_MODULE_UI_TASK",
                 new UITaskMessagePayload(uiTask, rnInstanceId)));
             })
-
-            if (!Object.keys(config.workerRNInstanceConfigByRNInstanceName).includes(rnInstanceName)) {
-              throw new RNOHError({
-                whatHappened: `Couldn't find WorkerRNInstanceConfig for RNInstance named "${rnInstanceName}"`,
-                howCanItBeFixed: [`Verify WorkerRNInstanceConfig is defined for rnInstanceName: "${rnInstanceName}"`]
-              });
-            }
-            const rnInstanceConfig = config.workerRNInstanceConfigByRNInstanceName[rnInstanceName]!
+            const rnInstanceConfig = config.createWorkerRNInstanceConfig(rnInstanceName)
             const packages = rnInstanceConfig.thirdPartyPackagesFactory({})
             let turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
             const rnInstance = new WorkerRNInstanceInternal(rnInstanceId, napiBridge, typedMessagePayload.architecture,
