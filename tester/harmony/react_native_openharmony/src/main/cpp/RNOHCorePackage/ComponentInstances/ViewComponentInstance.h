@@ -30,6 +30,7 @@ class ViewComponentInstance
   void onPropsChanged(SharedConcreteProps const& props) override;
 
   void updateClippedSubviews(bool childrenChange = false);
+  void restoreClippedSubviews();
 
   void onFinalizeUpdates() override;
 
