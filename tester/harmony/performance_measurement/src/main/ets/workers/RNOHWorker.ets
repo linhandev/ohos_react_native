@@ -9,8 +9,8 @@ import { setupRNOHWorker } from "@rnoh/react-native-openharmony/src/main/ets/set
 import { createRNPackages } from "../RNPackagesFactory"
 
 setupRNOHWorker({
-  workerRNInstanceConfigByRNInstanceName: {
-    "performance_measurement": { thirdPartyPackagesFactory: createRNPackages },
+  createWorkerRNInstanceConfig: (_rnInstanceName) => {
+    return { thirdPartyPackagesFactory: createRNPackages }
   }
 })
 
