@@ -3,6 +3,7 @@ import {TestSuite} from '@rnoh/testerino';
 import React, {useEffect, useState} from 'react';
 import {Button, TestCase} from '../components';
 import {getScrollViewContentHorizontal} from './ScrollViewTest/fixtures';
+import {useEnvironment} from '../contexts';
 
 const WRONG_IMAGE_SRC = 'not_image';
 const LOCAL_IMAGE_ASSET_ID = require('../assets/pravatar-131.jpg');
@@ -20,6 +21,14 @@ const DATA_URI =
 const FILE_URI = 'file:///data/storage/el2/base/files/pravatar-131.jpg';
 
 export const ImageTest = () => {
+  const {
+    env: {isConnectedToInternet},
+  } = useEnvironment();
+
+  const noInternetSkipMsg = isConnectedToInternet
+    ? undefined
+    : 'Internet connection required';
+
   return (
     <TestSuite name="Image">
       <TestCase.Example itShould="support loading local images">
@@ -166,6 +175,7 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Logical
+        skip={noInternetSkipMsg}
         itShould="prefetch image"
         fn={async ({expect}) => {
           let ex: any;
@@ -180,7 +190,7 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Logical
-        skip={{android: true, harmony: false}}
+        skip={{android: true, harmony: noInternetSkipMsg ?? false}}
         itShould="query cache"
         fn={async ({expect}) => {
           await Image.prefetch(REMOTE_IMAGE_URL);
