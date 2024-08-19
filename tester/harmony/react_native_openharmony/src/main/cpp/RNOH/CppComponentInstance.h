@@ -294,7 +294,8 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
-          props->shadowRadius);
+          props->shadowRadius,
+          m_layoutMetrics.pointScaleFactor);
       }
     } else if (props->shadowColor != old->shadowColor &&
               props->shadowOffset != old->shadowOffset &&
@@ -304,7 +305,8 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
-          props->shadowRadius); 
+          props->shadowRadius,
+          m_layoutMetrics.pointScaleFactor); 
     } else {
         // Do nothing here.   
     }
