@@ -12,6 +12,12 @@ FontRegistry::FontRegistry(
 void FontRegistry::registerFont(
     const std::string& name,
     const std::string& fontFilePathRelativeToRawfileDir) {
+  {
+    auto lock = std::lock_guard(m_fontCollectionMtx);
+    RNOH_ASSERT_MSG(
+        m_fontCollection == nullptr,
+        "Fonts can't be registered after creating m_fontCollection'");
+  }
   m_threadGuard.assertThread();
   auto resourceManager = m_weakResourceManager.lock();
   if (resourceManager == nullptr) {
@@ -39,9 +45,14 @@ void FontRegistry::registerFont(
   m_fontFileContentByFontName.emplace(name, buffer);
 }
 
-UniqueFontCollection FontRegistry::createFontCollection() {
-  UniqueFontCollection fontCollection(
-      OH_Drawing_CreateFontCollection(), OH_Drawing_DestroyFontCollection);
+SharedFontCollection FontRegistry::getFontCollection() {
+  auto lockFontCollection = std::lock_guard(m_fontCollectionMtx);
+  if (m_fontCollection) {
+    return m_fontCollection;
+  }
+  SharedFontCollection fontCollection(
+      OH_Drawing_CreateSharedFontCollection(),
+      OH_Drawing_DestroyFontCollection);
   auto lock = std::lock_guard(m_fontFileContentByFontNameMtx);
   for (auto& [name, fileContent] : m_fontFileContentByFontName) {
     OH_Drawing_RegisterFontBuffer(
@@ -50,5 +61,6 @@ UniqueFontCollection FontRegistry::createFontCollection() {
         fileContent.data(),
         fileContent.size());
   }
+  m_fontCollection = fontCollection;
   return fontCollection;
 }

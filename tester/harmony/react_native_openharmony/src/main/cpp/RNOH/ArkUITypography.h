@@ -115,7 +115,7 @@ class ArkUITypographyBuilder final {
  public:
   ArkUITypographyBuilder(
       OH_Drawing_TypographyStyle* typographyStyle,
-      UniqueFontCollection fontCollection)
+      SharedFontCollection fontCollection)
       : m_typographyHandler(
             OH_Drawing_CreateTypographyHandler(
                 typographyStyle,
@@ -249,7 +249,7 @@ class ArkUITypographyBuilder final {
   std::vector<size_t> m_fragmentLengths{};
   facebook::react::Float m_maximumWidth =
       std::numeric_limits<facebook::react::Float>::max();
-  UniqueFontCollection m_fontCollection;
+  SharedFontCollection m_fontCollection;
 };
 
 } // namespace rnoh

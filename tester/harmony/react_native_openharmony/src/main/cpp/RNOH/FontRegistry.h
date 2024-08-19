@@ -12,9 +12,7 @@ namespace rnoh {
  * OH_Drawing_FontCollection can't be shared by multiple Typographies because
  * the app crashes.
  */
-using UniqueFontCollection = std::unique_ptr<
-    OH_Drawing_FontCollection,
-    decltype(&OH_Drawing_DestroyFontCollection)>;
+using SharedFontCollection = std::shared_ptr<OH_Drawing_FontCollection>;
 
 /**
  * @internal
@@ -26,6 +24,8 @@ class FontRegistry {
       m_fontFileContentByFontName;
   std::mutex m_fontFileContentByFontNameMtx;
   ThreadGuard m_threadGuard;
+  std::mutex m_fontCollectionMtx;
+  SharedFontCollection m_fontCollection;
 
  public:
   using Shared = std::shared_ptr<FontRegistry>;
@@ -39,6 +39,6 @@ class FontRegistry {
   /**
    * @threadSafe
    */
-  UniqueFontCollection createFontCollection();
+  SharedFontCollection getFontCollection();
 };
 } // namespace rnoh
