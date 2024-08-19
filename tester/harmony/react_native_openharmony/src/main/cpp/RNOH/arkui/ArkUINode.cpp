@@ -211,7 +211,8 @@ ArkUINode& ArkUINode::setShadow(
     facebook::react::SharedColor const& shadowColor,
     facebook::react::Size const& shadowOffset,
     float const shadowOpacity,
-    float const shadowRadius) {
+    float const shadowRadius,
+    facebook::react::Float pointScaleFactor) {
   if (shadowOpacity <= 0.0 || shadowOpacity > 1.0) {
     return *this;
   }
@@ -222,11 +223,15 @@ ArkUINode& ArkUINode::setShadow(
   uint32_t alpha = static_cast<uint32_t>(
       (float)((shadowColorValue >> 24) & (0xff)) * shadowOpacity);
   shadowColorValue = (alpha << 24) + (shadowColorValue & 0xffffff);
+
+  float offsetXInPX = shadowOffset.width * pointScaleFactor;
+  float offsetYInPX = shadowOffset.height * pointScaleFactor;
+  
   ArkUI_NumberValue shadowValue[] = {
       {.f32 = shadowRadius},
       {.i32 = 0},
-      {.f32 = static_cast<float>(shadowOffset.width)},
-      {.f32 = static_cast<float>(shadowOffset.height)},
+      {.f32 = offsetXInPX},
+      {.f32 = offsetYInPX},
       {.i32 = 0},
       {.u32 = shadowColorValue},
       {.u32 = 0}};
