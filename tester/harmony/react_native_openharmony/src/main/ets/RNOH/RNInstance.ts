@@ -586,8 +586,8 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public async runJSBundle(jsBundleProvider: JSBundleProvider) {
+    let bundleURL: string
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
-    const bundleURL = jsBundleProvider.getURL()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
     try {
       this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
@@ -597,9 +597,10 @@ export class RNInstanceImpl implements RNInstance {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`)
       })
-      this.initialBundleUrl = this.initialBundleUrl ?? jsBundleProvider.getURL()
+      bundleURL = jsBundleProvider.getURL()
+      this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
       await this.napiBridge.loadScript(this.id, jsBundle, bundleURL)
-      this.napiBridge.setBundlePath(this.id, jsBundleProvider.getURL());
+      this.napiBridge.setBundlePath(this.id, bundleURL);
       this.lifecycleState = LifecycleState.READY
       const hotReloadConfig = jsBundleProvider.getHotReloadConfig()
       if (hotReloadConfig) {
