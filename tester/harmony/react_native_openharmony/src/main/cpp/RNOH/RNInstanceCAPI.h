@@ -212,8 +212,14 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   MountingManager::Shared m_mountingManager;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
-  std::shared_ptr<facebook::react::Scheduler> scheduler;
+  /**
+   * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.
+   * These values must be destructed before the runtime.
+   * The runtime is destructed when `m_reactInstance` is destructed.
+   * Therefore, `m_scheduler` must be declared after `m_reactInstance`.
+   */
   std::shared_ptr<facebook::react::Instance> instance;
+  std::shared_ptr<facebook::react::Scheduler> scheduler = nullptr;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
   SharedNativeResourceManager m_nativeResourceManager;
