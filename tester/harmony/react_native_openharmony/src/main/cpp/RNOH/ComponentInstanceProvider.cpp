@@ -61,6 +61,15 @@ ComponentInstance::Shared ComponentInstanceProvider::createArkTSComponent(
       tag, componentHandle, std::move(componentName));
 }
 
+void rnoh::ComponentInstanceProvider::clearPreallocationRequestQueue() {
+  m_preallocationRequestQueue->clear();
+}
+
+void rnoh::ComponentInstanceProvider::clearPreallocatedViews() {
+  m_threadGuard.assertThread();
+  m_preallocatedComponentInstanceByTag.clear();
+}
+
 void ComponentInstanceProvider::onUITick(
     UITicker::Timestamp recentVSyncTimestamp) {
   facebook::react::SystraceSection s("ComponentInstanceProvider::onUITick");
@@ -75,25 +84,30 @@ void ComponentInstanceProvider::onUITick(
       break;
     }
     auto maybeRequest = m_preallocationRequestQueue->pop();
+
     if (!maybeRequest.has_value()) {
       break;
     }
-    auto request = maybeRequest.value();
-    bool isRequestOutdated =
-        m_componentInstanceRegistry->findByTag(request.tag) != nullptr;
-    if (isRequestOutdated) {
-      continue;
-    }
-    auto componentInstance = m_componentInstanceFactory->create(
-        request.tag, request.componentHandle, request.componentName);
-    if (componentInstance != nullptr) {
-      componentInstance->setProps(request.props);
-      m_preallocatedComponentInstanceByTag.emplace(
-          request.tag, componentInstance);
-    } else {
-      VLOG(2) << "Couldn't preallocate CppComponentInstance for: "
-              << request.componentName;
-    }
+    processPreallocationRequest(maybeRequest.value());
+  }
+}
+
+void ComponentInstanceProvider::processPreallocationRequest(
+    ComponentInstancePreallocationRequest const& request) {
+  bool isRequestOutdated =
+      m_componentInstanceRegistry->findByTag(request.tag) != nullptr;
+  if (isRequestOutdated) {
+    return;
+  }
+  auto componentInstance = m_componentInstanceFactory->create(
+      request.tag, request.componentHandle, request.componentName);
+  if (componentInstance != nullptr) {
+    componentInstance->setProps(request.props);
+    m_preallocatedComponentInstanceByTag.emplace(
+        request.tag, componentInstance);
+  } else {
+    VLOG(2) << "Couldn't preallocate CppComponentInstance for: "
+            << request.componentName;
   }
 }
 

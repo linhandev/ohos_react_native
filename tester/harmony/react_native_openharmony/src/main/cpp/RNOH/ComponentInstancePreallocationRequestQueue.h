@@ -37,6 +37,8 @@ class ComponentInstancePreallocationRequestQueue {
 
   std::optional<ComponentInstancePreallocationRequest> pop();
 
+  void clear();
+
   bool isEmpty();
 };
 } // namespace rnoh

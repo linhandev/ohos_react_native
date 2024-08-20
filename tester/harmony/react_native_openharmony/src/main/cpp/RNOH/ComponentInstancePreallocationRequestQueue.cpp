@@ -23,4 +23,10 @@ ComponentInstancePreallocationRequestQueue::pop() {
   }
   return std::nullopt;
 }
+
+void ComponentInstancePreallocationRequestQueue::clear() {
+  auto lock = std::lock_guard(m_mtx);
+  m_queue = {};
+}
+
 } // namespace rnoh

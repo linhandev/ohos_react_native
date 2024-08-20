@@ -42,8 +42,15 @@ class ComponentInstanceProvider
       facebook::react::ComponentHandle componentHandle,
       std::string componentName);
 
+  void clearPreallocationRequestQueue();
+
+  void clearPreallocatedViews();
+
  private:
   void onUITick(UITicker::Timestamp recentVSyncTimestamp);
+
+  void processPreallocationRequest(
+      ComponentInstancePreallocationRequest const& request);
 
   bool shouldPausePreallocationToAvoidBlockingMainThread(
       UITicker::Timestamp recentVSyncTimestamp);

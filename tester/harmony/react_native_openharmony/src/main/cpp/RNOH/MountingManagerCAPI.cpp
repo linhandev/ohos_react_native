@@ -57,6 +57,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
 
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START);
+  m_componentInstanceProvider->clearPreallocationRequestQueue();
   for (auto const& mutation : mutations) {
     try {
       this->handleMutation(mutation);
@@ -66,6 +67,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
+  m_componentInstanceProvider->clearPreallocatedViews();
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
