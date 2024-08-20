@@ -23,7 +23,7 @@ const safeAreaTurboModule = TurboModuleRegistry.get<Spec>(
 )!;
 
 const getPaddingTop = (inset: number, pageY: number) => {
-  return Math.max(0, inset - pageY);
+  return Math.max(0, inset - (pageY < 0 ? pageY * -1 : pageY));
 }
 
 const getPaddingBottom = (insetBottom: number, insetTop: number, paddingTop: number, height: number, windowHeight: number, pageY: number, positionY: number): number => {
