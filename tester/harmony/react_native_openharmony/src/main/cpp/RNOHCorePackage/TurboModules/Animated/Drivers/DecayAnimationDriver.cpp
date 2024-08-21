@@ -41,7 +41,7 @@ void DecayAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
       m_startTimeMillis = frameTimeMillis - 16;
       if (m_currentLoop ==
           1) { // first iteration, assign fromValue from the animatedValue
-        m_fromValue = animatedValue.getValueAsDouble();
+        m_fromValue = animatedValue.m_value;
       } else { // otherwise, reset the animatedValue based on fromValue
         animatedValue.setValue(m_fromValue);
       }

@@ -3,7 +3,6 @@
 #include "AnimatedNode.h"
 
 #include <folly/dynamic.h>
-#include "RNOH/Assert.h"
 
 namespace rnoh {
 
@@ -14,26 +13,12 @@ class ValueAnimatedNode : public AnimatedNode {
   ValueAnimatedNode() {}
 
   ValueAnimatedNode(folly::dynamic const& config) {
-    RNOH_ASSERT(config.count("value") > 0);
-    m_value = config["value"];
-    RNOH_ASSERT(config["offset"].isDouble());
+    m_value = config["value"].getDouble();
     m_offset = config["offset"].getDouble();
   }
 
-  folly::dynamic getOutput() override {
-    if (m_value.isDouble()) {
-      folly::dynamic result = this->getOutputAsDouble();
-      return result;
-    }
-    return m_value;
-  }
-
-  double getOutputAsDouble() {
-    return this->getValueAsDouble() + m_offset;
-  }
-
-  void setValue(folly::dynamic value) {
-    m_value = value;
+  double getValue() {
+    return m_value + m_offset;
   }
 
   void setValue(double value) {
@@ -45,21 +30,18 @@ class ValueAnimatedNode : public AnimatedNode {
   }
 
   void flattenOffset() {
-    m_value = this->getOutputAsDouble();
+    m_value += m_offset;
     m_offset = 0;
   }
 
   void extractOffset() {
-    m_offset += this->getValueAsDouble();
+    m_offset += m_value;
     m_value = 0;
   }
 
   void onValueUpdate() {
     if (m_valueListener.has_value()) {
-      /**
-       * NOTE: ValueListenerCallback on JS side expects only numbers.
-       */
-      m_valueListener.value()(getOutputAsDouble());
+      m_valueListener.value()(getValue());
     }
   }
 
@@ -74,21 +56,7 @@ class ValueAnimatedNode : public AnimatedNode {
     m_valueListener = std::nullopt;
   }
 
-  double getValueAsDouble() {
-    if (m_value.isNull()) {
-      // Special case for diffClamp
-      return 0;
-    }
-    if (!m_value.isDouble()) {
-      LOG(ERROR) << "Unexpected value type: " << m_value.typeName();
-      RNOH_ASSERT(false);
-      return 0;
-    }
-    return m_value.getDouble();
-  }
-
- protected:
-  folly::dynamic m_value;
+  double m_value = 0.0;
   double m_offset = 0.0;
   std::optional<AnimatedNodeValueListener> m_valueListener;
 };

@@ -25,7 +25,7 @@ class StyleAnimatedNode : public AnimatedNode {
       auto node = &m_nodesManager.getNodeByTag(nodeTag);
       if (auto valueNode = dynamic_cast<ValueAnimatedNode*>(node);
           valueNode != nullptr) {
-        style[key] = valueNode->getOutput();
+        style[key] = valueNode->getValue();
       } else if (auto transformNode =
                      dynamic_cast<TransformAnimatedNode*>(node);
                  transformNode != nullptr) {

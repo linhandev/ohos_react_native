@@ -4,7 +4,6 @@
 
 #include "AnimatedNode.h"
 #include "RNOHCorePackage/TurboModules/Animated/AnimatedNodesManager.h"
-#include "ValueAnimatedNode.h"
 
 namespace rnoh {
 
@@ -30,7 +29,6 @@ class InterpolationAnimatedNode : public ValueAnimatedNode {
     Number,
     Color,
     String,
-    Unknown,
   };
 
   static ExtrapolateType extrapolateTypeFromString(

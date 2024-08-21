@@ -93,7 +93,7 @@ folly::dynamic TransformAnimatedNode::getTransform() const {
     } else {
       auto animatedConfig = std::get<AnimatedTransformConfig>(config);
       auto& node = m_nodesManager.getValueNodeByTag(animatedConfig.nodeTag);
-      value = node.getOutputAsDouble();
+      value = node.getValue();
       property = animatedConfig.property;
     }
 

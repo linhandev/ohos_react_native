@@ -24,12 +24,12 @@ class AssociativeOperationNode : public ValueAnimatedNode {
          ++nodeTagIt) {
       auto& node = m_nodesManager.getValueNodeByTag(*nodeTagIt);
       if (nodeTagIt == m_inputNodeTags.begin()) {
-        value = node.getOutputAsDouble();
+        value = node.getValue();
       } else {
-        value = operation(value, node.getOutputAsDouble());
+        value = operation(value, node.getValue());
       }
     }
-    this->setValue(value);
+    m_value = value;
   }
 
  private:

@@ -17,9 +17,9 @@ class ModulusAnimatedNode : public ValueAnimatedNode {
 
   void update() override {
     auto& node = m_nodesManager.getValueNodeByTag(m_inputNodeTag);
-    auto inputValue = node.getOutputAsDouble();
-    this->setValue(fmod(
-        fmod(inputValue, m_modulusValue) + m_modulusValue, m_modulusValue));
+    auto inputValue = node.getValue();
+    m_value =
+        fmod(fmod(inputValue, m_modulusValue) + m_modulusValue, m_modulusValue);
   }
 
  private:

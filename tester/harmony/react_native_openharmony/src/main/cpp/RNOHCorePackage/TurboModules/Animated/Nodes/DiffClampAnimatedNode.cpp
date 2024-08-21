@@ -13,11 +13,10 @@ DiffClampAnimatedNode::DiffClampAnimatedNode(
 
 void DiffClampAnimatedNode::update() {
   auto& inputNode = m_nodesManager.getValueNodeByTag(m_inputNodeTag);
-  double inputValue = inputNode.getOutputAsDouble();
+  double inputValue = inputNode.getValue();
   double diff = inputValue - m_lastInputValue;
   m_lastInputValue = inputValue;
-  this->setValue(
-      std::min(std::max(this->getValueAsDouble() + diff, m_min), m_max));
+  m_value = std::min(std::max(m_value + diff, m_min), m_max);
 }
 
 } // namespace rnoh
