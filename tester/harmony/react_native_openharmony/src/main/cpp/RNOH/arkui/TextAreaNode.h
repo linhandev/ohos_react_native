@@ -17,7 +17,7 @@ class TextAreaNodeDelegate {
   virtual void onPasteOrCut() {};
   virtual void onTextSelectionChange(int32_t location, int32_t length) {};
   virtual void onContentScroll() {};
-  virtual void onContentSizeChange(float width, float height) {};
+  virtual void onContentSizeChange(float width, float height, bool multiline) {};
 };
 
 class TextAreaNode : public TextInputNodeBase {

@@ -22,10 +22,12 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
 
-void TextInputComponentInstance::onContentSizeChange(float width, float height) {
-  m_contentSizeWidth = width;
-  m_contentSizeHeight = height;
-  m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+void TextInputComponentInstance::onContentSizeChange(float width, float height, bool multiline) {
+  if (multiline == m_multiline){
+    m_contentSizeWidth = width;
+    m_contentSizeHeight = height;
+    m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+  }
 }
 
 void TextInputComponentInstance::onContentScroll() {
