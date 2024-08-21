@@ -13,11 +13,18 @@ export type SafeAreaInsets = {
 declare function px2vp(arg: number): number
 
 export class SafeAreaInsetsProvider {
-  private currentInsets: SafeAreaInsets = { top: 0, left: 0, right: 0, bottom: 0 };
+  private currentInsets: SafeAreaInsets = {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  };
 
-  public eventEmitter: EventEmitter<{"SAFE_AREA_INSETS_CHANGE": [SafeAreaInsets]}> = new EventEmitter()
+  public eventEmitter: EventEmitter<{ "SAFE_AREA_INSETS_CHANGE": [SafeAreaInsets] }> = new EventEmitter()
 
-  public get safeAreaInsets() { return { ...this.currentInsets } }
+  public get safeAreaInsets() {
+    return { ...this.currentInsets }
+  }
 
   constructor(private uiAbilityContext: common.UIAbilityContext) {
     this.createSafeAreaInsets().then((insets) => this.updateInsets(insets));
@@ -77,15 +84,22 @@ function getSafeAreaInsetsFromAvoidAreas(avoidAreas: WindowUtils.AvoidArea[], wi
     return {
       top: Math.max(currentInsets.top, avoidArea.topRect.height + avoidArea.topRect.top),
       left: Math.max(currentInsets.left, avoidArea.leftRect.width + avoidArea.leftRect.left),
-      right: Math.max(currentInsets.right, avoidArea.rightRect.left > 0 ? windowSize.width - avoidArea.rightRect.left : 0),
-      bottom: Math.max(currentInsets.bottom, avoidArea.bottomRect.top > 0 ? windowSize.height - avoidArea.bottomRect.top : 0),
+      right: Math.max(currentInsets.right,
+        avoidArea.rightRect.left > 0 ? windowSize.width - avoidArea.rightRect.left : 0),
+      bottom: Math.max(currentInsets.bottom,
+        avoidArea.bottomRect.top > 0 ? windowSize.height - avoidArea.bottomRect.top : 0),
     }
-  }, { top: 0, left: 0, right: 0, bottom: 0 })
+  }, {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  })
 }
 
 
-
-function mapProps<TObj extends Record<string, any>>(obj: TObj, cb: <TKey extends keyof TObj>(value: TObj[TKey], key: TKey) => TObj[TKey]) {
+function mapProps<TObj extends Record<string, any>>(obj: TObj,
+  cb: <TKey extends keyof TObj>(value: TObj[TKey], key: TKey) => TObj[TKey]) {
   return Object.entries(obj).reduce((acc, [key, value]) => {
     acc[key as keyof TObj] = cb(value, key)
     return acc
