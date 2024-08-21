@@ -305,9 +305,8 @@ void NativeAnimatedTurboModule::updateAnimatedNodeConfig(
 
 double NativeAnimatedTurboModule::getValue(react::Tag tag) {
   auto lock = acquireLock();
-  auto output = m_animatedNodesManager.getNodeOutput(tag);
-  RNOH_ASSERT(output.isDouble());
-  return output.asDouble();
+  auto value = m_animatedNodesManager.getValue(tag);
+  return value;
 }
 
 void NativeAnimatedTurboModule::startListeningToAnimatedNodeValue(
@@ -466,7 +465,6 @@ void NativeAnimatedTurboModule::runUpdates() {
     }
   } catch (std::exception& e) {
     LOG(ERROR) << "Error in animation update: " << e.what();
-
     m_vsyncListener->requestFrame(
         [weakSelf = weak_from_this()](long long _timestamp) {
           if (auto self = weakSelf.lock()) {

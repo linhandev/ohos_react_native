@@ -13,7 +13,6 @@ class AnimatedNode {
   virtual void update();
   virtual void onAttachedToNode(facebook::react::Tag tag);
   virtual void onDetachedFromNode(facebook::react::Tag tag);
-  virtual folly::dynamic getOutput();
 
   void addChild(AnimatedNode& child);
   void removeChild(AnimatedNode& child);

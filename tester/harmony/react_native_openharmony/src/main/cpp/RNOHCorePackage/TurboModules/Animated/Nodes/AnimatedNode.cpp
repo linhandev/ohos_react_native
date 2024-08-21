@@ -6,10 +6,6 @@ namespace rnoh {
 
 void AnimatedNode::update() {}
 
-folly::dynamic AnimatedNode::getOutput() {
-  return nullptr;
-}
-
 void AnimatedNode::onAttachedToNode(facebook::react::Tag tag) {}
 
 void AnimatedNode::onDetachedFromNode(facebook::react::Tag tag) {}
