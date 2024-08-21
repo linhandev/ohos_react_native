@@ -21,7 +21,7 @@ function App() {
     <Environment>
       <View style={{backgroundColor: 'black'}}>
         <StatusBar barStyle="light-content" />
-        <SafeAreaView>
+        <SafeAreaView style={{paddingBottom: 0}}>
           <NavigationContainer>
             <PortalProvider>
               <View id="__harmony::ready" />
