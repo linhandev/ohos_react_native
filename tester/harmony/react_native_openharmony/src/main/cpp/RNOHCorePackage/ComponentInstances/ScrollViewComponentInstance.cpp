@@ -51,7 +51,12 @@ void ScrollViewComponentInstance::setLayout(
 }
 
 void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
-    facebook::react::Point offset) {
+    facebook::react::Point offset,
+    double diff) {
+  if (diff <= 0) {
+    return;
+  }
+
   if (isHorizontal(m_props)) {
     if (offset.x + m_containerSize.width <= m_contentSize.width) {
       return;
@@ -86,8 +91,12 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
   CppComponentInstance::onStateChanged(state);
   auto stateData = state->getData();
   if (m_contentSize != stateData.getContentSize()) {
+    double diff = isHorizontal(m_props)
+        ? m_contentSize.width - stateData.getContentSize().width
+        : m_contentSize.height - stateData.getContentSize().height;
     m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
+    updateOffsetAfterChildChange(getCurrentOffset(), diff);
   }
 }
 
@@ -534,7 +543,6 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
     }
     m_shouldAdjustScrollPositionOnNextRender = false;
   }
-  updateOffsetAfterChildChange(getCurrentOffset());
 }
 
 folly::dynamic ScrollViewComponentInstance::getScrollEventPayload(
