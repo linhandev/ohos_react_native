@@ -26,6 +26,9 @@ function App() {
             <Page name="_DEV Tests">
               <TesterExample filter={{tags: ['dev']}} />
             </Page>
+            <Page name="ALL TESTS">
+              <TesterExample filter={{}} />
+            </Page>
             <Page name="AUTOMATED & MANUAL Tests">
               <TesterExample filter={{types: ['automated', 'manual']}} />
             </Page>
