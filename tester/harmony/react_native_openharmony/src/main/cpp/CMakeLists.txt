@@ -380,7 +380,6 @@ target_compile_options(hermes_inspector PRIVATE ${folly_compile_options})
 
 add_subdirectory("${RNOH_CPP_DIR}/RNOH/react-native-jsvm")
 
-
 # ----------------------------------------------------------------------------------------------------------------------
 
 add_library(rnoh SHARED

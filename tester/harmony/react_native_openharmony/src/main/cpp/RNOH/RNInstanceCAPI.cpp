@@ -21,6 +21,7 @@
 #include "JSVMExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/RNInstance.h"
+#include "JSVMExecutorFactory.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -90,7 +91,7 @@ void RNInstanceCAPI::initialize() {
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   std::vector<std::unique_ptr<react::NativeModule>> modules;
   auto instanceCallback = std::make_unique<react::InstanceCallback>();
-auto jsExecutorFactory = std::make_shared<rnjsvm::JSVMExecutorFactory>(
+ auto jsExecutorFactory = std::make_shared<rnjsvm::JSVMExecutorFactory>(
         // runtime installer, which is run when the runtime
         // is first initialized and provides access to the runtime
         // before the JS code is executed
@@ -100,6 +101,17 @@ auto jsExecutorFactory = std::make_shared<rnjsvm::JSVMExecutorFactory>(
         // install tracing functions
         rnoh::setupTracing(rt);
         });
+//     auto jsExecutorFactory = std::make_shared<react::HermesExecutorFactory>(
+//         // runtime installer, which is run when the runtime
+//         // is first initialized and provides access to the runtime
+//         // before the JS code is executed
+//         [](facebook::jsi::Runtime& rt) {
+//           // install `console.log` (etc.) implementation
+//           react::bindNativeLogger(rt, nativeLogger);
+//           // install tracing functions
+//           rnoh::setupTracing(rt);
+//         });
+//     jsExecutorFactory->setEnableDebugger(m_shouldEnableDebugger);
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
