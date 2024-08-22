@@ -14,7 +14,7 @@ TrackingAnimatedNode::TrackingAnimatedNode(
 
 void TrackingAnimatedNode::update() {
   auto& toValueNode = m_nodesManager.getValueNodeByTag(m_toValueNodeTag);
-  m_animationConfig["toValue"] = toValueNode.getValue();
+  m_animationConfig["toValue"] = toValueNode.getOutputAsDouble();
   m_nodesManager.startAnimatingNode(
       m_animationId, m_valueNodeTag, m_animationConfig, [](auto _val) {});
 }
