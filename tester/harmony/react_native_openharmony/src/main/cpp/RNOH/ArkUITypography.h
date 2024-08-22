@@ -288,11 +288,11 @@ class ArkUITypographyBuilder final {
           mapValueToFontWeight(
               int(fragment.textAttributes.fontWeight.value())));
     }
-    if (!fragment.textAttributes.fontFamily.empty()) {
-      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
-    } else if (!m_defaultFontFamilyName.empty()) {
+    if (!m_defaultFontFamilyName.empty()) {
       const char* fontFamilies[] = {m_defaultFontFamilyName.c_str()};
+      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+    } else if (!fragment.textAttributes.fontFamily.empty()) {
+      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
       OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
     }
     if (fragment.textAttributes.fontVariant.has_value()) {
