@@ -316,6 +316,10 @@ std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
     auto typography = typographyBuilder.build();
     typography.getLineMetrics(data);
   }
+  for (int i = 0; i < data.size(); i++) {
+    data[i].width = static_cast<Float>(data[i].width) / m_scale;
+    data[i].height = static_cast<Float>(data[i].height) / m_scale;
+  }
   return data;
 }
 
