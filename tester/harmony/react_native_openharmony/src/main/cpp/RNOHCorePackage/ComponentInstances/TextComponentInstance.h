@@ -17,6 +17,8 @@ class TextComponentInstance
   std::vector<std::shared_ptr<ArkUINode>> m_childNodes{};
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
+  std::string m_key;
+  int m_rnInstanceId = 0;
 
  public:
   TextComponentInstance(Context context);
@@ -34,15 +36,6 @@ class TextComponentInstance
 
  private:
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);
-  void setFragment(
-      const facebook::react::AttributedString::Fragment& fragment,
-      std::shared_ptr<SpanNode> spanNode,
-      uint32_t index);
-  void setImageSpanSize(
-      const facebook::react::Size& imageSize,
-      std::shared_ptr<ImageSpanNode> imageSpanNode);
-  void setParagraphAttributes(
-      const facebook::react::ParagraphAttributes& paragraphAttributes);
   std::string stringCapitalize(const std::string& strInput);
   void updateFragmentTouchTargets(
       facebook::react::ParagraphState const& newState);

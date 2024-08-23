@@ -80,7 +80,7 @@ struct Index {
             fontResourceByFontFamily: {
               'Pacifico-Regular': $rawfile("fonts/Pacifico-Regular.ttf"),
               "StintUltraCondensed-Regular": $rawfile('fonts/StintUltraCondensed-Regular.ttf'),
-            }
+            },
           },
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "app_name",
