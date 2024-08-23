@@ -1,7 +1,6 @@
 #pragma once
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 #include <react/renderer/runtimescheduler/RuntimeScheduler.h>
-#include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
@@ -31,8 +30,7 @@ class RNInstanceInternal
       ComponentInstancePreallocationRequestQueue::Shared
           componentInstancePreallocationRequestQueue,
       bool shouldEnableDebugger,
-      bool shouldEnableBackgroundExecutor,
-      ArkTSBridge::Shared arkTSBridge)
+      bool shouldEnableBackgroundExecutor)
       : m_id(id),
         m_taskExecutor(std::move(taskExecutor)),
         m_contextContainer(std::move(contextContainer)),
@@ -49,7 +47,6 @@ class RNInstanceInternal
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_arkTSChannel(std::move(arkTSChannel)),
-        m_arkTSBridge(std::move(arkTSBridge)),
         m_componentInstancePreallocationRequestQueue(
             std::move(componentInstancePreallocationRequestQueue)) {
     m_unsubscribeUITickListener =
@@ -142,8 +139,6 @@ class RNInstanceInternal
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =
       nullptr;
   MountingManager::Shared m_mountingManager;
-
-  ArkTSBridge::Shared m_arkTSBridge;
 
   /**
    * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.

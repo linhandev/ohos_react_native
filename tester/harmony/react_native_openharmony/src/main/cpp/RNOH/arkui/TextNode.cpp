@@ -7,10 +7,7 @@ namespace rnoh {
 
 TextNode::TextNode()
     : ArkUINode(NativeNodeApi::getInstance()->createNode(
-          ArkUI_NodeType::ARKUI_NODE_TEXT)) {
-  maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
-      m_nodeHandle, NODE_EVENT_ON_DISAPPEAR, NODE_EVENT_ON_DISAPPEAR, this));
-}
+          ArkUI_NodeType::ARKUI_NODE_TEXT)) {}
 
 void TextNode::insertChild(ArkUINode& child, std::size_t index) {
   maybeThrow(NativeNodeApi::getInstance()->insertChildAt(
@@ -294,20 +291,6 @@ TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   ArkUI_AttributeItem item = {&value, 1};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_SELECTED_BACKGROUND_COLOR, &item));
-  return *this;
-}
-
-TextNode& TextNode::setTextContentWithStyledString(
-    const SharedStyledString& styledString) {
-  ArkUI_AttributeItem item = {.object = styledString.get()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item));
-  return *this;
-}
-
-TextNode& TextNode::resetTextContentWithStyledString() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING));
   return *this;
 }
 

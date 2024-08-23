@@ -1,14 +1,10 @@
 #pragma once
-#include <arkui/native_type.h>
-#include <arkui/styled_string.h>
-#include <native_drawing/drawing_brush.h>
 #include <native_drawing/drawing_font_collection.h>
 #include <native_drawing/drawing_text_typography.h>
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
 #include <memory>
 #include "FontRegistry.h"
-#include "react/renderer/attributedstring/primitives.h"
 
 namespace rnoh {
 
@@ -18,11 +14,6 @@ namespace rnoh {
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
-
-using SharedStyledString = std::shared_ptr<ArkUI_StyledString>;
-
-using UniqueTextStyle = std::
-    unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>;
 
 /**
  * @internal
@@ -48,25 +39,17 @@ class ArkUITypography final {
       attachment.frame.size.height =
           OH_Drawing_GetBottomFromTextBox(placeholderRects, i) -
           OH_Drawing_GetTopFromTextBox(placeholderRects, i);
-      attachment.frame.size.height /= m_scale;
-      attachment.frame.size.width /= m_scale;
-      attachment.frame.origin.x /= m_scale;
-      attachment.frame.origin.y /= m_scale;
       result.push_back(std::move(attachment));
     }
     return result;
   }
 
   facebook::react::Float getHeight() const {
-    return OH_Drawing_TypographyGetHeight(m_typography.get()) / m_scale;
+    return OH_Drawing_TypographyGetHeight(m_typography.get());
   }
 
   facebook::react::Float getLongestLineWidth() const {
-    return OH_Drawing_TypographyGetLongestLine(m_typography.get()) / m_scale;
-  }
-
-  bool didExceedMaxLines() const {
-    return OH_Drawing_TypographyDidExceedMaxLines(m_typography.get());
+    return OH_Drawing_TypographyGetLongestLine(m_typography.get());
   }
 
   using Rects = std::vector<facebook::react::Rect>;
@@ -88,14 +71,12 @@ class ArkUITypography final {
       rects.reserve(textBoxCount);
       for (size_t j = 0; j < textBoxCount; j++) {
         facebook::react::Rect rect;
-        rect.origin.x = OH_Drawing_GetLeftFromTextBox(textBoxes, j) / m_scale;
-        rect.origin.y = OH_Drawing_GetTopFromTextBox(textBoxes, j) / m_scale;
-        rect.size.width = (OH_Drawing_GetRightFromTextBox(textBoxes, j) -
-                           OH_Drawing_GetLeftFromTextBox(textBoxes, j)) /
-            m_scale;
-        rect.size.height = (OH_Drawing_GetBottomFromTextBox(textBoxes, j) -
-                            OH_Drawing_GetTopFromTextBox(textBoxes, j)) /
-            m_scale;
+        rect.origin.x = OH_Drawing_GetLeftFromTextBox(textBoxes, j);
+        rect.origin.y = OH_Drawing_GetTopFromTextBox(textBoxes, j);
+        rect.size.width = OH_Drawing_GetRightFromTextBox(textBoxes, j) -
+            OH_Drawing_GetLeftFromTextBox(textBoxes, j);
+        rect.size.height = OH_Drawing_GetBottomFromTextBox(textBoxes, j) -
+            OH_Drawing_GetTopFromTextBox(textBoxes, j);
         rects.emplace_back(std::move(rect));
       }
       result.emplace_back(std::move(rects));
@@ -104,36 +85,25 @@ class ArkUITypography final {
     return result;
   }
 
-  SharedStyledString getStyledString() {
-    return m_styledString;
-  }
-
  private:
   ArkUITypography(
-      SharedStyledString styledString,
+      OH_Drawing_TypographyCreate* typographyHandler,
       size_t attachmentCount,
       std::vector<size_t> fragmentLengths,
-      facebook::react::Float maxWidth,
-      float scale)
+      facebook::react::Float maxWidth)
       : m_typography(
-            OH_ArkUI_StyledString_CreateTypography(styledString.get()),
+            OH_Drawing_CreateTypography(typographyHandler),
             OH_Drawing_DestroyTypography),
-        m_styledString(styledString),
         m_attachmentCount(attachmentCount),
-        m_fragmentLengths(std::move(fragmentLengths)),
-        m_scale(scale) {
+        m_fragmentLengths(std::move(fragmentLengths)) {
     OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
   }
-
-  SharedStyledString m_styledString;
 
   std::
       unique_ptr<OH_Drawing_Typography, decltype(&OH_Drawing_DestroyTypography)>
           m_typography;
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
-
-  float m_scale = 1.0;
 
   friend class ArkUITypographyBuilder;
 };
@@ -145,15 +115,13 @@ class ArkUITypographyBuilder final {
  public:
   ArkUITypographyBuilder(
       OH_Drawing_TypographyStyle* typographyStyle,
-      SharedFontCollection fontCollection,
-      float scale,
-      bool halfLeading)
-      : m_styledString(
-            OH_ArkUI_StyledString_Create(typographyStyle, fontCollection.get()),
-            OH_ArkUI_StyledString_Destroy),
-        m_scale(scale),
-        m_fontCollection(std::move(fontCollection)),
-        m_halfLeading(halfLeading) {}
+      SharedFontCollection fontCollection)
+      : m_typographyHandler(
+            OH_Drawing_CreateTypographyHandler(
+                typographyStyle,
+                fontCollection.get()),
+            OH_Drawing_DestroyTypographyHandler),
+        m_fontCollection(std::move(fontCollection)) {}
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
     if (!isnan(maximumWidth) && maximumWidth > 0) {
@@ -174,18 +142,13 @@ class ArkUITypographyBuilder final {
 
   ArkUITypography build() const {
     return ArkUITypography(
-        m_styledString,
+        m_typographyHandler.get(),
         m_attachmentCount,
         m_fragmentLengths,
-        m_maximumWidth,
-        m_scale);
+        m_maximumWidth);
   }
 
  private:
-  float m_scale;
-  bool m_halfLeading;
-  std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
-
   size_t utf8Length(const std::string& str) {
     size_t length = 0;
     for (auto c : str) {
@@ -198,125 +161,58 @@ class ArkUITypographyBuilder final {
 
   void addTextFragment(
       const facebook::react::AttributedString::Fragment& fragment) {
-    UniqueTextStyle textStyle(
-        OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfLeading);
-
+    auto textStyle = OH_Drawing_CreateTextStyle();
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {
       // set fontSize to default for negative values(same as iOS)
       fontSize = 14;
     }
-
-    OH_Drawing_SetTextStyleFontSize(textStyle.get(), fontSize * m_scale);
-
-    // fontStyle
-    if (fragment.textAttributes.fontStyle.has_value()) {
-      OH_Drawing_SetTextStyleFontStyle(
-          textStyle.get(), (int)fragment.textAttributes.fontStyle.value());
-    }
-
-    // fontColor
-    if (fragment.textAttributes.foregroundColor) {
-      OH_Drawing_SetTextStyleColor(
-          textStyle.get(),
-          (uint32_t)(*fragment.textAttributes.foregroundColor));
-    }
-
-    // textDecoration
-    int32_t textDecorationType = TEXT_DECORATION_NONE;
-    uint32_t textDecorationColor = 0xFF000000;
-    int32_t textDecorationStyle = TEXT_DECORATION_STYLE_SOLID;
-    if (fragment.textAttributes.textDecorationLineType.has_value()) {
-      textDecorationType =
-          (int32_t)fragment.textAttributes.textDecorationLineType.value();
-      if (fragment.textAttributes.textDecorationColor) {
-        textDecorationColor =
-            (uint32_t)(*fragment.textAttributes.textDecorationColor);
-      } else if (fragment.textAttributes.foregroundColor) {
-        textDecorationColor =
-            (uint32_t)(*fragment.textAttributes.foregroundColor);
-      }
-      if (textDecorationType ==
-              (int32_t)facebook::react::TextDecorationLineType::Strikethrough ||
-          textDecorationType ==
-              (int32_t)facebook::react::TextDecorationLineType::
-                  UnderlineStrikethrough) {
-        textDecorationType = TEXT_DECORATION_LINE_THROUGH;
-      }
-    }
-    if (fragment.textAttributes.textDecorationStyle.has_value()) {
-      textDecorationStyle =
-          (int32_t)fragment.textAttributes.textDecorationStyle.value();
-    }
-    OH_Drawing_SetTextStyleDecoration(textStyle.get(), textDecorationType);
-    OH_Drawing_SetTextStyleDecorationColor(
-        textStyle.get(), textDecorationColor);
-    OH_Drawing_SetTextStyleDecorationStyle(
-        textStyle.get(), textDecorationStyle);
-
-    // backgroundColor
-    std::unique_ptr<OH_Drawing_Brush, decltype(&OH_Drawing_BrushDestroy)> brush(
-        OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (fragment.textAttributes.isHighlighted.has_value() &&
-        fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    } else if (fragment.textAttributes.backgroundColor) {
-      OH_Drawing_BrushSetColor(
-          brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    }
-
-    // shadow
-    std::unique_ptr<
-        OH_Drawing_TextShadow,
-        decltype(&OH_Drawing_DestroyTextShadow)>
-        shadow(OH_Drawing_CreateTextShadow(), OH_Drawing_DestroyTextShadow);
-
+    OH_Drawing_SetTextStyleFontSize(textStyle, fontSize);
     // new NDK for setting letterSpacing
     if (!isnan(fragment.textAttributes.letterSpacing)) {
       OH_Drawing_SetTextStyleLetterSpacing(
-          textStyle.get(), fragment.textAttributes.letterSpacing);
+          textStyle, fragment.textAttributes.letterSpacing);
     }
     if (!isnan(fragment.textAttributes.lineHeight) &&
         fragment.textAttributes.lineHeight > 0) {
       // fontSize * fontHeight = lineHeight, no direct ndk for setting
       // lineHeight so do it in this weird way
       double fontHeight = fragment.textAttributes.lineHeight / fontSize;
-      OH_Drawing_SetTextStyleFontHeight(textStyle.get(), fontHeight);
+      OH_Drawing_SetTextStyleFontHeight(textStyle, fontHeight);
     }
     if (fragment.textAttributes.fontWeight.has_value()) {
       OH_Drawing_SetTextStyleFontWeight(
-          textStyle.get(),
+          textStyle,
           mapValueToFontWeight(
               int(fragment.textAttributes.fontWeight.value())));
     }
     if (!fragment.textAttributes.fontFamily.empty()) {
       const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+      OH_Drawing_SetTextStyleFontFamilies(textStyle, 1, fontFamilies);
     }
     // push text and corresponding textStyle to handler
-    OH_ArkUI_StyledString_PushTextStyle(m_styledString.get(), textStyle.get());
-    OH_ArkUI_StyledString_AddText(
-        m_styledString.get(), fragment.string.c_str());
-    m_fragmentLengths.emplace_back(utf8Length(fragment.string));
+    OH_Drawing_TypographyHandlerPushTextStyle(
+        m_typographyHandler.get(), textStyle);
+    OH_Drawing_TypographyHandlerAddText(
+        m_typographyHandler.get(), fragment.string.c_str());
+    OH_Drawing_DestroyTextStyle(textStyle);
+    m_fragmentLengths.push_back(utf8Length(fragment.string));
   }
 
   void addAttachment(
       const facebook::react::AttributedString::Fragment& fragment) {
     // using placeholder span for inline views
     OH_Drawing_PlaceholderSpan inlineView = {
-        fragment.parentShadowView.layoutMetrics.frame.size.width * m_scale,
-        fragment.parentShadowView.layoutMetrics.frame.size.height * m_scale,
+        fragment.parentShadowView.layoutMetrics.frame.size.width,
+        fragment.parentShadowView.layoutMetrics.frame.size.height,
         // align to the line's baseline
         ALIGNMENT_ABOVE_BASELINE,
         TEXT_BASELINE_ALPHABETIC,
         0,
     };
     // push placeholder to handler
-    OH_ArkUI_StyledString_AddPlaceholder(m_styledString.get(), &inlineView);
-    m_placeholderSpan.emplace_back(inlineView);
+    OH_Drawing_TypographyHandlerAddPlaceholder(
+        m_typographyHandler.get(), &inlineView);
     m_attachmentCount++;
   }
 
@@ -345,7 +241,10 @@ class ArkUITypographyBuilder final {
     }
   }
 
-  SharedStyledString m_styledString;
+  std::unique_ptr<
+      OH_Drawing_TypographyCreate,
+      decltype(&OH_Drawing_DestroyTypographyHandler)>
+      m_typographyHandler;
   size_t m_attachmentCount = 0;
   std::vector<size_t> m_fragmentLengths{};
   facebook::react::Float m_maximumWidth =

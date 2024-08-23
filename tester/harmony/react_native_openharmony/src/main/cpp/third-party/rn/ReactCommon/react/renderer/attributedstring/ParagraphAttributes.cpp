@@ -14,32 +14,26 @@
 
 namespace facebook::react {
 
-bool ParagraphAttributes::operator==(const ParagraphAttributes& rhs) const {
+bool ParagraphAttributes::operator==(const ParagraphAttributes &rhs) const {
   return std::tie(
              maximumNumberOfLines,
              ellipsizeMode,
              textBreakStrategy,
              adjustsFontSizeToFit,
              includeFontPadding,
-             android_hyphenationFrequency,
-             allowFontScaling,
-             writingDirection) ==
+             android_hyphenationFrequency) ==
       std::tie(
              rhs.maximumNumberOfLines,
              rhs.ellipsizeMode,
              rhs.textBreakStrategy,
              rhs.adjustsFontSizeToFit,
              rhs.includeFontPadding,
-             rhs.android_hyphenationFrequency,
-             rhs.allowFontScaling,
-             rhs.writingDirection) &&
+             rhs.android_hyphenationFrequency) &&
       floatEquality(minimumFontSize, rhs.minimumFontSize) &&
-      floatEquality(maximumFontSize, rhs.maximumFontSize) &&
-      floatEquality(minimumFontScale, rhs.minimumFontScale) &&
-      floatEquality(maxFontSizeMultiplier, rhs.maxFontSizeMultiplier);
+      floatEquality(maximumFontSize, rhs.maximumFontSize);
 }
 
-bool ParagraphAttributes::operator!=(const ParagraphAttributes& rhs) const {
+bool ParagraphAttributes::operator!=(const ParagraphAttributes &rhs) const {
   return !(*this == rhs);
 }
 
@@ -56,8 +50,7 @@ SharedDebugStringConvertibleList ParagraphAttributes::getDebugProps() const {
       debugStringConvertibleItem("maximumFontSize", maximumFontSize),
       debugStringConvertibleItem("includeFontPadding", includeFontPadding),
       debugStringConvertibleItem(
-          "android_hyphenationFrequency", android_hyphenationFrequency),
-      debugStringConvertibleItem("minimumFontScale", minimumFontScale)};
+          "android_hyphenationFrequency", android_hyphenationFrequency)};
 }
 #endif
 

@@ -14,8 +14,8 @@ bool CoreFeatures::enablePropIteratorSetter = false;
 bool CoreFeatures::enableMapBuffer = false;
 bool CoreFeatures::blockPaintForUseLayoutEffect = false;
 bool CoreFeatures::useNativeState = false;
-bool CoreFeatures::cacheNSTextStorage = true;
-bool CoreFeatures::cacheLastTextMeasurement = true;
+bool CoreFeatures::cacheNSTextStorage = false;
+bool CoreFeatures::cacheLastTextMeasurement = false;
 bool CoreFeatures::cancelImageDownloadsOnRecycle = false;
 
 } // namespace react

@@ -106,7 +106,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     fontRegistry->registerFont(fontFamilyName, fontPathRelativeToRawfileDir);
   }
   auto textMeasurer =
-      std::make_shared<TextMeasurer>(featureFlagRegistry, fontRegistry, id);
+      std::make_shared<TextMeasurer>(featureFlagRegistry, fontRegistry);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
   HarmonyReactMarker::logMarker(
@@ -267,8 +267,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstancePreallocationRequestQueue,
         std::move(resourceManager),
         shouldEnableDebugger,
-        shouldEnableBackgroundExecutor,
-        arkTSBridge);
+        shouldEnableBackgroundExecutor);
     componentInstanceDependencies->rnInstance = rnInstance;
     auto imageSourceResolver =
         std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
@@ -301,6 +300,5 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::move(arkTSMessageHandlers),
       nullptr, // ComponentInstancePreallocationRequestQueue
       shouldEnableDebugger,
-      shouldEnableBackgroundExecutor,
-      arkTSBridge);
+      shouldEnableBackgroundExecutor);
 }

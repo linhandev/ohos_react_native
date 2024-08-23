@@ -1,15 +1,9 @@
 #pragma once
+
 #include "ArkUINode.h"
-#include "RNOH/ArkUITypography.h"
 #include "react/renderer/attributedstring/primitives.h"
 
 namespace rnoh {
-
-class TextNodeDelegate {
- public:
-  virtual ~TextNodeDelegate() = default;
-  virtual void onDisappear(){};
-};
 
 /**
  * @api
@@ -80,9 +74,6 @@ class TextNode : public ArkUINode {
   TextNode& setPadding(float top, float right, float bottom, float left);
   TextNode& setWordBreak(ArkUI_WordBreak wordBreak);
   TextNode& setSelectedBackgroundColor(uint32_t color);
-  TextNode& setTextContentWithStyledString(
-      const SharedStyledString& styledString);
-  TextNode& resetTextContentWithStyledString();
   TextNode& setTextDataDetectorEnable(int32_t enableFlag);
   TextNode& setTextDataDetectorType(ArkUI_TextDataDetectorType type);
 };
