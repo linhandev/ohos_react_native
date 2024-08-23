@@ -378,6 +378,9 @@ target_include_directories(hermes_inspector PRIVATE
 )
 target_compile_options(hermes_inspector PRIVATE ${folly_compile_options})
 
+add_subdirectory("${RNOH_CPP_DIR}/RNOH/react-native-jsvm")
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 add_library(rnoh SHARED
@@ -493,6 +496,7 @@ target_include_directories(rnoh PUBLIC
     "${folly_include_dir}"
     "${hermes_include_dirs}"
     "${RNOH_APP_DIR}"
+    "${JSVM_EXECUTOR_INCLUDE_DIR}"
 )
 # add hitrace systrace implementation for debugging
 if(DEFINED WITH_HITRACE_SYSTRACE)
@@ -511,6 +515,7 @@ target_link_libraries(rnoh PUBLIC
     Boost::context
     reactnative
     react_render_scheduler
+    jsvm_executor_common
     hermes_executor_common
     rrc_image
     rrc_text
