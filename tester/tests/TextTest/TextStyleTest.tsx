@@ -1,4 +1,4 @@
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {SAMPLE_PARAGRAPH_TEXT} from './fixtures';
 import {TestCase} from '../../components';
@@ -27,7 +27,7 @@ export function TextStyleTest() {
       </TestCase.Example>
       <TestCase.Example
         itShould="show text with the 'sans-serif' font"
-        skip={Platform.select({harmony: 'Not supported'})}
+
         // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/860
       >
         <View style={{height: 30, width: '100%'}}>
@@ -41,11 +41,7 @@ export function TextStyleTest() {
           </Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="show text with the 'serif' font"
-        skip={Platform.select({harmony: 'Not supported'})}
-        // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/860
-      >
+      <TestCase.Example itShould="show text with the 'serif' font">
         <View style={{height: 30, width: '100%'}}>
           <Text
             style={{
@@ -57,11 +53,7 @@ export function TextStyleTest() {
           </Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="show text with the 'monospace' font"
-        skip={Platform.select({harmony: 'Not supported'})}
-        // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/860
-      >
+      <TestCase.Example itShould="show text with the 'monospace' font">
         <View style={{height: 30, width: '100%'}}>
           <Text
             style={{

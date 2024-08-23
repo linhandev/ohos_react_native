@@ -18,6 +18,8 @@
 #include "RNOH/SynchronousEventBeat.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
+#include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
+#include "TextMeasurer.h"
 #include "hermes/executor/HermesExecutorFactory.h"
 
 namespace rnoh {
@@ -79,6 +81,19 @@ void RNInstanceInternal::start() {
           binder->createBindings(rt, turboModuleProvider);
         }
       });
+
+  auto textMeasurer =
+      m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
+          "textLayoutManagerDelegate");
+
+  RNOH_ASSERT(textMeasurer != nullptr);
+
+  auto displayMetrics = m_arkTSBridge->getDisplayMetrics().screenPhysicalPixels;
+
+  float fontScale = displayMetrics.fontScale;
+  float scale = displayMetrics.scale;
+
+  textMeasurer->setTextMeasureParams(fontScale, scale, false);
 }
 
 void RNInstanceInternal::initialize() {
