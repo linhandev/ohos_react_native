@@ -210,7 +210,8 @@ class ArkUITypographyBuilder final {
 //                OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
     std::shared_ptr<OH_Drawing_TextStyle> textStyle(
         OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle); //  Revert this after API rectification
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading);
+    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading
+        || !isnan(fragment.textAttributes.lineHeight));
     // fontSize
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {
