@@ -186,6 +186,8 @@ class ArkUITypographyBuilder final {
   bool m_halfLeading;
   std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
 
+  using FontVariant = facebook::react::FontVariant;
+
   size_t utf8Length(const std::string& str) {
     size_t length = 0;
     for (auto c : str) {
@@ -296,6 +298,35 @@ class ArkUITypographyBuilder final {
       const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
       OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
     }
+
+    if (fragment.textAttributes.fontVariant.has_value()) {
+      auto fontVariant = int(fragment.textAttributes.fontVariant.value());
+
+      OH_Drawing_TextStyleAddFontFeature(
+          textStyle.get(),
+          "smcp",
+          static_cast<int>((fontVariant & (int)FontVariant::SmallCaps) != 0));
+
+      OH_Drawing_TextStyleAddFontFeature(
+          textStyle.get(),
+          "onum",
+          static_cast<int>(
+              (fontVariant & (int)FontVariant::OldstyleNums) != 0));
+      OH_Drawing_TextStyleAddFontFeature(
+          textStyle.get(),
+          "lnum",
+          static_cast<int>((fontVariant & (int)FontVariant::LiningNums) != 0));
+      OH_Drawing_TextStyleAddFontFeature(
+          textStyle.get(),
+          "tnum",
+          static_cast<int>((fontVariant & (int)FontVariant::TabularNums) != 0));
+      OH_Drawing_TextStyleAddFontFeature(
+          textStyle.get(),
+          "pnum",
+          static_cast<int>(
+              (fontVariant & (int)FontVariant::ProportionalNums) != 0));
+    }
+
     // push text and corresponding textStyle to handler
     OH_ArkUI_StyledString_PushTextStyle(m_styledString.get(), textStyle.get());
     OH_ArkUI_StyledString_AddText(
