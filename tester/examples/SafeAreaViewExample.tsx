@@ -1,5 +1,12 @@
 import {useEffect, useRef, useState} from 'react';
-import {Animated, SafeAreaView, StatusBar, Text, View} from 'react-native';
+import {
+  Animated,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  View,
+} from 'react-native';
 import {Button} from '../components';
 
 export function SafeAreaViewExample() {
@@ -111,6 +118,33 @@ export const SafeAreaViewEdgeCases = () => {
               <Button label="Slide In" onPress={slideIn} />
               <Button label="Slide Out" onPress={slideOut} />
             </View>
+            <ScrollView style={{backgroundColor: 'pink', marginVertical: 16}}>
+              <View style={{borderWidth: 1, margin: 16, height: 500}}>
+                <Text>View to make scroll view scrollable</Text>
+              </View>
+              <View style={{borderWidth: 1, margin: 16, height: 500}}>
+                <Text>View to make scroll view scrollable</Text>
+              </View>
+              <SafeAreaView
+                id="NESTED SAFE AREA IN SCROLL VIEW"
+                testID="NESTED SAFE AREA IN SCROLL VIEW"
+                style={{backgroundColor: 'blue'}}>
+                <View
+                  style={{
+                    padding: 16,
+                    backgroundColor: 'lightgreen',
+                  }}>
+                  <Text>
+                    This green area is wrapper with nested SafeAreaView (with
+                    blue background). Notice there is no blue background nor
+                    extra padding.
+                  </Text>
+                </View>
+              </SafeAreaView>
+              <View style={{borderWidth: 1, margin: 16, height: 500}}>
+                <Text>View to make scroll view scrollable</Text>
+              </View>
+            </ScrollView>
           </View>
           <SafeAreaView
             id="BOTTOM NESTED SAFE AREA"
