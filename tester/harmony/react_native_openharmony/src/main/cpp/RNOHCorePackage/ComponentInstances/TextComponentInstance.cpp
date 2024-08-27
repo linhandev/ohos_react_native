@@ -137,6 +137,7 @@ void TextComponentInstance::onStateChanged(
   uint32_t childIndex = 0;
   auto const& fragments = textState->getData().attributedString.getFragments();
   VLOG(3) << "[text-debug] getFragments size:" << fragments.size();
+  m_textNode.resetTextContentWithStyledString();
   if (fragments.empty()) {
     return;
   }
@@ -150,7 +151,6 @@ void TextComponentInstance::onStateChanged(
         TextMeasureRegistry::getTextMeasureRegistry().getTextStyledString(
             m_key);
 
-    m_textNode.resetTextContentWithStyledString();
     if (styledString != nullptr) {
       VLOG(3) << "[text-debug] setTextContentWithStyledString";
       m_textNode.setTextContentWithStyledString(styledString);
