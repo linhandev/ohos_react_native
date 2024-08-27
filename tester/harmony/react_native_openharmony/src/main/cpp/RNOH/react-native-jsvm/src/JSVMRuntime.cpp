@@ -138,7 +138,11 @@ bool JSVMRuntime::drainMicrotasks(int maxMicrotasksHint)
 {
     DFX();
     bool result = false;
-    OH_JSVM_PumpMessageLoop(vm, &result);
+    
+    while(OH_JSVM_PumpMessageLoop(vm, &result) == JSVM_OK && result) {
+      OH_JSVM_PerformMicrotaskCheckpoint(vm);
+    }
+  
     return !result;
 }
 
@@ -530,7 +534,9 @@ void JSVMRuntime::setNativeState(
       env,
       object,
       static_cast<void*>(objectNativeState),
-      [](JSVM_Env env, void* data, void* hint) {},
+      [](JSVM_Env env, void* data, void* hint) {
+        delete static_cast<ObjectNativeState *>(data);
+      },
       nullptr,
       nullptr);
 }
@@ -846,7 +852,9 @@ Function JSVMRuntime::createFunctionFromHostFunction(
       env,
       jsFunc,
       static_cast<void*>(proxy),
-      [](JSVM_Env env, void* data, void* hint) {},
+      [](JSVM_Env env, void* data, void* hint) {
+        delete static_cast<HostFunctionProxy *>(data);
+      },
       nullptr,
       nullptr);
   return JSVMConverter::make<Object>(env, jsFunc).getFunction(*this);
