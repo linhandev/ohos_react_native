@@ -333,10 +333,10 @@ void ScrollViewComponentInstance::onScroll() {
     if( m_eventEmitter != nullptr ){
         m_eventEmitter->onScroll(scrollViewMetrics);
      }
-        updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-        sendEventForNativeAnimations(scrollViewMetrics);
-        m_currentOffset = scrollViewMetrics.contentOffset;
-        updateContentClippedSubviews();
+    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+    sendEventForNativeAnimations(scrollViewMetrics);
+    m_currentOffset = scrollViewMetrics.contentOffset;
+    updateContentClippedSubviews();
   }
 }
 
