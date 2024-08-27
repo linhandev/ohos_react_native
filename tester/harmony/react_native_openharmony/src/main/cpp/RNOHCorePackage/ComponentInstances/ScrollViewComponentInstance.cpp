@@ -330,11 +330,13 @@ void ScrollViewComponentInstance::onScroll() {
             << scrollViewMetrics.contentSize.height
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
-    m_eventEmitter->onScroll(scrollViewMetrics);
-    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-    sendEventForNativeAnimations(scrollViewMetrics);
-    m_currentOffset = scrollViewMetrics.contentOffset;
-    updateContentClippedSubviews();
+    if( m_eventEmitter != nullptr ){
+        m_eventEmitter->onScroll(scrollViewMetrics);
+     }
+        updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+        sendEventForNativeAnimations(scrollViewMetrics);
+        m_currentOffset = scrollViewMetrics.contentOffset;
+        updateContentClippedSubviews();
   }
 }
 
