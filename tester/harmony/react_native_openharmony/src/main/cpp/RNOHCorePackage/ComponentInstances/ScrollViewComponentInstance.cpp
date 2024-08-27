@@ -234,18 +234,18 @@ void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
 
   facebook::react::Point targetOffset = {offset.x, offset.y};
   if (isHorizontal(m_props)) {
-    if (targetOffset.x < 0) {
-      targetOffset.x = 0;
-    }
     if (targetOffset.x > m_contentSize.width - m_containerSize.width) {
       targetOffset.x = m_contentSize.width - m_containerSize.width;
     }
-  } else {
-    if (targetOffset.y < 0) {
-      targetOffset.y = 0;
+    if (targetOffset.x < 0) {
+      targetOffset.x = 0;
     }
+  } else {
     if (targetOffset.y > m_contentSize.height - m_containerSize.height) {
       targetOffset.y = m_contentSize.height - m_containerSize.height;
+    }
+    if (targetOffset.y < 0) {
+      targetOffset.y = 0;
     }
   }
 
