@@ -87,19 +87,19 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Logical
-        skip={{android: false, harmony: {arkTs: false, cAPI: 'NOT SUPPORTED'}}}
-        itShould="retrieve invalid uri image size"
+        itShould="fail when retrieving image size for an invalid uri"
         fn={({expect}) => {
           return new Promise((resolve, reject) => {
             Image.getSize(
               INVALID_IMAGE_URL,
-              (width, height) => {
-                expect(width).to.be.eq(0);
-                expect(height).to.be.eq(0);
-                resolve();
+              () => {
+                reject(
+                  'retrieving the size of an image with invalid uri should fail, but it returned a success',
+                );
               },
               e => {
-                reject(e);
+                expect(e).to.not.be.undefined;
+                resolve();
               },
             );
           });

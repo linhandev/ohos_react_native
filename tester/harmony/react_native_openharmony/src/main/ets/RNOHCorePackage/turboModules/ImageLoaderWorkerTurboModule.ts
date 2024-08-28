@@ -48,7 +48,7 @@ export class ImageLoaderWorkerTurboModule extends WorkerTurboModule {
       const imageInfo = await imageSource.getImageSource().getImageInfo()
       return [imageInfo.size.width, imageInfo.size.height]
     } else {
-      return [0, 0]
+      throw 'Cannot get the size of an image for an empty URI'
     }
   }
 
