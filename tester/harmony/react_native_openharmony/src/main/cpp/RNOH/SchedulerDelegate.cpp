@@ -53,9 +53,13 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
             }
         }
         performOnMainThread(
-            [otherMutation](MountingManager::Shared 
+            [otherMutation, this](MountingManager::Shared 
         const& mountingManager) {
               mountingManager->didMount(otherMutation);
+              auto preAllocationBuffer = m_preAllocationBuffer.lock();
+              if(preAllocationBuffer){
+                  preAllocationBuffer->clearPreallocatedViews();
+              }
             });
        });
 }
