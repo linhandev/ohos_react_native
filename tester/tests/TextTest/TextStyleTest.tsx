@@ -346,19 +346,19 @@ export function TextStyleTest() {
       </TestCase.Example>
       <TestCase.Example itShould="show text with font variants">
         <Text style={{fontFamily: 'serif', fontVariant: ['small-caps']}}>
-            The quick brown fox jumps over the lazy dog
+          The quick brown fox jumps over the lazy dog
         </Text>
         <Text style={{fontFamily: 'serif', fontVariant: ['oldstyle-nums']}}>
-            0123456789
+          0123456789
         </Text>
         <Text style={{fontFamily: 'serif', fontVariant: ['lining-nums']}}>
-            0123456789
+          0123456789
         </Text>
         <Text style={{fontFamily: 'serif', fontVariant: ['tabular-nums']}}>
-            0123456789
+          0123456789
         </Text>
         <Text style={{fontFamily: 'serif', fontVariant: ['proportional-nums']}}>
-            0123456789
+          0123456789
         </Text>
       </TestCase.Example>
     </TestSuite>

@@ -20,7 +20,7 @@ void OHReactMarkerListener::logMarker(
       break;
     case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START:
       logMarkerStart("CREATE_REACT_CONTEXT", "");
-      break;  
+      break;
     case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_STOP:
       logMarkerFinish("CREATE_REACT_CONTEXT", "");
       break;
@@ -138,10 +138,10 @@ void OHReactMarkerListener::logMarker(
       break;
     case HarmonyReactMarkerId::DOWNLOAD_START:
       logMarkerStart("DOWNLOAD", tag);
-      break;  
+      break;
     case HarmonyReactMarkerId::DOWNLOAD_END:
       logMarkerFinish("DOWNLOAD", tag);
-      break;  
+      break;
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
       break;
