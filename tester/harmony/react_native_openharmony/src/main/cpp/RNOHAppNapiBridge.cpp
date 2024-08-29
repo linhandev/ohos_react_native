@@ -578,6 +578,17 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
   });
 }
 
+static napi_value logMarker(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 2);
+    auto markerId = arkJS.getString(args[0]);
+    auto rnInstanceId = std::to_string(arkJS.getDouble(args[1])).c_str();
+    HarmonyReactMarker::logMarker(markerId, rnInstanceId);
+    return arkJS.getNull();
+  });
+}
+
 /**
  * @thread: MAIN/WORKER
  */
@@ -782,6 +793,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"setSurfaceDisplayMode",
        nullptr,
        setSurfaceDisplayMode,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"logMarker",
+       nullptr,
+       logMarker,
        nullptr,
        nullptr,
        nullptr,
