@@ -27,6 +27,15 @@ std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>> rnInstanceById;
 auto uiTicker = std::make_shared<UITicker>();
 static auto cleanupRunner = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
+napi_value invoke(napi_env env, std::function<napi_value()> operation) {
+  ArkJS arkJS(env);
+  try {
+    return arkJS.createResult(Ok<napi_value>(operation()));
+  } catch (...) {
+    return arkJS.createResult(Err<napi_value>(std::current_exception()));
+  }
+}
+
 static napi_value onInit(napi_env env, napi_callback_info info) {
   HarmonyReactMarker::setLogMarkerIfNeeded();
   HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
@@ -474,6 +483,20 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
   return arkJs.getUndefined();
 }
 
+static napi_value logMarker(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 2);
+    auto markerId = arkJS.getString(args[0]);
+    auto rnInstanceId = std::to_string(arkJS.getDouble(args[1])).c_str();
+    HarmonyReactMarker::logMarker(markerId, rnInstanceId);
+    return arkJS.getNull();
+  });
+}
+
+/**
+ * @thread: MAIN/WORKER
+ */
 static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
   ArkJS arkJs(env);
   try {
@@ -666,6 +689,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"setSurfaceDisplayMode",
        nullptr,
        setSurfaceDisplayMode,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"logMarker",
+       nullptr,
+       logMarker,
        nullptr,
        nullptr,
        nullptr,
