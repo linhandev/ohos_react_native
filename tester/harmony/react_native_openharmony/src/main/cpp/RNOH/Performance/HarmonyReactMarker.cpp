@@ -31,6 +31,12 @@ void HarmonyReactMarker::logMarker(
 }
 
 void HarmonyReactMarker::logMarker(
+    const std::string& markerId,
+    const char* tag) {
+  logMarker(harmonyMarkerIdForString(markerId), tag);
+}
+
+void HarmonyReactMarker::logMarker(
     const ReactMarker::ReactMarkerId markerId,
     const char* tag) {
   logMarker(harmonyMarkerIdForReactMarkerId(markerId), tag);
@@ -94,6 +100,20 @@ HarmonyReactMarker::harmonyMarkerIdForReactMarkerId(
     case ReactMarker::ReactMarkerId::REACT_INSTANCE_INIT_STOP:
       return HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP;
   }
+}
+
+HarmonyReactMarker::HarmonyReactMarkerId
+HarmonyReactMarker::harmonyMarkerIdForString(const std::string& markerId) {
+  if (markerId == "CREATE_REACT_CONTEXT_START") {
+    return HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START;
+  }
+  if (markerId == "DOWNLOAD_START") {
+    return HarmonyReactMarkerId::DOWNLOAD_START;
+  }
+  if (markerId == "DOWNLOAD_END") {
+    return HarmonyReactMarkerId::DOWNLOAD_END;
+  }
+  throw std::invalid_argument("Unknown markerId: " + markerId);
 }
 
 } // namespace rnoh

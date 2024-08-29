@@ -18,8 +18,11 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::RUN_JS_BUNDLE_STOP:
       logMarkerFinish("RUN_JS_BUNDLE", tag);
       break;
+    case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START:
+      logMarkerStart("CREATE_REACT_CONTEXT", "");
+      break;  
     case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_STOP:
-      logMarker("CREATE_REACT_CONTEXT_END", "");
+      logMarkerFinish("CREATE_REACT_CONTEXT", "");
       break;
     case HarmonyReactMarkerId::JS_BUNDLE_STRING_CONVERT_START:
       logMarkerStart("loadApplicationScript_StringConvert", "");
@@ -133,6 +136,12 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END:
       logMarkerFinish("PROCESS_CORE_REACT_PACKAGE", tag);
       break;
+    case HarmonyReactMarkerId::DOWNLOAD_START:
+      logMarkerStart("DOWNLOAD", tag);
+      break;  
+    case HarmonyReactMarkerId::DOWNLOAD_END:
+      logMarkerFinish("DOWNLOAD", tag);
+      break;  
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
       break;

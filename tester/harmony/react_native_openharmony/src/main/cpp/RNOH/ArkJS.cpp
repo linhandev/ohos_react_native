@@ -184,6 +184,27 @@ napi_value ArkJS::createFromRNOHError(rnoh::RNOHError const& e) {
   return this->createFromDynamic(errData);
 }
 
+napi_value ArkJS::createResult(const rnoh::Result<napi_value>& result) {
+  if (!result.isOk()) {
+    auto resultBuilder =
+        this->createObjectBuilder().addProperty("ok", this->getNull());
+    try {
+      std::rethrow_exception(result.unwrapErr());
+    } catch (const rnoh::RNOHError& e) {
+      resultBuilder.addProperty("err", this->createFromRNOHError(e));
+    } catch (const facebook::jsi::JSError& e) {
+      resultBuilder.addProperty("err", this->createFromJSError(e));
+    } catch (const std::exception& e) {
+      resultBuilder.addProperty("err", this->createFromException(e));
+    }
+    return resultBuilder.build();
+  }
+  return this->createObjectBuilder()
+      .addProperty("ok", result.unwrap())
+      .addProperty("err", this->getNull())
+      .build();
+}
+
 napi_value ArkJS::getReferenceValue(napi_ref ref) {
   napi_value result;
   auto status = napi_get_reference_value(m_env, ref, &result);

@@ -19,6 +19,7 @@ class HarmonyReactMarker {
     NATIVE_REQUIRE_STOP,
     RUN_JS_BUNDLE_START,
     RUN_JS_BUNDLE_STOP,
+    CREATE_REACT_CONTEXT_START,
     CREATE_REACT_CONTEXT_STOP,
     JS_BUNDLE_STRING_CONVERT_START,
     JS_BUNDLE_STRING_CONVERT_STOP,
@@ -29,6 +30,8 @@ class HarmonyReactMarker {
     REACT_INSTANCE_INIT_START,
     REACT_INSTANCE_INIT_STOP,
     CONTENT_APPEARED,
+    DOWNLOAD_START,
+    DOWNLOAD_END,
     REACT_BRIDGE_LOADING_START,
     REACT_BRIDGE_LOADING_END,
     ON_HOST_RESUME_START,
@@ -79,6 +82,7 @@ class HarmonyReactMarker {
   static void logMarker(
       const HarmonyReactMarkerId markerId,
       facebook::react::Tag tag);
+  static void logMarker(const std::string& markerId, const char* tag);
   static void logMarker(const ReactMarker::ReactMarkerId, const char* tag);
   static void logMarker(
       const HarmonyReactMarkerId,
@@ -91,6 +95,8 @@ class HarmonyReactMarker {
   static double getAppStartTime();
   static HarmonyReactMarkerId harmonyMarkerIdForReactMarkerId(
       const ReactMarker::ReactMarkerId markerId);
+  static HarmonyReactMarkerId harmonyMarkerIdForString(
+      const std::string& markerId);
 };
 
 } // namespace rnoh
