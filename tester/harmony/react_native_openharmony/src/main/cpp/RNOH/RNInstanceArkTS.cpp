@@ -73,7 +73,9 @@ void rnoh::RNInstanceArkTS::setSurfaceProps(
   });
 }
 
-void rnoh::RNInstanceArkTS::stopSurface(react::Tag surfaceId) {
+void rnoh::RNInstanceArkTS::stopSurface(
+    react::Tag surfaceId,
+    std::function<void()> onStop) {
   m_taskExecutor->runTask(TaskThread::JS, [=] {
     auto it = surfaceHandlers.find(surfaceId);
     if (it == surfaceHandlers.end()) {
@@ -84,6 +86,7 @@ void rnoh::RNInstanceArkTS::stopSurface(react::Tag surfaceId) {
     LOG(INFO) << "stopSurface: stopping " << surfaceId;
     try {
       surfaceHandle->stop();
+      onStop();
       LOG(INFO) << "stopSurface: stopped " << surfaceId;
     } catch (const std::exception& e) {
       LOG(ERROR) << "stopSurface: failed - " << e.what() << "\n";

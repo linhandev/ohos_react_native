@@ -449,7 +449,7 @@ export class RNInstanceImpl implements RNInstance {
     for (const surfaceHandle of this.surfaceHandles) {
       if (surfaceHandle.isRunning()) {
         this.logger.warn("Destroying instance with running surface with tag: " + surfaceHandle.getTag());
-        surfaceHandle.stop();
+        await surfaceHandle.stop();
       }
       surfaceHandle.destroy()
     }

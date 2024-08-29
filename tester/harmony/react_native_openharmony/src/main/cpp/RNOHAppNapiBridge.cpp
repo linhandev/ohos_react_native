@@ -450,7 +450,7 @@ static napi_value startSurface(napi_env env, napi_callback_info info) {
 static napi_value stopSurface(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
-    auto args = arkJS.getCallbackArgs(info, 2);
+    auto args = arkJS.getCallbackArgs(info, 3);
     size_t instanceId = arkJS.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     auto it = RN_INSTANCE_BY_ID.find(instanceId);
@@ -459,8 +459,13 @@ static napi_value stopSurface(napi_env env, napi_callback_info info) {
     }
     auto& rnInstance = it->second;
     facebook::react::Tag surfaceId = arkJS.getDouble(args[1]);
+    auto n_onStopRef = arkJS.createNapiRef(args[2]);
     DLOG(INFO) << "stopSurface: surfaceId=" << surfaceId << "\n";
-    rnInstance->stopSurface(surfaceId);
+    rnInstance->stopSurface(
+        surfaceId, [env, n_onStopRef = std::move(n_onStopRef)]() {
+          ArkJS arkJS(env);
+          arkJS.call(arkJS.getReferenceValue(n_onStopRef), {});
+        });
     return arkJS.getNull();
   });
 }

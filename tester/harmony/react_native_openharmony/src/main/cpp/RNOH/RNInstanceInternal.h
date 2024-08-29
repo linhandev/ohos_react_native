@@ -98,7 +98,9 @@ class RNInstanceInternal
   virtual void setSurfaceProps(
       facebook::react::Tag surfaceId,
       folly::dynamic&& props) = 0;
-  virtual void stopSurface(facebook::react::Tag surfaceId) = 0;
+  virtual void stopSurface(
+      facebook::react::Tag surfaceId,
+      std::function<void()> onStop) = 0;
   virtual void destroySurface(facebook::react::Tag surfaceId) = 0;
   virtual void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,

@@ -4,6 +4,7 @@
 #include "RNInstance.h"
 #include "RNOH/Assert.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
+#include "TaskExecutor/TaskExecutor.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -99,6 +100,7 @@ void RNInstanceCAPI::createSurface(
   m_surfaceById.emplace(
       surfaceId,
       std::make_shared<XComponentSurface>(
+          m_taskExecutor,
           m_scheduler,
           m_componentInstanceRegistry,
           m_componentInstanceFactory,
@@ -164,13 +166,15 @@ void RNInstanceCAPI::setSurfaceProps(
   it->second->setProps(std::move(props));
 }
 
-void RNInstanceCAPI::stopSurface(facebook::react::Tag surfaceId) {
+void RNInstanceCAPI::stopSurface(
+    facebook::react::Tag surfaceId,
+    std::function<void()> onStop) {
   DLOG(INFO) << "RNInstanceCAPI::stopSurface";
   auto it = m_surfaceById.find(surfaceId);
   if (it == m_surfaceById.end()) {
     return;
   }
-  it->second->stop();
+  it->second->stop(std::move(onStop));
 }
 
 void RNInstanceCAPI::destroySurface(facebook::react::Tag surfaceId) {

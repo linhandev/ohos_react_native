@@ -231,10 +231,16 @@ export class NapiBridge {
     instanceId: number,
     surfaceTag: number,
   ) {
+    let resolveWait = () => {}
+    const wait = new Promise((resolve) => {
+      resolveWait = () => resolve(undefined)
+    })
     const result = this.libRNOHApp?.stopSurface(
       instanceId,
-      surfaceTag
+      surfaceTag,
+      () => resolveWait
     );
+    await wait;
     return this.unwrapResult(result)
   }
 
