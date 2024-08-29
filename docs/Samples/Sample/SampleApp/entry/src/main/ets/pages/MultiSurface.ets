@@ -60,7 +60,7 @@ export struct MultiSurface {
     this.instance1 = await this.rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages: createRNPackages,
       enableNDKTextMeasuring: true,
-      enableBackgroundExecutor: true,
+      enableBackgroundExecutor: false,
       enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
       arkTsComponentNames: arkTsComponentNames
     });
@@ -79,7 +79,7 @@ export struct MultiSurface {
     this.instance2 = await this.rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages: createRNPackages,
       enableNDKTextMeasuring: true,
-      enableBackgroundExecutor: true,
+      enableBackgroundExecutor: false,
       enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
       arkTsComponentNames: arkTsComponentNames
     });
@@ -98,7 +98,7 @@ export struct MultiSurface {
     this.instance3 = await this.rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages: createRNPackages,
       enableNDKTextMeasuring: true,
-      enableBackgroundExecutor: true,
+      enableBackgroundExecutor: false,
       enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
       arkTsComponentNames: arkTsComponentNames
     });
