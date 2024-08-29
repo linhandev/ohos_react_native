@@ -179,6 +179,9 @@ void TextComponentInstance::onStateChanged(
   VLOG(3) << "[text-debug] getFragments size:" << fragments.size();
   m_textNode.resetTextContentWithStyledString();
   if (fragments.empty()) {
+    if (m_key != "") {
+      TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
+    }
     m_key = "";
     return;
   }
