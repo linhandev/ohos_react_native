@@ -59,7 +59,6 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
-  m_preAllocationBuffer->clearPreallocatedViews();
 }
 
 facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(

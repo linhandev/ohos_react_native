@@ -24,15 +24,18 @@ namespace rnoh
     ComponentInstanceFactory::Shared m_componentInstanceFactory;
     std::unordered_map<facebook::react::Tag, ComponentInstance::Shared>
       m_preallocatedComponentInstanceByTag;
+    ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
 
   public:
     using Shared = std::shared_ptr<PreAllocationBuffer>;
     using Weak = std::weak_ptr<PreAllocationBuffer>;
 
     PreAllocationBuffer(
-      ComponentInstanceFactory::Shared componentInstanceFactory
+      ComponentInstanceFactory::Shared componentInstanceFactory,
+      ComponentInstanceRegistry::Shared componentInstanceRegistry
     )
-    : m_componentInstanceFactory(std::move(componentInstanceFactory)) {}
+    : m_componentInstanceFactory(std::move(componentInstanceFactory)),
+      m_componentInstanceRegistry(std::move(componentInstanceRegistry)) {}
 
     ~PreAllocationBuffer()
     {
@@ -100,6 +103,11 @@ namespace rnoh
         if (allocInfo == nullptr)
         {
           break;
+        }
+        bool isRequestOutdated =
+            m_componentInstanceRegistry->findByTag(allocInfo->tag) != nullptr;
+        if (isRequestOutdated) {
+          continue;
         }
         auto componentInstance = m_componentInstanceFactory->create(allocInfo->tag, allocInfo->componentHandle, allocInfo->componentName);
         if (componentInstance != nullptr) {
