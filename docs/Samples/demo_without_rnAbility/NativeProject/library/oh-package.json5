@@ -1,0 +1,11 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "Index.ets",
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "rnoh": "file:../libs/react_native_openharmony-5.0.0.490.har"
+  }
+}
