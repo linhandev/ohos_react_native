@@ -311,6 +311,7 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 
 void ScrollViewComponentInstance::onScroll() {
   auto scrollViewMetrics = getScrollViewMetrics();
+  sendEventForNativeAnimations(scrollViewMetrics);
   if (!isContentSmallerThanContainer() && m_allowScrollPropagation &&
       !isAtEnd(scrollViewMetrics.contentOffset)) {
     m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
@@ -334,7 +335,6 @@ void ScrollViewComponentInstance::onScroll() {
         m_eventEmitter->onScroll(scrollViewMetrics);
      }
     updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-    sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
     updateContentClippedSubviews();
   }
