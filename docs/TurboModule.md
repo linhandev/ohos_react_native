@@ -1,3 +1,5 @@
+This documentation is based on React Native documentation licensed under the [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) license at https://reactnative.cn/docs/0.72/the-new-architecture/pillars-turbomodules. ‌© Meta Platforms Inc. Changed to How to create a TurboModule on HarmonyOS.
+
 # 自定义TurboModule的实现
 
 ## ArkTS TurboModule的实现
