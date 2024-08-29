@@ -81,7 +81,7 @@ export struct BasePrecreateView {
       const instance = await this.rnohCoreContext!.createAndRegisterRNInstance({
         createRNPackages: createRNPackages,
         enableNDKTextMeasuring: true,
-        enableBackgroundExecutor: true,
+        enableBackgroundExecutor: false,
         enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
         arkTsComponentNames: arkTsComponentNames
       });
@@ -104,7 +104,7 @@ export struct BasePrecreateView {
       const rnInstance = await rnohCoreContext.createAndRegisterRNInstance({
         createRNPackages: createRNPackages,
         enableNDKTextMeasuring: true,
-        enableBackgroundExecutor: true,
+        enableBackgroundExecutor: false,
         enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
         arkTsComponentNames: arkTsComponentNames
       });

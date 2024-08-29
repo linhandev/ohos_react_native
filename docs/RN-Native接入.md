@@ -188,7 +188,7 @@
        const cpInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
          createRNPackages: createRNPackages,
          enableNDKTextMeasuring: true,
-         enableBackgroundExecutor: true,
+         enableBackgroundExecutor: false,
          enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
          arkTsComponentNames: arkTsComponentNames
        });
@@ -312,7 +312,7 @@
        const bpInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
          createRNPackages: createRNPackages,
          enableNDKTextMeasuring: true,
-         enableBackgroundExecutor: true,
+         enableBackgroundExecutor: false,
          enableCAPIArchitecture: ENABLE_CAPI_ARCHITECTURE,
          arkTsComponentNames: arkTsComponentNames
        });
