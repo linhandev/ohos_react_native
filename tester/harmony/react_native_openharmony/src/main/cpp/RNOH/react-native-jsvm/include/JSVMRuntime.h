@@ -200,13 +200,20 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
   }
 
  private:
-  void UnRef() {
-    uint32_t refcount = 0;
-    OH_JSVM_ReferenceUnref(env, reference, &refcount);
-    if (refcount == 0) {
-      OH_JSVM_DeleteReference(env, reference);
+    void UnRef() {
+        uint32_t refcount = 0;
+        
+        OH_JSVM_ReferenceRef(env, reference, &refcount);
+        if (refcount == 2 || refcount == 0) {
+          OH_JSVM_DeleteReference(env, reference);
+        } else if (refcount == 1) {
+          OH_JSVM_ReferenceUnref(env, reference, &refcount);
+          OH_JSVM_DeleteReference(env, reference);
+        } else {
+          OH_JSVM_ReferenceUnref(env, reference, &refcount);
+          OH_JSVM_ReferenceUnref(env, reference, &refcount);
+        }
     }
-  }
 
   void invalidate() {
     if (unlikely(!isJsThread)) {
