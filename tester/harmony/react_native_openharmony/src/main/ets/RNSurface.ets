@@ -5,6 +5,7 @@ import {
   Descriptor,
   DisplayMode,
   RNComponentContext,
+  RNInstanceImpl,
   RNOHContext,
   RNOHError,
   RNOHLogger
@@ -75,7 +76,8 @@ export struct RNSurface {
         howCanItBeFixed: ["Provide RNComponentContext instead of RNOHContext"]
       }))
     }
-    const stopTracing = this.logger.clone("aboutToAppear").startTracing()
+    const stopTracing = this.logger.clone("aboutToAppear").startTracing();
+    (this.ctx.rnInstance as RNInstanceImpl).setUIContext(this.getUIContext());
     this.ctx.rnInstance.setFrameNodeFactory(new CustomRNComponentFrameNodeFactory(this.getUIContext(), this.ctx.logger,
       () => {
         return this.ctx as RNComponentContext
