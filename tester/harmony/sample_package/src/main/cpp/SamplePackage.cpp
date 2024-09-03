@@ -1,4 +1,5 @@
 #include "SamplePackage.h"
+#include "CodegenLibCppSampleComponentInstance.h"
 #include "GeneratedSampleViewComponentInstance.h"
 #include "NativeCxxModuleExampleCxxSpec.h"
 #include "PropsDisplayerComponentDescriptor.h"
@@ -141,6 +142,8 @@ ComponentInstance::Shared SamplePackage::createComponentInstance(
     return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
   } else if (ctx.componentName == "SimpleText") {
     return std::make_shared<SimpleTextComponentInstance>(ctx);
+  } else if (ctx.componentName == "CodegenLibCppSampleComponent") {
+    return std::make_shared<CodegenLibCppSampleComponentInstance>(ctx);
   }
   return nullptr;
 };

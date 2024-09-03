@@ -9,6 +9,7 @@ const TEMPLATE = `
  *
  * @generatorVersion: 1
  */
+
 #pragma once
 
 #include <react/renderer/core/ConcreteComponentDescriptor.h>

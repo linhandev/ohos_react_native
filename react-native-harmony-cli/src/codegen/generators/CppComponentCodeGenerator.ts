@@ -1,30 +1,22 @@
-import RNCodegen from '@react-native/codegen/lib/generators/RNCodegen';
 import { AbsolutePath } from '../../core';
 import { CodeGenerator, UberSchema } from '../core';
 import {
   BaseComponentInstanceHTemplate,
   ComponentJSIBinderHTemplate,
 } from '../templates';
-import { GlueCodeComponentDataV2 } from './GlueCodeGenerator';
+import { GlueCodeComponentDataV2 } from './AppBuildTimeGlueCodeGenerator';
 
-/**
- * NPM package that extends RNOH capabilities.
- */
 export type LibraryData = {
-  /**
-   * C++ directory name which is used in #include statements
-   */
-  name: string;
+  libraryCppName: string;
   uberSchema: UberSchema;
 };
 
-export class ComponentCodeGeneratorCAPI implements CodeGenerator<LibraryData> {
+export class CppComponentCodeGenerator implements CodeGenerator<LibraryData> {
   private glueCodeComponentsData: GlueCodeComponentDataV2[] = [];
 
   constructor(
-    /// "shared" — platform independent code that can be shared between platforms
-    private onGetSharedOutputPath: (filename: string) => AbsolutePath,
-    private onGetRNOHOutputPath: (filename: string) => AbsolutePath
+    private onGetRNOHOutputPath: (filename: string) => AbsolutePath,
+    private codegenNoticeLines: string[]
   ) {}
 
   getGlueCodeData() {
@@ -32,46 +24,25 @@ export class ComponentCodeGeneratorCAPI implements CodeGenerator<LibraryData> {
   }
 
   generate({
-    name: libraryName,
+    libraryCppName,
     uberSchema,
   }: LibraryData): Map<AbsolutePath, string> {
     const fileContentByPath = new Map<AbsolutePath, string>();
-    const generatorFns = [
-      RNCodegen.allGenerators.generatePropsH,
-      RNCodegen.allGenerators.generatePropsCpp,
-      RNCodegen.allGenerators.generateEventEmitterH,
-      RNCodegen.allGenerators.generateEventEmitterCpp,
-      RNCodegen.allGenerators.generateComponentDescriptorH,
-      RNCodegen.allGenerators.generateStateH,
-      RNCodegen.allGenerators.generateStateCpp,
-      RNCodegen.allGenerators.generateShadowNodeH,
-      RNCodegen.allGenerators.generateShadowNodeCpp,
-    ];
-    generatorFns.forEach((generate) => {
-      const filesOutput = generate(
-        libraryName,
-        uberSchema.getValue(),
-        'UNUSED_packageName',
-        true
-      );
-      filesOutput.forEach((fileContent, filename) => {
-        fileContentByPath.set(
-          this.onGetSharedOutputPath(filename),
-          fileContent
-        );
-      });
-    });
-    for (const [filename, schema] of uberSchema
+    for (const [_filename, schema] of uberSchema
       .getSpecSchemaByFilenameMap()
       .entries()) {
       if (schema.type === 'Component') {
         Object.entries(schema.components).map(([componentName, shape]) => {
           const componentJSIBinderHTemplate = new ComponentJSIBinderHTemplate(
             componentName,
-            2
+            this.codegenNoticeLines
           );
           const componentInstanceSpecHTemplate =
-            new BaseComponentInstanceHTemplate(componentName, libraryName);
+            new BaseComponentInstanceHTemplate(
+              componentName,
+              libraryCppName,
+              this.codegenNoticeLines
+            );
           shape.props.forEach((prop) => {
             componentJSIBinderHTemplate.addProp({
               name: prop.name,
@@ -103,7 +74,7 @@ export class ComponentCodeGeneratorCAPI implements CodeGenerator<LibraryData> {
           );
           this.glueCodeComponentsData.push({
             name: componentName,
-            libraryName,
+            libraryCppName,
           });
         });
       }
