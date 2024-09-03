@@ -6,57 +6,119 @@ import {
   Text,
   View,
 } from 'react-native';
-import {TestCase} from '../components';
+import {Button, TestCase} from '../components';
+import {PALETTE} from '../components/palette';
 
 export function AccessibilityInfoTest() {
   return (
     <TestSuite name="AccessibilityInfo">
-      <TestCase.Example
-        skip={{android: true, harmony: {arkTs: true, cAPI: true}}}
-        itShould="display red background if Screen Reader is enabled">
-        <AccessibilityInfoScreenReaderStatus />
-      </TestCase.Example>
-      <TestCase.Example
-        skip={{android: true, harmony: {arkTs: true, cAPI: false}}}
-        itShould="display red background if Accessibility Service is enabled">
+      <Text
+        style={{
+          color: 'black',
+          padding: 8,
+          borderRadius: 8,
+          fontSize: 12,
+          backgroundColor: PALETTE.YELLOW_LIGHT,
+        }}>
+        {
+          'To enable screen reader on: HarmonyOS 1) go to Settings > Accessibility features > Accessibility shortcut 2) Assign ScreenReader in "Select feature" option 3) Quickly press the power button three times; Android hold volume up and down for 3 sec.'
+        }
+      </Text>
+      <TestSuite name="addEventListener">
+        <TestSuite name="screenReaderChanged">
+          <TestCase.Manual
+            initialState={false}
+            itShould="pass when screen reader is enabled (enable screen reader)"
+            arrange={({setState}) => {
+              return (
+                <AccessibilityInfoScreenReaderStatus
+                  onScreenReaderChanged={isEnabled => {
+                    if (isEnabled) {
+                      setState(true);
+                    }
+                  }}
+                />
+              );
+            }}
+            assert={({expect, state}) => {
+              expect(state).to.be.eq(true);
+            }}
+          />
+        </TestSuite>
+      </TestSuite>
+      <TestSuite name="isScreenReaderEnabled">
+        <TestCase.Manual<boolean[]>
+          itShould="return true when the screen reader is enabled and false when disabled (test passes when call history includes both states)"
+          initialState={[]}
+          arrange={({setState, state}) => {
+            return (
+              <>
+                <Text>Call history: {JSON.stringify(state)}</Text>
+                <Button
+                  label="trigger function"
+                  onPress={() => {
+                    AccessibilityInfo.isScreenReaderEnabled().then(
+                      isScreenReaderEnabled => {
+                        setState(prev => [...prev, isScreenReaderEnabled]);
+                      },
+                    );
+                  }}
+                />
+              </>
+            );
+          }}
+          assert={async ({expect, state}) => {
+            await new Promise(resolve => {
+              if (state.includes(true) && state.includes(false)) {
+                resolve(undefined);
+              }
+            });
+            expect(state.includes(true)).to.be.true;
+            expect(state.includes(false)).to.be.true;
+          }}
+        />
+      </TestSuite>
+
+      <TestCase.Example itShould="display red background if Accessibility Service is enabled">
         <AccessibilityInfoAccessibilityServiceEnabled />
       </TestCase.Example>
 
-      <TestCase.Example
-        skip={{android: true, harmony: {arkTs: true, cAPI: false}}}
-        itShould="display red background if Accessibility Service is changed">
+      <TestCase.Example itShould="display red background if Accessibility Service is changed">
         <AccessibilityInfoAccessibilityServiceChanged />
       </TestCase.Example>
     </TestSuite>
   );
 }
 
-function AccessibilityInfoScreenReaderStatus() {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const backgroundColor = isEnabled ? 'red' : 'transparent';
+function AccessibilityInfoScreenReaderStatus({
+  onScreenReaderChanged,
+}: {
+  onScreenReaderChanged: (isEnabled: boolean) => void;
+}) {
+  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false);
+  const backgroundColor = isScreenReaderEnabled ? 'green' : 'transparent';
 
   useEffect(() => {
     const listener = AccessibilityInfo.addEventListener(
       'screenReaderChanged',
-      setIsEnabled,
+      isEnabled => {
+        setIsScreenReaderEnabled(isEnabled);
+        onScreenReaderChanged(isEnabled);
+      },
     );
 
-    AccessibilityInfo.isScreenReaderEnabled()
-      .then(isOptionEnabled => {
-        setIsEnabled(isOptionEnabled);
-      })
-      .catch(err =>
-        console.log(`Error while testing Screen Reader - error: ${err}`),
-      );
-
-    return function cleanup() {
+    AccessibilityInfo.isScreenReaderEnabled().then(isEnabled => {
+      setIsScreenReaderEnabled(isEnabled);
+      onScreenReaderChanged(isEnabled);
+    });
+    return () => {
       listener.remove();
     };
   }, []);
 
   return (
     <View style={{backgroundColor, padding: 16}}>
-      <Text>{`Screen Reader is ${isEnabled ? 'enabled' : 'disabled'}.`}</Text>
+      <Text>{`Current Screen Reader status: ${isScreenReaderEnabled ? 'enabled' : 'disabled'}`}</Text>
     </View>
   );
 }

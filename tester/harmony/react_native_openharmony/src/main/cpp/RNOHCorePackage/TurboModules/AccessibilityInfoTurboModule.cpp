@@ -8,8 +8,8 @@ AccessibilityInfoTurboModule::AccessibilityInfoTurboModule(
     const std::string name)
     : ArkTSTurboModule(ctx, name) {
   methodMap_ = {
-      ARK_METHOD_METADATA(isTouchExplorationEnabled, 1),
-      ARK_METHOD_METADATA(isAccessibilityServiceEnabled, 1)};
+      ARK_ASYNC_METHOD_METADATA(isScreenReaderEnabled, 0),
+      ARK_ASYNC_METHOD_METADATA(isAccessibilityServiceEnabled, 0)};
 }
 
 } // namespace rnoh

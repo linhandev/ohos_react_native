@@ -1,68 +1,79 @@
 import accessibility from '@ohos.accessibility';
-import type { TurboModuleContext } from '../../RNOH/TurboModule';
-import { TurboModule } from '../../RNOH/TurboModule';
-import { BusinessError } from '@ohos.base';
+import type { UITurboModuleContext } from '../../RNOH/TurboModule';
+import { UITurboModule } from '../../RNOH/TurboModule';
 
-const ALL_ABILITY_TYPE: accessibility.AbilityType = 'all';
-const ENABLE_ABILITY_STATE: accessibility.AbilityState = 'enable';
+type AccessibilityFeature = "SCREEN_READER"
+type AccessibilityDeviceEvent = "screenReaderChanged"
 
-export class AccessibilityInfoTurboModule extends TurboModule {
+export class AccessibilityInfoTurboModule extends UITurboModule {
   public static readonly NAME = 'AccessibilityInfo';
 
-  public ctx: TurboModuleContext;
   private cleanUpCallbacks: (() => void)[] = [];
-  private onAccessibilityStateChange: ((isOn: boolean) => void) | undefined;
+  private enabledAccessibilityFeatures = new Set<AccessibilityFeature>()
+  private deviceEventByAccessibilityFeatureName =
+    new Map<AccessibilityFeature, AccessibilityDeviceEvent>().set("SCREEN_READER", "screenReaderChanged")
 
-  constructor(ctx: TurboModuleContext) {
+  constructor(ctx: UITurboModuleContext) {
     super(ctx);
-    this.ctx = ctx;
+    this.enabledAccessibilityFeatures = this.getEnabledAccessibilityFeatures()
     this.subscribeListeners();
   }
 
-  private subscribeListeners() {
-    this.ctx.logger.info(`AccessibilityInfoTurboModule subscribeListeners`);
-
-    this.onAccessibilityStateChange = (isOn: boolean) => {
-      this.ctx.logger.info(`AccessibilityInfoTurboModule accessibilityStateChange : ` + isOn);
-      this.ctx.rnInstance.emitDeviceEvent("accessibilityServiceChanged", isOn);
-    };
-
-    accessibility.on("accessibilityStateChange", this.onAccessibilityStateChange);
-
-    this.cleanUpCallbacks.push(() => {
-      if (this.onAccessibilityStateChange) {
-        accessibility.off("accessibilityStateChange", this.onAccessibilityStateChange);
+  private getEnabledAccessibilityFeatures(): Set<AccessibilityFeature> {
+    const accessibilityExtensions = accessibility.getAccessibilityExtensionListSync("all", "enable")
+    const newEnabledAccessibilityFeatures = new Set<AccessibilityFeature>()
+    for (const accessibilityExtension of accessibilityExtensions) {
+      if (accessibilityExtension.bundleName === "com.huawei.hmos.screenreader") {
+        newEnabledAccessibilityFeatures.add("SCREEN_READER")
       }
-    });
+    }
+    return newEnabledAccessibilityFeatures
   }
 
   __onDestroy__() {
     super.__onDestroy__();
     this.cleanUpCallbacks.forEach(cb => cb());
-    this.cleanUpCallbacks = []; 
+    this.cleanUpCallbacks = [];
   }
 
-  public isTouchExplorationEnabled(
-    resolveCallback: (isScreenReaderEnabled: boolean) => void,
-  ) {
-    const isScreenReaderEnabled = accessibility.isOpenTouchGuideSync();
-    resolveCallback(isScreenReaderEnabled);
+  private subscribeListeners() {
+    const onAccessibilityStateChange = (isOn: boolean) => this.onAccessibilityStateChange(isOn)
+    accessibility.on("accessibilityStateChange", onAccessibilityStateChange);
+    this.cleanUpCallbacks.push(() => {
+      accessibility.off("accessibilityStateChange", onAccessibilityStateChange);
+    });
   }
 
-  public isAccessibilityServiceEnabled(
-    resolveCallback: (isAccessibilityServiceEnabled: boolean) => void,
-  ) {
-    accessibility.getAccessibilityExtensionList(ALL_ABILITY_TYPE, ENABLE_ABILITY_STATE)
-      .then((data: accessibility.AccessibilityAbilityInfo[]) => {
-        if (data.length > 0) {
-          resolveCallback(true);
-        } else {
-          resolveCallback(false);
-        }
-      }).catch((err: BusinessError) => {
-        this.ctx.logger.error(`Failed to get accessibility extension list, Code is ${err.code}, message is ${err.message}`);
-        resolveCallback(false);
-      });
-
+  private onAccessibilityStateChange(isOn: boolean) {
+    const newEnabledAccessibilityFeatures = this.getEnabledAccessibilityFeatures()
+    const oldEnabledAccessibilityFeatures = this.enabledAccessibilityFeatures;
+    const { added, removed } = compareSets(oldEnabledAccessibilityFeatures, newEnabledAccessibilityFeatures)
+    added.forEach(enabledFeature => {
+      this.ctx.rnInstance.emitDeviceEvent(this.deviceEventByAccessibilityFeatureName.get(enabledFeature), true)
+    })
+    removed.forEach(disabledFeature => {
+      this.ctx.rnInstance.emitDeviceEvent(this.deviceEventByAccessibilityFeatureName.get(disabledFeature), false)
+    })
+    this.ctx.rnInstance.emitDeviceEvent("accessibilityServiceChanged", isOn);
+    this.enabledAccessibilityFeatures = newEnabledAccessibilityFeatures;
   }
+
+  public isScreenReaderEnabled(): Promise<boolean> {
+    return Promise.resolve(this.enabledAccessibilityFeatures.has("SCREEN_READER"));
+  }
+
+  public async isAccessibilityServiceEnabled(): Promise<boolean> {
+    const enabledAccessibilityExtensions = await accessibility.getAccessibilityExtensionList("all", "enable")
+    return enabledAccessibilityExtensions.length > 0
+  }
+}
+
+function compareSets<T>(oldSet: Set<T>, newSet: Set<T>): {
+  added: Set<T>;
+  removed: Set<T>;
+} {
+  const added = new Set<T>([...newSet].filter(x =>!oldSet.has(x)));
+  const removed = new Set<T>([...oldSet].filter(x =>!newSet.has(x)));
+
+  return { added, removed };
 }
