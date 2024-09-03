@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.72.38
+- [breaking] changed SafeAreaView to include bottom inset by default (previous behavior can be restored by specifying `paddingBottom: 0`) ([7071e43300](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7071e43300546daaa39b23180c6ee52e920bfbba))
+- updated @rnoh/react-native-harmony-cli to version 0.0.27 — this version adds a new command `codegen-lib-harmony` ([03524e7ab9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/03524e7ab9fe6d78444f9ca36c96a51af5398ef9))
+- added support for font variants ([1857b57d4c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1857b57d4cce1bc3c9217402095caea49d2664a3))
+- added TextMeasureRegistry to cache text measurements ([6023919e4e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6023919e4e5fd6827a6089c6a93b29540c437f13))
+- fixed a deadlock occurring when the surface is being stopped and setNativeProps is used at the same time ([a4af7034ec](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a4af7034ec715282ad30d458a506f7d0ac463336))
+- fixed not failing Image.getSize('') ([95f464ac7c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/95f464ac7c535aaae66f0c06a9f0376c06c53172))
+- fixed scroll aligning to the end when contentSize smaller than containerSize ([71e5624b9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/71e5624b9ff1919890dd9b0650e8774e7826fdc7))
+- fixed SafeAreaView insets when SafeAreaViews are nested ([c7fd583168](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c7fd58316869ab0d8232186f6c7285cfc66de502)) ([7071e43300](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7071e43300546daaa39b23180c6ee52e920bfbba))
+- fixed memory leak in View preallocation ([580d06fbc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/580d06fbc5796af176a3ec07b0c95efa2eca5624))
+- fixed overscrolling behavior when removeClippedSubviews is enabled ([c0ca29e55d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c0ca29e55db9c543741bd59d4475344c4d5d4e5b))
+- fixed removeClippedSubviews when scroll direction changes to horizontal ([1923572377](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/192357237711034d44fc186fe80532c304fa7401))
+
+
 ## v0.72.37
 - [breaking] replaced workerRNInstanceConfigByRNInstanceName with createWorkerRNInstanceConfig to support creating configs dynamically ([e4885b2041](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e4885b2041e0cc9840b83756e77d7276230f88c9))
 - [breaking] optimized creating napi values from dynamics by changing the signature of `ArkJS::createFromDynamics` to take the vector of dynamics by const reference ([96d7cef977](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/96d7cef9779391b9618930790bbfd8760a3ea2be))
