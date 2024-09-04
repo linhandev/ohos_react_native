@@ -81,7 +81,8 @@ class ArkUINode {
       facebook::react::SharedColor const& shadowColor,
       facebook::react::Size const& shadowOffset,
       float const shadowOpacity,
-      float const shadowRadius);
+      float const shadowRadius,
+      facebook::react::Float pointScaleFactor);
   virtual ArkUINode& setHitTestMode(
       facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setAccessibilityDescription(

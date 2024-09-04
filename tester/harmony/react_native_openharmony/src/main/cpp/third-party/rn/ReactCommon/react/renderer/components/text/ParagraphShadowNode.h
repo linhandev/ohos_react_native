@@ -46,7 +46,8 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
     // can't mount views inside `TextView`.
     traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
 #endif
-
+    //rnoh patch: unset Text's FormsStackingContext, just same as Android do    
+    traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
     return traits;
   }
 

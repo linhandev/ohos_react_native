@@ -14,7 +14,6 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
-#include "ClippingComponent.h"
 
 namespace rnoh {
 
@@ -25,7 +24,6 @@ class MountingManagerCAPI;
  */
 class ComponentInstance
     : public TouchTarget,
-        public ClippingComponent,
       public std::enable_shared_from_this<ComponentInstance> {
  private:
   std::string m_componentName;

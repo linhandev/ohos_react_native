@@ -4,6 +4,7 @@
 #include <react/renderer/core/ConcreteState.h>
 #include <cmath>
 #include <optional>
+#include "CustomNodeComponentInstance.h"
 #include "PullToRefreshViewComponentInstance.h"
 #include "conversions.h"
 
@@ -26,9 +27,6 @@ StackNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
 void ScrollViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
-  m_childComponent = childComponentInstance;
-  m_childComponent->setRemoveClippedSubviews(getRemoveClippedSubviews(), m_horizontal);
-  m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
   CppComponentInstance::onChildInserted(childComponentInstance, index);
   m_contentContainerNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index);
@@ -37,7 +35,6 @@ void ScrollViewComponentInstance::onChildInserted(
 void ScrollViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance) {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-  m_childComponent = nullptr;
   m_contentContainerNode.removeChild(
       childComponentInstance->getLocalRootArkUINode());
 }
@@ -50,19 +47,56 @@ void ScrollViewComponentInstance::setLayout(
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
   }
-  if (m_childComponent != nullptr) {
-    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-  }
   markBoundingBoxAsDirty();
+}
+
+void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
+    facebook::react::Point offset,
+    double diff) {
+  if (diff <= 0) {
+    return;
+  }
+
+  if (isHorizontal(m_props)) {
+    if (offset.x + m_containerSize.width <= m_contentSize.width) {
+      return;
+    }
+  } else {
+    if (offset.y + m_containerSize.height <= m_contentSize.height) {
+      return;
+    }
+  }
+
+  facebook::react::Point targetOffset = {offset.x, offset.y};
+  if (isHorizontal(m_props)) {
+    targetOffset.x = m_contentSize.width - m_containerSize.width;
+  } else {
+    targetOffset.y = m_contentSize.height - m_containerSize.height;
+  }
+
+  if (targetOffset.x < 0) {
+    targetOffset.x = 0;
+  }
+  if (targetOffset.y < 0) {
+    targetOffset.y = 0;
+  }
+
+  onScrollStart();
+  m_scrollNode.scrollTo(
+      targetOffset.x, targetOffset.y, false, m_scrollToOverflowEnabled);
 }
 
 void rnoh::ScrollViewComponentInstance::onStateChanged(
     SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto stateData = state->getData();
-  m_contentContainerNode.setSize(stateData.getContentSize());
   if (m_contentSize != stateData.getContentSize()) {
+    double diff = isHorizontal(m_props)
+        ? m_contentSize.width - stateData.getContentSize().width
+        : m_contentSize.height - stateData.getContentSize().height;
+    m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
+    updateOffsetAfterChildChange(getCurrentOffset(), diff);
   }
 }
 
@@ -102,8 +136,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
-  m_removeClippedSubviews = props->removeClippedSubviews;
-  m_horizontal = isHorizontal(props);
   m_scrollNode.setHorizontal(isHorizontal(props))
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
@@ -132,10 +164,6 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     }
   }
 
-  if (m_childComponent != nullptr) {
-    m_childComponent->setRemoveClippedSubviews(m_removeClippedSubviews, m_horizontal);
-    m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-  }
     
   if (rawProps.nestedScrollEnabled.has_value()) {
      m_rawProps.nestedScrollEnabled = rawProps.nestedScrollEnabled;
@@ -283,6 +311,7 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 
 void ScrollViewComponentInstance::onScroll() {
   auto scrollViewMetrics = getScrollViewMetrics();
+  sendEventForNativeAnimations(scrollViewMetrics);
   if (!isContentSmallerThanContainer() && m_allowScrollPropagation &&
       !isAtEnd(scrollViewMetrics.contentOffset)) {
     m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
@@ -302,13 +331,12 @@ void ScrollViewComponentInstance::onScroll() {
             << scrollViewMetrics.contentSize.height
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
-    if (m_childComponent != nullptr) {
-      m_childComponent->updateContentOffset(m_scrollNode.getScrollOffset(), m_containerSize);
-    }
-    m_eventEmitter->onScroll(scrollViewMetrics);
+    if( m_eventEmitter != nullptr ){
+        m_eventEmitter->onScroll(scrollViewMetrics);
+     }
     updateStateWithContentOffset(scrollViewMetrics.contentOffset);
-    sendEventForNativeAnimations(scrollViewMetrics);
     m_currentOffset = scrollViewMetrics.contentOffset;
+    updateContentClippedSubviews();
   }
 }
 
@@ -375,6 +403,16 @@ void ScrollViewComponentInstance::emitOnMomentumScrollEndEvent() {
   auto scrollViewMetrics = getScrollViewMetrics();
   m_eventEmitter->onMomentumScrollEnd(scrollViewMetrics);
   updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+}
+
+void ScrollViewComponentInstance::updateContentClippedSubviews(bool childrenChange) {
+  if (!m_children.empty() && m_children[0] != nullptr) {
+    auto contentContainer =
+        std::dynamic_pointer_cast<CustomNodeComponentInstance>(m_children[0]);
+    if (contentContainer != nullptr) {
+      contentContainer->updateClippedSubviews(childrenChange);
+    }
+  }
 }
 
 facebook::react::Float
@@ -660,7 +698,7 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic v
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()
     const {
   facebook::react::Point contentViewOffset = {0, 0};
-  if (m_props->centerContent) {
+  if (m_props && m_props->centerContent) {
     if (m_contentSize.width < m_containerSize.width) {
       contentViewOffset.x = (m_containerSize.width - m_contentSize.width) / 2;
     }
@@ -758,24 +796,7 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
 }
 
 void ScrollViewComponentInstance::onAppear() {
-  if (!m_state || !m_props) {
-    return;
-  }
-
-  auto stateData = m_state->getData();
-  bool isContentOffsetZero =
-      stateData.contentOffset == facebook::react::Point{0, 0};
-
-  if (isContentOffsetZero) {
-    m_scrollNode.scrollTo(
-        m_props->contentOffset.x, m_props->contentOffset.y, false);
-    updateStateWithContentOffset(m_props->contentOffset);
-  }
-
-  if (!isContentOffsetZero) {
-    m_scrollNode.scrollTo(
-        stateData.contentOffset.x, stateData.contentOffset.y, false);
-  }
+  updateContentClippedSubviews(true);
 }
 
 bool ScrollViewComponentInstance::setKeyboardAvoider(

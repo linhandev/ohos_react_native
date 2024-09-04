@@ -22,10 +22,12 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
 
-void TextInputComponentInstance::onContentSizeChange(float width, float height) {
-  m_contentSizeWidth = width;
-  m_contentSizeHeight = height;
-  m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+void TextInputComponentInstance::onContentSizeChange(float width, float height, bool multiline) {
+  if (multiline == m_multiline){
+    m_contentSizeWidth = width;
+    m_contentSizeHeight = height;
+    m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+  }
 }
 
 void TextInputComponentInstance::onContentScroll() {
@@ -266,6 +268,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+      m_textInputNode.setPasswordIconVisibility(false);      
     }
   }
   if (props->maxLength != 0) {
@@ -324,6 +327,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+    m_textInputNode.setPasswordIconVisibility(false);        
   }
   if (!m_props || props->traits.caretHidden != m_props->traits.caretHidden) {
     m_textInputNode.setCaretHidden(props->traits.caretHidden);

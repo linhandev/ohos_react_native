@@ -59,7 +59,7 @@ class AnimatedNodesManager {
   void flattenOffset(facebook::react::Tag tag);
   void extractOffset(facebook::react::Tag tag);
 
-  double getValue(facebook::react::Tag tag);
+  folly::dynamic getNodeOutput(facebook::react::Tag tag);
 
   void startAnimatingNode(
       facebook::react::Tag animationId,

@@ -79,7 +79,7 @@ class TextInputComponentInstance
   
   void onContentScroll() override;
 
-  void onContentSizeChange(float width, float height) override;
+  void onContentSizeChange(float width, float height, bool multiline) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 
