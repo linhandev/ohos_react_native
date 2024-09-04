@@ -1,6 +1,7 @@
 import accessibility from '@ohos.accessibility';
 import type { UITurboModuleContext } from '../../RNOH/TurboModule';
 import { UITurboModule } from '../../RNOH/TurboModule';
+import bundleManager from '@ohos.bundle.bundleManager';
 
 type AccessibilityFeature = "SCREEN_READER"
 type AccessibilityDeviceEvent = "screenReaderChanged"
@@ -56,6 +57,11 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
     })
     this.ctx.rnInstance.emitDeviceEvent("accessibilityServiceChanged", isOn);
     this.enabledAccessibilityFeatures = newEnabledAccessibilityFeatures;
+  }
+
+  async announceForAccessibility(announcement: string) {
+    const bundleInfo = await bundleManager.getBundleInfoForSelf(-1);
+    accessibility.sendAccessibilityEvent({ type: "announceForAccessibility", bundleName: bundleInfo.name, triggerAction: "common", textAnnouncedForAccessibility: announcement });
   }
 
   public isScreenReaderEnabled(): Promise<boolean> {

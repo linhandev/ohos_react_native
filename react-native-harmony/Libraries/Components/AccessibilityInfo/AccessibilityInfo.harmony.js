@@ -284,7 +284,7 @@ const AccessibilityInfo = {
    */
   isAccessibilityServiceEnabled(): Promise<boolean> {
     // RNOH patch
-    return NativeAccessibilityInfoHarmony.isAccessibilityServiceEnabled()
+    return NativeAccessibilityInfoHarmony.isAccessibilityServiceEnabled();
     // return new Promise((resolve, reject) => {
     //   if (Platform.OS === 'android') {
     //     if (
@@ -378,6 +378,7 @@ const AccessibilityInfo = {
    */
   announceForAccessibility(announcement: string): void {
     // RNOH patch
+    NativeAccessibilityInfoHarmony.announceForAccessibility(announcement);
     // if (Platform.OS === 'android') {
     //   NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
     // } else {
@@ -417,7 +418,7 @@ const AccessibilityInfo = {
    */
   getRecommendedTimeoutMillis(originalTimeout: number): Promise<number> {
     // RNOH patch
-    return Promise.resolve(0)
+    return Promise.resolve(0);
     // if (Platform.OS === 'android') {
     //   return new Promise((resolve, reject) => {
     //     if (NativeAccessibilityInfoAndroid?.getRecommendedTimeoutMillis) {

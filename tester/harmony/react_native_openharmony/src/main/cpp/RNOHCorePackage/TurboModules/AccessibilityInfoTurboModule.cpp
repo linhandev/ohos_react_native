@@ -9,6 +9,7 @@ AccessibilityInfoTurboModule::AccessibilityInfoTurboModule(
     : ArkTSTurboModule(ctx, name) {
   methodMap_ = {
       ARK_ASYNC_METHOD_METADATA(isScreenReaderEnabled, 0),
+      ARK_ASYNC_METHOD_METADATA(announceForAccessibility, 1),
       ARK_ASYNC_METHOD_METADATA(isAccessibilityServiceEnabled, 0)};
 }
 

@@ -10,6 +10,32 @@ import {Button, TestCase} from '../components';
 import {PALETTE} from '../components/palette';
 
 export function AccessibilityInfoTest() {
+  const [skipMsgIfReaderDisabled, setSkipMsgIfReaderDisabled] = useState<
+    undefined | string
+  >('Determining screen reader status...');
+
+  useEffect(() => {
+    const onScreenReaderChange = (isScreenReaderEnabled: boolean) => {
+      if (isScreenReaderEnabled) {
+        setSkipMsgIfReaderDisabled(undefined);
+      } else {
+        setSkipMsgIfReaderDisabled(
+          'ScreenReader must be enabled to run this test',
+        );
+      }
+    };
+
+    AccessibilityInfo.isScreenReaderEnabled().then(onScreenReaderChange);
+    const listener = AccessibilityInfo.addEventListener(
+      'screenReaderChanged',
+      onScreenReaderChange,
+    );
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
     <TestSuite name="AccessibilityInfo">
       <Text
@@ -77,6 +103,19 @@ export function AccessibilityInfoTest() {
             expect(state.includes(false)).to.be.true;
           }}
         />
+      </TestSuite>
+
+      <TestSuite name="announceForAccessibility">
+        <TestCase.Example
+          skip={skipMsgIfReaderDisabled}
+          itShould="announce 'Button pressed' after pressing the button">
+          <Button
+            label="Read text"
+            onPress={() => {
+              AccessibilityInfo.announceForAccessibility('Button pressed');
+            }}
+          />
+        </TestCase.Example>
       </TestSuite>
 
       <TestCase.Example itShould="display red background if Accessibility Service is enabled">
