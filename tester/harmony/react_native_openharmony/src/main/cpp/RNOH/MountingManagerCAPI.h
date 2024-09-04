@@ -1,6 +1,8 @@
 #pragma once
 
 #include <react/renderer/mounting/ShadowViewMutation.h>
+#include "ArkTSChannel.h"
+#include "RNOH/ArkTSChannel.h"
 #include "RNOH/ComponentInstance.h"
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
@@ -23,11 +25,13 @@ class MountingManagerCAPI final : public MountingManager {
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceProvider::Shared componentInstanceProvider,
       MountingManager::Shared arkTSMountingManager,
-      FeatureFlagRegistry::Shared featureFlagRegistry)
+      FeatureFlagRegistry::Shared featureFlagRegistry,
+      ArkTSChannel::Shared arkTSChannel)
       : m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceProvider(std::move(componentInstanceProvider)),
         m_arkTSMountingManager(std::move(arkTSMountingManager)),
-        m_featureFlagRegistry(std::move(featureFlagRegistry)){};
+        m_featureFlagRegistry(std::move(featureFlagRegistry)),
+        m_arkTSChannel(std::move(arkTSChannel)){};
 
   void willMount(MutationList const& mutations) override;
 
@@ -50,6 +54,10 @@ class MountingManagerCAPI final : public MountingManager {
       folly::dynamic props,
       facebook::react::ComponentDescriptor const& componentDescriptor) override;
 
+  void schedulerDidSendAccessibilityEvent(
+      const facebook::react::ShadowView& shadowView,
+      std::string const& eventType) override;
+
  private:
   void updateComponentWithShadowView(
       ComponentInstance::Shared const& componentInstance,
@@ -69,5 +77,6 @@ class MountingManagerCAPI final : public MountingManager {
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   std::unordered_set<std::string> m_cApiComponentNames;
   std::unordered_set<std::string> m_arkTSComponentNames;
+  ArkTSChannel::Shared m_arkTSChannel;
 };
 } // namespace rnoh

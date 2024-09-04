@@ -1,10 +1,21 @@
-import accessibility from '@ohos.accessibility';
+import Accessibility from '@ohos.accessibility';
 import type { UITurboModuleContext } from '../../RNOH/TurboModule';
 import { UITurboModule } from '../../RNOH/TurboModule';
 import bundleManager from '@ohos.bundle.bundleManager';
 
 type AccessibilityFeature = "SCREEN_READER"
 type AccessibilityDeviceEvent = "screenReaderChanged"
+
+type RNAccessibilityEvent = {
+  type: "click",
+  targetId: string,
+} | {
+  type: "focus",
+  targetId: string,
+} | {
+  type: "viewHoverEnter"
+  targetId: string,
+}
 
 export class AccessibilityInfoTurboModule extends UITurboModule {
   public static readonly NAME = 'AccessibilityInfo';
@@ -17,11 +28,15 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
   constructor(ctx: UITurboModuleContext) {
     super(ctx);
     this.enabledAccessibilityFeatures = this.getEnabledAccessibilityFeatures()
-    this.subscribeListeners();
+    this.subscribeToAccessibilityEvents();
+    this.cleanUpCallbacks.push(ctx.rnInstance.cppEventEmitter.subscribe("RNOH::schedulerDidSendAccessibilityEvent",
+      (eventType: RNAccessibilityEvent) => {
+        this.schedulerDidSendAccessibilityEvent(eventType)
+      }))
   }
 
   private getEnabledAccessibilityFeatures(): Set<AccessibilityFeature> {
-    const accessibilityExtensions = accessibility.getAccessibilityExtensionListSync("all", "enable")
+    const accessibilityExtensions = Accessibility.getAccessibilityExtensionListSync("all", "enable")
     const newEnabledAccessibilityFeatures = new Set<AccessibilityFeature>()
     for (const accessibilityExtension of accessibilityExtensions) {
       if (accessibilityExtension.bundleName === "com.huawei.hmos.screenreader") {
@@ -37,12 +52,64 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
     this.cleanUpCallbacks = [];
   }
 
-  private subscribeListeners() {
+  private subscribeToAccessibilityEvents() {
     const onAccessibilityStateChange = (isOn: boolean) => this.onAccessibilityStateChange(isOn)
-    accessibility.on("accessibilityStateChange", onAccessibilityStateChange);
+    Accessibility.on("accessibilityStateChange", onAccessibilityStateChange);
     this.cleanUpCallbacks.push(() => {
-      accessibility.off("accessibilityStateChange", onAccessibilityStateChange);
+      Accessibility.off("accessibilityStateChange", onAccessibilityStateChange);
     });
+  }
+
+  /**
+   * This method is called indirectly by SchedulerDelegate
+   */
+  private async schedulerDidSendAccessibilityEvent(event: RNAccessibilityEvent) {
+    const bundleName = (await bundleManager.getBundleInfoForSelf(-1)).name;
+    switch (event.type) {
+      case "click": {
+        /**
+         * On Android 'click' works with aria-selected or aria-checked.
+         * At the moment of adding this case, aria-selected and aria-checked props aren't supported.
+         * This case may need to be modified to match Android behavior.
+         *
+         * Android uses TYPE_VIEW_CLICKED:
+         * https://developer.android.com/reference/android/view/accessibility/AccessibilityEvent#TYPE_VIEW_CLICKED
+         */
+        Accessibility.sendAccessibilityEvent({
+          type: "click",
+          bundleName,
+          triggerAction: "click",
+          customId: event.targetId
+        })
+        break;
+      }
+      case "focus": {
+        Accessibility.sendAccessibilityEvent({
+          type: "requestFocusForAccessibility",
+          bundleName,
+          triggerAction: "common",
+          customId: event.targetId,
+        })
+        break;
+      }
+      case "viewHoverEnter": {
+        /**
+         * This case may need to be updated. At the moment of adding this case, OHOS doesn't
+         * handle hovering in the same manner as Android. The behavior of this case differs from Android. It might be
+         * a problem with hovering in general or this case is not handled properly.
+         */
+        Accessibility.sendAccessibilityEvent({
+          type: "hoverEnter",
+          bundleName,
+          triggerAction: "common",
+          customId: event.targetId,
+        })
+        break;
+      }
+      default: {
+        this.ctx.logger.warn(`Unsupported eventType`)
+      }
+    }
   }
 
   private onAccessibilityStateChange(isOn: boolean) {
@@ -61,7 +128,12 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
 
   async announceForAccessibility(announcement: string) {
     const bundleInfo = await bundleManager.getBundleInfoForSelf(-1);
-    accessibility.sendAccessibilityEvent({ type: "announceForAccessibility", bundleName: bundleInfo.name, triggerAction: "common", textAnnouncedForAccessibility: announcement });
+    Accessibility.sendAccessibilityEvent({
+      type: "announceForAccessibility",
+      bundleName: bundleInfo.name,
+      triggerAction: "common",
+      textAnnouncedForAccessibility: announcement
+    });
   }
 
   public isScreenReaderEnabled(): Promise<boolean> {
@@ -69,7 +141,7 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
   }
 
   public async isAccessibilityServiceEnabled(): Promise<boolean> {
-    const enabledAccessibilityExtensions = await accessibility.getAccessibilityExtensionList("all", "enable")
+    const enabledAccessibilityExtensions = await Accessibility.getAccessibilityExtensionList("all", "enable")
     return enabledAccessibilityExtensions.length > 0
   }
 }

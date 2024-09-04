@@ -246,7 +246,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         componentInstanceRegistry,
         componentInstanceProvider,
         mountingManager,
-        featureFlagRegistry);
+        featureFlagRegistry,
+        arkTSChannel);
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,

@@ -1,9 +1,11 @@
 import {TestSuite} from '@rnoh/testerino';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
   AccessibilityChangeEventName,
+  AccessibilityEventTypes,
   AccessibilityInfo,
   Text,
+  TextProps,
   View,
 } from 'react-native';
 import {Button, TestCase} from '../components';
@@ -107,7 +109,95 @@ export function AccessibilityInfoTest() {
           }
         />
       </TestSuite>
+
+      <TestSuite name="sendAccessibilityEvent">
+        <TestSuite name="click">
+          <TestCase.Example
+            itShould="announce 'checked' after pressing the button"
+            skip={
+              skipMsgIfReaderDisabled ?? {
+                android: false,
+                harmony:
+                  'Connected but this test fails probably because aria-checked is not connected.',
+              }
+            }>
+            <SendAccessibilityEventExample
+              accessibilityEvent="click"
+              textProps={{'aria-checked': true}}
+            />
+          </TestCase.Example>
+          <TestCase.Example
+            itShould="announce 'selected' after pressing the button"
+            skip={
+              skipMsgIfReaderDisabled ?? {
+                android: false,
+                harmony:
+                  'Connected but this test fails probably because aria-selected is not connected.',
+              }
+            }>
+            <SendAccessibilityEventExample
+              accessibilityEvent="click"
+              textProps={{'aria-selected': true}}
+            />
+          </TestCase.Example>
+        </TestSuite>
+        <TestSuite name="focus">
+          <TestCase.Example
+            itShould="read the text content in the square"
+            skip={skipMsgIfReaderDisabled}>
+            <SendAccessibilityEventExample accessibilityEvent="focus" />
+          </TestCase.Example>
+        </TestSuite>
+        <TestSuite name="viewHoverEnter">
+          <TestCase.Example
+            itShould="read the text content in the square when hovering over an element"
+            skip={
+              skipMsgIfReaderDisabled ?? {
+                android: false,
+                harmony:
+                  "Hovering in general behaves differently to Android and the text isn't read.",
+              }
+            }>
+            <SendAccessibilityEventExample accessibilityEvent="viewHoverEnter" />
+          </TestCase.Example>
+        </TestSuite>
+      </TestSuite>
     </TestSuite>
+  );
+}
+
+function SendAccessibilityEventExample({
+  accessibilityEvent,
+  textProps,
+}: {
+  accessibilityEvent: AccessibilityEventTypes;
+  textProps?: TextProps;
+}) {
+  const ref = useRef<Text>(null);
+
+  return (
+    <>
+      <Text
+        ref={ref}
+        accessible={true}
+        style={{
+          backgroundColor: 'silver',
+          width: '100%',
+          height: 64,
+        }}
+        {...(textProps ?? {})}>
+        target content
+      </Text>
+      <Button
+        label="SEND ACCESSIBILITY EVENT"
+        onPress={() => {
+          AccessibilityInfo.sendAccessibilityEvent(
+            ref.current!,
+            accessibilityEvent,
+          );
+        }}
+      />
+    </>
   );
 }
 
