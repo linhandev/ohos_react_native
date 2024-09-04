@@ -51,6 +51,11 @@ export function AccessibilityInfoTest() {
         }
       </Text>
       <TestSuite name="addEventListener">
+        <TestSuite name="accessibilityServiceChanged">
+          <TestCase.Example itShould="display red background if Accessibility Service is changed">
+            <AccessibilityInfoAccessibilityServiceChanged />
+          </TestCase.Example>
+        </TestSuite>
         <TestSuite name="screenReaderChanged">
           <TestCase.Manual
             initialState={false}
@@ -73,35 +78,11 @@ export function AccessibilityInfoTest() {
         </TestSuite>
       </TestSuite>
       <TestSuite name="isScreenReaderEnabled">
-        <TestCase.Manual<boolean[]>
+        <AccessibilityFeatureStatusTestCase
           itShould="return true when the screen reader is enabled and false when disabled (test passes when call history includes both states)"
-          initialState={[]}
-          arrange={({setState, state}) => {
-            return (
-              <>
-                <Text>Call history: {JSON.stringify(state)}</Text>
-                <Button
-                  label="trigger function"
-                  onPress={() => {
-                    AccessibilityInfo.isScreenReaderEnabled().then(
-                      isScreenReaderEnabled => {
-                        setState(prev => [...prev, isScreenReaderEnabled]);
-                      },
-                    );
-                  }}
-                />
-              </>
-            );
-          }}
-          assert={async ({expect, state}) => {
-            await new Promise(resolve => {
-              if (state.includes(true) && state.includes(false)) {
-                resolve(undefined);
-              }
-            });
-            expect(state.includes(true)).to.be.true;
-            expect(state.includes(false)).to.be.true;
-          }}
+          onChangeAccessibilityFeature={() =>
+            AccessibilityInfo.isScreenReaderEnabled()
+          }
         />
       </TestSuite>
 
@@ -118,13 +99,14 @@ export function AccessibilityInfoTest() {
         </TestCase.Example>
       </TestSuite>
 
-      <TestCase.Example itShould="display red background if Accessibility Service is enabled">
-        <AccessibilityInfoAccessibilityServiceEnabled />
-      </TestCase.Example>
-
-      <TestCase.Example itShould="display red background if Accessibility Service is changed">
-        <AccessibilityInfoAccessibilityServiceChanged />
-      </TestCase.Example>
+      <TestSuite name="isAccessibilityServiceEnabled">
+        <AccessibilityFeatureStatusTestCase
+          itShould="return true when the screen reader (or some other third party accessibility service) is enabled and false when disabled (test passes when call history includes both states)"
+          onChangeAccessibilityFeature={() =>
+            AccessibilityInfo.isAccessibilityServiceEnabled()
+          }
+        />
+      </TestSuite>
     </TestSuite>
   );
 }
@@ -162,29 +144,6 @@ function AccessibilityInfoScreenReaderStatus({
   );
 }
 
-function AccessibilityInfoAccessibilityServiceEnabled() {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const backgroundColor = isEnabled ? 'red' : 'transparent';
-
-  useEffect(() => {
-    AccessibilityInfo.isAccessibilityServiceEnabled()
-      .then(isOptionEnabled => {
-        setIsEnabled(isOptionEnabled);
-      })
-      .catch(err =>
-        console.log(
-          `Error while testing Accessibility Service Enabled - error: ${err}`,
-        ),
-      );
-  }, []);
-
-  return (
-    <View style={{backgroundColor, padding: 16}}>
-      <Text>{`Accessibility Service is ${isEnabled ? 'enabled' : 'disabled'}.`}</Text>
-    </View>
-  );
-}
-
 function AccessibilityInfoAccessibilityServiceChanged() {
   const [isEnabled, setIsEnabled] = useState(false);
   const backgroundColor = isEnabled ? 'red' : 'transparent';
@@ -206,5 +165,47 @@ function AccessibilityInfoAccessibilityServiceChanged() {
     <View style={{backgroundColor, padding: 16}}>
       <Text>{`Accessibility Service change is ${isEnabled ? 'enabled' : 'disabled'}.`}</Text>
     </View>
+  );
+}
+
+function AccessibilityFeatureStatusTestCase({
+  itShould,
+  onChangeAccessibilityFeature,
+  skip,
+}: {
+  itShould: string;
+  onChangeAccessibilityFeature: () => Promise<boolean>;
+  skip?: React.ComponentProps<typeof TestCase.Manual>['skip'];
+}) {
+  return (
+    <TestCase.Manual<boolean[]>
+      itShould={itShould}
+      initialState={[]}
+      skip={skip}
+      arrange={({setState, state}) => {
+        return (
+          <>
+            <Text>Call history: {JSON.stringify(state)}</Text>
+            <Button
+              label="trigger function"
+              onPress={() => {
+                onChangeAccessibilityFeature().then(isScreenReaderEnabled => {
+                  setState(prev => [...prev, isScreenReaderEnabled]);
+                });
+              }}
+            />
+          </>
+        );
+      }}
+      assert={async ({expect, state}) => {
+        await new Promise(resolve => {
+          if (state.includes(true) && state.includes(false)) {
+            resolve(undefined);
+          }
+        });
+        expect(state.includes(true)).to.be.true;
+        expect(state.includes(false)).to.be.true;
+      }}
+    />
   );
 }
