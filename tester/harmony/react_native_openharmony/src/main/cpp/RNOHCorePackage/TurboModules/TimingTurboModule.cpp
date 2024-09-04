@@ -111,15 +111,14 @@ void TimingTurboModule::createTimer(
     if (timingPtr == nullptr) {
       return;
     }
-    if (timingPtr->call(*timingPtr->runtime, "isReady", nullptr, 0).getBool()) {
-      if (auto instance = timingPtr->m_ctx.instance.lock(); instance != nullptr) {
-        instance->callFunction(
-        "JSTimers", "callTimers", std::move(getObject(id)));
-      }
-      if (!repeat) {
-        timingPtr->deleteTimer(id);
-      }
-    } else if (timingPtr->call(*timingPtr->runtime, "isPaused", nullptr, 0).getBool()) {
+    if (auto instance = timingPtr->m_ctx.instance.lock(); instance != nullptr) {
+      instance->callFunction(
+      "JSTimers", "callTimers", std::move(getObject(id)));
+    }
+    if (!repeat) {
+      timingPtr->deleteTimer(id);
+    }
+    if (timingPtr->call(*timingPtr->runtime, "isPaused", nullptr, 0).getBool()) {
       timingPtr->deleteTimer(id);
       facebook::jsi::Value testargs[4] ={
       facebook::jsi::Value(id),

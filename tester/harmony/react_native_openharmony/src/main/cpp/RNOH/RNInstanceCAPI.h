@@ -42,9 +42,7 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
-using UniqueNativeResourceManager = std::unique_ptr<
-    NativeResourceManager,
-    decltype(&OH_ResourceManager_ReleaseNativeResourceManager)>;
+using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
 
 class RNInstanceCAPI : public RNInstanceInternal,
                        public facebook::react::LayoutAnimationStatusDelegate {
@@ -67,7 +65,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       ArkTSMessageHub::Shared arkTSMessageHub,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
-      UniqueNativeResourceManager nativeResourceManager,
+      SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : RNInstanceInternal(),
@@ -93,12 +91,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_componentInstanceFactory(componentInstanceFactory),
         m_arkTSChannel(std::move(arkTSChannel)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
-        m_nativeResourceManager(std::move(nativeResourceManager)) {
-      this->unsubscribeUITickListener =
-          this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
-		  this->taskExecutor->runTask(
-            TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
-  }
+        m_nativeResourceManager(std::move(nativeResourceManager)) {}
 
  ~RNInstanceCAPI() noexcept override;
 
@@ -219,11 +212,17 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   MountingManager::Shared m_mountingManager;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
-  std::shared_ptr<facebook::react::Scheduler> scheduler;
+  /**
+   * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.
+   * These values must be destructed before the runtime.
+   * The runtime is destructed when `m_reactInstance` is destructed.
+   * Therefore, `m_scheduler` must be declared after `m_reactInstance`.
+   */
   std::shared_ptr<facebook::react::Instance> instance;
+  std::shared_ptr<facebook::react::Scheduler> scheduler = nullptr;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
-  UniqueNativeResourceManager m_nativeResourceManager;
+  SharedNativeResourceManager m_nativeResourceManager;
   std::string m_bundlePath;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
 

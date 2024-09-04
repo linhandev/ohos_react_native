@@ -49,6 +49,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     auto validMutations = getValidMutations(mutations);
     m_arkTsMountingManager->didMount(validMutations);
  
+  m_preAllocationBuffer->clear();
   for (auto const& mutation : mutations) {
     try {
       this->handleMutation(mutation);
@@ -187,16 +188,13 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
         auto componentInstance =
-              m_componentInstanceRegistry->findByTag(newChild.tag);
+              m_preAllocationBuffer->getComponentInstance(newChild.tag, newChild.componentHandle, newChild.componentName);
         if (componentInstance == nullptr) {
-          componentInstance = m_componentInstanceFactory->create(
-              newChild.tag, newChild.componentHandle, newChild.componentName);
-          if (componentInstance == nullptr) {
-//            LOG(INFO) << "Couldn't create CppComponentInstance for: " << newChild.componentName;
-            return;
-          }
-          m_componentInstanceRegistry->insert(componentInstance);
+          LOG(ERROR) << "Couldn't create CppComponentInstance for: "
+                     << newChild.componentName;
+          return;
         }
+        m_componentInstanceRegistry->insert(componentInstance);
         updateComponentWithShadowView(componentInstance, newChild);
         break;
       }

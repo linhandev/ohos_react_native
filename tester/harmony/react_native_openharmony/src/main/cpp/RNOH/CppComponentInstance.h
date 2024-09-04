@@ -124,14 +124,14 @@ class CppComponentInstance : public ComponentInstance {
 
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
     this->onLayoutChanged(layoutMetrics);
-    bool changeFlag =  (layoutMetrics != m_layoutMetrics);
+//     bool changeFlag =  (layoutMetrics != m_layoutMetrics);
     m_layoutMetrics = layoutMetrics;
-    if (changeFlag) {
-      auto parent =  getParent().lock();
-      if (parent != nullptr) {
-        parent->onChildLayoutChange(shared_from_this());
-      }
-    }
+//     if (changeFlag) {
+//       auto parent =  getParent().lock();
+//       if (parent != nullptr) {
+//         parent->onChildLayoutChange(shared_from_this());
+//       }
+//     }
   }
 
  public:
@@ -294,7 +294,8 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
-          props->shadowRadius);
+          props->shadowRadius,
+          m_layoutMetrics.pointScaleFactor);
       }
     } else if (props->shadowColor != old->shadowColor &&
               props->shadowOffset != old->shadowOffset &&
@@ -304,7 +305,8 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
-          props->shadowRadius); 
+          props->shadowRadius,
+          m_layoutMetrics.pointScaleFactor); 
     } else {
         // Do nothing here.   
     }
@@ -313,6 +315,7 @@ class CppComponentInstance : public ComponentInstance {
       if (!old) {
         if (props->transform != defaultTransform || abs(m_oldPointScaleFactor - 0.0f) > 0.001f) {
           m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+          this->setTransform(props->transform);
           this->getLocalRootArkUINode().setTransform(
             props->transform, m_layoutMetrics.pointScaleFactor);
           markBoundingBoxAsDirty();
@@ -448,13 +451,14 @@ class CppComponentInstance : public ComponentInstance {
   };
 
  private:
+
   facebook::react::Transform m_transform =
-      facebook::react::Transform::Identity();  
-    
+    facebook::react::Transform::Identity();  
+
   void setTransform(facebook::react::Transform const& transform) {
     m_transform = transform;
   }
-    
+
   void setOpacity(facebook::react::SharedViewProps const& props) {
     auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
     auto isTransformManagedByAnimated =
@@ -491,16 +495,9 @@ class CppComponentInstance : public ComponentInstance {
  protected:
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
-    if (props->testId != "") {
-      return props->testId;
-    } else if (props->nativeId != "") {
-      return props->nativeId;
-    } else {
-      std::ostringstream id;
-      id << ShadowNodeT::Name() << "(" << m_tag << ")"
-         << "@" << this;
-      return id.str();
-    }
+    std::ostringstream id;
+    id << m_tag;
+    return id.str();
   }
 
   struct ViewRawProps {

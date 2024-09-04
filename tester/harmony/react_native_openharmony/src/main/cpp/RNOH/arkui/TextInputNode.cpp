@@ -68,7 +68,7 @@ void TextInputNode::onNodeEvent(
     if (m_textInputNodeDelegate != nullptr) {
       float width = eventArgs[0].f32;
       float height = eventArgs[1].f32;
-      m_textInputNodeDelegate->onContentSizeChange(width, height);
+      m_textInputNodeDelegate->onContentSizeChange(width, height, false);
     }
 }
 }

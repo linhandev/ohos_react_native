@@ -1,4 +1,5 @@
 import type UIAbility from '@ohos.app.ability.UIAbility'
+import { UIContext } from '@kit.ArkUI'
 import { CommandDispatcher, RNComponentCommandHub } from './RNComponentCommandHub'
 import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegistry'
 import { ComponentManagerRegistry } from './ComponentManagerRegistry'
@@ -7,13 +8,12 @@ import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
-import type { RNOHContext } from './RNOHContext'
 import { RNOHCorePackage } from '../RNOHCorePackage/ts'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
 import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule } from './TurboModule'
+import type { TurboModule, TurboModuleContext } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -24,6 +24,7 @@ import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
 import font from '@ohos.font'
 
+export type Resource = Exclude<font.FontOptions["familySrc"], string>
 export type SurfaceContext = {
   width: number
   height: number
@@ -242,6 +243,8 @@ export interface RNInstance {
    * register an appropriate onScroll callback and call this method.
    */
   cancelTouches(): void
+
+  getUIContext(): UIContext
 }
 
 export type RNInstanceOptions = {
@@ -294,9 +297,10 @@ export type RNInstanceOptions = {
    */
   httpClient?: HttpClient,
   /**
-   * config the fonts to be use
+   * Specifies custom fonts used by RN application.
+   * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
    */
-  fontOptions?: font.FontOptions[]
+  fontResourceByFontFamily?: Record<string, Resource>
 }
 
 /**
@@ -304,14 +308,6 @@ export type RNInstanceOptions = {
  */
 export interface FrameNodeFactory {
   create(tag: Tag, componentName: string);
-}
-
-/**
- * Used in the C-API architecture
- */
-export type FontOptions = {
-  familyName: string,
-  familySrc: string
 }
 
 
@@ -335,7 +331,7 @@ export class RNInstanceImpl implements RNInstance {
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>()
   private initialBundleUrl: string | undefined = undefined
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
-
+  private uiCtx: UIContext;
   /**
    * @deprecated
    */
@@ -349,7 +345,7 @@ export class RNInstanceImpl implements RNInstance {
     private napiBridge: NapiBridge,
     private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
-    private createRNOHContext: (rnInstance: RNInstance) => RNOHContext,
+    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => TurboModuleContext,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
@@ -358,7 +354,7 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
-    private fontOptions: font.FontOptions[],
+    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -443,13 +439,6 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
-    const fontOptions: FontOptions[] = []
-    for (const fontOption of this.fontOptions ?? []) {
-      fontOptions.push({
-        familyName: fontOption.familyName as string,
-        familySrc: fontOption.familySrc as string
-      });
-    }
     this.napiBridge.createReactNativeInstance(
       this.id,
       this.turboModuleProvider,
@@ -481,7 +470,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags,
       this.resourceManager,
       this.arkTsComponentNames,
-      fontOptions
+      this.fontFamilyNameByFontPathRelativeToRawfileDir,
     )
     stopTracing()
   }
@@ -528,7 +517,7 @@ export class RNInstanceImpl implements RNInstance {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
     packages.unshift(new RNOHCorePackage({}));
-    const turboModuleContext = this.createRNOHContext(this)
+    const turboModuleContext = this.createUITurboModuleContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
@@ -599,8 +588,8 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public async runJSBundle(jsBundleProvider: JSBundleProvider) {
+    let bundleURL: string
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
-    const bundleURL = jsBundleProvider.getURL()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
     try {
       this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
@@ -610,9 +599,10 @@ export class RNInstanceImpl implements RNInstance {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`)
       })
-      this.initialBundleUrl = this.initialBundleUrl ?? jsBundleProvider.getURL()
+      bundleURL = jsBundleProvider.getURL()
+      this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
       await this.napiBridge.loadScript(this.id, jsBundle, bundleURL)
-      this.napiBridge.setBundlePath(this.id, jsBundleProvider.getURL());
+      this.napiBridge.setBundlePath(this.id, bundleURL);
       this.lifecycleState = LifecycleState.READY
       const hotReloadConfig = jsBundleProvider.getHotReloadConfig()
       if (hotReloadConfig) {
@@ -754,6 +744,14 @@ export class RNInstanceImpl implements RNInstance {
 
   public cancelTouches() {
     this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
+  }
+
+  public setUIContext(uiCtx: UIContext): void {
+    this.uiCtx = uiCtx;
+  }
+
+  public getUIContext(): UIContext {
+    return this.uiCtx;
   }
 }
 

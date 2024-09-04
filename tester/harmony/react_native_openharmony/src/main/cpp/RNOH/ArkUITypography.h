@@ -210,7 +210,8 @@ class ArkUITypographyBuilder final {
 //                OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
     std::shared_ptr<OH_Drawing_TextStyle> textStyle(
         OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle); //  Revert this after API rectification
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading);
+    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading
+        || !isnan(fragment.textAttributes.lineHeight));
     // fontSize
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {
@@ -256,14 +257,11 @@ class ArkUITypographyBuilder final {
     OH_Drawing_SetTextStyleDecorationStyle(textStyle.get(), textDecorationStyle);
     
     // backgroundColor
-    std::unique_ptr<
-        OH_Drawing_Brush,
-        decltype(&OH_Drawing_BrushDestroy)>
-        brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (fragment.textAttributes.isHighlighted.has_value() && fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    } else if (fragment.textAttributes.backgroundColor) {
+    if (fragment.textAttributes.backgroundColor) {
+      std::unique_ptr<
+          OH_Drawing_Brush,
+          decltype(&OH_Drawing_BrushDestroy)>
+          brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
       OH_Drawing_BrushSetColor(brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
       OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     }
@@ -291,12 +289,17 @@ class ArkUITypographyBuilder final {
           mapValueToFontWeight(
               int(fragment.textAttributes.fontWeight.value())));
     }
-    if (!fragment.textAttributes.fontFamily.empty()) {
-      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
-    } else if (!m_defaultFontFamilyName.empty()) {
+    if (!m_defaultFontFamilyName.empty()) {
       const char* fontFamilies[] = {m_defaultFontFamilyName.c_str()};
       OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+    } else if (!fragment.textAttributes.fontFamily.empty()) {
+      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
+      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+    }
+    if (fragment.textAttributes.fontVariant.has_value()) {
+      for (auto& [tag, value] : mapValueToFontVariant(int(fragment.textAttributes.fontVariant.value()))) {
+        OH_Drawing_TextStyleAddFontFeature(textStyle.get(), tag.c_str(), value);
+      }
     }
     // push text and corresponding textStyle to handler
     OH_ArkUI_StyledString_PushTextStyle(
@@ -350,7 +353,25 @@ class ArkUITypographyBuilder final {
     }
   }
 
-
+  std::map<std::string, int> mapValueToFontVariant(int value) {
+    std::map<std::string, int> fontVariant{};
+    if (value & (int)facebook::react::FontVariant::SmallCaps) {
+      fontVariant.emplace("smcp", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::OldstyleNums) {
+      fontVariant.emplace("onum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::LiningNums) {
+      fontVariant.emplace("lnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::TabularNums) {
+      fontVariant.emplace("tnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::ProportionalNums) {
+      fontVariant.emplace("pnum", 1);
+    }
+    return fontVariant;
+  }
 
 //  std::unique_ptr<
 //    ArkUI_StyledString,

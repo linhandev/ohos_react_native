@@ -59,7 +59,7 @@ void TextAreaNode::onNodeEvent(
     if (m_textAreaNodeDelegate != nullptr) {
       float width = eventArgs[0].f32;
       float height = eventArgs[1].f32;
-      m_textAreaNodeDelegate->onContentSizeChange(width, height);
+      m_textAreaNodeDelegate->onContentSizeChange(width, height, true);
     }
   }
 }

@@ -20,7 +20,6 @@ class ScrollViewComponentInstance
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
   StackNode m_scrollContainerNode;
-  std::shared_ptr<ComponentInstance> m_childComponent; 
   bool m_horizontal = false;
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
@@ -81,6 +80,8 @@ class ScrollViewComponentInstance
   std::optional<ChildTagWithOffset> getFirstVisibleView(
       int32_t minIndexForVisible);
 
+  void updateContentClippedSubviews(bool childrenChange = false);
+
  public:
   ScrollViewComponentInstance(Context context);
 
@@ -125,6 +126,7 @@ class ScrollViewComponentInstance
 
  private:
   void updateStateWithContentOffset(facebook::react::Point contentOffset);
+  void updateOffsetAfterChildChange(facebook::react::Point offset, double diff);
   bool isContentSmallerThanContainer();
   bool isAtEnd(facebook::react::Point currentOffset);
   /**
@@ -135,6 +137,7 @@ class ScrollViewComponentInstance
    * So when `isCloseToTargetOffset` returns true, you need to actively emit the `onScroll` event.
    */
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
+  void onContentSizeChanged();
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;
   bool isNestedScroll();
