@@ -126,7 +126,9 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
-  m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  if (m_eventEmitter != NULL) {
+    m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  }
 }
 
 facebook::react::TextInputMetrics
