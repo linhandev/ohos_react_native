@@ -1,5 +1,5 @@
 import Accessibility from '@ohos.accessibility';
-import type { UITurboModuleContext } from '../../RNOH/TurboModule';
+import type { UITurboModuleContext, Tag } from '../../RNOH/ts';
 import { UITurboModule } from '../../RNOH/TurboModule';
 import bundleManager from '@ohos.bundle.bundleManager';
 
@@ -58,6 +58,16 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
     this.cleanUpCallbacks.push(() => {
       Accessibility.off("accessibilityStateChange", onAccessibilityStateChange);
     });
+  }
+
+  public async setAccessibilityFocus(tag: Tag) {
+    const bundleName = (await bundleManager.getBundleInfoForSelf(-1)).name;
+    Accessibility.sendAccessibilityEvent({
+      type: "requestFocusForAccessibility",
+      bundleName,
+      triggerAction: "common",
+      customId: this.ctx.rnInstance.getNativeNodeIdByTag(tag),
+    })
   }
 
   /**

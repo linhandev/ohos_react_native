@@ -353,7 +353,9 @@ const AccessibilityInfo = {
    * See https://reactnative.dev/docs/accessibilityinfo#setaccessibilityfocus
    */
   setAccessibilityFocus(reactTag: number): void {
-    legacySendAccessibilityEvent(reactTag, 'focus');
+    // RNOH patch
+    NativeAccessibilityInfoHarmony.setAccessibilityFocus(reactTag);
+    // legacySendAccessibilityEvent(reactTag, 'focus');
   },
 
   /**

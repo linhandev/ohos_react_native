@@ -4,11 +4,12 @@ import {
   AccessibilityChangeEventName,
   AccessibilityEventTypes,
   AccessibilityInfo,
+  findNodeHandle,
   Text,
   TextProps,
   View,
 } from 'react-native';
-import {Button, TestCase} from '../components';
+import {Button, Ref, TestCase} from '../components';
 import {PALETTE} from '../components/palette';
 
 export function AccessibilityInfoTest() {
@@ -161,6 +162,29 @@ export function AccessibilityInfoTest() {
             <SendAccessibilityEventExample accessibilityEvent="viewHoverEnter" />
           </TestCase.Example>
         </TestSuite>
+      </TestSuite>
+      <TestSuite name="setAccessibilityFocus">
+        <TestCase.Example
+          itShould="read 'target view' after pressing the button and switch focus to that view"
+          skip={skipMsgIfReaderDisabled}>
+          <Ref<Text>
+            render={ref => {
+              return (
+                <>
+                  <Text ref={ref}>target view</Text>
+                  <Button
+                    label="setAccessibilityFocus on target view"
+                    onPress={() => {
+                      AccessibilityInfo.setAccessibilityFocus(
+                        findNodeHandle(ref.current)!,
+                      );
+                    }}
+                  />
+                </>
+              );
+            }}
+          />
+        </TestCase.Example>
       </TestSuite>
     </TestSuite>
   );
