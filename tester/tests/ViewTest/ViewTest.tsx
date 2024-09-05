@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React, {useRef, useState} from 'react';
-import {Button, TestCase} from '../components';
+import {Button, TestCase} from '../../components';
+import {ViewAccessibilityTest} from './ViewAccessibilityTest';
 
 export function ViewTest() {
   return (
@@ -763,6 +764,7 @@ export function ViewTest() {
           expect(state.responderRejectedCount).to.be.greaterThan(0);
         }}
       />
+      <ViewAccessibilityTest />
       <TestCase.Manual
         modal
         itShould='call the "escape" gesture handler'
@@ -803,50 +805,6 @@ export function ViewTest() {
             importantForAccessibility="no-hide-descendants">
             <Text>Ignored Layout</Text>
           </View>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuemax accessibility prop">
-        <View
-          accessible={true}
-          aria-valuemax={1000}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemax: 100</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuemin accessibility prop">
-        <View
-          accessible={true}
-          aria-valuemin={10}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: 10</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuenow accessibility prop">
-        <View
-          accessible={true}
-          aria-valuenow={55}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: 55</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuetext accessibility prop">
-        <View
-          accessible={true}
-          aria-valuetext={'Test Text'}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: Test Text</Text>
         </View>
       </TestCase.Example>
       <TestCase.Example
