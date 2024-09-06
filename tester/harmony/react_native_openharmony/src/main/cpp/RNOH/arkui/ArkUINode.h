@@ -27,20 +27,12 @@ enum class ArkuiHitTestMode : int32_t {
 };
 }
 
-class ArkUINode;
-
-/**
- * @api
- */
 class ArkUINodeDelegate {
  public:
   virtual ~ArkUINodeDelegate() = default;
   virtual void onArkUINodeDestroy(ArkUINode* node){};
 };
 
-/**
- * @api
- */
 class ArkUINode {
   ArkUINodeDelegate* m_arkUINodeDelegate = nullptr;
 

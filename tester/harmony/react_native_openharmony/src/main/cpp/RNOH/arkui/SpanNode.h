@@ -3,17 +3,12 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
-/**
- * @internal
- */
+
 class ImageSpanNode : public ArkUINode {
  public:
   ImageSpanNode();
 };
 
-/**
- * @api
- */
 class SpanNode : public ArkUINode {
  public:
   SpanNode();

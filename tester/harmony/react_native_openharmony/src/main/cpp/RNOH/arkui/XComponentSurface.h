@@ -13,8 +13,7 @@
 namespace rnoh {
 
 /**
- * @internal
- * @thread: MAIN
+ * @Thread: MAIN
  * Wraps the `react::SurfaceHandle` and attaches the root component of the
  * React Native `Surface` to the native `XComponent`
  */

@@ -3,9 +3,6 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
-/**
- * @api
- */
 class CustomNodeDelegate {
  public:
   virtual ~CustomNodeDelegate() = default;
@@ -18,9 +15,6 @@ struct UserCallback {
   std::function<void(ArkUI_NodeCustomEvent* event)> callback;
 };
 
-/**
- * @api
- */
 class CustomNode : public ArkUINode {
  protected:
   CustomNodeDelegate* m_customNodeDelegate;
