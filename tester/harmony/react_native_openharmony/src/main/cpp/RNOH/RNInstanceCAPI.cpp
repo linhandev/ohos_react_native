@@ -20,6 +20,7 @@
 #include "hermes/executor/HermesExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/RNInstance.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -103,11 +104,15 @@ void RNInstanceCAPI::initialize() {
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
+      HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
   this->instance->initializeBridge(
       std::move(instanceCallback),
       std::move(jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
+      HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
 void RNInstanceCAPI::initializeScheduler(
@@ -292,7 +297,15 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     return;
   }
 
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_START,
+      tag);
   m_mountingManager->updateView(tag, std::move(props), *componentDescriptor);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::
+          FABRIC_UPDATE_UI_MAIN_THREAD_END,
+      tag);
 }
 
 facebook::react::ContextContainer const&

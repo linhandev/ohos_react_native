@@ -1,4 +1,6 @@
 #include "MountingManagerCAPI.h"
+#include <cxxreact/SystraceSection.h>
+#include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
 
@@ -49,6 +51,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     auto validMutations = getValidMutations(mutations);
     m_arkTsMountingManager->didMount(validMutations);
  
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START); 
   m_preAllocationBuffer->clear();
   for (auto const& mutation : mutations) {
     try {
@@ -59,6 +63,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
 
 facebook::react::ShadowViewMutationList MountingManagerCAPI::getValidMutations(
