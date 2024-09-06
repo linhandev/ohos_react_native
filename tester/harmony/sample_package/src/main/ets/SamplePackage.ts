@@ -3,9 +3,9 @@ import {
   TurboModulesFactory,
   DescriptorWrapperFactoryByDescriptorType,
   DescriptorWrapperFactoryByDescriptorTypeCtx
-} from '@rnoh/react-native-openharmony/ts';
-import type { TurboModule, TurboModuleContext, } from '@rnoh/react-native-openharmony/ts';
-import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
+} from '@react-native-ohos/react-native-openharmony/ts';
+import type { TurboModule, TurboModuleContext, } from '@react-native-ohos/react-native-openharmony/ts';
+import { RNC, TM } from "@react-native-ohos/react-native-openharmony/generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
 
 class SampleTurboModulesFactory extends TurboModulesFactory {
