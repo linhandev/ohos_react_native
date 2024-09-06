@@ -534,7 +534,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
           }
         } else {
           if (newScrollOffset > m_scrollNode.getScrollOffset().y) {
-            LOG(INFO)
+            DLOG(INFO)
                 << "Adjusting scroll position to prevent keyboard avoider being hidden by the keyboard";
             m_scrollNode.scrollTo(
                 m_scrollNode.getScrollOffset().x, newScrollOffset, true);

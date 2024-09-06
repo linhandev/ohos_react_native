@@ -175,15 +175,15 @@ void MountingManagerCAPI::updateComponentWithShadowView(
 }
 
 void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
- //    VLOG(1) << "Mutation (type:" << this->getMutationNameFromType(mutation.type)
-//            << "; componentName: "
-//            << (mutation.newChildShadowView.componentName != nullptr
-//                    ? mutation.newChildShadowView.componentName
-//                    : "null")
-//            << "; newTag: " << mutation.newChildShadowView.tag
-//            << "; index: " << mutation.index
-//            << "; oldTag: " << mutation.oldChildShadowView.tag
-//            << "; parentTag: " << mutation.parentShadowView.tag << ")";
+    DLOG(INFO) << "Mutation (type:" << getMutationNameFromType(mutation.type)
+           << "; componentName: "
+           << (mutation.newChildShadowView.componentName != nullptr
+                   ? mutation.newChildShadowView.componentName
+                   : "null")
+           << "; newTag: " << mutation.newChildShadowView.tag
+           << "; index: " << mutation.index
+           << "; oldTag: " << mutation.oldChildShadowView.tag
+           << "; parentTag: " << mutation.parentShadowView.tag << ")";
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
@@ -238,7 +238,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
               std::size_t parentIndex = parentComponentInstance->getIndex();
               //  mutation.newChildShadowView is old data
               facebook::react::ShadowView parentShadowView = parentComponentInstance->getShadowView();
-              LOG(INFO) << "need update text node, parent tag=" << parentComponentInstance->getTag()
+              DLOG(INFO) << "need update text node, parent tag=" << parentComponentInstance->getTag()
                 << ", grandParentTag tag=" << grandParentTag << ", parent index=" << parentIndex
                 << ", child index=" << mutation.index;
               auto grandParentComponentInstance = m_componentInstanceRegistry->findByTag(grandParentTag);

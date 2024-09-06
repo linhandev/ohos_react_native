@@ -269,15 +269,15 @@ void rnoh::RNInstanceCAPI::updateState(
 void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
     folly::dynamic props) {
-  // DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
+  DLOG(INFO) << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread";
 
   RNOH_ASSERT(taskExecutor->getCurrentTaskThread() == TaskThread::MAIN);
 
   auto componentInstance = m_componentInstanceRegistry->findByTag(tag);
   if (componentInstance == nullptr) {
-    // LOG(ERROR)
-    //     << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: could not find componentInstance for tag: "
-    //     << tag;
+    LOG(ERROR)
+        << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: could not find componentInstance for tag: "
+        << tag;
     return;
   }
 
@@ -286,9 +286,9 @@ void rnoh::RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
       scheduler->findComponentDescriptorByHandle_DO_NOT_USE_THIS_IS_BROKEN(
           componentHandle);
   if (componentDescriptor == nullptr) {
-    // LOG(ERROR)
-    //     << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: could not find componentDescriptor for tag: "
-    //     << tag;
+    LOG(ERROR)
+        << "RNInstanceCAPI::synchronouslyUpdateViewOnUIThread: could not find componentDescriptor for tag: "
+        << tag;
     return;
   }
 
@@ -373,7 +373,7 @@ TurboModule::Shared RNInstanceCAPI::getTurboModule(const std::string& name) {
     if (rnohTurboModule) {
       return rnohTurboModule;
     } else {
-      DLOG(ERROR) << "TurboModule '" << name
+      LOG(ERROR) << "TurboModule '" << name
                   << "' should extend rnoh::TurboModule";
       return nullptr;
     }
