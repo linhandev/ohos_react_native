@@ -1,5 +1,5 @@
-import { TurboModule, RNOHError, Tag } from '@rnoh/react-native-openharmony/ts';
-import { TM } from "@rnoh/react-native-openharmony/generated/ts"
+import { TurboModule, RNOHError, Tag } from '@react-native-ohos/react-native-openharmony/ts';
+import { TM } from "@react-native-ohos/react-native-openharmony/generated/ts"
 
 
 export class SampleTurboModule extends TurboModule implements TM.GeneratedSampleTurboModule.Spec, TM.GeneratedSampleTurboModule2.Spec {

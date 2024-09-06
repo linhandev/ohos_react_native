@@ -2,7 +2,7 @@
   license: 'ISC',
   types: '',
   devDependencies: {},
-  name: '@rnoh/react-native-openharmony',
+  name: '@react-native-ohos/react-native-openharmony',
   description: 'React Native for OpenHarmony',
   ohos: {
     org: '',
