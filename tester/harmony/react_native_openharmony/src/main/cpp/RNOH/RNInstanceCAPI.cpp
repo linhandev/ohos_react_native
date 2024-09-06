@@ -104,11 +104,15 @@ void RNInstanceCAPI::initialize() {
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
+      HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
   this->instance->initializeBridge(
       std::move(instanceCallback),
       std::move(jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
+      HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
 void RNInstanceCAPI::initializeScheduler(
