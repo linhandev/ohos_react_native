@@ -3,18 +3,12 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
-/**
- * @api
- */
 class ColumnNodeDelegate {
  public:
   virtual ~ColumnNodeDelegate() = default;
   virtual void onClick(){};
 };
 
-/**
- * @api
- */
 class ColumnNode : public ArkUINode {
  protected:
   ColumnNodeDelegate* m_columnNodeDelegate;

@@ -12,9 +12,6 @@ class TextNodeDelegate {
   virtual void onDisappear(){};
 };
 
-/**
- * @api
- */
 class TextNode : public ArkUINode {
  private:
   enum {

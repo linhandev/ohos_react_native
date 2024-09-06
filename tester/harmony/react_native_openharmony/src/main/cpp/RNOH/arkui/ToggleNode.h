@@ -4,18 +4,12 @@
 
 namespace rnoh {
 
-/**
- * @api
- */
 class ToggleNodeDelegate {
  public:
   virtual ~ToggleNodeDelegate() = default;
   virtual void onValueChange(int32_t& value) = 0;
 };
 
-/**
- * @api
- */
 class ToggleNode : public ArkUINode {
  protected:
   ArkUI_NodeHandle m_childArkUINodeHandle;
