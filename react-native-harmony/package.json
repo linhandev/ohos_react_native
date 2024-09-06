@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-ohos/react-native-harmony",
+  "name": "@react-native-ohos/react-native-openharmony",
   "version": "0.72.29",
   "description": "",
   "scripts": {
@@ -44,7 +44,7 @@
     "./harmony/*"
   ],
   "dependencies": {
-    "@rnoh/react-native-harmony-cli": "../react-native-harmony-cli/react-native-ohos-react-native-harmony-cli-0.0.26.tgz",
+    "@rnoh/react-native-harmony-cli": "../react-native-harmony-cli/react-native-ohos-react-native-openharmony-cli-0.0.26.tgz",
     "colors": "^1.4.0",
     "fs-extra": "^11.1.1",
     "metro": "^0.76.3",
