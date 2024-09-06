@@ -15,7 +15,7 @@ ThreadTaskRunner::ThreadTaskRunner(
 }
 
 ThreadTaskRunner::~ThreadTaskRunner() {
-  LOG(INFO) << "Shutting down thread runner " << name;
+  DLOG(INFO) << "Shutting down thread runner " << name;
   running = false;
   cv.notify_all();
   thread.join();

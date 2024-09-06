@@ -46,7 +46,7 @@ class MountingManagerCAPI final : public MountingManager {
         m_featureFlagRegistry(std::move(featureFlagRegistry)) {};
     
     ~MountingManagerCAPI() {
-    VLOG(1) << "~MountingManagerCAPI";
+    DLOG(INFO) << "~MountingManagerCAPI";
   }
 
   PreAllocationBuffer::Shared getPreAllocationBuffer() override{

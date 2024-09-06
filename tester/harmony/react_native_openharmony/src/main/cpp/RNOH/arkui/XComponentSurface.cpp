@@ -17,9 +17,9 @@ void maybeAttachRootNode(
     OH_NativeXComponent* nativeXComponent,
     ComponentInstance& rootView) {
   if (nativeXComponent != nullptr) {
-//    LOG(INFO)
-//        << "Attaching native root node to nativeXComponent for surface with id: "
-//        << rootView.getTag();
+   DLOG(INFO)
+       << "Attaching native root node to nativeXComponent for surface with id: "
+       << rootView.getTag();
 #ifdef C_API_ARCH
     OH_NativeXComponent_AttachNativeRootNode(
         nativeXComponent,
@@ -84,7 +84,7 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
   }
 
   void onMessageReceived(ArkTSMessage const& message) {
-    LOG(INFO) << "onMessageReceived: " << message.name;
+    DLOG(INFO) << "onMessageReceived: " << message.name;
     if (message.name == "CANCEL_TOUCHES" &&
         message.payload["rnInstanceId"].asInt() == m_rnInstanceId) {
       m_touchEventDispatcher.cancelActiveTouches();
@@ -211,7 +211,7 @@ void XComponentSurface::setProps(folly::dynamic const& props) {
 void XComponentSurface::stop() {
     m_threadGuard.assertThread();
     if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
-        LOG(WARNING) << "Tried to unregister a running surface with id "
+        DLOG(WARNING) << "Tried to unregister a running surface with id "
                     << m_surfaceId;
         m_surfaceHandler.stop();
     }

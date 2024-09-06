@@ -170,7 +170,7 @@ void TimingTurboModule::deleteTimer(double id) {
 }
 
 void TimingTurboModule::setSendIdleEvents(bool enabled) {
-  LOG(INFO) << "TimingTurboModule::setSendIdleEvents("
+  DLOG(INFO) << "TimingTurboModule::setSendIdleEvents("
             << enabled
             << "): not implemented";
 }

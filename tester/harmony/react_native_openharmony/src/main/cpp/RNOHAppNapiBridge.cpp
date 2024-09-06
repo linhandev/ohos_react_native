@@ -137,7 +137,7 @@ static napi_value createReactNativeInstance(
           {
             auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
             if (rnInstanceById.find(instanceId) == rnInstanceById.end()) {
-              LOG(WARNING) << "RNInstance with the following id " +
+              DLOG(WARNING) << "RNInstance with the following id " +
                       std::to_string(instanceId) + " does not exist";
               return;
             }
@@ -153,7 +153,7 @@ static napi_value createReactNativeInstance(
           {
             auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
             if (rnInstanceById.find(instanceId) == rnInstanceById.end()) {
-              LOG(WARNING) << "RNInstance with the following id " +
+              DLOG(WARNING) << "RNInstance with the following id " +
                       std::to_string(instanceId) + " does not exist";
               return;
             }
