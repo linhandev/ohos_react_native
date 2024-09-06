@@ -65,7 +65,12 @@ Value JSVMRuntime::evaluateJavaScript(const std::shared_ptr<const Buffer> &buffe
     size_t len = 0;
     uint8_t *cache = nullptr;
     JSVM_Script script = nullptr;
-    std::string name = cachePath/std::filesystem::path(sourceURL);
+    std::string name;
+    if( std::filesystem::is_regular_file(sourceURL) ){
+        name = cachePath + sourceURL;
+    }else{
+        name = cachePath/std::filesystem::path(sourceURL);
+    }
     if (auto it = codeCache.find(name); it != codeCache.end()) {
         findCache = true;
         cache = it->second.first;
