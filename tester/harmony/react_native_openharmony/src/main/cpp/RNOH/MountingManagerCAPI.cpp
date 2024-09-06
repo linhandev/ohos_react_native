@@ -51,6 +51,8 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     auto validMutations = getValidMutations(mutations);
     m_arkTsMountingManager->didMount(validMutations);
  
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START); 
   m_preAllocationBuffer->clear();
   for (auto const& mutation : mutations) {
     try {
