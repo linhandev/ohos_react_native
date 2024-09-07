@@ -10,8 +10,10 @@ namespace rnoh {
 std::unique_ptr<ArkUINodeRegistry> ArkUINodeRegistry::instance = nullptr;
 
 void ArkUINodeRegistry::initialize(ArkTSBridge::Shared arkTSBridge) {
-  instance = std::unique_ptr<ArkUINodeRegistry>(
+  if (instance == nullptr) {
+    instance = std::unique_ptr<ArkUINodeRegistry>(
       new ArkUINodeRegistry(std::move(arkTSBridge)));
+  }
 }
 
 ArkUINodeRegistry& ArkUINodeRegistry::getInstance() {
