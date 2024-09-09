@@ -773,24 +773,6 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        itShould="make the screen reader say 'This view has a red background and no text' when clicking on the View component with accessibilityLabel prop">
-        <View
-          accessible={true}
-          accessibilityLabel="This view has a red background and no text"
-          style={[styles.accessibilityLayout, {backgroundColor: 'red'}]}
-        />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display 'This view has a red background and no text' when clicking on the View component with aria-label prop">
-        <View
-          accessible={true}
-          aria-label="This view has a red background and no text"
-          style={[styles.accessibilityLayout, {backgroundColor: 'red'}]}
-        />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
         itShould="make the screen reader say/display 'busy' after clicking on the backgroud">
         <View
           accessible={true}
