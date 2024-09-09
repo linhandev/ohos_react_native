@@ -96,6 +96,8 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
+  m_scrollNode.setClip(props->getClipsContentToBounds());
+
   /**
    * This block is needed to detects which batch of mutations were triggered by
    * appearance of the keyboard.
