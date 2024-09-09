@@ -6,6 +6,28 @@ import React from 'react';
 export function ViewAccessibilityTest() {
   return (
     <TestSuite name="Accessibility & Aria props">
+      <TestSuite name="accessibilityLabel">
+        <TestCase.Example itShould="make the screen reader announce 'I am reading accessibilityLabel content' after focusing the view below in accessibility mode">
+          <View
+            accessible={true}
+            accessibilityLabel="I am reading accessibilityLabel content"
+            style={{width: '100%', padding: 16, backgroundColor: 'lightblue'}}>
+            <Text importantForAccessibility="no">1. Enable ScreenReader</Text>
+            <Text importantForAccessibility="no">2. Focus on this View</Text>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="aria-label">
+        <TestCase.Example itShould="make the screen reader announce 'I am reading aria-label content' after focusing the view below in accessibility mode">
+          <View
+            accessible={true}
+            aria-label="I am reading aria-label content"
+            style={{width: '100%', padding: 16, backgroundColor: 'lightblue'}}>
+            <Text importantForAccessibility="no">1. Enable ScreenReader</Text>
+            <Text importantForAccessibility="no">2. Focus on this View</Text>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
       <TestSuite name="aria-valuenow/min/max">
         <TestCase.Manual<number[]>
           initialState={[50]}
