@@ -29,6 +29,10 @@
         "name": "can_preview_text",
         "value": "true",
       },
+      {
+        "name": "halfLeading",
+        "value": "true",
+      },
     ],
     "abilities": [
       {

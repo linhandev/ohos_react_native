@@ -17,6 +17,7 @@ import type { HttpClient } from "../HttpClient/ts"
 import { AbilityConstant, Want } from '@kit.AbilityKit';
 import { WorkerThread } from "./WorkerThread"
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
+import { bundleManager } from '@kit.AbilityKit';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -24,7 +25,7 @@ import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
-  fontSizeScale : number | undefined,
+  fontSizeScale: number | undefined,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl: string,
@@ -64,6 +65,22 @@ const RNOH_BANNER = '\n\n\n' +
 
 type AppState = "FOREGROUND" | "BACKGROUND"
 
+function getMetadata(name: string): string {
+  let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA |
+  bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION;
+  let metadataArray = bundleManager.getBundleInfoForSelfSync(bundleFlags).appInfo.metadataArray;
+  let finalMetadata = '';
+  metadataArray.forEach(moduleMetadata => {
+    moduleMetadata.metadata.forEach(metadata => {
+      if (metadata.name == name) {
+        finalMetadata = metadata.value
+        return;
+      }
+    });
+  });
+  return finalMetadata;
+}
+
 /**
  * Bootstraps React Native and forwards device events to RNInstances. This class is created for UIAbility's usage.
  * Use this class if RNAbility is too limiting for your use case, and adapting code to breaking changes is not a big deal in your project.
@@ -83,13 +100,18 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
-    const envInfo = napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true, {
-      handleError: (rnohError) => {
-        dependencies.logger.error(rnohError)
-      }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
-      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
-    });
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale ?? 1, dependencies.logger);
+    const envInfo =
+      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true,
+        {
+          handleError: (rnohError) => {
+            dependencies.logger.error(rnohError)
+          },
+          getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
+          getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
+          getMetadata,
+        });
+
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,

@@ -82,4 +82,13 @@ auto ArkTSBridge::getFontSizeScale() -> float {
   return m_arkJS.getDouble(napiResult);
 }
 
+auto ArkTSBridge::getMetadata(std::string const& name) -> std::string {
+  m_threadGuard.assertThread();
+  auto napiBridgeObject = m_arkJS.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl = m_arkJS.getObjectProperty(napiBridgeObject, "getMetadata");
+  auto metadataName = m_arkJS.createString(name);
+  auto napiResult = m_arkJS.call<1>(methodImpl, {metadataName});
+  return m_arkJS.getString(napiResult);
+}
+
 } // namespace rnoh

@@ -31,6 +31,8 @@ class ArkTSBridge final : public DisplayMetricsManager,
   DisplayMetrics getDisplayMetrics() override;
   float getFontSizeScale() override;
 
+  std::string getMetadata(std::string const& name);
+
  protected:
   ArkJS m_arkJS;
   NapiRef m_arkTSBridgeRef;

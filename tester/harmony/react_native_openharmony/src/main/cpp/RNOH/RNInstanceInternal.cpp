@@ -89,11 +89,12 @@ void RNInstanceInternal::start() {
   RNOH_ASSERT(textMeasurer != nullptr);
 
   auto displayMetrics = m_arkTSBridge->getDisplayMetrics().screenPhysicalPixels;
-
   float fontScale = displayMetrics.fontScale;
   float scale = displayMetrics.scale;
 
-  textMeasurer->setTextMeasureParams(fontScale, scale, false);
+  auto halfLeading = m_arkTSBridge->getMetadata("halfLeading") == "true";
+
+  textMeasurer->setTextMeasureParams(fontScale, scale, halfLeading);
 }
 
 void RNInstanceInternal::initialize() {

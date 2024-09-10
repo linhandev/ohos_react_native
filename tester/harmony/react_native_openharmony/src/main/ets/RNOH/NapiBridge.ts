@@ -12,7 +12,7 @@ import ohosResourceManager from '@ohos.resourceManager';
 import { WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
 
 
-export type CppFeatureFlag =  "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
+export type CppFeatureFlag = "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
 
 type RawRNOHError = {
   message: string,
@@ -32,6 +32,7 @@ export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
   handleError: (rnohError: RNOHError) => void
   getFontSizeScale: () => number
+  getMetadata: (name: string) => string;
 }
 
 export class NapiBridge {
@@ -85,12 +86,15 @@ export class NapiBridge {
         }))
       },
       getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics(),
-      getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale()
+      getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale(),
+      getMetadata: (name: string) => arkTSBridgeHandler.getMetadata(name),
     } satisfies ArkTSBridgeHandler))
   }
 
-  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>, rnInstanceId: number) {
-    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId))
+  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>,
+    rnInstanceId: number) {
+    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider,
+      rnInstanceId))
   }
 
   getNextRNInstanceId(): number {
@@ -104,8 +108,8 @@ export class NapiBridge {
     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
     mutationsListener: (mutations: Mutation[]) => void,
     componentCommandsListener: (tag: Tag,
-                                commandName: string,
-                                args: unknown) => void,
+      commandName: string,
+      args: unknown) => void,
     onCppMessage: (type: string, payload: any) => void,
     shouldEnableDebugger: boolean,
     shouldEnableBackgroundExecutor: boolean,
@@ -231,7 +235,8 @@ export class NapiBridge {
     instanceId: number,
     surfaceTag: number,
   ) {
-    let resolveWait = () => {}
+    let resolveWait = () => {
+    }
     const wait = new Promise((resolve) => {
       resolveWait = () => resolve(undefined)
     })
