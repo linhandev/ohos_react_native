@@ -10,11 +10,11 @@ import {
 import {useEffect, useState} from 'react';
 import React from 'react';
 import {Button, Effect, Ref, TestCase} from '../components';
-import {IncomingData as GeneratedSampleNativeComponentArkTSCustomProps} from 'react-native-harmony-sample-package/src/specs/v1/GeneratedSampleNativeComponent';
+import {IncomingData as GeneratedSampleNativeComponentArkTSCustomProps} from 'react-native-openharmony-sample-package/src/specs/v1/GeneratedSampleNativeComponent';
 import {
   IncomingData as GeneratedSampleNativeComponentCAPICustomProps,
   SupportedCommandArgs as GeneratedSampleNativeComponentCAPICommandArgs,
-} from 'react-native-harmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
+} from 'react-native-openharmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
 import {View} from 'react-native';
 
 export function CustomNativeComponentTest() {
