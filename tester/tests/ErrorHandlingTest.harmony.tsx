@@ -1,6 +1,6 @@
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../components';
-import {SampleTurboModule} from 'react-native-harmony-sample-package';
+import {SampleTurboModule} from 'react-native-openharmony-sample-package';
 
 export function ErrorHandlingTest() {
   return (
