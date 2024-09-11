@@ -3,7 +3,7 @@
 #include "NativeCxxModuleExampleCxxSpec.h"
 #include "PropsDisplayerComponentDescriptor.h"
 #include "RNOH/RNInstanceCAPI.h"
-#include "RNOH/generated/BaseReactNativeHarmonySamplePackagePackage.h"
+#include "RNOH/generated/BaseReactNativeOpenharmonySamplePackagePackage.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentNapiBinder.h"
 #include "SampleTurboModuleSpec.h"
@@ -33,9 +33,9 @@ class SampleViewJSIBinder : public ViewComponentJSIBinder {
 };
 
 class SampleTurboModuleFactoryDelegate
-    : public BaseReactNativeHarmonySamplePackagePackageTurboModuleFactoryDelegate {
+    : public BaseReactNativeOpenharmonySamplePackagePackageTurboModuleFactoryDelegate {
   using Super =
-      BaseReactNativeHarmonySamplePackagePackageTurboModuleFactoryDelegate;
+      BaseReactNativeOpenharmonySamplePackagePackageTurboModuleFactoryDelegate;
 
  public:
   SharedTurboModule createTurboModule(Context ctx, const std::string& name)
