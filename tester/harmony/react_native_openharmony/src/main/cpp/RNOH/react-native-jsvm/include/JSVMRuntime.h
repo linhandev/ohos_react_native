@@ -161,7 +161,7 @@ class JSVMRuntime : public Runtime {
 
 class JSVMPointerValue : public JSVMRuntime::PointerValue {
  public:
-  JSVMPointerValue(JSVM_Env env, const JSVM_Value value, bool isWeak = false) : env(env), isWeak(isWeak) {
+  JSVMPointerValue(JSVM_Env env, const JSVM_Value value, bool isWeak = false) : env(env), isWeak(isWeak), reference(nullptr) {
     uint32_t initialRef = 1;
     if (isWeak) {
       initialRef = 0;
@@ -173,8 +173,11 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
       : reference(pointer->reference), env(pointer->env), isWeak(false) {
     if (unlikely(pointer->isWeak)) {
       JSVMUtil::HandleScopeWrapper scope(env);
-      JSVM_Value value;
-      OH_JSVM_GetReferenceValue(env, reference, &value);
+      JSVM_Value value = nullptr;
+      auto status = OH_JSVM_GetReferenceValue(env, reference, &value);
+      if(status != JSVM_OK){
+         LOG(ERROR)<<"JSVM GetReferenceValue Failed";
+      }
       OH_JSVM_CreateReference(env, value, 1, &reference);
     } else {
       OH_JSVM_ReferenceRef(env, reference, nullptr);
@@ -194,8 +197,11 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
   }
 
   JSVM_Value GetValue() const {
-    JSVM_Value value;
-    OH_JSVM_GetReferenceValue(env, reference, &value);
+    JSVM_Value value = nullptr;
+    auto status = OH_JSVM_GetReferenceValue(env, reference, &value);
+    if(status != JSVM_OK){
+        LOG(ERROR)<<"JSVM GetReferenceValue Failed";
+    }
     return value;
   }
 
