@@ -1,7 +1,124 @@
 import {TestSuite} from '@rnoh/testerino';
-import {Text, View} from 'react-native';
+import {AccessibilityRole, Role, Text, View} from 'react-native';
 import {TestCase} from '../../components';
 import React from 'react';
+
+const ANNOUNCEMENT_BY_PLATFORM_BY_ACCESSIBILITY_ROLE = new Map<
+  AccessibilityRole,
+  Record<'harmony' | 'android', string | undefined>
+>()
+  .set('none', {android: undefined, harmony: undefined})
+  .set('button', {android: 'button', harmony: 'button'})
+  .set('togglebutton', {
+    android: 'switch',
+    harmony: 'not ticked, that is(?) button',
+  })
+  .set('link', {android: 'link', harmony: undefined})
+  .set('search', {android: 'edit box', harmony: 'edit box'})
+  .set('image', {android: 'image', harmony: 'image'})
+  .set('keyboardkey', {android: 'keyboardkey', harmony: undefined})
+  .set('text', {android: 'text', harmony: undefined})
+  .set('adjustable', {
+    android: 'slider',
+    harmony: 'null %, double tap and hold with one finger...',
+  })
+  .set('imagebutton', {android: 'button, image', harmony: 'button'})
+  .set('header', {android: 'header, heading', harmony: undefined})
+  .set('summary', {android: 'summary', harmony: undefined})
+  .set('alert', {android: 'alert', harmony: undefined})
+  .set('checkbox', {android: 'checkbox', harmony: 'not ticked, checkbox'})
+  .set('combobox', {android: 'combobox', harmony: undefined})
+  .set('menu', {android: 'menu', harmony: undefined})
+  .set('menubar', {android: 'menubar', harmony: undefined})
+  .set('menuitem', {android: 'menuitem', harmony: undefined})
+  .set('progressbar', {android: 'progressbar', harmony: 'null %, progressbar'})
+  .set('radio', {android: 'radio button', harmony: 'option button'})
+  .set('radiogroup', {android: 'radio group', harmony: undefined})
+  .set('scrollbar', {android: 'scrollbar', harmony: 'scrollbar'})
+  .set('spinbutton', {android: 'spin button', harmony: undefined})
+  .set('switch', {android: 'switch', harmony: 'not ticked, that is (?) button'})
+  .set('tab', {android: 'tab', harmony: undefined})
+  .set('tablist', {android: 'tablist', harmony: undefined})
+  .set('timer', {android: 'timer', harmony: undefined})
+  .set('list', {android: 'list', harmony: 'list'})
+  .set('toolbar', {android: 'toolbar', harmony: undefined});
+
+const ANNOUNCEMENT_BY_PLATFORM_BY_ROLE = new Map<
+  Role,
+  Record<'harmony' | 'android', string | undefined>
+>()
+  .set('alert', {android: 'alert', harmony: undefined})
+  .set('alertdialog', {android: undefined, harmony: undefined})
+  .set('application', {android: undefined, harmony: undefined})
+  .set('article', {android: undefined, harmony: undefined})
+  .set('banner', {android: undefined, harmony: undefined})
+  .set('button', {android: 'button', harmony: 'button'})
+  .set('cell', {android: undefined, harmony: undefined})
+  .set('checkbox', {android: 'checkbox', harmony: 'not ticked, checkbox'})
+  .set('columnheader', {android: undefined, harmony: undefined})
+  .set('combobox', {android: 'combobox', harmony: undefined})
+  .set('complementary', {android: undefined, harmony: undefined})
+  .set('contentinfo', {android: undefined, harmony: undefined})
+  .set('definition', {android: undefined, harmony: undefined})
+  .set('dialog', {android: undefined, harmony: undefined})
+  .set('directory', {android: undefined, harmony: undefined})
+  .set('document', {android: undefined, harmony: undefined})
+  .set('feed', {android: undefined, harmony: undefined})
+  .set('figure', {android: undefined, harmony: undefined})
+  .set('form', {android: undefined, harmony: undefined})
+  .set('grid', {android: 'grid', harmony: undefined})
+  .set('group', {android: undefined, harmony: undefined})
+  .set('heading', {android: '<content> heading', harmony: undefined})
+  .set('img', {android: 'unlabeled image', harmony: 'image'})
+  .set('link', {android: 'link', harmony: undefined})
+  .set('list', {android: 'list', harmony: 'list'})
+  .set('listitem', {android: undefined, harmony: undefined})
+  .set('log', {android: undefined, harmony: undefined})
+  .set('main', {android: undefined, harmony: undefined})
+  .set('marquee', {android: undefined, harmony: undefined})
+  .set('math', {android: undefined, harmony: undefined})
+  .set('menu', {android: 'menu', harmony: undefined})
+  .set('menubar', {android: 'menubar', harmony: undefined})
+  .set('menuitem', {android: 'menuitem', harmony: undefined})
+  .set('meter', {android: undefined, harmony: undefined})
+  .set('navigation', {android: undefined, harmony: undefined})
+  .set('none', {android: undefined, harmony: undefined})
+  .set('note', {android: undefined, harmony: undefined})
+  .set('option', {android: undefined, harmony: undefined})
+  .set('presentation', {android: undefined, harmony: undefined})
+  .set('progressbar', {android: 'progressbar', harmony: 'null %, progressbar'})
+  .set('radio', {android: 'radiobutton', harmony: 'option button'})
+  .set('radiogroup', {android: 'radiogroup', harmony: undefined})
+  .set('region', {android: undefined, harmony: undefined})
+  .set('row', {android: undefined, harmony: undefined})
+  .set('rowgroup', {android: undefined, harmony: undefined})
+  .set('rowheader', {android: undefined, harmony: undefined})
+  .set('scrollbar', {android: 'scrollbar', harmony: 'scrollbar'})
+  .set('searchbox', {android: 'edit box', harmony: 'edit box'})
+  .set('separator', {android: undefined, harmony: undefined})
+  .set('slider', {
+    android: 'slider',
+    harmony:
+      'null %, double tap and hold with one finger and swipe left or right to adjust the value',
+  })
+  .set('spinbutton', {android: 'spinbutton', harmony: undefined})
+  .set('status', {android: undefined, harmony: undefined})
+  .set('summary', {android: 'summary', harmony: undefined})
+  .set('switch', {
+    android: '<state> switch',
+    harmony: 'not ticked, that is button',
+  })
+  .set('tab', {android: 'tab', harmony: undefined})
+  .set('table', {android: undefined, harmony: undefined})
+  .set('tablist', {android: 'tablist', harmony: undefined})
+  .set('tabpanel', {android: undefined, harmony: undefined})
+  .set('term', {android: undefined, harmony: undefined})
+  .set('timer', {android: 'timer', harmony: undefined})
+  .set('toolbar', {android: 'toolbar', harmony: undefined})
+  .set('tooltip', {android: undefined, harmony: undefined})
+  .set('tree', {android: undefined, harmony: undefined})
+  .set('treegrid', {android: undefined, harmony: undefined})
+  .set('treeitem', {android: undefined, harmony: undefined});
 
 export function ViewAccessibilityTest() {
   return (
@@ -96,6 +213,78 @@ export function ViewAccessibilityTest() {
             <Text importantForAccessibility="no">1. Enable ScreenReader</Text>
             <Text importantForAccessibility="no">2. Focus on this View</Text>
           </View>
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="accessibilityRole">
+        <TestCase.Example itShould="announce text specified in the appropriate column">
+          <View style={{padding: 16, flexDirection: 'row', width: '100%'}}>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Role</Text>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Android</Text>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Harmony</Text>
+          </View>
+          {Array.from(
+            ANNOUNCEMENT_BY_PLATFORM_BY_ACCESSIBILITY_ROLE.entries(),
+          ).map(([role, {android, harmony}]) => {
+            return (
+              <View
+                key={role}
+                accessible
+                accessibilityRole={role}
+                style={{
+                  padding: 16,
+                  flexDirection: 'row',
+                  width: '100%',
+                  borderBottomWidth: 1,
+                  borderColor: 'silver',
+                }}>
+                <Text style={{width: '33%'}} importantForAccessibility="no">
+                  {role}
+                </Text>
+                <Text style={{width: '33%'}} importantForAccessibility="no">
+                  {android}
+                </Text>
+                <Text style={{width: '33%'}} importantForAccessibility="no">
+                  {harmony}
+                </Text>
+              </View>
+            );
+          })}
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="role">
+        <TestCase.Example itShould="announce text specified in the appropriate column">
+          <View style={{padding: 16, flexDirection: 'row', width: '100%'}}>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Role</Text>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Android</Text>
+            <Text style={{width: '33%', fontWeight: 'bold'}}>Harmony</Text>
+          </View>
+          {Array.from(ANNOUNCEMENT_BY_PLATFORM_BY_ROLE.entries()).map(
+            ([role, {android, harmony}]) => {
+              return (
+                <View
+                  key={role}
+                  accessible
+                  role={role}
+                  style={{
+                    padding: 16,
+                    flexDirection: 'row',
+                    width: '100%',
+                    borderBottomWidth: 1,
+                    borderColor: 'silver',
+                  }}>
+                  <Text style={{width: '33%'}} importantForAccessibility="no">
+                    {role}
+                  </Text>
+                  <Text style={{width: '33%'}} importantForAccessibility="no">
+                    {android}
+                  </Text>
+                  <Text style={{width: '33%'}} importantForAccessibility="no">
+                    {harmony}
+                  </Text>
+                </View>
+              );
+            },
+          )}
         </TestCase.Example>
       </TestSuite>
     </TestSuite>
