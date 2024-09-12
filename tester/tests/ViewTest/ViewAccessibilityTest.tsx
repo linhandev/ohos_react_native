@@ -1,5 +1,5 @@
 import {TestSuite} from '@rnoh/testerino';
-import {AccessibilityRole, Role, Text, View} from 'react-native';
+import {AccessibilityRole, Platform, Role, Text, View} from 'react-native';
 import {TestCase} from '../../components';
 import React from 'react';
 
@@ -122,7 +122,7 @@ const ANNOUNCEMENT_BY_PLATFORM_BY_ROLE = new Map<
 
 export function ViewAccessibilityTest() {
   return (
-    <TestSuite name="Accessibility & Aria props">
+    <TestSuite name="Accessibility props">
       <TestSuite name="accessibilityLabel">
         <TestCase.Example itShould="make the screen reader announce 'I am reading accessibilityLabel content' after focusing the view below in accessibility mode">
           <View
@@ -142,6 +142,102 @@ export function ViewAccessibilityTest() {
             style={{width: '100%', padding: 16, backgroundColor: 'lightblue'}}>
             <Text importantForAccessibility="no">1. Enable ScreenReader</Text>
             <Text importantForAccessibility="no">2. Focus on this View</Text>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="accessibilityState">
+        <TestSuite name="checked">
+          <TestCase.Example
+            itShould={
+              Platform.OS === 'harmony'
+                ? 'announce "ticked option tick box"'
+                : "announce 'checked option'"
+            }>
+            <View
+              style={{padding: 8}}
+              accessible={true}
+              accessibilityLabel="option"
+              accessibilityRole={Platform.select({harmony: 'checkbox'})}
+              accessibilityState={{checked: true}}>
+              <Text>1. Enable screen reader</Text>
+              <Text>2. Focus on this view</Text>
+            </View>
+          </TestCase.Example>
+        </TestSuite>
+        <TestSuite name="disabled">
+          <TestCase.Example
+            itShould={
+              Platform.OS === 'harmony'
+                ? "announce 'option button disabled'"
+                : "announce 'option disabled'"
+            }>
+            <View
+              style={{padding: 8}}
+              accessible={true}
+              accessibilityLabel="option"
+              accessibilityRole={Platform.select({
+                harmony: 'button',
+              })}
+              accessibilityState={{disabled: true}}>
+              <Text>1. Enable screen reader</Text>
+              <Text>2. Focus on this view</Text>
+            </View>
+          </TestCase.Example>
+        </TestSuite>
+        <TestSuite name="selected">
+          <TestCase.Example
+            itShould={
+              Platform.OS === 'harmony'
+                ? "announce 'selected option button'"
+                : "announce 'selected option'"
+            }>
+            <View
+              style={{padding: 8}}
+              accessible={true}
+              accessibilityLabel="option"
+              accessibilityRole="button"
+              accessibilityState={{selected: true}}>
+              <Text>1. Enable screen reader</Text>
+              <Text>2. Focus on this view</Text>
+            </View>
+          </TestCase.Example>
+        </TestSuite>
+      </TestSuite>
+      <TestSuite name="aria-disabled">
+        <TestCase.Example
+          itShould={
+            Platform.OS === 'harmony'
+              ? "announce 'option button disabled'"
+              : "announce 'option disabled'"
+          }>
+          <View
+            style={{padding: 8}}
+            accessible={true}
+            aria-disabled={true}
+            role={Platform.select({
+              harmony: 'button',
+            })}
+            accessibilityLabel="option">
+            <Text>1. Enable screen reader</Text>
+            <Text>2. Focus on this view</Text>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="aria-selected">
+        <TestCase.Example
+          itShould={
+            Platform.OS === 'harmony'
+              ? "announce 'selected option button'"
+              : "announce 'selected option'"
+          }>
+          <View
+            style={{padding: 8}}
+            accessible={true}
+            accessibilityLabel="option"
+            accessibilityRole="button"
+            aria-selected={true}>
+            <Text>1. Enable screen reader</Text>
+            <Text>2. Focus on this view</Text>
           </View>
         </TestCase.Example>
       </TestSuite>

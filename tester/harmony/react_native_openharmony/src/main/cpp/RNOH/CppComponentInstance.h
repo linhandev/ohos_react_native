@@ -248,6 +248,15 @@ class CppComponentInstance : public ComponentInstance {
       // Do nothing here.
     }
     
+    if (props->accessibilityState.disabled !=
+            old->accessibilityState.disabled ||
+        props->accessibilityState.checked != old->accessibilityState.checked ||
+        props->accessibilityState.selected !=
+            old->accessibilityState.selected) {
+      this->getLocalRootArkUINode().setAccessibilityState(
+          props->accessibilityState);
+    }
+
     facebook::react::BorderMetrics borderMetrics =
       props->resolveBorderMetrics(this->m_layoutMetrics);
     
