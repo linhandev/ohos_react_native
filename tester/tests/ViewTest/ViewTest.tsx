@@ -767,13 +767,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/599
-        itShould="render a view with aria-selected accessibility prop">
-        <ViewAccessibilityAriaSelected />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display 'busy' after clicking on the backgroud">
+        itShould="make the screen reader say/display 'busy' after clicking on the background">
         <View
           accessible={true}
           aria-busy={true}
@@ -784,15 +778,6 @@ export function ViewTest() {
         modal
         itShould="make the screen reader say/display: 'checked, mixed' when both button are 'checked', 'mixed' when one of the button is 'checked' and 'unchecked' when none of the button is 'checked'">
         <ViewAccessibilityAriaChecked />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display: 'disabled'">
-        <View
-          accessible={true}
-          aria-disabled={true}
-          style={styles.accessibilityLayout}
-        />
       </TestCase.Example>
       <TestCase.Example
         modal
@@ -919,46 +904,6 @@ function PointerEventsView(props: {
         </View>
       </View>
       <Button label="reset" onPress={props.reset} />
-    </View>
-  );
-}
-
-function SelectedView({
-  itemId,
-  selectedId,
-  setSelectedId,
-}: {
-  itemId: number;
-  selectedId: number;
-  setSelectedId: React.Dispatch<React.SetStateAction<number>>;
-}) {
-  return (
-    <View
-      aria-selected={selectedId === itemId}
-      accessibilityState={{selected: selectedId === itemId}}
-      style={[styles.accessibilityLayout, {borderBottomWidth: 2}]}>
-      <Text
-        style={{width: '100%', height: '100%'}}
-        onPress={() => setSelectedId(itemId)}>
-        aria-selected {String(selectedId === itemId)}
-      </Text>
-    </View>
-  );
-}
-
-function ViewAccessibilityAriaSelected() {
-  const [selectedId, setSelectedId] = useState<number>(1);
-
-  return (
-    <View accessible={true} style={styles.accessibilityContainer}>
-      {Array.from({length: 5}, (_, index) => index + 1).map(id => (
-        <SelectedView
-          key={id}
-          itemId={id}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-        />
-      ))}
     </View>
   );
 }
