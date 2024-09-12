@@ -18,10 +18,8 @@ TextMeasurement TextLayoutManager::measure(
     AttributedStringBox attributedStringBox,
     ParagraphAttributes paragraphAttributes,
     LayoutConstraints layoutConstraints) const {
-  auto& attributedString = attributedStringBox.getValue();
-
-  return m_textLayoutManagerDelegate->measure(
-      attributedString, paragraphAttributes, layoutConstraints);
+  return measure(
+      attributedStringBox, paragraphAttributes, layoutConstraints, nullptr);
 }
 
 TextMeasurement TextLayoutManager::measure(
@@ -29,8 +27,12 @@ TextMeasurement TextLayoutManager::measure(
     ParagraphAttributes paragraphAttributes,
     LayoutConstraints layoutConstraints,
     std::shared_ptr<void> hostTextStorage) const {
-  return this->measure(
-      attributedStringBox, paragraphAttributes, layoutConstraints);
+  auto& attributedString = attributedStringBox.getValue();
+  return m_textLayoutManagerDelegate->measure(
+      attributedString,
+      paragraphAttributes,
+      layoutConstraints,
+      std::move(hostTextStorage));
 }
 
 LinesMeasurements TextLayoutManager::measureLines(
@@ -44,7 +46,8 @@ std::shared_ptr<void> TextLayoutManager::getHostTextStorage(
     AttributedString attributedString,
     ParagraphAttributes paragraphAttributes,
     LayoutConstraints layoutConstraints) const {
-  return nullptr;
+  return m_textLayoutManagerDelegate->getHostTextStorage(
+      attributedString, paragraphAttributes, layoutConstraints);
 }
 
 } // namespace react

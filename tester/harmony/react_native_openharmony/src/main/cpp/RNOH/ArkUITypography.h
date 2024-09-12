@@ -7,8 +7,7 @@
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
 #include <memory>
-#include "FontRegistry.h"
-#include "react/renderer/attributedstring/primitives.h"
+#include "RNOH/StyledStringWrapper.h"
 
 namespace rnoh {
 
@@ -18,11 +17,6 @@ namespace rnoh {
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
-
-using SharedStyledString = std::shared_ptr<ArkUI_StyledString>;
-
-using UniqueTextStyle = std::
-    unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>;
 
 /**
  * @internal
@@ -104,284 +98,41 @@ class ArkUITypography final {
     return result;
   }
 
-  SharedStyledString getStyledString() {
-    return m_styledString;
+  facebook::react::TextMeasurement getMeasurement() const {
+    return {
+        {
+            .width = getLongestLineWidth(),
+            .height = getHeight(),
+        },
+        getAttachments()};
   }
 
  private:
   ArkUITypography(
-      SharedStyledString styledString,
+      ArkUI_StyledString* styledString,
       size_t attachmentCount,
       std::vector<size_t> fragmentLengths,
       facebook::react::Float maxWidth,
       float scale)
       : m_typography(
-            OH_ArkUI_StyledString_CreateTypography(styledString.get()),
+            OH_ArkUI_StyledString_CreateTypography(styledString),
             OH_Drawing_DestroyTypography),
-        m_styledString(styledString),
         m_attachmentCount(attachmentCount),
         m_fragmentLengths(std::move(fragmentLengths)),
         m_scale(scale) {
+    if (isnan(maxWidth) || maxWidth <= 0) {
+      maxWidth = std::numeric_limits<decltype(maxWidth)>::max();
+    }
     OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
   }
 
-  SharedStyledString m_styledString;
-
-  std::
-      unique_ptr<OH_Drawing_Typography, decltype(&OH_Drawing_DestroyTypography)>
-          m_typography;
+  std::shared_ptr<OH_Drawing_Typography> m_typography;
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
 
   float m_scale = 1.0;
 
-  friend class ArkUITypographyBuilder;
-};
-
-/**
- * @internal
- */
-class ArkUITypographyBuilder final {
- public:
-  ArkUITypographyBuilder(
-      OH_Drawing_TypographyStyle* typographyStyle,
-      SharedFontCollection fontCollection,
-      float scale,
-      bool halfLeading)
-      : m_styledString(
-            OH_ArkUI_StyledString_Create(typographyStyle, fontCollection.get()),
-            OH_ArkUI_StyledString_Destroy),
-        m_scale(scale),
-        m_fontCollection(std::move(fontCollection)),
-        m_halfLeading(halfLeading) {}
-
-  void setMaximumWidth(facebook::react::Float maximumWidth) {
-    if (!isnan(maximumWidth) && maximumWidth > 0) {
-      m_maximumWidth = maximumWidth;
-    } else {
-      m_maximumWidth = std::numeric_limits<facebook::react::Float>::max();
-    }
-  }
-
-  void addFragment(
-      const facebook::react::AttributedString::Fragment& fragment) {
-    if (!fragment.isAttachment()) {
-      addTextFragment(fragment);
-    } else {
-      addAttachment(fragment);
-    }
-  }
-
-  ArkUITypography build() const {
-    return ArkUITypography(
-        m_styledString,
-        m_attachmentCount,
-        m_fragmentLengths,
-        m_maximumWidth,
-        m_scale);
-  }
-
- private:
-  float m_scale;
-  bool m_halfLeading;
-  std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
-
-  using FontVariant = facebook::react::FontVariant;
-
-  size_t utf8Length(const std::string& str) {
-    size_t length = 0;
-    for (auto c : str) {
-      if ((c & 0x80) == 0 || (c & 0xc0) == 0xc0) {
-        length++;
-      }
-    }
-    return length;
-  }
-
-  void addTextFragment(
-      const facebook::react::AttributedString::Fragment& fragment) {
-    UniqueTextStyle textStyle(
-        OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfLeading);
-
-    auto fontSize = fragment.textAttributes.fontSize;
-    if (fontSize <= 0) {
-      // set fontSize to default for negative values(same as iOS)
-      fontSize = 14;
-    }
-
-    OH_Drawing_SetTextStyleFontSize(textStyle.get(), fontSize * m_scale);
-
-    // fontStyle
-    if (fragment.textAttributes.fontStyle.has_value()) {
-      OH_Drawing_SetTextStyleFontStyle(
-          textStyle.get(), (int)fragment.textAttributes.fontStyle.value());
-    }
-
-    // fontColor
-    if (fragment.textAttributes.foregroundColor) {
-      OH_Drawing_SetTextStyleColor(
-          textStyle.get(),
-          (uint32_t)(*fragment.textAttributes.foregroundColor));
-    }
-
-    // textDecoration
-    int32_t textDecorationType = TEXT_DECORATION_NONE;
-    uint32_t textDecorationColor = 0xFF000000;
-    int32_t textDecorationStyle = TEXT_DECORATION_STYLE_SOLID;
-    if (fragment.textAttributes.textDecorationLineType.has_value()) {
-      textDecorationType =
-          (int32_t)fragment.textAttributes.textDecorationLineType.value();
-      if (fragment.textAttributes.textDecorationColor) {
-        textDecorationColor =
-            (uint32_t)(*fragment.textAttributes.textDecorationColor);
-      } else if (fragment.textAttributes.foregroundColor) {
-        textDecorationColor =
-            (uint32_t)(*fragment.textAttributes.foregroundColor);
-      }
-      if (textDecorationType ==
-              (int32_t)facebook::react::TextDecorationLineType::Strikethrough ||
-          textDecorationType ==
-              (int32_t)facebook::react::TextDecorationLineType::
-                  UnderlineStrikethrough) {
-        textDecorationType = TEXT_DECORATION_LINE_THROUGH;
-      }
-    }
-    if (fragment.textAttributes.textDecorationStyle.has_value()) {
-      textDecorationStyle =
-          (int32_t)fragment.textAttributes.textDecorationStyle.value();
-    }
-    OH_Drawing_SetTextStyleDecoration(textStyle.get(), textDecorationType);
-    OH_Drawing_SetTextStyleDecorationColor(
-        textStyle.get(), textDecorationColor);
-    OH_Drawing_SetTextStyleDecorationStyle(
-        textStyle.get(), textDecorationStyle);
-
-    // backgroundColor
-    std::unique_ptr<OH_Drawing_Brush, decltype(&OH_Drawing_BrushDestroy)> brush(
-        OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (fragment.textAttributes.isHighlighted.has_value() &&
-        fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    } else if (fragment.textAttributes.backgroundColor) {
-      OH_Drawing_BrushSetColor(
-          brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    }
-
-    // shadow
-    std::unique_ptr<
-        OH_Drawing_TextShadow,
-        decltype(&OH_Drawing_DestroyTextShadow)>
-        shadow(OH_Drawing_CreateTextShadow(), OH_Drawing_DestroyTextShadow);
-
-    // new NDK for setting letterSpacing
-    if (!isnan(fragment.textAttributes.letterSpacing)) {
-      OH_Drawing_SetTextStyleLetterSpacing(
-          textStyle.get(), fragment.textAttributes.letterSpacing);
-    }
-    if (!isnan(fragment.textAttributes.lineHeight) &&
-        fragment.textAttributes.lineHeight > 0) {
-      // fontSize * fontHeight = lineHeight, no direct ndk for setting
-      // lineHeight so do it in this weird way
-      double fontHeight = fragment.textAttributes.lineHeight / fontSize;
-      OH_Drawing_SetTextStyleFontHeight(textStyle.get(), fontHeight);
-    }
-    if (fragment.textAttributes.fontWeight.has_value()) {
-      OH_Drawing_SetTextStyleFontWeight(
-          textStyle.get(),
-          mapValueToFontWeight(
-              int(fragment.textAttributes.fontWeight.value())));
-    }
-    if (!fragment.textAttributes.fontFamily.empty()) {
-      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
-    }
-
-    if (fragment.textAttributes.fontVariant.has_value()) {
-      auto fontVariant = int(fragment.textAttributes.fontVariant.value());
-
-      OH_Drawing_TextStyleAddFontFeature(
-          textStyle.get(),
-          "smcp",
-          static_cast<int>((fontVariant & (int)FontVariant::SmallCaps) != 0));
-
-      OH_Drawing_TextStyleAddFontFeature(
-          textStyle.get(),
-          "onum",
-          static_cast<int>(
-              (fontVariant & (int)FontVariant::OldstyleNums) != 0));
-      OH_Drawing_TextStyleAddFontFeature(
-          textStyle.get(),
-          "lnum",
-          static_cast<int>((fontVariant & (int)FontVariant::LiningNums) != 0));
-      OH_Drawing_TextStyleAddFontFeature(
-          textStyle.get(),
-          "tnum",
-          static_cast<int>((fontVariant & (int)FontVariant::TabularNums) != 0));
-      OH_Drawing_TextStyleAddFontFeature(
-          textStyle.get(),
-          "pnum",
-          static_cast<int>(
-              (fontVariant & (int)FontVariant::ProportionalNums) != 0));
-    }
-
-    // push text and corresponding textStyle to handler
-    OH_ArkUI_StyledString_PushTextStyle(m_styledString.get(), textStyle.get());
-    OH_ArkUI_StyledString_AddText(
-        m_styledString.get(), fragment.string.c_str());
-    m_fragmentLengths.emplace_back(utf8Length(fragment.string));
-  }
-
-  void addAttachment(
-      const facebook::react::AttributedString::Fragment& fragment) {
-    // using placeholder span for inline views
-    OH_Drawing_PlaceholderSpan inlineView = {
-        fragment.parentShadowView.layoutMetrics.frame.size.width * m_scale,
-        fragment.parentShadowView.layoutMetrics.frame.size.height * m_scale,
-        // align to the line's baseline
-        ALIGNMENT_ABOVE_BASELINE,
-        TEXT_BASELINE_ALPHABETIC,
-        0,
-    };
-    // push placeholder to handler
-    OH_ArkUI_StyledString_AddPlaceholder(m_styledString.get(), &inlineView);
-    m_placeholderSpan.emplace_back(inlineView);
-    m_attachmentCount++;
-  }
-
-  OH_Drawing_FontWeight mapValueToFontWeight(int value) {
-    switch (value) {
-      case 100:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_100;
-      case 200:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_200;
-      case 300:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_300;
-      case 400:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_400;
-      case 500:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_500;
-      case 600:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_600;
-      case 700:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_700;
-      case 800:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_800;
-      case 900:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_900;
-      default:
-        return OH_Drawing_FontWeight::FONT_WEIGHT_400;
-    }
-  }
-
-  SharedStyledString m_styledString;
-  size_t m_attachmentCount = 0;
-  std::vector<size_t> m_fragmentLengths{};
-  facebook::react::Float m_maximumWidth =
-      std::numeric_limits<facebook::react::Float>::max();
-  SharedFontCollection m_fontCollection;
+  friend class TextMeasurer;
 };
 
 } // namespace rnoh

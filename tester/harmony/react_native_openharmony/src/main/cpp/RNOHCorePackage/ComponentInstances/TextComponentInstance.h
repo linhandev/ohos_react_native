@@ -1,9 +1,9 @@
 #pragma once
 
 #include <react/renderer/components/text/ParagraphShadowNode.h>
+#include <optional>
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/arkui/SpanNode.h"
-#include "RNOH/arkui/StackNode.h"
+#include "RNOH/TextMeasurer.h"
 #include "RNOH/arkui/TextNode.h"
 
 namespace rnoh {
@@ -14,11 +14,9 @@ class TextComponentInstance
       std::unordered_map<facebook::react::Tag, std::shared_ptr<TouchTarget>>;
 
   TextNode m_textNode{};
-  std::vector<std::shared_ptr<ArkUINode>> m_childNodes{};
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
-  std::string m_key;
-  int m_rnInstanceId = 0;
+  std::optional<TextMeasurer::TextStorage> m_textStorage = std::nullopt;
 
  public:
   TextComponentInstance(Context context);
@@ -36,7 +34,6 @@ class TextComponentInstance
 
  private:
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);
-  std::string stringCapitalize(const std::string& strInput);
   void updateFragmentTouchTargets(
       facebook::react::ParagraphState const& newState);
 };

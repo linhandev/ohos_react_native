@@ -588,8 +588,8 @@ static napi_value logMarker(napi_env env, napi_callback_info info) {
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 2);
     auto markerId = arkJS.getString(args[0]);
-    auto rnInstanceId = std::to_string(arkJS.getDouble(args[1])).c_str();
-    HarmonyReactMarker::logMarker(markerId, rnInstanceId);
+    auto rnInstanceId = std::to_string(arkJS.getDouble(args[1]));
+    HarmonyReactMarker::logMarker(markerId, rnInstanceId.c_str());
     return arkJS.getNull();
   });
 }

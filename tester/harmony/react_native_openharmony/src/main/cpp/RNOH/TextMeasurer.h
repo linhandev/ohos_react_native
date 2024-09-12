@@ -5,13 +5,23 @@
 #include "ArkUITypography.h"
 #include "FontRegistry.h"
 #include "RNOH/FeatureFlagRegistry.h"
-#include "RNOH/TaskExecutor/TaskExecutor.h"
-#include "TextMeasureRegistry.h"
-#include "napi/native_api.h"
 
 namespace rnoh {
-class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
+class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
  public:
+  class TextStorage {
+    using AttributedString = facebook::react::AttributedString;
+    using ParagraphAttributes = facebook::react::ParagraphAttributes;
+    using LayoutConstraints = facebook::react::LayoutConstraints;
+
+   public:
+    StyledStringWrapper styledString;
+    ArkUITypography arkUITypography;
+    AttributedString attributedString;
+    ParagraphAttributes paragraphAttributes;
+    LayoutConstraints layoutConstraints;
+  };
+
   TextMeasurer(
       FeatureFlagRegistry::Shared featureFlagManager,
       FontRegistry::Shared fontRegistry,
@@ -27,40 +37,41 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   facebook::react::TextMeasurement measure(
       facebook::react::AttributedString attributedString,
       facebook::react::ParagraphAttributes paragraphAttributes,
-      facebook::react::LayoutConstraints layoutConstraints) override;
+      facebook::react::LayoutConstraints layoutConstraints,
+      std::shared_ptr<void> hostTextStorage) override;
 
-  ArkUITypography measureTypography(
-      facebook::react::AttributedString const& attributedString,
-      facebook::react::ParagraphAttributes const& paragraphAttributes,
-      facebook::react::LayoutConstraints const& layoutConstraints);
+  std::shared_ptr<void> getHostTextStorage(
+      facebook::react::AttributedString attributedString,
+      facebook::react::ParagraphAttributes paragraphAttributes,
+      facebook::react::LayoutConstraints layoutConstraints) const override;
+
+  TextStorage createTextStorage(
+      facebook::react::AttributedString attributedString,
+      facebook::react::ParagraphAttributes paragraphAttributes,
+      facebook::react::LayoutConstraints layoutConstraints) const;
+
+  bool maybeUpdateTextStorage(
+      facebook::react::AttributedString attributedString,
+      facebook::react::ParagraphAttributes paragraphAttributes,
+      facebook::react::LayoutConstraints layoutConstraints,
+      std::shared_ptr<TextStorage> const& hostTextStorage) const;
 
   void
   setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfLeading);
 
  private:
-  ArkUITypography findFitFontSize(
+  TextStorage findFitFontSize(
       int maxFontSize,
-      facebook::react::AttributedString const& attributedStringRef,
+      facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,
-      facebook::react::LayoutConstraints const& layoutConstraints);
+      facebook::react::LayoutConstraints const& layoutConstraints) const;
 
-  std::string stringCapitalize(const std::string& strInput);
-  void textCaseTransform(
-      std::string& textContent,
-      facebook::react::TextTransform type);
+  StyledStringWrapper createStyledString(
+      facebook::react::AttributedString const& attributedString,
+      facebook::react::ParagraphAttributes const& paragraphAttributes) const;
 
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   FontRegistry::Shared m_fontRegistry;
-  int32_t getOHDrawingTextAlign(
-      const facebook::react::TextAlignment& textAlign);
-  int32_t getOHDrawingTextDirection(
-      const facebook::react::WritingDirection& writingDirection);
-
-  std::string keyForAttributedString(
-      facebook::react::AttributedString const& attributedString);
-
-  OH_Drawing_EllipsisModal mapEllipsizeMode(
-      facebook::react::EllipsizeMode ellipsizeMode);
 
   float m_fontScale = 1.0f;
   float m_scale = 1.0f;

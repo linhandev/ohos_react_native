@@ -4,8 +4,6 @@
 #include "ArkTSChannel.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ComponentInstance.h"
-#include "RNOH/ComponentInstanceFactory.h"
-#include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/ComponentInstanceProvider.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/FeatureFlagRegistry.h"

@@ -3,11 +3,11 @@
 #include <react/renderer/components/text/ParagraphProps.h>
 #include <react/renderer/components/text/ParagraphState.h>
 #include <react/renderer/core/ConcreteState.h>
+#include <memory>
 #include <sstream>
 #include "RNOH/TextMeasurer.h"
 #include "TextConversions.h"
 #include "react/renderer/attributedstring/primitives.h"
-#include "react/renderer/components/view/conversions.h"
 
 namespace rnoh {
 const static float DEFAULT_LINE_SPACING = 0.15f;
@@ -130,39 +130,44 @@ void TextComponentInstance::onStateChanged(
     SharedConcreteState const& textState) {
   CppComponentInstance::onStateChanged(textState);
   m_touchTargetChildrenNeedUpdate = true;
-  for (const auto& item : m_childNodes) {
-    m_textNode.removeChild(*item);
-  }
-  m_childNodes.clear();
-  uint32_t childIndex = 0;
-  auto const& fragments = textState->getData().attributedString.getFragments();
-  VLOG(3) << "[text-debug] getFragments size:" << fragments.size();
-  m_textNode.resetTextContentWithStyledString();
+  auto const& stateData = textState->getData();
+  auto const& fragments = stateData.attributedString.getFragments();
   if (fragments.empty()) {
+    m_textNode.resetTextContentWithStyledString();
+    m_textStorage.reset();
     return;
   }
-  if (!fragments.empty()) {
-    std::stringstream ss;
-    ss << m_rnInstanceId << "_" << fragments[0].parentShadowView.tag << "_"
-       << fragments[0].parentShadowView.surfaceId;
-    m_key = ss.str();
+  auto const& paragraphLayoutManager = stateData.paragraphLayoutManager;
+  auto textStorage = std::static_pointer_cast<TextMeasurer::TextStorage>(
+      paragraphLayoutManager.getHostTextStorage());
+  auto textMeasurer = static_cast<const TextMeasurer*>(
+      paragraphLayoutManager.getTextLayoutManager()
+          ->getNativeTextLayoutManager());
+  RNOH_ASSERT(textMeasurer);
 
-    auto styledString =
-        TextMeasureRegistry::getTextMeasureRegistry().getTextStyledString(
-            m_key);
-
-    if (styledString != nullptr) {
-      VLOG(3) << "[text-debug] setTextContentWithStyledString";
-      m_textNode.setTextContentWithStyledString(styledString);
-      std::string textContent;
-      for (auto& fragment : fragments) {
-        textContent += fragment.string;
-      }
-      m_textNode.setTextContent(textContent);
-    }
+  if (!textStorage) {
+    m_textStorage = textMeasurer->createTextStorage(
+        stateData.attributedString,
+        stateData.paragraphAttributes,
+        {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size});
   } else {
-    m_key = "";
+    textMeasurer->maybeUpdateTextStorage(
+        stateData.attributedString,
+        stateData.paragraphAttributes,
+        textStorage->layoutConstraints,
+        textStorage);
+    m_textStorage = *textStorage;
   }
+
+  RNOH_ASSERT(m_textStorage.has_value());
+  m_textNode.setTextContentWithStyledString(
+      m_textStorage.value().styledString.get());
+  std::stringstream ss;
+  for (auto const& fragment : fragments) {
+    ss << fragment.string;
+  }
+  m_textNode.setTextContent(ss.str());
+
   this->setTextAttributes(fragments[0].textAttributes);
 }
 
@@ -175,47 +180,6 @@ void TextComponentInstance::setTextAttributes(
     VLOG(3) << "[text-debug] textAttributes.alignment=" << align;
     m_textNode.setTextAlign(align);
   }
-}
-
-std::string TextComponentInstance::stringCapitalize(
-    const std::string& strInput) {
-  if (strInput.empty()) {
-    return strInput;
-  }
-
-  std::string strRes;
-  std::string split = " ";
-  std::vector<std::string> subStringVector;
-  subStringVector.clear();
-
-  std::string strSrc = strInput + split;
-  auto pos = strSrc.find(split);
-  auto step = split.size();
-
-  while (pos != std::string::npos) {
-    std::string strTemp = strSrc.substr(0, pos);
-    subStringVector.push_back(strTemp);
-
-    strSrc = strSrc.substr(pos + step, strSrc.size());
-    pos = strSrc.find(split);
-  }
-
-  for (auto subString : subStringVector) {
-    if (std::isalpha(subString[0]) != 0) {
-      std::transform(
-          subString.begin(),
-          subString.end(),
-          subString.begin(),
-          [](unsigned char c) { return std::tolower(c); });
-      subString[0] = std::toupper(static_cast<unsigned char>(subString[0]));
-    }
-    if (!strRes.empty()) {
-      strRes += split;
-    }
-    strRes += subString;
-  }
-
-  return strRes;
 }
 
 TextNode& TextComponentInstance::getLocalRootArkUINode() {
@@ -339,20 +303,12 @@ TextComponentInstance::getTouchTargetChildren() {
 void TextComponentInstance::updateFragmentTouchTargets(
     facebook::react::ParagraphState const& newState) {
   auto const& fragments = newState.attributedString.getFragments();
-  auto textLayoutManager =
-      newState.paragraphLayoutManager.getTextLayoutManager();
-  if (textLayoutManager == nullptr || fragments.empty()) {
+  if (!m_textStorage.has_value() || fragments.empty()) {
     m_fragmentTouchTargetByTag.clear();
     return;
   }
 
-  auto nativeTextLayoutManager =
-      textLayoutManager->getNativeTextLayoutManager();
-  auto textMeasurer = static_cast<TextMeasurer*>(nativeTextLayoutManager);
-  auto typography = textMeasurer->measureTypography(
-      newState.attributedString,
-      m_props->paragraphAttributes,
-      {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size});
+  auto const& typography = m_textStorage->arkUITypography;
   auto rects = typography.getRectsForFragments();
 
   FragmentTouchTargetByTag touchTargetByTag;

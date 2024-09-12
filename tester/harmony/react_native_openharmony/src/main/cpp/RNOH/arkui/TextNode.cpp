@@ -298,8 +298,8 @@ TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
 }
 
 TextNode& TextNode::setTextContentWithStyledString(
-    const SharedStyledString& styledString) {
-  ArkUI_AttributeItem item = {.object = styledString.get()};
+    ArkUI_StyledString* styledString) {
+  ArkUI_AttributeItem item = {.object = styledString};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item));
   return *this;
