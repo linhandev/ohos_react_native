@@ -32,7 +32,7 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
   }
   // clear non-thread-safe objects on the main thread
   // by moving them into a task
-  taskExecutor->runTask(
+  taskExecutor->runSyncTask(
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
         componentInstanceRegistry = std::move(m_componentInstanceRegistry),
