@@ -301,15 +301,12 @@ void TextInputComponentInstance::onPropsChanged(
   m_textAreaNode.setId(getIdFromProps(props));
   m_textInputNode.setId(getIdFromProps(props));
 
-  if (!m_props){//When setting autofocus for the first time, it should only be set when its value is true
-    if (props->autoFocus == true){
-      m_textAreaNode.setAutoFocus(props->autoFocus);
-      m_textInputNode.setAutoFocus(props->autoFocus);
+  if (!m_props || props->autoFocus != m_props->autoFocus){
+    if (m_multiline == true){
+        m_textAreaNode.setAutoFocus(props->autoFocus);
+    } else if (m_multiline == false) {
+        m_textInputNode.setAutoFocus(props->autoFocus);
     }
-  }
-  else if (props->autoFocus != m_props->autoFocus) {
-    m_textAreaNode.setAutoFocus(props->autoFocus);
-    m_textInputNode.setAutoFocus(props->autoFocus);
   }
   if (!m_props || *(props->selectionColor) != *(m_props->selectionColor)) {
     if (props->selectionColor) {
@@ -420,7 +417,15 @@ void TextInputComponentInstance::onCommandReceived(
         m_selectionStart, m_selectionEnd);
     }
   } else if (commandName == "blur") {
-    blur();
+    if (m_multiline == true){
+      if(m_textAreaNode.getTextFocusStatus() == true) {
+        blur();
+      } 
+    } else {
+      if (m_textInputNode.getTextFocusStatus() == true) {
+        blur();
+      }
+    }
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
