@@ -97,6 +97,8 @@ class ArkUINode {
       facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setAccessibilityDescription(
       std::string const& accessibilityDescription);
+  virtual ArkUINode& setAccessibilityState(
+      const facebook::react::AccessibilityState& state);
   virtual ArkUINode& setAccessibilityLevel(
       facebook::react::ImportantForAccessibility importance);
   virtual ArkUINode& setAccessibilityText(

@@ -216,6 +216,15 @@ class CppComponentInstance : public ComponentInstance {
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
 
+    if (props->accessibilityState.disabled !=
+            old->accessibilityState.disabled ||
+        props->accessibilityState.checked != old->accessibilityState.checked ||
+        props->accessibilityState.selected !=
+            old->accessibilityState.selected) {
+      this->getLocalRootArkUINode().setAccessibilityState(
+          props->accessibilityState);
+    }
+
     if (props->shadowColor != old->shadowColor ||
         props->shadowOffset != old->shadowOffset ||
         props->shadowOpacity != old->shadowOpacity ||
