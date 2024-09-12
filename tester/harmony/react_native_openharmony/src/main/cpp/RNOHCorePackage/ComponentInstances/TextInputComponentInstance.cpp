@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <sstream>
 #include <utility>
-#include "RNOH/arkui/conversions.h"
 #include "ScrollViewComponentInstance.h"
 #include "conversions.h"
 #include "react/renderer/components/textinput/primitives.h"
@@ -38,7 +37,6 @@ void TextInputComponentInstance::onChange(std::string text) {
 }
 
 void TextInputComponentInstance::onSubmit() {
-  m_nativeEventCount++;
   m_eventEmitter->onSubmitEditing(getTextInputMetrics());
 }
 
@@ -54,9 +52,7 @@ void TextInputComponentInstance::onBlur() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Always);
   }
-  m_nativeEventCount++;
   m_eventEmitter->onBlur(getTextInputMetrics());
-  m_nativeEventCount++;
   m_eventEmitter->onEndEditing(getTextInputMetrics());
 }
 
@@ -79,7 +75,6 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
-  m_nativeEventCount++;
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -105,7 +100,6 @@ void TextInputComponentInstance::onTextSelectionChange(
           m_selectionLocation, location - m_selectionLocation);
       key = boost::locale::conv::utf_to_utf<char>(wideKey);
     }
-    m_nativeEventCount++;
     auto keyPressMetrics = facebook::react::KeyPressMetrics();
     keyPressMetrics.text = key;
     keyPressMetrics.eventCount = m_nativeEventCount;
@@ -115,7 +109,6 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
-  m_nativeEventCount++;
   m_eventEmitter->onSelectionChange(getTextInputMetrics());
 }
 
