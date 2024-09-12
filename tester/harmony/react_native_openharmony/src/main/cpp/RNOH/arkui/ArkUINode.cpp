@@ -327,6 +327,25 @@ ArkUINode& ArkUINode::setAccessibilityDescription(
   return *this;
 }
 
+ArkUINode& ArkUINode::setAccessibilityState(
+    const facebook::react::AccessibilityState& rnState) {
+  std::unique_ptr<
+      ArkUI_AccessibilityState,
+      decltype(&OH_ArkUI_AccessibilityState_Dispose)>
+      state(
+          OH_ArkUI_AccessibilityState_Create(),
+          OH_ArkUI_AccessibilityState_Dispose);
+  OH_ArkUI_AccessibilityState_SetDisabled(state.get(), rnState.disabled);
+  OH_ArkUI_AccessibilityState_SetCheckedState(
+      state.get(),
+      rnState.checked == facebook::react::AccessibilityState::Checked);
+  OH_ArkUI_AccessibilityState_SetSelected(state.get(), rnState.selected);
+  ArkUI_AttributeItem item = {.object = state.get()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_ACCESSIBILITY_STATE, &item));
+  return *this;
+}
+
 ArkUINode& ArkUINode::setAccessibilityLevel(
     facebook::react::ImportantForAccessibility importance) {
   ArkUI_NumberValue levelValue[] = {{.i32 = static_cast<int32_t>(importance)}};
