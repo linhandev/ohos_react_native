@@ -6,6 +6,42 @@
 
 namespace rnoh {
 
+const std::unordered_map<std::string, ArkUI_NodeType> NODE_TYPE_BY_ROLE_NAME = {
+    {"button", ARKUI_NODE_BUTTON},
+    {"togglebutton", ARKUI_NODE_TOGGLE},
+    {"search", ARKUI_NODE_TEXT_INPUT},
+    {"image", ARKUI_NODE_IMAGE},
+    {"text", ARKUI_NODE_TEXT},
+    {"adjustable", ARKUI_NODE_SLIDER},
+    {"imagebutton", ARKUI_NODE_BUTTON},
+    {"checkbox", ARKUI_NODE_CHECKBOX},
+    {"menuitem", ARKUI_NODE_LIST_ITEM},
+    {"progressbar", ARKUI_NODE_PROGRESS},
+    {"radio", ARKUI_NODE_RADIO},
+    {"scrollbar", ARKUI_NODE_SCROLL},
+    {"switch", ARKUI_NODE_TOGGLE},
+    {"list", ARKUI_NODE_LIST},
+    {"cell", ARKUI_NODE_GRID_ITEM},
+    {"grid", ARKUI_NODE_GRID},
+    {"img", ARKUI_NODE_IMAGE},
+    {"listitem", ARKUI_NODE_LIST_ITEM},
+    {"marquee", ARKUI_NODE_IMAGE_ANIMATOR},
+    {"meter", ARKUI_NODE_PROGRESS},
+    {"option", ARKUI_NODE_LIST_ITEM},
+    {"row", ARKUI_NODE_ROW},
+    {"searchbox", ARKUI_NODE_TEXT_INPUT},
+    {"slider", ARKUI_NODE_SLIDER},
+    {"table", ARKUI_NODE_GRID},
+};
+
+std::optional<ArkUI_NodeType> roleNameToNodeType(const std::string& roleName) {
+  auto it = NODE_TYPE_BY_ROLE_NAME.find(roleName);
+  if (it != NODE_TYPE_BY_ROLE_NAME.end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
 static void receiveEvent(ArkUI_NodeEvent* event) {
 #ifdef C_API_ARCH
   try {
@@ -268,6 +304,28 @@ ArkUINode& ArkUINode::setHitTestMode(
       .size = sizeof(hitTestModeValue) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_HIT_TEST_BEHAVIOR, &hitTestModeItem));
+  return *this;
+}
+
+ArkUINode& ArkUINode::setAccessibilityRole(std::string const& roleName) {
+  if (roleName == "none") {
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    return *this;
+  }
+  std::optional<ArkUI_NodeType> maybeNodeType = roleNameToNodeType(roleName);
+  if (!maybeNodeType.has_value()) {
+    DLOG(WARNING) << "Unsupported accessibility role: " << roleName;
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    return *this;
+  }
+  auto nodeType = maybeNodeType.value();
+  ArkUI_NumberValue value[] = {{.u32 = nodeType}};
+  ArkUI_AttributeItem attr = {
+      .value = value, .size = sizeof(nodeType) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_ACCESSIBILITY_ROLE, &attr));
   return *this;
 }
 

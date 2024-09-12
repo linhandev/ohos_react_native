@@ -63,6 +63,7 @@ class ArkUINode {
 
   void markDirty();
 
+  virtual ArkUINode& setAccessibilityRole(std::string const& role);
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
   virtual ArkUINode& setLayoutRect(

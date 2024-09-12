@@ -240,6 +240,11 @@ class CppComponentInstance : public ComponentInstance {
           props->pointerEvents != facebook::react::PointerEventsMode::None);
     }
 
+    if (props->accessibilityRole != old->accessibilityHint) {
+      this->getLocalRootArkUINode().setAccessibilityRole(
+          props->accessibilityRole);
+    }
+
     if (props->accessibilityHint != old->accessibilityHint) {
       this->getLocalRootArkUINode().setAccessibilityDescription(
           props->accessibilityHint);
