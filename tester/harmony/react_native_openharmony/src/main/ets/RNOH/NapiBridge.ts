@@ -237,16 +237,18 @@ export class NapiBridge {
   ) {
     let resolveWait = () => {
     }
-    const wait = new Promise((resolve) => {
-      resolveWait = () => resolve(undefined)
+    const wait = new Promise<void>((resolve) => {
+      resolveWait = () => {
+        resolve()
+      }
     })
     const result = this.libRNOHApp?.stopSurface(
       instanceId,
       surfaceTag,
-      () => resolveWait
+      () => resolveWait()
     );
-    await wait;
-    return this.unwrapResult(result)
+    this.unwrapResult(result);
+    return wait;
   }
 
   async destroySurface(
