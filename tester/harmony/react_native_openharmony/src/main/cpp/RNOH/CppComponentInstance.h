@@ -252,6 +252,9 @@ class CppComponentInstance : public ComponentInstance {
         this->getLocalRootArkUINode().setAccessibilityState(
             props->accessibilityState);
       }
+    } else {
+        this->getLocalRootArkUINode().setAccessibilityState(
+            props->accessibilityState);
     }
 
     facebook::react::BorderMetrics borderMetrics =
