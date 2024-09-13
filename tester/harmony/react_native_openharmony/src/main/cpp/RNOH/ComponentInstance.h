@@ -67,6 +67,12 @@ class ComponentInstance
 
   virtual ~ComponentInstance() = default;
 
+  /**
+   * In C++ virtual methods shouldn't be called from constructor. Override this
+   * method to bypass this limitation.
+   */
+  virtual void onCreate() {}
+
   Tag getTag() const {
     return m_tag;
   }
