@@ -160,7 +160,7 @@ export interface RNInstance {
   /**
    * Reads JS Bundle and executes loaded code.
    */
-  runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
+  runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null): Promise<void>;
   /**
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
@@ -586,15 +586,20 @@ export class RNInstanceImpl implements RNInstance {
   public getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined {
     return this.bundleExecutionStatusByBundleURL.get(bundleURL)
   }
-
-  public async runJSBundle(jsBundleProvider: JSBundleProvider) {
+  public async runJSBundle(jsBundleProvider: JSBundleProvider, info?:string | null) {
     let bundleURL: string
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
     const isRunningInitialBundle = this.initialBundleUrl === undefined
     try {
-      this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
-        `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
+      if(info === undefined) {
+        this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
+          `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
+      }else if(info) {
+        this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
+          `${info.slice(0, 255)}`)
+      }
+
       this.bundleExecutionStatusByBundleURL.set(bundleURL, "RUNNING")
       this.logMarker("DOWNLOAD_START");
       const jsBundle = await jsBundleProvider.getBundle((progress) => {
