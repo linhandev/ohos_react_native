@@ -234,9 +234,11 @@ void TextInputNode::setFont(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   if (!allowFontScaling) {
-        float scale = ArkTSBridge::getInstance()
-                            ->getFontSizeScale();
-        fontSize /= scale;
+    maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+        m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+        m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP));
   }
 
   std::array<ArkUI_NumberValue, 3> value = {
