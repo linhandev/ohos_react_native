@@ -241,14 +241,17 @@ class CppComponentInstance : public ComponentInstance {
     } else {
       // Do nothing here.
     }
-    
-    if (props->accessibilityState.disabled !=
-            old->accessibilityState.disabled ||
-        props->accessibilityState.checked != old->accessibilityState.checked ||
-        props->accessibilityState.selected !=
-            old->accessibilityState.selected) {
-      this->getLocalRootArkUINode().setAccessibilityState(
-          props->accessibilityState);
+
+    if (old) {
+      if (props->accessibilityState.disabled !=
+              old->accessibilityState.disabled ||
+          props->accessibilityState.checked !=
+              old->accessibilityState.checked ||
+          props->accessibilityState.selected !=
+              old->accessibilityState.selected) {
+        this->getLocalRootArkUINode().setAccessibilityState(
+            props->accessibilityState);
+      }
     }
 
     facebook::react::BorderMetrics borderMetrics =
