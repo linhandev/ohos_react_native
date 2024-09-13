@@ -46,41 +46,41 @@ void OHReactMarkerListener::logMarker(
       logMarker("CONTENT_APPEARED", tag);
       break;
     case HarmonyReactMarkerId::FABRIC_COMMIT_START:
-      logMarkerStart("FABRIC_COMMIT", std::to_string(timestamp));
+      logMarkerStart("FABRIC_COMMIT", "");
       break;
     case HarmonyReactMarkerId::FABRIC_COMMIT_END:
-      logMarkerFinish("FABRIC_COMMIT", std::to_string(timestamp));
+      logMarkerFinish("FABRIC_COMMIT", "");
       break;
     case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_START:
-      logMarkerStart("FABRIC_FINISH_TRANSACTION", std::to_string(timestamp));
+      logMarkerStart("FABRIC_FINISH_TRANSACTION", "");
       break;
     case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END:
-      logMarkerFinish("FABRIC_FINISH_TRANSACTION", std::to_string(timestamp));
+      logMarkerFinish("FABRIC_FINISH_TRANSACTION", "");
       break;
     case HarmonyReactMarkerId::FABRIC_DIFF_START:
-      logMarkerStart("FABRIC_DIFF", std::to_string(timestamp));
+      logMarkerStart("FABRIC_DIFF", "");
       break;
     case HarmonyReactMarkerId::FABRIC_DIFF_END:
-      logMarkerFinish("FABRIC_DIFF", std::to_string(timestamp));
+      logMarkerFinish("FABRIC_DIFF", "");
       break;
     case HarmonyReactMarkerId::FABRIC_LAYOUT_START:
-      logMarkerStart("FABRIC_LAYOUT", std::to_string(timestamp));
+      logMarkerStart("FABRIC_LAYOUT", "");
       break;
     case HarmonyReactMarkerId::FABRIC_LAYOUT_END:
-      logMarkerFinish("FABRIC_LAYOUT", std::to_string(timestamp));
+      logMarkerFinish("FABRIC_LAYOUT", "");
       break;
     case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START:
-      logMarkerStart("FABRIC_BATCH_EXECUTION", std::to_string(timestamp));
+      logMarkerStart("FABRIC_BATCH_EXECUTION", "");
       break;
     case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END:
-      logMarkerFinish("FABRIC_BATCH_EXECUTION", std::to_string(timestamp));
+      logMarkerFinish("FABRIC_BATCH_EXECUTION", "");
       break;
     case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_START:
-      logMarkerStart("FABRIC_UPDATE_UI_MAIN_THREAD", std::to_string(timestamp));
+      logMarkerStart("FABRIC_UPDATE_UI_MAIN_THREAD", "");
       break;
     case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_END:
       logMarkerFinish(
-          "FABRIC_UPDATE_UI_MAIN_THREAD", std::to_string(timestamp));
+          "FABRIC_UPDATE_UI_MAIN_THREAD", "");
       break;
     case HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START:
       logMarkerStart("REACT_BRIDGE_LOADING", tag);
@@ -151,9 +151,8 @@ void OHReactMarkerListener::logMarker(
 void OHReactMarkerListener::logMarker(
     const std::string& marker,
     const std::string& tag) {
-  auto message = makeMessage(marker, tag);
-  OH_HiTrace_StartTrace(message.c_str());
-  OH_HiTrace_FinishTrace();
+  logMarkerStart(marker, tag);
+  logMarkerFinish(marker, tag);
 }
 
 void OHReactMarkerListener::logMarkerStart(
