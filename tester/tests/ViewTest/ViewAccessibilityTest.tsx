@@ -1,5 +1,12 @@
 import {TestSuite} from '@rnoh/testerino';
-import {AccessibilityRole, Platform, Role, Text, View} from 'react-native';
+import {
+  AccessibilityRole,
+  Platform,
+  Role,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {TestCase} from '../../components';
 import React from 'react';
 
@@ -240,6 +247,108 @@ export function ViewAccessibilityTest() {
             <Text>2. Focus on this view</Text>
           </View>
         </TestCase.Example>
+      </TestSuite>
+      <TestSuite name="accessibilityActions">
+        <TestSuite name="activate">
+          <TestCase.Manual
+            itShould="pass when view below is activated by accessibility stuff"
+            skip={{android: false, harmony: 'Not supported'}}
+            initialState={false}
+            arrange={({setState}) => {
+              return (
+                <View
+                  accessible={true}
+                  accessibilityLabel="activate action tester"
+                  role="button"
+                  style={{width: '100%', padding: 16}}
+                  accessibilityActions={[{name: 'activate'}]}
+                  onAccessibilityAction={e => {
+                    if (e.nativeEvent.actionName === 'activate') {
+                      setState(true);
+                    }
+                  }}>
+                  <Text importantForAccessibility="no">
+                    1. Enable ScreenReader
+                  </Text>
+                  <Text importantForAccessibility="no">
+                    2. Focus on this View
+                  </Text>
+                  <Text importantForAccessibility="no">
+                    3. Activate it by double tapping
+                  </Text>
+                </View>
+              );
+            }}
+            assert={({expect, state}) => {
+              expect(state).to.be.true;
+            }}
+          />
+        </TestSuite>
+        <TestSuite name="longpress">
+          <TestCase.Manual
+            skip={{android: "couldn't make it work", harmony: 'Not supported'}}
+            itShould="pass when the user places accessibility focus on the component, then double-taps and holds one finger on the screen"
+            initialState={false}
+            arrange={({setState}) => {
+              return (
+                <View
+                  accessible={true}
+                  role="button"
+                  style={{width: '100%', padding: 16}}
+                  accessibilityActions={[{name: 'longpress'}]}
+                  onAccessibilityAction={e => {
+                    if (e.nativeEvent.actionName === 'longpress') {
+                      setState(true);
+                    }
+                  }}>
+                  <Text importantForAccessibility="no">
+                    1. Enable ScreenReader
+                  </Text>
+                  <Text importantForAccessibility="no">
+                    2. Focus on this View
+                  </Text>
+                  <Text importantForAccessibility="no">
+                    3. Activate it by double tapping
+                  </Text>
+                </View>
+              );
+            }}
+            assert={({expect, state}) => {
+              expect(state).to.be.true;
+            }}
+          />
+        </TestSuite>
+        <TestSuite name="copy">
+          <TestCase.Manual
+            skip={{android: true, harmony: false}}
+            itShould="pass after double tapping with three fingers when the TextInput is focused"
+            initialState={false}
+            arrange={({setState}) => {
+              return (
+                <TextInput
+                  value="content to copy"
+                  accessible={true}
+                  style={{
+                    width: '100%',
+                    padding: 16,
+                    borderColor: 'gray',
+                    borderWidth: 2,
+                    fontSize: 12,
+                  }}
+                  accessibilityActions={[{name: 'copy'}]}
+                  onAccessibilityAction={e => {
+                    if (e.nativeEvent.actionName === 'copy') {
+                      setState(true);
+                    }
+                  }}
+                />
+              );
+            }}
+            assert={({expect, state}) => {
+              expect(state).to.be.true;
+            }}
+          />
+        </TestSuite>
       </TestSuite>
       <TestSuite name="aria-valuenow/min/max">
         <TestCase.Manual<number[]>
