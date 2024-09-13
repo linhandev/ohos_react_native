@@ -82,7 +82,7 @@ const AccessibilityInfo = {
    */
   isBoldTextEnabled(): Promise<boolean> {
     // RNOH patch
-    return Promise.resolve(false);
+    return NativeAccessibilityInfoHarmony.isBoldTextEnabled();
     // if (Platform.OS === 'android') {
     //   return Promise.resolve(false);
     // } else {

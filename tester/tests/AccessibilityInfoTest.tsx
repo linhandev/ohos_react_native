@@ -186,6 +186,46 @@ export function AccessibilityInfoTest() {
           />
         </TestCase.Example>
       </TestSuite>
+      <TestSuite name="isBoldTextEnabled">
+        <TestCase.Manual<boolean[]>
+          itShould="pass when history contains both states"
+          initialState={[]}
+          skip={{android: true, harmony: false}}
+          arrange={({setState, state}) => {
+            return (
+              <>
+                <Text style={{fontSize: 12}}>
+                  {
+                    "To change font weight on HarmonyOS, go to 'Settings' > 'Text & display size' and drag the Text weight slider until the OS classifies the text weight as bold"
+                  }
+                </Text>
+                <Text style={{marginTop: 16}}>
+                  Call result history: {JSON.stringify(state)}
+                </Text>
+                <Button
+                  label="check text weight"
+                  onPress={() => {
+                    AccessibilityInfo.isBoldTextEnabled().then(
+                      isBoldTextEnabled => {
+                        setState(prev => [...prev, isBoldTextEnabled]);
+                      },
+                    );
+                  }}
+                />
+              </>
+            );
+          }}
+          assert={async ({expect, state}) => {
+            await new Promise(resolve => {
+              if (state.includes(true) && state.includes(false)) {
+                resolve(undefined);
+              }
+            });
+            expect(state.includes(true)).to.be.true;
+            expect(state.includes(false)).to.be.true;
+          }}
+        />
+      </TestSuite>
     </TestSuite>
   );
 }

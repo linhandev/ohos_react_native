@@ -150,6 +150,18 @@ export class AccessibilityInfoTurboModule extends UITurboModule {
     return Promise.resolve(this.enabledAccessibilityFeatures.has("SCREEN_READER"));
   }
 
+  public isBoldTextEnabled(): Promise<boolean> {
+    /**
+     * Min value that can be set in the settings: 0.9
+     * Max value that can be set in the settings: 1.25
+     */
+    const fontWeightScale = this.ctx.uiAbilityContext.config.fontWeightScale ?? 1;
+    /**
+     * OHOS classifies font weight as bold if the fontWeightScale is larger than 1.
+     */
+    return Promise.resolve(fontWeightScale > 1)
+  }
+
   public async isAccessibilityServiceEnabled(): Promise<boolean> {
     const enabledAccessibilityExtensions = await Accessibility.getAccessibilityExtensionList("all", "enable")
     return enabledAccessibilityExtensions.length > 0
