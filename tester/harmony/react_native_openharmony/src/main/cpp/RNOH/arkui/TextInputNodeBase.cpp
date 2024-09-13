@@ -59,9 +59,11 @@ void TextInputNodeBase::setTextInputLineHeight(
   }
   float lineHeight = static_cast<float>(textAttributes.lineHeight);
   if (!allowFontScaling) {
-      float scale = ArkTSBridge::getInstance()
-                            ->getFontSizeScale();
-      lineHeight /= scale;
+    maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+        m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+        m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP));
   }
    ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
    ArkUI_AttributeItem item = {.value = value, .size = 1};
@@ -91,9 +93,11 @@ void TextInputNodeBase::setCommonFontAttributes(
 
     float fontSize = static_cast<float>(textAttributes.fontSize);
     if (!allowFontScaling) {
-        float scale = ArkTSBridge::getInstance()
-                            ->getFontSizeScale();
-        fontSize /= scale;
+      maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+          m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
+    } else {
+      maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+          m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP));
     }
     std::array<ArkUI_NumberValue, 1> value = {
         {{.f32 = fontSize}}};
