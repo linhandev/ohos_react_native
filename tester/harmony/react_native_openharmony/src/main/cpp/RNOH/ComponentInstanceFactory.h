@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include "RNOH/ComponentInstance.h"
+#include "RNOH/CppComponentInstance.h"
 #include "RNOH/CustomComponentArkUINodeHandleFactory.h"
 #include "RNOH/FallbackComponentInstance.h"
 #include "RNOH/ThreadGuard.h"
@@ -95,6 +96,7 @@ class ComponentInstanceFactory {
     for (auto& delegate : m_delegates) {
       auto componentInstance = delegate->create(ctx);
       if (componentInstance != nullptr) {
+        componentInstance->onCreate();
         return componentInstance;
       }
     }

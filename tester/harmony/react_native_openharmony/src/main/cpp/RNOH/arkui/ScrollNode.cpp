@@ -28,6 +28,7 @@ ScrollNode::~ScrollNode() {
 void ScrollNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
+  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_SCROLL_EVENT_ON_DID_SCROLL) {
     if (m_scrollNodeDelegate != nullptr) {
       m_scrollNodeDelegate->onScroll();

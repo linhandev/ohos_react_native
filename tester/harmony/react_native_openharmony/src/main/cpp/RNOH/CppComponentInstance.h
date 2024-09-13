@@ -25,7 +25,8 @@ inline facebook::react::Rect transformRectAroundPoint(
  * @api
  */
 template <typename ShadowNodeT>
-class CppComponentInstance : public ComponentInstance {
+class CppComponentInstance : public ComponentInstance,
+                             public ArkUINodeDelegate {
   static_assert(
       std::is_base_of_v<facebook::react::ShadowNode, ShadowNodeT>,
       "ShadowNodeT must be a subclass of facebook::react::ShadowNode");
@@ -44,6 +45,10 @@ class CppComponentInstance : public ComponentInstance {
 
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
+
+  void onCreate() override {
+    this->getLocalRootArkUINode().setArkUINodeDelegate(this);
+  }
 
   facebook::react::Tag getTag() const {
     return m_tag;
@@ -234,6 +239,11 @@ class CppComponentInstance : public ComponentInstance {
           props->shadowOffset,
           props->shadowOpacity,
           props->shadowRadius);
+    }
+
+    if (props->accessibilityActions != old->accessibilityActions) {
+      this->getLocalRootArkUINode().setAccessibilityActions(
+          props->accessibilityActions);
     }
 
     if (!isTransformManagedByAnimated && props->transform != old->transform) {
@@ -435,6 +445,14 @@ class CppComponentInstance : public ComponentInstance {
   std::optional<facebook::react::Rect> m_boundingBox;
   bool m_isClipping = false;
   facebook::react::BorderMetrics m_oldBorderMetrics = {};
+
+  void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
+      override {
+    if (m_eventEmitter == nullptr) {
+      return;
+    }
+    m_eventEmitter->onAccessibilityAction(actionName);
+  }
 };
 
 inline facebook::react::Rect transformRectAroundPoint(

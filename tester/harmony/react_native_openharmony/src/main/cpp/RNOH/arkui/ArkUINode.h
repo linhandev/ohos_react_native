@@ -25,7 +25,7 @@ enum class ArkuiHitTestMode : int32_t {
   TRANSPARENT,
   NONE,
 };
-}
+} // namespace
 
 class ArkUINode;
 
@@ -36,6 +36,9 @@ class ArkUINodeDelegate {
  public:
   virtual ~ArkUINodeDelegate() = default;
   virtual void onArkUINodeDestroy(ArkUINode* node){};
+  virtual void onArkUINodeAccessibilityAction(
+      ArkUINode* node,
+      const std::string& actionName){};
 };
 
 /**
@@ -95,6 +98,8 @@ class ArkUINode {
       float const shadowRadius);
   virtual ArkUINode& setHitTestMode(
       facebook::react::PointerEventsMode const& pointerEvents);
+  virtual ArkUINode& setAccessibilityActions(
+      const std::vector<facebook::react::AccessibilityAction>& rnActions);
   virtual ArkUINode& setAccessibilityDescription(
       std::string const& accessibilityDescription);
   virtual ArkUINode& setAccessibilityState(
