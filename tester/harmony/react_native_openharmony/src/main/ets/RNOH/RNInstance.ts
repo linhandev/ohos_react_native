@@ -586,11 +586,11 @@ export class RNInstanceImpl implements RNInstance {
   public getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined {
     return this.bundleExecutionStatusByBundleURL.get(bundleURL)
   }
-
   public async runJSBundle(jsBundleProvider: JSBundleProvider, info?:string | null) {
+    let bundleURL: string
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
-    const bundleURL = jsBundleProvider.getURL()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
+    const isRunningInitialBundle = this.initialBundleUrl === undefined
     try {
       if(info === undefined) {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
@@ -599,15 +599,19 @@ export class RNInstanceImpl implements RNInstance {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `${info.slice(0, 255)}`)
       }
-      
+
       this.bundleExecutionStatusByBundleURL.set(bundleURL, "RUNNING")
+      this.logMarker("DOWNLOAD_START");
       const jsBundle = await jsBundleProvider.getBundle((progress) => {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`)
       })
-      this.initialBundleUrl = this.initialBundleUrl ?? jsBundleProvider.getURL()
+      this.logMarker("DOWNLOAD_END");
+      bundleURL = jsBundleProvider.getURL()
+      this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
+
       await this.napiBridge.loadScript(this.id, jsBundle, bundleURL)
-      this.napiBridge.setBundlePath(this.id, jsBundleProvider.getURL());
+      this.napiBridge.setBundlePath(this.id, bundleURL);
       this.lifecycleState = LifecycleState.READY
       const hotReloadConfig = jsBundleProvider.getHotReloadConfig()
       if (hotReloadConfig) {
@@ -642,6 +646,9 @@ export class RNInstanceImpl implements RNInstance {
       }
     } finally {
       this.devToolsController.eventEmitter.emit("HIDE_DEV_LOADING_VIEW", this.id)
+      if (isRunningInitialBundle) {
+        this.logMarker("CREATE_REACT_CONTEXT_START")
+      }
       stopTracing()
     }
   }
