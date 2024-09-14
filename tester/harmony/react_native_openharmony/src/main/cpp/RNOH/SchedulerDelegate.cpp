@@ -128,7 +128,12 @@ void SchedulerDelegate::schedulerDidDispatchCommand(
 
 void SchedulerDelegate::schedulerDidSendAccessibilityEvent(
     const ShadowView& shadowView,
-    std::string const& eventType) {}
+    std::string const& eventType) {
+    performOnMainThread([shadowView, eventType](
+                          MountingManager::Shared const& mountingManager) {
+      mountingManager->schedulerDidSendAccessibilityEvent(shadowView, eventType);
+    });
+}
 
 void SchedulerDelegate::schedulerDidSetIsJSResponder(
     ShadowView const& shadowView,

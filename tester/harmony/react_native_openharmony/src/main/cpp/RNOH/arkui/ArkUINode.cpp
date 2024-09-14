@@ -65,6 +65,13 @@ ArkUI_NodeHandle ArkUINode::getArkUINodeHandle() {
   return m_nodeHandle;
 }
 
+std::string ArkUINode::getId() const {
+  auto idItem =
+      NativeNodeApi::getInstance()->getAttribute(m_nodeHandle, NODE_ID);
+  RNOH_ASSERT(idItem != nullptr);
+  return idItem->string;
+}
+
 void ArkUINode::markDirty() {
   // TODO: maybe this can be passed as an arg here,
   // and Component Instance can decide which flag to set in each mutation
