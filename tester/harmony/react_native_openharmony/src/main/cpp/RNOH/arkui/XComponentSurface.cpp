@@ -103,6 +103,7 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
 };
 
 XComponentSurface::XComponentSurface(
+    TaskExecutor::Shared taskExecutor,
     std::shared_ptr<Scheduler> scheduler,
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
     ComponentInstanceFactory::Shared const& componentInstanceFactory,
@@ -115,6 +116,7 @@ XComponentSurface::XComponentSurface(
       m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
       m_surfaceHandler(SurfaceHandler(appKey, surfaceId)) {
   m_scheduler->registerSurface(m_surfaceHandler);
+  m_taskExecutor = taskExecutor;
   m_rootView = componentInstanceFactory->create(
       surfaceId, facebook::react::RootShadowNode::Handle(), "RootView");
   if (m_rootView == nullptr) {
@@ -131,6 +133,7 @@ XComponentSurface::XComponentSurface(
 XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
     : m_surfaceId(other.m_surfaceId),
       m_scheduler(std::move(other.m_scheduler)),
+      m_taskExecutor(std::move(other.m_taskExecutor)),
       m_nativeXComponent(other.m_nativeXComponent),
       m_rootView(std::move(other.m_rootView)),
       m_componentInstanceRegistry(std::move(other.m_componentInstanceRegistry)),
@@ -143,6 +146,7 @@ XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
 XComponentSurface& XComponentSurface::operator=(
     XComponentSurface&& other) noexcept {
   m_threadGuard.assertThread();
+  std::swap(m_taskExecutor, other.m_taskExecutor);
   std::swap(m_surfaceId, other.m_surfaceId);
   std::swap(m_scheduler, other.m_scheduler);
   std::swap(m_nativeXComponent, other.m_nativeXComponent);
@@ -154,7 +158,11 @@ XComponentSurface& XComponentSurface::operator=(
 }
 
 XComponentSurface::~XComponentSurface() noexcept {
-  this->stop();
+ if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
+    LOG(WARNING) << "Tried to unregister a running surface with id "
+                 << m_surfaceId;
+    m_surfaceHandler.stop();
+  }
   m_scheduler->unregisterSurface(m_surfaceHandler);
   if (m_componentInstanceRegistry != nullptr && m_rootView != nullptr) {
     // NOTE: we don't detach the view from XComponent here,
@@ -218,13 +226,29 @@ void XComponentSurface::setProps(folly::dynamic const& props) {
   m_surfaceHandler.setProps(props);
 }
 
-void XComponentSurface::stop() {
+void XComponentSurface::stop(std::function<void()> onStop) {
     m_threadGuard.assertThread();
-    if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
-        DLOG(WARNING) << "Tried to unregister a running surface with id "
-                    << m_surfaceId;
-        m_surfaceHandler.stop();
-    }
+            m_taskExecutor->runTask(
+      TaskThread::JS,
+      [weakSelf = weak_from_this(),
+       taskExecutor = m_taskExecutor,
+       onStop = std::move(onStop)]() {
+        auto self = weakSelf.lock();
+        if (self != nullptr &&
+            self->m_surfaceHandler.getStatus() ==
+                SurfaceHandler::Status::Running) {
+            DLOG(WARNING) << "Tried to unregister a running surface with id "
+                    << self->m_surfaceId;
+          self->m_surfaceHandler.stop();
+        }
+        taskExecutor->runTask(
+            TaskThread::MAIN,
+            [onStop = std::move(onStop),
+             // moving self here releases XComponentSurface on the main thread
+             self = std::move(self)
+
+        ] { onStop(); });
+      });
 }
 
 void XComponentSurface::setDisplayMode(
