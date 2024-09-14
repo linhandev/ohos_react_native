@@ -102,19 +102,22 @@ export struct RNSurface {
   }
 
   aboutToDisappear() {
-    const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
-    this.cleanUpCallbacks.forEach(cb => cb())
-    if (this.shouldStopSurface) {
-      if (!this.surfaceHandle.isDestroyed()) {
-        // NOTE: when the app is stopping, it's possible the ability cleaned up the surface
-        // before us. This is fine.
-        this.surfaceHandle.stop();
-        this.surfaceHandle.destroy();
+    (async () => {
+      const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
+      this.cleanUpCallbacks.forEach(cb => cb())
+      if (this.shouldStopSurface) {
+        if (!this.surfaceHandle.isDestroyed()) {
+          // NOTE: when the app is stopping, it's possible the ability cleaned up the surface
+          // before us. This is fine.
+          await this.surfaceHandle.stop();
+          this.surfaceHandle.destroy();
+        }
+      } else if (this.surfaceHandle.getDisplayMode() === DisplayMode.Visible) {
+        this.surfaceHandle.setDisplayMode(DisplayMode.Suspended);
       }
-    } else if (this.surfaceHandle.getDisplayMode() === DisplayMode.Visible) {
-      this.surfaceHandle.setDisplayMode(DisplayMode.Suspended);
-    }
-    stopTracing()
+      stopTracing()
+    })()
+
   }
 
   onUpdateComponent(newDescriptor: Descriptor) {
