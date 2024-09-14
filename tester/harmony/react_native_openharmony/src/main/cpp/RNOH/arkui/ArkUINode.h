@@ -56,6 +56,7 @@ class ArkUINode {
   int32_t getSavedWidth();
   int32_t getSavedHeight();
 
+  virtual ArkUINode& setAccessibilityRole(std::string const& role);
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
   virtual ArkUINode& setLayoutRect(
@@ -87,6 +88,8 @@ class ArkUINode {
       facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setAccessibilityDescription(
       std::string const& accessibilityDescription);
+  virtual ArkUINode& setAccessibilityState(
+      const facebook::react::AccessibilityState& state);
   virtual ArkUINode& setAccessibilityLevel(
       facebook::react::ImportantForAccessibility importance);
   virtual ArkUINode& setAccessibilityText(
