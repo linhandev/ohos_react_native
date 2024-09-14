@@ -32,7 +32,7 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
   }
   // clear non-thread-safe objects on the main thread
   // by moving them into a task
-  taskExecutor->runTask(
+  taskExecutor->runSyncTask(
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
         componentInstanceRegistry = std::move(m_componentInstanceRegistry),
@@ -51,11 +51,6 @@ TaskExecutor::Shared RNInstanceCAPI::getTaskExecutor() {
 
 void RNInstanceCAPI::start() {
   DLOG(INFO) << "RNInstanceCAPI::start";
-  auto sharedInstance = std::static_pointer_cast<RNInstanceCAPI>(shared_from_this());
-  this->unsubscribeUITickListener =
-      this->m_uiTicker->subscribe(m_id, [sharedInstance](long long timestamp){ 
-      sharedInstance->taskExecutor->runTask(
-        TaskThread::MAIN, [sharedInstance, timestamp](){ sharedInstance->onUITick(timestamp); }); });
   this->initialize();
   m_turboModuleProvider = this->createTurboModuleProvider();
   this->initializeScheduler(m_turboModuleProvider);
@@ -344,8 +339,12 @@ void RNInstanceCAPI::onUITick(long long timestamp) {
     this->scheduler->animationTick();
   }
   if( this->m_uiTicker != nullptr){
-    long long vsyncPeriod;
-    this->m_uiTicker->getVsyncPeriod(&vsyncPeriod);
+    long long vsyncPeriod = 0;
+    auto ret = this->m_uiTicker->getVsyncPeriod(&vsyncPeriod);
+    if( ret != 0){
+        LOG(ERROR)<<"failed to get vsyncPeriod";
+        return;  
+    }
     schedulerTransactionByVsync(timestamp, vsyncPeriod);   
   }
 }

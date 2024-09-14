@@ -22,6 +22,7 @@
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/SchedulerDelegate.h"
+#include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/UITicker.h"
