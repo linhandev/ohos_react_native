@@ -273,6 +273,16 @@ export interface RNInstance {
    */
   cancelTouches(): void
 
+   /**
+   * @architecture: C-API
+   * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
+   */
+   getNativeNodeIdByTag(tag: Tag): string | undefined
+
+   /**
+    * @returns UIContext
+   */
+
   getUIContext(): UIContext
 
   /**
@@ -900,6 +910,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public setUIContext(uiCtx: UIContext): void {
     this.uiCtx = uiCtx;
+  }
+
+  public getNativeNodeIdByTag(tag: Tag): string | undefined {
+    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 
   public getUIContext(): UIContext {
