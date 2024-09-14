@@ -141,14 +141,7 @@ Value JSVMRuntime::evaluatePreparedJavaScript(const std::shared_ptr<const Prepar
 
 bool JSVMRuntime::drainMicrotasks(int maxMicrotasksHint)
 {
-    DFX();
-    bool result = false;
-    
-    while(OH_JSVM_PumpMessageLoop(vm, &result) == JSVM_OK && result) {
-      OH_JSVM_PerformMicrotaskCheckpoint(vm);
-    }
-  
-    return !result;
+    return true;
 }
 
 // TODO: optimize
@@ -730,7 +723,7 @@ Array JSVMRuntime::getPropertyNames(const Object& obj)
     DFX();
     JSVMUtil::HandleScopeWrapper scope(env);
 
-    JSVM_Value props;
+    JSVM_Value props = nullptr;
     JSVM_Value object = JSVMConverter::PointerValueToJSVM(env, obj);
     CALL_JSVM(env, OH_JSVM_GetPropertyNames(env, object, &props));
     return JSVMConverter::make<Object>(env, props).getArray(*this); 
