@@ -1,7 +1,7 @@
 import { DescriptorWrapperFactoryByDescriptorType, RNPackage, TurboModulesFactory, } from '../RNOH/RNPackage';
 import type { TurboModule, TurboModuleContext } from '../RNOH/TurboModule';
 import {
-  AccessibilityManagerTurboModule,
+  AccessibilityInfoTurboModule,
   AlertManagerTurboModule,
   AppearanceTurboModule,
   AppStateTurboModule,
@@ -48,7 +48,7 @@ export class RNOHCorePackage extends RNPackage {
 }
 
 const TURBO_MODULE_CLASS_BY_NAME: Record<string, typeof TurboModule> = {
-  [AccessibilityManagerTurboModule.NAME]: AccessibilityManagerTurboModule,
+  [AccessibilityInfoTurboModule.NAME]: AccessibilityInfoTurboModule,
   [AlertManagerTurboModule.NAME]: AlertManagerTurboModule,
   [AppearanceTurboModule.NAME]: AppearanceTurboModule,
   [AppStateTurboModule.NAME]: AppStateTurboModule,
