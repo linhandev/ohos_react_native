@@ -300,4 +300,8 @@ export class NapiBridge {
     const result = this.libRNOHApp?.getNativeNodeIdByTag(instanceId, tag)
     return this.unwrapResult(result)
   }
+
+  registerFont(instanceId: number, fontFamily: string, path: string) {
+    return this.unwrapResult(this.libRNOHApp?.registerFont(instanceId, fontFamily, path));
+  }
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 #include <react/renderer/runtimescheduler/RuntimeScheduler.h>
+#include <string_view>
+#include "FontRegistry.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
@@ -32,7 +34,8 @@ class RNInstanceInternal
           componentInstancePreallocationRequestQueue,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor,
-      ArkTSBridge::Shared arkTSBridge)
+      ArkTSBridge::Shared arkTSBridge,
+      FontRegistry::Shared fontRegistry)
       : m_id(id),
         m_taskExecutor(std::move(taskExecutor)),
         m_contextContainer(std::move(contextContainer)),
@@ -58,7 +61,8 @@ class RNInstanceInternal
               TaskThread::MAIN, [this, recentVSyncTimestamp]() {
                 onUITick(recentVSyncTimestamp);
               });
-        });
+        }),
+    m_fontRegistry = std::move(fontRegistry);
   }
 
   virtual ~RNInstanceInternal() noexcept = default;
@@ -127,6 +131,10 @@ class RNInstanceInternal
       const std::string& name,
       folly::dynamic const& payload);
 
+  void registerFont(
+      std::string const& fontFamily,
+      std::string const& fontFilePathRelativeToRawfileDir);
+
  protected:
   void initialize();
   void initializeScheduler(
@@ -180,5 +188,6 @@ class RNInstanceInternal
       m_componentInstancePreallocationRequestQueue;
   std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
       nullptr;
+  FontRegistry::Shared m_fontRegistry;
 };
 } // namespace rnoh

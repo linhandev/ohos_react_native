@@ -2,6 +2,7 @@
 
 #include <ace/xcomponent/native_interface_xcomponent.h>
 
+#include "FontRegistry.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSMessageHub.h"
@@ -43,7 +44,8 @@ class RNInstanceCAPI : public RNInstanceInternal {
       SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor,
-      ArkTSBridge::Shared arkTSBridge)
+      ArkTSBridge::Shared arkTSBridge,
+      FontRegistry::Shared FontRegistry)
       : RNInstanceInternal(
             id,
             contextContainer,
@@ -61,7 +63,8 @@ class RNInstanceCAPI : public RNInstanceInternal {
             std::move(componentInstancePreallocationRequestQueue),
             shouldEnableDebugger,
             shouldEnableBackgroundExecutor,
-            std::move(arkTSBridge)),
+            std::move(arkTSBridge),
+            std::move(FontRegistry)),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),

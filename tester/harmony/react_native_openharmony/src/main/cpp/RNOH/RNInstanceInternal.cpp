@@ -12,13 +12,10 @@
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/Performance/NativeTracing.h"
-#include "RNOH/RNOHError.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/SynchronousEventBeat.h"
-#include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
-#include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
 #include "TextMeasurer.h"
 #include "hermes/executor/HermesExecutorFactory.h"
 
@@ -316,5 +313,10 @@ void RNInstanceInternal::onAllAnimationsComplete() {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::onAllAnimationsComplete");
   m_shouldRelayUITick.store(false);
+}
+void RNInstanceInternal::registerFont(
+    std::string const& fontFamily,
+    std::string const& fontFilePathRelativeToRawfileDir) {
+  m_fontRegistry->registerFont(fontFamily, fontFilePathRelativeToRawfileDir);
 }
 } // namespace rnoh

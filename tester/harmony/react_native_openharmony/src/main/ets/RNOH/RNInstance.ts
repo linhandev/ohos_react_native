@@ -282,6 +282,11 @@ export interface RNInstance {
    * @returns UIContext
    */
   getUIContext(): UIContext
+
+  /**
+   * Registers a custom font used by the RN application.
+   */
+  registerFont(fontFamily: string, fontResource: Resource)
 }
 
 export type RNInstanceOptions = {
@@ -854,6 +859,13 @@ export class RNInstanceImpl implements RNInstance {
 
   public getUIContext(): UIContext {
     return this.uiCtx;
+  }
+
+  public registerFont(fontFamily: string, fontResource: Resource): void {
+    const fontPath = fontResource.params![0]
+    this.fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params![0]
+    font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+    this.napiBridge.registerFont(this.id, fontFamily, fontPath)
   }
 }
 

@@ -23,7 +23,6 @@
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"
-#include "napi/native_api.h"
 
 template <typename Map, typename K, typename V>
 auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
@@ -704,6 +703,28 @@ static napi_value getNativeNodeIdByTag(napi_env env, napi_callback_info info) {
                                     : arkJS.getUndefined();
   });
 }
+
+static napi_value registerFont(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 3);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
+      return arkJS.getUndefined();
+    }
+    auto const& rnInstance = it->second;
+
+    auto fontName = arkJS.getString(args[1]);
+    auto fontPath = arkJS.getString(args[2]);
+
+    rnInstance->registerFont(fontName, fontPath);
+
+    return arkJS.getUndefined();
+  });
+}
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
@@ -862,6 +883,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"getNativeNodeIdByTag",
        nullptr,
        ::getNativeNodeIdByTag,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"registerFont",
+       nullptr,
+       ::registerFont,
        nullptr,
        nullptr,
        nullptr,

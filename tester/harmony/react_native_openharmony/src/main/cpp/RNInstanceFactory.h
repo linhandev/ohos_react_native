@@ -11,7 +11,6 @@
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHandler.h"
-#include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
@@ -23,7 +22,6 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
-#include "RNOH/SchedulerDelegate.h"
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
@@ -269,7 +267,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::move(resourceManager),
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor,
-        arkTSBridge);
+        arkTSBridge,
+        std::move(fontRegistry));
     componentInstanceDependencies->rnInstance = rnInstance;
     auto imageSourceResolver =
         std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
@@ -303,5 +302,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       nullptr, // ComponentInstancePreallocationRequestQueue
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor,
-      arkTSBridge);
+      arkTSBridge,
+      std::move(fontRegistry));
 }

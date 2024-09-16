@@ -12,12 +12,6 @@ FontRegistry::FontRegistry(
 void FontRegistry::registerFont(
     const std::string& name,
     const std::string& fontFilePathRelativeToRawfileDir) {
-  {
-    auto lock = std::lock_guard(m_fontCollectionMtx);
-    RNOH_ASSERT_MSG(
-        m_fontCollection == nullptr,
-        "Fonts can't be registered after creating m_fontCollection'");
-  }
   m_threadGuard.assertThread();
   auto resourceManager = m_weakResourceManager.lock();
   if (resourceManager == nullptr) {
@@ -43,6 +37,9 @@ void FontRegistry::registerFont(
   }
   auto lock = std::lock_guard(m_fontFileContentByFontNameMtx);
   m_fontFileContentByFontName.emplace(name, buffer);
+  // NOTE: fonts cannot be added to an existing collection, so we need to
+  // recreate it the next time `getFontCollection` is called
+  m_fontCollection.reset();
 }
 
 SharedFontCollection FontRegistry::getFontCollection() {
