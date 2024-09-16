@@ -51,6 +51,13 @@ void TextComponentInstance::onChildRemoved(
   }
 }
 
+const std::string& TextComponentInstance::getAccessibilityLabel() const {
+  auto const& superAccessibilityLabel =
+      CppComponentInstance::getAccessibilityLabel();
+  return superAccessibilityLabel.empty() ? m_textContent
+                                         : superAccessibilityLabel;
+}
+
 void TextComponentInstance::onPropsChanged(
     SharedConcreteProps const& textProps) {
   CppComponentInstance::onPropsChanged(textProps);

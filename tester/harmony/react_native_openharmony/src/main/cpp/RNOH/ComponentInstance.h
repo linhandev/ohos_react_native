@@ -34,6 +34,15 @@ class ComponentInstance
   using ComponentHandle = facebook::react::ComponentHandle;
 
  public:
+  using Shared = std::shared_ptr<ComponentInstance>;
+  using Weak = std::weak_ptr<ComponentInstance>;
+
+  class Registry {
+   public:
+    using Shared = std::shared_ptr<Registry>;
+    virtual ComponentInstance::Shared findById(const std::string& id) const = 0;
+  };
+
   friend MountingManagerCAPI;
 
   struct Dependencies {
@@ -42,6 +51,7 @@ class ComponentInstance
     ArkTSChannel::Shared arkTSChannel;
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
+    Registry::Shared componentInstanceRegistry;
   };
 
   struct Context {
@@ -52,9 +62,6 @@ class ComponentInstance
   };
 
   virtual ArkUINode& getLocalRootArkUINode() = 0;
-
-  using Shared = std::shared_ptr<ComponentInstance>;
-  using Weak = std::weak_ptr<ComponentInstance>;
 
   ComponentInstance(Context ctx);
 
@@ -141,6 +148,15 @@ class ComponentInstance
   }
 
  public:
+  /**
+   * This method is necessary to support "aria-labelledby" and
+   * "accessibilityLabelledBy" props.
+   */
+  virtual const std::string& getAccessibilityLabel() const {
+    static const std::string empty = "";
+    return empty;
+  }
+
   virtual std::vector<ComponentInstance::Shared> const& getChildren() const {
     return m_children;
   }

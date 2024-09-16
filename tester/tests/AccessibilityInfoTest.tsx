@@ -50,7 +50,7 @@ export function AccessibilityInfoTest() {
           backgroundColor: PALETTE.YELLOW_LIGHT,
         }}>
         {
-          'To enable screen reader on: HarmonyOS 1) go to Settings > Accessibility features > Accessibility shortcut 2) Assign ScreenReader in "Select feature" option 3) Quickly press the power button three times; Android hold volume up and down for 3 sec.'
+          'To enable screen reader on: HarmonyOS 1) go to Settings > Accessibility features > Accessibility shortcut 2) Assign ScreenReader in "Select feature" option 3) Hold volume up and down for 3 sec.'
         }
       </Text>
       <TestSuite name="addEventListener">
