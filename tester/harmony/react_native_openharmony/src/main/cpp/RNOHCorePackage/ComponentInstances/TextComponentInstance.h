@@ -17,6 +17,7 @@ class TextComponentInstance
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
   std::optional<TextMeasurer::TextStorage> m_textStorage = std::nullopt;
+  std::string m_textContent = "";
 
  public:
   TextComponentInstance(Context context);
@@ -31,6 +32,7 @@ class TextComponentInstance
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& textState) override;
+  const std::string& getAccessibilityLabel() const override;
 
  private:
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);

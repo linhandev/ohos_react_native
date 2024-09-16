@@ -28,6 +28,13 @@ void TextComponentInstance::onChildRemoved(
   throw RNOHError("TextComponentInstance does not support children");
 }
 
+const std::string& TextComponentInstance::getAccessibilityLabel() const {
+  auto const& superAccessibilityLabel =
+      CppComponentInstance::getAccessibilityLabel();
+  return superAccessibilityLabel.empty() ? m_textContent
+                                         : superAccessibilityLabel;
+}
+
 void TextComponentInstance::onPropsChanged(
     SharedConcreteProps const& textProps) {
   CppComponentInstance::onPropsChanged(textProps);
@@ -166,7 +173,8 @@ void TextComponentInstance::onStateChanged(
   for (auto const& fragment : fragments) {
     ss << fragment.string;
   }
-  m_textNode.setTextContent(ss.str());
+  m_textContent = ss.str();
+  m_textNode.setTextContent(m_textContent);
 
   this->setTextAttributes(fragments[0].textAttributes);
 }

@@ -67,6 +67,10 @@ class CppComponentInstance : public ComponentInstance,
     return m_eventEmitter;
   }
 
+  const std::string& getAccessibilityLabel() const override {
+    return m_accessibilityLabel;
+  }
+
   /**
    * TODO: change to private — those methods are intended to be called
    * only by MountingManagerCAPI which is a friend of this class
@@ -227,6 +231,8 @@ class CppComponentInstance : public ComponentInstance,
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
 
+    m_accessibilityLabel = props->accessibilityLabel;
+
     if (props->accessibilityState.disabled !=
             old->accessibilityState.disabled ||
         props->accessibilityState.checked != old->accessibilityState.checked ||
@@ -346,6 +352,35 @@ class CppComponentInstance : public ComponentInstance,
 
   void onFinalizeUpdates() override {
     ComponentInstance::onFinalizeUpdates();
+    if (m_props->accessibilityLabelledBy.value != m_accessibilityLabelledBy) {
+      std::string targetId = "";
+      if (!m_props->accessibilityLabelledBy.value.empty()) {
+        targetId = m_props->accessibilityLabelledBy.value[0];
+      }
+      if (!targetId.empty()) {
+        auto componentInstance =
+            m_deps->componentInstanceRegistry->findById(targetId);
+        if (componentInstance != nullptr) {
+          std::string newAccessibilityLabel = "";
+          if (m_props->accessibilityLabel != "") {
+            newAccessibilityLabel += m_props->accessibilityLabel;
+          }
+          auto targetAccessibilityLabel =
+              componentInstance->getAccessibilityLabel();
+          if (!targetAccessibilityLabel.empty()) {
+            newAccessibilityLabel += " " + targetAccessibilityLabel;
+          }
+          if (!newAccessibilityLabel.empty()) {
+            this->getLocalRootArkUINode().setAccessibilityText(
+                newAccessibilityLabel);
+          }
+        } else {
+          DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
+                        << targetId;
+        }
+      }
+    }
+    m_accessibilityLabelledBy = m_props->accessibilityLabelledBy.value;
 
     facebook::react::BorderMetrics borderMetrics =
         m_props->resolveBorderMetrics(this->m_layoutMetrics);
@@ -417,6 +452,14 @@ class CppComponentInstance : public ComponentInstance,
   }
 
  protected:
+  void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
+      override {
+    if (m_eventEmitter == nullptr) {
+      return;
+    }
+    m_eventEmitter->onAccessibilityAction(actionName);
+  }
+
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
     if (props->testId != "") {
@@ -452,14 +495,6 @@ class CppComponentInstance : public ComponentInstance,
   bool m_isClipping = false;
   facebook::react::BorderMetrics m_oldBorderMetrics = {};
 
-  void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
-      override {
-    if (m_eventEmitter == nullptr) {
-      return;
-    }
-    m_eventEmitter->onAccessibilityAction(actionName);
-  }
-
   static ArkUI_Direction convertLayoutDirection(
       facebook::react::LayoutDirection layoutDirection) {
     switch (layoutDirection) {
@@ -472,6 +507,10 @@ class CppComponentInstance : public ComponentInstance,
         return ArkUI_Direction::ARKUI_DIRECTION_AUTO;
     }
   }
+
+ private:
+  std::vector<std::string> m_accessibilityLabelledBy{};
+  std::string m_accessibilityLabel;
 };
 
 inline facebook::react::Rect transformRectAroundPoint(

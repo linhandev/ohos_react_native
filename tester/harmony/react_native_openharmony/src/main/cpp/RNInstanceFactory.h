@@ -231,6 +231,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
+    componentInstanceDependencies->componentInstanceRegistry =
+        componentInstanceRegistry;
     auto componentInstancePreallocationRequestQueue =
         std::make_shared<ComponentInstancePreallocationRequestQueue>();
     auto componentInstanceProvider =
