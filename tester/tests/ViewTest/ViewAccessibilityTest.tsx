@@ -383,6 +383,55 @@ export function ViewAccessibilityTest() {
           )}
         </TestCase.Example>
       </TestSuite>
+
+      <TestSuite name="aria-labelledby">
+        <TestCase.Example
+          itShould={`announce: '${Platform.OS === 'android' ? 'edit box for phone number' : 'phone number, edit box, double tap to ...'}' after TextInput gains focus`}>
+          <View>
+            <Text nativeID="testAriaLabelledBy">Phone Number</Text>
+            <TextInput
+              style={{backgroundColor: 'lightblue', padding: 8}}
+              aria-labelledby={'testAriaLabelledBy'}
+              value="focus on me"
+            />
+          </View>
+        </TestCase.Example>
+
+        <TestCase.Example itShould="not mention: 'phone number' after the text input gains focus">
+          <View collapsable={false}>
+            <View accessibilityLabelledBy={'xxx'}>
+              <View collapsable={false} nativeID="testAriaLabelledBy2">
+                <Text>
+                  Phone Number (aria-labelledby points to a view, not a text)
+                </Text>
+              </View>
+              <TextInput
+                aria-labelledby={'testAriaLabelledBy2'}
+                style={{backgroundColor: 'lightblue', padding: 8}}
+                value="focus on me"
+              />
+            </View>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
+
+      <TestSuite name="accessibilityLabelledBy">
+        <TestCase.Example
+          itShould={`announce: '${Platform.OS === 'android' ? 'edit box for phone number in accessibility label' : 'phone number in accessibility label, edit box, double tap to ...'}' after TextInput gains focus`}>
+          <View>
+            <Text
+              accessibilityLabel="phone number in accessibilityLabel"
+              nativeID="testAccessibilityLabelledBy">
+              Phone Number
+            </Text>
+            <TextInput
+              accessibilityLabelledBy={'testAccessibilityLabelledBy'}
+              style={{backgroundColor: 'lightblue', padding: 8}}
+              value="focus on me"
+            />
+          </View>
+        </TestCase.Example>
+      </TestSuite>
     </TestSuite>
   );
 }
