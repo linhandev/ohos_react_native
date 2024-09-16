@@ -8,3 +8,4 @@ export * from './ObjectDisplayer';
 export * from './Ref';
 export * from './PressCounter';
 export * from './TestCase';
+export * from './MockedVideoPlayer';
