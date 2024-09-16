@@ -3,6 +3,7 @@
  */
 #pragma once
 #include <arkui/native_node.h>
+#include <arkui/native_type.h>
 #include <folly/dynamic.h>
 #include <react/renderer/components/rncore/Props.h>
 #include <react/renderer/components/view/AccessibilityPrimitives.h>
@@ -12,7 +13,6 @@
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
 #include <stdexcept>
-#include "RNOH/Assert.h"
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
 
@@ -35,10 +35,10 @@ class ArkUINode;
 class ArkUINodeDelegate {
  public:
   virtual ~ArkUINodeDelegate() = default;
-  virtual void onArkUINodeDestroy(ArkUINode* node){};
+  virtual void onArkUINodeDestroy(ArkUINode* /*node*/){};
   virtual void onArkUINodeAccessibilityAction(
-      ArkUINode* node,
-      const std::string& actionName){};
+      ArkUINode* /*node*/,
+      const std::string& /*actionName*/){};
 };
 
 /**
@@ -131,6 +131,7 @@ class ArkUINode {
   virtual ArkUINode& setVisibility(ArkUI_Visibility visibility);
   virtual ArkUINode& setZIndex(float index);
   virtual ArkUINode& setRenderGroup(bool renderOffscreen);
+  virtual ArkUINode& setDirection(ArkUI_Direction direction);
 
   virtual ArkUINode& resetAccessibilityText();
 

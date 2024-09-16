@@ -2,6 +2,7 @@
  * Used only in C-API based Architecture.
  */
 #pragma once
+#include <arkui/native_type.h>
 #include <react/renderer/components/view/TouchEventEmitter.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/EventEmitter.h>
@@ -201,6 +202,11 @@ class CppComponentInstance : public ComponentInstance,
       this->getLocalRootArkUINode().setTransform(
           m_transform, layoutMetrics.pointScaleFactor);
     }
+    if (layoutMetrics.layoutDirection != m_layoutMetrics.layoutDirection) {
+      ArkUI_Direction direction =
+          convertLayoutDirection(layoutMetrics.layoutDirection);
+      this->getLocalRootArkUINode().setDirection(direction);
+    }
     markBoundingBoxAsDirty();
   }
 
@@ -313,7 +319,7 @@ class CppComponentInstance : public ComponentInstance,
   };
 
   virtual void onEventEmitterChanged(
-      SharedConcreteEventEmitter const& eventEmitter){};
+      SharedConcreteEventEmitter const& /*eventEmitter*/){};
 
   void calculateBoundingBox() {
     facebook::react::SystraceSection s(std::string(
@@ -452,6 +458,19 @@ class CppComponentInstance : public ComponentInstance,
       return;
     }
     m_eventEmitter->onAccessibilityAction(actionName);
+  }
+
+  static ArkUI_Direction convertLayoutDirection(
+      facebook::react::LayoutDirection layoutDirection) {
+    switch (layoutDirection) {
+      using facebook::react::LayoutDirection;
+      case LayoutDirection::LeftToRight:
+        return ArkUI_Direction::ARKUI_DIRECTION_LTR;
+      case facebook::react::LayoutDirection::RightToLeft:
+        return ArkUI_Direction::ARKUI_DIRECTION_RTL;
+      default:
+        return ArkUI_Direction::ARKUI_DIRECTION_AUTO;
+    }
   }
 };
 

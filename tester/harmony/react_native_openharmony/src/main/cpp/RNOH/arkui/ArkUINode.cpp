@@ -1,4 +1,6 @@
 #include "ArkUINode.h"
+#include <arkui/native_node.h>
+#include <arkui/native_type.h>
 #include <algorithm>
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
@@ -726,4 +728,11 @@ const ArkUI_AttributeItem& ArkUINode::getAttribute(
   return *item;
 }
 
+ArkUINode& ArkUINode::setDirection(ArkUI_Direction direction) {
+  ArkUI_NumberValue value = {.u32 = direction};
+  ArkUI_AttributeItem item = {.value = &value, .size = 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_DIRECTION, &item));
+  return *this;
+}
 } // namespace rnoh
