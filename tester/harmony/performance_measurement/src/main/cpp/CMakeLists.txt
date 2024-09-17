@@ -9,8 +9,8 @@ set(RNOH_GENERATED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
 set(LOG_VERBOSITY_LEVEL 1)
 set(CMAKE_ASM_FLAGS "-Wno-error=unused-command-line-argument -Qunused-arguments")
 set(CMAKE_CXX_FLAGS "-fstack-protector-strong -Wl,-z,relro,-z,now,-z,noexecstack -s -fPIE -pie")
-set(WITH_HITRACE_SYSTRACE 1) # for other CMakeLists.txt files to use
-add_compile_definitions(WITH_HITRACE_SYSTRACE)
+set(WITH_HITRACE_SYSTRACE ON)
+set(WITH_HITRACE_REACT_MARKER ON)
 
 add_subdirectory("${RNOH_CPP_DIR}" ./rn)
 add_subdirectory("${OH_MODULES}/@react-native-oh-tpl/react-native-safe-area-context/src/main/cpp" ./safe-area)

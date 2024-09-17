@@ -1,5 +1,5 @@
 #include "MountingManagerCAPI.h"
-#include <cxxreact/SystraceSection.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
