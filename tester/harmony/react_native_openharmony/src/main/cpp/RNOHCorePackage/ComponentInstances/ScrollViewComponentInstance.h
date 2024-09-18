@@ -93,10 +93,10 @@ class ScrollViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
 
-  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;
-
   void onStateChanged(SharedConcreteState const& state) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
+  void onLayoutChanged(
+      facebook::react::LayoutMetrics const& layoutMetrics) override;
 
   void onCommandReceived(
       std::string const& commandName,
@@ -138,6 +138,8 @@ class ScrollViewComponentInstance
    */
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
   void onContentSizeChanged();
+  facebook::react::Float adjustOffsetToRTL(facebook::react::Float x) const;
+  facebook::react::Point getScrollOffset() const;
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;
   bool isNestedScroll();
