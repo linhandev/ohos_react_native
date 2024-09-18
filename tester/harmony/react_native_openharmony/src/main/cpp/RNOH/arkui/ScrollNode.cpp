@@ -108,6 +108,13 @@ ScrollNode& ScrollNode::setHorizontal(bool horizontal) {
   return *this;
 }
 
+bool ScrollNode::isHorizontal() const {
+  auto item = NativeNodeApi::getInstance()->getAttribute(
+      m_nodeHandle, NODE_SCROLL_SCROLL_DIRECTION);
+  bool isHorizontal = item->value[0].i32;
+  return isHorizontal;
+}
+
 ScrollNode& ScrollNode::setEnableScrollInteraction(
     bool enableScrollInteraction) {
   ArkUI_NumberValue value[] = {{.i32 = enableScrollInteraction}};

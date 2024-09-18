@@ -172,6 +172,7 @@ class ScrollViewComponentInstance
   struct ScrollViewRawProps {
     std::optional<std::string> overScrollMode;
     std::optional<uint32_t> endFillColor;
+    bool horizontal = false;
     static ScrollViewRawProps getFromDynamic(folly::dynamic value);
   };
   ScrollViewRawProps m_rawProps;
@@ -206,7 +207,7 @@ class ScrollViewComponentInstance
 
   void sendEventForNativeAnimations(
       facebook::react::ScrollViewMetrics const& scrollViewMetrics);
-  bool isHorizontal(SharedConcreteProps const& props);
+  bool isHorizontal(ScrollViewRawProps const& props);
   void disableIntervalMomentum();
   std::optional<float> getNextSnapTarget();
   void adjustVisibleContentPosition(

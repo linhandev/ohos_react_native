@@ -235,7 +235,7 @@ void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
   }
 
   facebook::react::Point targetOffset = {offset.x, offset.y};
-  if (isHorizontal(m_props)) {
+  if (isHorizontal(m_rawProps)) {
     if (targetOffset.x > m_contentSize.width - m_containerSize.width) {
       targetOffset.x = m_contentSize.width - m_containerSize.width;
     }
@@ -307,16 +307,17 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   m_scrollEventThrottle = props->scrollEventThrottle;
   m_disableIntervalMomentum = props->disableIntervalMomentum;
   m_scrollToOverflowEnabled = props->scrollToOverflowEnabled;
-  m_scrollNode.setHorizontal(isHorizontal(props))
+  auto wasHorizontal = m_scrollNode.isHorizontal();
+  m_scrollNode.setHorizontal(isHorizontal(rawProps))
       .setEnableScrollInteraction(
           !m_isNativeResponderBlocked && props->scrollEnabled)
       .setFriction(getFrictionFromDecelerationRate(props->decelerationRate))
       .setEdgeEffect(
           props->bounces,
-          isHorizontal(props) ? props->alwaysBounceHorizontal
-                              : props->alwaysBounceVertical)
+          isHorizontal(rawProps) ? props->alwaysBounceHorizontal
+                                 : props->alwaysBounceVertical)
       .setScrollBarDisplayMode(getScrollBarDisplayMode(
-          isHorizontal(props),
+          isHorizontal(rawProps),
           m_persistentScrollbar,
           props->showsVerticalScrollIndicator,
           props->showsHorizontalScrollIndicator))
@@ -327,28 +328,31 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
               : 0x66000000)
       .setEnablePaging(props->pagingEnabled);
 
-  if (rawProps.overScrollMode.has_value() &&
-      m_rawProps.overScrollMode != rawProps.overScrollMode) {
-    m_rawProps.overScrollMode = rawProps.overScrollMode;
-    bool alwaysBounce = false;
-    bool bounces = false;
-    if (m_rawProps.overScrollMode.value() == "auto") {
-      bounces = true;
-    } else if (m_rawProps.overScrollMode.value() == "always") {
-      bounces = true;
-      alwaysBounce = true;
+  // Prioritize overScrollMode over bounces and alwaysBounce* props
+  if (rawProps.overScrollMode.has_value()) {
+    if (m_rawProps.overScrollMode != rawProps.overScrollMode ||
+        wasHorizontal != isHorizontal(rawProps)) {
+      m_rawProps.overScrollMode = rawProps.overScrollMode;
+      bool alwaysBounce = false;
+      bool bounces = false;
+      if (m_rawProps.overScrollMode.value() == "auto") {
+        bounces = true;
+      } else if (m_rawProps.overScrollMode.value() == "always") {
+        bounces = true;
+        alwaysBounce = true;
+      }
+      m_scrollNode.setEdgeEffect(bounces, alwaysBounce);
     }
-    m_scrollNode.setEdgeEffect(bounces, alwaysBounce);
   } else {
     if (!m_props || props->bounces != m_props->bounces ||
-        (isHorizontal(props) &&
+        (isHorizontal(rawProps) &&
          props->alwaysBounceHorizontal != m_props->alwaysBounceHorizontal) ||
-        (!isHorizontal(props) &&
+        (!isHorizontal(rawProps) &&
          props->alwaysBounceVertical != m_props->alwaysBounceVertical)) {
       m_scrollNode.setEdgeEffect(
           props->bounces,
-          isHorizontal(props) ? props->alwaysBounceHorizontal
-                              : props->alwaysBounceVertical);
+          isHorizontal(rawProps) ? props->alwaysBounceHorizontal
+                                 : props->alwaysBounceVertical);
     }
   }
 
@@ -375,6 +379,10 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
     } else {
       m_scrollNode.setCenterContent(false);
     }
+  }
+
+  if (m_rawProps.horizontal != rawProps.horizontal) {
+    m_rawProps.horizontal = rawProps.horizontal;
   }
 
   setScrollSnap(
@@ -589,7 +597,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
                 std::dynamic_pointer_cast<ScrollViewComponentInstance>(
                     this->shared_from_this()));
         auto newScrollOffset = scrollOffset - m_layoutMetrics.frame.size.height;
-        if (isHorizontal(m_props)) {
+        if (isHorizontal(m_rawProps)) {
           if (newScrollOffset > m_scrollNode.getScrollOffset().x) {
             m_scrollNode.scrollTo(
                 newScrollOffset, m_scrollNode.getScrollOffset().y, true);
@@ -656,13 +664,14 @@ void rnoh::ScrollViewComponentInstance::sendEventForNativeAnimations(
 }
 
 bool ScrollViewComponentInstance::isContentSmallerThanContainer() {
-  return isHorizontal(m_props) ? m_contentSize.width <= m_containerSize.width
-                               : m_contentSize.height <= m_containerSize.height;
+  return isHorizontal(m_rawProps)
+      ? m_contentSize.width <= m_containerSize.width
+      : m_contentSize.height <= m_containerSize.height;
 }
 
 bool ScrollViewComponentInstance::isAtEnd(
     facebook::react::Point currentOffset) {
-  if (isHorizontal(m_props)) {
+  if (isHorizontal(m_rawProps)) {
     return currentOffset.x <= 0.001 ||
         m_contentSize.width - m_containerSize.width - currentOffset.x < 0.001;
   } else {
@@ -686,12 +695,8 @@ bool ScrollViewComponentInstance::isCloseToTargetOffset(
 }
 
 bool ScrollViewComponentInstance::isHorizontal(
-    SharedConcreteProps const& props) {
-  if (props == nullptr) {
-    return false;
-  }
-  return props->alwaysBounceHorizontal ||
-      m_contentSize.width > m_containerSize.width;
+    ScrollViewRawProps const& props) {
+  return props.horizontal || m_contentSize.width > m_containerSize.width;
 }
 
 void ScrollViewComponentInstance::disableIntervalMomentum() {
@@ -700,7 +705,7 @@ void ScrollViewComponentInstance::disableIntervalMomentum() {
   }
   auto nextSnapTarget = getNextSnapTarget();
   if (nextSnapTarget.has_value()) {
-    if (isHorizontal(m_props)) {
+    if (isHorizontal(m_rawProps)) {
       m_scrollNode.scrollTo(
           nextSnapTarget.value(),
           static_cast<float>(m_currentOffset.y),
@@ -719,7 +724,7 @@ void ScrollViewComponentInstance::disableIntervalMomentum() {
 std::optional<float> ScrollViewComponentInstance::getNextSnapTarget() {
   std::optional<float> nextSnapTarget = std::nullopt;
   auto currentOffset =
-      isHorizontal(m_props) ? m_currentOffset.x : m_currentOffset.y;
+      isHorizontal(m_rawProps) ? m_currentOffset.x : m_currentOffset.y;
 
   if (!m_snapToOffsets.empty()) {
     if (m_recentScrollFrameOffset > 0) {
@@ -729,8 +734,8 @@ std::optional<float> ScrollViewComponentInstance::getNextSnapTarget() {
           *upper < std::numeric_limits<facebook::react::Float>::infinity()) {
         nextSnapTarget = static_cast<float>(*upper);
       } else {
-        nextSnapTarget =
-            isHorizontal(m_props) ? m_contentSize.width : m_contentSize.height;
+        nextSnapTarget = isHorizontal(m_rawProps) ? m_contentSize.width
+                                                  : m_contentSize.height;
       }
     } else {
       auto lower = std::lower_bound(
@@ -760,8 +765,10 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(
   auto endFillColor = (value.count("endFillColor") > 0)
       ? std::optional(value["endFillColor"].asInt())
       : std::nullopt;
+  auto horizontal =
+      (value.count("horizontal") > 0) ? value["horizontal"].asBool() : false;
 
-  return {overScrollMode, endFillColor};
+  return {overScrollMode, endFillColor, horizontal};
 }
 
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()
@@ -801,7 +808,7 @@ void ScrollViewComponentInstance::adjustVisibleContentPosition(
   }
   auto newPosition = firstVisibleChild->getLayoutMetrics().frame.origin;
 
-  if (isHorizontal(m_props)) {
+  if (isHorizontal(m_rawProps)) {
     auto deltaX = newPosition.x - firstVisibleView.offset;
     if (deltaX != 0) {
       auto scrollX = m_currentOffset.x;
@@ -837,7 +844,7 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
   }
 
   auto currentScrollPosition =
-      isHorizontal(m_props) ? m_currentOffset.x : m_currentOffset.y;
+      isHorizontal(m_rawProps) ? m_currentOffset.x : m_currentOffset.y;
   auto const& scrollViewChildren = m_children[0]->getChildren();
 
   minIndexForVisible = std::max(minIndexForVisible, 0);
@@ -846,7 +853,7 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
        it++) {
     auto childComponentInstance =
         std::static_pointer_cast<ComponentInstance>(*it);
-    auto position = isHorizontal(m_props)
+    auto position = isHorizontal(m_rawProps)
         ? childComponentInstance->getLayoutMetrics().frame.origin.x
         : childComponentInstance->getLayoutMetrics().frame.origin.y;
     if (position >= currentScrollPosition) {
@@ -857,7 +864,7 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
 
   auto lastChild =
       std::static_pointer_cast<ComponentInstance>(scrollViewChildren.back());
-  auto position = isHorizontal(m_props)
+  auto position = isHorizontal(m_rawProps)
       ? lastChild->getLayoutMetrics().frame.origin.x
       : lastChild->getLayoutMetrics().frame.origin.y;
   return std::optional<ScrollViewComponentInstance::ChildTagWithOffset>(

@@ -1,6 +1,7 @@
 import {View, ScrollView, Text} from 'react-native';
 import {TestSuite, TestCase} from '@rnoh/testerino';
 import React from 'react';
+import {Button} from '../../components';
 
 export function OverScrollTest() {
   return (
@@ -582,6 +583,130 @@ export function OverScrollTest() {
           </View>
         </View>
       </TestCase>
+      <TestCase
+        tags={['C_API']}
+        modal
+        itShould="maintain overScrollMode value when horizontal prop changes">
+        <OverscrollWhenHorizontalChanged />
+      </TestCase>
+      <TestCase
+        tags={['C_API']}
+        modal
+        itShould="prioritize overScrollMode prop over bounces, alwaysBounceHorizontal and alwaysBounceVertical props">
+        <View
+          style={{
+            backgroundColor: 'pink',
+            width: '100%',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              height: 400,
+              marginTop: 50,
+              marginBottom: 50,
+              backgroundColor: 'green',
+            }}>
+            <ScrollView
+              overScrollMode="never"
+              bounces={true}
+              alwaysBounceVertical={true}
+              alwaysBounceHorizontal={true}>
+              <Text style={{fontSize: 15, backgroundColor: 'yellow'}}>
+                property overScrollMode set to 'never'
+              </Text>
+              <Text
+                style={{fontSize: 15, backgroundColor: 'yellow', marginTop: 5}}>
+                property bounces property set to true
+              </Text>
+              <Text
+                style={{fontSize: 15, backgroundColor: 'yellow', marginTop: 5}}>
+                the scrollview can scroll
+              </Text>
+              <Text style={{fontSize: 15, backgroundColor: 'yellow'}}>
+                content size is smaller than scrollview content size is smaller
+                than scrollview content size is smaller than scrollview content
+                size is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview content size is smaller than
+                scrollview content size is smaller than scrollview content size
+                is smaller than scrollview
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
+      </TestCase>
     </TestSuite>
+  );
+}
+
+function OverscrollWhenHorizontalChanged() {
+  const [horizontal, setHorizontal] = React.useState(false);
+  return (
+    <View
+      style={{
+        backgroundColor: 'pink',
+        width: '100%',
+        justifyContent: 'center',
+      }}>
+      <View
+        style={{
+          height: 400,
+          marginTop: 50,
+          marginBottom: 50,
+          backgroundColor: 'green',
+        }}>
+        <Button
+          label="Toggle horizontal"
+          onPress={() => setHorizontal(!horizontal)}
+        />
+        <ScrollView overScrollMode="never" horizontal={horizontal}>
+          <Text style={{fontSize: 15, backgroundColor: 'yellow'}}>
+            android property overScrollMode set to 'always'
+          </Text>
+          <Text style={{fontSize: 15, backgroundColor: 'yellow', marginTop: 5}}>
+            ios property bounces property not set
+          </Text>
+          <Text style={{fontSize: 15, backgroundColor: 'yellow', marginTop: 5}}>
+            the scrollview can overscroll and bounces when it reaches the end of
+            the content
+          </Text>
+          <Text style={{fontSize: 15, backgroundColor: 'yellow'}}>
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview content size is smaller than
+            scrollview content size is smaller than scrollview content size is
+            smaller than scrollview content size is smaller than scrollview
+            content size is smaller than scrollview
+          </Text>
+        </ScrollView>
+      </View>
+    </View>
   );
 }

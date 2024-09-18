@@ -55,6 +55,8 @@ class ScrollNode : public ArkUINode {
   ScrollNode& setEnablePaging(bool enablePaging);
   ScrollNode& setCenterContent(bool centerContent);
 
+  bool isHorizontal() const;
+
   ScrollNode& resetScrollSnap();
   void scrollTo(
       float x,

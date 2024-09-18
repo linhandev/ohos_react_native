@@ -204,6 +204,19 @@ export function MiscPropsTest() {
         itShould="render scroll view with different fading edge length (fadingEdgeLength)">
         <ScrollViewFadingEdgeLengthTest />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="display vertical scroll view when alwaysBounceHorizontal set to true">
+        <View
+          style={[
+            styles.wrapperView,
+            {flexDirection: 'row', alignContent: 'space-between'},
+          ]}>
+          <ScrollView {...COMMON_PROPS} alwaysBounceHorizontal={true}>
+            {getScrollViewContent({})}
+          </ScrollView>
+        </View>
+      </TestCase.Example>
     </TestSuite>
   );
 }
