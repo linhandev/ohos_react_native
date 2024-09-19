@@ -11,9 +11,10 @@ import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
-import { WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
+import { AnyThreadTurboModule, UITurboModule,
+  UITurboModuleContext,
+  WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
 import display from '@ohos.display';
-
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "WORKER_THREAD_ENABLED"
 
@@ -93,8 +94,10 @@ export class NapiBridge {
     } satisfies ArkTSBridgeHandler))
   }
 
-  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>, rnInstanceId: number) {
-    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId))
+  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,
+    rnInstanceId: number) {
+    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider,
+      rnInstanceId))
   }
 
   getNextRNInstanceId(): number {
@@ -108,12 +111,12 @@ export class NapiBridge {
   onCreateRNInstance(
     envId: number,
     instanceId: number,
-    turboModuleProvider: TurboModuleProvider,
+    turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>,
     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
     mutationsListener: (mutations: Mutation[]) => void,
     componentCommandsListener: (tag: Tag,
-                                commandName: string,
-                                args: unknown) => void,
+      commandName: string,
+      args: unknown) => void,
     onCppMessage: (type: string, payload: any) => void,
     shouldEnableDebugger: boolean,
     shouldEnableBackgroundExecutor: boolean,
@@ -253,11 +256,20 @@ export class NapiBridge {
     instanceId: number,
     surfaceTag: number,
   ) {
+    let resolveWait = () => {
+    }
+    const wait = new Promise<void>((resolve) => {
+      resolveWait = () => {
+        resolve()
+      }
+    })
     const result = this.libRNOHApp?.stopSurface(
       instanceId,
-      surfaceTag
+      surfaceTag,
+      () => resolveWait()
     );
-    return this.unwrapResult(result)
+    this.unwrapResult(result);
+    return wait;
   }
 
   async destroySurface(

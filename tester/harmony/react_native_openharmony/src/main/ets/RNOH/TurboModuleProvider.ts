@@ -1,18 +1,16 @@
 import type {
+  AnyThreadTurboModule,
   UITurboModule,
-  WorkerTurboModule,
-  UITurboModuleContext,
-  WorkerTurboModuleContext
+  WorkerTurboModule
 } from './TurboModule';
 import type { TurboModulesFactory } from './RNPackage';
 import { RNOHLogger } from './RNOHLogger';
 
-export class TurboModuleProvider<TTurboModule extends UITurboModule | WorkerTurboModule = UITurboModule,
-TTurboModuleContext extends UITurboModuleContext | WorkerTurboModuleContext = UITurboModuleContext> {
+export class TurboModuleProvider<TTurboModule extends UITurboModule | WorkerTurboModule | AnyThreadTurboModule = UITurboModule> {
   private cachedTurboModuleByName: Record<string, TTurboModule> = {};
   private logger: RNOHLogger
 
-  constructor(private turboModulesFactories: (TurboModulesFactory<TTurboModule, TTurboModuleContext>)[], logger: RNOHLogger) {
+  constructor(private turboModulesFactories: (TurboModulesFactory<TTurboModule, unknown>)[], logger: RNOHLogger) {
     this.logger = logger.clone("TurboModuleProvider");
   }
 

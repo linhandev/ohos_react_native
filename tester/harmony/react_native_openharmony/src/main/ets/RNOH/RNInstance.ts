@@ -12,8 +12,8 @@ import type { RNOHContext } from './RNOHContext'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
-import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule, UITurboModule } from './TurboModule'
+import type { AnyThreadTurboModuleFactory, RNPackage, RNPackageContext, UITurboModuleFactory } from './RNPackage'
+import type { AnyThreadTurboModule, UITurboModule } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -177,10 +177,9 @@ export interface RNInstance {
 
   runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null): Promise<void>;
   /**
-   * @deprecated: Use getUITurboModule instead (latestRNOHVersion: 0.72.33)
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
-  getTurboModule<T extends TurboModule>(name: string): T;
+  getTurboModule<T>(name: string): T;
 
   /**
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
@@ -355,7 +354,7 @@ export interface FrameNodeFactory {
 
 
 export class RNInstanceImpl implements RNInstance {
-  private turboModuleProvider: TurboModuleProvider
+  private turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>
   private surfaceCounter = 0;
   private lifecycleState: LifecycleState = LifecycleState.BEFORE_CREATE
   private bundleExecutionStatusByBundleURL: Map<string, BundleExecutionStatus> = new Map()
@@ -579,6 +578,38 @@ export class RNInstanceImpl implements RNInstance {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
     const turboModuleContext = this.createUITurboModuleContext(this)
+
+    function logPkgTraceName(pkg, idx) {
+      const pkgDebugName = pkg.getDebugName()
+      let traceName = `package${idx + 1}`
+      if (pkgDebugName) {
+        traceName += `: ${pkgDebugName}`
+      }
+      return traceName
+    }
+
+    type UIThreadTurboModuleFactory = UITurboModuleFactory | AnyThreadTurboModuleFactory;
+
+    const uiThreadTMFactoryPromises: Promise<UIThreadTurboModuleFactory>[] = [...packages.map(async (pkg, idx) => {
+      logger.clone(logPkgTraceName(pkg, idx)).debug("createTurboModulesFactory")
+      const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
+      await turboModuleFactory.prepareEagerTurboModules()
+      return turboModuleFactory
+    }), ...packages.map(async (pkg, idx) => {
+      logger.clone(logPkgTraceName(pkg, idx)).debug("createUITurboModuleFactory")
+      const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
+      await turboModuleFactory.prepareEagerTurboModules()
+      return turboModuleFactory
+    })];
+    if (!this.workerThread) {
+      uiThreadTMFactoryPromises.push(...packages.map(async (pkg, idx) => {
+        logger.clone(logPkgTraceName(pkg, idx)).debug("createAnyThreadTurboModuleFactory")
+        const turboModuleFactory = pkg.createAnyThreadTurboModuleFactory(turboModuleContext);
+        await turboModuleFactory?.prepareEagerTurboModules()
+        return turboModuleFactory
+      }))
+    }
+
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
         const descriptorWrapperFactoryByDescriptorType = pkg.createDescriptorWrapperFactoryByDescriptorType({})
@@ -588,28 +619,8 @@ export class RNInstanceImpl implements RNInstance {
         }
         return acc
       }, new Map<string, DescriptorWrapperFactory>()),
-      turboModuleProvider: new TurboModuleProvider(
-        await Promise.all([...packages.map(async (pkg, idx) => {
-          const pkgDebugName = pkg.getDebugName()
-          let traceName = `package${idx + 1}`
-          if (pkgDebugName) {
-            traceName += `: ${pkgDebugName}`
-          }
-          logger.clone(traceName).debug("createTurboModulesFactory")
-          const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
-          await turboModuleFactory.prepareEagerTurboModules()
-          return turboModuleFactory
-        }), ...packages.map(async (pkg, idx) => {
-          const pkgDebugName = pkg.getDebugName()
-          let traceName = `package${idx + 1}`
-          if (pkgDebugName) {
-            traceName += `: ${pkgDebugName}`
-          }
-          logger.clone(traceName).debug("createUITurboModuleFactory")
-          const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
-          await turboModuleFactory.prepareEagerTurboModules()
-          return turboModuleFactory
-        })]),
+      turboModuleProvider: new TurboModuleProvider<UITurboModule | AnyThreadTurboModule>(
+        (await Promise.all(uiThreadTMFactoryPromises)).filter(factory => factory != null),
         this.logger
       )
     }
@@ -712,7 +723,7 @@ export class RNInstanceImpl implements RNInstance {
         jsBundleUrl: bundleURL,
         appKeys: jsBundleProvider.getAppKeys()
       })
-      this.workerThread.postMessage("JS_BUNDLE_EXECUTION_FINISH", { rnInstanceId: this.id })
+      this.workerThread?.postMessage("JS_BUNDLE_EXECUTION_FINISH", { rnInstanceId: this.id })
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL)
       if (err instanceof JSBundleProviderError) {
@@ -735,13 +746,12 @@ export class RNInstanceImpl implements RNInstance {
     }
   }
 
-  /** @deprecated Use getUITurboModule instead (latestRNOHVersion: 0.72.33) */
-  public getTurboModule<T extends TurboModule>(name: string): T {
+  public getTurboModule<T>(name: string): T {
     return this.getUITurboModule<T>(name)
   }
 
-  public getUITurboModule<T extends UITurboModule>(name: string): T {
-    return this.turboModuleProvider.getModule(name);
+  public getUITurboModule<T>(name: string): T {
+    return this.turboModuleProvider.getModule(name) as T;
   }
 
   public createSurface(appKey: string): SurfaceHandle {
