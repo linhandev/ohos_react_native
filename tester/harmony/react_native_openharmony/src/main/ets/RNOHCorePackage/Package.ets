@@ -1,12 +1,7 @@
-import {
-  DescriptorWrapperFactoryByDescriptorType,
-  UITurboModuleFactory,
-  WorkerTurboModuleFactory,
-  WorkerTurboModule
-} from '../RNOH/ts';
+import { DescriptorWrapperFactoryByDescriptorType } from '../RNOH/ts';
 import { RNPackage } from "../RNOH/RNPackage"
-import type { UITurboModule } from '../RNOH/TurboModule';
-import type { UITurboModuleContext, WorkerTurboModuleContext } from "../RNOH/RNOHContext"
+import type { AnyThreadTurboModule, UITurboModule } from '../RNOH/TurboModule';
+import type { AnyThreadTurboModuleContext, UITurboModuleContext } from "../RNOH/RNOHContext"
 import {
   AccessibilityInfoTurboModule,
   AlertManagerTurboModule,
@@ -35,35 +30,19 @@ import {
   ToastAndroidTurboModule,
   VibrationTurboModule,
   WebSocketTurboModule,
-  ImageLoaderWorkerTurboModule
+  ImageLoaderWorkerTurboModule,
+  LinkingManagerTurboModule
 } from './turboModules';
-import { AppearanceWorkerTurboModule } from './turboModules/AppearanceWorkerTurboModule';
-import { LinkingManagerTurboModule } from './turboModules/LinkingManagerTurboModule';
 import { ViewDescriptorWrapper } from './components/ts';
+import { AppearanceTurboModule } from './turboModules/AppearanceTurboModule';
 
 export class RNOHCorePackage extends RNPackage {
-  createUITurboModuleFactory(ctx: UITurboModuleContext): UITurboModuleFactory {
-    return new CoreUITurboModulesFactory(ctx);
-  }
-
-  createWorkerTurboModuleFactory(ctx: WorkerTurboModuleContext): WorkerTurboModuleFactory | null {
-    return new CoreWorkerTurboModulesFactory(ctx)
-  }
-
-  createDescriptorWrapperFactoryByDescriptorType(): DescriptorWrapperFactoryByDescriptorType {
+  override createDescriptorWrapperFactoryByDescriptorType(): DescriptorWrapperFactoryByDescriptorType {
     return { View: ctx => new ViewDescriptorWrapper(ctx.descriptor) };
   }
 
-  getDebugName() {
-    return 'rnoh';
-  }
-}
-
-
-class CoreUITurboModulesFactory extends UITurboModuleFactory {
-  private eagerTurboModuleByName: Map<string, UITurboModule> = new Map();
-  private turboModuleFactoryByName =
-    (new Map<string, ((ctx: UITurboModuleContext) => UITurboModule)>())
+  override getUITurboModuleFactoryByNameMap(): Map<string, (ctx: UITurboModuleContext) => UITurboModule | null> {
+    return new Map<string, ((ctx: UITurboModuleContext) => UITurboModule)>()
       .set(AccessibilityInfoTurboModule.NAME, (ctx) => new AccessibilityInfoTurboModule(ctx))
       .set(AlertManagerTurboModule.NAME, (ctx) => new AlertManagerTurboModule(ctx))
       .set(AppStateTurboModule.NAME, (ctx) => new AppStateTurboModule(ctx))
@@ -85,71 +64,32 @@ class CoreUITurboModulesFactory extends UITurboModuleFactory {
       .set(DevLoadingViewTurboModule.NAME, (ctx) => new DevLoadingViewTurboModule(ctx))
       .set(VibrationTurboModule.NAME, (ctx) => new VibrationTurboModule(ctx))
       .set(ToastAndroidTurboModule.NAME, (ctx) => new ToastAndroidTurboModule(ctx))
-
-  async prepareEagerTurboModules() {
-    this.eagerTurboModuleByName.set(DeviceInfoTurboModule.NAME, await DeviceInfoTurboModule.create(this.ctx))
   }
 
-  createTurboModule(name: string): UITurboModule | null {
-    const logger = this.ctx.logger.clone(["CoreUITurboModulesFactory", "createTurboModule"])
-    logger.info(`Creating ${name} TurboModule`)
-    if (!this.hasTurboModule(name)) {
-      logger.info(`Couldn't create ${name} TurboModule`)
-      return null
-    }
-    if (this.eagerTurboModuleByName.has(name)) {
-      return this.eagerTurboModuleByName.get(name)!;
-    }
-    return this.turboModuleFactoryByName.get(name)!(this.ctx);
-  }
-
-  hasTurboModule(name: string): boolean {
-    return (
-      this.turboModuleFactoryByName.has(name) || this.eagerTurboModuleByName.has(name)
-    );
-  }
-}
-
-
-class CoreWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
-  private eagerTurboModuleByName: Map<string, WorkerTurboModule> = new Map();
-  private turboModuleFactoryByName = new Map<string, ((ctx: WorkerTurboModuleContext) => WorkerTurboModule)>()
-    .set(ImageLoaderWorkerTurboModule.NAME, (ctx) => new ImageLoaderWorkerTurboModule(ctx))
-    .set(AppearanceWorkerTurboModule.NAME, (ctx) => new AppearanceWorkerTurboModule(ctx))
-    .set(NetworkingTurboModule.NAME, (ctx) => new NetworkingTurboModule(ctx))
-    .set(WebSocketTurboModule.NAME, (ctx) => new WebSocketTurboModule(ctx))
-    .set(BlobTurboModule.NAME, (ctx) => new BlobTurboModule(ctx))
-    .set(FileReaderTurboModule.NAME, (ctx) => new FileReaderTurboModule(ctx))
-
-  async prepareEagerTurboModules(): Promise<void> {
-    const statusBarTurboModule = new StatusBarTurboModule(this.ctx);
-    this.eagerTurboModuleByName.set(SafeAreaTurboModule.NAME, await SafeAreaTurboModule.create(
-      this.ctx,
+  override async createEagerUITurboModuleByNameMap(ctx: UITurboModuleContext): Promise<Map<string, UITurboModule>> {
+    const deviceInfoTurboModulePromise = DeviceInfoTurboModule.create(ctx)
+    const statusBarTurboModule = new StatusBarTurboModule(ctx);
+    const safeAreaTurboModulePromise = SafeAreaTurboModule.create(
+      ctx,
       statusBarTurboModule,
-    ))
-    this.eagerTurboModuleByName.set(StatusBarTurboModule.NAME, statusBarTurboModule)
+    )
+    return new Map()
+      .set(DeviceInfoTurboModule.NAME, await deviceInfoTurboModulePromise)
+      .set(SafeAreaTurboModule.NAME, await safeAreaTurboModulePromise)
+      .set(StatusBarTurboModule.NAME, statusBarTurboModule)
   }
 
-  createTurboModule(name: string): WorkerTurboModule | null {
-    const logger = this.ctx.logger.clone(["CoreWorkerTurboModulesFactory", "createTurboModule"])
-    logger.info(`Creating ${name} TurboModule`)
-    if (!this.hasTurboModule(name)) {
-      logger.info(`Couldn't create ${name} TurboModule`)
-      return null;
-    }
-    if (this.eagerTurboModuleByName.has(name)) {
-      return this.eagerTurboModuleByName.get(name)!;
-    }
-    return this.turboModuleFactoryByName.get(name)!(this.ctx);
+  override getAnyThreadTurboModuleFactoryByNameMap(): Map<string, (ctx: AnyThreadTurboModuleContext) => AnyThreadTurboModule | null> {
+    return new Map<string, ((ctx: AnyThreadTurboModuleContext) => AnyThreadTurboModule)>()
+      .set(AppearanceTurboModule.NAME, (ctx) => new AppearanceTurboModule(ctx))
+      .set(ImageLoaderWorkerTurboModule.NAME, (ctx) => new ImageLoaderWorkerTurboModule(ctx))
+      .set(NetworkingTurboModule.NAME, (ctx) => new NetworkingTurboModule(ctx))
+      .set(WebSocketTurboModule.NAME, (ctx) => new WebSocketTurboModule(ctx))
+      .set(BlobTurboModule.NAME, (ctx) => new BlobTurboModule(ctx))
+      .set(FileReaderTurboModule.NAME, (ctx) => new FileReaderTurboModule(ctx))
   }
 
-  hasTurboModule(name: string): boolean {
-    if (this.ctx.rnInstance.getArchitecture() === "ARK_TS" && name == ImageLoaderWorkerTurboModule.NAME) {
-      // fallback to UI version of ImageLoaderTurboModule in ArkTS architecture because RNImage uses it
-      return false;
-    }
-    return this.turboModuleFactoryByName.has(name) || this.eagerTurboModuleByName.has(name);
+  override getDebugName() {
+    return 'rnoh';
   }
 }
-
-
