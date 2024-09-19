@@ -1,7 +1,7 @@
 import http from '@ohos.net.http'
 import util from "@ohos.util";
 
-import { WorkerTurboModule } from "../../../RNOH/TurboModule";
+import { AnyThreadTurboModule, WorkerTurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
 import ArrayList from '@ohos.util.ArrayList';
 import { BlobMetadata } from '../Blob';
@@ -64,7 +64,7 @@ export type ResponseBodyHandler = {
  * It also exposes handlers which can be used to customize how requests are handled.
  */
 
-export class NetworkingTurboModule extends WorkerTurboModule {
+export class NetworkingTurboModule extends AnyThreadTurboModule {
   public static readonly NAME = 'Networking';
   private networkEventDispatcher: NetworkEventsDispatcher = new NetworkEventsDispatcher((eventName, params) => {
     this.ctx.rnInstance.emitDeviceEvent(eventName, params)

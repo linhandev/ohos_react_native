@@ -1,7 +1,8 @@
 import ConfigurationConstant from '@ohos.app.ability.ConfigurationConstant';
 import type EnvironmentCallback from '@ohos.app.ability.EnvironmentCallback';
-import { EtsWorkerTurboModule } from "../../RNOH/EtsWorkerTurboModule";
-import type { RNOHLogger, UITurboModuleContext, WorkerTurboModuleContext } from "../../RNOH/ts"
+import { EtsWorkerTurboModuleContext } from '../../RNOH';
+import { AnyThreadTurboModuleContext } from '../../RNOH/RNOHContext';
+import { AnyThreadTurboModule, RNOHLogger, UITurboModuleContext } from "../../RNOH/ts"
 import { UITaskRunnable } from '../../RNOH/UITaskRunner';
 
 @Sendable
@@ -22,7 +23,7 @@ class ChangeColorSchemeRunnable implements UITaskRunnable<ChangeColorSchemeRunna
 
 type JSColorScheme = 'light' | 'dark' | null;
 
-export class AppearanceWorkerTurboModule extends EtsWorkerTurboModule {
+export class AppearanceTurboModule extends AnyThreadTurboModule {
   public static readonly NAME = 'Appearance';
   private lastColorScheme: JSColorScheme = null;
   /**
@@ -35,7 +36,7 @@ export class AppearanceWorkerTurboModule extends EtsWorkerTurboModule {
   private initialColorMode: ConfigurationConstant.ColorMode = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET;
   private logger: RNOHLogger
 
-  constructor(ctx: WorkerTurboModuleContext) {
+  constructor(ctx: AnyThreadTurboModuleContext) {
     super(ctx);
     this.logger = ctx.logger.clone("AppearanceTurboModule")
     this.logger.info("constructor")
@@ -90,6 +91,10 @@ export class AppearanceWorkerTurboModule extends EtsWorkerTurboModule {
       //for null we want to use the colorMode set in the system settings
       colorMode = this.initialColorMode;
     }
-    this.ctx.runOnUIThread(new ChangeColorSchemeRunnable(), new ChangeColorSchemeRunnableParams(colorMode))
+    if (this.ctx instanceof EtsWorkerTurboModuleContext) {
+      this.ctx.runOnUIThread(new ChangeColorSchemeRunnable(), new ChangeColorSchemeRunnableParams(colorMode))
+    } else if (this.ctx instanceof UITurboModuleContext) {
+      this.ctx.uiAbilityContext.getApplicationContext().setColorMode(colorMode)
+    }
   };
 }

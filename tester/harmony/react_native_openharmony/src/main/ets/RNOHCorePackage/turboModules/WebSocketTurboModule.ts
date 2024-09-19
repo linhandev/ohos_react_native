@@ -1,8 +1,9 @@
 import webSocket from '@ohos.net.webSocket'
 import util from '@ohos.util'
-import { WorkerTurboModule, WorkerTurboModuleContext, RNOHLogger } from "../../RNOH/ts";
+import { RNOHLogger, AnyThreadTurboModule } from "../../RNOH/ts";
 import { BusinessError } from '@ohos.base';
 import { BlobMetadata as BlobMetadata } from './Blob';
+import { AnyThreadTurboModuleContext } from '../../RNOH/RNOHContext';
 
 const WEB_SOCKET_SUPPORTED_EVENT_NAMES =
   ["websocketOpen", "websocketClosed", "websocketFailed", "websocketMessage"] as const;
@@ -18,7 +19,7 @@ export type ContentHandler = {
   processByteMessage: (bytes: ArrayBuffer, params: MessageParams) => MessageParams;
 }
 
-export class WebSocketTurboModule extends WorkerTurboModule {
+export class WebSocketTurboModule extends AnyThreadTurboModule {
   public static readonly NAME = 'WebSocketModule';
 
   private socketById: Map<number, webSocket.WebSocket> = new Map();
@@ -26,7 +27,7 @@ export class WebSocketTurboModule extends WorkerTurboModule {
   private base64 = new util.Base64Helper();
   private contentHandlerBySocketId: Map<number, ContentHandler> = new Map();
 
-  constructor(ctx: WorkerTurboModuleContext) {
+  constructor(ctx: AnyThreadTurboModuleContext) {
     super(ctx)
     this.logger = ctx.logger.clone("WebSocketTurboModule")
   }

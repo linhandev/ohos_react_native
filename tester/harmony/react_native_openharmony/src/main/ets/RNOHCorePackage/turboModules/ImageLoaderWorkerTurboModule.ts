@@ -1,22 +1,18 @@
-import type { WorkerTurboModuleContext } from '../../RNOH/TurboModule';
-import { WorkerTurboModule } from '../../RNOH/TurboModule';
+import { AnyThreadTurboModule } from '../../RNOH/TurboModule';
 import type { RNOHLogger } from "../../RNOH/ts"
 import {
   RemoteImageDiskCache,
-  RemoteImageLoader,
-  RemoteImageLoaderError,
-  RemoteImageMemoryCache
+  RemoteImageLoader, RemoteImageMemoryCache
 } from '../../RemoteImageLoader';
-import image from '@ohos.multimedia.image';
-import { RemoteImageSource } from '../../RemoteImageLoader/RemoteImageSource';
+import { AnyThreadTurboModuleContext } from '../../RNOH/RNOHContext';
 
-export class ImageLoaderWorkerTurboModule extends WorkerTurboModule {
+export class ImageLoaderWorkerTurboModule extends AnyThreadTurboModule {
   static NAME = "ImageLoader" as const
 
   private imageLoader: RemoteImageLoader
   private logger: RNOHLogger
 
-  constructor(protected ctx: WorkerTurboModuleContext) {
+  constructor(protected ctx: AnyThreadTurboModuleContext) {
     super(ctx)
     this.logger = ctx.logger.clone(ImageLoaderWorkerTurboModule.NAME)
     this.logger.debug("constructor")

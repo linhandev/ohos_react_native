@@ -1,16 +1,16 @@
-import { WorkerTurboModule } from '../../../RNOH/TurboModule';
+import { AnyThreadTurboModule } from '../../../RNOH/TurboModule';
 import { BlobTurboModule } from './BlobTurboModule';
 import { BlobMetadata as BlobMetadata } from './types';
 import util from '@ohos.util';
 
-export class FileReaderTurboModule extends WorkerTurboModule {
+export class FileReaderTurboModule extends AnyThreadTurboModule {
   public static readonly NAME = 'FileReaderModule';
 
   private base64Helper = new util.Base64Helper();
 
 
   private getBlobTurboModule(): BlobTurboModule {
-    const blobModule = this.ctx.rnInstance.getWorkerTurboModule<BlobTurboModule>(BlobTurboModule.NAME);
+    const blobModule = this.ctx.rnInstance.getTurboModule<BlobTurboModule>(BlobTurboModule.NAME);
     if (blobModule == null) {
       throw new Error('FileReaderModule::Could not get BlobModule')
     }
