@@ -59,6 +59,8 @@ folly::dynamic ArkTSTurboModule::callSync(
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
       TaskThread::MAIN, [ctx = m_ctx, &methodName, &args, &result]() {
+        facebook::react::SystraceSection s(
+          "ArkTSTurboModule::callSync runSyncTask methodName: ", methodName);
         ArkJS arkJs(ctx.env);
         auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
