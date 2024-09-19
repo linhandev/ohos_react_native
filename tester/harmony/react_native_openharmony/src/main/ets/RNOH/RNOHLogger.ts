@@ -133,8 +133,13 @@ export class StandardRNOHLogger implements RNOHLogger {
     if (args.length === 0) {
       args.push("")
     }
-    console.log(this.threadPrefix)
-    hilog[severity](this.getDomain(), this.getTag(), `${this.threadPrefix} ${this.formattedPath}%{public}s`, ...args)
+    const concatenatedArgs = args.map(arg => String(arg)).join(' ');
+    hilog[severity](
+      this.getDomain(),
+      this.getTag(),
+      `${this.threadPrefix} ${this.formattedPath} %{public}s`,
+      concatenatedArgs,
+    );
   }
 
 
