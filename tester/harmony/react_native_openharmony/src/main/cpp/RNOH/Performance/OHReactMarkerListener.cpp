@@ -30,12 +30,6 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::JS_BUNDLE_STRING_CONVERT_STOP:
       logMarkerFinish("loadApplicationScript_StringConvert", "");
       break;
-    case HarmonyReactMarkerId::NATIVE_MODULE_SETUP_START:
-      logMarkerStart("NATIVE_MODULE_SETUP", tag);
-      break;
-    case HarmonyReactMarkerId::NATIVE_MODULE_SETUP_STOP:
-      logMarkerFinish("NATIVE_MODULE_SETUP", tag);
-      break;
     case HarmonyReactMarkerId::REGISTER_JS_SEGMENT_START:
       logMarkerStart("REGISTER_JS_SEGMENT", tag);
       break;
