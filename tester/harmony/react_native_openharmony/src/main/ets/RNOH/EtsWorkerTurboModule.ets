@@ -8,8 +8,9 @@ import { EtsWorkerTurboModuleContext } from "./EtsRNOHContext"
 
 
 /**
- * @api
  * @thread: WORKER
+ * @deprecated (latestRNOHVersion: 0.72.38)
+ * use AnyThreadTurboModule instead
  */
 export class EtsWorkerTurboModule extends WorkerTurboModule {
   protected ctx: EtsWorkerTurboModuleContext

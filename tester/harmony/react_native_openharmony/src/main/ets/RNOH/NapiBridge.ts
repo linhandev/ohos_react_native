@@ -9,7 +9,9 @@ import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
-import { WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
+import { AnyThreadTurboModule, UITurboModule,
+  UITurboModuleContext,
+  WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
 
 
 export type CppFeatureFlag = "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -91,7 +93,7 @@ export class NapiBridge {
     } satisfies ArkTSBridgeHandler))
   }
 
-  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>,
+  registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,
     rnInstanceId: number) {
     return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider,
       rnInstanceId))
@@ -104,7 +106,7 @@ export class NapiBridge {
   onCreateRNInstance(
     envId: number,
     instanceId: number,
-    turboModuleProvider: TurboModuleProvider,
+    turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>,
     frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null },
     mutationsListener: (mutations: Mutation[]) => void,
     componentCommandsListener: (tag: Tag,
