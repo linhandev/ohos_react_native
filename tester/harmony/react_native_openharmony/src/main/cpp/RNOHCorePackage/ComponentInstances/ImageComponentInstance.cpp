@@ -1,10 +1,17 @@
 #include "ImageComponentInstance.h"
+#include <RNOH/RNInstanceInternal.h>
 #include <react/renderer/components/image/ImageProps.h>
 #include <react/renderer/components/image/ImageState.h>
 #include <react/renderer/core/ConcreteState.h>
 #include <sstream>
+#include <string_view>
 
 namespace rnoh {
+
+using namespace std::literals;
+constexpr std::string_view ASSET_PREFIX = "asset://"sv;
+constexpr std::string_view RAWFILE_PREFIX = "resource://RAWFILE/assets/";
+constexpr std::string_view FILE_PREFIX = "file://";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
@@ -16,14 +23,29 @@ ImageComponentInstance::ImageComponentInstance(Context context)
   this->getLocalRootArkUINode().setDraggable(false);
 }
 
+std::string ImageComponentInstance::resolveSourceWithAssetPrefix(
+    std::string const& imageUri) {
+  auto assetsPrefix = this->getAssetsPrefix();
+  auto imageSource = assetsPrefix + imageUri.substr(ASSET_PREFIX.size());
+  return imageSource;
+}
+
 void ImageComponentInstance::setSources(
     facebook::react::ImageSources const& sources) {
   auto newSources =
       m_deps->imageSourceResolver->resolveImageSources(*this, sources);
+
   if (!newSources.empty()) {
-    this->getLocalRootArkUINode().setSources(newSources);
+    std::string imageSource = newSources[0].uri;
+
+    if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
+      std::string assetsPrefix = this->getAssetsPrefix();
+      imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
+    }
+
+    this->getLocalRootArkUINode().setSource(imageSource);
   } else {
-    this->getLocalRootArkUINode().resetSources();
+    this->getLocalRootArkUINode().resetSource();
   }
 }
 
@@ -54,15 +76,16 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
   if (m_props->defaultSources != props->defaultSources) {
     if (!(props->defaultSources.empty())) {
-      this->getLocalRootArkUINode().setAlt(props->defaultSources[0].uri);
+      this->getLocalRootArkUINode().setAlt(
+          this->resolveSourceWithAssetPrefix(props->defaultSources[0].uri));
     }
   }
 
   if (m_rawProps.loadingIndicatorSource != rawProps.loadingIndicatorSource) {
     m_rawProps.loadingIndicatorSource = rawProps.loadingIndicatorSource;
     if (m_rawProps.loadingIndicatorSource.has_value()) {
-      this->getLocalRootArkUINode().setAlt(
-          m_rawProps.loadingIndicatorSource.value());
+      this->getLocalRootArkUINode().setAlt(this->resolveSourceWithAssetPrefix(
+          m_rawProps.loadingIndicatorSource.value()));
     }
   }
 
@@ -187,6 +210,24 @@ void ImageComponentInstance::onLoadStart() {
   if (m_eventEmitter) {
     m_eventEmitter->onLoadStart();
   }
+}
+
+std::string ImageComponentInstance::getBundlePath() {
+  auto rnInstance = m_deps->rnInstance.lock();
+  RNOH_ASSERT(rnInstance != nullptr);
+  return rnInstance->getBundlePath();
+}
+
+std::string ImageComponentInstance::getAssetsPrefix() {
+  auto bundlePath = getBundlePath();
+  auto position = bundlePath.rfind('/');
+
+  if (position == std::string::npos) {
+    return std::string(RAWFILE_PREFIX);
+  }
+
+  auto prefix = std::string(FILE_PREFIX) + bundlePath.substr(0, position + 1);
+  return prefix;
 }
 
 ImageComponentInstance::ImageRawProps

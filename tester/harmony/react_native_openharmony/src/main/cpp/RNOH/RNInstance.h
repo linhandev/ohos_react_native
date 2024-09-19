@@ -90,6 +90,7 @@ class RNInstance {
     RNOH_ASSERT_MSG(false, "Not implemented");
     return std::nullopt;
   };
+  virtual std::string getBundlePath() const = 0;
 };
 
 } // namespace rnoh

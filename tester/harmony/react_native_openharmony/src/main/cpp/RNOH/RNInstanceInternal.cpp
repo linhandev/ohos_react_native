@@ -222,6 +222,10 @@ void RNInstanceInternal::loadScript(
     std::vector<uint8_t> bundle,
     std::string const sourceURL,
     std::function<void(const std::string)> onFinish) {
+  if (m_bundlePath.empty()) {
+    m_bundlePath = sourceURL;
+  }
+
   m_taskExecutor->runTask(
       TaskThread::JS,
       [this,
@@ -318,5 +322,9 @@ void RNInstanceInternal::registerFont(
     std::string const& fontFamily,
     std::string const& fontFilePathRelativeToRawfileDir) {
   m_fontRegistry->registerFont(fontFamily, fontFilePathRelativeToRawfileDir);
+}
+
+std::string RNInstanceInternal::getBundlePath() const {
+  return m_bundlePath;
 }
 } // namespace rnoh

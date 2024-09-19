@@ -47,7 +47,7 @@ void OHReactMarkerListener::logMarker(
       break;
     case HarmonyReactMarkerId::CHANGE_THREAD_PRIORITY:
       logMarker("CHANGE_THREAD_PRIORITY", tag);
-    break;
+      break;
     case HarmonyReactMarkerId::FABRIC_COMMIT_START:
       logMarkerStart("FABRIC_COMMIT", "");
       break;

@@ -24,6 +24,9 @@ class ImageComponentInstance
   ImageRawProps m_rawProps;
 
   void setSources(facebook::react::ImageSources const& sources);
+  std::string resolveSourceWithAssetPrefix(std::string const& imageUri);
+  std::string getBundlePath();
+  std::string getAssetsPrefix();
 
  public:
   ImageComponentInstance(Context context);

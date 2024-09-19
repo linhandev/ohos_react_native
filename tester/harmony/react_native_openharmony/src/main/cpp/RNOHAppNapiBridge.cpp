@@ -358,6 +358,7 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
     }
     auto& rnInstance = it->second;
     auto onFinishRef = arkJS.createNapiRef(args[3]);
+
     rnInstance->loadScript(
         arkJS.getArrayBuffer(args[1]),
         arkJS.getString(args[2]),

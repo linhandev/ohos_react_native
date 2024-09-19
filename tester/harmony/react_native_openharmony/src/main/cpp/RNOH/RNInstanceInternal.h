@@ -73,6 +73,8 @@ class RNInstanceInternal
       const std::string& name,
       folly::dynamic const& payload) override;
 
+  std::string getBundlePath() const override;
+
   TaskExecutor::Shared getTaskExecutor();
   void start();
   void loadScript(
@@ -189,5 +191,6 @@ class RNInstanceInternal
   std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
       nullptr;
   FontRegistry::Shared m_fontRegistry;
+  std::string m_bundlePath;
 };
 } // namespace rnoh

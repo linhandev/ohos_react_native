@@ -10,10 +10,6 @@ static constexpr ArkUI_NodeEventType IMAGE_NODE_EVENT_TYPES[] = {
 
 namespace rnoh {
 
-using namespace std::literals;
-constexpr std::string_view ASSET_PREFIX = "asset://"sv;
-const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
-
 ImageNode::ImageNode()
     : ArkUINode(NativeNodeApi::getInstance()->createNode(
           ArkUI_NodeType::ARKUI_NODE_IMAGE)),
@@ -57,16 +53,9 @@ void ImageNode::onNodeEvent(
   }
 }
 
-ImageNode& ImageNode::setSources(facebook::react::ImageSources const& src) {
-  ArkUI_AttributeItem item;
-  m_uri = src[0].uri;
-  std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
-  if (m_uri.rfind(ASSET_PREFIX, 0) == 0) {
-    resourceStr += m_uri.substr(ASSET_PREFIX.size());
-    item = {.string = resourceStr.c_str()};
-  } else {
-    item = {.string = m_uri.c_str()};
-  }
+ImageNode& ImageNode::setSource(std::string const& imageSource) {
+  ArkUI_AttributeItem item = {.string = imageSource.c_str()};
+
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_IMAGE_SRC, &item));
   return *this;
@@ -204,11 +193,9 @@ ImageNode& ImageNode::setResizeMethod(std::string const& resizeMethod) {
   return *this;
 }
 
-ImageNode& ImageNode::setAlt(std::string const& uri) {
-  if (!uri.empty()) {
-    std::string resourceStr = std::string("resource://RAWFILE/") + "assets/";
-    resourceStr += uri.substr(ASSET_PREFIX.size());
-    ArkUI_AttributeItem item = {.string = resourceStr.c_str()};
+ImageNode& ImageNode::setAlt(std::string const& imageSource) {
+  if (!imageSource.empty()) {
+    ArkUI_AttributeItem item = {.string = imageSource.c_str()};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_IMAGE_ALT, &item));
   }
@@ -225,7 +212,7 @@ ImageNode& ImageNode::resetResizeMethod() {
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
 }
-ImageNode& ImageNode::resetSources() {
+ImageNode& ImageNode::resetSource() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_IMAGE_SRC));
   return *this;

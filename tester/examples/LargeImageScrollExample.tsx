@@ -15,9 +15,8 @@ export function LargeImageScrollExample() {
       />
 
       {new Array(numberOfComponents).fill(0).map((_, idx) => (
-        <View style={styles.imageContainer}>
+        <View key={idx} style={styles.imageContainer}>
           <Image
-            key={idx}
             source={require('../assets/placeholder2000x2000.jpg')}
             style={styles.image}
           />
