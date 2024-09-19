@@ -292,7 +292,7 @@ export type RNInstanceOptions = {
   /**
    * Used to identify RNInstance on RNOHWorker thread.
    */
-  name: string,
+  name?: string,
   /**
    * Creates RNPackages provided by third-party libraries.
    */
@@ -403,7 +403,7 @@ export class RNInstanceImpl implements RNInstance {
     disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
     private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
-    private workerThread: WorkerThread,
+    private workerThread: WorkerThread | undefined,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseImageLoader: boolean,
@@ -502,7 +502,7 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
       cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
-    if (this.workerThread != null) {
+    if (this.workerThread != undefined) {
       cppFeatureFlags.push("WORKER_THREAD_ENABLED")
     }
     this.napiBridge.onCreateRNInstance(
@@ -606,7 +606,7 @@ export class RNInstanceImpl implements RNInstance {
       await turboModuleFactory.prepareEagerTurboModules()
       return turboModuleFactory
     })];
-    if (!this.workerThread) {
+    if (this.workerThread === undefined) {
       uiThreadTMFactoryPromises.push(...packages.map(async (pkg, idx) => {
         logger.clone(logPkgTraceName(pkg, idx)).debug("createAnyThreadTurboModuleFactory")
         const turboModuleFactory = pkg.createAnyThreadTurboModuleFactory(turboModuleContext);
@@ -629,7 +629,7 @@ export class RNInstanceImpl implements RNInstance {
         this.logger
       )
     }
-    if (this.workerThread) {
+    if (this.workerThread !== undefined) {
       this.unregisterWorkerMessageListener = this.workerThread.subscribeToMessages(async (type, payload) => {
         if (type === "RNOH_TURBO_MODULE_UI_TASK") {
           const task = payload.task

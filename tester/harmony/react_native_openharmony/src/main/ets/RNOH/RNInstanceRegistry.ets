@@ -36,7 +36,7 @@ export class RNInstanceRegistry {
   private defaultHttpClient: HttpClient | undefined
   private resourceManager: resourceManager.ResourceManager
   private displayMetricsManager: DisplayMetricsManager
-  private workerThreadPromise: Promise<WorkerThread>
+  private workerThreadPromise: Promise<WorkerThread> | undefined
 
   constructor(
     uiAbilityContext: common.UIAbilityContext,
@@ -49,7 +49,7 @@ export class RNInstanceRegistry {
     defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     resourceManager: resourceManager.ResourceManager,
     displayMetricsManager: DisplayMetricsManager,
-    workerThreadPromise: Promise<WorkerThread>,
+    workerThreadPromise: Promise<WorkerThread> | undefined,
   ) {
     this.uiAbilityContext = uiAbilityContext
     this.envId = envId
@@ -67,7 +67,9 @@ export class RNInstanceRegistry {
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
     const workerThread = await this.workerThreadPromise
-    await this.createRNInstanceEnvOnWorker(workerThread, id, options)
+    if (workerThread !== undefined) {
+      await this.createRNInstanceEnvOnWorker(workerThread, id, options)
+    }
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
     for (const fontFamilyAndResource of Object.entries(options.fontResourceByFontFamily ?? {})) {
       const fontFamily = fontFamilyAndResource[0]
@@ -129,12 +131,14 @@ export class RNInstanceRegistry {
   public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
       this.instanceMap.delete(id);
-      const worker = await this.workerThreadPromise;
-      const ack =
-        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
-          (payload: DestroyWorkerRNInstanceAckPayload) => payload.rnInstanceId === id)
-      worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
-      await ack;
+      if (this.workerThreadPromise !== undefined) {
+        const worker = await this.workerThreadPromise;
+        const ack =
+          worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
+            (payload: DestroyWorkerRNInstanceAckPayload) => payload.rnInstanceId === id)
+        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
+        await ack;
+      }
       return true;
     }
     return false;

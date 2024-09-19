@@ -28,7 +28,7 @@ export interface RNInstancesCoordinatorDependencies {
   fontSizeScale: number | undefined,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
-  rnohWorkerScriptUrl: string,
+  rnohWorkerScriptUrl?: string,
 
   /**
    * invoked when the React application doesn't want to handle the device back press
@@ -164,7 +164,7 @@ export class RNInstancesCoordinator {
     devMenu: DevMenu,
     jsPackagerClient: JSPackagerClient,
     defaultBackPressHandler: () => void,
-    rnohWorkerScriptUrl: string,
+    rnohWorkerScriptUrl?: string | undefined,
     options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
@@ -179,6 +179,15 @@ export class RNInstancesCoordinator {
     this.jsPackagerClient = jsPackagerClient;
     this.defaultBackPressHandler = defaultBackPressHandler;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
+    const workerThreadPromise = rnohWorkerScriptUrl !== undefined ? WorkerThread.create({
+        scriptUrl: rnohWorkerScriptUrl,
+        name: "RNOHWorker",
+        logger: logger,
+        onWorkerError: (rnohError) => {
+          this.devToolsController.setLastError(rnohError)
+          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+        }
+      }) : undefined
     this.rnInstanceRegistry = new RNInstanceRegistry(
       uiAbilityContext,
       this.envId,
@@ -190,15 +199,7 @@ export class RNInstancesCoordinator {
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
       displayMetricsManager,
-      WorkerThread.create({
-        scriptUrl: rnohWorkerScriptUrl,
-        name: "RNOHWorker",
-        logger: logger,
-        onWorkerError: (rnohError) => {
-          this.devToolsController.setLastError(rnohError)
-          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-        }
-      })
+      workerThreadPromise
     )
     this.rnohCoreContext = new RNOHCoreContext({
       reactNativeVersion: "0.72.5",

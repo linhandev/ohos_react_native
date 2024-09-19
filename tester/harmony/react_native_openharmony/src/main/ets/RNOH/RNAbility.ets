@@ -63,7 +63,9 @@ export abstract class RNAbility extends UIAbility {
    * You may need to import setupRNOHWorker directly from its file, because ETS seem to struggle when
    * importing this function from the package level.
    */
-  protected abstract getRNOHWorkerScriptUrl(): string
+  protected getRNOHWorkerScriptUrl(): string | undefined {
+    return undefined
+  }
 
   /**
    * Invoked when the React application doesn't handle the device back press.
