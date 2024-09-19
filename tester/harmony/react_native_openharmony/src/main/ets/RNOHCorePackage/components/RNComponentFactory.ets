@@ -18,6 +18,7 @@ import { RNSwitch } from './RNSwitch'
 import { RNActivityIndicator } from './RNActivityIndicator'
 
 
+
 @Builder
 export function buildRNComponent(ctx: RNComponentContext, descriptorWrapper: DescriptorWrapper) {
   if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "View" || ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "RootView") {

@@ -393,6 +393,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   private defaultProps: Record<string, any>
+  private packages: RNPackage[] = []
 
   constructor(
     private envId: number,
@@ -476,8 +477,13 @@ export class RNInstanceImpl implements RNInstance {
     return this.isFeatureFlagEnabledByName.get(featureFlagName) ?? false
   }
 
+  getPackages() {
+    return this.packages
+  }
+
   public async initialize(packages: RNPackage[]) {
     const stopTracing = this.logger.clone("initialize").startTracing()
+    this.packages = packages;
     const { descriptorWrapperFactoryByDescriptorType, turboModuleProvider } = await this.processPackages(packages)
     this.turboModuleProvider = turboModuleProvider
     this.descriptorRegistry = new DescriptorRegistry(
