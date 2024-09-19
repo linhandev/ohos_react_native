@@ -167,7 +167,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
                   logger: workerLogger,
                   uiAbilityContext,
                   rnInstance,
-                  httpClient: rnInstanceConfig.httpClient ?? new DefaultHttpClient(),
+                  httpClient: rnInstanceConfig.httpClient ?? new DefaultHttpClient({ logger: workerLogger }),
                   safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
                 },
                 uiTaskRunner: uiTaskRunner

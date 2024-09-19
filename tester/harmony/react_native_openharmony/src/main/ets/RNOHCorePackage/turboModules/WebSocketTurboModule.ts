@@ -4,7 +4,8 @@ import { WorkerTurboModule, WorkerTurboModuleContext, RNOHLogger } from "../../R
 import { BusinessError } from '@ohos.base';
 import { BlobMetadata as BlobMetadata } from './Blob';
 
-const WEB_SOCKET_SUPPORTED_EVENT_NAMES = ["websocketOpen", "websocketClosed", "websocketFailed", "websocketMessage"] as const;
+const WEB_SOCKET_SUPPORTED_EVENT_NAMES =
+  ["websocketOpen", "websocketClosed", "websocketFailed", "websocketMessage"] as const;
 
 type MessageParams = {
   id: number,
@@ -141,14 +142,18 @@ export class WebSocketTurboModule extends WorkerTurboModule {
   }
 
   private maybeHandleError(socketId: number, err: unknown | undefined): boolean {
+    const logger = this.logger.clone("maybeHandleError");
     if (err) {
+      if (typeof err === 'object' && 'code' in err && err?.code === 201) {
+        logger.error('Permission denied. Check if \'ohos.permission.INTERNET\' has been granted');
+      }
       let stringifiedErr = ""
       if (err instanceof Error) {
         stringifiedErr = err.message
       } else {
         stringifiedErr = JSON.stringify(err)
       }
-      this.logger.clone("maybeHandleError").error(err);
+      logger.error(JSON.stringify(err));
       this.ctx.rnInstance.emitDeviceEvent("websocketFailed", { id: socketId, message: stringifiedErr });
       this.socketById.delete(socketId);
       this.contentHandlerBySocketId.delete(socketId);
@@ -160,7 +165,8 @@ export class WebSocketTurboModule extends WorkerTurboModule {
   private getSocketById(socketId: number, methodName: string) {
     const ws = this.socketById.get(socketId);
     if (!ws) {
-      this.maybeHandleError(socketId, new Error(`Tried to get websocket with ID "${socketId}", but such socket hasn't been created or it's closed. (WebSocketTurboModule::${methodName})`));
+      this.maybeHandleError(socketId,
+        new Error(`Tried to get websocket with ID "${socketId}", but such socket hasn't been created or it's closed. (WebSocketTurboModule::${methodName})`));
       return null
     }
     return ws
