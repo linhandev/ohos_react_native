@@ -1,29 +1,29 @@
-import { RNInstanceImpl } from "./RNInstance"
-import { RNOHError } from "./RNOHError"
-import type common from '@ohos.app.ability.common'
-import { UIContext } from '@kit.ArkUI'
-import type { DescriptorRegistry } from './DescriptorRegistry';
-import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
-import type { RNInstance } from './RNInstance';
-import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
-import type { HttpClient } from '../HttpClient/HttpClient';
-import type { RNOHLogger } from "./RNOHLogger"
-import type { WorkerRNInstance } from "./WorkerRNInstance"
-import type { DevMenu } from './DevMenu'
-import type { DevToolsController } from './DevToolsController'
-import type { DisplayMetrics } from './types'
-import type { RNInstanceOptions } from './RNInstance'
-import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider'
+import {RNInstanceImpl} from './RNInstance';
+import {RNOHError} from './RNOHError';
+import type common from '@ohos.app.ability.common';
+import {UIContext} from '@kit.ArkUI';
+import type {DescriptorRegistry} from './DescriptorRegistry';
+import type {RNComponentCommandReceiver} from './RNComponentCommandHub';
+import type {RNInstance} from './RNInstance';
+import type {ComponentManagerRegistry} from './ComponentManagerRegistry';
+import type {HttpClient} from '../HttpClient/HttpClient';
+import type {RNOHLogger} from './RNOHLogger';
+import type {WorkerRNInstance} from './WorkerRNInstance';
+import type {DevMenu} from './DevMenu';
+import type {DevToolsController} from './DevToolsController';
+import type {DisplayMetrics} from './types';
+import type {RNInstanceOptions} from './RNInstance';
+import type {SafeAreaInsetsProvider} from './SafeAreaInsetsProvider';
+import {TurboModule} from './TurboModule';
 
-
-export type UIAbilityState = "FOREGROUND" | "BACKGROUND"
+export type UIAbilityState = 'FOREGROUND' | 'BACKGROUND';
 
 type RNOHCoreContextDependencies = {
-  reactNativeVersion: string,
+  reactNativeVersion: string;
   rnInstanceRegistry: {
-    createInstance(options: RNInstanceOptions): Promise<RNInstance>
-    deleteInstance(id: number): Promise<boolean>
-    forEach(cb: (rnInstance: RNInstanceImpl) => void)
+    createInstance(options: RNInstanceOptions): Promise<RNInstance>;
+    deleteInstance(id: number): Promise<boolean>;
+    forEach(cb: (rnInstance: RNInstanceImpl) => void);
   };
   displayMetricsProvider: () => DisplayMetrics;
   uiAbilityStateProvider: () => UIAbilityState;
@@ -33,7 +33,7 @@ type RNOHCoreContextDependencies = {
   defaultBackPressHandler: () => void;
   devToolsController: DevToolsController;
   devMenu: DevMenu;
-  safeAreaInsetsProvider: SafeAreaInsetsProvider
+  safeAreaInsetsProvider: SafeAreaInsetsProvider;
   launchUri?: string;
 };
 
@@ -46,31 +46,41 @@ export class RNOHCoreContext {
   /**
    * @internal
    */
-  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {
-  }
+  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {}
 
   get reactNativeVersion() {
-    return this._rnohCoreContextDeps.reactNativeVersion
+    return this._rnohCoreContextDeps.reactNativeVersion;
   }
 
   public reportRNOHError(rnohError: RNOHError) {
-    this.devToolsController.setLastError(rnohError)
-    this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
+    this.devToolsController.setLastError(rnohError);
+    this.devToolsController.eventEmitter.emit('NEW_ERROR', rnohError);
   }
 
-  async createAndRegisterRNInstance(options: RNInstanceOptions): Promise<RNInstance> {
-    const stopTracing = this._rnohCoreContextDeps.logger.clone("createAndRegisterRNInstance").startTracing();
-    const result = await this._rnohCoreContextDeps.rnInstanceRegistry.createInstance(options);
+  async createAndRegisterRNInstance(
+    options: RNInstanceOptions,
+  ): Promise<RNInstance> {
+    const stopTracing = this._rnohCoreContextDeps.logger
+      .clone('createAndRegisterRNInstance')
+      .startTracing();
+    const result =
+      await this._rnohCoreContextDeps.rnInstanceRegistry.createInstance(
+        options,
+      );
     stopTracing();
     return result;
   }
 
   async destroyAndUnregisterRNInstance(rnInstance: RNInstance): Promise<void> {
-    const stopTracing = this._rnohCoreContextDeps.logger.clone("destroyAndUnregisterRNInstance").startTracing();
+    const stopTracing = this._rnohCoreContextDeps.logger
+      .clone('destroyAndUnregisterRNInstance')
+      .startTracing();
     if (rnInstance instanceof RNInstanceImpl) {
       rnInstance.onDestroy();
     }
-    await this._rnohCoreContextDeps.rnInstanceRegistry.deleteInstance(rnInstance.getId());
+    await this._rnohCoreContextDeps.rnInstanceRegistry.deleteInstance(
+      rnInstance.getId(),
+    );
     stopTracing();
   }
 
@@ -83,18 +93,19 @@ export class RNOHCoreContext {
   }
 
   dispatchBackPress(): void {
-    this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance => rnInstance.onBackPress());
+    this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance =>
+      rnInstance.onBackPress(),
+    );
   }
 
   /**
    * @deprecated - This function shouldn't be in RNOHCoreContext because readiness is relative to a RNInstance and this context is shared across instances.
    * @depreciationDate 2024-04-08
    */
-  markReadiness(): void {
-  }
+  markReadiness(): void {}
 
   cancelTouches(): void {
-    this._rnohCoreContextDeps.rnInstanceRegistry.forEach((rnInstance) => {
+    this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance => {
       rnInstance.cancelTouches();
     });
   }
@@ -133,9 +144,9 @@ export class RNOHCoreContext {
 }
 
 type RNOHContextDependencies = {
-  rnInstance: RNInstance,
-  rnohCoreContextDependencies: RNOHCoreContextDependencies,
-}
+  rnInstance: RNInstance;
+  rnohCoreContextDependencies: RNOHCoreContextDependencies;
+};
 
 /**
  * @thread: MAIN
@@ -145,25 +156,23 @@ export class RNOHContext extends RNOHCoreContext {
   /**
    * @internal
    */
-  static fromRNOHCoreContext(rnohCoreContext: RNOHCoreContext, rnInstance: RNInstance): RNOHContext {
+  static fromRNOHCoreContext(
+    rnohCoreContext: RNOHCoreContext,
+    rnInstance: RNInstance,
+  ): RNOHContext {
     return new RNOHContext({
       rnohCoreContextDependencies: rnohCoreContext._rnohCoreContextDeps,
       rnInstance: rnInstance,
-    })
+    });
   }
 
-  protected constructor(
-    public _rnohContextDeps: RNOHContextDependencies,
-  ) {
-    super(
-      _rnohContextDeps.rnohCoreContextDependencies
-    )
+  protected constructor(public _rnohContextDeps: RNOHContextDependencies) {
+    super(_rnohContextDeps.rnohCoreContextDependencies);
   }
 
   protected get rnInstanceImpl() {
-    return this._rnohContextDeps.rnInstance as RNInstanceImpl
+    return this._rnohContextDeps.rnInstance as RNInstanceImpl;
   }
-
 
   /**
    * Check DescriptorRegistry documentation for more information.
@@ -190,7 +199,7 @@ export class RNOHContext extends RNOHCoreContext {
    * Check RNInstance documentation for more information.
    */
   get rnInstance(): RNInstance {
-    return this.rnInstanceImpl
+    return this.rnInstanceImpl;
   }
 
   /**
@@ -213,16 +222,48 @@ export class RNOHContext extends RNOHCoreContext {
   }
 }
 
+export interface AnyThreadRNInstance extends Partial<RNInstance> {
+  emitDeviceEvent(eventName: string, payload: any): void;
+
+  callRNFunction(
+    moduleName: string,
+    functionName: string,
+    args: unknown[],
+  ): void;
+
+  postMessageToCpp(name: string, payload: any): void;
+
+  getArchitecture(): 'ARK_TS' | 'C_API';
+
+  getTurboModule<T>(name: string): T;
+
+  getAssetsDest(): string;
+}
+
 /**
  * @api
  */
-export class UITurboModuleContext extends RNOHContext {
+export interface AnyThreadTurboModuleContext {
+  logger: RNOHLogger;
+  uiAbilityContext: common.UIAbilityContext;
+  rnInstance: AnyThreadRNInstance;
+  httpClient: HttpClient;
+  safeAreaInsetsProvider: SafeAreaInsetsProvider;
+}
+
+/**
+ * @api
+ */
+export class UITurboModuleContext
+  extends RNOHContext
+  implements AnyThreadTurboModuleContext
+{
   constructor(rnohContext: RNOHContext) {
     super(rnohContext._rnohContextDeps);
   }
 
   getUIContext(): UIContext | null {
-    return this._rnohContextDeps.rnInstance.getUIContext()
+    return this._rnohContextDeps.rnInstance.getUIContext();
   }
 }
 
@@ -237,41 +278,41 @@ export class TurboModuleContext extends UITurboModuleContext {
  * @internal
  */
 export type WorkerTurboModuleContextDependencies = {
-  logger: RNOHLogger
-  uiAbilityContext: common.UIAbilityContext
-  rnInstance: WorkerRNInstance
-  httpClient: HttpClient
-  safeAreaInsetsProvider: SafeAreaInsetsProvider
-}
+  logger: RNOHLogger;
+  uiAbilityContext: common.UIAbilityContext;
+  rnInstance: WorkerRNInstance;
+  httpClient: HttpClient;
+  safeAreaInsetsProvider: SafeAreaInsetsProvider;
+};
 
 /**
  * @api
  */
-export class WorkerTurboModuleContext {
+export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {
   /**
    * @internal
    */
-  constructor(public _workerTurboModuleContextDeps: WorkerTurboModuleContextDependencies) {
-  }
+  constructor(
+    public _workerTurboModuleContextDeps: WorkerTurboModuleContextDependencies,
+  ) {}
 
   get logger() {
-    return this._workerTurboModuleContextDeps.logger
+    return this._workerTurboModuleContextDeps.logger;
   }
 
   get uiAbilityContext() {
-    return this._workerTurboModuleContextDeps.uiAbilityContext
+    return this._workerTurboModuleContextDeps.uiAbilityContext;
   }
 
   get rnInstance() {
-    return this._workerTurboModuleContextDeps.rnInstance
+    return this._workerTurboModuleContextDeps.rnInstance;
   }
 
   get httpClient() {
-    return this._workerTurboModuleContextDeps.httpClient
+    return this._workerTurboModuleContextDeps.httpClient;
   }
 
   get safeAreaInsetsProvider() {
-    return this._workerTurboModuleContextDeps.safeAreaInsetsProvider
+    return this._workerTurboModuleContextDeps.safeAreaInsetsProvider;
   }
 }
-

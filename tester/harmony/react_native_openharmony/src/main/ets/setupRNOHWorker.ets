@@ -12,7 +12,9 @@ import {
   WorkerRNInstanceInternal,
   WorkerTurboModule,
   WorkerTurboModuleContext,
-  SafeAreaInsetsProvider
+  SafeAreaInsetsProvider,
+  AnyThreadTurboModule,
+  AnyThreadTurboModuleFactory
 } from "./RNOH/ts"
 import { RNOHCorePackage } from "./RNOHCorePackage/Package"
 import { EtsWorkerTurboModuleContext } from "./RNOH/EtsRNOHContext"
@@ -110,7 +112,7 @@ class SendableRNOHError {
 interface WorkerTurboModuleDeps {
   uiTaskRunner: UITaskRunner
   rnInstance: WorkerRNInstanceInternal
-  turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext>
+  turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>
 }
 
 /**
@@ -157,7 +159,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             })
             const rnInstanceConfig = config.createWorkerRNInstanceConfig(rnInstanceName)
             const packages = rnInstanceConfig.thirdPartyPackagesFactory({})
-            let turboModuleProvider: TurboModuleProvider<WorkerTurboModule, WorkerTurboModuleContext> | undefined
+            let turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule> | undefined
             const rnInstance = new WorkerRNInstanceInternal(rnInstanceId, napiBridge, typedMessagePayload.architecture,
               typedMessagePayload.assetsDest,
               () => turboModuleProvider)
@@ -237,20 +239,19 @@ async function createTurboModuleProvider(etsWorkerTurboModuleContext: EtsWorkerT
   logger: RNOHLogger) {
   const packages = [...thirdPartyPackages]
   packages.unshift(new RNOHCorePackage({}));
-  const factories = await Promise.all(packages.map(async (pkg, idx) => {
+  const factories = (await Promise.all(packages.map(async (pkg, idx) => {
     const pkgDebugName = pkg.getDebugName()
     let loggerName = `package${idx + 1}`
     if (pkgDebugName) {
       loggerName += `: ${pkgDebugName}`
     }
     logger.clone(loggerName).debug("")
-    const turboModuleFactory = pkg.createWorkerTurboModuleFactory(etsWorkerTurboModuleContext);
-    if (turboModuleFactory != null) {
-      await turboModuleFactory.prepareEagerTurboModules()
-    }
-    return turboModuleFactory
-  }));
-  return new TurboModuleProvider(
+    const workerTurboModuleFactory = pkg.createWorkerTurboModuleFactory(etsWorkerTurboModuleContext);
+    const anyThreadTurboModuleFactory = pkg.createAnyThreadTurboModuleFactory(etsWorkerTurboModuleContext);
+    await Promise.all([workerTurboModuleFactory?.prepareEagerTurboModules(), anyThreadTurboModuleFactory?.prepareEagerTurboModules()]);
+    return [workerTurboModuleFactory, anyThreadTurboModuleFactory]
+  }))).flat();
+  return new TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>(
     factories.filter(tmf => tmf != null) as WorkerTurboModuleFactory[],
     logger
   )
