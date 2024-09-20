@@ -294,10 +294,5 @@ export class NapiBridge {
     return this.unwrapResult(result)
   }
 
-  getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {
-    const result = this.libRNOHApp?.getNativeNodeIdByTag(instanceId, tag)
-    return this.unwrapResult(result)
-  }
-
 
 }

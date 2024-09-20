@@ -216,8 +216,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         mountingManager,
         arkTsComponentNames,
 		preAllocationBuffer,
-        featureFlagRegistry,
-        arkTSChannel);
+        featureFlagRegistry);
     SharedNativeResourceManager nativeResourceManager(
       OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
       OH_ResourceManager_ReleaseNativeResourceManager);
