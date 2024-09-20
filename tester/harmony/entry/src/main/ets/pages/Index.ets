@@ -9,8 +9,8 @@ import {
   RNOHLogger,
   TraceJSBundleProviderDecorator,
   RNOHCoreContext
-} from '@react-native-ohos/react-native-openharmony';
-import { PropsDisplayer, SampleView, GeneratedSampleView } from '@react-native-ohos/sample-package';
+} from '@rnoh/react-native-openharmony';
+import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-package';
 import { createRNPackages } from '../RNPackagesFactory';
 
 const arkTsComponentNames: Array<string> = [SampleView.NAME, GeneratedSampleView.NAME, PropsDisplayer.NAME];

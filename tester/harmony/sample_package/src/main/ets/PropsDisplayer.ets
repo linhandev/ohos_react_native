@@ -1,4 +1,4 @@
-import { Descriptor, ViewDynamicProps, RNOHContext, RNViewBase } from '@react-native-ohos/react-native-openharmony';
+import { Descriptor, ViewDynamicProps, RNOHContext, RNViewBase } from '@rnoh/react-native-openharmony';
 
 export type PropsDisplayerDescriptor = Descriptor<"PropsDisplayer", ViewDynamicProps>;
 

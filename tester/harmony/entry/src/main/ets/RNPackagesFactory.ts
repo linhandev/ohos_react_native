@@ -1,5 +1,5 @@
-import type {RNPackageContext, RNPackage} from '@react-native-ohos/react-native-openharmony/ts';
-import {SamplePackage} from '@react-native-ohos/sample-package/ts';
+import type {RNPackageContext, RNPackage} from 'rnoh/ts';
+import {SamplePackage} from 'rnoh-sample-package/ts';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
   return [new SamplePackage(ctx)];

@@ -1,5 +1,5 @@
 {
-  "name": "react-native-openharmony-sample-package",
+  "name": "react-native-harmony-sample-package",
   "version": "1.0.0",
   "description": "Sample RN harmony package",
   "main": "index.ts",
