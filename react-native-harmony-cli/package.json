@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-ohos/react-native-openharmony-cli",
+  "name": "@rnoh/react-native-harmony-cli",
   "version": "0.0.26",
   "description": "",
   "scripts": {

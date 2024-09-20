@@ -3,7 +3,7 @@ import {
   ViewBaseProps,
   RNViewBase,
   RNComponentContext
-} from '@react-native-ohos/react-native-openharmony';
+} from '@rnoh/react-native-openharmony';
 
 
 interface SampleViewProps extends ViewBaseProps {
