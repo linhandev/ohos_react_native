@@ -335,6 +335,9 @@ void ScrollViewComponentInstance::onScroll() {
 }
 
 void ScrollViewComponentInstance::onScrollStart() {
+  if (m_scrollState == ScrollState::IDLE) {
+    m_scrollState = ScrollState::FLING; 
+  }
   m_allowNextScrollEvent = false;
 }
 
