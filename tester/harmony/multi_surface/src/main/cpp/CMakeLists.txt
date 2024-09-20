@@ -6,8 +6,9 @@ set(NODE_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../node_modules")
 set(RNOH_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../oh_modules/@rnoh/react-native-openharmony/src/main/cpp")
 set(LOG_VERBOSITY_LEVEL 1)
 set(CMAKE_ASM_FLAGS "-Wno-error=unused-command-line-argument -Qunused-arguments")
-set(WITH_HITRACE_SYSTRACE 1) # for other CMakeLists.txt files to use
-add_compile_definitions(WITH_HITRACE_SYSTRACE)
+set(WITH_HITRACE_SYSTRACE ON)
+set(WITH_HITRACE_REACT_MARKER ON)
+
 
 
 
