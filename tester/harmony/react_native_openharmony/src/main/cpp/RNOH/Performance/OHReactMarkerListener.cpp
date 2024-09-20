@@ -155,15 +155,19 @@ void OHReactMarkerListener::logMarker(
 void OHReactMarkerListener::logMarkerStart(
     const std::string& marker,
     const std::string& tag) {
+#ifdef WITH_HITRACE_REACT_MARKER    
   auto message = makeMessage(marker, tag);
   OH_HiTrace_StartAsyncTrace(message.c_str(), getMessageId(message.c_str()));
+#endif
 }
 
 void OHReactMarkerListener::logMarkerFinish(
     const std::string& marker,
     const std::string& tag) {
+#ifdef WITH_HITRACE_REACT_MARKER
   auto message = makeMessage(marker, tag);
   OH_HiTrace_FinishAsyncTrace(message.c_str(), getMessageId(message.c_str()));
+#endif
 }
 
 std::string OHReactMarkerListener::makeMessage(
