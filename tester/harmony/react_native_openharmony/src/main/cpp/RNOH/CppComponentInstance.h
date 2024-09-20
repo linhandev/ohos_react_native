@@ -241,22 +241,7 @@ class CppComponentInstance : public ComponentInstance {
     } else {
       // Do nothing here.
     }
-
-    if (old) {
-      if (props->accessibilityState.disabled !=
-              old->accessibilityState.disabled ||
-          props->accessibilityState.checked !=
-              old->accessibilityState.checked ||
-          props->accessibilityState.selected !=
-              old->accessibilityState.selected) {
-        this->getLocalRootArkUINode().setAccessibilityState(
-            props->accessibilityState);
-      }
-    } else {
-        this->getLocalRootArkUINode().setAccessibilityState(
-            props->accessibilityState);
-    }
-
+    
     facebook::react::BorderMetrics borderMetrics =
       props->resolveBorderMetrics(this->m_layoutMetrics);
     
@@ -360,19 +345,7 @@ class CppComponentInstance : public ComponentInstance {
     } else {
       // Do nothing here.
     }
-
-    if (!old) {
-      if (!props->accessibilityRole.empty()) {
-        this->getLocalRootArkUINode().setAccessibilityRole(
-          props->accessibilityRole);
-      }
-    } else if (props->accessibilityRole != old->accessibilityHint) {
-      this->getLocalRootArkUINode().setAccessibilityRole(
-          props->accessibilityRole);
-    } else {
-      // Do nothing here.
-    }
-    
+        
     if (!old) {
       if (!props->accessibilityHint.empty()) {
         this->getLocalRootArkUINode().setAccessibilityDescription(
