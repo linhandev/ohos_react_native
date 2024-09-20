@@ -1,4 +1,4 @@
-import {RNAbility} from '@react-native-ohos/react-native-openharmony';
+import {RNAbility} from 'rnoh';
 
 export default class EntryAbility extends RNAbility {
   getPagePath() {
