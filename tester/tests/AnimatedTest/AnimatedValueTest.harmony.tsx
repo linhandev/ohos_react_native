@@ -1,7 +1,7 @@
 import {Animated} from 'react-native-harmony';
 import {TestCase} from '../../components';
 import {AnimatedValueTestCore as AnimatedValueTestCore} from './AnimatedValueTestCore';
-import {SimpleText} from 'react-native-openharmony-sample-package';
+import {SimpleText} from 'react-native-harmony-sample-package';
 import {useEffect, useRef} from 'react';
 
 const AnimatedSimpleText = Animated.createAnimatedComponent(SimpleText);
