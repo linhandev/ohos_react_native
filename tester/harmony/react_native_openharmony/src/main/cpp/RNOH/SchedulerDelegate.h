@@ -65,6 +65,13 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
  private:
   template <typename Operation>
   void performOnMainThread(Operation operation) {
+    if (m_taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      if (auto mountingManager = m_mountingManager.lock()) {
+        operation(mountingManager);
+      }
+      return;
+    }
+
     m_taskExecutor->runTask(
         TaskThread::MAIN,
         [weakMountingManager = m_mountingManager,
