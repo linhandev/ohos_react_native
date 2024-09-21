@@ -500,18 +500,10 @@ target_include_directories(rnoh PUBLIC
     "${RNOH_APP_DIR}"
 )
 # add hitrace systrace implementation for debugging
-option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation" OFF)
-option(WITH_HITRACE_REACT_MARKER "enables HiTrace-based React Marker implementation" OFF)
-if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
+if(DEFINED WITH_HITRACE_SYSTRACE)
     target_link_libraries(reactnative libhitrace_ndk.z.so)
     target_link_libraries(react_nativemodule_core libhitrace_ndk.z.so)
     target_link_libraries(react_render_debug libhitrace_ndk.z.so)
-    if (WITH_HITRACE_SYSTRACE)
-        target_compile_definitions(rnoh PUBLIC WITH_HITRACE_SYSTRACE)
-    endif()
-    if (WITH_HITRACE_REACT_MARKER)
-        target_compile_definitions(rnoh PUBLIC WITH_HITRACE_REACT_MARKER)
-    endif()
 endif()
 target_link_libraries(rnoh PUBLIC
     libace_napi.z.so

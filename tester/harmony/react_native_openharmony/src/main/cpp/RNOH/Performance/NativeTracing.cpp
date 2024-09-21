@@ -28,14 +28,12 @@ void rnoh::setupTracing(jsi::Runtime& runtime) {
       [](jsi::Runtime& runtime,
          const jsi::Value&,
          const jsi::Value* args,
-         size_t count) {
-#ifdef WITH_HITRACE_SYSTRACE          
+         size_t count) {       
         if (args[0].getNumber() != TRACE_TAG_REACT_APPS) {
           return Value::undefined();
         }
         auto traceMessage = args[1].asString(runtime).utf8(runtime);
-        OH_HiTrace_StartTrace(traceMessage.c_str());
-#endif        
+        OH_HiTrace_StartTrace(traceMessage.c_str());       
         return Value::undefined();
       });
 
@@ -46,13 +44,11 @@ void rnoh::setupTracing(jsi::Runtime& runtime) {
       [](jsi::Runtime& runtime,
          const jsi::Value&,
          const jsi::Value* args,
-         size_t count) {
-#ifdef WITH_HITRACE_SYSTRACE          
+         size_t count) {        
         if (args[0].getNumber() != TRACE_TAG_REACT_APPS) {
           return Value::undefined();
         }
         OH_HiTrace_FinishTrace();
-#endif
         return Value::undefined();
       });
   auto nativeTraceBeginAsyncSection = Function::createFromHostFunction(
@@ -63,14 +59,12 @@ void rnoh::setupTracing(jsi::Runtime& runtime) {
          const jsi::Value&,
          const jsi::Value* args,
          size_t count) {
-#ifdef WITH_HITRACE_SYSTRACE
         if (args[0].getNumber() != TRACE_TAG_REACT_APPS) {
           return Value::undefined();
         }
         auto traceMessage = args[1].asString(runtime).utf8(runtime);
         auto cookie = args[2].getNumber();
-        OH_HiTrace_StartAsyncTrace(traceMessage.c_str(), cookie);
-#endif        
+        OH_HiTrace_StartAsyncTrace(traceMessage.c_str(), cookie);   
         return Value::undefined();
       });
   auto nativeTraceEndAsyncSection = Function::createFromHostFunction(
@@ -81,14 +75,12 @@ void rnoh::setupTracing(jsi::Runtime& runtime) {
          const jsi::Value&,
          const jsi::Value* args,
          size_t count) {
-#ifdef WITH_HITRACE_SYSTRACE
         if (args[0].getNumber() != TRACE_TAG_REACT_APPS) {
           return Value::undefined();
         }
         auto traceMessage = args[1].asString(runtime).utf8(runtime);
         auto cookie = args[2].getNumber();
-        OH_HiTrace_FinishAsyncTrace(traceMessage.c_str(), cookie);
-#endif        
+        OH_HiTrace_FinishAsyncTrace(traceMessage.c_str(), cookie);    
         return Value::undefined();
       });
 
@@ -100,14 +92,12 @@ void rnoh::setupTracing(jsi::Runtime& runtime) {
          const jsi::Value&,
          const jsi::Value* args,
          size_t count) {
-#ifdef WITH_HITRACE_SYSTRACE
         if (args[0].getNumber() != TRACE_TAG_REACT_APPS) {
           return Value::undefined();
         }
         auto traceMessage = args[1].asString(runtime).utf8(runtime);
         auto value = args[2].getNumber();
-        OH_HiTrace_CountTrace(traceMessage.c_str(), value);
-#endif        
+        OH_HiTrace_CountTrace(traceMessage.c_str(), value);   
         return Value::undefined();
       });
   runtime.global().setProperty(
