@@ -102,18 +102,19 @@ export struct RNSurface {
   }
 
   aboutToDisappear() {
+    const surfaceHandle = this.surfaceHandle;
     (async () => {
       const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
       this.cleanUpCallbacks.forEach(cb => cb())
       if (this.shouldStopSurface) {
-        if (!this.surfaceHandle.isDestroyed()) {
+        if (!surfaceHandle.isDestroyed()) {
           // NOTE: when the app is stopping, it's possible the ability cleaned up the surface
           // before us. This is fine.
-          await this.surfaceHandle.stop();
-          this.surfaceHandle.destroy();
+          await surfaceHandle.stop();
+          surfaceHandle.destroy();
         }
-      } else if (this.surfaceHandle.getDisplayMode() === DisplayMode.Visible) {
-        this.surfaceHandle.setDisplayMode(DisplayMode.Suspended);
+      } else if (surfaceHandle.getDisplayMode() === DisplayMode.Visible) {
+        surfaceHandle.setDisplayMode(DisplayMode.Suspended);
       }
       stopTracing()
     })()
