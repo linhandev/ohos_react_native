@@ -842,7 +842,7 @@ Function JSVMRuntime::createFunctionFromHostFunction(
   JSVM_Value jsFunc = nullptr;
   OH_JSVM_CreateFunction(
       env, funcName.c_str(), funcName.size(), proxy->GetCallback(), &jsFunc);
-  static JSVM_PropertyDescriptor descriptor = {
+  JSVM_PropertyDescriptor descriptor = {
       "length", nullptr, nullptr, nullptr, nullptr, nullptr, JSVM_DEFAULT};
   OH_JSVM_CreateDouble(env, paramCount, &(descriptor.value));
   CALL_JSVM_AND_THROW(OH_JSVM_DefineProperties(env, jsFunc, 1, &descriptor));

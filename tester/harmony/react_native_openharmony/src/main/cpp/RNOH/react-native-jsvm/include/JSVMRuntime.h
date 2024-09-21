@@ -208,14 +208,14 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
  private:
     void UnRef() {
         uint32_t refcount = 0;
-        
+        if(isWeak){
+            OH_JSVM_DeleteReference(env, reference);
+            return;
+        }
         OH_JSVM_ReferenceRef(env, reference, &refcount);
         if (refcount == 2 || refcount == 0) {
           OH_JSVM_DeleteReference(env, reference);
-        } else if (refcount == 1) {
-          OH_JSVM_ReferenceUnref(env, reference, &refcount);
-          OH_JSVM_DeleteReference(env, reference);
-        } else {
+        }else {
           OH_JSVM_ReferenceUnref(env, reference, &refcount);
           OH_JSVM_ReferenceUnref(env, reference, &refcount);
         }
