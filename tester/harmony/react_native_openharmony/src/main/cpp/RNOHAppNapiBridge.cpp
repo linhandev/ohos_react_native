@@ -39,9 +39,7 @@ napi_value invoke(napi_env env, std::function<napi_value()> operation) {
 
 static napi_value onInit(napi_env env, napi_callback_info info) {
   HarmonyReactMarker::setLogMarkerIfNeeded();
-#ifdef WITH_HITRACE_REACT_MARKER  
   HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
-#endif
   LogSink::initializeLogging();
   auto logVerbosityLevel = 0;
 
