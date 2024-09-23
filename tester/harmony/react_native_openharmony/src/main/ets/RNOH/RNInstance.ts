@@ -458,9 +458,7 @@ export class RNInstanceImpl implements RNInstance {
       }
       surfaceHandle.destroy()
     }
-    if (this.isFeatureFlagEnabled("ENABLE_RN_INSTANCE_CLEAN_UP")) {
-      this.napiBridge.onDestroyRNInstance(this.id)
-    }
+    this.napiBridge.onDestroyRNInstance(this.id)
     this.turboModuleProvider.onDestroy()
     stopTracing()
   }

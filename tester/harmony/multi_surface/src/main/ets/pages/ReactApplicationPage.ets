@@ -57,9 +57,6 @@ struct ReactApplicationPage {
         },
         appKey: "app_name",
         wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
-        onSetUp: (rnInstance) => {
-          rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
-        },
         jsBundleProvider: new AnyJSBundleProvider([new MetroJSBundleProvider(),
           new ResourceJSBundleProvider(this.rnohCoreContext!.uiAbilityContext.resourceManager)]),
       })

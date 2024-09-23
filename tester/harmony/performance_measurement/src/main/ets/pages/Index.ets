@@ -102,9 +102,6 @@ struct Index {
           initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "performance_measurement",
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
-          onSetUp: (rnInstance) => {
-            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
-          },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([
               new MetroJSBundleProvider(),

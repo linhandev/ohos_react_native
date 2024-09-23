@@ -79,7 +79,6 @@ struct Index {
           appKey: "app_name",
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {
-            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
             // NOTE: you can provide fonts dynamically at runtime by calling `RNInstance.registerFont`
             rnInstance.registerFont('Pacifico-Regular', $rawfile("fonts/Pacifico-Regular.ttf"))
           },
