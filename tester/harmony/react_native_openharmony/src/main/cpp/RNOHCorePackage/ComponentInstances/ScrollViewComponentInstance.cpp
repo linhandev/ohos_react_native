@@ -472,13 +472,12 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
-void ScrollViewComponentInstance::updateContentClippedSubviews(
-    bool childrenChange) {
+void ScrollViewComponentInstance::updateContentClippedSubviews() {
   if (!m_children.empty() && m_children[0] != nullptr) {
     auto contentContainer =
         std::dynamic_pointer_cast<ViewComponentInstance>(m_children[0]);
     if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews(childrenChange);
+      contentContainer->updateClippedSubviews();
     }
   }
 }
@@ -894,8 +893,6 @@ void ScrollViewComponentInstance::onAppear() {
         stateData.contentOffset.y,
         false);
   }
-
-  updateContentClippedSubviews(true);
 }
 
 bool ScrollViewComponentInstance::setKeyboardAvoider(

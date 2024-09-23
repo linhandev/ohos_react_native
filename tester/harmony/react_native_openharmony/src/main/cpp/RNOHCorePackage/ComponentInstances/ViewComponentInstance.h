@@ -10,7 +10,7 @@ class ViewComponentInstance
  private:
   facebook::react::Size m_contentSize;
   CustomNode m_customNode;
-  std::vector<bool> m_childrenClippedState;
+  std::unordered_map<facebook::react::Tag, bool> m_childrenClippedState;
   facebook::react::Point m_previousOffset;
 
   bool isViewClipped(
