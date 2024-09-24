@@ -254,10 +254,10 @@ void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
   if (offset == targetOffset) {
     return;
   }
-
-  onScrollStart();
+  
   m_scrollNode.scrollTo(
       targetOffset.x, targetOffset.y, false, m_scrollToOverflowEnabled);
+  updateContentClippedSubviews();
 }
 
 void rnoh::ScrollViewComponentInstance::onStateChanged(
