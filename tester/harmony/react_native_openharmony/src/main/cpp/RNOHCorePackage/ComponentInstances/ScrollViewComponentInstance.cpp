@@ -404,12 +404,12 @@ void ScrollViewComponentInstance::emitOnMomentumScrollEndEvent() {
   updateStateWithContentOffset(scrollViewMetrics.contentOffset);
 }
 
-void ScrollViewComponentInstance::updateContentClippedSubviews(bool childrenChange) {
+void ScrollViewComponentInstance::updateContentClippedSubviews() {
   if (!m_children.empty() && m_children[0] != nullptr) {
     auto contentContainer =
         std::dynamic_pointer_cast<CustomNodeComponentInstance>(m_children[0]);
     if (contentContainer != nullptr) {
-      contentContainer->updateClippedSubviews(childrenChange);
+      contentContainer->updateClippedSubviews();
     }
   }
 }
@@ -796,7 +796,6 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
 }
 
 void ScrollViewComponentInstance::onAppear() {
-  updateContentClippedSubviews(true);
 }
 
 bool ScrollViewComponentInstance::setKeyboardAvoider(
