@@ -158,7 +158,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
   facebook::react::SystraceSection s(
       "RNOH::MountingManagerCAPI::handleMutation");
 
-  VLOG(1) << "Mutation (type:" << getMutationNameFromType(mutation.type)
+  DVLOG(1) << "Mutation (type:" << getMutationNameFromType(mutation.type)
           << "; componentName: "
           << (mutation.newChildShadowView.componentName != nullptr
                   ? mutation.newChildShadowView.componentName

@@ -41,7 +41,7 @@ TurboModule::Shared RNInstanceInternal::getTurboModule(
     if (rnohTurboModule != nullptr) {
       return rnohTurboModule;
     } else {
-      DLOG(ERROR) << "TurboModule '" << name
+      LOG(ERROR) << "TurboModule '" << name
                   << "' should extend rnoh::TurboModule";
       return nullptr;
     }
