@@ -354,7 +354,9 @@ void ScrollViewComponentInstance::onScrollStop() {
   }
   auto scrollViewMetrics = getScrollViewMetrics();
   if (isAtEnd(scrollViewMetrics.contentOffset)) {
-    m_eventEmitter->onScroll(scrollViewMetrics);
+    if(m_eventEmitter != nullptr){
+        m_eventEmitter->onScroll(scrollViewMetrics);    
+    }
     sendEventForNativeAnimations(scrollViewMetrics);
   }
 }
