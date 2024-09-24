@@ -80,7 +80,7 @@ class ScrollViewComponentInstance
   std::optional<ChildTagWithOffset> getFirstVisibleView(
       int32_t minIndexForVisible);
 
-  void updateContentClippedSubviews(bool childrenChange = false);
+  void updateContentClippedSubviews();
 
  public:
   ScrollViewComponentInstance(Context context);
