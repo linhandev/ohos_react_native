@@ -1,9 +1,11 @@
 #include "RNInstanceCAPI.h"
 
 #include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
+#include "Assert.h"
 #include "RNInstance.h"
 #include "RNOH/Assert.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOHError.h"
 #include "TaskExecutor/TaskExecutor.h"
 
 using namespace facebook;
@@ -112,8 +114,10 @@ void RNInstanceCAPI::createSurface(
 
 void RNInstanceCAPI::updateSurfaceConstraints(
     facebook::react::Tag surfaceId,
-    float width,
-    float height,
+    float minWidth,
+    float minHeight,
+    float maxWidth,
+    float maxHeight,
     float viewportOffsetX,
     float viewportOffsetY,
     float pixelRatio,
@@ -126,13 +130,50 @@ void RNInstanceCAPI::updateSurfaceConstraints(
     return;
   }
   it->second->updateConstraints(
-      width, height, viewportOffsetX, viewportOffsetY, pixelRatio, isRTL);
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+      viewportOffsetX,
+      viewportOffsetY,
+      pixelRatio,
+      isRTL);
+}
+
+facebook::react::Size RNInstanceCAPI::measureSurface(
+    facebook::react::Tag surfaceId,
+    float minWidth,
+    float minHeight,
+    float maxWidth,
+    float maxHeight,
+    float viewportOffsetX,
+    float viewportOffsetY,
+    float pixelRatio,
+    bool isRTL) {
+  DLOG(INFO) << "RNInstanceCAPI::measureSurface";
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceCAPI::updateSurfaceConstraints");
+  auto it = m_surfaceById.find(surfaceId);
+  if (it == m_surfaceById.end()) {
+    throw FatalRNOHError("Invalid surfaceId");
+  }
+  return it->second->measure(
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+      viewportOffsetX,
+      viewportOffsetY,
+      pixelRatio,
+      isRTL);
 }
 
 void RNInstanceCAPI::startSurface(
     facebook::react::Tag surfaceId,
-    float width,
-    float height,
+    float minWidth,
+    float minHeight,
+    float maxWidth,
+    float maxHeight,
     float viewportOffsetX,
     float viewportOffsetY,
     float pixelRatio,
@@ -144,8 +185,10 @@ void RNInstanceCAPI::startSurface(
     return;
   }
   it->second->start(
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       viewportOffsetX,
       viewportOffsetY,
       pixelRatio,

@@ -21,8 +21,10 @@ void rnoh::RNInstanceArkTS::createSurface(
 
 void RNInstanceArkTS::startSurface(
     react::Tag surfaceId,
-    float width,
-    float height,
+    float minWidth,
+    float minHeight,
+    float maxWidth,
+    float maxHeight,
     float viewportOffsetX,
     float viewportOffsetY,
     float pixelRatio,
@@ -42,8 +44,8 @@ void RNInstanceArkTS::startSurface(
       layoutConstraints.layoutDirection = isRTL
           ? react::LayoutDirection::RightToLeft
           : react::LayoutDirection::LeftToRight;
-      layoutConstraints.minimumSize =
-          layoutConstraints.maximumSize = {.width = width, .height = height};
+      layoutConstraints.minimumSize = layoutConstraints.maximumSize = {
+          .width = maxWidth, .height = maxHeight};
       auto layoutContext = surfaceHandler->getLayoutContext();
       layoutContext.viewportOffset = {viewportOffsetX, viewportOffsetY};
       layoutContext.pointScaleFactor = pixelRatio;
@@ -128,8 +130,10 @@ void rnoh::RNInstanceArkTS::setSurfaceDisplayMode(
 
 void RNInstanceArkTS::updateSurfaceConstraints(
     react::Tag surfaceId,
-    float width,
-    float height,
+    float minWidth,
+    float minHeight,
+    float maxWidth,
+    float maxHeight,
     float viewportOffsetX,
     float viewportOffsetY,
     float pixelRatio,
@@ -138,8 +142,8 @@ void RNInstanceArkTS::updateSurfaceConstraints(
       TaskThread::JS,
       [this,
        surfaceId,
-       width,
-       height,
+       maxWidth,
+       maxHeight,
        viewportOffsetX,
        viewportOffsetY,
        pixelRatio,
@@ -153,7 +157,7 @@ void RNInstanceArkTS::updateSurfaceConstraints(
           auto layoutConstraints =
               surfaceHandlers[surfaceId]->getLayoutConstraints();
           layoutConstraints.minimumSize = layoutConstraints.maximumSize = {
-              .width = width, .height = height};
+              .width = maxWidth, .height = maxHeight};
           auto layoutContext = surfaceHandlers[surfaceId]->getLayoutContext();
           layoutContext.viewportOffset = {viewportOffsetX, viewportOffsetY};
           layoutContext.pointScaleFactor = pixelRatio;

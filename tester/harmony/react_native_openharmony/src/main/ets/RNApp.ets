@@ -106,7 +106,7 @@ export struct RNApp {
   private logger!: RNOHLogger
   private ctx!: RNComponentContext
 
-  aboutToAppear() {
+  aboutToAppear(): void {
     this.init()
   }
 
@@ -202,6 +202,7 @@ export struct RNApp {
     if (Object.keys(this.rnInstanceConfig).includes("rnInstance")) {
       return Promise.resolve((this.rnInstanceConfig as CustomRNInstance).rnInstance)
     } else {
+
       const options = this.rnInstanceConfig
       this.shouldDestroyRNInstance = true
       return this.rnohCoreContext!.createAndRegisterRNInstance(options as RNInstanceOptions)

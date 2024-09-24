@@ -40,8 +40,10 @@ export class SurfaceHandle {
     this.napiBridge.startSurface(
       this.rnInstance.getId(),
       this.tag,
-      ctx.width,
-      ctx.height,
+      ctx.minWidth,
+      ctx.minHeight,
+      ctx.maxWidth,
+      ctx.maxHeight,
       ctx.surfaceOffsetX,
       ctx.surfaceOffsetY,
       ctx.pixelRatio,
@@ -60,8 +62,10 @@ export class SurfaceHandle {
 
   public updateConstraints(
     {
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -72,8 +76,10 @@ export class SurfaceHandle {
       throw new Error("updateConstraints called on a destroyed surface");
     }
     this.surfaceCtx = {
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       isRTL,
@@ -83,8 +89,10 @@ export class SurfaceHandle {
     this.napiBridge.updateSurfaceConstraints(
       this.rnInstance.getId(),
       this.tag,
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -94,16 +102,20 @@ export class SurfaceHandle {
 
   public updateRTL(isRTL: boolean) {
     const {
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
     } = this.surfaceCtx;
 
     this.surfaceCtx = {
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       isRTL,
@@ -113,13 +125,30 @@ export class SurfaceHandle {
     this.napiBridge.updateSurfaceConstraints(
       this.rnInstance.getId(),
       this.tag,
-      width,
-      height,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
       isRTL,
     );
+  }
+
+  measure({
+    minWidth,
+    minHeight,
+    maxWidth,
+    maxHeight,
+    surfaceOffsetX,
+    surfaceOffsetY,
+    pixelRatio,
+    isRTL,
+  }: SurfaceContext) {
+    return this.napiBridge.measureSurface(this.rnInstance.getId(), this.tag, minWidth, minHeight, maxWidth, maxHeight,
+      surfaceOffsetX,
+      surfaceOffsetY, pixelRatio, isRTL)
   }
 
   public getDisplayMode(): DisplayMode {

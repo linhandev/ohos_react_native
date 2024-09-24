@@ -382,7 +382,7 @@ static napi_value updateSurfaceConstraints(
   return invoke(env, [&] {
     DLOG(INFO) << "updateSurfaceConstraints";
     ArkJS arkJS(env);
-    auto args = arkJS.getCallbackArgs(info, 8);
+    auto args = arkJS.getCallbackArgs(info, 10);
     size_t instanceId = arkJS.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     auto it = RN_INSTANCE_BY_ID.find(instanceId);
@@ -390,6 +390,7 @@ static napi_value updateSurfaceConstraints(
       return arkJS.getUndefined();
     }
     auto& rnInstance = it->second;
+
     rnInstance->updateSurfaceConstraints(
         arkJS.getDouble(args[1]),
         arkJS.getDouble(args[2]),
@@ -397,8 +398,39 @@ static napi_value updateSurfaceConstraints(
         arkJS.getDouble(args[4]),
         arkJS.getDouble(args[5]),
         arkJS.getDouble(args[6]),
-        arkJS.getBoolean(args[7]));
+        arkJS.getDouble(args[7]),
+        arkJS.getDouble(args[8]),
+        arkJS.getBoolean(args[9]));
     return arkJS.getNull();
+  });
+}
+
+static napi_value measureSurface(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    DLOG(INFO) << "measureSurface";
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 10);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
+      return arkJS.getUndefined();
+    }
+    auto& rnInstance = it->second;
+    auto size = rnInstance->measureSurface(
+        arkJS.getDouble(args[1]),
+        arkJS.getDouble(args[2]),
+        arkJS.getDouble(args[3]),
+        arkJS.getDouble(args[4]),
+        arkJS.getDouble(args[5]),
+        arkJS.getDouble(args[6]),
+        arkJS.getDouble(args[7]),
+        arkJS.getDouble(args[8]),
+        arkJS.getBoolean(args[9]));
+    return arkJS.createObjectBuilder()
+        .addProperty("width", size.width)
+        .addProperty("height", size.height)
+        .build();
   });
 }
 
@@ -424,7 +456,7 @@ static napi_value createSurface(napi_env env, napi_callback_info info) {
 static napi_value startSurface(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
-    auto args = arkJS.getCallbackArgs(info, 9);
+    auto args = arkJS.getCallbackArgs(info, 11);
     size_t instanceId = arkJS.getDouble(args[0]);
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     auto it = RN_INSTANCE_BY_ID.find(instanceId);
@@ -441,8 +473,10 @@ static napi_value startSurface(napi_env env, napi_callback_info info) {
         arkJS.getDouble(args[4]),
         arkJS.getDouble(args[5]),
         arkJS.getDouble(args[6]),
-        arkJS.getBoolean(args[7]),
-        arkJS.getDynamic(args[8]));
+        arkJS.getDouble(args[7]),
+        arkJS.getDouble(args[8]),
+        arkJS.getBoolean(args[9]),
+        arkJS.getDynamic(args[10]));
     return arkJS.getNull();
   });
 }
@@ -804,6 +838,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"createSurface",
        nullptr,
        createSurface,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"measureSurface",
+       nullptr,
+       measureSurface,
        nullptr,
        nullptr,
        nullptr,

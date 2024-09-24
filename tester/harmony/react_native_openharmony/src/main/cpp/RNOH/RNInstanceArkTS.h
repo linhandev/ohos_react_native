@@ -40,16 +40,20 @@ class RNInstanceArkTS : public RNInstanceInternal {
       std::string const& moduleName) override;
   void updateSurfaceConstraints(
       facebook::react::Tag surfaceId,
-      float width,
-      float height,
+      float minWidth,
+      float minHeight,
+      float maxWidth,
+      float maxHeight,
       float viewportOffsetX,
       float viewportOffsetY,
       float pixelRatio,
       bool isRTL) override;
   void startSurface(
       facebook::react::Tag surfaceId,
-      float width,
-      float height,
+      float minWidth,
+      float minHeight,
+      float maxWidth,
+      float maxHeight,
       float viewportOffsetX,
       float viewportOffsetY,
       float pixelRatio,

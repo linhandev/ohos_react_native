@@ -9,9 +9,13 @@ import type { InspectorInstance, DisplayMetrics } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
-import { AnyThreadTurboModule, UITurboModule,
+import {
+  AnyThreadTurboModule,
+  UITurboModule,
   UITurboModuleContext,
-  WorkerTurboModule, WorkerTurboModuleContext } from './TurboModule';
+  WorkerTurboModule,
+  WorkerTurboModuleContext
+} from './TurboModule';
 
 
 export type CppFeatureFlag = "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -163,8 +167,10 @@ export class NapiBridge {
   startSurface(
     instanceId: number,
     surfaceTag: number,
-    initialSurfaceWidth: number,
-    initialSurfaceHeight: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
     surfaceOffsetX: number,
     surfaceOffsetY: number,
     pixelRatio: number,
@@ -173,8 +179,10 @@ export class NapiBridge {
     const result = this.libRNOHApp?.startSurface(
       instanceId,
       surfaceTag,
-      initialSurfaceWidth,
-      initialSurfaceHeight,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -187,8 +195,10 @@ export class NapiBridge {
   updateSurfaceConstraints(
     instanceId: number,
     surfaceTag: number,
-    surfaceWidth: number,
-    surfaceHeight: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
     surfaceOffsetX: number,
     surfaceOffsetY: number,
     pixelRatio: number,
@@ -197,14 +207,43 @@ export class NapiBridge {
     const result = this.libRNOHApp?.updateSurfaceConstraints(
       instanceId,
       surfaceTag,
-      surfaceWidth,
-      surfaceHeight,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
       isRTL
     );
     return this.unwrapResult(result)
+  }
+
+  measureSurface(
+    instanceId: number,
+    surfaceTag: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
+    surfaceOffsetX: number,
+    surfaceOffsetY: number,
+    pixelRatio: number,
+    isRTL: boolean,
+  ) {
+    const result = this.libRNOHApp?.measureSurface(
+      instanceId,
+      surfaceTag,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL
+    );
+    return this.unwrapResult<{ width: number, height: number }>(result)
   }
 
   createSurface(
@@ -219,6 +258,7 @@ export class NapiBridge {
     );
     return this.unwrapResult(result)
   }
+
 
   setSurfaceProps(
     instanceId: number,
