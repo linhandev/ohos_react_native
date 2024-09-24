@@ -117,7 +117,7 @@ export class NapiBridge {
     shouldEnableBackgroundExecutor: boolean,
     cppFeatureFlags: CppFeatureFlag[],
     resourceManager: ohosResourceManager.ResourceManager,
-    fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>
+    fontPathByFontFamily: Record<string, string>
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -135,7 +135,7 @@ export class NapiBridge {
       frameNodeFactoryRef,
       resourceManager,
       envId,
-      fontFamilyNameByFontPathRelativeToRawfileDir
+      fontPathByFontFamily
     );
     return this.unwrapResult(result)
   }

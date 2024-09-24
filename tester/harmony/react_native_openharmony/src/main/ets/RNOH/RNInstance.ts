@@ -284,8 +284,13 @@ export interface RNInstance {
 
   /**
    * Registers a custom font used by the RN application.
+   * NOTE: Due to ArkUI limitations, fonts from the application sandbox can only be used by the <Text> component.
+   * @param fontFamily name of the font family
+   * @param fontResource a `$rawfile` resource or an absolute path to the font file in the application sandbox
+   * @example registerFont("Pacifico-Regular", $rawfile("fonts/Pacifico-Regular.ttf")
+   * @example registerFont("Pacifico-Regular", "/data/storage/el2/base/files/Pacifico-Regular.ttf")
    */
-  registerFont(fontFamily: string, fontResource: Resource)
+  registerFont(fontFamily: string, fontResource: Resource | string)
 }
 
 export type RNInstanceOptions = {
@@ -348,9 +353,13 @@ export type RNInstanceOptions = {
   disableConcurrentRoot?: boolean;
   /**
    * Specifies custom fonts used by RN application.
-   * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
+   * NOTE: Due to ArkUI limitations, fonts from the application sandbox can only be used by the <Text> component.
+   * @example {
+   *   "Stint-Regular": $rawfile('fonts/Stint-Regular.ttf'),
+   *   "Pacifico-Regular": "/data/storage/el2/base/files/Pacifico-Regular.ttf"
+   * }
    */
-  fontResourceByFontFamily?: Record<string, Resource>
+  fontResourceByFontFamily?: Record<string, Resource | string>
 }
 
 /**
@@ -412,7 +421,7 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private displayMetricsManager: DisplayMetricsManager,
-    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
+    private fontPathByFontFamily: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
@@ -534,7 +543,7 @@ export class RNInstanceImpl implements RNInstance {
       this.shouldEnableBackgroundExecutor,
       cppFeatureFlags,
       this.resourceManager,
-      this.fontFamilyNameByFontPathRelativeToRawfileDir,
+      this.fontPathByFontFamily,
     )
     stopTracing()
   }
@@ -877,10 +886,22 @@ export class RNInstanceImpl implements RNInstance {
     return this.uiCtx;
   }
 
-  public registerFont(fontFamily: string, fontResource: Resource): void {
-    const fontPath = fontResource.params![0]
-    this.fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params![0]
-    font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+  public registerFont(fontFamily: string, fontResource: Resource | string): void {
+    const fontPath = (() => {
+      if (typeof fontResource === 'string') {
+        if (!fontResource.startsWith("/")) {
+          throw new RNOHError({
+            whatHappened: "Font path must be an absolute path or a $rawfile Resource",
+            howCanItBeFixed: ["Provide an absolute path to the font (starting with a \"/\")"]
+          })
+        }
+        return fontResource;
+      } else {
+        font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+        return fontResource.params![0]
+      }
+    })()
+    this.fontPathByFontFamily[fontFamily] = fontPath
     this.napiBridge.registerFont(this.id, fontFamily, fontPath)
   }
 }

@@ -70,12 +70,16 @@ export class RNInstanceRegistry {
     if (workerThread !== undefined) {
       await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     }
-    const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
+    const fontPathByFontFamily: Record<string, string> = {}
     for (const fontFamilyAndResource of Object.entries(options.fontResourceByFontFamily ?? {})) {
       const fontFamily = fontFamilyAndResource[0]
       const fontResource = fontFamilyAndResource[1]
-      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params![0]
-      font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+      if (typeof fontResource == 'string') {
+        fontPathByFontFamily[fontFamily] = fontResource
+      } else {
+        fontPathByFontFamily[fontFamily] = fontResource.params![0]
+        font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+      }
     }
     const rnInstance = new RNInstanceImpl(
       this.envId,
@@ -94,7 +98,7 @@ export class RNInstanceRegistry {
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
       this.displayMetricsManager,
-      fontFamilyNameByFontPathRelativeToRawfileDir,
+      fontPathByFontFamily,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler ?? (() => {

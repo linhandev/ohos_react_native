@@ -21,8 +21,8 @@ using SharedFontCollection = std::shared_ptr<OH_Drawing_FontCollection>;
 class FontRegistry {
   std::weak_ptr<NativeResourceManager> m_weakResourceManager;
   std::unordered_map<std::string, std::vector<uint8_t>>
-      m_fontFileContentByFontName;
-  std::mutex m_fontFileContentByFontNameMtx;
+      m_fontFileContentByFontFamily;
+  std::mutex m_fontFileContentByFontFamilyMtx;
   ThreadGuard m_threadGuard;
   std::mutex m_fontCollectionMtx;
   SharedFontCollection m_fontCollection;
@@ -32,9 +32,7 @@ class FontRegistry {
 
   FontRegistry(std::weak_ptr<NativeResourceManager> weakResourceManager);
 
-  void registerFont(
-      const std::string& name,
-      const std::string& fontAbsolutePath);
+  void registerFont(const std::string& name, const std::string& fontFilePath);
 
   /**
    * @threadSafe

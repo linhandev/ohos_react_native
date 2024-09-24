@@ -135,7 +135,7 @@ class RNInstanceInternal
 
   void registerFont(
       std::string const& fontFamily,
-      std::string const& fontFilePathRelativeToRawfileDir);
+      std::string const& fontFilePath);
 
  protected:
   void initialize();

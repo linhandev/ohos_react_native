@@ -320,8 +320,8 @@ void RNInstanceInternal::onAllAnimationsComplete() {
 }
 void RNInstanceInternal::registerFont(
     std::string const& fontFamily,
-    std::string const& fontFilePathRelativeToRawfileDir) {
-  m_fontRegistry->registerFont(fontFamily, fontFilePathRelativeToRawfileDir);
+    std::string const& fontFilePath) {
+  m_fontRegistry->registerFont(fontFamily, fontFilePath);
 }
 
 std::string RNInstanceInternal::getBundlePath() const {

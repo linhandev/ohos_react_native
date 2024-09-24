@@ -230,13 +230,11 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto frameNodeFactoryRef = arkJS.createNapiRef(args[8]);
     auto jsResourceManager = args[9];
     int envId = arkJS.getDouble(args[10]);
-    auto n_fontPathRelativeToRawfileDirByFontFamily =
-        arkJS.getObjectProperties(args[11]);
-    std::unordered_map<std::string, std::string>
-        fontPathRelativeToRawfileDirByFontFamily;
+    auto fontPathByFontFamilyEntries = arkJS.getObjectProperties(args[11]);
+    std::unordered_map<std::string, std::string> fontPathByFontFamily;
     for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
-         n_fontPathRelativeToRawfileDirByFontFamily) {
-      fontPathRelativeToRawfileDirByFontFamily.emplace(
+         fontPathByFontFamilyEntries) {
+      fontPathByFontFamily.emplace(
           arkJS.getString(fontFamily),
           arkJS.getString(fontPathRelativeToRawfileDir));
     }
@@ -310,7 +308,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         jsResourceManager,
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor,
-        std::move(fontPathRelativeToRawfileDirByFontFamily));
+        std::move(fontPathByFontFamily));
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {

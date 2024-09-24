@@ -81,6 +81,7 @@ struct Index {
           onSetUp: (rnInstance) => {
             // NOTE: you can provide fonts dynamically at runtime by calling `RNInstance.registerFont`
             rnInstance.registerFont('Pacifico-Regular', $rawfile("fonts/Pacifico-Regular.ttf"))
+            // rnInstance.registerFont('Pacifico-Regular', "/data/storage/el2/base/files/Pacifico-Regular.ttf");
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([
