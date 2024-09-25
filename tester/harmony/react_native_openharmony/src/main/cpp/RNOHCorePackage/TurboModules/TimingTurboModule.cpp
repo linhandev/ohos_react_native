@@ -190,6 +190,7 @@ TimingTurboModule::~TimingTurboModule() {
       });
     }
   });
+  loop->stop();
 }
 
 } // namespace rnoh
