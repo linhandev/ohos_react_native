@@ -390,6 +390,24 @@ void TextInputComponentInstance::onLayoutChanged(
   }
 }
 
+void TextInputComponentInstance::setTextContentAndSelection(std::string const &content, size_t selectionStart, size_t selectionEnd) {
+    m_textInputNode.setTextContent(content);      
+    m_textAreaNode.setTextContent(content);
+    m_textInputNode.setTextSelection(selectionStart, selectionEnd);
+    m_textAreaNode.setTextSelection(selectionStart, selectionEnd);
+}
+
+void TextInputComponentInstance::setTextContent(std::string const &content) {
+      // NOTE: if selection isn't set explicitly by JS side, we want it to stay
+      // roughly in the same place, rather than have it move to the end of the
+      // input (which is the ArkUI default behaviour)
+    auto selectionFromEnd = m_content.size() - m_selectionLocation;
+    auto selectionStart = content.size() - selectionFromEnd;
+    auto selectionEnd = selectionStart + m_selectionLength;
+    setTextContentAndSelection(content, selectionStart, selectionEnd);
+}
+
+
 void TextInputComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
@@ -400,11 +418,14 @@ void TextInputComponentInstance::onCommandReceived(
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
-    m_textInputNode.setTextContent(args[1].asString());
-    m_textAreaNode.setTextContent(args[1].asString());
-    if (args[2].asInt() >= 0 && args[3].asInt() >= 0) {
-      m_textInputNode.setTextSelection(args[2].asInt(), args[3].asInt());
-      m_textAreaNode.setTextSelection(args[2].asInt(), args[3].asInt());
+    auto textContent = args[1].asString();
+    auto selectionStart = args[2].asInt();
+    auto selectionEnd = args[3].asInt();
+
+    if (selectionStart < 0) {
+      setTextContent(textContent);
+    } else {
+      setTextContentAndSelection(textContent, selectionStart, selectionEnd);
     }
   }
 }
@@ -426,8 +447,8 @@ void TextInputComponentInstance::onStateChanged(
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }
-  m_textAreaNode.setTextContent(content);
-  m_textInputNode.setTextContent(content);
+  
+  setTextContent(content);
 }
 
 ArkUINode& TextInputComponentInstance::getLocalRootArkUINode() {
