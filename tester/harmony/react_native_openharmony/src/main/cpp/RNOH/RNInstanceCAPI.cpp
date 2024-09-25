@@ -52,6 +52,8 @@ TaskExecutor::Shared RNInstanceCAPI::getTaskExecutor() {
 
 void RNInstanceCAPI::start() {
   DLOG(INFO) << "RNInstanceCAPI::start";
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START);
   this->initialize();
   m_turboModuleProvider = this->createTurboModuleProvider();
   this->initializeScheduler(m_turboModuleProvider);
