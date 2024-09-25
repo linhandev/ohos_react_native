@@ -157,12 +157,12 @@ jsi::Value ArkTSTurboModule::callAsync(
                       ArkJS arkJs(ctx.env);
                       arkJs.deleteReference(napiResultRef);
                     })
-                    .catch_([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
-                      ctx.jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
+                    .catch_([&rt2, jsiPromise, jsInvoker = ctx.jsInvoker, env = ctx.env, napiResultRef](auto args) {
+                      jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
                         jsiPromise->reject(preparePromiseRejectionResult(args));
                         jsiPromise->allowRelease();
                       });
-                      ArkJS arkJs(ctx.env);
+                      ArkJS arkJs(env);
                       arkJs.deleteReference(napiResultRef);
                     });
               });
