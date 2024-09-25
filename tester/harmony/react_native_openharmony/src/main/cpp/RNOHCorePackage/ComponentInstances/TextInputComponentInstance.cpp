@@ -88,6 +88,9 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
+  if (m_selectionStart >= 0 && m_selectionEnd >= m_selectionStart) {
+    m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
+  }
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -425,9 +428,9 @@ void TextInputComponentInstance::onCommandReceived(
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
     m_textInputNode.setTextContent(args[1].asString());
     m_textAreaNode.setTextContent(args[1].asString());
-    if (args[2].asInt() >= 0 && args[3].asInt() >= 0) {
-      m_textInputNode.setTextSelection(args[2].asInt(), args[3].asInt());
-      m_textAreaNode.setTextSelection(args[2].asInt(), args[3].asInt());
+    if (args[2].asInt() >= 0 && args[3].asInt() >= args[2].asInt()) {
+      m_selectionStart = args[2].asInt();
+      m_selectionEnd = args[3].asInt();
     }
   }
 }
