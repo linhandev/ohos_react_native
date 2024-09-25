@@ -204,7 +204,16 @@ class CppComponentInstance : public ComponentInstance,
         layoutMetrics.pointScaleFactor);
     if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
       this->getLocalRootArkUINode().setTransform(
-          m_transform, layoutMetrics.pointScaleFactor);
+          m_transform, layoutMetrics.pointScaleFactor);    
+      if (m_props) { 
+        auto props = std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
+        this->getLocalRootArkUINode().setShadow(
+            props->shadowColor,
+            props->shadowOffset,
+            props->shadowOpacity,
+            props->shadowRadius,
+            layoutMetrics.pointScaleFactor);
+      }    
     }
     if (layoutMetrics.layoutDirection != m_layoutMetrics.layoutDirection) {
       ArkUI_Direction direction =
@@ -250,7 +259,8 @@ class CppComponentInstance : public ComponentInstance,
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
-          props->shadowRadius);
+          props->shadowRadius,
+          m_layoutMetrics.pointScaleFactor);
     }
 
     if (props->accessibilityActions != old->accessibilityActions) {
