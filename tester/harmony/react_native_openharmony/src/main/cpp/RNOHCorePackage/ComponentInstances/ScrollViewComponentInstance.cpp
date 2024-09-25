@@ -77,9 +77,9 @@ void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
     return;
   }
 
-  onScrollStart();
   m_scrollNode.scrollTo(
       targetOffset.x, targetOffset.y, false, m_scrollToOverflowEnabled);
+  updateContentClippedSubviews();
 }
 
 void rnoh::ScrollViewComponentInstance::onStateChanged(
@@ -335,6 +335,9 @@ void ScrollViewComponentInstance::onScroll() {
 }
 
 void ScrollViewComponentInstance::onScrollStart() {
+  if (m_scrollState == ScrollState::IDLE) {
+    m_scrollState = ScrollState::FLING; 
+  }
   m_allowNextScrollEvent = false;
 }
 
