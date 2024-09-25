@@ -24,8 +24,6 @@ class FontRegistry {
       m_fontFileContentByFontFamily;
   std::mutex m_fontFileContentByFontFamilyMtx;
   ThreadGuard m_threadGuard;
-  std::mutex m_fontCollectionMtx;
-  SharedFontCollection m_fontCollection;
 
  public:
   using Shared = std::shared_ptr<FontRegistry>;

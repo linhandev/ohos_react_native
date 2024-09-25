@@ -1,5 +1,6 @@
 #include "FontRegistry.h"
 #include <glog/logging.h>
+#include <native_drawing/drawing_font_collection.h>
 #include <native_drawing/drawing_register_font.h>
 #include <rawfile/raw_file_manager.h>
 #include <fstream>
@@ -61,18 +62,11 @@ void FontRegistry::registerFont(
       : readRawFile(resourceManager.get(), fontFilePath);
   auto lock = std::lock_guard(m_fontFileContentByFontFamilyMtx);
   m_fontFileContentByFontFamily.emplace(name, std::move(fontData));
-  // NOTE: fonts cannot be added to an existing collection, so we need to
-  // recreate it the next time `getFontCollection` is called
-  m_fontCollection.reset();
 }
 
 SharedFontCollection FontRegistry::getFontCollection() {
-  auto lockFontCollection = std::lock_guard(m_fontCollectionMtx);
-  if (m_fontCollection) {
-    return m_fontCollection;
-  }
   SharedFontCollection fontCollection(
-      OH_Drawing_CreateSharedFontCollection(),
+      OH_Drawing_CreateFontCollection(),
       OH_Drawing_DestroyFontCollection);
   auto lock = std::lock_guard(m_fontFileContentByFontFamilyMtx);
   for (auto& [name, fileContent] : m_fontFileContentByFontFamily) {
@@ -82,6 +76,5 @@ SharedFontCollection FontRegistry::getFontCollection() {
         fileContent.data(),
         fileContent.size());
   }
-  m_fontCollection = fontCollection;
   return fontCollection;
 }
