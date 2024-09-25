@@ -68,8 +68,10 @@ struct ReactPage {
     if (surfaceHandle !== undefined) {
       surfaceHandle.start(
         {
-          width: 0,
-          height: 0,
+          maxWidth: 0,
+          maxHeight: 0,
+          minWidth: 0,
+          minHeight: 0,
           surfaceOffsetX: 0,
           surfaceOffsetY: 0,
           pixelRatio: vp2px(1),
