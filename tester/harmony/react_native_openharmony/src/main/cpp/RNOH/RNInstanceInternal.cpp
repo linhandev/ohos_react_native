@@ -57,6 +57,8 @@ void RNInstanceInternal::postMessageToArkTS(
 
 void RNInstanceInternal::start() {
   DLOG(INFO) << "RNInstanceInternal::start";
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START);
   initialize();
 
   m_runtimeScheduler = std::make_shared<react::RuntimeScheduler>(

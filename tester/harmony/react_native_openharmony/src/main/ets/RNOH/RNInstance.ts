@@ -700,7 +700,6 @@ export class RNInstanceImpl implements RNInstance {
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
     const bundleURL = jsBundleProvider.getURL()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
-    const isRunningInitialBundle = this.initialBundleUrl === undefined
     try {
       this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
         `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
@@ -750,9 +749,6 @@ export class RNInstanceImpl implements RNInstance {
       }
     } finally {
       this.devToolsController.eventEmitter.emit("HIDE_DEV_LOADING_VIEW", this.id)
-      if (isRunningInitialBundle) {
-        this.logMarker("CREATE_REACT_CONTEXT_START")
-      }
       stopTracing()
     }
   }
