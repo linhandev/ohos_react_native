@@ -49,6 +49,12 @@ export struct RNSurface {
    */
   public surfaceConfig!: SurfaceConfig;
   /**
+   * Not Required,
+   * Used to return the corresponding RNInstance and root tag for this 
+   * specific RNSurface. 
+   */
+  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
+  /**
    * Required if ctx isn't RNComponentContext
    * @deprecated: provide RNComponentContext to RNSurface::ctx instead
    */
@@ -92,6 +98,7 @@ export struct RNSurface {
       this.shouldStopSurface = true;
     }
     const tag = this.surfaceHandle.getTag();
+    this.updateViewRootTag && this.updateViewRootTag(this.ctx.rnInstance, tag);
     this.onUpdateComponent(this.ctx.rnInstance.descriptorRegistry.getDescriptor(tag))
     this.touchDispatcher = new TouchDispatcher(tag, this.ctx.rnInstance, this.ctx.logger)
     this.cleanUpCallbacks.push(this.ctx.descriptorRegistry.subscribeToDescriptorChanges(
