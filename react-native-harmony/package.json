@@ -9,7 +9,8 @@
     "update_version": "node ./scripts/update-version.js",
     "gen:changelog": "node ./scripts/generate-changelog.js",
     "deploy": "node ./scripts/deploy.js",
-    "verify": "react-native verify-package-harmony --package-path . --skip-checks oh_package_name_is_derived_from_npm_package_name",
+    "verify": "npm run check_if_plugin_included && react-native verify-package-harmony --package-path . --skip-checks 'oh_package_name_is_derived_from_npm_package_name;harmony_directory_contains_only_one_har_file'",
+    "check_if_plugin_included": "test $(ls ./harmony/*.tgz 2>/dev/null | wc -l) -eq 1",
     "test": "jest"
   },
   "author": "",

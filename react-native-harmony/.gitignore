@@ -1,5 +1,5 @@
-*.tgz
-*.tar.gz
+/*.tgz
+/*.tar.gz
 react-native
 out
-harmony/
+harmony/*.har
