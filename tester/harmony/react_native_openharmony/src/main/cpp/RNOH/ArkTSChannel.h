@@ -37,13 +37,19 @@ class ArkTSChannel {
   void postMessage(std::string type, folly::dynamic payload) {
     auto executor = m_taskExecutor.lock();
     if (executor) {
-      executor->runTask(TaskThread::MAIN, [=]() {
-        auto napi_event_handler =
-            m_arkJS.getReferenceValue(m_napi_event_dispatcher_ref);
-        m_arkJS.call<2>(
-            napi_event_handler,
-            {m_arkJS.createString(type), m_arkJS.createFromDynamic(payload)});
-      });
+      executor->runTask(
+          TaskThread::MAIN,
+          [env = m_arkJS.getEnv(),
+           eventDispatcherRef = m_napi_event_dispatcher_ref,
+           type = std::move(type),
+           payload = std::move(payload)]() {
+            ArkJS arkJS(env);
+            auto napi_event_handler =
+                arkJS.getReferenceValue(eventDispatcherRef);
+            arkJS.call<2>(
+                napi_event_handler,
+                {arkJS.createString(type), arkJS.createFromDynamic(payload)});
+          });
     }
   }
 };
