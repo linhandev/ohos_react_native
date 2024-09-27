@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native-harmony';
+import {View, Text} from 'react-native';
 
 export function MockedVideoPlayer({
   itemId,

@@ -1,4 +1,4 @@
-import {Animated} from 'react-native-harmony';
+import {Animated} from 'react-native';
 import {TestCase} from '../../components';
 import {AnimatedValueTestCore as AnimatedValueTestCore} from './AnimatedValueTestCore';
 import {SimpleText} from 'react-native-harmony-sample-package';
