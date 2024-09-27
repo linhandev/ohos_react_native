@@ -39,6 +39,7 @@ class ImageComponentInstance
     ON_ERROR,
     ON_PARTIAL_LOAD,
   };
+  using EventType = ImageComponentInstance::EventType;
   struct ScheduledEvent {
     EventType eventType;
     const ValueFactory payloadFactory;
