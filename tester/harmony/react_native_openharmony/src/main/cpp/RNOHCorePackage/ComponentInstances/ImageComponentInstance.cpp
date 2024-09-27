@@ -49,6 +49,56 @@ void ImageComponentInstance::setSources(
   }
 }
 
+void ImageComponentInstance::onEventEmitterChanged(
+    SharedConcreteEventEmitter const& eventEmitter) {
+  if (m_eventEmitter == eventEmitter || eventEmitter == nullptr ||
+      m_scheduledEvents.empty()) {
+    return;
+  }
+  m_eventEmitter = eventEmitter;
+  for (auto& event : m_scheduledEvents) {
+    dispatchEvent(event.eventType, event.payloadFactory);
+  }
+  m_scheduledEvents.clear();
+}
+
+void ImageComponentInstance::dispatchOrScheduleEvent(
+    EventType eventType,
+    const ValueFactory& payloadFactory) {
+  if (!m_eventEmitter) {
+    m_scheduledEvents.push_back({eventType, payloadFactory});
+    return;
+  }
+  dispatchEvent(eventType, payloadFactory);
+}
+
+void ImageComponentInstance::dispatchEvent(
+    EventType eventType,
+    const ValueFactory& payloadFactory) {
+  std::string eventTypeString;
+  switch (eventType) {
+    case ON_LOAD_START:
+      eventTypeString = "loadStart";
+      break;
+    case ON_LOAD:
+      eventTypeString = "load";
+      break;
+    case ON_LOAD_END:
+      eventTypeString = "loadEnd";
+      break;
+    case ON_PROGRESS:
+      eventTypeString = "progress";
+      break;
+    case ON_ERROR:
+      eventTypeString = "error";
+      break;
+    case ON_PARTIAL_LOAD:
+      eventTypeString = "partialLoad";
+      break;
+  }
+  m_eventEmitter->dispatchEvent(eventTypeString, payloadFactory);
+}
+
 void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
 
@@ -56,9 +106,7 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
   if (m_props->sources != props->sources) {
     setSources(props->sources);
-    if (!this->getLocalRootArkUINode().getUri().empty()) {
-      onLoadStart();
-    }
+    dispatchOrScheduleEvent(ON_LOAD_START);
   }
 
   if (m_props->tintColor != props->tintColor) {
@@ -150,12 +198,8 @@ ImageNode& ImageComponentInstance::getLocalRootArkUINode() {
 }
 
 void ImageComponentInstance::onComplete(float width, float height) {
-  if (m_eventEmitter == nullptr) {
-    return;
-  }
-
-  std::string uri = this->getLocalRootArkUINode().getUri();
-  m_eventEmitter->dispatchEvent("load", [=](facebook::jsi::Runtime& runtime) {
+  auto uri = this->getLocalRootArkUINode().getUri();
+  dispatchOrScheduleEvent(ON_LOAD, [=](facebook::jsi::Runtime& runtime) {
     auto payload = facebook::jsi::Object(runtime);
     auto source = facebook::jsi::Object(runtime);
     source.setProperty(runtime, "width", width);
@@ -164,7 +208,7 @@ void ImageComponentInstance::onComplete(float width, float height) {
     payload.setProperty(runtime, "source", source);
     return payload;
   });
-  m_eventEmitter->onLoadEnd();
+  dispatchOrScheduleEvent(ON_LOAD_END);
 }
 
 void ImageComponentInstance::onError(int32_t errorCode) {
@@ -181,35 +225,23 @@ void ImageComponentInstance::onError(int32_t errorCode) {
   }
 
   errMsg += std::string("error code: ") + std::to_string(errorCode);
-  m_eventEmitter->dispatchEvent(
-      "error", [errMsg](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        auto source = facebook::jsi::Object(runtime);
-        source.setProperty(runtime, "error", errMsg);
-        payload.setProperty(runtime, "source", source);
-        return payload;
-      });
-  m_eventEmitter->onLoadEnd();
+  dispatchOrScheduleEvent(ON_ERROR, [errMsg](facebook::jsi::Runtime& runtime) {
+    auto payload = facebook::jsi::Object(runtime);
+    auto source = facebook::jsi::Object(runtime);
+    source.setProperty(runtime, "error", errMsg);
+    payload.setProperty(runtime, "source", source);
+    return payload;
+  });
+  dispatchOrScheduleEvent(ON_LOAD_END);
 }
 
 void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
-  if (m_eventEmitter == nullptr) {
-    return;
-  }
-
-  m_eventEmitter->dispatchEvent(
-      "progress", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        payload.setProperty(runtime, "loaded", (int32_t)loaded);
-        payload.setProperty(runtime, "total", (int32_t)total);
-        return payload;
-      });
-}
-
-void ImageComponentInstance::onLoadStart() {
-  if (m_eventEmitter) {
-    m_eventEmitter->onLoadStart();
-  }
+  dispatchOrScheduleEvent(ON_PROGRESS, [=](facebook::jsi::Runtime& runtime) {
+    auto payload = facebook::jsi::Object(runtime);
+    payload.setProperty(runtime, "loaded", (int32_t)loaded);
+    payload.setProperty(runtime, "total", (int32_t)total);
+    return payload;
+  });
 }
 
 std::string ImageComponentInstance::getBundlePath() {

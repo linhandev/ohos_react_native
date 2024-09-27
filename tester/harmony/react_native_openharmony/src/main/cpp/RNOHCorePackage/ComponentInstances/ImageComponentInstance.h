@@ -12,6 +12,9 @@ class ImageComponentInstance
       public ImageNodeDelegate,
       public ImageSourceResolver::ImageSourceUpdateListener {
  private:
+  using ValueFactory = facebook::react::ValueFactory;
+  using EventEmitter = facebook::react::EventEmitter;
+
   ImageNode m_imageNode;
   struct ImageRawProps {
     std::optional<std::string> resizeMethod;
@@ -28,15 +31,35 @@ class ImageComponentInstance
   std::string getBundlePath();
   std::string getAssetsPrefix();
 
+  enum class EventType {
+    ON_LOAD_START,
+    ON_LOAD,
+    ON_LOAD_END,
+    ON_PROGRESS,
+    ON_ERROR,
+    ON_PARTIAL_LOAD,
+  };
+  struct ScheduledEvent {
+    EventType eventType;
+    const ValueFactory payloadFactory;
+  };
+  std::vector<ScheduledEvent> m_scheduledEvents;
+  void dispatchOrScheduleEvent(
+      EventType eventType,
+      const ValueFactory& payloadFactory =
+          EventEmitter::defaultPayloadFactory());
+  void dispatchEvent(EventType eventType, const ValueFactory& payloadFactory);
+
  public:
   ImageComponentInstance(Context context);
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;
+  void onEventEmitterChanged(
+      SharedConcreteEventEmitter const& eventEmitter) override;
 
   void onProgress(uint32_t loaded, uint32_t total) override;
   void onComplete(float width, float height) override;
   void onError(int32_t errorCode) override;
-  void onLoadStart();
 
   ImageNode& getLocalRootArkUINode() override;
 

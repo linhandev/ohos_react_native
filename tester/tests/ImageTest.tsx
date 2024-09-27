@@ -222,12 +222,15 @@ export const ImageTest = () => {
       <TestCase.Manual
         itShould="call onLoadStart"
         initialState={'not called'}
-        arrange={({setState}) => {
+        arrange={({state, setState}) => {
           return (
-            <Image
-              source={LOCAL_IMAGE_ASSET_ID}
-              onLoadStart={() => setState('called')}
-            />
+            <View>
+              <Text>{JSON.stringify(state)}</Text>
+              <Image
+                source={LOCAL_IMAGE_ASSET_ID}
+                onLoadStart={() => setState('called')}
+              />
+            </View>
           );
         }}
         assert={({expect, state}) => {
@@ -237,12 +240,15 @@ export const ImageTest = () => {
       <TestCase.Manual
         itShould="call onProgress"
         initialState={'not called'}
-        arrange={({setState}) => {
+        arrange={({state, setState}) => {
           return (
-            <Image
-              source={LOCAL_IMAGE_ASSET_ID}
-              onProgress={() => setState('called')}
-            />
+            <View>
+              <Text>{JSON.stringify(state)}</Text>
+              <Image
+                source={LOCAL_IMAGE_ASSET_ID}
+                onProgress={() => setState('called')}
+              />
+            </View>
           );
         }}
         assert={({expect, state}) => {

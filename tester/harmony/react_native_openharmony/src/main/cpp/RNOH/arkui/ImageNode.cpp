@@ -55,7 +55,7 @@ void ImageNode::onNodeEvent(
 
 ImageNode& ImageNode::setSource(std::string const& imageSource) {
   ArkUI_AttributeItem item = {.string = imageSource.c_str()};
-
+  m_uri = imageSource;
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_IMAGE_SRC, &item));
   return *this;
