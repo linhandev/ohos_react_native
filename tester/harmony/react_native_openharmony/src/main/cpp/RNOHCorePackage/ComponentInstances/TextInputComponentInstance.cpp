@@ -17,10 +17,7 @@ namespace rnoh {
 
 TextInputComponentInstance::TextInputComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
-      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {
-  m_textInputNode.setTextInputNodeDelegate(this);
-  m_textAreaNode.setTextAreaNodeDelegate(this);
-}
+      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {}
 
 void TextInputComponentInstance::onContentSizeChange(float width, float height, bool multiline) {
   if (multiline == m_multiline){
@@ -181,6 +178,13 @@ TextInputComponentInstance::getOnContentSizeChangeMetrics() {
 void TextInputComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   m_multiline = props->traits.multiline;
+  if (m_multiline) {
+    m_textInputNode.setTextInputNodeDelegate(nullptr);
+    m_textAreaNode.setTextAreaNodeDelegate(this);
+  } else {
+    m_textInputNode.setTextInputNodeDelegate(this);
+    m_textAreaNode.setTextAreaNodeDelegate(nullptr);
+  }
   CppComponentInstance::onPropsChanged(props);
   m_clearTextOnFocus = props->traits.clearTextOnFocus;
   if (!m_props) {
@@ -401,11 +405,15 @@ void TextInputComponentInstance::onLayoutChanged(
     facebook::react::LayoutMetrics const& layoutMetrics) {
   CppComponentInstance::onLayoutChanged(layoutMetrics);
   if (m_multiline) {
-    m_textInputNode.setLayoutRect(
-      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
-  } else {
     m_textAreaNode.setLayoutRect(
-      layoutMetrics.frame.origin, layoutMetrics.frame.size, layoutMetrics.pointScaleFactor);
+        layoutMetrics.frame.origin,
+        layoutMetrics.frame.size,
+        layoutMetrics.pointScaleFactor);
+  } else {
+    m_textInputNode.setLayoutRect(
+        layoutMetrics.frame.origin,
+        layoutMetrics.frame.size,
+        layoutMetrics.pointScaleFactor);
   }
 }
 
