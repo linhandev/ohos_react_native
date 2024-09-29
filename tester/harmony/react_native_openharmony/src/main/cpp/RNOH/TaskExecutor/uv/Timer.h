@@ -1,12 +1,12 @@
 #pragma once
+#include <folly/Function.h>
 #include <uv.h>
-#include <functional>
 
 namespace rnoh {
 namespace uv {
 class Timer final {
  public:
-  using Callback = std::function<void()>;
+  using Callback = folly::Function<void()>;
 
   Timer(uv_loop_t* loop, Callback callback, uint64_t timeout, uint64_t repeat);
   ~Timer() noexcept;

@@ -1,5 +1,4 @@
 #include "RNOH/MutationsToNapiConverter.h"
-#include <react/renderer/debug/SystraceSection.h>
 #include "MutationsToNapiConverter.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/BaseComponentNapiBinder.h"
@@ -14,13 +13,11 @@ MutationsToNapiConverter::MutationsToNapiConverter(
 napi_value MutationsToNapiConverter::convert(
     napi_env env,
     react::ShadowViewMutationList const& mutations) const {
-  facebook::react::SystraceSection s(
-      "#RNOH::MutationsToNapiConverter::convert");
   std::vector<napi_value> napiMutations;
-  ArkJS arkJS(env);
+  ArkJS arkJs(env);
   for (auto& mutation : mutations) {
     auto objBuilder =
-        arkJS.createObjectBuilder().addProperty("type", mutation.type);
+        arkJs.createObjectBuilder().addProperty("type", mutation.type);
     switch (mutation.type) {
       case react::ShadowViewMutation::Type::Create: {
         objBuilder.addProperty(
@@ -49,14 +46,10 @@ napi_value MutationsToNapiConverter::convert(
         objBuilder.addProperty("tag", mutation.oldChildShadowView.tag);
         break;
       }
-      case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
-        RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
-        break;
-      }
     }
     napiMutations.push_back(objBuilder.build());
   }
-  return arkJS.createArray(napiMutations);
+  return arkJs.createArray(napiMutations);
 }
 
 void rnoh::MutationsToNapiConverter::updateState(
@@ -74,30 +67,30 @@ void rnoh::MutationsToNapiConverter::updateState(
 napi_value MutationsToNapiConverter::convertShadowView(
     napi_env env,
     react::ShadowView const shadowView) const {
-  ArkJS arkJS(env);
-  auto descriptorBuilder = arkJS.createObjectBuilder();
+  ArkJS arkJs(env);
+  auto descriptorBuilder = arkJs.createObjectBuilder();
   if (m_componentNapiBinderByName.count(shadowView.componentName) > 0) {
     auto componentNapiBinder =
         m_componentNapiBinderByName.at(shadowView.componentName);
-    descriptorBuilder.addProperty("isDynamicBinder", arkJS.createBoolean(false))
+    descriptorBuilder.addProperty("isDynamicBinder", arkJs.createBoolean(false))
         .addProperty("props", componentNapiBinder->createProps(env, shadowView))
         .addProperty(
             "state", componentNapiBinder->createState(env, shadowView));
   } else {
     BaseComponentNapiBinder baseNapiBinder;
-    descriptorBuilder.addProperty("isDynamicBinder", arkJS.createBoolean(true))
+    descriptorBuilder.addProperty("isDynamicBinder", arkJs.createBoolean(true))
         .addProperty("props", baseNapiBinder.createProps(env, shadowView))
-        .addProperty("state", arkJS.createObjectBuilder().build());
+        .addProperty("state", arkJs.createObjectBuilder().build());
   }
   descriptorBuilder.addProperty(
       "layoutMetrics",
-      arkJS.createObjectBuilder()
+      arkJs.createObjectBuilder()
           .addProperty(
               "frame",
-              arkJS.createObjectBuilder()
+              arkJs.createObjectBuilder()
                   .addProperty(
                       "origin",
-                      arkJS.createObjectBuilder()
+                      arkJs.createObjectBuilder()
                           .addProperty(
                               "x", shadowView.layoutMetrics.frame.origin.x)
                           .addProperty(
@@ -105,7 +98,7 @@ napi_value MutationsToNapiConverter::convertShadowView(
                           .build())
                   .addProperty(
                       "size",
-                      arkJS.createObjectBuilder()
+                      arkJs.createObjectBuilder()
                           .addProperty(
                               "width",
                               shadowView.layoutMetrics.frame.size.width)
@@ -121,8 +114,8 @@ napi_value MutationsToNapiConverter::convertShadowView(
 
   return descriptorBuilder.addProperty("tag", shadowView.tag)
       .addProperty("type", shadowView.componentName)
-      .addProperty("childrenTags", arkJS.createArray())
+      .addProperty("childrenTags", arkJs.createArray())
       .addProperty(
-          "rawProps", arkJS.createFromDynamic(shadowView.props->rawProps))
+          "rawProps", arkJs.createFromDynamic(shadowView.props->rawProps))
       .build();
 }

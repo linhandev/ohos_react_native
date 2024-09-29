@@ -1,5 +1,4 @@
 #include "Inspector.h"
-
 #include <glog/logging.h>
 #include <memory>
 #include <vector>
@@ -12,40 +11,46 @@ static std::unique_ptr<NapiTaskRunner> mainThreadTaskRunner = nullptr;
 
 // Constructor must always be called on the main thread
 RemoteConnection::RemoteConnection(napi_env env, napi_value connection)
-    : m_env(env), m_connectionRef(ArkJS(env).createNapiRef(connection)) {}
+    : m_env(env) {
+  napi_create_reference(env, connection, 1, &m_connectionRef);
+}
 
 RemoteConnection::~RemoteConnection() {
-  mainThreadTaskRunner->runAsyncTask([ref = std::move(m_connectionRef)] {});
+  mainThreadTaskRunner->runAsyncTask(
+      [env = this->m_env, ref = this->m_connectionRef] {
+        ArkJS arkJs(env);
+        arkJs.deleteReference(ref);
+      });
 }
 
 void RemoteConnection::onMessage(std::string message) {
   mainThreadTaskRunner->runAsyncTask([env = this->m_env,
                                       ref = this->m_connectionRef,
                                       message = std::move(message)] {
-    ArkJS arkJS(env);
-    arkJS.getObject(ref).call<1>("onMessage", {arkJS.createString(message)});
+    ArkJS arkJs(env);
+    arkJs.getObject(ref).call<1>("onMessage", {arkJs.createString(message)});
   });
 }
 
 void RemoteConnection::onDisconnect() {
   mainThreadTaskRunner->runAsyncTask(
       [env = this->m_env, ref = this->m_connectionRef] {
-        ArkJS arkJS(env);
-        arkJS.getObject(ref).call<0>("onDisconnect", {});
+        ArkJS arkJs(env);
+        arkJs.getObject(ref).call<0>("onDisconnect", {});
       });
 }
 
 static napi_value wrapLocalConnection(
     napi_env env,
     std::unique_ptr<facebook::react::ILocalConnection> localConnection) {
-  ArkJS arkJS(env);
+  ArkJS arkJs(env);
   auto connectionRawPtr = localConnection.release();
 
   try {
-    auto sendMessage = arkJS.createFunction(
+    auto sendMessage = arkJs.createFunction(
         "sendMessage",
         [](auto env, auto cbInfo) {
-          ArkJS arkJS(env);
+          ArkJS arkJs(env);
           facebook::react::ILocalConnection* connection;
           size_t argc = 1;
           napi_value args[1];
@@ -53,15 +58,15 @@ static napi_value wrapLocalConnection(
               env, cbInfo, &argc, args, nullptr, (void**)&connection);
           if (argc < 1) {
             LOG(ERROR) << "sendMessage requires 1 argument";
-            return arkJS.getUndefined();
+            return arkJs.getUndefined();
           }
-          auto message = arkJS.getString(args[0]);
+          auto message = arkJs.getString(args[0]);
           connection->sendMessage(message);
-          return arkJS.getUndefined();
+          return arkJs.getUndefined();
         },
         connectionRawPtr);
 
-    auto disconnect = arkJS.createFunction(
+    auto disconnect = arkJs.createFunction(
         "disconnect",
         [](auto env, auto cbInfo) {
           facebook::react::ILocalConnection* connection;
@@ -73,28 +78,28 @@ static napi_value wrapLocalConnection(
         },
         connectionRawPtr);
 
-    return arkJS.createObjectBuilder()
+    return arkJs.createObjectBuilder()
         .addProperty("sendMessage", sendMessage)
         .addProperty("disconnect", disconnect)
         .build();
   } catch (std::exception& e) {
     LOG(ERROR) << "Failed to wrap local connection: " << e.what();
     delete connectionRawPtr;
-    return arkJS.getUndefined();
+    return arkJs.getUndefined();
   }
 }
 
 static napi_value connect(napi_env env, napi_callback_info info) {
-  ArkJS arkJS(env);
+  ArkJS arkJs(env);
 
   size_t argc = 2;
   napi_value args[2];
   napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
   if (argc < 2) {
     LOG(ERROR) << "connect requires 2 arguments";
-    return arkJS.getUndefined();
+    return arkJs.getUndefined();
   }
-  auto pageId = static_cast<int>(arkJS.getDouble(args[0]));
+  auto pageId = static_cast<int>(arkJs.getDouble(args[0]));
   auto remoteConnection = std::make_unique<RemoteConnection>(env, args[1]);
   auto localConnection = ::facebook::react::getInspectorInstance().connect(
       pageId, std::move(remoteConnection));
@@ -102,28 +107,27 @@ static napi_value connect(napi_env env, napi_callback_info info) {
 }
 
 static napi_value getPages(napi_env env, napi_callback_info info) {
-  ArkJS arkJS(env);
+  ArkJS arkJs(env);
   auto pages = ::facebook::react::getInspectorInstance().getPages();
   std::vector<napi_value> pageObjects(pages.size());
   for (size_t i = 0; i < pages.size(); i++) {
     auto page = pages[i];
-    auto pageObject = arkJS.createObjectBuilder()
-                          .addProperty("id", arkJS.createDouble(page.id))
-                          .addProperty("title", arkJS.createString(page.title))
-                          .addProperty("vm", arkJS.createString(page.vm))
+    auto pageObject = arkJs.createObjectBuilder()
+                          .addProperty("id", arkJs.createDouble(page.id))
+                          .addProperty("title", arkJs.createString(page.title))
+                          .addProperty("vm", arkJs.createString(page.vm))
                           .build();
     pageObjects[i] = pageObject;
   }
-  return arkJS.createArray(pageObjects);
+  return arkJs.createArray(pageObjects);
 }
 
 napi_value getInspectorWrapper(napi_env env, napi_callback_info info) {
   if (mainThreadTaskRunner == nullptr) {
-    mainThreadTaskRunner =
-        std::make_unique<NapiTaskRunner>("RNOH_MAIN_INSPECTOR", env);
+    mainThreadTaskRunner = std::make_unique<NapiTaskRunner>(env);
   }
 
-  ArkJS arkJS(env);
+  ArkJS arkJs(env);
   napi_property_descriptor desc[] = {
       {"getPages",
        nullptr,
@@ -141,7 +145,7 @@ napi_value getInspectorWrapper(napi_env env, napi_callback_info info) {
        nullptr,
        napi_default,
        nullptr}};
-  auto obj = arkJS.createObjectBuilder().build();
+  auto obj = arkJs.createObjectBuilder().build();
   napi_define_properties(env, obj, sizeof(desc) / sizeof(desc[0]), desc);
   return obj;
 }

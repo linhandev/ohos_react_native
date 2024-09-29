@@ -19,11 +19,9 @@ class TouchEventHandler {
 
 class ArkUINodeRegistry {
   static std::unique_ptr<ArkUINodeRegistry> instance;
-  static std::function<void(std::exception_ptr)> ON_ERROR;
 
  public:
-  static bool isInitialized();
-  static void initialize(std::function<void(std::exception_ptr)> onError);
+  static void initialize(ArkTSBridge::Shared arkTSBridge);
   static ArkUINodeRegistry& getInstance();
 
   void registerNode(ArkUINode* node);
@@ -35,13 +33,14 @@ class ArkUINodeRegistry {
   void unregisterTouchHandler(ArkUINode* node);
 
  private:
-  ArkUINodeRegistry();
+  ArkUINodeRegistry(ArkTSBridge::Shared arkTSBridge);
 
   void receiveEvent(ArkUI_NodeEvent* event);
 
   std::unordered_map<ArkUI_NodeHandle, ArkUINode*> m_nodeByHandle;
   std::unordered_map<ArkUI_NodeHandle, TouchEventHandler*>
       m_touchHandlerByNodeHandle;
+  ArkTSBridge::Shared m_arkTSBridge;
 };
 
 } // namespace rnoh

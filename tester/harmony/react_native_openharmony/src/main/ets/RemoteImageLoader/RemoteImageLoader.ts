@@ -17,7 +17,6 @@ export class RemoteImageLoader {
     private memoryCache: RemoteImageMemoryCache,
     private diskCache: RemoteImageDiskCache,
     private context: common.UIAbilityContext,
-    private onDiskCacheUpdate: (e: {remoteUri: string, fileUri: string}) => void,
   ) {
   }
 
@@ -157,24 +156,6 @@ export class RemoteImageLoader {
     this.abortPrefetchByUrl.delete(requestId);
   }
 
-  private addRequestListener(downloadTask: request.DownloadTask, requestId: number, uri: string): void {
-    let progressCallback = (receiveSize: number, totalSize) => {
-      this.abortPrefetchByUrl.set(requestId, {uri: uri, downloadTask: downloadTask});
-    };
-
-    let failCallback = (err: number) => {
-      this.abortPrefetchByUrl.delete(requestId);
-    };
-
-    let completeCallback = () => {
-      this.abortPrefetchByUrl.delete(requestId);
-    };
-
-    downloadTask.on('progress', progressCallback);
-    downloadTask.on('fail', failCallback);
-    downloadTask.on('complete', completeCallback);
-  }
-
   public async prefetch(uri: string): Promise<boolean> {
     if (this.diskCache.has(uri)) {
       return true;
@@ -193,8 +174,6 @@ export class RemoteImageLoader {
     this.activePrefetchByUrl.set(uri, promise);
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
-      const fileUri = `file://${this.diskCache.getLocation(uri)}`;
-      this.onDiskCacheUpdate({remoteUri: uri, fileUri})
     });
 
     return await promise;
@@ -202,14 +181,10 @@ export class RemoteImageLoader {
 
   private async performDownload(config: request.DownloadConfig): Promise<boolean> {
     return await new Promise(async (resolve, reject) => {
-      try {
-        const downloadTask = await request.downloadFile(this.context, config);
-        downloadTask.on("complete", () => resolve(true));
-        downloadTask.on("fail", (err: number) => reject(`Failed to download the task. Code: ${err}`));
-      } catch (e) {
-        reject(e);
-      }
-    });
+      const downloadTask = await request.downloadFile(this.context, config);
+      downloadTask.on("complete", () => resolve(true));
+      downloadTask.on("fail", (err: number) => reject(`Failed to download the task. Code: ${err}`));
+    })
   }
 
   private async downloadFile(uri: string): Promise<boolean> {
@@ -217,7 +192,7 @@ export class RemoteImageLoader {
     const tempPath = path + '_tmp';
 
     try {
-      // Download to a temporary location to avoid risks of corrupted files from incomplete downloads, 
+      // Download to a temporary location to avoid risks of corrupted files from incomplete downloads,
       // as request.downloadFile does not clean up failed downloads automatically.
       if (fs.accessSync(tempPath)){
         await fs.unlink(tempPath);
@@ -238,16 +213,6 @@ export class RemoteImageLoader {
     }
     if (this.memoryCache.has(uri)) {
       return 'memory';
-    }
-    return undefined;
-  }
-
-  public getPrefetchResult(uri: string) {
-    if (this.activePrefetchByUrl.has(uri)) {
-      return 'pending';
-    }
-    if (this.diskCache.has(uri)) {
-      return `file://${this.diskCache.getLocation(uri)}`;
     }
     return undefined;
   }

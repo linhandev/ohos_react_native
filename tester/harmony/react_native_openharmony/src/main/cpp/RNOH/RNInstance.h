@@ -23,6 +23,7 @@
 #include "RNOH/TurboModule.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOH/UITicker.h"
+#include "RNOH/Assert.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -78,7 +79,7 @@ class RNInstance {
   virtual void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) = 0;
-  virtual void callJSFunction(
+  virtual void callFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) = 0;
@@ -121,7 +122,8 @@ class RNInstanceInternal : public RNInstance,
   virtual void setSurfaceProps(
       facebook::react::Tag surfaceId,
       folly::dynamic&& props) = 0;
-  virtual void stopSurface(facebook::react::Tag surfaceId) = 0;
+  virtual void stopSurface(facebook::react::Tag surfaceId, 
+    std::function<void()> onStop) = 0;
   virtual void destroySurface(facebook::react::Tag surfaceId) = 0;
   virtual void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,

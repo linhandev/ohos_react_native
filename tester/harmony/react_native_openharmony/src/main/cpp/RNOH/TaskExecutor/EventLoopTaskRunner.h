@@ -16,7 +16,6 @@ namespace rnoh {
 class EventLoopTaskRunner : public AbstractTaskRunner {
  public:
   EventLoopTaskRunner(
-      std::string name,
       uv_loop_t* loop,
       ExceptionHandler exceptionHandler = defaultExceptionHandler);
   ~EventLoopTaskRunner() override;
@@ -36,20 +35,22 @@ class EventLoopTaskRunner : public AbstractTaskRunner {
  protected:
   virtual void executeTask();
 
+  Task popNextTask();
   void waitForSyncTask(Task&& task);
   void cleanup();
 
-  DelayedTaskId m_nextTaskId = 0;
+  std::atomic<DelayedTaskId> m_nextTaskId = 0;
   std::string m_name;
   uv_loop_t* m_loop;
   std::atomic_bool m_running{true};
   std::queue<Task> m_asyncTaskQueue{};
   std::queue<Task> m_syncTaskQueue{};
   std::mutex m_mutex;
-  std::condition_variable m_syncTaskCv;
   std::unique_ptr<uv::Async> m_asyncHandle;
   std::unordered_map<DelayedTaskId, uv::Timer> m_timerByTaskId;
   ExceptionHandler m_exceptionHandler;
   bool cleanedUp = false;
+
+  friend class ThreadTaskRunner;
 };
 } // namespace rnoh

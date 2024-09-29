@@ -1,6 +1,5 @@
 #pragma
 
-#include <react/renderer/debug/SystraceSection.h>
 #include <vector>
 
 namespace rnoh {
@@ -48,7 +47,6 @@ class Subject {
   }
 
   void notifyObservers(PayloadT const& payload) {
-    facebook::react::SystraceSection s("#RNOH::Subject::notifyObservers");
     for (auto observer : m_observers) {
       observer->onUpdate(payload);
     }

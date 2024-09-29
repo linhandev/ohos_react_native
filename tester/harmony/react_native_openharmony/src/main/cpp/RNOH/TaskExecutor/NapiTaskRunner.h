@@ -18,7 +18,6 @@ namespace rnoh {
 class NapiTaskRunner : public EventLoopTaskRunner {
  public:
   NapiTaskRunner(
-      std::string name,
       napi_env env,
       ExceptionHandler exceptionHandler = defaultExceptionHandler);
   ~NapiTaskRunner() override;

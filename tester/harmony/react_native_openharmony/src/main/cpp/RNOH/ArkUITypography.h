@@ -14,9 +14,8 @@ namespace rnoh {
 using UniqueTypographyStyle = std::unique_ptr<
     OH_Drawing_TypographyStyle,
     decltype(&OH_Drawing_DestroyTypographyStyle)>;
-using UniqueFontCollection = std::unique_ptr<
-    OH_Drawing_FontCollection,
-    decltype(&OH_Drawing_DestroyFontCollection)>;
+using SharedFontCollection = std::shared_ptr<
+    OH_Drawing_FontCollection>;
 
 class ArkUITypography final {
  public:
@@ -107,30 +106,18 @@ class ArkUITypography final {
       size_t attachmentCount,
       std::vector<size_t> fragmentLengths,
       facebook::react::Float maxWidth,
-      float scale,
-      const std::shared_ptr<OH_Drawing_TypographyStyle> typographyStyleRef, //  Delete this after API rectification
-      const std::shared_ptr<ArkUI_StyledString> styledStringRef, //  Delete this after API rectification
-      const std::unordered_set<std::shared_ptr<OH_Drawing_TextStyle>> textStylesRef) //  Delete this after API rectification
+      float scale)
       : m_typography(
             OH_ArkUI_StyledString_CreateTypography(typographyHandler),
             OH_Drawing_DestroyTypography),
         m_attachmentCount(attachmentCount),
         m_fragmentLengths(std::move(fragmentLengths)),
-        m_scale(scale),
-        m_typographyStyleRef (std::move(typographyStyleRef)), //  Delete this after API rectification
-        m_styledStringRef(std::move(styledStringRef)), //  Delete this after API rectification
-        m_textStylesRef(std::move(textStylesRef)) { //  Delete this after API rectification
+        m_scale(scale) {
     OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
   }
 
   std::shared_ptr<OH_Drawing_Typography>
           m_typography;
-  std::shared_ptr<ArkUI_StyledString>
-      m_styledStringRef; //  Delete this after API rectification
-  std::unordered_set<std::shared_ptr<OH_Drawing_TextStyle>>
-      m_textStylesRef; //  Delete this after API rectification
-  std::shared_ptr<OH_Drawing_TypographyStyle>
-      m_typographyStyleRef; //  Delete this after API rectification
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
 
@@ -142,14 +129,14 @@ class ArkUITypographyBuilder final {
  public:
   ArkUITypographyBuilder(
       OH_Drawing_TypographyStyle* typographyStyle,
-      OH_Drawing_FontCollection* fontCollection,
+      std::shared_ptr<OH_Drawing_FontCollection> fontCollection,
       float scale,
       bool halfleading,
-      const std::shared_ptr<OH_Drawing_TypographyStyle> typographyStyleRef) //  Delete this after API rectification
-      : m_styledString(OH_ArkUI_StyledString_Create(typographyStyle, fontCollection), OH_ArkUI_StyledString_Destroy),
+      std::string defaultFontFamilyName)
+      : m_styledString(OH_ArkUI_StyledString_Create(typographyStyle, fontCollection.get()), OH_ArkUI_StyledString_Destroy),
         m_scale(scale),
         m_halfleading(halfleading),
-        m_typographyStyleRef (std::move(typographyStyleRef)) {}  //  Delete this after API rectification
+        m_defaultFontFamilyName(defaultFontFamilyName) {}
 
   void setMaximumWidth(facebook::react::Float maximumWidth) {
     if (!isnan(maximumWidth) && maximumWidth > 0) {
@@ -174,10 +161,7 @@ class ArkUITypographyBuilder final {
         m_attachmentCount,
         m_fragmentLengths,
         m_maximumWidth,
-        m_scale,
-        m_typographyStyleRef,
-        m_styledString,
-        m_textStyles);  //  Delete this after API rectification
+        m_scale);
   }
 
   ArkUI_StyledString* getTextStyleString() {
@@ -187,6 +171,7 @@ class ArkUITypographyBuilder final {
  private:
   float m_scale;
   bool m_halfleading;
+  std::string m_defaultFontFamilyName;
   std::vector<OH_Drawing_PlaceholderSpan> m_placeholderSpan;
   
   size_t utf8Length(const std::string& str) {
@@ -201,13 +186,12 @@ class ArkUITypographyBuilder final {
   
   void addTextFragment(
       const facebook::react::AttributedString::Fragment& fragment) {
-//    std::
-//        unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>
-//            textStyle(
-//                OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
-    std::shared_ptr<OH_Drawing_TextStyle> textStyle(
-        OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle); //  Revert this after API rectification
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading);
+    std::
+        unique_ptr<OH_Drawing_TextStyle, decltype(&OH_Drawing_DestroyTextStyle)>
+            textStyle(
+                OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
+    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfleading
+        || !isnan(fragment.textAttributes.lineHeight));
     // fontSize
     auto fontSize = fragment.textAttributes.fontSize;
     if (fontSize <= 0) {
@@ -253,14 +237,11 @@ class ArkUITypographyBuilder final {
     OH_Drawing_SetTextStyleDecorationStyle(textStyle.get(), textDecorationStyle);
     
     // backgroundColor
-    std::unique_ptr<
-        OH_Drawing_Brush,
-        decltype(&OH_Drawing_BrushDestroy)>
-        brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
-    if (fragment.textAttributes.isHighlighted.has_value() && fragment.textAttributes.isHighlighted.value()) {
-      OH_Drawing_BrushSetColor(brush.get(), (uint32_t)0xFF80808080);
-      OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
-    } else if (fragment.textAttributes.backgroundColor) {
+    if (fragment.textAttributes.backgroundColor) {
+      std::unique_ptr<
+          OH_Drawing_Brush,
+          decltype(&OH_Drawing_BrushDestroy)>
+          brush(OH_Drawing_BrushCreate(), OH_Drawing_BrushDestroy);
       OH_Drawing_BrushSetColor(brush.get(), (uint32_t)(*fragment.textAttributes.backgroundColor));
       OH_Drawing_SetTextStyleBackgroundBrush(textStyle.get(), brush.get());
     }
@@ -288,14 +269,24 @@ class ArkUITypographyBuilder final {
           mapValueToFontWeight(
               int(fragment.textAttributes.fontWeight.value())));
     }
+    std::vector<const char*> fontFamilies;
+    if (!m_defaultFontFamilyName.empty() && m_defaultFontFamilyName != "default") {
+      fontFamilies.emplace_back(m_defaultFontFamilyName.c_str());
+    }
     if (!fragment.textAttributes.fontFamily.empty()) {
-      const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+      fontFamilies.emplace_back(fragment.textAttributes.fontFamily.c_str());
+    }
+    if (fontFamilies.size() > 0) {
+      OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), fontFamilies.size(), fontFamilies.data());
+    }
+    if (fragment.textAttributes.fontVariant.has_value()) {
+      for (auto& [tag, value] : mapValueToFontVariant(int(fragment.textAttributes.fontVariant.value()))) {
+        OH_Drawing_TextStyleAddFontFeature(textStyle.get(), tag.c_str(), value);
+      }
     }
     // push text and corresponding textStyle to handler
     OH_ArkUI_StyledString_PushTextStyle(
         m_styledString.get(), textStyle.get());
-    m_textStyles.emplace(textStyle);
     OH_ArkUI_StyledString_AddText(
         m_styledString.get(), fragment.string.c_str());
     m_fragmentLengths.emplace_back(utf8Length(fragment.string));
@@ -344,18 +335,30 @@ class ArkUITypographyBuilder final {
     }
   }
 
+std::map<std::string, int> mapValueToFontVariant(int value) {
+    std::map<std::string, int> fontVariant{};
+    if (value & (int)facebook::react::FontVariant::SmallCaps) {
+      fontVariant.emplace("smcp", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::OldstyleNums) {
+      fontVariant.emplace("onum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::LiningNums) {
+      fontVariant.emplace("lnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::TabularNums) {
+      fontVariant.emplace("tnum", 1);
+    }
+    if (value & (int)facebook::react::FontVariant::ProportionalNums) {
+      fontVariant.emplace("pnum", 1);
+    }
+    return fontVariant;
+  }
 
-
-//  std::unique_ptr<
-//    ArkUI_StyledString,
-//    decltype(&OH_ArkUI_StyledString_Destroy)>
-//    m_styledString;
-  std::shared_ptr<ArkUI_StyledString>
-      m_styledString; //  Revert this after API rectification
-  std::unordered_set<std::shared_ptr<OH_Drawing_TextStyle>>
-      m_textStyles; //  Delete this after API rectification
-  std::shared_ptr<OH_Drawing_TypographyStyle>
-      m_typographyStyleRef; //  Delete this after API rectification
+  std::unique_ptr<
+    ArkUI_StyledString,
+    decltype(&OH_ArkUI_StyledString_Destroy)>
+    m_styledString;
   size_t m_attachmentCount = 0;
   std::vector<size_t> m_fragmentLengths{};
   facebook::react::Float m_maximumWidth =

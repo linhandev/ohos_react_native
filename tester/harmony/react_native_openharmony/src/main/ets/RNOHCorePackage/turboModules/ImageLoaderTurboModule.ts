@@ -17,7 +17,7 @@ export class ImageLoaderTurboModule extends TurboModule {
   constructor(protected ctx: TurboModuleContext) {
     super(ctx)
     this.imageLoader = new RemoteImageLoader(
-      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext, () => {})
+      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, ctx.uiAbilityContext.cacheDir), ctx.uiAbilityContext)
   }
 
   public getConstants() {
@@ -30,7 +30,7 @@ export class ImageLoaderTurboModule extends TurboModule {
       const imageInfo = await imageSource.getImageSource().getImageInfo()
       return [imageInfo.size.width, imageInfo.size.height]
     } else {
-      return [0,0]
+      throw 'Cannot get the size of an image for an empty URI'
     }
   }
 
@@ -54,7 +54,7 @@ export class ImageLoaderTurboModule extends TurboModule {
     return Promise.resolve({ width: imageInfo.size.width, height: imageInfo.size.height})
   }
 
-  public async prefetchImage(uri: string, requestId: number): Promise<boolean> {
+  public async prefetchImage(uri: string): Promise<boolean> {
     return this.imageLoader.prefetch(uri);
   }
 
@@ -65,10 +65,6 @@ export class ImageLoaderTurboModule extends TurboModule {
   public prefetchImageWithMetadata(uri: string, queryRootName: string, rootTag: number): Promise<boolean> {
     this.ctx.logger.warn("ImageLoader::prefetchImageWithMetadata is not supported")
     return Promise.resolve(false)
-  }
-
-  public getPrefetchResult(uri: string): string | undefined {
-    return this.imageLoader.getPrefetchResult(uri);
   }
 
   public queryCache(uris: Array<string>): Promise<Object> {

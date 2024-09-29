@@ -35,7 +35,7 @@ class PropsAnimatedNode : public AnimatedNode {
 
   std::optional<PropUpdate> updateView() {
     if (m_viewTag == std::nullopt) {
-      LOG(WARNING)
+      DLOG(WARNING)
           << "PropsAnimatedNode::updateView() called on unconnected node";
       return std::nullopt;
     }
@@ -47,7 +47,7 @@ class PropsAnimatedNode : public AnimatedNode {
         props.update(styleNode->getStyle());
       } else if (auto valueNode = dynamic_cast<ValueAnimatedNode*>(node);
                  valueNode != nullptr) {
-        props[key] = valueNode->getValue();
+        props[key] = valueNode->getOutput();
       } else {
         throw std::runtime_error("Unsupported property animated node type");
       }

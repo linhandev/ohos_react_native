@@ -1,7 +1,7 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
 import type { RNOHLogger } from './RNOHLogger';
 import { StandardRNOHLogger } from './RNOHLogger';
-import { RNOHCoreContext } from "./RNOHContext"
+import { RNOHCoreContext } from "./RNOHCoreContext"
 import window from '@ohos.window';
 import Want from '@ohos.app.ability.Want';
 import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
@@ -16,7 +16,7 @@ import { BusinessError } from '@kit.BasicServicesKit';
  RNInstancesCoordinator can be used if more control is needed.
  */
 export abstract class RNAbility extends UIAbility {
-  // region RNAbility methods that can be safely overridden.
+  // region RNAbility custom methods that can be safely overridden.
   protected createLogger(): RNOHLogger {
     return new StandardRNOHLogger((err) => {
       this.rnInstancesCoordinator?.getRNOHCoreContext().reportRNOHError(err)
@@ -54,18 +54,6 @@ export abstract class RNAbility extends UIAbility {
   }
 
   protected abstract getPagePath(): string
-
-  /**
-   * Override to specify the worker script URL and enable the RNOHWorker thread and WorkerTurboModules.
-   * @example return "entry/ets/workers/RNOHWorker.ets"
-   *
-   * RNOHWorker.ets calls `setupRNOHWorker` which can be imported from RNOH in the following way:
-   * import { setupRNOHWorker } from "@rnoh/react-native-openharmony/src/main/ets/setupRNOHWorker"
-   *
-   * You may need to import setupRNOHWorker directly from its file, because ETS seem to struggle when
-   * importing this function from the package level.
-   */
-  protected abstract getRNOHWorkerScriptUrl(): string
 
   /**
    * Invoked when the React application doesn't handle the device back press.
@@ -107,9 +95,7 @@ export abstract class RNAbility extends UIAbility {
       defaultBackPressHandler: () => {
         this.defaultBackPressHandler()
       },
-      rnohWorkerScriptUrl: this.getRNOHWorkerScriptUrl(),
     }, {
-      disableCleaningRNInstances: this.onShouldDisableCleaningRNInstances(),
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
         host: "localhost",
         port: 8081
@@ -127,7 +113,6 @@ export abstract class RNAbility extends UIAbility {
   }
 
   onDestroy() {
-    // this method seems to be never called
     this.rnInstancesCoordinator?.onDestroy()
   }
 
@@ -184,16 +169,5 @@ export abstract class RNAbility extends UIAbility {
 
   onBackground() {
     this.rnInstancesCoordinator?.onBackground();
-  }
-
-  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    this.rnInstancesCoordinator?.onNewWant(want, launchParam);
-  }
-
-  /**
-   * Return `true`, if your app bundle provides multiple RNAbilities, for each RNAbility.
-   */
-  onShouldDisableCleaningRNInstances(): boolean {
-    return false;
   }
 }

@@ -2,9 +2,6 @@
 #include <hilog/log.h>
 #include <pthread.h>
 
-#undef LOG_DOMAIN
-#undef LOG_TAG
-
 #define LOG_DOMAIN 0xBEEF
 #define LOG_TAG "#RNOH_CPP"
 
@@ -15,15 +12,13 @@ std::string getThreadSymbol() {
   pthread_getname_np(pthread_self(), c_threadName, sizeof(c_threadName));
   auto threadName = std::string(c_threadName);
   if (threadName == "RNOH_JS") {
-    return "__█__";
+    return "__█";
   } else if (threadName == "RNOH_BACKGROUND") {
-    return "_█___";
+    return "_█_";
   } else if (threadName == "RNOH_CLEANUP") {
-    return "____█";
-  } else if (threadName == "WorkerThread") {
-    return "___█_";
+    return "___█";
   } else {
-    return "█____";
+    return "█__";
   }
 }
 

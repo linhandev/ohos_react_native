@@ -2,7 +2,6 @@
 
 #include <ReactCommon/TurboModule.h>
 #include "RNOH/ArkTSTurboModule.h"
-#include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/UIManagerModule.h"
 #include "napi/native_api.h"
 namespace rnoh {
@@ -20,26 +19,17 @@ class TurboModuleFactoryDelegate {
       const std::string& name) const = 0;
 };
 
-class TurboModuleFactory final {
+class TurboModuleFactory {
  public:
-  struct ArkTSTurboModuleEnvironment {
-    napi_env napiEnv;
-    NapiRef arkTSTurboModuleProviderRef;
-  };
-
   using Context = ArkTSTurboModule::Context;
   using SharedTurboModule = std::shared_ptr<facebook::react::TurboModule>;
 
   TurboModuleFactory(
-      std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
-          arkTSTurboModuleEnvironmentByTaskThread,
-      FeatureFlagRegistry::Shared featureFlagRegistry,
+      napi_env env,
+      napi_ref arkTsTurboModuleProviderRef,
       const ComponentJSIBinderByString&&,
-      TaskExecutor::Shared,
-      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
-      std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
-
-  ~TurboModuleFactory() noexcept;
+      std::shared_ptr<TaskExecutor>,
+      std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>);
 
   virtual SharedTurboModule create(
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
@@ -50,38 +40,21 @@ class TurboModuleFactory final {
       std::weak_ptr<RNInstance> instance) const;
 
  protected:
-  std::optional<TaskThread> findArkTSTurboModuleThread(
-      const std::string& turboModuleName) const;
-
-  bool hasArkTSTurboModule(
-      const std::string& turboModuleName,
-      TaskThread thread,
-      napi_env env,
-      NapiRef const& turboModuleProviderRef) const;
-
   SharedTurboModule delegateCreatingTurboModule(
       Context ctx,
       const std::string& name) const;
 
-  NapiRef maybeGetArkTsTurboModuleInstanceRef(
-      const std::string& name,
-      TaskThread thread,
-      ArkTSTurboModuleEnvironment arkTSTurboModuleEnv) const;
-
-  ArkTSTurboModuleEnvironment getArkTSTurboModuleEnvironmentByTaskThread(
-      TaskThread taskThread) const;
+  napi_ref maybeGetArkTsTurboModuleInstanceRef(const std::string& name) const;
 
   virtual SharedTurboModule handleUnregisteredModuleRequest(
       Context ctx,
       const std::string& name) const;
 
   const ComponentJSIBinderByString m_componentBinderByString;
-  std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
-      m_arkTSTurboModuleEnvironmentByTaskThread;
-  TaskExecutor::Shared m_taskExecutor;
+  napi_env m_env;
+  napi_ref m_arkTsTurboModuleProviderRef;
+  std::shared_ptr<TaskExecutor> m_taskExecutor;
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> m_delegates;
-  std::shared_ptr<ArkTSMessageHub> m_arkTSMessageHub;
-  FeatureFlagRegistry::Shared m_featureFlagRegistry;
 };
 
 } // namespace rnoh

@@ -1,25 +1,19 @@
 #pragma once
 
 #include <ReactCommon/TurboModule.h>
-#include <glog/logging.h>
 #include <memory>
-#include "RNOH/ArkTSMessageHub.h"
+
+#include "glog/logging.h"
 
 namespace rnoh {
 
 class RNInstance;
 
-/**
- * @api
- * Extend this class if your TurboModule is intended to be a C++ only
- * TurboModule.
- */
 class TurboModule : public facebook::react::TurboModule {
  public:
   struct Context {
     std::shared_ptr<facebook::react::CallInvoker> jsInvoker;
     std::weak_ptr<RNInstance> instance;
-    std::shared_ptr<ArkTSMessageHub> arkTSMessageHub;
   };
 
   using Shared = std::shared_ptr<TurboModule>;
@@ -31,10 +25,10 @@ class TurboModule : public facebook::react::TurboModule {
       facebook::jsi::Runtime& rt,
       const facebook::jsi::PropNameID& name,
       const facebook::jsi::Value& value) override {
-//    LOG(INFO) << "Turbo Module: " << name_ << "::"
-//              << "set("
-//              << "_, \"" << name.utf8(rt) << "\", \""
-//              << value.toString(rt).utf8(rt) << "\")";
+   DLOG(INFO) << "Turbo Module: " << name_ << "::"
+             << "set("
+             << "_, \"" << name.utf8(rt) << "\", \""
+             << value.toString(rt).utf8(rt) << "\")";
   }
 };
 

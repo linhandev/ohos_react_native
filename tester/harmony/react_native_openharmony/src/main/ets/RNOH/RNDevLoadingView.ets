@@ -1,4 +1,4 @@
-import { RNOHCoreContext } from './RNOHContext'
+import { RNOHCoreContext } from './RNOHCoreContext'
 import { SafeAreaInsets } from "./SafeAreaInsetsProvider"
 
 @Component

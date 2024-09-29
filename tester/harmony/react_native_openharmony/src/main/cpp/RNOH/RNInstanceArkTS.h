@@ -137,12 +137,13 @@ class RNInstanceArkTS : public RNInstanceInternal,
       folly::dynamic&& initialProps) override;
   void setSurfaceProps(facebook::react::Tag surfaceId, folly::dynamic&& props)
       override;
-  void stopSurface(facebook::react::Tag surfaceId) override;
+  void stopSurface(facebook::react::Tag surfaceId, std::function<void()> onStop)
+      override;
   void destroySurface(facebook::react::Tag surfaceId) override;
   void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) override;
-  void callJSFunction(
+  void callFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) override;

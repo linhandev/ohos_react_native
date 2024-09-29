@@ -164,6 +164,7 @@ void PullToRefreshViewComponentInstance::onRefresh() {
 void PullToRefreshViewComponentInstance::onRefreshStateChanged(RefreshStatus state) {
   switch (state) {
     case RefreshStatus::REFRESH_STATUS_DRAG:
+      m_enableOnRefreshNativeEvent = true;
       m_refreshIndicatorContainerNode.setVisibility(ARKUI_VISIBILITY_VISIBLE);
       break;
 

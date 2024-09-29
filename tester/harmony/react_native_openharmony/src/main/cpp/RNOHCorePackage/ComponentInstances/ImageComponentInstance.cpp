@@ -2,8 +2,6 @@
 #include <react/renderer/components/image/ImageProps.h>
 #include <react/renderer/components/image/ImageState.h>
 #include <react/renderer/core/ConcreteState.h>
-#include <filesystem>
-#include <regex>
 #include <sstream>
 
 namespace rnoh {
@@ -12,9 +10,7 @@ const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 const std::string INVALID_PATH_PREFIX = "invalidpathprefix/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)),
-      ImageSourceResolver::ImageSourceUpdateListener(
-          m_deps->imageSourceResolver) {
+    : CppComponentInstance(std::move(context)) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);
@@ -26,55 +22,31 @@ std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) 
     return uri;
   }
 
-  std::string cache = getCacheFilePath(uri);
-  if (cache.empty()) {
+  if (!m_deps) {
     return uri;
   }
 
-  return cache;
-}
-
-std::string ImageComponentInstance::getCacheFilePath(std::string const& uri) {
-  if (has(uri)) {
-    return "file://" + getLocation(uri);
-  }
-  return uri;
-}
-
-bool ImageComponentInstance::has(std::string const& key) {
-  std::string cachedKey = getCacheKey(key);
-  try {
-    std::filesystem::path filePath = getFilePath(cachedKey);
-    if (std::filesystem::exists(filePath)) {
-      return true;
-    }
-  } catch (const std::exception& e) {
-    LOG(INFO) << "no cache";
+  auto rnInstance = m_deps->rnInstance.lock();
+  if (!rnInstance) {
+    return uri;
   }
 
-  return false;
-}
-
-// this method does not check if the file exists and is also used to determine
-// file path for prefetch
-std::string ImageComponentInstance::getLocation(std::string const& key) {
-  std::string cachedKey = getCacheKey(key);
-  return getFilePath(cachedKey);
-}
-
-std::string ImageComponentInstance::getFilePath(std::string const& key) {
-  return m_deps->displayMetricsManager->getCacheDir() + '/' + key;
-}
-
-std::string ImageComponentInstance::getCacheKey(std::string const& uri) {
-  if (uri == "") {
-    // if multiple images would have the same uri, they would overwrite each
-    // other but it's better than crashing the app
-    LOG(INFO) << "Cache key not provided, defaulting to empty cache key";
-    return "";
+  auto turboModule = rnInstance->getTurboModule("ImageLoader");
+  if (!turboModule) {
+    return uri;
   }
-  std::regex pattern("[^a-zA-Z0-9 -]");
-  return std::regex_replace(uri, pattern, "");
+
+  auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
+  if (!arkTsTurboModule) {
+    return uri;
+  }
+
+  auto cache = arkTsTurboModule->callSync("getCacheFilePath", {uri});
+  if (!cache.isString()) {
+    return uri;
+  }
+
+  return cache.asString();
 }
 
 std::string ImageComponentInstance::getBundlePath() {
@@ -200,12 +172,6 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   }
 }
 
-void ImageComponentInstance::onImageSourceCacheUpdate() {
-  auto source = m_state->getData().getImageSource();
-  this->getLocalRootArkUINode().setSources(
-      FindLocalCacheByUri(source.uri), getAbsolutePathPrefix(getBundlePath()));
-}
-
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   auto source = state->getData().getImageSource();
@@ -252,9 +218,7 @@ void ImageComponentInstance::onError(int32_t errorCode) {
   m_eventEmitter->dispatchEvent(
       "error", [errMsg](facebook::jsi::Runtime& runtime) {
         auto payload = facebook::jsi::Object(runtime);
-        auto source = facebook::jsi::Object(runtime);
-        source.setProperty(runtime, "error", errMsg);
-        payload.setProperty(runtime, "source", source);
+        payload.setProperty(runtime, "error", errMsg);
         return payload;
       });
   m_eventEmitter->onLoadEnd();
@@ -266,12 +230,12 @@ void ImageComponentInstance::onProgress(uint32_t loaded, uint32_t total) {
   }
 
   m_eventEmitter->dispatchEvent(
-      "progress", [=](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        payload.setProperty(runtime, "loaded", (int32_t)loaded);
-        payload.setProperty(runtime, "total", (int32_t)total);
-        return payload;
-      });
+    "progress", [=](facebook::jsi::Runtime& runtime) {
+      auto payload = facebook::jsi::Object(runtime);
+      payload.setProperty(runtime, "loaded", (int32_t)loaded);
+      payload.setProperty(runtime, "total", (int32_t)total);
+      return payload;
+    });
 }
 
 void ImageComponentInstance::onLoadStart() {
@@ -290,6 +254,7 @@ ImageComponentInstance::ImageRawProps::getFromDynamic(folly::dynamic value) {
       : std::nullopt;
   auto alt = (value.count("alt") > 0) ? std::optional(value["alt"].asString())
                                       : std::nullopt;
+                        
   auto loadingIndicatorSource = (value.count("loadingIndicatorSource") > 0)
       ? std::optional(value["loadingIndicatorSource"].at("uri").getString())
       : std::nullopt;

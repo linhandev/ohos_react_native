@@ -12,7 +12,9 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_ON_BLUR,
     NODE_TEXT_INPUT_ON_TEXT_SELECTION_CHANGE,
     NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
-    NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE};
+    NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE,
+    NODE_EVENT_ON_APPEAR,
+    NODE_EVENT_ON_DISAPPEAR};
 
 namespace rnoh {
 
@@ -68,9 +70,21 @@ void TextInputNode::onNodeEvent(
     if (m_textInputNodeDelegate != nullptr) {
       float width = eventArgs[0].f32;
       float height = eventArgs[1].f32;
-      m_textInputNodeDelegate->onContentSizeChange(width, height);
+      m_textInputNodeDelegate->onContentSizeChange(width, height, false);
     }
-}
+ } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_APPEAR) {
+    if (m_autofocus == true){
+      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(1)};
+      ArkUI_AttributeItem item = {&value, 1};
+      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FOCUS_STATUS, &item));
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
+    ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
+    ArkUI_AttributeItem item = {&value, 1};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_FOCUS_STATUS, &item));
+  }
 }
 
 void TextInputNode::onNodeEvent(
@@ -192,8 +206,8 @@ void TextInputNode::setCancelButtonMode(
 }
 
 void TextInputNode::setFont(
-    facebook::react::TextAttributes const& textAttributes, float fontSizeScale) {
-  TextInputNodeBase::setCommonFontAttributes(textAttributes, fontSizeScale);
+    facebook::react::TextAttributes const& textAttributes) {
+  TextInputNodeBase::setCommonFontAttributes(textAttributes);
 
   std::string fontFamily = "HarmonyOS Sans";
   if (!textAttributes.fontFamily.empty()) {
@@ -220,7 +234,9 @@ void TextInputNode::setFont(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   if (!allowFontScaling) {
-        fontSize /= fontSizeScale;
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
   }
 
   std::array<ArkUI_NumberValue, 3> value = {
@@ -345,6 +361,15 @@ std::string TextInputNode::getTextContent() {
   auto item = NativeNodeApi::getInstance()->getAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT);
   return item->string;
+}
+
+void TextInputNode::setAutoFocus(bool const &autoFocus){
+    m_autofocus = autoFocus;
+}
+
+bool TextInputNode::getTextFocusStatus(){
+    return NativeNodeApi::getInstance()->getAttribute(
+      m_nodeHandle, NODE_FOCUS_STATUS)->value[0].i32;
 }
 
 } // namespace rnoh

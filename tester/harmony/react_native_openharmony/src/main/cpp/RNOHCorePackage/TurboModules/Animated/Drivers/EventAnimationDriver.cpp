@@ -21,7 +21,7 @@ void EventAnimationDriver::updateWithEvent(folly::dynamic const& event) {
   }
 
   auto& valueNode = getValueNode();
-  valueNode.m_value = currentEvent->asDouble();
+  valueNode.setValue(currentEvent->asDouble());
   m_nodesManager.setNeedsUpdate(m_nodeTag);
   return;
 }

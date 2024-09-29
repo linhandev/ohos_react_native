@@ -45,6 +45,9 @@ class TextInputComponentInstance
   bool m_focused{false};
   bool m_shouldIgnoreNextChangeEvent = false;
 
+  int32_t m_selectionStart = -1;
+  int32_t m_selectionEnd = -1;
+
   void focus();
   void blur();
 
@@ -76,7 +79,7 @@ class TextInputComponentInstance
   
   void onContentScroll() override;
 
-  void onContentSizeChange(float width, float height) override;
+  void onContentSizeChange(float width, float height, bool multiline) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 

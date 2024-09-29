@@ -8,17 +8,12 @@
 namespace rnoh {
 
 std::unique_ptr<ArkUINodeRegistry> ArkUINodeRegistry::instance = nullptr;
-std::function<void(std::exception_ptr)> ArkUINodeRegistry::ON_ERROR =
-    [](std::exception_ptr) {};
 
-bool ArkUINodeRegistry::isInitialized() {
-  return instance != nullptr;
-}
-
-void ArkUINodeRegistry::initialize(
-    std::function<void(std::exception_ptr)> onError) {
-  ArkUINodeRegistry::ON_ERROR = onError;
-  instance = std::unique_ptr<ArkUINodeRegistry>(new ArkUINodeRegistry());
+void ArkUINodeRegistry::initialize(ArkTSBridge::Shared arkTSBridge) {
+  if (instance == nullptr) {
+    instance = std::unique_ptr<ArkUINodeRegistry>(
+      new ArkUINodeRegistry(std::move(arkTSBridge)));
+  }
 }
 
 ArkUINodeRegistry& ArkUINodeRegistry::getInstance() {
@@ -30,7 +25,7 @@ void ArkUINodeRegistry::registerNode(ArkUINode* node) {
   auto [_it, inserted] =
       m_nodeByHandle.emplace(node->getArkUINodeHandle(), node);
   if (!inserted) {
-    LOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
+    DLOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
                  << " was already registered";
   }
 }
@@ -38,7 +33,7 @@ void ArkUINodeRegistry::registerNode(ArkUINode* node) {
 void ArkUINodeRegistry::unregisterNode(ArkUINode* node) {
   auto it = m_nodeByHandle.find(node->getArkUINodeHandle());
   if (it == m_nodeByHandle.end()) {
-    LOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
+    DLOG(WARNING) << "Node with handle: " << node->getArkUINodeHandle()
                  << " not found";
     return;
   }
@@ -54,7 +49,7 @@ void ArkUINodeRegistry::registerTouchHandler(
   auto [_it, inserted] = m_touchHandlerByNodeHandle.emplace(
       node->getArkUINodeHandle(), touchEventHandler);
   if (!inserted) {
-    LOG(WARNING) << "Touch handler for node handle: "
+    DLOG(WARNING) << "Touch handler for node handle: "
                  << node->getArkUINodeHandle() << " was already registered";
   }
 }
@@ -64,14 +59,15 @@ void ArkUINodeRegistry::unregisterTouchHandler(ArkUINode* node) {
              << node->getArkUINodeHandle();
   auto it = m_touchHandlerByNodeHandle.find(node->getArkUINodeHandle());
   if (it == m_touchHandlerByNodeHandle.end()) {
-    LOG(WARNING) << "Touch handler for node handle: "
+    DLOG(WARNING) << "Touch handler for node handle: "
                  << node->getArkUINodeHandle() << " not found";
     return;
   }
   m_touchHandlerByNodeHandle.erase(it);
 }
 
-ArkUINodeRegistry::ArkUINodeRegistry() {
+ArkUINodeRegistry::ArkUINodeRegistry(ArkTSBridge::Shared arkTSBridge)
+    : m_arkTSBridge(std::move(arkTSBridge)) {
   NativeNodeApi::getInstance()->registerNodeEventReceiver(
       [](ArkUI_NodeEvent* event) {
         ArkUINodeRegistry::getInstance().receiveEvent(event);
@@ -87,7 +83,7 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
     if (eventType == ArkUI_NodeEventType::NODE_TOUCH_EVENT) {
       auto it = m_touchHandlerByNodeHandle.find(node);
       if (it == m_touchHandlerByNodeHandle.end()) {
-        LOG(WARNING) << "Touch event for node with handle: " << node
+        DLOG(WARNING) << "Touch event for node with handle: " << node
                      << " not found";
         return;
       }
@@ -105,7 +101,7 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
 
     auto it = m_nodeByHandle.find(node);
     if (it == m_nodeByHandle.end()) {
-      LOG(WARNING) << "Node with handle: " << node << " not found";
+      DLOG(WARNING) << "Node with handle: " << node << " not found";
       return;
     }
 
@@ -121,7 +117,7 @@ void ArkUINodeRegistry::receiveEvent(ArkUI_NodeEvent* event) {
     }
 
   } catch (std::exception& e) {
-    ArkUINodeRegistry::ON_ERROR(std::current_exception());
+    m_arkTSBridge->handleError(std::current_exception());
   }
 #endif
 }

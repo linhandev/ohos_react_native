@@ -8,12 +8,12 @@ import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
-import type { UITurboModuleContext } from './RNOHContext'
+import { RNOHCorePackage } from '../RNOHCorePackage/ts'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
 import type { RNPackage, RNPackageContext } from './RNPackage'
-import type { TurboModule, UITurboModule } from './TurboModule'
+import type { TurboModule, TurboModuleContext } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
 import { RNOHError } from './RNOHError'
@@ -22,12 +22,9 @@ import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
 import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
-import { DisplayMetricsManager } from './DisplayMetricsManager'
-import { WorkerThread } from "./WorkerThread"
-import font from "@ohos.font"
+import font from '@ohos.font'
 
 export type Resource = Exclude<font.FontOptions["familySrc"], string>
-
 export type SurfaceContext = {
   width: number
   height: number
@@ -85,6 +82,7 @@ const rootDescriptor = {
   }
 }
 
+const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
 type FeatureFlagName = "ENABLE_RN_INSTANCE_CLEAN_UP" | "NDK_TEXT_MEASUREMENTS" | "IMAGE_LOADER" | "C_API_ARCH"
 
@@ -162,17 +160,11 @@ export interface RNInstance {
   /**
    * Reads JS Bundle and executes loaded code.
    */
-  runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
+  runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null): Promise<void>;
   /**
-   * @deprecated: Use getUITurboModule instead (latestRNOHVersion: 0.72.33)
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
   getTurboModule<T extends TurboModule>(name: string): T;
-  /**
-   * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
-   */
-  getUITurboModule<T extends UITurboModule>(name: string): T;
-
   /**
    * Used by RNSurface. It creates a surface somewhere in React Native.
    */
@@ -252,28 +244,10 @@ export interface RNInstance {
    */
   cancelTouches(): void
 
-  /**
-   * @architecture: C-API
-   * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
-   */
-  getNativeNodeIdByTag(tag: Tag): string | undefined
-
-  /**
-   * set UIContext
-   */
-  setUIContext(uiCtx: UIContext): void
-
-  /**
-   * @returns UIContext
-   */
   getUIContext(): UIContext
 }
 
 export type RNInstanceOptions = {
-  /**
-   * Used to identify RNInstance on RNOHWorker thread.
-   */
-  name: string,
   /**
    * Creates RNPackages provided by third-party libraries.
    */
@@ -306,14 +280,6 @@ export type RNInstanceOptions = {
    */
   enableCAPIArchitecture?: boolean,
   /**
-   * @architecture: C-API
-   * When enabled, RNOH will send mutations that affect only Descriptors of custom components implemented on the ArkUI side.
-   * If disabled, RNOH will send all mutations to DescriptorRegistry, even if a component is a CppComponentInstance.
-   * Enabling this feature flag may improve performance, but it may break some libraries built on top of the ArkTS architecture
-   * and that operate on the tree of descriptors.
-   */
-  enablePartialSyncOfDescriptorRegistryInCAPI?: boolean
-  /**
    * Specifies the path for RN to locate assets. Necessary in production environments where assets are not hosted by the Metro server.
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
    */
@@ -331,16 +297,6 @@ export type RNInstanceOptions = {
    */
   httpClient?: HttpClient,
   /**
-   * config the fonts to be use
-   */
-  fontOptions?: font.FontOptions[] ,
-  /**
-   * Disables advanced React 18 features, such as Automatic Batching.
-   * Setting this to `true` will revert to the behavior of React 17,
-   * where state updates are processed synchronously and separately.
-   */
-  disableConcurrentRoot?: boolean;
-  /**
    * Specifies custom fonts used by RN application.
    * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
    */
@@ -352,14 +308,6 @@ export type RNInstanceOptions = {
  */
 export interface FrameNodeFactory {
   create(tag: Tag, componentName: string);
-}
-
-/**
- * Used in the C-API architecture
- */
-export type FontOptions = {
-  familyName: string,
-  familySrc: string
 }
 
 
@@ -383,43 +331,34 @@ export class RNInstanceImpl implements RNInstance {
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>()
   private initialBundleUrl: string | undefined = undefined
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
-  private unregisterWorkerMessageListener = () => {
-  }
   private uiCtx: UIContext;
-
   /**
    * @deprecated
    */
   public get commandDispatcher() {
     return this.componentCommandHub
   }
-  private defaultProps: Record<string, any>
+
   constructor(
-    private envId: number,
     private id: number,
     private injectedLogger: RNOHLogger,
     private napiBridge: NapiBridge,
-    disableConcurrentRoot: boolean | undefined,
+    private defaultProps: Record<string, any>,
     private devToolsController: DevToolsController,
-    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
-    private workerThread: WorkerThread,
+    private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => TurboModuleContext,
     private shouldEnableDebugger: boolean,
     private shouldEnableBackgroundExecutor: boolean,
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
-    private shouldUseCAPIArchitecture: boolean,
-    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
+    private shouldUseCApiArchitecture: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
-    private displayMetricsManager: DisplayMetricsManager,
-    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     private arkTsComponentNames: Array<string>,
-    private fontOptions: font.FontOptions[] | undefined,
+    private fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
   ) {
-    this.defaultProps = { concurrentRoot: !disableConcurrentRoot }
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this)
     this.logger = injectedLogger.clone("RNInstance")
     this.frameNodeFactoryRef = { frameNodeFactory: null }
@@ -430,18 +369,18 @@ export class RNInstanceImpl implements RNInstance {
     if (this.shouldUseImageLoader) {
       this.enableFeatureFlag("IMAGE_LOADER")
     }
-    if (this.shouldUseCAPIArchitecture) {
+    if (this.shouldUseCApiArchitecture) {
       this.enableFeatureFlag("C_API_ARCH")
     }
     this.onCreate()
   }
 
   public getArchitecture() {
-    return this.shouldUseCAPIArchitecture ? "C_API" : "ARK_TS"
+    return this.shouldUseCApiArchitecture ? "C_API" : "ARK_TS"
   }
 
   public getAssetsDest(): string {
-    return this.assetsDest
+    return this.assetsDest ?? DEFAULT_ASSETS_DEST
   }
 
   public onCreate() {
@@ -454,16 +393,15 @@ export class RNInstanceImpl implements RNInstance {
 
   public async onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
-    this.unregisterWorkerMessageListener()
     for (const surfaceHandle of this.surfaceHandles) {
       if (surfaceHandle.isRunning()) {
         this.logger.warn("Destroying instance with running surface with tag: " + surfaceHandle.getTag());
-        surfaceHandle.stop();
+        await surfaceHandle.stop();
       }
       surfaceHandle.destroy()
     }
     if (this.isFeatureFlagEnabled("ENABLE_RN_INSTANCE_CLEAN_UP")) {
-      this.napiBridge.onDestroyRNInstance(this.id)
+      this.napiBridge.destroyReactNativeInstance(this.id)
     }
     this.turboModuleProvider.onDestroy()
     stopTracing()
@@ -495,24 +433,13 @@ export class RNInstanceImpl implements RNInstance {
       this.logger,
     );
     const cppFeatureFlags: CppFeatureFlag[] = []
-    if (this.shouldUseCAPIArchitecture) {
+    if (this.shouldUseCApiArchitecture) {
       cppFeatureFlags.push("C_API_ARCH")
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
     }
-    if (this.workerThread != null) {
-      cppFeatureFlags.push("WORKER_THREAD_ENABLED")
-    }
-    const fontOptions: FontOptions[] = []
-    for (const fontOption of this.fontOptions ?? []) {
-      fontOptions.push({
-        familyName: fontOption.familyName as string,
-        familySrc: fontOption.familySrc as string
-      });
-    }
-    this.napiBridge.onCreateRNInstance(
-      this.envId,
+    this.napiBridge.createReactNativeInstance(
       this.id,
       this.turboModuleProvider,
       this.frameNodeFactoryRef,
@@ -543,7 +470,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags,
       this.resourceManager,
       this.arkTsComponentNames,
-      fontOptions
+      this.fontFamilyNameByFontPathRelativeToRawfileDir,
     )
     stopTracing()
   }
@@ -589,6 +516,7 @@ export class RNInstanceImpl implements RNInstance {
   private async processPackages(packages: RNPackage[]) {
     const logger = this.logger.clone("processPackages")
     const stopTracing = logger.startTracing()
+    packages.unshift(new RNOHCorePackage({}));
     const turboModuleContext = this.createUITurboModuleContext(this)
     const result = {
       descriptorWrapperFactoryByDescriptorType: packages.reduce((acc, pkg) => {
@@ -600,50 +528,26 @@ export class RNInstanceImpl implements RNInstance {
         return acc
       }, new Map<string, DescriptorWrapperFactory>()),
       turboModuleProvider: new TurboModuleProvider(
-        await Promise.all([...packages.map(async (pkg, idx) => {
+        await Promise.all(packages.map(async (pkg, idx) => {
           const pkgDebugName = pkg.getDebugName()
           let traceName = `package${idx + 1}`
           if (pkgDebugName) {
             traceName += `: ${pkgDebugName}`
           }
-          logger.clone(traceName).debug("createTurboModulesFactory")
+          logger.clone(traceName).debug("")
           const turboModuleFactory = pkg.createTurboModulesFactory(turboModuleContext);
           await turboModuleFactory.prepareEagerTurboModules()
           return turboModuleFactory
-        }), ...packages.map(async (pkg, idx) => {
-          const pkgDebugName = pkg.getDebugName()
-          let traceName = `package${idx + 1}`
-          if (pkgDebugName) {
-            traceName += `: ${pkgDebugName}`
-          }
-          logger.clone(traceName).debug("createUITurboModuleFactory")
-          const turboModuleFactory = pkg.createUITurboModuleFactory(turboModuleContext);
-          await turboModuleFactory.prepareEagerTurboModules()
-          return turboModuleFactory
-        })]),
+        })),
         this.logger
       )
     }
-    if (this.workerThread) {
-      this.unregisterWorkerMessageListener = this.workerThread.subscribeToMessages(async (type, payload) => {
-        if (type === "RNOH_TURBO_MODULE_UI_TASK") {
-          const task = payload.task
-          if (payload.rnInstanceId !== this.id) {
-            return;
-          }
-          const result =
-            await (task.runnable.run(turboModuleContext, task.params) as Promise<any>)
-          this.workerThread!.postMessage("RNOH_TURBO_MODULE_UI_TASK_RESULT", { result, taskId: task.id, rnInstanceId: this.id })
-        }
-      })
-    }
-    this.napiBridge.setCacheDir(this.id, turboModuleContext.uiAbilityContext.cacheDir);
     stopTracing()
     return result
   }
 
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
+                                                                                            listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
     return this.lifecycleEventEmitter.subscribe(type, listener)
   }
 
@@ -675,28 +579,38 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public emitDeviceEvent(eventName: string, params: any) {
+    this.logger.clone(`emitDeviceEvent`).debug(eventName)
     this.callRNFunction("RCTDeviceEventEmitter", "emit", [eventName, params]);
   }
 
   public getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined {
     return this.bundleExecutionStatusByBundleURL.get(bundleURL)
   }
-
-  public async runJSBundle(jsBundleProvider: JSBundleProvider) {
+  public async runJSBundle(jsBundleProvider: JSBundleProvider, info?:string | null) {
+    let bundleURL: string
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
-    const bundleURL = jsBundleProvider.getURL()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
     try {
-      this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
-        `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
+      if(info === undefined) {
+        this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
+          `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
+      }else if(info) {
+        this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
+          `${info.slice(0, 255)}`)
+      }
+
       this.bundleExecutionStatusByBundleURL.set(bundleURL, "RUNNING")
+      this.logMarker("DOWNLOAD_START");
       const jsBundle = await jsBundleProvider.getBundle((progress) => {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`)
       })
-      this.initialBundleUrl = this.initialBundleUrl ?? jsBundleProvider.getURL()
+      this.logMarker("DOWNLOAD_END");
+      bundleURL = jsBundleProvider.getURL()
+      this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
+
       await this.napiBridge.loadScript(this.id, jsBundle, bundleURL)
-      this.napiBridge.setBundlePath(this.id, jsBundleProvider.getURL());
+      this.napiBridge.setBundlePath(this.id, bundleURL);
       this.lifecycleState = LifecycleState.READY
       const hotReloadConfig = jsBundleProvider.getHotReloadConfig()
       if (hotReloadConfig) {
@@ -735,12 +649,7 @@ export class RNInstanceImpl implements RNInstance {
     }
   }
 
-  /** @deprecated Use getUITurboModule instead (latestRNOHVersion: 0.72.33) */
   public getTurboModule<T extends TurboModule>(name: string): T {
-    return this.getUITurboModule<T>(name)
-  }
-
-  public getUITurboModule<T extends UITurboModule>(name: string): T {
     return this.turboModuleProvider.getModule(name);
   }
 
@@ -773,17 +682,11 @@ export class RNInstanceImpl implements RNInstance {
   public onForeground() {
     this.lifecycleState = LifecycleState.READY
     this.lifecycleEventEmitter.emit("FOREGROUND")
-    this.postMessageToCpp("FOREGROUND", {})
   }
 
   public onBackground() {
     this.lifecycleState = LifecycleState.PAUSED
     this.lifecycleEventEmitter.emit("BACKGROUND")
-    this.postMessageToCpp("BACKGROUND", {})
-  }
-
-  public onNewWant(url: string) {
-    this.emitDeviceEvent("url", { url: url })
   }
 
   public onConfigurationUpdate(...args: Parameters<UIAbility["onConfigurationUpdate"]>) {
@@ -843,16 +746,16 @@ export class RNInstanceImpl implements RNInstance {
     this.napiBridge.postMessageToCpp(name, { rnInstanceId: this.id, payload });
   }
 
+  public logMarker(markerId: string): void {
+    this.napiBridge.logMarker(markerId, this.id);
+  }
+
   public setFrameNodeFactory(frameNodeFactory: FrameNodeFactory | null) {
     this.frameNodeFactoryRef.frameNodeFactory = frameNodeFactory
   }
 
   public cancelTouches() {
     this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
-  }
-
-  public getNativeNodeIdByTag(tag: Tag): string | undefined {
-    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 
   public setUIContext(uiCtx: UIContext): void {

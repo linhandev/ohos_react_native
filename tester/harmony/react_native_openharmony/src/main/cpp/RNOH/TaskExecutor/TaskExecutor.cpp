@@ -3,6 +3,7 @@
 #include <react/renderer/debug/SystraceSection.h>
 #include "NapiTaskRunner.h"
 #include "RNOH/Assert.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNOHError.h"
 #include "ThreadTaskRunner.h"
 
@@ -10,9 +11,8 @@ namespace rnoh {
 
 TaskExecutor::TaskExecutor(
     napi_env mainEnv,
-    std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
     bool shouldEnableBackground) {
-  auto mainTaskRunner = std::make_shared<NapiTaskRunner>("RNOH_MAIN", mainEnv);
+  auto mainTaskRunner = std::make_shared<NapiTaskRunner>(mainEnv);
   auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
   auto backgroundExecutor = shouldEnableBackground
       ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
@@ -20,8 +20,7 @@ TaskExecutor::TaskExecutor(
   m_taskRunners = {
       mainTaskRunner,
       jsTaskRunner,
-      backgroundExecutor,
-      std::move(workerTaskRunner)};
+      backgroundExecutor};
   this->runTask(TaskThread::JS, [this]() {
     this->setTaskThreadPriority(QoS_Level::QOS_USER_INTERACTIVE);
   });
@@ -34,6 +33,10 @@ TaskExecutor::TaskExecutor(
 
 TaskExecutor::~TaskExecutor() noexcept {
   DLOG(INFO) << "TaskExecutor::~TaskExecutor()";
+  std::thread cleanupThread(
+      [](std::array<AbstractTaskRunner::Shared, 3> taskRunners) {},
+      std::move(m_taskRunners));
+  cleanupThread.detach();
 }
 
 void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
@@ -43,6 +46,9 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
   pthread_getname_np(pthread_self(), buffer.data(), buffer.size());
   DLOG(INFO) << "TaskExecutor::setTaskThreadPriority " << buffer.data()
              << (ret == 0 ? " SUCCESSFUL" : " FAILED");
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CHANGE_THREAD_PRIORITY,
+      buffer.data());
 #else
   DLOG(WARNING)
       << "TaskExecutor::setTaskThreadPriority available only with C-API";
@@ -50,13 +56,12 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
 }
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
-  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runTask");
+  //facebook::react::SystraceSection s("#RNOH::TaskExecutor::runTask");
   auto taskRunner = this->getTaskRunner(thread);
   taskRunner->runAsyncTask(std::move(task));
 }
 
 void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
-  facebook::react::SystraceSection s("#RNOH::TaskExecutor::runSyncTask");
   auto waitsOnThread = m_waitsOnThread[thread];
   if (waitsOnThread.has_value() && isOnTaskThread(waitsOnThread.value())) {
     throw RNOHError("Deadlock detected");
@@ -67,7 +72,7 @@ void TaskExecutor::runSyncTask(TaskThread thread, Task&& task) {
   }
   std::exception_ptr thrownError;
   auto taskRunner = this->getTaskRunner(thread);
-  taskRunner->runSyncTask([task = std::move(task), &thrownError]() {
+  taskRunner->runSyncTask([task = std::move(task), &thrownError]() mutable {
     try {
       task();
     } catch (const std::exception& e) {
@@ -98,31 +103,24 @@ void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
 }
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
-  facebook::react::SystraceSection s("#RNOH::TaskExecutor::isOnTaskThread");
   auto runner = m_taskRunners[thread];
   return runner && runner->isOnCurrentThread();
 }
 
 std::optional<TaskThread> TaskExecutor::getCurrentTaskThread() const {
-  facebook::react::SystraceSection s(
-      "#RNOH::TaskExecutor::getCurrentTaskThread");
   if (isOnTaskThread(TaskThread::MAIN)) {
     return TaskThread::MAIN;
   } else if (isOnTaskThread(TaskThread::JS)) {
     return TaskThread::JS;
   } else if (isOnTaskThread(TaskThread::BACKGROUND)) {
     return TaskThread::BACKGROUND;
-  } else if (isOnTaskThread(TaskThread::WORKER)) {
-    return TaskThread::WORKER;
   } else {
     return std::nullopt;
   }
 }
 
 void TaskExecutor::setExceptionHandler(ExceptionHandler handler) {
-  facebook::react::SystraceSection s(
-      "#RNOH::TaskExecutor::setExceptionHandler");
-  for (auto& taskRunner : m_taskRunners) {
+    for (auto& taskRunner : m_taskRunners) {
     if (taskRunner) {
       taskRunner->setExceptionHandler(handler);
     }

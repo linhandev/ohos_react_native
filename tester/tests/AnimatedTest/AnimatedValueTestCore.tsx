@@ -1,79 +1,180 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, PanResponder} from 'react-native';
+import {Animated, View, Text, PanResponder, Pressable} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import {Button, Effect, TestCase} from '../components';
+import {Button, Effect, TestCase} from '../../components';
 
-export function AnimatedValueTest() {
+export function AnimatedValueTestCore({
+  renderInterpolateTests,
+}: {
+  renderInterpolateTests?: () => React.ReactNode;
+}) {
   return (
     <>
       <TestSuite name="Animated.Value">
-        <TestCase.Manual
-          itShould="move square 200px to the right and stop animation on pressing setValue"
-          initialState={0}
-          arrange={({setState}) => (
-            <SetValueView singular setState={setState} />
-          )}
-          assert={({expect, state}) => {
-            expect(state).to.be.eq(200);
-          }}
-        />
-        <TestCase.Example itShould="add and remove listeners on click">
-          <ListenerView singular={true} />
-        </TestCase.Example>
-        <TestCase.Example itShould="move square 200px to the right on pressing setOffset">
-          <SetOffsetView singular={true} />
-        </TestCase.Example>
+        <TestSuite name="addListener + removeListener + removeAllListeners + hasListeners">
+          <TestCase.Manual
+            itShould="move square 200px to the right and stop animation on pressing setValue"
+            initialState={0}
+            arrange={({setState}) => (
+              <SetValueView singular setState={setState} />
+            )}
+            assert={({expect, state}) => {
+              expect(state).to.be.eq(200);
+            }}
+          />
+          <TestCase.Example itShould="add and remove listeners on click">
+            <ListenerView singular={true} />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="interpolate">{renderInterpolateTests?.()}</TestSuite>
+
+        <TestSuite name="setOffset">
+          <TestCase.Example itShould="move square 200px to the right on pressing setOffset">
+            <SetOffsetView singular={true} />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="event">
+          <TestCase.Example itShould="move red square horizontally relatively to the scroll offset">
+            <AnimatedScrollViewTestCase />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="tracking">
+          <TestCase.Example
+            skip="tracking value doesn't seem to work anywhere"
+            itShould="move both squares, with blue square following the red with a spring">
+            <TrackingValue />
+          </TestCase.Example>
+        </TestSuite>
       </TestSuite>
+
       <TestSuite name="Animated.ValueXY">
-        <TestCase.Manual
-          itShould="move square 100px to the right and stop animation on pressing setValue"
-          initialState={0}
-          arrange={({setState}) => <SetValueView setState={setState} />}
-          assert={({expect, state}) => {
-            expect(state).to.be.eq(100);
-          }}
-        />
-        <TestCase.Example itShould="add and remove listeners on click">
-          <ListenerView singular={false} />
-        </TestCase.Example>
-        <TestCase.Example itShould="move square 100px to the right on pressing setOffset">
-          <SetOffsetView singular={false} />
-        </TestCase.Example>
-        <TestCase.Manual<Object>
-          itShould="get layout of animated value"
-          initialState={{}}
-          arrange={({setState}) => {
-            const animValue = new Animated.ValueXY({x: 1, y: 1});
-            return (
-              <Effect
-                onMount={() => {
-                  setState(animValue.getLayout());
-                }}
-              />
-            );
-          }}
-          assert={({state, expect}) => {
-            expect(JSON.stringify(state)).to.be.eq(
-              JSON.stringify({left: 1, top: 1}),
-            );
-          }}
-        />
-        <TestCase.Example itShould="move square to the right after extract offset">
-          <ExtractOffsetView />
-        </TestCase.Example>
-        <TestCase.Example itShould="move square to the left after flatten offset">
-          <FlattenOffsetView />
-        </TestCase.Example>
-        <TestCase.Example itShould="blue square should move the same as red square">
-          <AnimatedGetLayout />
-        </TestCase.Example>
-        <TestCase.Example itShould="move the blue square on drag">
-          <AnimatedDraggableView />
-        </TestCase.Example>
+        <TestSuite name="core">
+          <TestCase.Example itShould="move square both vertically and horizontally">
+            <ValueXY />
+          </TestCase.Example>
+          <TestCase.Example itShould="move the blue square on drag">
+            <AnimatedDraggableView />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="addListener + removeListener + removeAllListeners + hasListeners">
+          <TestCase.Manual
+            itShould="move square 100px to the right and stop animation on pressing setValue"
+            initialState={0}
+            arrange={({setState}) => <SetValueView setState={setState} />}
+            assert={({expect, state}) => {
+              expect(state).to.be.eq(100);
+            }}
+          />
+          <TestCase.Example itShould="add and remove listeners on click">
+            <ListenerView singular={false} />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="setOffset">
+          <TestCase.Example itShould="move square 100px to the right on pressing setOffset">
+            <SetOffsetView singular={false} />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="getLayout">
+          <TestCase.Manual<Object>
+            itShould="get layout of animated value"
+            initialState={{}}
+            arrange={({setState}) => {
+              const animValue = new Animated.ValueXY({x: 1, y: 1});
+              return (
+                <Effect
+                  onMount={() => {
+                    setState(animValue.getLayout());
+                  }}
+                />
+              );
+            }}
+            assert={({state, expect}) => {
+              expect(JSON.stringify(state)).to.be.eq(
+                JSON.stringify({left: 1, top: 1}),
+              );
+            }}
+          />
+          <TestCase.Example itShould="blue square should move the same as red square">
+            <AnimatedGetLayout />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="extractOffset">
+          <TestCase.Example itShould="move square to the right after extract offset">
+            <ExtractOffsetView />
+          </TestCase.Example>
+        </TestSuite>
+
+        <TestSuite name="flattenOffset">
+          <TestCase.Example itShould="move square to the left after flatten offset">
+            <FlattenOffsetView />
+          </TestCase.Example>
+        </TestSuite>
       </TestSuite>
     </>
   );
 }
+
+const ValueXY = () => {
+  const square1Anim = useRef(new Animated.ValueXY({x: 50, y: 50})).current;
+
+  const animation = Animated.sequence([
+    Animated.timing(square1Anim, {
+      toValue: {x: 0, y: 0},
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: {x: 0, y: 50},
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: {x: 50, y: 0},
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: {x: 50, y: 50},
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+  ]);
+  const handleAnimation = () => {
+    animation.reset();
+    animation.start();
+  };
+
+  return (
+    <Pressable style={{height: 120, width: '100%'}} onPress={handleAnimation}>
+      <View style={{height: 100}}>
+        <Animated.View
+          style={{
+            height: 40,
+            width: 40,
+            backgroundColor: 'red',
+            transform: [
+              {
+                translateX: square1Anim.x,
+              },
+              {
+                translateY: square1Anim.y,
+              },
+            ],
+          }}
+        />
+      </View>
+      <Text style={{height: 20}}>Press me to start animation</Text>
+    </Pressable>
+  );
+};
+
 const ExtractOffsetView = () => {
   const value = useRef(new Animated.Value(0)).current;
   const animation = Animated.loop(
@@ -502,5 +603,125 @@ const AnimatedDraggableView = () => {
         ]}
       />
     </View>
+  );
+};
+
+const AnimatedScrollViewTestCase = () => {
+  const scrollY = new Animated.Value(0);
+  const translation = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, 200],
+    extrapolate: 'clamp',
+  });
+
+  return (
+    <View
+      style={{
+        width: '100%',
+        height: 100,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+      <Animated.ScrollView
+        style={{width: '100%', height: '100%'}}
+        contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {
+            useNativeDriver: true,
+          },
+        )}>
+        {new Array(3).fill(0).map((_, idx) => {
+          return (
+            <View
+              key={idx}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'gray',
+                marginBottom: 50,
+              }}
+            />
+          );
+        })}
+      </Animated.ScrollView>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            transform: [{translateX: translation}],
+            width: 32,
+            height: 32,
+            backgroundColor: 'red',
+          },
+        ]}
+      />
+    </View>
+  );
+};
+
+const TrackingValue = () => {
+  const square1Anim = useRef(new Animated.Value(50)).current;
+  const square2Anim = useRef(new Animated.Value(50)).current;
+
+  const animation = Animated.sequence([
+    Animated.timing(square1Anim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: 50,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+    Animated.timing(square1Anim, {
+      toValue: 50,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+  ]);
+
+  const handleAnimation = () => {
+    animation.reset();
+    animation.start();
+
+    const tracking = Animated.spring(square2Anim, {
+      toValue: square1Anim,
+      useNativeDriver: true,
+      mass: 10,
+    });
+    tracking.start();
+  };
+
+  return (
+    <Pressable style={{height: 120, width: '100%'}} onPress={handleAnimation}>
+      <View style={{height: 100}}>
+        <Animated.View
+          style={{
+            height: 40,
+            width: 40,
+            backgroundColor: 'red',
+            transform: [{translateX: square1Anim}],
+          }}
+        />
+        <Animated.View
+          style={{
+            height: 40,
+            width: 40,
+            backgroundColor: 'blue',
+            transform: [{translateX: square2Anim}],
+          }}
+        />
+      </View>
+      <Text style={{height: 20}}>Press me to start animation</Text>
+    </Pressable>
   );
 };

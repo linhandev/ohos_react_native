@@ -1,22 +1,16 @@
-import type {
-  UITurboModule,
-  WorkerTurboModule,
-  UITurboModuleContext,
-  WorkerTurboModuleContext
-} from './TurboModule';
+import type { TurboModule } from './TurboModule';
 import type { TurboModulesFactory } from './RNPackage';
 import { RNOHLogger } from './RNOHLogger';
 
-export class TurboModuleProvider<TTurboModule extends UITurboModule | WorkerTurboModule = UITurboModule,
-TTurboModuleContext extends UITurboModuleContext | WorkerTurboModuleContext = UITurboModuleContext> {
-  private cachedTurboModuleByName: Record<string, TTurboModule> = {};
+export class TurboModuleProvider {
+  private cachedTurboModuleByName: Record<string, TurboModule> = {};
   private logger: RNOHLogger
 
-  constructor(private turboModulesFactories: (TurboModulesFactory<TTurboModule, TTurboModuleContext>)[], logger: RNOHLogger) {
+  constructor(private turboModulesFactories: TurboModulesFactory[], logger: RNOHLogger) {
     this.logger = logger.clone("TurboModuleProvider");
   }
 
-  getModule<T extends TTurboModule>(name: string): T {
+  getModule<T extends TurboModule>(name: string): T {
     if (!(name in this.cachedTurboModuleByName)) {
       for (const tmFactory of this.turboModulesFactories) {
         if (tmFactory.hasTurboModule(name)) {
@@ -44,7 +38,7 @@ TTurboModuleContext extends UITurboModuleContext | WorkerTurboModuleContext = UI
       try {
         turboModule.__onDestroy__()
       } catch {
-        this.logger.error("Error while cleaning up TurboModule " + name);
+        this.logger.error("Error while cleaning up TurboModule "+name);
       }
     })
   }

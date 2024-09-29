@@ -8,17 +8,16 @@
 #include <string>
 #include <vector>
 #include "RNOH/ArkJS.h"
-#include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
-#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/MountingManagerArkTS.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
 #include "RNOH/PreAllocationBuffer.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
@@ -54,44 +53,37 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
-    napi_env workerEnv,
-    std::unique_ptr<NapiTaskRunner> workerTaskRunner,
-    ArkTSBridge::Shared arkTSBridge,
-    NapiRef mainArkTSTurboModuleProviderRef,
-    NapiRef workerArkTSTurboModuleProviderRef,
-    NapiRef frameNodeFactoryRef,
+    napi_ref arkTsTurboModuleProviderRef,
+    napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,
     napi_ref measureTextFnRef,
-    NapiRef napiEventDispatcherRef,
+    napi_ref napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor,
     std::unordered_set<std::string> arkTsComponentNames,
-    std::unordered_map<std::string, std::string> fontFamilySrcByName
-    ) {
+    std::unordered_map<std::string, std::string> fontPathRelativeToRawfileDirByFontFamily
+    ) {  
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
   auto shouldUseCAPIArchitecture =
       featureFlagRegistry->getFeatureFlagStatus("C_API_ARCH");
-  auto taskExecutor = std::make_shared<TaskExecutor>(
-      env, std::move(workerTaskRunner), shouldEnableBackgroundExecutor);
+  std::shared_ptr<TaskExecutor> taskExecutor =
+      std::make_shared<TaskExecutor>(env, shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
 
   taskExecutor->setExceptionHandler(
-      [weakExecutor = std::weak_ptr(taskExecutor),
-       weakArkTsBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
+      [weakExecutor = std::weak_ptr(taskExecutor)](std::exception_ptr e) {
         auto executor = weakExecutor.lock();
         if (executor == nullptr) {
           return;
         }
-        executor->runTask(TaskThread::MAIN, [e, weakArkTsBridge]() {
-          auto arkTSBridge = weakArkTsBridge.lock();
-          if (arkTSBridge == nullptr) {
-            return;
-          }
-          arkTSBridge->handleError(e);
+        executor->runTask(TaskThread::MAIN, [e]() {
+          ArkTSBridge::getInstance()->handleError(e);
         });
       });
 
@@ -100,12 +92,18 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       env, measureTextFnRef, taskExecutor, featureFlagRegistry, id);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_START);
   PackageProvider packageProvider;
   auto packages = packageProvider.getPackages({});
+  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
+                                    PROCESS_CORE_REACT_PACKAGE_START);
   packages.insert(
       packages.begin(),
       std::make_shared<RNOHCorePackage>(
           Package::Context{.shadowViewRegistry = shadowViewRegistry}));
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END);
   auto componentDescriptorProviderRegistry =
       std::make_shared<facebook::react::ComponentDescriptorProviderRegistry>();
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>
@@ -162,19 +160,14 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       arkTSMessageHandlers.push_back(arkTSMessageHandler);
     }
   }
-
-  auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_END);
   auto turboModuleFactory = TurboModuleFactory(
-     {
-          // clang-format off
-        {TaskThread::MAIN, {.napiEnv = env, .arkTSTurboModuleProviderRef = std::move(mainArkTSTurboModuleProviderRef)}},
-        {TaskThread::WORKER, {.napiEnv = workerEnv, .arkTSTurboModuleProviderRef = std::move(workerArkTSTurboModuleProviderRef)}},
-      }, // clang-format on
-      featureFlagRegistry,
+      env,
+      arkTsTurboModuleProviderRef,
       std::move(componentJSIBinderByName),
       taskExecutor,
-      std::move(turboModuleFactoryDelegates),
-      arkTSMessageHub);
+      std::move(turboModuleFactoryDelegates));
   auto mutationsToNapiConverter = std::make_shared<MutationsToNapiConverter>(
       std::move(componentNapiBinderByName));
   auto mountingManager = std::make_shared<MountingManagerArkTS>(
@@ -199,6 +192,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         }
       },
       arkTSChannel);
+  auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   arkTSMessageHandlers.emplace_back(arkTSMessageHub);
   if (shouldUseCAPIArchitecture) {
 #ifdef C_API_ARCH
@@ -206,7 +200,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         std::make_shared<ComponentInstance::Dependencies>();
     componentInstanceDependencies->arkTSChannel = arkTSChannel;
     componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
-    componentInstanceDependencies->displayMetricsManager = arkTSBridge;
     auto customComponentArkUINodeFactory =
         std::make_shared<CustomComponentArkUINodeHandleFactory>(
             env, frameNodeFactoryRef, taskExecutor);
@@ -216,7 +209,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
-    auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>();
+    auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>(componentInstanceFactory, componentInstanceRegistry);
     auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
         componentInstanceRegistry,
         componentInstanceFactory,
@@ -224,12 +217,13 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         arkTsComponentNames,
 		preAllocationBuffer,
         featureFlagRegistry);
-    auto nativeResourceManager = UniqueNativeResourceManager(
-        OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
-        OH_ResourceManager_ReleaseNativeResourceManager);
-    for (auto& [familyName, familySrc] : fontFamilySrcByName) {
-      textMeasurer->registerFont(nativeResourceManager.get(), familyName, familySrc);
-    }  
+    SharedNativeResourceManager nativeResourceManager(
+      OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
+      OH_ResourceManager_ReleaseNativeResourceManager);
+    for (auto& [fontFamilyName, fontPathRelativeToRawfileDir] :
+       fontPathRelativeToRawfileDirByFontFamily) {
+      textMeasurer->registerFont(nativeResourceManager, fontFamilyName, fontPathRelativeToRawfileDir);
+    }
     auto rnInstance = std::make_shared<RNInstanceCAPI>(
         id,
         contextContainer,
@@ -251,9 +245,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor);
     componentInstanceDependencies->rnInstance = rnInstance;
-    auto imageSourceResolver =
-        std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
-    componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
     return rnInstance;
 #else
     LOG(FATAL)
@@ -262,6 +255,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
            "run Build > Clean Project?";
 #endif
   }
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
   return std::make_shared<RNInstanceArkTS>(
       id,
       contextContainer,

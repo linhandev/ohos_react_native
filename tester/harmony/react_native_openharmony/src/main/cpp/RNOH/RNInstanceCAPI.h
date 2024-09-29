@@ -42,9 +42,7 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
-using UniqueNativeResourceManager = std::unique_ptr<
-    NativeResourceManager,
-    decltype(&OH_ResourceManager_ReleaseNativeResourceManager)>;
+using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
 
 class RNInstanceCAPI : public RNInstanceInternal,
                        public facebook::react::LayoutAnimationStatusDelegate {
@@ -67,7 +65,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
       ArkTSMessageHub::Shared arkTSMessageHub,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared componentInstanceFactory,
-      UniqueNativeResourceManager nativeResourceManager,
+      SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
       : RNInstanceInternal(),
@@ -94,11 +92,11 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_arkTSChannel(std::move(arkTSChannel)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {
-      this->unsubscribeUITickListener =
-          this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
-		  this->taskExecutor->runTask(
-            TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
-  }
+          this->unsubscribeUITickListener =
+              this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
+              this->taskExecutor->runTask(
+                TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
+        }
 
  ~RNInstanceCAPI() noexcept override;
 
@@ -131,12 +129,13 @@ class RNInstanceCAPI : public RNInstanceInternal,
       folly::dynamic&& initialProps) override;
   void setSurfaceProps(facebook::react::Tag surfaceId, folly::dynamic&& props)
       override;
-  void stopSurface(facebook::react::Tag surfaceId) override;
+  void stopSurface(facebook::react::Tag surfaceId, std::function<void()> onStop)
+      override;
   void destroySurface(facebook::react::Tag surfaceId) override;
   void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) override;
-  void callJSFunction(
+  void callFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) override;
@@ -181,14 +180,14 @@ class RNInstanceCAPI : public RNInstanceInternal,
       folly::dynamic const& payload) override;
   void setBundlePath(std::string const& path) override;
   std::string getBundlePath() override;
+  void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   int getId() override { return m_id; }
   NativeResourceManager const* getNativeResourceManager() const override;
     
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
     
-  std::optional<std::string> getNativeNodeIdByTag(
-      facebook::react::Tag tag) const;
 
  protected:
   int m_id;
@@ -219,11 +218,17 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   MountingManager::Shared m_mountingManager;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
-  std::shared_ptr<facebook::react::Scheduler> scheduler;
+  /**
+   * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.
+   * These values must be destructed before the runtime.
+   * The runtime is destructed when `m_reactInstance` is destructed.
+   * Therefore, `m_scheduler` must be declared after `m_reactInstance`.
+   */
   std::shared_ptr<facebook::react::Instance> instance;
+  std::shared_ptr<facebook::react::Scheduler> scheduler = nullptr;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
-  UniqueNativeResourceManager m_nativeResourceManager;
+  SharedNativeResourceManager m_nativeResourceManager;
   std::string m_bundlePath;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
 

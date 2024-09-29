@@ -1,5 +1,7 @@
 export * from "./AccessibilityManagerTurboModule";
 
+export * from "./AppearanceTurboModule";
+
 export * from "./AppStateTurboModule";
 
 export * from "./Blob";
@@ -37,4 +39,3 @@ export * from "./VibrationTurboModule";
 
 export * from "./ToastAndroidTurboModule";
 export * from "./ShareTurboModule";
-export * from "./ImageLoaderWorkerTurboModule"
