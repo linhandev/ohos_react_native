@@ -5,6 +5,7 @@ import {
   Descriptor,
   DisplayMode,
   RNComponentContext,
+  RNInstance,
   RNInstanceImpl,
   RNOHContext,
   RNOHError,
