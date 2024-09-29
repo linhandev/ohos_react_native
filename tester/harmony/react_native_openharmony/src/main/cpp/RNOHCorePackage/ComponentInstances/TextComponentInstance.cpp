@@ -162,19 +162,6 @@ void TextComponentInstance::onPropsChanged(
       VLOG(3) << "[text-debug] writingDirection=" << writingDirection;
       m_textNode.setWritingDirection(writingDirection);
     }
-    
-    // fontVariant
-    if (textProps->rawProps.count("fontVariant") != 0) {
-      std::string fontVariants;
-      for(const auto& fontVariant : textProps->rawProps["fontVariant"]) {
-        fontVariants += TextConversions::getArkUIFontVariant(fontVariant.asString());
-      }
-      if(!fontVariants.empty()) {
-        fontVariants = fontVariants.substr(0, fontVariants.length() - 1);
-        VLOG(3) << "[text-debug] fontVariant=" << fontVariants;
-        m_textNode.setFontVariant(fontVariants);
-      }
-    }
   }
   VLOG(3) << "[text-debug] setProps end";
 }
@@ -192,6 +179,9 @@ void TextComponentInstance::onStateChanged(
   VLOG(3) << "[text-debug] getFragments size:" << fragments.size();
   m_textNode.resetTextContentWithStyledString();
   if (fragments.empty()) {
+    if (m_key != "") {
+      TextMeasureRegistry::getTextMeasureRegistry().eraseTextMeasureInfo(m_key);
+    }
     m_key = "";
     return;
   }
@@ -435,10 +425,10 @@ void TextComponentInstance::setShadowView(facebook::react::ShadowView const& sha
     }
   }
   if (isNesting) {
-    // LOG(INFO) << "new StackNode, tag=" << getTag();
+    DLOG(INFO) << "new StackNode, tag=" << getTag();
     m_stackNodePtr = new StackNode();
     if (m_stackNodePtr == nullptr) {
-      // LOG(INFO) << "new StackNode error";
+      DLOG(INFO) << "new StackNode error";
       return;
     }
     m_stackNodePtr->insertChild(m_textNode, 0);

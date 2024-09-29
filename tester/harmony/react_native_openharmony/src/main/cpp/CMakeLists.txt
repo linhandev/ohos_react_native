@@ -451,6 +451,9 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/SpringAnimationDriver.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/DecayAnimationDriver.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/EventAnimationDriver.cpp"
+    "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/uv/Async.cpp"
+    "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/uv/EventLoop.cpp"
+    "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/uv/Timer.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/I18nManagerTurboModule.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/EventEmitRequestHandlers/TouchEventEmitRequestHandler.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/NativeNodeApi.cpp"
@@ -473,7 +476,6 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/arkui/RefreshNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/CustomNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/ComponentInstance.cpp"
-    "${RNOH_CPP_DIR}/RNOH/ClippingComponent.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/ImageComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/ViewComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/TextComponentInstance.cpp"
@@ -487,6 +489,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/CustomNodeComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/HarmonyReactMarker.cpp"
+    "${RNOH_CPP_DIR}/RNOH/Performance/OHReactMarkerListener.cpp"
 )
 target_include_directories(rnoh PUBLIC
     "${RNOH_CPP_DIR}"

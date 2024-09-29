@@ -22,10 +22,12 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
   m_textAreaNode.setTextAreaNodeDelegate(this);
 }
 
-void TextInputComponentInstance::onContentSizeChange(float width, float height) {
-  m_contentSizeWidth = width;
-  m_contentSizeHeight = height;
-  m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+void TextInputComponentInstance::onContentSizeChange(float width, float height, bool multiline) {
+  if (multiline == m_multiline){
+    m_contentSizeWidth = width;
+    m_contentSizeHeight = height;
+    m_eventEmitter->onContentSizeChange(getOnContentSizeChangeMetrics());
+  }
 }
 
 void TextInputComponentInstance::onContentScroll() {
@@ -86,6 +88,9 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
+  if (m_selectionStart >= 0 && m_selectionEnd >= m_selectionStart) {
+    m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
+  }
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -124,7 +129,9 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
-  m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  if (m_eventEmitter != NULL) {
+    m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  }
 }
 
 facebook::react::TextInputMetrics
@@ -218,16 +225,14 @@ void TextInputComponentInstance::onPropsChanged(
     }
   }
   if (!m_props || props->textAttributes != m_props->textAttributes) {
-    auto fontSizeScale = this->m_deps->displayMetricsManager->getFontSizeScale();
-    m_textAreaNode.setFont(props->textAttributes,fontSizeScale);
-    m_textInputNode.setFont(props->textAttributes,fontSizeScale);
+    m_textAreaNode.setFont(props->textAttributes);
+    m_textInputNode.setFont(props->textAttributes);
   }
   if (!m_props ||
     props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
     if (props->textAttributes.lineHeight) {
-     auto fontSizeScale = this->m_deps->displayMetricsManager->getFontSizeScale();
-      m_textAreaNode.setTextInputLineHeight(props->textAttributes,fontSizeScale);
-      m_textInputNode.setTextInputLineHeight(props->textAttributes,fontSizeScale);
+      m_textAreaNode.setTextInputLineHeight(props->textAttributes);
+      m_textInputNode.setTextInputLineHeight(props->textAttributes);
     }
   }  
   if (!m_props || *(props->backgroundColor) != *(m_props->backgroundColor)) {
@@ -268,6 +273,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+      m_textInputNode.setPasswordIconVisibility(false);      
     }
   }
   if (props->maxLength != 0) {
@@ -298,9 +304,12 @@ void TextInputComponentInstance::onPropsChanged(
   m_textAreaNode.setId(getIdFromProps(props));
   m_textInputNode.setId(getIdFromProps(props));
 
-  if (!m_props || props->autoFocus != m_props->autoFocus) {
-    m_textAreaNode.setAutoFocus(props->autoFocus);
-    m_textInputNode.setAutoFocus(props->autoFocus);
+  if (!m_props || props->autoFocus != m_props->autoFocus){
+    if (m_multiline == true){
+        m_textAreaNode.setAutoFocus(props->autoFocus);
+    } else if (m_multiline == false) {
+        m_textInputNode.setAutoFocus(props->autoFocus);
+    }
   }
   if (!m_props || *(props->selectionColor) != *(m_props->selectionColor)) {
     if (props->selectionColor) {
@@ -320,6 +329,7 @@ void TextInputComponentInstance::onPropsChanged(
         props->traits.secureTextEntry
             ? ARKUI_TEXTINPUT_TYPE_PASSWORD
             : rnoh::convertInputType(props->traits.keyboardType));
+    m_textInputNode.setPasswordIconVisibility(false);        
   }
   if (!m_props || props->traits.caretHidden != m_props->traits.caretHidden) {
     m_textInputNode.setCaretHidden(props->traits.caretHidden);
@@ -404,15 +414,23 @@ void TextInputComponentInstance::onCommandReceived(
   if (commandName == "focus") {
     focus();
   } else if (commandName == "blur") {
-    blur();
+    if (m_multiline == true){
+      if(m_textAreaNode.getTextFocusStatus() == true) {
+        blur();
+      } 
+    } else {
+      if (m_textInputNode.getTextFocusStatus() == true) {
+        blur();
+      }
+    }
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
     m_textInputNode.setTextContent(args[1].asString());
     m_textAreaNode.setTextContent(args[1].asString());
-    if (args[2].asInt() >= 0 && args[3].asInt() >= 0) {
-      m_textInputNode.setTextSelection(args[2].asInt(), args[3].asInt());
-      m_textAreaNode.setTextSelection(args[2].asInt(), args[3].asInt());
+    if (args[2].asInt() >= 0 && args[3].asInt() >= args[2].asInt()) {
+      m_selectionStart = args[2].asInt();
+      m_selectionEnd = args[3].asInt();
     }
   }
 }

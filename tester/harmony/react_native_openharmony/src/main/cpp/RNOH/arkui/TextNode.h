@@ -80,7 +80,6 @@ class TextNode : public ArkUINode {
   TextNode& setSelectedBackgroundColor(uint32_t color);
   TextNode& setTextDataDetectorType(int32_t enable, ArkUI_NumberValue types[]);
   TextNode& setWritingDirection(int32_t direction);
-  TextNode& setFontVariant(const std::string& fontVariants);
   TextNode& setTextContentWithStyledString(std::shared_ptr<TextMeasureInfo> info);
   TextNode& resetTextContentWithStyledString();
 };

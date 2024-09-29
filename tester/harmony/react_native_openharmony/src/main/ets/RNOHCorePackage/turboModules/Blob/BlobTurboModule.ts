@@ -44,21 +44,6 @@ export class BlobTurboModule extends TurboModule {
       return false;
     },
     fetch: async (query) => {
-      const parsedUri = new uri.URI(query.url)
-      if (parsedUri.scheme === 'asset') {
-        //assets can't be handled using normal file API's
-        const path = query.url.replace("asset://", this.ctx.rnInstance.getAssetsDest())
-        const bytes = this.ctx.uiAbilityContext.resourceManager.getRawFileContentSync(path);
-        const blob = bytes.buffer;
-        return {
-          blobId: this.blobRegistry.save(blob),
-          offset: bytes.byteOffset,
-          size: bytes.byteLength,
-          type: undefined, //no way to find the type using Ark
-          name: path,
-          lastModified: 0 //we don't know the value
-        }
-      }
       const file = fs.openSync(query.url, fs.OpenMode.READ_WRITE);
       const stat = await fs.stat(query.url);
       const blob: Blob = new ArrayBuffer(stat.size);

@@ -99,10 +99,7 @@ export struct RNApp {
         }
         this.rnInstance = await this.getOrCreateRNInstance()
         this.ctx = new RNComponentContext(
-          RNOHContext.fromRNOHCoreContext(
-            this.rnohCoreContext,
-            this.rnInstance
-          ),
+          RNOHContext.fromCoreContext(this.rnohCoreContext!, this.rnInstance),
           this.wrappedCustomRNComponentBuilder,
           wrapBuilder(buildRNComponentForTag),
           new Map(),
@@ -150,13 +147,11 @@ export struct RNApp {
         }
       })()
       stopTracing()
-    } catch (err) {
-      if (err instanceof RNOHError) {
-        this.rnohCoreContext!.logger.error(err)
-      } else if (typeof err === "string") {
-        this.rnohCoreContext!.logger.error(err)
-      } else if (err instanceof Error) {
-        this.rnohCoreContext!.logger.error(err.message)
+    } catch (reason) {
+      if (typeof reason === "string") {
+        this.rnohCoreContext!.logger.error(reason)
+      } else if (reason instanceof Error) {
+        this.rnohCoreContext!.logger.error(reason.message)
       } else {
         this.rnohCoreContext!.logger.error("Fatal exception")
       }
@@ -168,7 +163,7 @@ export struct RNApp {
     const stopTracing = this.logger.clone("cleanUp").startTracing()
     this.shouldShow = false
     if (this.shouldDestroyRNInstance) {
-      this.rnohCoreContext!.destroyAndUnregisterRNInstance(this.rnInstance)
+      await this.rnohCoreContext!.destroyAndUnregisterRNInstance(this.rnInstance)
     }
     this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
     stopTracing()

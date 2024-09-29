@@ -1,3 +1,5 @@
+export * from "./Package";
+
 export type { DeviceInfoTurboModule } from "./turboModules/DeviceInfoTurboModule";
 
 export { LogBoxTurboModule } from "./turboModules/LogBoxTurboModule";

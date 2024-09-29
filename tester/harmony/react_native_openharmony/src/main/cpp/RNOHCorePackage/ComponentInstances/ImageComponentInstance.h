@@ -3,14 +3,12 @@
 #include <react/renderer/components/image/ImageEventEmitter.h>
 #include <react/renderer/components/image/ImageShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
-#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/arkui/ImageNode.h"
 
 namespace rnoh {
 class ImageComponentInstance
     : public CppComponentInstance<facebook::react::ImageShadowNode>,
-      public ImageNodeDelegate,
-      public ImageSourceResolver::ImageSourceUpdateListener {
+      public ImageNodeDelegate {
  private:
   ImageNode m_imageNode;
   struct ImageRawProps {
@@ -25,12 +23,7 @@ class ImageComponentInstance
 
   // used for find local cache of uri, if not find return uri
   std::string FindLocalCacheByUri(std::string const& uri);
-  std::string getCacheFilePath(std::string const& uri);
-  bool has(std::string const& key);
-  std::string getLocation(std::string const& key);
-  std::string getFilePath(std::string const& key);
-  std::string getCacheKey(std::string const& uri);
-    
+
   std::string getBundlePath();
   std::string getAbsolutePathPrefix(std::string const& bundlePath);
 
@@ -45,8 +38,5 @@ class ImageComponentInstance
   void onLoadStart();
 
   ImageNode& getLocalRootArkUINode() override;
-
-  // ImageSourceResolver::ImageSourceUpdateListener
-  void onImageSourceCacheUpdate() override;
 };
 } // namespace rnoh

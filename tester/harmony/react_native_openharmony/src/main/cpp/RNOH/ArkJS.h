@@ -13,16 +13,13 @@
 #include <vector>
 #include "RNOH/RNOHError.h"
 #include "RNOH/Result.h"
-#include "ThreadGuard.h"
 #include "napi/native_api.h"
+#include "ThreadGuard.h"
 
 class RNOHNapiObjectBuilder;
 class RNOHNapiObject;
 class NapiRef;
 
-/**
- * @api
- */
 class ArkJS {
  public:
   using IntermediaryCallback = std::function<void(std::vector<folly::dynamic>)>;
@@ -84,7 +81,7 @@ class ArkJS {
   napi_value createFromJSError(facebook::jsi::JSError const&);
 
   napi_value createFromRNOHError(rnoh::RNOHError const&);
-
+  
   napi_value createResult(rnoh::Result<napi_value> const&);
 
   RNOHNapiObjectBuilder createObjectBuilder();
@@ -109,9 +106,7 @@ class ArkJS {
 
   RNOHNapiObject getObject(napi_value object);
 
-  RNOHNapiObject getObject(napi_ref objectRef);
-
-  RNOHNapiObject getObject(NapiRef const& objectRef);
+  RNOHNapiObject getObject(napi_ref object);
 
   napi_value getObjectProperty(napi_value object, std::string const& key);
 
@@ -157,22 +152,22 @@ class ArkJS {
 
 class RNOHNapiObject {
  public:
-  RNOHNapiObject(ArkJS arkJS, napi_value object);
+  RNOHNapiObject(ArkJS arkJs, napi_value object);
 
   template <size_t args_count>
   napi_value call(
       std::string const& key,
       std::array<napi_value, args_count> args) {
-    return m_arkJS.call(this->getProperty(key), args, m_object);
+    return m_arkJs.call(this->getProperty(key), args, m_object);
   }
 
   napi_value call(std::string const& key, std::vector<napi_value> args) {
-    return m_arkJS.call(this->getProperty(key), args, m_object);
+    return m_arkJs.call(this->getProperty(key), args, m_object);
   }
 
   napi_value
   call(std::string const& key, const napi_value* args, int argsCount) {
-    return m_arkJS.call(this->getProperty(key), args, argsCount, m_object);
+    return m_arkJs.call(this->getProperty(key), args, argsCount, m_object);
   }
 
   napi_value getProperty(std::string const& key);
@@ -182,7 +177,7 @@ class RNOHNapiObject {
   std::vector<std::pair<napi_value, napi_value>> getKeyValuePairs();
 
  private:
-  ArkJS m_arkJS;
+  ArkJS m_arkJs;
   napi_value m_object;
 
   friend class RNOHNapiObjectBuilder;
@@ -190,9 +185,9 @@ class RNOHNapiObject {
 
 class RNOHNapiObjectBuilder {
  public:
-  RNOHNapiObjectBuilder(napi_env env, ArkJS arkJS);
+  RNOHNapiObjectBuilder(napi_env env, ArkJS arkJs);
 
-  RNOHNapiObjectBuilder(napi_env env, ArkJS arkJS, napi_value object);
+  RNOHNapiObjectBuilder(napi_env env, ArkJS arkJs, napi_value object);
 
   RNOHNapiObjectBuilder& addProperty(const char* name, napi_value value);
 
@@ -225,7 +220,7 @@ class RNOHNapiObjectBuilder {
   napi_value build();
 
  private:
-  ArkJS m_arkJS;
+  ArkJS m_arkJs;
   napi_env m_env;
   napi_value m_object;
   std::vector<std::pair<std::string, napi_value>> m_properties;
@@ -239,7 +234,7 @@ class Promise {
   Promise& catch_(std::function<void(std::vector<folly::dynamic>)>&& callback);
 
  private:
-  ArkJS m_arkJS;
+  ArkJS m_arkJs;
   napi_value m_value;
 };
 

@@ -107,7 +107,7 @@ ImageNode& ImageNode::setTintColor(
       {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.red},   {.f32 = 0},
       {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.green}, {.f32 = 0},
       {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.blue},  {.f32 = 0},
-      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = 1},         {.f32 = 0}};
+      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.alpha}, {.f32 = 0}};
 
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -214,11 +214,6 @@ ImageNode& ImageNode::resetFocusable() {
 ImageNode& ImageNode::resetResizeMethod() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
-  return *this;
-}
-ImageNode& ImageNode::resetSources() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_IMAGE_SRC));
   return *this;
 }
 

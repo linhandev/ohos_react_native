@@ -12,9 +12,10 @@ maybeThrowFromStatus(napi_env env, napi_status status, const char* message) {
     std::string error_code_msg_str = ". Error code: ";
     std::string status_str = error_info->error_message;
     std::string full_msg = msg_str + error_code_msg_str + status_str;
+    auto c_str = full_msg.c_str();
     napi_throw_error(env, nullptr, message);
     // stops a code execution after throwing napi_error
-    throw std::runtime_error(full_msg);
+    throw std::runtime_error(message);
   }
 }
 
@@ -224,10 +225,8 @@ void ArkJS::deleteReference(napi_ref reference) {
 }
 
 napi_value ArkJS::getReferenceValue(NapiRef const& ref) {
-  napi_value result;
-  auto status = napi_get_reference_value(m_env, ref.m_ref.get(), &result);
-  this->maybeThrowFromStatus(status, "Couldn't get a reference value");
-  return result;
+  RNOH_ASSERT(ref.m_env == m_env);
+  return getReferenceValue(ref.m_ref.get());
 }
 
 NapiRef ArkJS::createNapiRef(napi_value value) {
@@ -241,9 +240,9 @@ createNapiCallback(
       [callback = std::move(callback)](
           napi_env env,
           std::vector<napi_value> callbackNapiArgs) -> napi_value {
-        ArkJS arkJS(env);
-        callback(arkJS.getDynamics(callbackNapiArgs));
-        return arkJS.getUndefined();
+        ArkJS arkJs(env);
+        callback(arkJs.getDynamics(callbackNapiArgs));
+        return arkJs.getUndefined();
       });
 }
 
@@ -252,10 +251,10 @@ napi_value singleUseCallback(napi_env env, napi_callback_info info) {
   napi_get_cb_info(env, info, nullptr, nullptr, nullptr, &data);
   auto callback = static_cast<
       std::function<napi_value(napi_env, std::vector<napi_value>)>*>(data);
-  ArkJS arkJS(env);
-  (*callback)(env, arkJS.getCallbackArgs(info));
+  ArkJS arkJs(env);
+  (*callback)(env, arkJs.getCallbackArgs(info));
   delete callback;
-  return arkJS.getUndefined();
+  return arkJs.getUndefined();
 }
 
 /*
@@ -315,11 +314,7 @@ RNOHNapiObject ArkJS::getObject(napi_value object) {
 }
 
 RNOHNapiObject ArkJS::getObject(napi_ref objectRef) {
-  return getObject(getReferenceValue(objectRef));
-}
-
-RNOHNapiObject ArkJS::getObject(NapiRef const& objectRef) {
-  return getObject(getReferenceValue(objectRef));
+  return RNOHNapiObject(*this, this->getReferenceValue(objectRef));
 }
 
 napi_value ArkJS::getObjectProperty(napi_value object, std::string const& key) {
@@ -481,8 +476,8 @@ napi_value ArkJS::convertIntermediaryValueToNapiValue(IntermediaryArg arg) {
   }
 }
 
-RNOHNapiObjectBuilder::RNOHNapiObjectBuilder(napi_env env, ArkJS arkJS)
-    : m_env(env), m_arkJS(arkJS) {
+RNOHNapiObjectBuilder::RNOHNapiObjectBuilder(napi_env env, ArkJS arkJs)
+    : m_env(env), m_arkJs(arkJs) {
   napi_value obj;
   auto status = napi_create_object(env, &obj);
   maybeThrowFromStatus(env, status, "Failed to create an object");
@@ -491,9 +486,9 @@ RNOHNapiObjectBuilder::RNOHNapiObjectBuilder(napi_env env, ArkJS arkJS)
 
 RNOHNapiObjectBuilder::RNOHNapiObjectBuilder(
     napi_env env,
-    ArkJS arkJS,
+    ArkJS arkJs,
     napi_value object)
-    : m_env(env), m_arkJS(arkJS), m_object(object) {}
+    : m_env(env), m_arkJs(arkJs), m_object(object) {}
 
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
@@ -505,14 +500,14 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     bool value) {
-  addProperty(name, m_arkJS.createBoolean(value));
+  addProperty(name, m_arkJs.createBoolean(value));
   return *this;
 }
 
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     int value) {
-  auto napi_value = m_arkJS.createInt(value);
+  auto napi_value = m_arkJs.createInt(value);
   addProperty(name, napi_value);
   return *this;
 }
@@ -520,14 +515,14 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     facebook::react::Float value) {
-  addProperty(name, m_arkJS.createDouble(value));
+  addProperty(name, m_arkJs.createDouble(value));
   return *this;
 }
 
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     char const* value) {
-  addProperty(name, m_arkJS.createString(value));
+  addProperty(name, m_arkJs.createString(value));
   return *this;
 }
 
@@ -535,20 +530,20 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     facebook::react::SharedColor value) {
   if (!value) {
-    addProperty(name, m_arkJS.getUndefined());
+    addProperty(name, m_arkJs.getUndefined());
     return *this;
   }
   auto colorComponents = colorComponentsFromColor(value);
   napi_value n_value;
   napi_create_array(m_env, &n_value);
   napi_set_element(
-      m_env, n_value, 0, m_arkJS.createDouble(colorComponents.red));
+      m_env, n_value, 0, m_arkJs.createDouble(colorComponents.red));
   napi_set_element(
-      m_env, n_value, 1, m_arkJS.createDouble(colorComponents.green));
+      m_env, n_value, 1, m_arkJs.createDouble(colorComponents.green));
   napi_set_element(
-      m_env, n_value, 2, m_arkJS.createDouble(colorComponents.blue));
+      m_env, n_value, 2, m_arkJs.createDouble(colorComponents.blue));
   napi_set_element(
-      m_env, n_value, 3, m_arkJS.createDouble(colorComponents.alpha));
+      m_env, n_value, 3, m_arkJs.createDouble(colorComponents.alpha));
   addProperty(name, n_value);
   return *this;
 }
@@ -564,7 +559,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
        nullptr,
        nullptr,
        nullptr,
-       m_arkJS.createDouble(value.topLeft),
+       m_arkJs.createDouble(value.topLeft),
        napi_default_jsproperty,
        nullptr},
       {"topRight",
@@ -572,7 +567,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
        nullptr,
        nullptr,
        nullptr,
-       m_arkJS.createDouble(value.topRight),
+       m_arkJs.createDouble(value.topRight),
        napi_default_jsproperty,
        nullptr},
       {"bottomLeft",
@@ -580,7 +575,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
        nullptr,
        nullptr,
        nullptr,
-       m_arkJS.createDouble(value.bottomLeft),
+       m_arkJs.createDouble(value.bottomLeft),
        napi_default_jsproperty,
        nullptr},
       {"bottomRight",
@@ -588,7 +583,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
        nullptr,
        nullptr,
        nullptr,
-       m_arkJS.createDouble(value.bottomRight),
+       m_arkJs.createDouble(value.bottomRight),
        napi_default_jsproperty,
        nullptr}};
 
@@ -603,7 +598,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
   napi_create_array_with_length(m_env, matrix.size(), &n_value);
 
   for (std::size_t i = 0; i < matrix.size(); ++i) {
-    napi_set_element(m_env, n_value, i, m_arkJS.createDouble(matrix[i]));
+    napi_set_element(m_env, n_value, i, m_arkJs.createDouble(matrix[i]));
   }
 
   addProperty(name, n_value);
@@ -613,14 +608,14 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     std::string value) {
-  addProperty(name, m_arkJS.createString(value));
+  addProperty(name, m_arkJs.createString(value));
   return *this;
 }
 
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     folly::dynamic value) {
-  addProperty(name, m_arkJS.createFromDynamic(value));
+  addProperty(name, m_arkJs.createFromDynamic(value));
   return *this;
 }
 
@@ -649,20 +644,20 @@ napi_value RNOHNapiObjectBuilder::build() {
   return m_object;
 }
 
-RNOHNapiObject::RNOHNapiObject(ArkJS arkJS, napi_value object)
-    : m_arkJS(arkJS), m_object(object) {}
+RNOHNapiObject::RNOHNapiObject(ArkJS arkJs, napi_value object)
+    : m_arkJs(arkJs), m_object(object) {}
 
 napi_value RNOHNapiObject::getProperty(std::string const& key) {
-  return m_arkJS.getObjectProperty(m_object, key);
+  return m_arkJs.getObjectProperty(m_object, key);
 }
 
 napi_value RNOHNapiObject::getProperty(napi_value key) {
-  return m_arkJS.getObjectProperty(m_object, key);
+  return m_arkJs.getObjectProperty(m_object, key);
 }
 
 std::vector<std::pair<napi_value, napi_value>>
 RNOHNapiObject::getKeyValuePairs() {
-  return m_arkJS.getObjectProperties(m_object);
+  return m_arkJs.getObjectProperties(m_object);
 }
 
 bool ArkJS::isPromise(napi_value value) {
@@ -676,18 +671,18 @@ RNOHNapiObjectBuilder ArkJS::getObjectBuilder(napi_value object) {
 }
 
 Promise::Promise(napi_env env, napi_value value)
-    : m_arkJS(ArkJS(env)), m_value(value) {}
+    : m_arkJs(ArkJS(env)), m_value(value) {}
 
 Promise& Promise::then(
     std::function<void(std::vector<folly::dynamic>)>&& callback) {
-  auto obj = m_arkJS.getObject(m_value);
-  obj.call("then", {m_arkJS.createSingleUseCallback(std::move(callback))});
+  auto obj = m_arkJs.getObject(m_value);
+  obj.call("then", {m_arkJs.createSingleUseCallback(std::move(callback))});
   return *this;
 }
 
 Promise& Promise::catch_(
     std::function<void(std::vector<folly::dynamic>)>&& callback) {
-  auto obj = m_arkJS.getObject(m_value);
-  obj.call("catch", {m_arkJS.createSingleUseCallback(std::move(callback))});
+  auto obj = m_arkJs.getObject(m_value);
+  obj.call("catch", {m_arkJs.createSingleUseCallback(std::move(callback))});
   return *this;
 }

@@ -1,5 +1,4 @@
 #include "TouchTarget.h"
-#include <react/renderer/debug/SystraceSection.h>
 
 std::optional<facebook::react::Transform> invertTransform(
     const facebook::react::Transform& transform);
@@ -10,7 +9,6 @@ static constexpr auto infinity =
 auto rnoh::TouchTarget::computeChildPoint(
     Point const& point,
     TouchTarget::Shared const& child) const -> Point {
-  facebook::react::SystraceSection s("RNOH::MountingManagerCAPI::updateView");
   auto childLayout = child->getLayoutMetrics();
   auto childTransform = child->getTransform();
 

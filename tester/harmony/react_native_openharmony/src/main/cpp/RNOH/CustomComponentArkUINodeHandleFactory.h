@@ -22,12 +22,12 @@ class CustomComponentArkUINodeHandleFactory final {
 
   CustomComponentArkUINodeHandleFactory(
       napi_env env,
-      NapiRef customRNComponentFrameNodeFactoryRef,
+      napi_ref customRNComponentFrameNodeFactoryRef,
       TaskExecutor::Shared taskExecutor)
       : m_env(env),
         m_taskExecutor(taskExecutor),
         m_customRNComponentFrameNodeFactoryRef(
-            std::move(customRNComponentFrameNodeFactoryRef)) {}
+            customRNComponentFrameNodeFactoryRef) {}
 
   std::pair<ArkUI_NodeHandle, std::function<void()>> create(
       facebook::react::Tag tag,
@@ -46,7 +46,7 @@ class CustomComponentArkUINodeHandleFactory final {
     auto n_arkTsNodeHandle = arkJs.getObjectProperty(n_result, "frameNode");
     auto n_destroyBuilderNode =
         arkJs.getObjectProperty(n_result, "destroyBuilderNode");
-    auto n_destroyBuilderNodeRef = arkJs.createNapiRef(n_destroyBuilderNode);
+    auto n_destroyBuilderNodeRef = arkJs.createReference(n_destroyBuilderNode);
     ArkUI_NodeHandle arkTsNodeHandle = nullptr;
     auto errorCode = OH_ArkUI_GetNodeHandleFromNapiValue(
         m_env, n_arkTsNodeHandle, &arkTsNodeHandle);
@@ -55,12 +55,11 @@ class CustomComponentArkUINodeHandleFactory final {
       return std::make_pair(nullptr, [] {});
     }
     return std::make_pair(
-          arkTsNodeHandle,
-        [env = m_env,
-         destroyBuilderNodeRef = std::move(n_destroyBuilderNodeRef)] {
+        arkTsNodeHandle, [env = m_env, n_destroyBuilderNodeRef] {
           ArkJS arkJs(env);
-          auto n_destroy = arkJs.getReferenceValue(destroyBuilderNodeRef);
+          auto n_destroy = arkJs.getReferenceValue(n_destroyBuilderNodeRef);
           arkJs.call(n_destroy, {});
+          arkJs.deleteReference(n_destroyBuilderNodeRef);
         });
 #else
     return std::make_pair(nullptr, [] {});
@@ -70,7 +69,7 @@ class CustomComponentArkUINodeHandleFactory final {
  private:
   TaskExecutor::Shared m_taskExecutor;
   napi_env m_env;
-  NapiRef m_customRNComponentFrameNodeFactoryRef;
+  napi_ref m_customRNComponentFrameNodeFactoryRef;
   ThreadGuard m_threadGuard{};
 };
 } // namespace rnoh

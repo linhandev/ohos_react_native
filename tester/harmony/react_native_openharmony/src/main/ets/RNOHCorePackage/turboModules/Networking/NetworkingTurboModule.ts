@@ -192,27 +192,18 @@ export class NetworkingTurboModule extends TurboModule {
     if (this.isEncodedURI(str)) {
       return str;
     }
-    return encodeURI(str);
+    return str.replace(/[\u4e00-\u9fa5]/g, (char) => encodeURIComponent(char));
   }
+  
 
-  async sendRequest(query: Query, onRequestRegistered: (requestId: number) => void) {
+  async sendRequest(query: Query, callback: (requestId: number) => void) {
     const httpClient = this.ctx.rnInstance.httpClient;
     const requestId = this.createId();
-    onRequestRegistered(requestId);
     for (const handler of this.uriHandlers) {
       if (handler.supports(query)) {
-        try {
-          const response = await handler.fetch(query);
-          this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, 200, {}, query.url)
-          this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, response);
-          this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
-        } catch (error) {
-          this.networkEventDispatcher.dispatchDidReceiveNetworkResponse(requestId, 400, {},
-            query.url)
-          this.networkEventDispatcher.dispatchDidCompleteNetworkResponseWithError(requestId,
-            error.toString(), false);
-        }
-
+        const response = handler.fetch(query);
+        this.networkEventDispatcher.dispatchDidReceiveNetworkData(requestId, response);
+        this.networkEventDispatcher.dispatchDidCompleteNetworkResponse(requestId);
         return;
       }
     }
@@ -266,6 +257,7 @@ export class NetworkingTurboModule extends TurboModule {
         sendProgress.totalLength)
     };
 
+
     const { cancel, promise } = httpClient.sendRequest(this.getEncodedURI(query.url),
       {
         method: this.REQUEST_METHOD_BY_NAME[query.method],
@@ -307,6 +299,7 @@ export class NetworkingTurboModule extends TurboModule {
     });
 
 
+    callback(requestId)
   }
 
   abortRequest(requestId: number) {

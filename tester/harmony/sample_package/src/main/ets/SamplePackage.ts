@@ -1,18 +1,15 @@
 import {
   RNPackage,
+  TurboModulesFactory,
   DescriptorWrapperFactoryByDescriptorType,
-  DescriptorWrapperFactoryByDescriptorTypeCtx,
-  UITurboModuleFactory,
-  UITurboModuleContext,
-  WorkerTurboModuleFactory,
-  WorkerTurboModuleContext,
+  DescriptorWrapperFactoryByDescriptorTypeCtx
 } from '@rnoh/react-native-openharmony/ts';
+import type { TurboModule, TurboModuleContext, } from '@rnoh/react-native-openharmony/ts';
 import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
-import { SampleWorkerTurboModule } from './SampleWorkerTurboModule';
 
-class SampleTurboModulesFactory extends UITurboModuleFactory {
-  createTurboModule(name: string) {
+class SampleTurboModulesFactory extends TurboModulesFactory {
+  createTurboModule(name: string): TurboModule | null {
     if (name === 'SampleTurboModule' || name === TM.GeneratedSampleTurboModule.NAME || name === TM.GeneratedSampleTurboModule2.NAME) {
       return new SampleTurboModule(this.ctx);
     }
@@ -24,26 +21,9 @@ class SampleTurboModulesFactory extends UITurboModuleFactory {
   }
 }
 
-class SampleWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
-  createTurboModule(name: string) {
-    if (name === TM.SampleWorkerTurboModule.NAME) {
-      return new SampleWorkerTurboModule(this.ctx);
-    }
-    return null;
-  }
-
-  hasTurboModule(name: string): boolean {
-    return name === TM.SampleWorkerTurboModule.NAME
-  }
-}
-
 export class SamplePackage extends RNPackage {
-  createUITurboModuleFactory(ctx: UITurboModuleContext) {
+  createTurboModulesFactory(ctx: TurboModuleContext): TurboModulesFactory {
     return new SampleTurboModulesFactory(ctx);
-  }
-
-  createWorkerTurboModuleFactory(ctx: WorkerTurboModuleContext) {
-    return new SampleWorkerTurboModulesFactory(ctx);
   }
 
   createDescriptorWrapperFactoryByDescriptorType(ctx: DescriptorWrapperFactoryByDescriptorTypeCtx): DescriptorWrapperFactoryByDescriptorType {

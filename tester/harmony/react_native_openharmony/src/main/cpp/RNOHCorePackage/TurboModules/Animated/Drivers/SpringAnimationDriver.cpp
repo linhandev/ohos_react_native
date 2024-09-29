@@ -44,10 +44,10 @@ void SpringAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
     auto& animatedValue = m_nodesManager.getValueNodeByTag(m_animatedNodeTag);
     if (!m_springStarted) {
       if (m_currentLoop == 0) {
-        m_originalValue = animatedValue.m_value;
+        m_originalValue = animatedValue.getValueAsDouble();
         m_currentLoop = 1;
       }
-      m_fromValue = m_position = animatedValue.m_value;
+      m_fromValue = m_position = animatedValue.getValueAsDouble();
       m_lastTime = frameTimeMillis;
       m_timeAccumulator = 0;
       m_springStarted = true;

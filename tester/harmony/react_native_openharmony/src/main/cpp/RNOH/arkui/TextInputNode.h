@@ -15,7 +15,7 @@ class TextInputNodeDelegate {
   virtual void onSubmit() {};
   virtual void onPasteOrCut() {};
   virtual void onContentScroll() {};
-  virtual void onContentSizeChange(float width, float height) {};
+  virtual void onContentSizeChange(float width, float height, bool multiline) {};
 
   virtual void onTextSelectionChange(int32_t location, int32_t length){};
 };
@@ -23,6 +23,7 @@ class TextInputNodeDelegate {
 class TextInputNode : public TextInputNodeBase {
  private:
   uint32_t m_caretColorValue;
+  bool m_autofocus{false};
  protected:
   TextInputNodeDelegate* m_textInputNodeDelegate;
 
@@ -57,7 +58,7 @@ class TextInputNode : public TextInputNodeBase {
   void setCancelButtonMode(
       facebook::react::TextInputAccessoryVisibilityMode mode);
 
-  void setFont(facebook::react::TextAttributes const& textAttributes, float fontSizeScale) override;
+  void setFont(facebook::react::TextAttributes const& textAttributes) override;
 
   void setCaretColor(facebook::react::SharedColor const& color) override;
 
@@ -84,6 +85,10 @@ class TextInputNode : public TextInputNodeBase {
   void setshowSoftInputOnFocus(int32_t enable);
 
   void setInputFilter(std::string const& inputFilter);
+
+  void setAutoFocus(bool const &autoFocus);
+
+  bool getTextFocusStatus();
 
   std::string getTextContent() override;
 };

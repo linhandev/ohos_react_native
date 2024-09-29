@@ -9,6 +9,7 @@
 #include "SampleTurboModuleSpec.h"
 #include "SampleViewComponentDescriptor.h"
 #include "SampleViewComponentInstance.h"
+#include "SimpleTextComponentInstance.h"
 
 using namespace facebook;
 
@@ -101,10 +102,6 @@ class SampleArkTSMessageHandler : public ArkTSMessageHandler {
               ctx.messagePayload["isBlocked"].asBool(),
               ctx.messagePayload["origin"].asString());
         }
-      } else if (ctx.messageName == "SAMPLE_WORKER_MESSAGE") {
-        rnInstance
-            ->getTurboModule<SampleWorkerTurboModule>("SampleWorkerTurboModule")
-            ->callSync("onInvokeFromCpp", {ctx.messagePayload});
       }
     }
   };
@@ -138,6 +135,8 @@ ComponentInstance::Shared SamplePackage::createComponentInstance(
     const ComponentInstance::Context& ctx) {
   if (ctx.componentName == "GeneratedSampleView") {
     return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);
+  } else if (ctx.componentName == "SimpleText") {
+    return std::make_shared<SimpleTextComponentInstance>(ctx);
   }
   return nullptr;
 };

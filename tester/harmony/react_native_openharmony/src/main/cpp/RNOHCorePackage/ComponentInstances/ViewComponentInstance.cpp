@@ -1,5 +1,4 @@
 #include "ViewComponentInstance.h"
-#include "RNOH/ClippingComponent.h"
 #include <RNOH/arkui/NativeNodeApi.h>
 #include "RNOH/arkui/ArkUINodeRegistry.h"
 
@@ -12,27 +11,16 @@ ViewComponentInstance::ViewComponentInstance(Context context)
 void ViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance, std::size_t index) {
     CppComponentInstance::onChildInserted(childComponentInstance, index);
-    if (m_removeClippedSubviews){
-        insertNodeWithRemoveClipping(childComponentInstance, index);
-    } else {
-        childComponentInstance->setIsClipped(false);
-        getLocalRootArkUINode().insertChild(childComponentInstance->getLocalRootArkUINode(), index);
-    }
+    getLocalRootArkUINode().insertChild(
+        childComponentInstance->getLocalRootArkUINode(), index);
 }
 
 void ViewComponentInstance::onChildRemoved(
     ComponentInstance::Shared const& childComponentInstance)
 {
   CppComponentInstance::onChildRemoved(childComponentInstance);
-    if (m_removeClippedSubviews) {
-        if (!childComponentInstance->getIsClipped()) {
-            getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
-        childComponentInstance->setIsClipped(true);
-  }
-    } else {
-        getLocalRootArkUINode().removeChild(childComponentInstance->getLocalRootArkUINode());
-        childComponentInstance->setIsClipped(true);
-    } 
+  getLocalRootArkUINode().removeChild(
+      childComponentInstance->getLocalRootArkUINode());
 }
 
 void ViewComponentInstance::onHoverIn() {

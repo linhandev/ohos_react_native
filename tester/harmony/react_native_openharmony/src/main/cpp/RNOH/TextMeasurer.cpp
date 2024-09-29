@@ -1,5 +1,7 @@
 #include "TextMeasurer.h"
 #include <native_drawing/drawing_register_font.h>
+#include <filesystem>
+#include <fstream>
 #include "RNInstance.h"
 #include "RNInstanceCAPI.h"
 #include "RNOH/ArkJS.h"
@@ -221,11 +223,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes,
     LayoutConstraints const& layoutConstraints) {
-  //  UniqueTypographyStyle typographyStyle(
-  //      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
-  //  Revert this after API rectification
-
-  std::shared_ptr<OH_Drawing_TypographyStyle> typographyStyle(
+  UniqueTypographyStyle typographyStyle(
       OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
 
   if (paragraphAttributes.ellipsizeMode == facebook::react::EllipsizeMode::Head) {
@@ -264,7 +262,7 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), m_fontCollection.get(), m_scale, m_halfleading, typographyStyle); //  Revert this after API rectification
+      typographyStyle.get(), getFontCollection(), m_scale, m_halfleading, getDefaultFontFamilyName());
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
@@ -312,6 +310,10 @@ std::vector<OH_Drawing_LineMetrics> TextMeasurer::getLineMetrics(
     auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
     auto typography = typographyBuilder.build();
     typography.getLineMetrics(data);
+  }
+  for (int i = 0; i < data.size(); i++) {
+    data[i].width = static_cast<Float>(data[i].width) / m_scale;
+    data[i].height = static_cast<Float>(data[i].height) / m_scale;
   }
   return data;
 }
@@ -427,22 +429,123 @@ void TextMeasurer::setTextMeasureParams(float fontScale, float scale, bool halfl
   m_fontScale = fontScale;
   m_scale = scale;
   m_halfleading = halfleading;
+  updateDefaultFont();
 }
 
-void TextMeasurer::registerFont(NativeResourceManager* nativeResourceManager, const std::string familyName, const std::string familySrc) {
-  const std::string fontPath = "assets" + familySrc;
-  auto file = OH_ResourceManager_OpenRawFile(
-      nativeResourceManager, fontPath.c_str());
-  auto length = OH_ResourceManager_GetRawFileSize(file);
-  auto buffer = malloc(length);
-  OH_ResourceManager_ReadRawFile(file, buffer, length);
-  OH_ResourceManager_CloseRawFile(file);
-  OH_Drawing_RegisterFontBuffer(
-        m_fontCollection.get(),
-        familyName.c_str(),
-        (uint8_t*)buffer,
-        length
-     );
-  free(buffer);
+void TextMeasurer::registerFont(std::weak_ptr<NativeResourceManager> weakResourceManager, const std::string name, const std::string fontFilePathRelativeToRawfileDir) {
+  auto resourceManager = weakResourceManager.lock();
+  if (resourceManager == nullptr) {
+    LOG(ERROR) << "Couldn't register font " << name
+               << " — resourceManager is nullptr";
+    return;
+  };
+  auto fontFile =
+      std::unique_ptr<RawFile, decltype(&OH_ResourceManager_CloseRawFile)>(
+          OH_ResourceManager_OpenRawFile(
+              resourceManager.get(), fontFilePathRelativeToRawfileDir.c_str()),
+          OH_ResourceManager_CloseRawFile);
+  if (!fontFile) {
+    throw RNOHError(
+        "Failed to open font fontFile: " + fontFilePathRelativeToRawfileDir);
+  }
+  auto length = OH_ResourceManager_GetRawFileSize(fontFile.get());
+  std::vector<uint8_t> buffer(length);
+  if (OH_ResourceManager_ReadRawFile(fontFile.get(), buffer.data(), length) !=
+      length) {
+    throw RNOHError(
+        "Failed to read fontFile: " + fontFilePathRelativeToRawfileDir);
+  }
+  auto lock = std::lock_guard(m_fontFileContentByFontNameMtx);
+  m_fontFileContentByFontName.emplace(name, buffer);
+  // NOTE: fonts cannot be added to an existing collection, so we need to
+  // recreate it the next time `getFontCollection` is called
+  // m_fontCollection.reset();
 }
+
+void TextMeasurer::updateDefaultFont() {
+  auto lock = std::lock_guard(m_defaultFontFamilyNameMtx);
+  m_defaultFontFamilyName.clear();
+  std::string path = "/data/themes/a/app";
+  if (!existDefaultFont(path)) {
+    path = "/data/themes/b/app";
+    if (!existDefaultFont(path)) {
+      return;
+    }
+  }
+  path = path.append("/fonts/");
+  for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+    auto entryPath = entry.path();
+    if (entry.is_regular_file() && entryPath.has_extension() && entryPath.extension() == ".ttf") {
+      if (m_defaultFontFamilyName == entryPath.stem()) {
+        return;
+      }
+      m_defaultFontFamilyName = entryPath.stem();
+      path = entryPath;
+      break;
+    }
+  }
+  if (m_defaultFontFamilyName.empty()) {
+    return;
+  }
+  std::ifstream ifs(path, std::ios_base::in);
+  ifs.seekg(0, ifs.end);
+  auto size = ifs.tellg();
+  ifs.seekg(ifs.beg);    
+  std::vector<uint8_t> buffer(size);
+  ifs.read((char*)buffer.data(), size);
+  bool isGood = ifs.good();
+  ifs.close();
+  if (isGood) {
+    auto lock = std::lock_guard(m_fontFileContentByFontNameMtx);
+    m_fontFileContentByFontName.emplace(m_defaultFontFamilyName, buffer);
+    // NOTE: fonts cannot be added to an existing collection, so we need to
+    // recreate it the next time `getFontCollection` is called
+    // m_fontCollection.reset();
+  }
+}
+
+
+bool TextMeasurer::existDefaultFont(std::string path) {
+  bool isFlagFileExist = false;
+  bool isFontDirExist = false;
+  try {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+      auto entryPath = entry.path();
+      isFlagFileExist = isFlagFileExist || (entry.is_regular_file() && entryPath.filename() == "flag");
+      isFontDirExist = isFontDirExist || (entry.is_directory() && entryPath.filename() == "fonts");
+      if (isFlagFileExist && isFontDirExist) {
+        break;
+      }
+    }
+  } catch (...) {
+    return false;
+  }
+  return isFlagFileExist && isFontDirExist;
+}
+
+SharedFontCollection TextMeasurer::getFontCollection() {
+  auto lockFontCollection = std::lock_guard(m_fontCollectionMtx);
+  if (m_fontCollection) {
+    return m_fontCollection;
+  }
+  SharedFontCollection fontCollection(
+      OH_Drawing_CreateSharedFontCollection(),
+      OH_Drawing_DestroyFontCollection);
+  auto lock = std::lock_guard(m_fontFileContentByFontNameMtx);
+  for (auto& [name, fileContent] : m_fontFileContentByFontName) {
+    OH_Drawing_RegisterFontBuffer(
+        fontCollection.get(),
+        name.c_str(),
+        fileContent.data(),
+        fileContent.size());
+  }
+  m_fontCollection = fontCollection;
+  return fontCollection;
+}
+
+std::string TextMeasurer::getDefaultFontFamilyName() {
+  auto lock = std::lock_guard(m_defaultFontFamilyNameMtx);
+  return m_defaultFontFamilyName;
+}
+
 } // namespace rnoh

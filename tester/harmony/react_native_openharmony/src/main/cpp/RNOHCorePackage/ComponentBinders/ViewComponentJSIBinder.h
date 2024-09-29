@@ -8,6 +8,8 @@ class ViewComponentJSIBinder : public BaseComponentJSIBinder {
   facebook::jsi::Object createNativeProps(facebook::jsi::Runtime& rt) override {
     auto nativeProps = BaseComponentJSIBinder::createNativeProps(rt);
 
+    nativeProps.setProperty(rt, "removeClippedSubviews", "boolean");
+
     // #region ViewEvents
 
     // Pointer events

@@ -197,9 +197,9 @@ void AnimatedNodesManager::extractOffset(facebook::react::Tag tag) {
   node.extractOffset();
 }
 
-double AnimatedNodesManager::getValue(facebook::react::Tag tag) {
+folly::dynamic AnimatedNodesManager::getNodeOutput(facebook::react::Tag tag) {
   auto& node = getValueNodeByTag(tag);
-  return node.getValue();
+  return node.getOutput();
 }
 
 void AnimatedNodesManager::startAnimatingNode(

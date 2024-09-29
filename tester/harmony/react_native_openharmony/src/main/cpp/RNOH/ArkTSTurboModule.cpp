@@ -4,8 +4,11 @@
 #include <jsi/JSIDynamic.h>
 #include <react/renderer/debug/SystraceSection.h>
 #include <exception>
+#include <optional>
+#include <variant>
 
 #include "ArkTSTurboModule.h"
+#include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/JsiConversions.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
@@ -29,23 +32,12 @@ std::string preparePromiseRejectionResult(
 ArkTSTurboModule::ArkTSTurboModule(Context ctx, std::string name)
     : m_ctx(ctx), TurboModule(ctx, name) {}
 
-ArkTSTurboModule::~ArkTSTurboModule() noexcept {
-  auto taskExecutor = m_ctx.taskExecutor;
-  taskExecutor->runTask(
-      m_ctx.turboModuleThread,
-      [ref = std::move(m_ctx.arkTSTurboModuleInstanceRef)] {});
-}
-
 // calls a TurboModule method and blocks until it returns, returning its result
 jsi::Value ArkTSTurboModule::call(
     jsi::Runtime& runtime,
     const std::string& methodName,
     const jsi::Value* jsiArgs,
     size_t argsCount) {
-  react::SystraceSection s(std::string(
-                               "#RNOH::ArkTSTurboModule::call (" + this->name_ +
-                               "::" + methodName + ")")
-                               .c_str());
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
   return jsi::valueFromDynamic(runtime, callSync(methodName, args));
@@ -56,12 +48,8 @@ jsi::Value ArkTSTurboModule::call(
 folly::dynamic ArkTSTurboModule::callSync(
     const std::string& methodName,
     std::vector<IntermediaryArg> args) {
-  react::SystraceSection s(std::string(
-                               "#RNOH::ArkTSTurboModule::callSync (" +
-                               this->name_ + "::" + methodName + ")")
-                               .c_str());
-  auto start = std::chrono::high_resolution_clock::now();
-
+  facebook::react::SystraceSection s(
+    "ArkTSTurboModule::callSync moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -70,22 +58,16 @@ folly::dynamic ArkTSTurboModule::callSync(
   }
   folly::dynamic result;
   m_ctx.taskExecutor->runSyncTask(
-      m_ctx.turboModuleThread, [&ctx = m_ctx, &methodName, &args, &result]() {
-        ArkJS arkJS(ctx.env);
-        auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
+      TaskThread::MAIN, [ctx = m_ctx, &methodName, &args, &result]() {
+        facebook::react::SystraceSection s(
+          "ArkTSTurboModule::callSync runSyncTask methodName: ", methodName);
+        ArkJS arkJs(ctx.env);
+        auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
         auto napiTurboModuleObject =
-            arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
+            arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
         auto napiResult = napiTurboModuleObject.call(methodName, napiArgs);
-        result = arkJS.getDynamic(napiResult);
+        result = arkJs.getDynamic(napiResult);
       });
-  auto stop = std::chrono::high_resolution_clock::now();
-  auto duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-  if (duration.count() > 2) {
-    LOG(WARNING) << "ArkTSTurboModule::callSync: execution time — "
-                 << duration.count()
-                 << " ms (" + this->name_ + "::" + methodName + ")";
-  }
   return result;
 }
 
@@ -95,10 +77,8 @@ void rnoh::ArkTSTurboModule::scheduleCall(
     const std::string& methodName,
     const facebook::jsi::Value* jsiArgs,
     size_t argsCount) {
-  react::SystraceSection s(std::string(
-                               "#RNOH::ArkTSTurboModule::scheduleCall (" +
-                               this->name_ + "::" + methodName + ")")
-                               .c_str());
+  facebook::react::SystraceSection s(
+    "ArkTSTurboModule::scheduleCall moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -108,17 +88,17 @@ void rnoh::ArkTSTurboModule::scheduleCall(
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
   m_ctx.taskExecutor->runTask(
-      m_ctx.turboModuleThread,
+      TaskThread::MAIN,
       [ctx = m_ctx,
        name = name_,
        methodName,
        args = std::move(args),
        &runtime]() {
         try {
-          ArkJS arkJS(ctx.env);
-          auto napiArgs = arkJS.convertIntermediaryValuesToNapiValues(args);
+          ArkJS arkJs(ctx.env);
+          auto napiArgs = arkJs.convertIntermediaryValuesToNapiValues(args);
           auto napiTurboModuleObject =
-              arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
+              arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
           napiTurboModuleObject.call(methodName, napiArgs);
         } catch (const std::exception& e) {
           LOG(ERROR) << "Exception thrown while calling " << name
@@ -134,10 +114,8 @@ jsi::Value ArkTSTurboModule::callAsync(
     const std::string& methodName,
     const jsi::Value* jsiArgs,
     size_t argsCount) {
-  react::SystraceSection s(std::string(
-                               "#RNOH::ArkTSTurboModule::callAsync (" +
-                               this->name_ + "::" + methodName + ")")
-                               .c_str());
+  facebook::react::SystraceSection s(
+      "ArkTSTurboModule::callAsync moduleName: ", name_, " methodName: ", methodName);
   if (!m_ctx.arkTSTurboModuleInstanceRef) {
     auto errorMsg = "Couldn't find turbo module '" + name_ +
         "' on ArkUI side. Did you link RNPackage that provides this turbo module?";
@@ -146,53 +124,49 @@ jsi::Value ArkTSTurboModule::callAsync(
   }
   auto args = convertJSIValuesToIntermediaryValues(
       runtime, m_ctx.jsInvoker, jsiArgs, argsCount);
+
   return react::createPromiseAsJSIValue(
       runtime,
-      [&, args = std::move(args)](
-          jsi::Runtime& runtime2, std::shared_ptr<react::Promise> jsiPromise) {
-        m_ctx.taskExecutor->runTask(
-            m_ctx.turboModuleThread,
-            [name = this->name_,
-             methodName,
-             args = std::move(args),
-             env = m_ctx.env,
-             arkTSTurboModuleInstanceRef = m_ctx.arkTSTurboModuleInstanceRef,
-             jsInvoker = m_ctx.jsInvoker,
-             &runtime2,
-             jsiPromise] {
-              ArkJS arkJS(env);
-              try {
-                auto n_promisedResult =
-                    arkJS.getObject(arkTSTurboModuleInstanceRef)
-                        .call(
-                            methodName,
-                            arkJS.convertIntermediaryValuesToNapiValues(args));
-                Promise(env, n_promisedResult)
-                    .then([&runtime2, jsiPromise, env, jsInvoker](auto args) {
-                      jsInvoker->invokeAsync(
-                          [&runtime2, jsiPromise, args = std::move(args)]() {
+      [ctx = m_ctx, args = args, methodName = methodName](
+          jsi::Runtime& rt2, std::shared_ptr<react::Promise> jsiPromise) {
+        try {
+          ctx.taskExecutor->runTask(
+              TaskThread::MAIN, [ctx, args = args, methodName = methodName, &rt2, jsiPromise]() {
+                facebook::react::SystraceSection s(
+                    "ArkTSTurboModule::callAsync Promise methodName name: ", methodName);
+                ArkJS arkJs(ctx.env);
+                auto napiArgs =
+                    arkJs.convertIntermediaryValuesToNapiValues(args);
+                auto napiTurboModuleObject =
+                    arkJs.getObject(ctx.arkTSTurboModuleInstanceRef);
+
+                auto napiResult =
+                    napiTurboModuleObject.call(methodName, napiArgs);
+                auto napiResultRef = arkJs.createReference(napiResult);
+
+                Promise(ctx.env, napiResult)
+                    .then([&rt2, jsiPromise, ctx, napiResultRef](auto args) {
+                      facebook::react::SystraceSection s(
+                          "ArkTSTurboModule::callAsync Promise then");
+                      ctx.jsInvoker->invokeAsync(
+                          [&rt2, jsiPromise, args = std::move(args)]() {
                             jsiPromise->resolve(
-                                preparePromiseResolverResult(runtime2, args));
+                                preparePromiseResolverResult(rt2, args));
                             jsiPromise->allowRelease();
                           });
+                      ArkJS arkJs(ctx.env);
+                      arkJs.deleteReference(napiResultRef);
                     })
-                    .catch_([&runtime2, jsiPromise, env, jsInvoker](auto args) {
-                      jsInvoker->invokeAsync([&runtime2,
-                                              jsiPromise,
-                                              args = std::move(args)]() {
+                    .catch_([&rt2, jsiPromise, jsInvoker = ctx.jsInvoker, env = ctx.env, napiResultRef](auto args) {
+                      jsInvoker->invokeAsync([&rt2, jsiPromise, args]() {
                         jsiPromise->reject(preparePromiseRejectionResult(args));
                         jsiPromise->allowRelease();
                       });
+                      ArkJS arkJs(env);
+                      arkJs.deleteReference(napiResultRef);
                     });
-              } catch (const std::exception& e) {
-                jsInvoker->invokeAsync(
-                    [message = std::string(e.what()), jsiPromise] {
-                      jsiPromise->reject(message);
-                      jsiPromise->allowRelease();
-                    });
-                return;
-              }
-            });
+              });
+        }catch (const std::exception& e) {}
       });
 }
 

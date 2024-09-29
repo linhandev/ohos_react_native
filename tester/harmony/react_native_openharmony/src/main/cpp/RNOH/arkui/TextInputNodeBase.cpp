@@ -30,15 +30,6 @@ void TextInputNodeBase::setFocusable(bool const& focusable) {
       m_nodeHandle, NODE_FOCUSABLE, &item));
 }
 
-void TextInputNodeBase::setAutoFocus(bool autoFocus) {
-  ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(autoFocus)};
-  ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_DEFAULT_FOCUS, &item));
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUS_STATUS, &item));
-}
-
 void TextInputNodeBase::setResponseRegion(
     facebook::react::Point const& position,
     facebook::react::Size const& size) {
@@ -61,14 +52,16 @@ void TextInputNodeBase::setFontColor(
 }
 
 void TextInputNodeBase::setTextInputLineHeight(
-      facebook::react::TextAttributes const& textAttributes,float fontSizeScale) {
+      facebook::react::TextAttributes const& textAttributes) {
   bool allowFontScaling = true;
   if (textAttributes.allowFontScaling.has_value()) {
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   float lineHeight = static_cast<float>(textAttributes.lineHeight);
   if (!allowFontScaling) {
-      lineHeight /= fontSizeScale;
+      float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+      lineHeight /= scale;
   }
    ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
    ArkUI_AttributeItem item = {.value = value, .size = 1};
@@ -77,7 +70,7 @@ void TextInputNodeBase::setTextInputLineHeight(
  }
 
 void TextInputNodeBase::setCommonFontAttributes(
-    facebook::react::TextAttributes const& textAttributes ,float fontSizeScale) {
+    facebook::react::TextAttributes const& textAttributes) {
   if (textAttributes.fontFamily.empty()) {
     maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_FONT_FAMILY));
@@ -98,7 +91,9 @@ void TextInputNodeBase::setCommonFontAttributes(
 
     float fontSize = static_cast<float>(textAttributes.fontSize);
     if (!allowFontScaling) {
-        fontSize /= fontSizeScale;
+        float scale = ArkTSBridge::getInstance()
+                            ->getFontSizeScale();
+        fontSize /= scale;
     }
     std::array<ArkUI_NumberValue, 1> value = {
         {{.f32 = fontSize}}};
