@@ -70,6 +70,11 @@ function runDeployment() {
             './harmony/react_native_openharmony.har'
           );
 
+          console.log('Refreshing rnoh-hvigor-plugin.tgz...');
+          execSync(
+            'cd ../react-native-harmony-hvigor-plugin && npm run update && cd ../react-native-harmony'
+          );
+
           const changelogForCurrentVersion = execSync(
             `npm run -s gen:changelog`
           ).toString();
