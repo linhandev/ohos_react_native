@@ -88,6 +88,10 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
+  if (m_selectionStart >= 0 && m_selectionEnd >= m_selectionStart) {
+    m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
+    m_textAreaNode.setTextSelection(m_selectionStart, m_selectionEnd);
+  }
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -126,7 +130,9 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
-  m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  if (m_eventEmitter != NULL) {
+    m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  }
 }
 
 facebook::react::TextInputMetrics
@@ -299,15 +305,12 @@ void TextInputComponentInstance::onPropsChanged(
   m_textAreaNode.setId(getIdFromProps(props));
   m_textInputNode.setId(getIdFromProps(props));
 
-  if (!m_props){//When setting autofocus for the first time, it should only be set when its value is true
-    if (props->autoFocus == true){
-      m_textAreaNode.setAutoFocus(props->autoFocus);
-      m_textInputNode.setAutoFocus(props->autoFocus);
+  if (!m_props || props->autoFocus != m_props->autoFocus){
+    if (m_multiline == true){
+        m_textAreaNode.setAutoFocus(props->autoFocus);
+    } else if (m_multiline == false) {
+        m_textInputNode.setAutoFocus(props->autoFocus);
     }
-  }
-  else if (props->autoFocus != m_props->autoFocus) {
-    m_textAreaNode.setAutoFocus(props->autoFocus);
-    m_textInputNode.setAutoFocus(props->autoFocus);
   }
   if (!m_props || *(props->selectionColor) != *(m_props->selectionColor)) {
     if (props->selectionColor) {
@@ -406,29 +409,56 @@ void TextInputComponentInstance::onLayoutChanged(
   }
 }
 
+void TextInputComponentInstance::setTextContentAndSelection(
+    std::string const& content,
+    size_t selectionStart,
+    size_t selectionEnd) {
+  if (m_multiline == true){
+    m_textAreaNode.setTextContent(content);
+    m_textAreaNode.setTextSelection(selectionStart, selectionEnd);
+  } else {
+    m_textInputNode.setTextContent(content);
+    m_textInputNode.setTextSelection(selectionStart, selectionEnd);
+  }
+}
+
+void TextInputComponentInstance::setTextContent(std::string const& content) {
+  // NOTE: if selection isn't set explicitly by JS side, we want it to stay
+  // roughly in the same place, rather than have it move to the end of the
+  // input (which is the ArkUI default behaviour)
+  auto selectionFromEnd = m_content.size() - m_selectionLocation;
+  auto selectionStart = content.size() - selectionFromEnd;
+  auto selectionEnd = selectionStart + m_selectionLength;
+  setTextContentAndSelection(content, selectionStart, selectionEnd);
+}
+
 void TextInputComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
   if (commandName == "focus") {
     focus();
-    if (m_selectionStart >= 0 && m_selectionEnd >= 0) {
-      m_textInputNode.setTextSelection(
-        m_selectionStart, m_selectionEnd);
-      m_textAreaNode.setTextSelection(
-        m_selectionStart, m_selectionEnd);
-    }
   } else if (commandName == "blur") {
-    blur();
+    if (m_multiline == true){
+      if(m_textAreaNode.getTextFocusStatus() == true) {
+        blur();
+      } 
+    } else {
+      if (m_textInputNode.getTextFocusStatus() == true) {
+        blur();
+      }
+    }
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
-    m_textInputNode.setTextContent(args[1].asString());
-    m_textAreaNode.setTextContent(args[1].asString());
-    if (args[2].asInt() >= 0 && args[3].asInt() >= 0) {
-      m_textInputNode.setTextSelection(args[2].asInt(), args[3].asInt());
-      m_textAreaNode.setTextSelection(args[2].asInt(), args[3].asInt());
-      m_selectionStart = args[2].asInt();
-      m_selectionEnd = args[3].asInt();
+    auto textContent = args[1].asString();
+    m_selectionStart = args[2].asInt();
+    m_selectionEnd = args[3].asInt();
+    if (m_selectionStart < 0) {
+      setTextContent(textContent);
+    } else {
+      m_textInputNode.setTextContent(textContent);
+      m_textAreaNode.setTextContent(textContent);
+    }
     }
   }
 }
@@ -450,8 +480,7 @@ void TextInputComponentInstance::onStateChanged(
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }
-  m_textAreaNode.setTextContent(content);
-  m_textInputNode.setTextContent(content);
+  setTextContent(content);
 }
 
 ArkUINode& TextInputComponentInstance::getLocalRootArkUINode() {

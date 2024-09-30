@@ -1,9 +1,16 @@
 #include "SchedulerDelegate.h"
+#include <react/renderer/debug/SystraceSection.h>
+#include "RNOH/Performance/HarmonyReactMarker.h"
+
 
 namespace rnoh {
 
 void SchedulerDelegate::schedulerDidFinishTransaction(
     MountingCoordinator::Shared mountingCoordinator) {
+  facebook::react::SystraceSection s(
+      "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction");
+  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
+                                    FABRIC_FINISH_TRANSACTION_START);
   mountingCoordinator->getTelemetryController().pullTransaction(
       [this](auto const& transaction, auto const& surfaceTelemetry) {
         performOnMainThread(
@@ -61,7 +68,52 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
                   preAllocationBuffer->clearPreallocatedViews();
               }
             });
-       });
+        logTransactionTelemetryMarkers(transaction);
+      });
+}
+
+void SchedulerDelegate::logTransactionTelemetryMarkers(
+    MountingTransaction const& transaction) {
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END);
+  auto telemetry = transaction.getTelemetry();
+  auto commitStartTime =
+      telemetryTimePointToMilliseconds(telemetry.getCommitStartTime());
+  auto commitEndTime =
+      telemetryTimePointToMilliseconds(telemetry.getCommitEndTime());
+  auto diffStartTime =
+      telemetryTimePointToMilliseconds(telemetry.getDiffStartTime());
+  auto diffEndTime =
+      telemetryTimePointToMilliseconds(telemetry.getDiffEndTime());
+  auto layoutStartTime =
+      telemetryTimePointToMilliseconds(telemetry.getLayoutStartTime());
+  auto layoutEndTime =
+      telemetryTimePointToMilliseconds(telemetry.getLayoutEndTime());
+
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_COMMIT_START,
+      "",
+      commitStartTime);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_COMMIT_END,
+      "",
+      commitEndTime);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_DIFF_START,
+      "",
+      diffStartTime);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_DIFF_END,
+      "",
+      diffEndTime);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_LAYOUT_START,
+      "",
+      layoutStartTime);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_LAYOUT_END,
+      "",
+      layoutEndTime);
 }
 
 void SchedulerDelegate::schedulerDidDispatchCommand(

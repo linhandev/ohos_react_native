@@ -44,12 +44,18 @@ class TextInputComponentInstance
 
   bool m_focused{false};
   bool m_shouldIgnoreNextChangeEvent = false;
-  
+
   int32_t m_selectionStart = -1;
   int32_t m_selectionEnd = -1;
 
   void focus();
   void blur();
+
+  void setTextContentAndSelection(
+    std::string const& content,
+    size_t selectionStart,
+    size_t selectionEnd);
+  void setTextContent(std::string const& content);
 
  public:
   TextInputComponentInstance(Context context);
