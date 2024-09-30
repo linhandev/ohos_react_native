@@ -90,6 +90,7 @@ void TextInputComponentInstance::onFocus() {
   }
   if (m_selectionStart >= 0 && m_selectionEnd >= m_selectionStart) {
     m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
+    m_textAreaNode.setTextSelection(m_selectionStart, m_selectionEnd);
   }
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
@@ -408,6 +409,29 @@ void TextInputComponentInstance::onLayoutChanged(
   }
 }
 
+void TextInputComponentInstance::setTextContentAndSelection(
+    std::string const& content,
+    size_t selectionStart,
+    size_t selectionEnd) {
+  if (m_multiline == true){
+    m_textAreaNode.setTextContent(content);
+    m_textAreaNode.setTextSelection(selectionStart, selectionEnd);
+  } else {
+    m_textInputNode.setTextContent(content);
+    m_textInputNode.setTextSelection(selectionStart, selectionEnd);
+  }
+}
+
+void TextInputComponentInstance::setTextContent(std::string const& content) {
+  // NOTE: if selection isn't set explicitly by JS side, we want it to stay
+  // roughly in the same place, rather than have it move to the end of the
+  // input (which is the ArkUI default behaviour)
+  auto selectionFromEnd = m_content.size() - m_selectionLocation;
+  auto selectionStart = content.size() - selectionFromEnd;
+  auto selectionEnd = selectionStart + m_selectionLength;
+  setTextContentAndSelection(content, selectionStart, selectionEnd);
+}
+
 void TextInputComponentInstance::onCommandReceived(
     std::string const& commandName,
     folly::dynamic const& args) {
@@ -426,11 +450,16 @@ void TextInputComponentInstance::onCommandReceived(
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
-    m_textInputNode.setTextContent(args[1].asString());
-    m_textAreaNode.setTextContent(args[1].asString());
-    if (args[2].asInt() >= 0 && args[3].asInt() >= args[2].asInt()) {
-      m_selectionStart = args[2].asInt();
-      m_selectionEnd = args[3].asInt();
+
+    auto textContent = args[1].asString();
+    auto selectionStart = args[2].asInt();
+    auto selectionEnd = args[3].asInt();
+
+    if (m_selectionStart < 0) {
+      setTextContent(textContent);
+    } else {
+      m_textInputNode.setTextContent(textContent);
+      m_textAreaNode.setTextContent(textContent);
     }
   }
 }
@@ -452,8 +481,8 @@ void TextInputComponentInstance::onStateChanged(
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }
-  m_textAreaNode.setTextContent(content);
-  m_textInputNode.setTextContent(content);
+
+  setTextContent(content);
 }
 
 ArkUINode& TextInputComponentInstance::getLocalRootArkUINode() {
