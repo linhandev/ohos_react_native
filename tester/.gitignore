@@ -77,3 +77,6 @@ scripts/performance_measurement/trace_streamer
 scripts/performance_measurement/tmp
 performance_reports
 
+# clangd / LSP
+.clangd
+.cache/
