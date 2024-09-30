@@ -223,27 +223,26 @@ export class NapiBridge {
     instanceId: number,
     surfaceTag: number,
   ) {
-    let resolveWait = () => {}
-    const wait = new Promise((resolve) => {
-      resolveWait = () => resolve(undefined)
-    })
     this.libRNOHApp?.stopSurface(
       instanceId,
-      surfaceTag,
-      () => resolveWait()
+      surfaceTag
     );
-    await wait;
   }
 
   async destroySurface(
     instanceId: number,
     surfaceTag: number,
   ) {
+    let resolveWait = () => {}
+    const wait = new Promise((resolve) => {
+      resolveWait = () => resolve(undefined)
+    })
     this.libRNOHApp?.destroySurface(
       instanceId,
-      surfaceTag
+      surfaceTag,
+      () => resolveWait
     );
-
+    await wait;
   }
 
   setSurfaceDisplayMode(instanceId: number, surfaceTag: Tag, displayMode: DisplayMode): void {
