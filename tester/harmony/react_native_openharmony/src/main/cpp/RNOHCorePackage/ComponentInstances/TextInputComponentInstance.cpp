@@ -450,15 +450,16 @@ void TextInputComponentInstance::onCommandReceived(
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
+
     auto textContent = args[1].asString();
-    m_selectionStart = args[2].asInt();
-    m_selectionEnd = args[3].asInt();
+    auto selectionStart = args[2].asInt();
+    auto selectionEnd = args[3].asInt();
+
     if (m_selectionStart < 0) {
       setTextContent(textContent);
     } else {
       m_textInputNode.setTextContent(textContent);
       m_textAreaNode.setTextContent(textContent);
-    }
     }
   }
 }
@@ -480,6 +481,7 @@ void TextInputComponentInstance::onStateChanged(
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }
+
   setTextContent(content);
 }
 
