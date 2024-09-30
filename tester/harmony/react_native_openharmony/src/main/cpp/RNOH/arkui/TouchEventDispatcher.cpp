@@ -231,7 +231,7 @@ void TouchEventDispatcher::dispatchTouchEvent(
     }
     auto eventTarget = it->second.lock();
     if (eventTarget == nullptr) {
-      LOG(WARNING) << "Target for current touch event has been deleted";
+      DLOG(WARNING) << "Target for current touch event has been deleted";
       m_touchTargetByTouchId.erase(it);
       continue;
     }
