@@ -74,7 +74,7 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
           }
         });
   }
-  void logTransactionTelemetryMarkers(
+  static void logTransactionTelemetryMarkers(
       facebook::react::MountingTransaction const& transaction);
 
   MountingManager::Weak m_mountingManager;

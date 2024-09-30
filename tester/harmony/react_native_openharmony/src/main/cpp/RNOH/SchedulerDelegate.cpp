@@ -11,28 +11,26 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
     MountingCoordinator::Shared mountingCoordinator) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction");
-  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
-                                    FABRIC_FINISH_TRANSACTION_START);
-  mountingCoordinator->getTelemetryController().pullTransaction(
-      [this](auto const& transaction, auto const& surfaceTelemetry) {
-        performOnMainThread(
-            [transaction](MountingManager::Shared const& mountingManager) {
-              mountingManager->willMount(transaction.getMutations());
-            });
-      },
-      [this](auto const& transaction, auto const& surfaceTelemetry) {
-        performOnMainThread(
-            [transaction](MountingManager::Shared const& mountingManager) {
-              mountingManager->doMount(transaction.getMutations());
-            });
-      },
-      [this](auto const& transaction, auto const& surfaceTelemetry) {
-        performOnMainThread(
-            [transaction](MountingManager::Shared const& mountingManager) {
-              mountingManager->didMount(transaction.getMutations());
-            });
-        logTransactionTelemetryMarkers(transaction);
-      });
+  performOnMainThread([mountingCoordinator](auto mountingManager) {
+    facebook::react::SystraceSection s(
+        "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction::pullTransaction");
+    HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
+                                      FABRIC_FINISH_TRANSACTION_START);
+    mountingCoordinator->getTelemetryController().pullTransaction(
+        [&mountingManager](
+            auto const& transaction, auto const& /*surfaceTelemetry*/) {
+          mountingManager->willMount(transaction.getMutations());
+        },
+        [&mountingManager](
+            auto const& transaction, auto const& /*surfaceTelemetry*/) {
+          mountingManager->doMount(transaction.getMutations());
+        },
+        [&mountingManager](
+            auto const& transaction, auto const& /*surfaceTelemetry*/) {
+          mountingManager->didMount(transaction.getMutations());
+          logTransactionTelemetryMarkers(transaction);
+        });
+  });
 }
 
 void SchedulerDelegate::logTransactionTelemetryMarkers(
@@ -80,7 +78,7 @@ void SchedulerDelegate::logTransactionTelemetryMarkers(
 }
 
 void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
-    SurfaceId surfaceId,
+    SurfaceId /*surfaceId*/,
     const ShadowNode& shadowNode) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation");
