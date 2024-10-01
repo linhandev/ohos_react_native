@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different
-                              # directories than targets
+# directories than targets
 
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")
 set(third_party_dir "${RNOH_CPP_DIR}/third-party")
@@ -432,6 +432,7 @@ add_library(
   "${RNOH_CPP_DIR}/RNOH/arkui/UIInputEventHandler.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/NativeNodeApi.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/NativeDialogApi.cpp"
+  "${RNOH_CPP_DIR}/RNOH/arkui/NodeContentHandle.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/XComponentSurface.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINode.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/ColumnNode.cpp"
