@@ -22,7 +22,6 @@
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
-#include "RNOH/arkui/ArkUINodeRegistry.h"
 
 template <typename Map, typename K, typename V>
 auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
@@ -88,54 +87,6 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #endif
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
-    if (!ArkUINodeRegistry::isInitialized()) {
-      /**
-       * RNOH captures errors emitted when handling ArkUI events to prevent
-       * applications from crashing.
-       *
-       * RNOH displays these errors in a RedBox. However, the C++ environment
-       * can be shared by multiple ArkTS environments when a bundle uses RNOH
-       * in multiple UIAbilities. In such scenarios, RNOH logs those errors in
-       * the console. RNOH theoretically could display a RedBox in multiple
-       * ArkTS environments. However, it is unknown which ArkTS environment is
-       * alive, because `UIAbility::onDestroy` is not called.
-       *
-       * At the moment of creating this error-handling solution,
-       * ArkUINodeRegistry is a singleton. The initial C-API version only
-       * allowed registering one global event handler for all ArkUI nodes, hence
-       * the choice of singleton. ArkUINodeRegistry captures all errors emitted
-       * during event handling and passes them to the callback below. Future
-       * C-API versions will allow registering event handlers per node, and a
-       * node will be responsible for handling events. To display such errors,
-       * RNOH needs to provide ArkTSErrorHandler to ArkUINode (in a non-breaking
-       * manner). Once libraries migrate to that new ArkUINode's constructor,
-       * this event handler could be removed.
-       */
-      ArkUINodeRegistry::initialize([](std::exception_ptr ex) {
-        if (ARK_TS_BRIDGE_BY_ENV_ID.size() > 1) {
-          try {
-            std::rethrow_exception(ex);
-          } catch (const RNOHError& e) {
-            std::string errMsg = e.getMessage() + '\n';
-            for (auto& trace : e.getStacktrace()) {
-              errMsg += trace + "\n";
-            }
-            for (auto& suggestion : e.getSuggestions()) {
-              errMsg += suggestion + "\n";
-            }
-            LOG(ERROR) << errMsg;
-          } catch (const facebook::jsi::JSError& e) {
-            LOG(ERROR) << e.getMessage() << "\n" << e.getStack();
-          } catch (const std::exception& e) {
-            LOG(ERROR) << e.what();
-          }
-        } else {
-          for (auto& envIdAndArkTsBridge : ARK_TS_BRIDGE_BY_ENV_ID) {
-            envIdAndArkTsBridge.second->handleError(ex);
-          }
-        }
-      });
-    }
 #ifdef LOG_VERBOSITY_LEVEL
     FLAGS_v = LOG_VERBOSITY_LEVEL;
     logVerbosityLevel = LOG_VERBOSITY_LEVEL;
