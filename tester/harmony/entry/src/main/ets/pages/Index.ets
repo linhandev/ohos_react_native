@@ -15,8 +15,6 @@ import { createRNPackages } from '../RNPackagesFactory';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
-  // There seems to be a problem with the placement of ArkTS components in mixed mode. Nested Stack temporarily avoided.
-  Stack() {
     /**
      * NOTE: This approach of registering components is no longer recommended.
      * Libraries are expected to use RNOHPackage.ets and register components there.
@@ -28,8 +26,6 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
         tag: ctx.tag
       })
     }
-  }
-  .position({ x: 0, y: 0 })
 
 }
 

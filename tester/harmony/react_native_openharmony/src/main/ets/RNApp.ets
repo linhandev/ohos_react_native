@@ -32,16 +32,11 @@ export function buildRNComponentForTag(ctx: RNComponentContext, tag: Tag) {
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
-  // There seems to be a problem with the placement of ArkTS components in mixed mode. Nested Stack temporarily avoided.
-  Stack() {
-    if (ctx.customRNComponentWrappedBuilderByName.has(ctx.componentName)) {
-      ctx.customRNComponentWrappedBuilderByName.get(ctx.componentName)!.builder(ctx)
-    } else if (ctx.rnComponentContext.customWrappedCustomRNComponentBuilder !== undefined) {
-      ctx.rnComponentContext.customWrappedCustomRNComponentBuilder!.builder(ctx)
-    }
+  if (ctx.customRNComponentWrappedBuilderByName.has(ctx.componentName)) {
+    ctx.customRNComponentWrappedBuilderByName.get(ctx.componentName)!.builder(ctx)
+  } else if (ctx.rnComponentContext.customWrappedCustomRNComponentBuilder !== undefined) {
+    ctx.rnComponentContext.customWrappedCustomRNComponentBuilder!.builder(ctx)
   }
-  .position({ x: 0, y: 0 })
-
 }
 
 const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)

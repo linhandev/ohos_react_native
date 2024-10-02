@@ -74,11 +74,7 @@ class ComponentInstanceFactory {
         ctx,
         std::move(arkUINode),
         std::move(frameNodeHandleAndBuilderNodeDestroyer.second));
-    // Wrapped by RootViewComponentInstance
-    // some ArkTS components depend on default measurement
-    auto rootComponentInstance = this->create(tag, componentHandle, "RootView");
-    rootComponentInstance->insertChild(arkUIComponentInstance, 0);
-    return rootComponentInstance;
+    return arkUIComponentInstance;
   }
 
   ComponentInstance::Shared create(

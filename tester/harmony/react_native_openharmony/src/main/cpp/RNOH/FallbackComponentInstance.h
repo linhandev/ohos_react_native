@@ -2,6 +2,7 @@
 #include <react/renderer/components/view/ViewShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUINode.h"
+#include "arkui/StackNode.h"
 
 namespace rnoh {
 /**
@@ -13,6 +14,7 @@ class FallbackComponentInstance
  private:
   std::function<void()> m_arkUIBuilderNodeDestroyer;
   std::unique_ptr<ArkUINode> m_arkUINode;
+  StackNode m_stackNode;
 
  public:
   FallbackComponentInstance(
@@ -23,19 +25,20 @@ class FallbackComponentInstance
         m_arkUINode(std::move(arkUINode)),
         m_arkUIBuilderNodeDestroyer(std::move(arkUIBuilderNodeDestroyer)) {
     m_arkUINode->setArkUINodeDelegate(this);
+    m_stackNode.insertChild(*m_arkUINode, 0);
   };
 
   ArkUINode& getLocalRootArkUINode() override {
-    return *m_arkUINode;
+    return m_stackNode;
   };
 
   void onArkUINodeDestroy(ArkUINode* node) override {
     m_arkUIBuilderNodeDestroyer();
   }
 
-  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
-    // Attributes are not set on the C++ side to prevent conflicts with ArkUI
-    // front-end state management.
+  void onLayoutChanged(
+      facebook::react::LayoutMetrics const& layoutMetrics) override {
+    m_stackNode.setLayoutRect(layoutMetrics);
   }
 
  protected:
