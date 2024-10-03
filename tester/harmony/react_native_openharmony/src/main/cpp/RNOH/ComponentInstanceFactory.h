@@ -8,11 +8,9 @@
 #include <memory>
 #include <vector>
 #include "RNOH/ComponentInstance.h"
-#include "RNOH/CppComponentInstance.h"
 #include "RNOH/CustomComponentArkUINodeHandleFactory.h"
 #include "RNOH/FallbackComponentInstance.h"
 #include "RNOH/ThreadGuard.h"
-#include "RNOH/arkui/StackNode.h"
 
 namespace rnoh {
 class ComponentInstanceFactoryDelegate {
@@ -59,22 +57,20 @@ class ComponentInstanceFactory {
         .componentName = componentName,
         .dependencies = m_dependencies};
 
-    LOG(WARNING) << "Creating FallbackComponentInstance for: " << componentName
-                 << ""
-                    ""
-                 << tag;
-    auto frameNodeHandleAndBuilderNodeDestroyer =
+    auto maybeCustomComponentWrapper =
         m_customComponentArkUINodeHandleFactory->create(tag, componentName);
-    auto arkUINode = frameNodeHandleAndBuilderNodeDestroyer.first != nullptr
-        ? std::make_unique<ArkUINode>(
-              frameNodeHandleAndBuilderNodeDestroyer.first)
-        // use Stack as a fallback when no frame node was created
-        : std::make_unique<StackNode>();
-    auto arkUIComponentInstance = std::make_shared<FallbackComponentInstance>(
-        ctx,
-        std::move(arkUINode),
-        std::move(frameNodeHandleAndBuilderNodeDestroyer.second));
-    return arkUIComponentInstance;
+    if (maybeCustomComponentWrapper.has_value()) {
+      auto [nodeHandle, nodeContent, deleter] =
+          std::move(maybeCustomComponentWrapper.value());
+      auto arkUINode = std::make_unique<ArkUINode>(nodeHandle);
+      auto arkUIComponentInstance = std::make_shared<FallbackComponentInstance>(
+          ctx,
+          std::move(arkUINode),
+          std::move(nodeContent),
+          std::move(deleter));
+      return arkUIComponentInstance;
+    }
+    return nullptr;
   }
 
   ComponentInstance::Shared create(

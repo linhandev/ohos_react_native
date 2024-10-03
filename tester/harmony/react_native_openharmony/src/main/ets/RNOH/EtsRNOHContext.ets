@@ -7,6 +7,7 @@ import { DescriptorWrapper, Tag } from "./DescriptorBase"
 import { RNComponentDataSource } from './RNComponentDataSource'
 import { RNOHPackage } from './RNOHPackage'
 import { RNInstanceImpl } from "./RNInstance"
+import { Content } from '@ohos.arkui.node';
 
 /**
  * @internal
@@ -100,6 +101,26 @@ export class RNComponentContext extends RNOHContext {
     const descriptorWrapper = this.descriptorRegistry.findDescriptorWrapperByTag(ctx.tag);
     const createComponentDataSource = descriptorWrapper && this.dataSourceFactoriesByType.get(descriptorWrapper.type_);
     return createComponentDataSource ? createComponentDataSource(ctx) : new RNComponentDataSource(this, ctx.tag);
+  }
+
+  private contentByTag: Map<Tag, Content> = new Map()
+
+  public getContentForTag(tag: Tag): Content | undefined {
+    return this.contentByTag.get(tag)
+  }
+
+  /**
+   * @internal
+   */
+  public __setContentForTag(tag: Tag, content: Content) {
+    this.contentByTag.set(tag, content);
+  }
+
+  /**
+   * @internal
+   */
+  public __deleteContentForTag(tag: Tag) {
+    this.contentByTag.delete(tag);
   }
 
   /**

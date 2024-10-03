@@ -5,6 +5,7 @@ import { RNViewManager } from '../../componentManagers';
 import { areFirstLevelElementsEqual, areFirstLevelPropsEqual } from './etsHacks';
 import matrix4 from '@ohos.matrix4';
 import { RN_PULL_TO_REFRESH_VIEW_NAME } from "../RNPullToRefreshView"
+import { NodeContent } from '@ohos.arkui.node';
 
 export interface ViewBaseState {}
 
@@ -201,7 +202,7 @@ export struct RNViewBase {
     let parentTag = descriptor.parentTag ?? this.tag;
     let parentDescriptor = this.ctx.descriptorRegistry.getDescriptor(parentTag);
 
-    if (parentDescriptor.type === RN_PULL_TO_REFRESH_VIEW_NAME) {
+    if (parentDescriptor?.type === RN_PULL_TO_REFRESH_VIEW_NAME) {
       return true
     }
 

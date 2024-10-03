@@ -1,9 +1,10 @@
 #pragma once
+#include <arkui/native_type.h>
 #include <glog/logging.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include "RNOH/ArkJS.h"
-#include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/ThreadGuard.h"
+#include "arkui/NodeContentHandle.h"
 
 #ifdef C_API_ARCH
 #include <arkui/native_node.h>
@@ -11,6 +12,12 @@
 #endif
 
 namespace rnoh {
+
+struct CustomComponentArkUINodeHandle {
+  ArkUI_NodeHandle nodeHandle;
+  NodeContentHandle nodeContent;
+  folly::Function<void()> deleter;
+};
 
 /**
  * @thread: MAIN
@@ -32,7 +39,7 @@ class CustomComponentArkUINodeHandleFactory final {
     DLOG(INFO) << "~CustomComponentArkUINodeHandleFactory";
   }
 
-  std::pair<ArkUI_NodeHandle, std::function<void()>> create(
+  std::optional<CustomComponentArkUINodeHandle> create(
       facebook::react::Tag tag,
       std::string componentName) {
     m_threadGuard.assertThread();
@@ -47,26 +54,27 @@ class CustomComponentArkUINodeHandleFactory final {
                 "create",
                 {arkJS.createInt(tag), arkJS.createString(componentName)});
     auto n_arkTSNodeHandle = arkJS.getObjectProperty(n_result, "frameNode");
-    auto n_destroyBuilderNode =
-        arkJS.getObjectProperty(n_result, "destroyBuilderNode");
-    auto n_destroyBuilderNodeRef = arkJS.createNapiRef(n_destroyBuilderNode);
+    auto n_disposeCallback = arkJS.getObjectProperty(n_result, "dispose");
+    auto n_disposeRef = arkJS.createNapiRef(n_disposeCallback);
     ArkUI_NodeHandle arkTSNodeHandle = nullptr;
     auto errorCode = OH_ArkUI_GetNodeHandleFromNapiValue(
         m_env, n_arkTSNodeHandle, &arkTSNodeHandle);
     if (errorCode != 0) {
       LOG(ERROR) << "Couldn't get node handle. Error code: " << errorCode;
-      return std::make_pair(nullptr, [] {});
+      return std::nullopt;
     }
-    return std::make_pair(
+    auto n_nodeContent = arkJS.getObjectProperty(n_result, "nodeContent");
+    auto contentHandle = NodeContentHandle::fromNapiValue(m_env, n_nodeContent);
+    return CustomComponentArkUINodeHandle{
         arkTSNodeHandle,
-        [env = m_env,
-         destroyBuilderNodeRef = std::move(n_destroyBuilderNodeRef)] {
+        contentHandle,
+        [env = m_env, disposeRef = std::move(n_disposeRef)] {
           ArkJS arkJS(env);
-          auto n_destroy = arkJS.getReferenceValue(destroyBuilderNodeRef);
-          arkJS.call(n_destroy, {});
-        });
+          auto disposeCallback = arkJS.getReferenceValue(disposeRef);
+          arkJS.call(disposeCallback, {});
+        }};
 #else
-    return std::make_pair(nullptr, [] {});
+    return std::nullopt;
 #endif
   }
 

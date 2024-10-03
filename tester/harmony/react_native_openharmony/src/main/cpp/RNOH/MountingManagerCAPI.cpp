@@ -159,13 +159,13 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       "RNOH::MountingManagerCAPI::handleMutation");
 
   DVLOG(1) << "Mutation (type:" << getMutationNameFromType(mutation.type)
-          << "; componentName: "
-          << (mutation.newChildShadowView.componentName != nullptr
-                  ? mutation.newChildShadowView.componentName
-                  : "null")
-          << "; newTag: " << mutation.newChildShadowView.tag
-          << "; oldTag: " << mutation.oldChildShadowView.tag
-          << "; parentTag: " << mutation.parentShadowView.tag << ")";
+           << "; componentName: "
+           << (mutation.newChildShadowView.componentName != nullptr
+                   ? mutation.newChildShadowView.componentName
+                   : "null")
+           << "; newTag: " << mutation.newChildShadowView.tag
+           << "; oldTag: " << mutation.oldChildShadowView.tag
+           << "; parentTag: " << mutation.parentShadowView.tag << ")";
 
   switch (mutation.type) {
     case facebook::react::ShadowViewMutation::Create: {
@@ -173,6 +173,12 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       auto componentInstance =
           m_componentInstanceProvider->getComponentInstance(
               newChild.tag, newChild.componentHandle, newChild.componentName);
+
+      if (componentInstance == nullptr) {
+        componentInstance = m_componentInstanceProvider->createArkTSComponent(
+            newChild.tag, newChild.componentHandle, newChild.componentName);
+      }
+
       if (componentInstance == nullptr) {
         LOG(ERROR) << "Couldn't create CppComponentInstance for: "
                    << newChild.componentName;
@@ -180,7 +186,6 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       }
       m_componentInstanceRegistry->insert(componentInstance);
       this->updateComponentWithShadowView(componentInstance, newChild);
-      m_cApiComponentNames.insert(newChild.componentName);
       break;
     }
     case facebook::react::ShadowViewMutation::Delete: {
@@ -193,26 +198,6 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
           m_componentInstanceRegistry->findByTag(mutation.parentShadowView.tag);
       auto newChildComponentInstance = m_componentInstanceRegistry->findByTag(
           mutation.newChildShadowView.tag);
-      // Building subtrees through insert is bottom-up.
-      // C++ nodes and ArkTS subtrees cannot be inserted into their ArkTS
-      // parent unless the parent is a C++ node. builderNode is then
-      // constructed in the ArkTS subtree of C++ nodes.
-      if (newChildComponentInstance == nullptr &&
-          parentComponentInstance != nullptr) {
-        newChildComponentInstance =
-            m_componentInstanceProvider->createArkTSComponent(
-                mutation.newChildShadowView.tag,
-                mutation.newChildShadowView.componentHandle,
-                mutation.newChildShadowView.componentName);
-        if (newChildComponentInstance != nullptr) {
-          m_componentInstanceRegistry->insert(newChildComponentInstance);
-          newChildComponentInstance->setLayout(
-              mutation.newChildShadowView.layoutMetrics);
-        } else {
-          LOG(FATAL) << "Couldn't create ArkTSComponentInstance for: "
-                     << mutation.newChildShadowView.componentName;
-        }
-      }
 
       if (parentComponentInstance != nullptr &&
           newChildComponentInstance != nullptr) {
@@ -228,15 +213,6 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
         parentComponentInstance->removeChild(
             m_componentInstanceRegistry->findByTag(
                 mutation.oldChildShadowView.tag));
-      }
-
-      auto newChildComponentInstance = m_componentInstanceRegistry->findByTag(
-          mutation.newChildShadowView.tag);
-      if (newChildComponentInstance &&
-          std::dynamic_pointer_cast<FallbackComponentInstance>(
-              newChildComponentInstance)) {
-        m_componentInstanceRegistry->deleteByTag(
-            mutation.newChildShadowView.tag);
       }
       break;
     }
@@ -308,7 +284,8 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
     bool isArkTSMutation = false;
     switch (mutation.type) {
       case facebook::react::ShadowViewMutation::Create:
-        // fallthrough
+        isArkTSMutation = !isCAPIComponent(mutation.newChildShadowView);
+        break;
       case facebook::react::ShadowViewMutation::Update:
         isArkTSMutation = !isCAPIComponent(mutation.newChildShadowView);
         break;
@@ -316,18 +293,12 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
         isArkTSMutation = !isCAPIComponent(mutation.oldChildShadowView);
         break;
       case facebook::react::ShadowViewMutation::Insert:
-        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView);
-        if (isArkTSMutation && isCAPIComponent(mutation.newChildShadowView)) {
-          LOG(WARNING) << "Inserting CAPI component \""
-                       << mutation.newChildShadowView.componentName
-                       << "\" into ArkTS parent \""
-                       << mutation.parentShadowView.componentName
-                       << "\" is not supported. "
-                       << "The component will not be rendered correctly.";
-        }
+        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView) ||
+            !isCAPIComponent(mutation.newChildShadowView);
         break;
       case facebook::react::ShadowViewMutation::Remove:
-        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView);
+        isArkTSMutation = !isCAPIComponent(mutation.parentShadowView) ||
+            !isCAPIComponent(mutation.oldChildShadowView);
         break;
       case facebook::react::ShadowViewMutation::RemoveDeleteTree:
         isArkTSMutation = false;

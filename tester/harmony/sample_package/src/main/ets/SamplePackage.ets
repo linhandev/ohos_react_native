@@ -17,6 +17,7 @@ import { SampleView } from "./SampleView"
 import { PropsDisplayer } from "./PropsDisplayer"
 import { GeneratedSampleView } from "./GeneratedSampleView"
 import { CodegenLibSampleArkTSComponent } from "./CodegenLibSampleArkTSComponent"
+import { ContainerView } from './ContainerView';
 
 class SampleTurboModulesFactory extends UITurboModuleFactory {
   createTurboModule(name: string) {
@@ -81,6 +82,15 @@ export function buildCodegenLibSampleArkTSComponent(ctx: ComponentBuilderContext
   })
 }
 
+
+@Builder
+export function buildContainerView(ctx: ComponentBuilderContext) {
+  ContainerView({
+    ctx: ctx.rnComponentContext,
+    tag: ctx.tag,
+  })
+}
+
 export class SamplePackage extends RNOHPackage {
   createUITurboModuleFactory(ctx: UITurboModuleContext) {
     return new SampleTurboModulesFactory(ctx);
@@ -104,6 +114,7 @@ export class SamplePackage extends RNOHPackage {
       .set(SampleView.NAME, wrapBuilder(buildSampleView))
       .set(PropsDisplayer.NAME, wrapBuilder(buildPropsDisplayer))
       .set(CodegenLibSampleArkTSComponent.NAME, wrapBuilder(buildCodegenLibSampleArkTSComponent))
+      .set(ContainerView.NAME, wrapBuilder(buildContainerView))
     // .set(GeneratedSampleView.NAME, wrapBuilder(buildGeneratedSampleView)) // commented out on purpose — this component is registered using the old approach for testing purposes
   }
 }
