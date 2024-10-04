@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ace/xcomponent/native_interface_xcomponent.h>
-
 #include "FontRegistry.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
@@ -11,6 +9,7 @@
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/RNInstanceInternal.h"
 #include "RNOH/arkui/ArkUISurface.h"
+#include "RNOH/arkui/NodeContentHandle.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -121,9 +120,11 @@ class RNInstanceCAPI : public RNInstanceInternal {
       facebook::react::Tag tag,
       folly::dynamic props) override;
 
-  void registerNativeXComponentHandle(
-      OH_NativeXComponent* nativeXComponent,
+  void attachRootView(
+      NodeContentHandle nodeContentHandle,
       facebook::react::Tag surfaceId);
+
+  void detachRootView(facebook::react::Tag surfaceId);
 
   ComponentInstance::Shared findComponentInstanceByTag(
       facebook::react::Tag tag);

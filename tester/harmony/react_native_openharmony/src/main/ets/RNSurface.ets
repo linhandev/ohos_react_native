@@ -14,6 +14,7 @@ import { TouchDispatcher } from './RNOH/TouchDispatcher';
 import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
 import type { SurfaceContext } from './RNOH/RNInstance';
+import { NodeContent } from '@ohos.arkui.node'
 
 interface RootViewState {}
 
@@ -90,6 +91,7 @@ export struct RNSurface {
   private shouldStopSurface: boolean = false;
   private initialProps!: SurfaceProps;
   private logger!: RNOHLogger
+  private rootViewNodeContent: NodeContent = new NodeContent();
 
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
@@ -122,6 +124,8 @@ export struct RNSurface {
           this.rootComponentSize = { width: payload.width, height: payload.height }
         }
       }))
+    this.surfaceHandle.attachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag(),
+      this.rootViewNodeContent);
     stopTracing()
   }
 
@@ -140,6 +144,7 @@ export struct RNSurface {
       } else if (surfaceHandle?.getDisplayMode() === DisplayMode.Visible) {
         surfaceHandle.setDisplayMode(DisplayMode.Suspended);
       }
+      this.surfaceHandle.detachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag())
       stopTracing()
     })()
 
@@ -200,11 +205,7 @@ export struct RNSurface {
 
   build() {
     Stack() {
-        XComponent({
-          id: this.ctx.rnInstance.getId() + "_" + this.surfaceHandle.getTag(),
-          type: "node",
-          libraryname: 'rnoh_app'
-        })
+      ContentSlot(this.rootViewNodeContent)
     }
     /**
      * width and height are used here only to trigger layout calculations. Actual values are set in onMeasureSize method.

@@ -16,6 +16,7 @@ import {
   WorkerTurboModule,
   WorkerTurboModuleContext
 } from './TurboModule';
+import { NodeContent } from '@ohos.arkui.node';
 
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -345,5 +346,15 @@ export class NapiBridge {
 
   registerFont(instanceId: number, fontFamily: string, path: string) {
     return this.unwrapResult(this.libRNOHApp?.registerFont(instanceId, fontFamily, path));
+  }
+
+  attachRootView(instanceId: number, surfaceId: number, nodeContent: NodeContent) {
+    const result = this.libRNOHApp?.attachRootView(instanceId, surfaceId, nodeContent)
+    return this.unwrapResult(result);
+  }
+
+  detachRootView(instanceId: number, surfaceId: number) {
+    const result = this.libRNOHApp?.detachRootView(instanceId, surfaceId)
+    return this.unwrapResult(result);
   }
 }

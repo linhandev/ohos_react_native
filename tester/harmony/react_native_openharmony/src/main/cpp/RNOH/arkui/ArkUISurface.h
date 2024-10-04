@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ace/xcomponent/native_interface_xcomponent.h>
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include <react/renderer/scheduler/SurfaceHandler.h>
@@ -8,6 +7,7 @@
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/ThreadGuard.h"
+#include "RNOH/arkui/NodeContentHandle.h"
 #include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
@@ -41,7 +41,8 @@ class ArkUISurface : public Surface,
 
   ~ArkUISurface() noexcept;
 
-  void attachNativeXComponent(OH_NativeXComponent* nativeXComponent);
+  void attachToNodeContent(NodeContentHandle nodeContentHandle);
+  void detachFromNodeContent();
 
   facebook::react::Size measure(
       float minWidth,
@@ -82,7 +83,7 @@ class ArkUISurface : public Surface,
  private:
   facebook::react::SurfaceId m_surfaceId;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler;
-  OH_NativeXComponent* m_nativeXComponent = nullptr;
+  std::optional<NodeContentHandle> m_nodeContentHandle;
   ComponentInstance::Shared m_rootView = nullptr;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   facebook::react::SurfaceHandler m_surfaceHandler;
