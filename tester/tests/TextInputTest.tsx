@@ -681,7 +681,7 @@ export function TextInputTest() {
             style={styles.textInput}
             value={''}
             onKeyPress={event => setState(event.nativeEvent.key)}
-            />  
+          />
         )}
         assert={({expect, state}) => {
           expect(state).to.not.be.equal('Backspace');

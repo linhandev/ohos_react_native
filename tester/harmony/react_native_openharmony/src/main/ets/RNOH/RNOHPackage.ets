@@ -1,7 +1,6 @@
 import { RNPackage } from "./RNPackage"
 import { ComponentBuilderContext } from "./EtsRNOHContext"
 
-
 /**
  * @api
  */

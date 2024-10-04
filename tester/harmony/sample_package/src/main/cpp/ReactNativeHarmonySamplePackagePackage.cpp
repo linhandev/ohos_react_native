@@ -1,4 +1,4 @@
-#include "SamplePackage.h"
+#include "ReactNativeHarmonySamplePackagePackage.h"
 #include "CodegenLibCppSampleComponentInstance.h"
 #include "GeneratedSampleViewComponentInstance.h"
 #include "NativeCxxModuleExampleCxxSpec.h"
@@ -56,12 +56,12 @@ class SampleTurboModuleFactoryDelegate
 };
 
 std::unique_ptr<TurboModuleFactoryDelegate>
-SamplePackage::createTurboModuleFactoryDelegate() {
+ReactNativeHarmonySamplePackagePackage::createTurboModuleFactoryDelegate() {
   return std::make_unique<SampleTurboModuleFactoryDelegate>();
 }
 
 std::vector<react::ComponentDescriptorProvider>
-SamplePackage::createComponentDescriptorProviders() {
+ReactNativeHarmonySamplePackagePackage::createComponentDescriptorProviders() {
   auto componentDescriptorProviders =
       Super::createComponentDescriptorProviders();
   componentDescriptorProviders.push_back(
@@ -73,13 +73,15 @@ SamplePackage::createComponentDescriptorProviders() {
   return componentDescriptorProviders;
 }
 
-ComponentNapiBinderByString SamplePackage::createComponentNapiBinderByName() {
+ComponentNapiBinderByString
+ReactNativeHarmonySamplePackagePackage::createComponentNapiBinderByName() {
   return {
       {"PropsDisplayer", std::make_shared<BaseComponentNapiBinder>()},
   };
 };
 
-ComponentJSIBinderByString SamplePackage::createComponentJSIBinderByName() {
+ComponentJSIBinderByString
+ReactNativeHarmonySamplePackagePackage::createComponentJSIBinderByName() {
   auto result = Super::createComponentJSIBinderByName();
   result["SampleView"] = std::make_shared<SampleViewJSIBinder>();
   return result;
@@ -113,7 +115,7 @@ class SampleArkTSMessageHandler : public ArkTSMessageHandler {
 };
 
 std::vector<ArkTSMessageHandler::Shared>
-SamplePackage::createArkTSMessageHandlers() {
+ReactNativeHarmonySamplePackagePackage::createArkTSMessageHandlers() {
   return {std::make_shared<SampleArkTSMessageHandler>()};
 }
 
@@ -122,7 +124,8 @@ SamplePackage::createArkTSMessageHandlers() {
  * here for testing purposes.
  */
 ComponentInstanceFactoryDelegate::Shared
-SamplePackage::createComponentInstanceFactoryDelegate() {
+ReactNativeHarmonySamplePackagePackage::
+    createComponentInstanceFactoryDelegate() {
   class SampleComponentInstanceFactoryDelegate
       : public ComponentInstanceFactoryDelegate {
    public:
@@ -136,7 +139,8 @@ SamplePackage::createComponentInstanceFactoryDelegate() {
   return std::make_shared<SampleComponentInstanceFactoryDelegate>();
 };
 
-ComponentInstance::Shared SamplePackage::createComponentInstance(
+ComponentInstance::Shared
+ReactNativeHarmonySamplePackagePackage::createComponentInstance(
     const ComponentInstance::Context& ctx) {
   if (ctx.componentName == "GeneratedSampleView") {
     return std::make_shared<GeneratedSampleViewComponentInstance>(ctx);

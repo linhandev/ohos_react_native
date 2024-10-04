@@ -10,8 +10,8 @@ import {
   TraceJSBundleProviderDecorator,
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
-import { PropsDisplayer, SampleView, GeneratedSampleView, CodegenLibSampleArkTSComponent } from 'rnoh-sample-package';
-import { createRNPackages } from '../RNPackagesFactory';
+import { GeneratedSampleView } from '@rnoh/react-native-harmony-sample-package';
+import { getRNOHPackages } from '../PackageProvider';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -62,7 +62,7 @@ struct Index {
         RNApp({
           rnInstanceConfig: {
             name: "app_name",
-            createRNPackages,
+            createRNPackages: getRNOHPackages,
             enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
             enablePartialSyncOfDescriptorRegistryInCAPI: true,
@@ -82,17 +82,17 @@ struct Index {
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([
               new MetroJSBundleProvider(),
-              /**
-               * NOTE: to load the bundle from file, place it in
-               * `/data/app/el2/100/base/com.rnoh.tester/files/bundle.harmony.js`
-               * on your device. The path mismatch is due to app sandboxing on HarmonyOS
-               */
-              // new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
-              /**
-               * NOTE: The HBC format is recommended in a production environment. HBC is optimized pre-compiled bytecode.
-               */
-              // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
-              // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
+            /**
+             * NOTE: to load the bundle from file, place it in
+             * `/data/app/el2/100/base/com.rnoh.tester/files/bundle.harmony.js`
+             * on your device. The path mismatch is due to app sandboxing on HarmonyOS
+             */
+            // new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
+            /**
+             * NOTE: The HBC format is recommended in a production environment. HBC is optimized pre-compiled bytecode.
+             */
+            // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
+            // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
             ]),
             this.rnohCoreContext.logger),
         })

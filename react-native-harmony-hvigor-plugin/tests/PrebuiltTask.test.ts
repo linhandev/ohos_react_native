@@ -1,54 +1,7 @@
-import {
-  PrebuiltTask,
-  CliExecutor,
-  Logger,
-  ValidationError,
-} from '../src/PrebuiltTask';
+import { PrebuiltTask, ValidationError } from '../src/PrebuiltTask';
 import { memfs, NestedDirectoryJSON } from 'memfs';
 import pathUtils from 'node:path';
-class FakeCliExecutor extends CliExecutor {
-  private commands: string[] = [];
-
-  constructor(private onRun: (command: string) => string) {
-    super();
-  }
-
-  run(
-    command: string,
-    args?: Record<string, string | number | boolean>
-  ): string {
-    let commandWithArgs = command;
-    if (args) {
-      commandWithArgs += ' ' + this.stringifyCliArgs(args);
-    }
-    this.commands.push(commandWithArgs);
-    return this.onRun(commandWithArgs);
-  }
-
-  getCommands() {
-    return this.commands;
-  }
-}
-
-class FakeLogger implements Logger {
-  private logs: { type: 'info' | 'warn' | 'error'; msg: string }[] = [];
-
-  info(message: string) {
-    this.logs.push({ type: 'info', msg: message });
-  }
-
-  warn(message: string): void {
-    this.logs.push({ type: 'warn', msg: message });
-  }
-
-  error(message: string): void {
-    this.logs.push({ type: 'error', msg: message });
-  }
-
-  getLogs() {
-    return this.logs;
-  }
-}
+import { FakeCliExecutor, FakeLogger } from './__fixtures__';
 
 function createPreBuiltTask(options: {
   onCodegenRun?: (command: string) => string;
@@ -94,7 +47,7 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
     fakeLogger
       .getLogs()
       .map((log) => log.msg)
-      .includes('[codegen] __GENERATED_FILE__')
+      .includes('[codegen]\n__GENERATED_FILE__')
   ).toBeTruthy();
 });
 
@@ -157,5 +110,54 @@ it('should allow skipping Metro setup', () => {
   ).toBeFalsy();
   expect(
     fakeLogger.getLogs().some((log) => log.msg.includes('[metro] skipped'))
+  ).toBeTruthy();
+});
+
+it('should call autolinking', () => {
+  const { preBuiltTask, fakeCliExecutor } = createPreBuiltTask({
+    fsSetup: {
+      node_modules: {
+        '.bin': {
+          'react-native': '',
+        },
+      },
+    },
+  });
+
+  preBuiltTask.run({
+    nodeModulesPath: './node_modules',
+    codegen: null,
+    metro: null,
+  });
+
+  expect(
+    fakeCliExecutor
+      .getCommands()
+      .some((command) => command.includes('link-harmony'))
+  ).toBeTruthy();
+});
+
+it('should skip autolinking', () => {
+  const { preBuiltTask, fakeCliExecutor } = createPreBuiltTask({
+    fsSetup: {
+      node_modules: {
+        '.bin': {
+          'react-native': '',
+        },
+      },
+    },
+  });
+
+  preBuiltTask.run({
+    nodeModulesPath: './node_modules',
+    codegen: null,
+    metro: null,
+    autolinking: null,
+  });
+
+  expect(
+    fakeCliExecutor
+      .getCommands()
+      .every((command) => !command.includes('link-harmony'))
   ).toBeTruthy();
 });

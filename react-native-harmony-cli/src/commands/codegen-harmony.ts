@@ -1,10 +1,10 @@
-import fs from 'node:fs';
 import pathUtils from 'node:path';
 import Case from 'case';
 import { Command } from '@react-native-community/cli-types';
 import {
   AbsolutePath,
   DescriptiveError,
+  FS,
   PackageJSON,
   ProjectDependenciesManager,
   maybeMakeDirectories,
@@ -18,7 +18,7 @@ import {
   AppBuildTimeGlueCodeGenerator,
   CodegenError,
 } from '../codegen';
-import { Logger } from '../io';
+import { Logger, RealFS } from '../io';
 
 export const commandCodegenHarmony: Command = {
   name: 'codegen-harmony',
@@ -53,6 +53,7 @@ export const commandCodegenHarmony: Command = {
   ],
   func: async (_argv, _config, args: any) => {
     const logger = new Logger();
+    const fs = new RealFS();
     try {
       const MAX_SUPPORTED_CODEGEN_VERSION = 2;
       // prepare the input data
@@ -64,6 +65,7 @@ export const commandCodegenHarmony: Command = {
       const cppOutputPath = new AbsolutePath(args.cppOutputPath);
       const projectRootPath = new AbsolutePath(args.projectRootPath);
       const uberSchemaFromArkTSLibraries = await UberSchema.fromProject(
+        fs,
         projectRootPath,
         (codegenVersion, packageName) => {
           throwErrorIfUnsupportedCodegenVersion(
@@ -75,6 +77,7 @@ export const commandCodegenHarmony: Command = {
         }
       );
       const cApiLibrariesData = await collectLibrariesData(
+        fs,
         projectRootPath,
         (codegenVersion, packageName) => {
           throwErrorIfUnsupportedCodegenVersion(
@@ -132,12 +135,13 @@ export const commandCodegenHarmony: Command = {
 
       // output the results
       if (args.debug) {
-        const uberSchema = await UberSchema.fromProject(projectRootPath);
+        const uberSchema = await UberSchema.fromProject(fs, projectRootPath);
         logger.debug((styles) =>
           styles.gray(JSON.stringify(uberSchema.getValue(), null, 2))
         );
       }
       saveCodegenResult(
+        fs,
         fileContentByPath,
         cppOutputPath,
         etsOutputPath,
@@ -168,13 +172,14 @@ function validateArgs(args: any) {
 }
 
 async function collectLibrariesData(
+  fs: FS,
   projectRootPath: AbsolutePath,
   onShouldAcceptCodegenConfig: (version: number, packageName: string) => boolean
 ): Promise<LibraryData[]> {
   const packageJSONs: PackageJSON[] = [
-    PackageJSON.fromProjectRootPath(projectRootPath, projectRootPath),
+    PackageJSON.fromProjectRootPath(fs, projectRootPath, projectRootPath),
   ];
-  await new ProjectDependenciesManager(projectRootPath).forEachAsync(
+  await new ProjectDependenciesManager(fs, projectRootPath).forEachAsync(
     (dependency) => {
       packageJSONs.push(dependency.readPackageJSON());
     }
@@ -221,6 +226,7 @@ function throwErrorIfUnsupportedCodegenVersion(
 }
 
 function saveCodegenResult(
+  fs: FS,
   fileContentByPath: Map<AbsolutePath, string>,
   cppOutputPath: AbsolutePath,
   etsOutputPath: AbsolutePath,
@@ -240,7 +246,7 @@ function saveCodegenResult(
     prepareDirectory(path.getDirectoryPath(), enableSafetyCheck);
   });
   fileContentByPath.forEach((fileContent, path) => {
-    fs.writeFileSync(path.getValue(), fileContent);
+    fs.writeTextSync(path, fileContent);
   });
 }
 

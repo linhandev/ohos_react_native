@@ -1,15 +1,20 @@
 {
-  "modelVersion": "5.0.0",
-  "license": "ISC",
-  "devDependencies": {
-    "@ohos/hypium": "1.0.6"
+  modelVersion: "5.0.0",
+  license: "ISC",
+  devDependencies: {
+    "@ohos/hypium": "1.0.6",
   },
-  "name": "rnoh",
-  "description": "example description",
-  "repository": {},
-  "version": "1.0.0",
-  "dependencies": {},
-  "overrides": {
-    "@rnoh/react-native-openharmony" : "./react_native_openharmony"
-  }
+  name: "rnoh",
+  description: "example description",
+  repository: {},
+  version: "1.0.0",
+  dependencies: {
+    "@rnoh/react-native-openharmony": "./react_native_openharmony",
+    "@rnoh/react-native-harmony-sample-package": "./sample_package",
+    "@react-native-oh-tpl/react-native-fs": "file:../node_modules/@react-native-oh-tpl/react-native-fs/harmony/fs.har",
+    "@react-native-oh-tpl/react-native-safe-area-context": "file:../node_modules/@react-native-oh-tpl/react-native-safe-area-context/harmony/safe_area.har",
+  },
+  overrides: {
+    "@rnoh/react-native-openharmony": "./react_native_openharmony",
+  },
 }

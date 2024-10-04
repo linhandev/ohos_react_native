@@ -13,7 +13,7 @@ import {
   createNpmAndOhPackageVersionsAreEqualCheck,
 } from './checks';
 import { Check, CheckStatus } from './types';
-import { unpackTarGz } from '../io';
+import { RealFS, unpackTarGz } from '../io';
 
 type StartProcessMessage = {
   type: 'START_PROCESS';
@@ -39,6 +39,7 @@ export async function* verifyRNOHPackage({
   checkNamesToSkip: string[];
 }): AsyncGenerator<VerificationMessage, void, unknown> {
   const npmPackageJson = PackageJSON.fromProjectRootPath(
+    new RealFS(),
     npmPackagePath,
     npmPackagePath
   );

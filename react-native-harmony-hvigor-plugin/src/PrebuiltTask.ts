@@ -4,7 +4,7 @@ import type { IFs } from 'memfs';
 /**
  * @api
  */
-type CodegenArgs = {
+export type CodegenConfig = {
   rnohModulePath: string;
   cppOutputPath?: string;
   projectRootPath?: string;
@@ -12,11 +12,36 @@ type CodegenArgs = {
   noSafetyCheck?: boolean;
 };
 
+type ConfigArgs = CodegenConfig;
+
 /**
  * @api
  */
-type Metro = {
+export type MetroConfig = {
   port?: number;
+};
+
+/**
+ * @api
+ */
+export type AutolinkingConfig = {
+  ohPackagePath?: string;
+  etsRNOHPackagesFactoryPath?: string;
+  cppRNOHPackagesFactoryPath?: string;
+  cmakeAutolinkPath?: string;
+  excludeNpmPackages?: string[];
+  includeNpmPackages?: string[];
+};
+
+type AutolinkingArgs = {
+  harmonyProjectPath: string;
+  nodeModulesPath: string;
+  cmakeAutolinkPathRelativeToHarmony: string;
+  cppRnohPackagesFactoryPathRelativeToHarmony: string;
+  etsRnohPackagesFactoryPathRelativeToHarmony: string;
+  ohPackagePathRelativeToHarmony: string;
+  excludeNpmPackages: string | undefined;
+  includeNpmPackages: string | undefined;
 };
 
 /**
@@ -24,8 +49,9 @@ type Metro = {
  */
 export type RNOHHvigorPluginOptions = {
   nodeModulesPath?: string;
-  metro?: Metro | null;
-  codegen: CodegenArgs | null;
+  metro?: MetroConfig | null;
+  codegen: CodegenConfig | null;
+  autolinking?: AutolinkingConfig | null;
 };
 
 /**
@@ -42,11 +68,11 @@ export class ValidationError extends RNOHHvigorPluginError {
 export abstract class CliExecutor {
   abstract run(
     command: string,
-    args?: Record<string, string | number | boolean>
+    args?: Record<string, string | number | boolean | undefined>
   ): string;
 
   protected stringifyCliArgs(
-    args: Record<string, string | number | boolean>
+    args: Record<string, string | number | boolean | undefined>
   ): string {
     return Object.entries(args)
       .filter(([_, value]) => {
@@ -56,6 +82,8 @@ export abstract class CliExecutor {
         return value !== undefined && value !== null;
       })
       .map(([key, value]) => {
+        if (value === undefined) return '';
+
         const formattedKey = toKebabCase(key);
 
         if (typeof value === 'boolean') {
@@ -83,21 +111,19 @@ export interface Logger {
   error(message: string): void;
 }
 
-type LogLevel = keyof Logger;
+export type FS = Pick<IFs, 'existsSync'>;
 
 export class PrebuiltTask {
   constructor(
     private cliExecutor: CliExecutor,
     private logger: Logger,
-    private fs: Pick<IFs, 'existsSync'>
+    private fs: FS
   ) {}
 
   run(options: RNOHHvigorPluginOptions) {
     try {
-      const config = this.prepareConfig(options);
-      this.runSubtasks(({ type, message, level }) => {
-        this.logger[level ?? 'info'](`[${type}] ${message}`);
-      }, config);
+      const input = this.prepareInput(options);
+      this.runSubtasks(input);
     } catch (err) {
       if (err instanceof RNOHHvigorPluginError) {
         this.logger.error(err.message);
@@ -107,7 +133,7 @@ export class PrebuiltTask {
     }
   }
 
-  private prepareConfig(options: RNOHHvigorPluginOptions) {
+  private prepareInput(options: RNOHHvigorPluginOptions) {
     const nodeModulesPath =
       options.nodeModulesPath ??
       pathUtils.join(process.cwd(), '../node_modules');
@@ -120,7 +146,6 @@ export class PrebuiltTask {
         'rnohModulePath must be specified if codegen is not null'
       );
     }
-
     return {
       nodeModulesPath,
       codegenArgs:
@@ -130,51 +155,134 @@ export class PrebuiltTask {
               projectRootPath: '../',
               cppOutputPath: './entry/src/main/cpp/generated',
               ...(options.codegen ?? {}),
-            } satisfies CodegenArgs),
+            } satisfies CodegenConfig),
       metro:
         options.metro === null
           ? null
           : { port: 8081, ...(options.metro ?? {}) },
+      autolinkingArgs:
+        options.autolinking === null
+          ? null
+          : ({
+              harmonyProjectPath: './',
+              nodeModulesPath: nodeModulesPath,
+              cmakeAutolinkPathRelativeToHarmony:
+                options.autolinking?.cmakeAutolinkPath ??
+                './entry/src/main/cpp/autolinking.cmake',
+              cppRnohPackagesFactoryPathRelativeToHarmony:
+                options.autolinking?.cppRNOHPackagesFactoryPath ??
+                './entry/src/main/cpp/RNOHPackagesFactory.h',
+              etsRnohPackagesFactoryPathRelativeToHarmony:
+                options.autolinking?.etsRNOHPackagesFactoryPath ??
+                './entry/src/main/ets/RNOHPackagesFactory.ets',
+              ohPackagePathRelativeToHarmony:
+                options.autolinking?.ohPackagePath ?? './oh-package.json5',
+              excludeNpmPackages: this.maybeWrapStringWithQuotes(
+                options.autolinking?.excludeNpmPackages?.join(';') || undefined
+              ),
+              includeNpmPackages: this.maybeWrapStringWithQuotes(
+                options.autolinking?.includeNpmPackages?.join(';') || undefined
+              ),
+            } satisfies AutolinkingArgs),
     };
   }
 
-  private runSubtasks(
-    onProgress: (arg: {
-      type: 'metro' | 'codegen';
-      message: string;
-      level?: LogLevel;
-    }) => void,
-    config: {
-      nodeModulesPath: string;
-      metro: { port: number } | null;
-      codegenArgs: CodegenArgs | null;
-    }
-  ) {
-    if (config.metro === null) {
-      onProgress({
-        type: 'metro',
-        message: 'skipped port forwarding',
-        level: 'warn',
-      });
-    } else {
-      onProgress({
-        type: 'metro',
-        message: this.cliExecutor.run(
-          `hdc rport tcp:${config.metro.port} tcp:${config.metro.port}`
+  private maybeWrapStringWithQuotes(str: string | undefined) {
+    if (str === undefined || str === '') return undefined;
+    return `"${str}"`;
+  }
+
+  private runSubtasks(input: {
+    nodeModulesPath: string;
+    metro: MetroPortForwardSubtaskInput;
+    codegenArgs: CodegenConfig | null;
+    autolinkingArgs: AutolinkingArgs | null;
+  }) {
+    (
+      [
+        new MetroPortForwardSubtask(this.cliExecutor, this.logger, input.metro),
+        new CodegenSubtask(
+          this.cliExecutor,
+          this.logger,
+          input.nodeModulesPath,
+          input.codegenArgs
         ),
-      });
-    }
-    if (config.codegenArgs === null) {
-      onProgress({ type: 'codegen', message: 'skipped', level: 'warn' });
-    } else {
-      onProgress({
-        type: 'codegen',
-        message: this.cliExecutor.run(
-          pathUtils.join(config.nodeModulesPath, '.bin', 'react-native') +
-            ' codegen-harmony',
-          config.codegenArgs
+        new AutolinkingSubtask(
+          this.cliExecutor,
+          this.logger,
+          input.autolinkingArgs
         ),
-      });
+      ] satisfies Subtask[]
+    ).forEach((subtask) => subtask.run());
+  }
+}
+
+interface Subtask {
+  run(): void;
+}
+
+type MetroPortForwardSubtaskInput = { port: any } | null;
+class MetroPortForwardSubtask implements Subtask {
+  constructor(
+    private cliExecutor: CliExecutor,
+    private logger: Logger,
+    private input: MetroPortForwardSubtaskInput
+  ) {}
+
+  run(): void {
+    if (this.input === null) {
+      this.logger.warn('[metro] skipped port forwarding');
+      return;
     }
+    const result = this.cliExecutor.run(
+      `hdc rport tcp:${this.input.port} tcp:${this.input.port}`
+    );
+    this.logger.info(`[metro] ${result}`);
+  }
+}
+
+type CodegenSubtaskInput = ConfigArgs | null;
+
+class CodegenSubtask implements Subtask {
+  constructor(
+    private cliExecutor: CliExecutor,
+    private logger: Logger,
+    private nodeModulesPath: string,
+    private input: CodegenSubtaskInput
+  ) {}
+
+  run(): void {
+    if (this.input === null) {
+      this.logger.warn('[codegen] skipped');
+      return;
+    }
+    const result = this.cliExecutor.run(
+      pathUtils.join(this.nodeModulesPath, '.bin', 'react-native') +
+        ' codegen-harmony',
+      this.input
+    );
+    this.logger.info(`[codegen]\n${result}`);
+  }
+}
+
+type AutolinkingSubtaskInput = AutolinkingArgs | null;
+class AutolinkingSubtask {
+  constructor(
+    private cliExecutor: CliExecutor,
+    private logger: Logger,
+    private input: AutolinkingSubtaskInput
+  ) {}
+
+  run(): void {
+    if (this.input === null) {
+      this.logger.warn(`[autolink] skipped`);
+      return;
+    }
+    const result = this.cliExecutor.run(
+      pathUtils.join(this.input.nodeModulesPath, '.bin', 'react-native') +
+        ' link-harmony',
+      this.input
+    );
+    this.logger.info(`[autolink]\n${result}`);
   }
 }

@@ -6,11 +6,11 @@
  * For the time being, use direct imports.
  */
 import { setupRNOHWorker } from "@rnoh/react-native-openharmony/src/main/ets/setupRNOHWorker"
-import { createRNPackages } from "../RNPackagesFactory"
+import { getRNOHPackages } from "../PackageProvider"
 
 setupRNOHWorker({
   createWorkerRNInstanceConfig: (_rnInstanceName) => {
-    return { thirdPartyPackagesFactory: createRNPackages }
+    return { thirdPartyPackagesFactory: getRNOHPackages }
   }
 })
 

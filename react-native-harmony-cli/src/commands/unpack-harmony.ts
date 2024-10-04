@@ -1,5 +1,5 @@
 import { Command } from '@react-native-community/cli-types';
-import { Logger } from '../io';
+import { Logger, RealFS } from '../io';
 
 import pathUtils from 'path';
 import fs from 'fs';
@@ -49,7 +49,9 @@ async function unpack(
   outputDirPath: AbsolutePath
 ) {
   const logger = new Logger();
+  const fs = new RealFS();
   const projectDependenciesManager = new ProjectDependenciesManager(
+    fs,
     projectRootPath
   );
   logger.info((styles) => styles.bold(`Unpacking RNOH modules`), {
@@ -79,7 +81,7 @@ async function unpack(
         packageJSON.version
       )
     ) {
-      if (!fs.existsSync(pkgHarmonyDirPath.getValue())) {
+      if (!fs.existsSync(pkgHarmonyDirPath)) {
         /**
          * After fresh install, harmony.tar.gz wasn't unpacked to harmony. Updating npm package should remove unpacked harmony dir.
          */
@@ -116,7 +118,7 @@ async function unpack(
         );
       }
     } else {
-      if (fs.existsSync(harmonyArchivePath.getValue())) {
+      if (fs.existsSync(harmonyArchivePath)) {
         skippedArchivesCount++;
         logger.info(
           (styles) =>
