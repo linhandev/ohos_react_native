@@ -10,7 +10,7 @@
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/RNInstanceInternal.h"
-#include "RNOH/arkui/XComponentSurface.h"
+#include "RNOH/arkui/ArkUISurface.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -142,7 +142,7 @@ class RNInstanceCAPI : public RNInstanceInternal {
  protected:
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() override;
 
-  std::unordered_map<facebook::react::SurfaceId, XComponentSurface::Shared>
+  std::unordered_map<facebook::react::SurfaceId, ArkUISurface::Shared>
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;

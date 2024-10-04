@@ -1,4 +1,4 @@
-#include "XComponentSurface.h"
+#include "ArkUISurface.h"
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
 #include <react/renderer/debug/SystraceSection.h>
@@ -90,7 +90,7 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
         break;
     }
     facebook::react::SystraceSection s(
-        (std::string("#RNOH::XComponentSurface::onTouchEvent::") + actionName)
+        (std::string("#RNOH::ArkUISurface::onTouchEvent::") + actionName)
             .c_str());
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
@@ -104,7 +104,7 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
   }
 };
 
-XComponentSurface::XComponentSurface(
+ArkUISurface::ArkUISurface(
     TaskExecutor::Shared taskExecutor,
     std::shared_ptr<Scheduler> scheduler,
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
@@ -132,7 +132,7 @@ XComponentSurface::XComponentSurface(
       m_rootView, std::move(arkTSMessageHub), rnInstanceId);
 }
 
-XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
+ArkUISurface::ArkUISurface(ArkUISurface&& other) noexcept
     : m_surfaceId(other.m_surfaceId),
       m_scheduler(std::move(other.m_scheduler)),
       m_taskExecutor(std::move(other.m_taskExecutor)),
@@ -145,8 +145,7 @@ XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
   other.m_nativeXComponent = nullptr;
 }
 
-XComponentSurface& XComponentSurface::operator=(
-    XComponentSurface&& other) noexcept {
+ArkUISurface& ArkUISurface::operator=(ArkUISurface&& other) noexcept {
   m_threadGuard.assertThread();
   std::swap(m_taskExecutor, other.m_taskExecutor);
   std::swap(m_surfaceId, other.m_surfaceId);
@@ -159,7 +158,7 @@ XComponentSurface& XComponentSurface::operator=(
   return *this;
 }
 
-XComponentSurface::~XComponentSurface() noexcept {
+ArkUISurface::~ArkUISurface() noexcept {
   m_threadGuard.assertThread();
   if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
     LOG(WARNING) << "Tried to unregister a running surface with id "
@@ -174,7 +173,7 @@ XComponentSurface::~XComponentSurface() noexcept {
   }
 }
 
-void XComponentSurface::attachNativeXComponent(
+void ArkUISurface::attachNativeXComponent(
     OH_NativeXComponent* nativeXComponent) {
   m_threadGuard.assertThread();
   if (nativeXComponent == m_nativeXComponent) {
@@ -185,7 +184,7 @@ void XComponentSurface::attachNativeXComponent(
   maybeAttachRootNode(nativeXComponent, *m_rootView);
 }
 
-void XComponentSurface::updateConstraints(
+void ArkUISurface::updateConstraints(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -208,7 +207,7 @@ void XComponentSurface::updateConstraints(
   m_surfaceHandler.constraintLayout(layoutConstraints, layoutContext);
 }
 
-facebook::react::Size XComponentSurface::measure(
+facebook::react::Size ArkUISurface::measure(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -231,7 +230,7 @@ facebook::react::Size XComponentSurface::measure(
   return m_surfaceHandler.measure(layoutConstraints, layoutContext);
 }
 
-void XComponentSurface::start(
+void ArkUISurface::start(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -259,12 +258,12 @@ void XComponentSurface::start(
   mountingCoordinator->setMountingOverrideDelegate(animationDriver);
 }
 
-void XComponentSurface::setProps(folly::dynamic const& props) {
+void ArkUISurface::setProps(folly::dynamic const& props) {
   m_threadGuard.assertThread();
   m_surfaceHandler.setProps(props);
 }
 
-void XComponentSurface::stop(std::function<void()> onStop) {
+void ArkUISurface::stop(std::function<void()> onStop) {
   m_threadGuard.assertThread();
   m_taskExecutor->runTask(
       TaskThread::JS,
@@ -280,20 +279,19 @@ void XComponentSurface::stop(std::function<void()> onStop) {
         taskExecutor->runTask(
             TaskThread::MAIN,
             [onStop = std::move(onStop),
-             // moving self here releases XComponentSurface on the main thread
+             // moving self here releases ArkUISurface on the main thread
              self = std::move(self)
 
         ] { onStop(); });
       });
 }
 
-void XComponentSurface::setDisplayMode(
-    facebook::react::DisplayMode displayMode) {
+void ArkUISurface::setDisplayMode(facebook::react::DisplayMode displayMode) {
   m_threadGuard.assertThread();
   m_surfaceHandler.setDisplayMode(displayMode);
 }
 
-Surface::LayoutContext XComponentSurface::getLayoutContext() {
+Surface::LayoutContext ArkUISurface::getLayoutContext() {
   m_threadGuard.assertThread();
   return Surface::LayoutContext::from(m_surfaceHandler.getLayoutContext());
 }
