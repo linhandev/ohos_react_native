@@ -43,6 +43,10 @@ export interface RNInstancesCoordinatorOptions {
   /** @deprecated: Use `defaultHttpClient` instead (latestRNOHVersion: 0.72.27) */
   httpClientProvider?: HttpClientProvider
   defaultHttpClient?: HttpClient
+  /**
+   * Set to `true` (in each UIAbility), if your app bundle provides multiple UIAbilities that use RNOH.
+   */
+  disableCleaningRNInstances?: boolean,
 }
 
 const RNOH_BANNER = '\n\n\n' +

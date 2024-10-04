@@ -8,7 +8,7 @@ import { TurboModuleProvider } from './TurboModuleProvider'
 import { EventEmitter } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
-import type { RNOHContext } from './RNOHContext'
+import type { UITurboModuleContext } from './RNOHContext'
 import type { JSBundleProvider } from './JSBundleProvider'
 import { JSBundleProviderError } from './JSBundleProvider'
 import type { Tag } from './DescriptorBase'
@@ -174,8 +174,8 @@ export interface RNInstance {
   /**
    * Reads JS Bundle and executes loaded code.
    */
+  runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
 
-  runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null): Promise<void>;
   /**
    * Provides TurboModule instance. Currently TurboModule live on UI thread. This method may be deprecated once "Worker" turbo module are supported.
    */
@@ -339,6 +339,12 @@ export type RNInstanceOptions = {
    */
   httpClient?: HttpClient
   /**
+   * Disables advanced React 18 features, such as Automatic Batching.
+   * Setting this to `true` will revert to the behavior of React 17,
+   * where state updates are processed synchronously and separately.
+   */
+  disableConcurrentRoot?: boolean;
+  /**
    * Specifies custom fonts used by RN application.
    * @example { "Pacifico-Regular": $rawfile("fonts/Pacifico-Regular.ttf") }
    */
@@ -373,7 +379,6 @@ export class RNInstanceImpl implements RNInstance {
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>()
   private initialBundleUrl: string | undefined = undefined
   private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
-  private uiCtx: UIContext;
   private unregisterWorkerMessageListener = () => {
   }
   private uiCtx: UIContext;
@@ -386,6 +391,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   private defaultProps: Record<string, any>
+  private packages: RNPackage[] = []
 
   constructor(
     private envId: number,
@@ -401,7 +407,6 @@ export class RNInstanceImpl implements RNInstance {
     private shouldUseNDKToMeasureText: boolean,
     private shouldUseImageLoader: boolean,
     private shouldUseCAPIArchitecture: boolean,
-    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private arkTsComponentNames: Array<string>,
@@ -473,8 +478,13 @@ export class RNInstanceImpl implements RNInstance {
     return this.isFeatureFlagEnabledByName.get(featureFlagName) ?? false
   }
 
+  getPackages() {
+    return this.packages
+  }
+
   public async initialize(packages: RNPackage[]) {
     const stopTracing = this.logger.clone("initialize").startTracing()
+    this.packages = packages;
     const { descriptorWrapperFactoryByDescriptorType, turboModuleProvider } = await this.processPackages(packages)
     this.turboModuleProvider = turboModuleProvider
     this.descriptorRegistry = new DescriptorRegistry(
@@ -492,9 +502,6 @@ export class RNInstanceImpl implements RNInstance {
     }
     if (this.shouldUseNDKToMeasureText) {
       cppFeatureFlags.push("ENABLE_NDK_TEXT_MEASURING")
-    }
-    if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
-      cppFeatureFlags.push("PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")
     }
     if (this.workerThread != undefined) {
       cppFeatureFlags.push("WORKER_THREAD_ENABLED")
