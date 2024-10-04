@@ -30,7 +30,9 @@ void TextInputComponentInstance::onChange(std::string text) {
   }
   m_nativeEventCount++;
   m_eventEmitter->onChange(getTextInputMetrics());
-  m_valueChanged = true;
+  
+  auto content = getTextContentFromState(m_state);
+  m_valueChanged = content != m_content;
 }
 
 void TextInputComponentInstance::onSubmit() {
@@ -119,6 +121,15 @@ void TextInputComponentInstance::onContentSizeChange(
 
 void TextInputComponentInstance::onContentScroll() {
   m_eventEmitter->onScroll(getTextInputMetrics());
+}
+
+std::string TextInputComponentInstance::getTextContentFromState(SharedConcreteState const& state) {
+  std::ostringstream contentStream;
+  for (auto const& fragment :
+      state->getData().attributedStringBox.getValue().getFragments()) {
+    contentStream << fragment.string;
+  }
+  return contentStream.str();
 }
 
 facebook::react::TextInputMetrics
@@ -443,13 +454,8 @@ void TextInputComponentInstance::onStateChanged(
   if (state->getData().mostRecentEventCount < this->m_nativeEventCount) {
     return;
   }
-
-  std::ostringstream contentStream;
-  for (auto const& fragment :
-       state->getData().attributedStringBox.getValue().getFragments()) {
-    contentStream << fragment.string;
-  }
-  auto content = contentStream.str();
+  
+  auto content = getTextContentFromState(state);
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }

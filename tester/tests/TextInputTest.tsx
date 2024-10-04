@@ -673,6 +673,20 @@ export function TextInputTest() {
         itShould="render multiline with different InputMode types">
         <TextAreaInputModeTest />
       </TestCase.Example>
+      <TestCase.Manual
+        itShould="not trigger backspace event after pressing any other key"
+        initialState={''}
+        arrange={({setState}) => (
+          <TextInput
+            style={styles.textInput}
+            value={''}
+            onKeyPress={event => setState(event.nativeEvent.key)}
+            />  
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.not.be.equal('Backspace');
+        }}
+      />
     </TestSuite>
   );
 }
