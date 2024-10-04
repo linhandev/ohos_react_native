@@ -148,7 +148,6 @@ export abstract class RNAbility extends UIAbility {
         this.rnInstancesCoordinator?.onWindowSizeChange(windowSize)
       }
       const onWindowStageChange = (windowStageEvent: window.WindowStageEventType) => {
-        this.logger?.error("WindowStageEventType !!" + windowStageEvent)
         this.rnInstancesCoordinator?.onWindowStageChange(windowStageEvent)
       }
       mainWindow.on('windowSizeChange', onWindowSizeChange)
