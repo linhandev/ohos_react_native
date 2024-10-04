@@ -7,7 +7,6 @@
 namespace rnoh {
 
 static void receiveEvent(ArkUI_NodeEvent* event) {
-#ifdef C_API_ARCH
   try {
     auto eventType = OH_ArkUI_NodeEvent_GetEventType(event);
     auto target = static_cast<UIInputEventHandler*>(
@@ -27,7 +26,6 @@ static void receiveEvent(ArkUI_NodeEvent* event) {
   } catch (std::exception& e) {
     LOG(ERROR) << e.what();
   }
-#endif
 }
 
 UIInputEventHandler::UIInputEventHandler(ArkUINode& node) : m_node(node) {

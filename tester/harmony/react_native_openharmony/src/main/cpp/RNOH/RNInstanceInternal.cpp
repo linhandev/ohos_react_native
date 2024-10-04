@@ -42,7 +42,7 @@ TurboModule::Shared RNInstanceInternal::getTurboModule(
       return rnohTurboModule;
     } else {
       LOG(ERROR) << "TurboModule '" << name
-                  << "' should extend rnoh::TurboModule";
+                 << "' should extend rnoh::TurboModule";
       return nullptr;
     }
   }

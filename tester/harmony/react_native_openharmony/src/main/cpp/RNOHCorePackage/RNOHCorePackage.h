@@ -11,23 +11,14 @@
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/Package.h"
 #include "RNOHCorePackage/ComponentBinders/ActivityIndicatorComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ActivityIndicatorComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ImageComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ImageComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ModalHostViewJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ModalHostViewNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/PullToRefreshViewJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/PullToRefreshViewNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ScrollViewComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ScrollViewComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/SwitchComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/SwitchComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/TextComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/TextComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/TextInputComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/TextInputComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ViewComponentNapiBinder.h"
 #include "RNOHCorePackage/ComponentInstances/ActivityIndicatorComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ImageComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ModalHostViewComponentInstance.h"
@@ -38,14 +29,6 @@
 #include "RNOHCorePackage/ComponentInstances/TextComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/TextInputComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ViewComponentInstance.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/ImageEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/ModalEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/PullToRefreshViewEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/ScrollEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/SwitchEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/TextInputEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/TouchEventEmitRequestHandler.h"
-#include "RNOHCorePackage/EventEmitRequestHandlers/ViewEventEmitRequestHandler.h"
 #include "RNOHCorePackage/GlobalBinders/BlobCollectorJSIBinder.h"
 #include "RNOHCorePackage/TurboModules/AccessibilityInfoTurboModule.h"
 #include "RNOHCorePackage/TurboModules/AlertManagerTurboModule.h"
@@ -236,35 +219,6 @@ class RNOHCorePackage : public Package {
         {"RCTActivityIndicatorView",
          std::make_shared<ActivityIndicatorComponentJSIBinder>()}};
   };
-
-  ComponentNapiBinderByString createComponentNapiBinderByName() override {
-    return {
-        {"RootView", std::make_shared<ViewComponentNapiBinder>()},
-        {"View", std::make_shared<ViewComponentNapiBinder>()},
-        {"Image", std::make_shared<ImageComponentNapiBinder>()},
-        {"Paragraph",
-         std::make_shared<TextComponentNapiBinder>(
-             this->m_ctx.shadowViewRegistry)},
-        {"ScrollView", std::make_shared<ScrollViewComponentNapiBinder>()},
-        {"TextInput", std::make_shared<TextInputComponentNapiBinder>()},
-        {"ModalHostView", std::make_shared<ModalHostViewNapiBinder>()},
-        {"Switch", std::make_shared<SwitchComponentNapiBinder>()},
-        {"PullToRefreshView", std::make_shared<PullToRefreshViewNapiBinder>()},
-        {"ActivityIndicatorView",
-         std::make_shared<ActivityIndicatorComponentNapiBinder>()}};
-  };
-
-  EventEmitRequestHandlers createEventEmitRequestHandlers() override {
-    return {
-        std::make_shared<TouchEventEmitRequestHandler>(),
-        std::make_shared<TextInputEventEmitRequestHandler>(),
-        std::make_shared<ScrollEventEmitRequestHandler>(),
-        std::make_shared<ModalEventEmitRequestHandler>(),
-        std::make_shared<SwitchEventEmitRequestHandler>(),
-        std::make_shared<PullToRefreshViewEventEmitRequestHandler>(),
-        std::make_shared<ImageEventEmitRequestHandler>(),
-        std::make_shared<ViewEventEmitRequestHandler>()};
-  }
 
   GlobalJSIBinders createGlobalJSIBinders() override {
     return {std::make_shared<rnoh::BlobCollectorJSIBinder>(

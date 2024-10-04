@@ -94,9 +94,7 @@ class RNInstanceInternal
       float viewportOffsetX,
       float viewportOffsetY,
       float pixelRatio,
-      bool isRTL) {
-    throw std::runtime_error("Not implemented");
-  };
+      bool isRTL) = 0;
 
   virtual void updateSurfaceConstraints(
       facebook::react::Tag surfaceId,

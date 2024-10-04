@@ -21,7 +21,6 @@ void maybeAttachRootNode(
     LOG(INFO)
         << "Attaching native root node to nativeXComponent for surface with id: "
         << rootView.getTag();
-#ifdef C_API_ARCH
     auto result = OH_NativeXComponent_AttachNativeRootNode(
         nativeXComponent,
         rootView.getLocalRootArkUINode().getArkUINodeHandle());
@@ -34,7 +33,6 @@ void maybeAttachRootNode(
                     "surface with id: "
                  << rootView.getTag();
     }
-#endif
   }
 }
 
@@ -42,11 +40,9 @@ void maybeDetachRootNode(
     OH_NativeXComponent* nativeXComponent,
     ComponentInstance& /* rootView */) {
   if (nativeXComponent != nullptr) {
-#ifdef C_API_ARCH
     // NOTE: this is noop, because detaching a destroyed XComponent is
     // incorrect, and we're not notified when it's destroyed. We may want to
     // detach it from `RNSurface` in the future.
-#endif
   }
 }
 

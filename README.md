@@ -137,11 +137,3 @@ Before you start the project, you have to setup the device on which you will be 
 
 1. Go to the `/react-native-harmony`
 1. Run `npm run pack:prod`
-
-## Enable C-API
-
-1. Add `RNOH_C_API_ARCH="1"` to environment variables.
-1. In `tester/harmony/entry/src/main/ets/pages/Index.ets` change `enableCAPIArchitecture` to `true`
-1. Restart DevEco Studio
-1. DevEcoStudio: `Build` -> `Clean Project`
-1. DevEcoStudio: `File` -> `Sync and Refresh Project`

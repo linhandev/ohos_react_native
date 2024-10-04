@@ -3,10 +3,10 @@
 #include "GeneratedSampleViewComponentInstance.h"
 #include "NativeCxxModuleExampleCxxSpec.h"
 #include "PropsDisplayerComponentDescriptor.h"
+#include "RNOH/BaseComponentNapiBinder.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/generated/BaseReactNativeHarmonySamplePackagePackage.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
-#include "RNOHCorePackage/ComponentBinders/ViewComponentNapiBinder.h"
 #include "SampleTurboModuleSpec.h"
 #include "SampleViewComponentDescriptor.h"
 #include "SampleViewComponentInstance.h"
@@ -75,7 +75,7 @@ SamplePackage::createComponentDescriptorProviders() {
 
 ComponentNapiBinderByString SamplePackage::createComponentNapiBinderByName() {
   return {
-      {"PropsDisplayer", std::make_shared<ViewComponentNapiBinder>()},
+      {"PropsDisplayer", std::make_shared<BaseComponentNapiBinder>()},
   };
 };
 

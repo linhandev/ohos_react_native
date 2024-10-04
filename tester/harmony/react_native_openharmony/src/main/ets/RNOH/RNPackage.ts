@@ -159,9 +159,6 @@ export abstract class RNPackage {
     return undefined;
   }
 
-  /**
-   * @architecture: ArkTS
-   */
   createDescriptorWrapperFactoryByDescriptorType(
     ctx: DescriptorWrapperFactoryByDescriptorTypeCtx,
   ): DescriptorWrapperFactoryByDescriptorType {

@@ -7,7 +7,6 @@ export function OverScrollTest() {
   return (
     <TestSuite name="overScrollModeTest">
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'auto', text is smaller than scrollview => the scrollview can not scroll">
         <View
@@ -47,7 +46,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'auto', text is larger than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -104,7 +102,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'never', text is smaller than scrollview => the scrollview can not scroll">
         <View
@@ -143,7 +140,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'never', text is larger than scrollview => the scrollview can scroll but can not overscroll">
         <View
@@ -199,7 +195,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'always', text is smaller than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -239,7 +234,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="overScrollMode set to 'always', text is larger than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -296,7 +290,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to false, text is smaller than scrollview => the scrollview can not scroll">
         <View
@@ -335,7 +328,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to false, text is larger than scrollview => the scrollview can scroll but can not overscroll">
         <View
@@ -391,7 +383,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to true, alwaysBounceVertical set to false, text is smaller than scrollview => the scrollview can not scroll">
         <View
@@ -430,7 +421,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to true, alwaysBounceVertical set to false, text is larger than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -487,7 +477,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to true, alwaysBounceVertical set to true, text is smaller than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -527,7 +516,6 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="bounce set to true, alwaysBounceVertical set to true, text is larger than scrollview => the scrollview can overscroll and bounces when it reaches the end of the content">
         <View
@@ -584,13 +572,11 @@ export function OverScrollTest() {
         </View>
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="maintain overScrollMode value when horizontal prop changes">
         <OverscrollWhenHorizontalChanged />
       </TestCase>
       <TestCase
-        tags={['C_API']}
         modal
         itShould="prioritize overScrollMode prop over bounces, alwaysBounceHorizontal and alwaysBounceVertical props">
         <View

@@ -255,7 +255,7 @@ target_link_libraries(folly_futures libevent)
 
 # HERMES
 add_library(hermes-engine::libhermes SHARED IMPORTED)
-add_compile_options(# TODO: check if building in debug mode
+add_compile_options( # TODO: check if building in debug mode
                     -DHERMES_ENABLE_DEBUGGER)
 set(hermes_include_dirs "${third_party_dir}/hermes/API"
                         "${third_party_dir}/hermes/public")
@@ -352,7 +352,6 @@ target_compile_options(hermes_inspector PRIVATE ${folly_compile_options})
 add_library(
   rnoh SHARED
   "${RNOH_CPP_DIR}/RNOH/RNInstanceInternal.cpp"
-  "${RNOH_CPP_DIR}/RNOH/RNInstanceArkTS.cpp"
   "${RNOH_CPP_DIR}/RNOH/RNInstanceCAPI.cpp"
   "${RNOH_CPP_DIR}/RNOH/SchedulerDelegate.cpp"
   "${RNOH_CPP_DIR}/RNOH/BlobCollector.cpp"
@@ -428,7 +427,6 @@ add_library(
   "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/DecayAnimationDriver.cpp"
   "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/EventAnimationDriver.cpp"
   "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/I18nManagerTurboModule.cpp"
-  "${RNOH_CPP_DIR}/RNOHCorePackage/EventEmitRequestHandlers/TouchEventEmitRequestHandler.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/UIInputEventHandler.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/NativeNodeApi.cpp"
   "${RNOH_CPP_DIR}/RNOH/arkui/NativeDialogApi.cpp"
@@ -512,11 +510,7 @@ target_link_libraries(
 target_compile_options(rnoh PUBLIC ${folly_compile_options} -DRAW_PROPS_ENABLED)
 target_compile_features(rnoh PUBLIC cxx_std_17)
 
-if("$ENV{RNOH_C_API_ARCH}" STREQUAL "1")
-  message("Experimental C-API architecture enabled")
-  target_link_libraries(rnoh PUBLIC libqos.so)
-  target_compile_definitions(rnoh PUBLIC C_API_ARCH)
-endif()
+target_link_libraries(rnoh PUBLIC libqos.so)
 
 if(DEFINED LOG_VERBOSITY_LEVEL)
   message("LOG_VERBOSITY_LEVEL is set to: ${LOG_VERBOSITY_LEVEL}")

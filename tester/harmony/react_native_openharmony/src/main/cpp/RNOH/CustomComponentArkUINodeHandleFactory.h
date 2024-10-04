@@ -1,15 +1,12 @@
 #pragma once
+#include <arkui/native_node.h>
+#include <arkui/native_node_napi.h>
 #include <arkui/native_type.h>
 #include <glog/logging.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include "RNOH/ArkJS.h"
 #include "RNOH/ThreadGuard.h"
-#include "arkui/NodeContentHandle.h"
-
-#ifdef C_API_ARCH
-#include <arkui/native_node.h>
-#include <arkui/native_node_napi.h>
-#endif
+#include "RNOH/arkui/NodeContentHandle.h"
 
 namespace rnoh {
 
@@ -43,7 +40,6 @@ class CustomComponentArkUINodeHandleFactory final {
       facebook::react::Tag tag,
       std::string componentName) {
     m_threadGuard.assertThread();
-#ifdef C_API_ARCH
     ArkJS arkJS(m_env);
     auto frameNodeFactory =
         arkJS.getObject(m_customRNComponentFrameNodeFactoryRef)
@@ -73,9 +69,6 @@ class CustomComponentArkUINodeHandleFactory final {
           auto disposeCallback = arkJS.getReferenceValue(disposeRef);
           arkJS.call(disposeCallback, {});
         }};
-#else
-    return std::nullopt;
-#endif
   }
 
  private:

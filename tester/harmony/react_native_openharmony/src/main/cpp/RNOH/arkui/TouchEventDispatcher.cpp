@@ -126,7 +126,6 @@ bool TouchEventDispatcher::canIgnoreMoveEvent(
 
 TouchPoint getActiveTouchFromEvent(ArkUI_UIInputEvent* event) {
   TouchPoint actionTouch{};
-#ifdef C_API_ARCH
   auto screenX = int32_t(OH_ArkUI_PointerEvent_GetDisplayX(event));
   auto screenY = int32_t(OH_ArkUI_PointerEvent_GetDisplayY(event));
   auto touchPointCount = OH_ArkUI_PointerEvent_GetPointerCount(event);
@@ -146,13 +145,11 @@ TouchPoint getActiveTouchFromEvent(ArkUI_UIInputEvent* event) {
       break;
     }
   }
-#endif
   return actionTouch;
 }
 
 std::vector<TouchPoint> getTouchesFromEvent(ArkUI_UIInputEvent* event) {
   std::vector<TouchPoint> result;
-#ifdef C_API_ARCH
   auto touchPointCount = OH_ArkUI_PointerEvent_GetPointerCount(event);
   result.reserve(touchPointCount);
   for (auto idx = 0; idx < touchPointCount; idx++) {
@@ -166,14 +163,12 @@ std::vector<TouchPoint> getTouchesFromEvent(ArkUI_UIInputEvent* event) {
         .screenY =
             int32_t(OH_ArkUI_PointerEvent_GetDisplayYByIndex(event, idx))});
   }
-#endif
   return result;
 }
 
 void TouchEventDispatcher::dispatchTouchEvent(
     ArkUI_UIInputEvent* event,
     TouchTarget::Shared const& rootTarget) {
-#ifdef C_API_ARCH
   auto action = OH_ArkUI_UIInputEvent_GetAction(event);
   auto timestamp = OH_ArkUI_UIInputEvent_GetEventTime(event);
   std::vector<TouchPoint> activeTouchPoints;
@@ -285,7 +280,6 @@ void TouchEventDispatcher::dispatchTouchEvent(
   }
 
   sendEvent(touches, changedTouches, action);
-#endif
 }
 
 TouchTarget::Shared TouchEventDispatcher::registerTargetForTouch(

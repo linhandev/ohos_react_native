@@ -4,7 +4,6 @@
 namespace rnoh {
 
 ArkUI_NativeDialogAPI_1* NativeDialogApi::getInstance() {
-#ifdef C_API_ARCH
   static ArkUI_NativeDialogAPI_1* INSTANCE = nullptr;
   if (INSTANCE == nullptr) {
     OH_ArkUI_GetModuleInterface(
@@ -14,9 +13,6 @@ ArkUI_NativeDialogAPI_1* NativeDialogApi::getInstance() {
     }
   }
   return INSTANCE;
-#endif
-  LOG(FATAL)
-      << "This method should only by used when C-API architecture is enabled.";
 }
 
 } // namespace rnoh

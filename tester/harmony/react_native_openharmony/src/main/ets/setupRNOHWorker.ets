@@ -42,7 +42,7 @@ interface CreateRNInstanceWorkerEnvPayload {
   rnInstanceName: string,
   rnInstanceId: number
   uiAbilityContext: common.UIAbilityContext
-  architecture: "C_API" | "ARK_TS"
+  architecture: "C_API"
   assetsDest: string
 }
 

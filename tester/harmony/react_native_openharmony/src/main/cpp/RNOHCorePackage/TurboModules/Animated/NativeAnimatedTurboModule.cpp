@@ -474,29 +474,10 @@ void NativeAnimatedTurboModule::setNativeProps(
 void NativeAnimatedTurboModule::setNativeProps(
     facebook::react::Tag tag,
     folly::dynamic const& props) {
-#ifdef C_API_ARCH
   if (auto instance = m_ctx.instance.lock(); instance != nullptr) {
     instance->synchronouslyUpdateViewOnUIThread(tag, props);
     return;
   }
-#endif
-  // NOTE: in ArkTS architecture, we used to construct the `transform` property
-  // in a way incompatible with RN's RawProps. With C-API we fix it in the
-  // TransformAnimatedNode, but we pass it the old way to ArkTS to preserve
-  // compatibility.
-  auto clonedProps = props;
-  if (auto it = props.find("transform"); it != props.items().end()) {
-    auto& transform = it->second;
-    clonedProps["transform"] = transform[0]["matrix"];
-  }
-
-  ArkJS arkJS(m_ctx.env);
-  auto napiTag = arkJS.createInt(tag);
-  auto napiProps = arkJS.createFromDynamic(clonedProps);
-
-  auto napiTurboModuleObject =
-      arkJS.getObject(m_ctx.arkTSTurboModuleInstanceRef);
-  napiTurboModuleObject.call("setViewProps", {napiTag, napiProps});
 }
 
 void NativeAnimatedTurboModule::emitAnimationEndedEvent(

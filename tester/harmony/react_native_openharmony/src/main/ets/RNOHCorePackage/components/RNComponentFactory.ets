@@ -7,64 +7,15 @@ import {
   ComponentBuilderContext,
   DescriptorEssence,
 } from "../../RNOH"
-import { buildRNView, RNView } from "./RNView"
-import { RNImage } from "./RNImage"
-import { RNTextInput } from "./RNTextInput"
-import { RNText } from "./RNText"
-import { RNScrollView } from "./RNScrollView"
 import { Descriptor } from "../../RNOH/DescriptorBase";
-import { RNModalHostView } from './RNModalHostView'
-import { RNSwitch } from './RNSwitch'
-import { RNActivityIndicator } from './RNActivityIndicator'
 
-
+/**
+ * @internal
+ * Used by RNOH to build custom native components implemented in ArkTS
+ */
 @Builder
 export function buildRNComponent(ctx: RNComponentContext, descriptorWrapper: DescriptorWrapper) {
-  if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "View" || ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "RootView") {
-    buildRNView(ctx, descriptorWrapper.tag)
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "Image") {
-    RNImage({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "TextInput") {
-    RNTextInput({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "Paragraph") {
-    RNText({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "PullToRefreshView") {
-    /**
-     * RNScrollView displays Refresh component if PullToRefreshView is its direct parent.
-     * Native Refresh component works correctly, only when a native Scroll is its direct child.
-     */
-    buildRNComponent(ctx, ctx.descriptorRegistry.findDescriptorWrapperByTag(descriptorWrapper.childrenTags[0])!)
-  }
-  else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "ScrollView") {
-    RNScrollView({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "Switch") {
-    RNSwitch({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "ModalHostView") {
-    RNModalHostView({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) === "ActivityIndicatorView") {
-    RNActivityIndicator({
-      ctx: ctx,
-      tag: descriptorWrapper.tag,
-    })
-  } else if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) !== '') {
+  if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) !== '') {
     ctx.wrappedCustomRNComponentBuilder.builder(new ComponentBuilderContext(
       ctx,
       ctx,
@@ -76,7 +27,7 @@ export function buildRNComponent(ctx: RNComponentContext, descriptorWrapper: Des
 }
 
 /**
- * @deprecated: Use one of  builder wrappers in `RNComponentContext` instead.
+ * @deprecated
  */
 @Component
 export struct RNComponentFactory {
@@ -108,52 +59,7 @@ export struct RNComponentFactory {
   }
 
   build() {
-    if (this.componentName === "View" || this.componentName === "RootView") {
-      RNView({
-        ctx: this.ctx,
-        tag: this.tag,
-        buildCustomComponent: this.buildCustomComponent,
-      })
-    } else if (this.componentName === "Image") {
-      RNImage({ ctx: this.ctx, tag: this.tag })
-    } else if (this.componentName === "TextInput") {
-      RNTextInput({ ctx: this.ctx, tag: this.tag })
-    } else if (this.componentName === "Paragraph") {
-      RNText({ ctx: this.ctx, tag: this.tag, buildCustomComponent: this.buildCustomComponent })
-    } else if (this.componentName === "PullToRefreshView") {
-      /**
-       * RNScrollView displays Refresh component if PullToRefreshView is its direct parent.
-       * Native Refresh component works correctly, only when a native Scroll is its direct child.
-       */
-      RNComponentFactory({
-        ctx: this.ctx,
-        tag: this.childrenTags[0],
-        buildCustomComponent: this.buildCustomComponent
-      })
-    }
-    else if (this.componentName === "ScrollView") {
-      RNScrollView({
-        ctx: this.ctx,
-        tag: this.tag,
-        buildCustomComponent: this.buildCustomComponent
-      })
-    } else if (this.componentName === "Switch") {
-      RNSwitch({
-        ctx: this.ctx,
-        tag: this.tag,
-      })
-    } else if (this.componentName === "ModalHostView") {
-      RNModalHostView({
-        ctx: this.ctx,
-        tag: this.tag,
-        buildCustomComponent: this.buildCustomComponent
-      })
-    } else if (this.componentName === "ActivityIndicatorView") {
-      RNActivityIndicator({
-        ctx: this.ctx,
-        tag: this.tag,
-      })
-    } else if (this.componentName !== '' && this.ctx instanceof RNComponentContext) {
+    if (this.componentName !== '' && this.ctx instanceof RNComponentContext) {
       this.buildCustomComponent(new ComponentBuilderContext(
         this.ctx,
         this.ctx,

@@ -1,8 +1,8 @@
 import type {NapiBridge} from './NapiBridge';
 import {RNOHError} from './RNOHError';
-import { AnyThreadTurboModule, WorkerTurboModule, WorkerTurboModuleContext} from './TurboModule';
+import {AnyThreadTurboModule, WorkerTurboModule} from './TurboModule';
 import type {TurboModuleProvider} from './TurboModuleProvider';
-import type {AnyThreadRNInstance} from './RNOHContext'
+import type {AnyThreadRNInstance} from './RNOHContext';
 
 /**
  * @api
@@ -19,7 +19,7 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
   constructor(
     protected id: number,
     protected napiBridge: NapiBridge,
-    protected architecture: 'ARK_TS' | 'C_API',
+    protected architecture: 'C_API',
     protected assetsDest: string,
     protected getTurboModuleProvider: () =>
       | TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>
@@ -83,4 +83,3 @@ export class WorkerRNInstanceInternal extends WorkerRNInstance {
     this.canCallRNFunction = true;
   }
 }
-

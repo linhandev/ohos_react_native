@@ -92,12 +92,9 @@ export class RNInstanceRegistry {
       workerThread,
       options.enableDebugger ?? false,
       options.enableBackgroundExecutor ?? false,
-      options.enableImageLoader ?? false,
-      options.enableCAPIArchitecture ?? false,
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
-      this.displayMetricsManager,
       fontPathByFontFamily,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
@@ -120,7 +117,7 @@ export class RNInstanceRegistry {
         rnInstanceId,
         rnInstanceName: options.name,
         uiAbilityContext: this.uiAbilityContext,
-        architecture: options.enableCAPIArchitecture ? "C_API" : "ARK_TS",
+        architecture: "C_API",
         assetsDest: options.assetsDest ?? DEFAULT_ASSETS_DEST
       })
     }, 0)

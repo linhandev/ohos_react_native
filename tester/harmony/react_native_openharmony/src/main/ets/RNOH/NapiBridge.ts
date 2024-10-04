@@ -18,7 +18,7 @@ import {
 } from './TurboModule';
 
 
-export type CppFeatureFlag = "C_API_ARCH" | "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
+export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
 
 type RawRNOHError = {
   message: string,

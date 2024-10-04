@@ -47,9 +47,12 @@ class TextInputComponentInstance
 
   void focus();
   void blur();
-  
-  void setTextContentAndSelection(std::string const &content, size_t selectionStart, size_t selectionEnd);
-  void setTextContent(std::string const &content);
+
+  void setTextContentAndSelection(
+      std::string const& content,
+      size_t selectionStart,
+      size_t selectionEnd);
+  void setTextContent(std::string const& content);
 
  public:
   TextInputComponentInstance(Context context);

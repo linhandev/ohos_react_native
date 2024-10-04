@@ -1,4 +1,3 @@
-import { RNComponentFactory, RNView } from './RNOHCorePackage';
 import {
   ComponentBuilderContext,
   CustomRNComponentFrameNodeFactory,
@@ -199,35 +198,13 @@ export struct RNSurface {
     })
   }
 
-  handleTouch(event: TouchEvent) {
-    if (this.ctx.rnInstance.getArchitecture() === "ARK_TS") {
-      this.logger.clone("handleTouch").debug()
-      this.touchDispatcher.handleTouchEvent(event)
-    }
-  }
-
   build() {
     Stack() {
-      if (this.ctx.rnInstance.getArchitecture() === "C_API") {
         XComponent({
           id: this.ctx.rnInstance.getId() + "_" + this.surfaceHandle.getTag(),
           type: "node",
           libraryname: 'rnoh_app'
         })
-      } else {
-        if (this.ctx instanceof RNComponentContext) {
-          RNView({
-            ctx: this.ctx,
-            tag: this.surfaceHandle.getTag()
-          }) // NOTE: This is wrong. RNOH should allow replacing RootComponent.
-        } else {
-          RNComponentFactory({
-            ctx: this.ctx,
-            tag: this.surfaceHandle.getTag(),
-            buildCustomComponent: this.buildCustomComponent
-          })
-        }
-      }
     }
     /**
      * width and height are used here only to trigger layout calculations. Actual values are set in onMeasureSize method.
@@ -238,6 +215,5 @@ export struct RNSurface {
       this.surfaceOffsetX = newArea.globalPosition.x as number
       this.surfaceOffsetY = newArea.globalPosition.y as number
     })
-    .onTouch((e) => this.handleTouch(e))
   }
 }

@@ -11,29 +11,25 @@
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHandler.h"
+#include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
+#include "RNOH/ComponentInstanceRegistry.h"
+#include "RNOH/CustomComponentArkUINodeHandleFactory.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/ImageSourceResolver.h"
 #include "RNOH/MountingManagerArkTS.h"
+#include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
-#include "RNOH/RNInstanceArkTS.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/UITicker.h"
 #include "RNOHCorePackage/RNOHCorePackage.h"
-
-#ifdef C_API_ARCH
-#include "RNOH/ComponentInstanceFactory.h"
-#include "RNOH/ComponentInstanceRegistry.h"
-#include "RNOH/CustomComponentArkUINodeHandleFactory.h"
-#include "RNOH/MountingManagerCAPI.h"
-#endif
 
 using namespace rnoh;
 
@@ -70,8 +66,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     std::unordered_map<std::string, std::string> fontPathByFontFamily) {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
-  auto shouldUseCAPIArchitecture =
-      featureFlagRegistry->isFeatureFlagOn("C_API_ARCH");
   auto taskExecutor = std::make_shared<TaskExecutor>(
       env, std::move(workerTaskRunner), shouldEnableBackgroundExecutor);
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
@@ -213,80 +207,38 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       },
       arkTSChannel);
   arkTSMessageHandlers.emplace_back(arkTSMessageHub);
-  if (shouldUseCAPIArchitecture) {
-#ifdef C_API_ARCH
-    auto componentInstanceDependencies =
-        std::make_shared<ComponentInstance::Dependencies>();
-    componentInstanceDependencies->arkTSChannel = arkTSChannel;
-    componentInstanceDependencies->arkTsMessageHub = arkTSMessageHub;
-    componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
-    componentInstanceDependencies->displayMetricsManager = arkTSBridge;
-    auto customComponentArkUINodeFactory =
-        std::make_shared<CustomComponentArkUINodeHandleFactory>(
-            env, frameNodeFactoryRef);
-    auto componentInstanceFactory = std::make_shared<ComponentInstanceFactory>(
-        componentInstanceFactoryDelegates,
-        componentInstanceDependencies,
-        customComponentArkUINodeFactory);
-    auto componentInstanceRegistry =
-        std::make_shared<ComponentInstanceRegistry>();
-    componentInstanceDependencies->componentInstanceRegistry =
-        componentInstanceRegistry;
-    auto componentInstancePreallocationRequestQueue =
-        std::make_shared<ComponentInstancePreallocationRequestQueue>();
-    auto componentInstanceProvider =
-        std::make_shared<ComponentInstanceProvider>(
-            taskExecutor,
-            componentInstancePreallocationRequestQueue,
-            componentInstanceFactory,
-            uiTicker,
-            componentInstanceRegistry);
-    auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
-        componentInstanceRegistry,
-        componentInstanceProvider,
-        mountingManager,
-        featureFlagRegistry,
-        arkTSChannel);
-    auto rnInstance = std::make_shared<RNInstanceCAPI>(
-        id,
-        contextContainer,
-        std::move(turboModuleFactory),
-        taskExecutor,
-        componentDescriptorProviderRegistry,
-        mutationsToNapiConverter,
-        eventEmitRequestHandlers,
-        globalJSIBinders,
-        uiTicker,
-        shadowViewRegistry,
-        std::move(mountingManagerCAPI),
-        std::move(arkTSMessageHandlers),
-        std::move(arkTSChannel),
-        arkTSMessageHub,
-        componentInstanceRegistry,
-        componentInstanceFactory,
-        componentInstancePreallocationRequestQueue,
-        std::move(resourceManager),
-        shouldEnableDebugger,
-        shouldEnableBackgroundExecutor,
-        arkTSBridge,
-        std::move(fontRegistry));
-    componentInstanceDependencies->rnInstance = rnInstance;
-    auto imageSourceResolver =
-        std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
-    componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
-    return rnInstance;
-#else
-    LOG(FATAL)
-        << "The C_API architecture also needs to be enabled on the CPP side. Have you set the "
-           "RNOH_C_API_ARCH=\"1\" environment variable, completely closed and reopened DevEco Studio and "
-           "run Build > Clean Project?";
-#endif
-  }
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
-  return std::make_shared<RNInstanceArkTS>(
+  auto componentInstanceDependencies =
+      std::make_shared<ComponentInstance::Dependencies>();
+  componentInstanceDependencies->arkTSChannel = arkTSChannel;
+  componentInstanceDependencies->arkTsMessageHub = arkTSMessageHub;
+  componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
+  componentInstanceDependencies->displayMetricsManager = arkTSBridge;
+  auto customComponentArkUINodeFactory =
+      std::make_shared<CustomComponentArkUINodeHandleFactory>(
+          env, frameNodeFactoryRef);
+  auto componentInstanceFactory = std::make_shared<ComponentInstanceFactory>(
+      componentInstanceFactoryDelegates,
+      componentInstanceDependencies,
+      customComponentArkUINodeFactory);
+  auto componentInstanceRegistry =
+      std::make_shared<ComponentInstanceRegistry>();
+  componentInstanceDependencies->componentInstanceRegistry =
+      componentInstanceRegistry;
+  auto componentInstancePreallocationRequestQueue =
+      std::make_shared<ComponentInstancePreallocationRequestQueue>();
+  auto componentInstanceProvider = std::make_shared<ComponentInstanceProvider>(
+      taskExecutor,
+      componentInstancePreallocationRequestQueue,
+      componentInstanceFactory,
+      uiTicker,
+      componentInstanceRegistry);
+  auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
+      componentInstanceRegistry,
+      componentInstanceProvider,
+      mountingManager,
+      featureFlagRegistry,
+      arkTSChannel);
+  auto rnInstance = std::make_shared<RNInstanceCAPI>(
       id,
       contextContainer,
       std::move(turboModuleFactory),
@@ -297,12 +249,23 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       globalJSIBinders,
       uiTicker,
       shadowViewRegistry,
-      arkTSChannel,
-      std::move(mountingManager),
+      std::move(mountingManagerCAPI),
       std::move(arkTSMessageHandlers),
-      nullptr, // ComponentInstancePreallocationRequestQueue
+      std::move(arkTSChannel),
+      arkTSMessageHub,
+      componentInstanceRegistry,
+      componentInstanceFactory,
+      componentInstancePreallocationRequestQueue,
+      std::move(resourceManager),
       shouldEnableDebugger,
       shouldEnableBackgroundExecutor,
       arkTSBridge,
       std::move(fontRegistry));
+  componentInstanceDependencies->rnInstance = rnInstance;
+  auto imageSourceResolver =
+      std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
+  componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
+  return rnInstance;
 }

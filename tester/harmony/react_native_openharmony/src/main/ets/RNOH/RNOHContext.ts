@@ -233,7 +233,10 @@ export interface AnyThreadRNInstance extends Partial<RNInstance> {
 
   postMessageToCpp(name: string, payload: any): void;
 
-  getArchitecture(): 'ARK_TS' | 'C_API';
+  /**
+   * @deprecated
+   */
+  getArchitecture(): 'C_API' | 'ARK_TS';
 
   getTurboModule<T>(name: string): T;
 
@@ -271,8 +274,7 @@ export class UITurboModuleContext
  * @api
  * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
  */
-export class TurboModuleContext extends UITurboModuleContext {
-}
+export class TurboModuleContext extends UITurboModuleContext {}
 
 /**
  * @internal

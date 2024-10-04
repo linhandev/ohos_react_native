@@ -86,10 +86,7 @@ class RNInstance {
       std::string method,
       folly::dynamic params) = 0;
   virtual std::optional<Surface::Weak> getSurfaceByRootTag(
-      facebook::react::Tag rootTag) {
-    RNOH_ASSERT_MSG(false, "Not implemented");
-    return std::nullopt;
-  };
+      facebook::react::Tag rootTag) = 0;
   virtual std::string getBundlePath() const = 0;
 };
 

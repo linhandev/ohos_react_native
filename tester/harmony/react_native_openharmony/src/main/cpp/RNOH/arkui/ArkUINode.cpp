@@ -78,7 +78,6 @@ static constexpr std::array NODE_EVENT_TYPES{
 };
 
 static void receiveEvent(ArkUI_NodeEvent* event) {
-#ifdef C_API_ARCH
   try {
     auto eventType = OH_ArkUI_NodeEvent_GetEventType(event);
     auto target =
@@ -103,7 +102,6 @@ static void receiveEvent(ArkUI_NodeEvent* event) {
   } catch (std::exception& e) {
     LOG(ERROR) << e.what();
   }
-#endif
 }
 
 ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {

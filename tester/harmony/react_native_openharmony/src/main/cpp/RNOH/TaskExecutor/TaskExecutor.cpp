@@ -42,7 +42,6 @@ TaskExecutor::~TaskExecutor() noexcept {
 }
 
 void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
-#ifdef C_API_ARCH
   int ret = OH_QoS_SetThreadQoS(level);
   std::array<char, 16> buffer = {0};
   pthread_getname_np(pthread_self(), buffer.data(), buffer.size());
@@ -51,10 +50,6 @@ void TaskExecutor::setTaskThreadPriority(QoS_Level level) {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::CHANGE_THREAD_PRIORITY,
       buffer.data());
-#else
-  DLOG(WARNING)
-      << "TaskExecutor::setTaskThreadPriority available only with C-API";
-#endif
 }
 
 void TaskExecutor::runTask(TaskThread thread, Task&& task) {
