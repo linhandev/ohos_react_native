@@ -600,7 +600,20 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
       return arkJs.getUndefined();
     }
     auto& rnInstance = it->second;
-    rnInstance->handleArkTSMessage(messageName, messagePayload);
+	std::weak_ptr<RNInstanceInternal> weakRNInstance = rnInstance;
+    auto taskExecutor = rnInstance->getTaskExecutor();
+    if (taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      rnInstance->handleArkTSMessage(messageName, messagePayload);
+    } else {
+      taskExecutor->runTask(
+          TaskThread::MAIN, [weakRNInstance, messageName, messagePayload] {
+            auto rnInstance = weakRNInstance.lock();
+            if (rnInstance == nullptr) {
+              return;
+            }
+            rnInstance->handleArkTSMessage(messageName, messagePayload);
+          });
+    }
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
   }
