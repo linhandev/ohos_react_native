@@ -17,6 +17,7 @@ import type { HttpClient } from "../HttpClient/ts"
 import { AbilityConstant, Want } from '@kit.AbilityKit';
 import { WorkerThread } from "./WorkerThread"
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
+import { bundleManager } from '@kit.AbilityKit';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -64,6 +65,22 @@ const RNOH_BANNER = '\n\n\n' +
 
 type AppState = "FOREGROUND" | "BACKGROUND"
 
+function getMetadata(name: string): string {
+  let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA |
+  bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION;
+  let metadataArray = bundleManager.getBundleInfoForSelfSync(bundleFlags).appInfo.metadataArray;
+  let finalMetadata = '';
+  metadataArray.forEach(moduleMetadata => {
+    moduleMetadata.metadata.forEach(metadata => {
+      if (metadata.name == name) {
+        finalMetadata = metadata.value
+        return;
+      }
+    });
+  });
+  return finalMetadata;
+}
+
 /**
  * Bootstraps React Native and forwards device events to RNInstances. This class is created for UIAbility's usage.
  * Use this class if RNAbility is too limiting for your use case, and adapting code to breaking changes is not a big deal in your project.
@@ -105,7 +122,8 @@ export class RNInstancesCoordinator {
       },
       getFoldStatus: () => displayMetricsManager.getFoldStatus(),
       getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
-      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
+      getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
+      getMetadata
     });
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,

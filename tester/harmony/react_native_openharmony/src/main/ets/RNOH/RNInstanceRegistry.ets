@@ -133,7 +133,6 @@ export class RNInstanceRegistry {
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
       (payload: CreateWorkerRNInstanceAckPayload) => payload.rnInstanceId === rnInstanceId)
-    console.log("wxjer RNOH_CREATE_WORKER_RN_INSTANCE_ACK")
   }
 
   public getInstance(id: number): RNInstance {
