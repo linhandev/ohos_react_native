@@ -102,6 +102,10 @@ class SampleArkTSMessageHandler : public ArkTSMessageHandler {
               ctx.messagePayload["isBlocked"].asBool(),
               ctx.messagePayload["origin"].asString());
         }
+      } else if (ctx.messageName == "SAMPLE_WORKER_MESSAGE") {
+        rnInstance
+            ->getTurboModule<SampleWorkerTurboModule>("SampleWorkerTurboModule")
+            ->callSync("onInvokeFromCpp", {ctx.messagePayload});
       }
     }
   };

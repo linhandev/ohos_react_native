@@ -69,7 +69,7 @@ export class NapiBridge {
 
   registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,
     rnInstanceId: number) {
-    return this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
+    this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
   }
 
   getNextRNInstanceId(): number {
@@ -101,7 +101,7 @@ export class NapiBridge {
       acc[cppFeatureFlag] = true
       return acc
     }, {} as Record<CppFeatureFlag, boolean>)
-    const result = this.libRNOHApp?.onCreateRNInstance(
+    this.libRNOHApp?.onCreateRNInstance(
       instanceId,
       turboModuleProvider,
       mutationsListener,
@@ -128,26 +128,22 @@ export class NapiBridge {
       fontFamilyNameByFontPathRelativeToRawfileDir,
       envId
     );
-    return result
   }
 
   onDestroyRNInstance(instanceId: number) {
-    return this.libRNOHApp?.onDestroyRNInstance(instanceId)
+    this.libRNOHApp?.onDestroyRNInstance(instanceId)
   }
 
   emitComponentEvent(instanceId: number, tag: Tag, eventEmitRequestHandlerName: string, payload: any) {
-    return this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName,
+    this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName,
       payload);
   }
 
   loadScript(instanceId: number, bundle: ArrayBuffer, sourceURL: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const result = this.libRNOHApp?.loadScript(instanceId, bundle, sourceURL, (errorMsg: string) => {
+      this.libRNOHApp?.loadScript(instanceId, bundle, sourceURL, (errorMsg: string) => {
         errorMsg ? reject(new Error(errorMsg)) : resolve()
-      }) as Result<null>;
-      if (result.err) {
-        reject(result)
-      }
+      });
     })
   }
 
@@ -161,7 +157,7 @@ export class NapiBridge {
     pixelRatio: number,
     isRTL: boolean,
     initialProps: any) {
-    const result = this.libRNOHApp?.startSurface(
+    this.libRNOHApp?.startSurface(
       instanceId,
       surfaceTag,
       initialSurfaceWidth,
@@ -172,7 +168,6 @@ export class NapiBridge {
       isRTL,
       initialProps,
     );
-    return result
   }
 
   updateSurfaceConstraints(
@@ -185,7 +180,7 @@ export class NapiBridge {
     pixelRatio: number,
     isRTL: boolean,
   ) {
-    const result = this.libRNOHApp?.updateSurfaceConstraints(
+    this.libRNOHApp?.updateSurfaceConstraints(
       instanceId,
       surfaceTag,
       surfaceWidth,
@@ -195,7 +190,6 @@ export class NapiBridge {
       pixelRatio,
       isRTL
     );
-    return result
   }
 
   createSurface(
@@ -203,12 +197,11 @@ export class NapiBridge {
     surfaceTag: number,
     appKey: string,
   ) {
-    const result = this.libRNOHApp?.createSurface(
+    this.libRNOHApp?.createSurface(
       instanceId,
       surfaceTag,
       appKey,
     );
-    return result
   }
 
   setSurfaceProps(
@@ -216,12 +209,11 @@ export class NapiBridge {
     surfaceTag: number,
     props: Record<string, any>,
   ) {
-    const result = this.libRNOHApp?.setSurfaceProps(
+    this.libRNOHApp?.setSurfaceProps(
       instanceId,
       surfaceTag,
       props,
     )
-    return result;
   }
 
   async stopSurface(
@@ -240,38 +232,33 @@ export class NapiBridge {
       surfaceTag,
       () => resolveWait()
     );
-    return wait;
+    await wait;
   }
 
   async destroySurface(
     instanceId: number,
     surfaceTag: number,
   ) {
-    const result = this.libRNOHApp?.destroySurface(
+    this.libRNOHApp?.destroySurface(
       instanceId,
       surfaceTag
     );
-    return result
   }
 
   setSurfaceDisplayMode(instanceId: number, surfaceTag: Tag, displayMode: DisplayMode): void {
-    const result = this.libRNOHApp?.setSurfaceDisplayMode(instanceId, surfaceTag, displayMode);
-    return result
+    this.libRNOHApp?.setSurfaceDisplayMode(instanceId, surfaceTag, displayMode);
   }
 
   callRNFunction(instanceId: number, moduleName: string, functionName: string, args: unknown[]): void {
-    const result = this.libRNOHApp?.callRNFunction(instanceId, moduleName, functionName, args);
-    return result
+    this.libRNOHApp?.callRNFunction(instanceId, moduleName, functionName, args);
   }
 
   onMemoryLevel(level: number): void {
-    const result = this.libRNOHApp?.onMemoryLevel(level)
-    return result
+    this.libRNOHApp?.onMemoryLevel(level)
   }
 
   updateState(instanceId: number, componentName: string, tag: Tag, state: unknown): void {
-    const result = this.libRNOHApp?.updateState(instanceId, componentName, tag, state)
-    return result
+    this.libRNOHApp?.updateState(instanceId, componentName, tag, state)
   }
 
   getInspectorWrapper(): InspectorInstance {
@@ -300,13 +287,11 @@ export class NapiBridge {
   }
 
   postMessageToCpp(name: string, payload: any) {
-    const result = this.libRNOHApp?.onArkTSMessage(name, payload)
-    return result
+    this.libRNOHApp?.onArkTSMessage(name, payload)
   }
 
   logMarker(markerId: string, rnInstanceId: number) {
-    const result = this.libRNOHApp?.logMarker(markerId, rnInstanceId)
-    return result
+    this.libRNOHApp?.logMarker(markerId, rnInstanceId)
   }
 
   getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {

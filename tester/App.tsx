@@ -18,7 +18,7 @@ const {TesterExample, ...remainingExampleByName} = exampleByName;
 
 function App() {
   return (
-    <Environment>
+    //<Environment>
       <View style={{backgroundColor: 'black'}}>
         <StatusBar barStyle="light-content" />
         <SafeAreaView>
@@ -116,7 +116,7 @@ function App() {
           </NavigationContainer>
         </SafeAreaView>
       </View>
-    </Environment>
+    //</Environment>
   );
 }
 
