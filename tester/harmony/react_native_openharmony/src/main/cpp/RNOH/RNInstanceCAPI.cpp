@@ -5,6 +5,7 @@
 #include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
 #include <react/renderer/scheduler/Scheduler.h>
+#include "ArkTSBridge.h"
 #include "NativeLogger.h"
 #include "RNInstanceArkTS.h"
 #include "RNOH/Assert.h"
@@ -65,21 +66,17 @@ void RNInstanceCAPI::start() {
           binder->createBindings(rt, turboModuleProvider);
         }
       });
-  auto turboModule = getTurboModule("DeviceInfo");
-  auto deviceInfoTurboModule =
-      std::dynamic_pointer_cast<rnoh::DeviceInfoTurboModule>(turboModule);
-  auto displayMetrics = deviceInfoTurboModule->callSync("getConstants", {});
-  auto m_halfleading = deviceInfoTurboModule->callSync("getHalfLeading", {});
-  if (displayMetrics.count("Dimensions") != 0) {
-    auto Dimensions = displayMetrics.at("Dimensions");
-    auto screenPhysicalPixels = Dimensions.at("screenPhysicalPixels");
-    float scale = screenPhysicalPixels.at("scale").asDouble();
-    float fontScale = screenPhysicalPixels.at("fontScale").asDouble();
-    auto textMeasurer = m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
-    if (textMeasurer) {
-      textMeasurer->setTextMeasureParams(fontScale, scale, m_halfleading.asBool());
-    }
-  }
+    auto textMeasurer =
+          m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
+              "textLayoutManagerDelegate");
+    RNOH_ASSERT(textMeasurer != nullptr);
+    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics().screenPhysicalPixels;
+
+    float fontScale = displayMetrics.fontScale;
+    float scale = displayMetrics.scale;
+
+    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
+    textMeasurer->setTextMeasureParams(fontScale, scale, halfLeading);
 }
 
 void RNInstanceCAPI::initialize() {

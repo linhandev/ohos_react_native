@@ -43,6 +43,7 @@ export interface ArkTSBridgeHandler {
   getFoldStatus: () => display.FoldStatus
   getIsSplitScreenMode: () => boolean
   getFontSizeScale: () => number
+  getMetadata: (name: string) => string
 }
 
 export class NapiBridge {
@@ -293,7 +294,8 @@ export class NapiBridge {
       },
       getFoldStatus: () => handler.getFoldStatus(),
       getIsSplitScreenMode: () => handler.getIsSplitScreenMode(),
-      getFontSizeScale: () => handler.getFontSizeScale()
+      getFontSizeScale: () => handler.getFontSizeScale(),
+      getMetadata: (name: string) => handler.getMetadata(name)
     });
   }
 
