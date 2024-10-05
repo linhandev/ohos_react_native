@@ -83,14 +83,9 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
     const envInfo =
-      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true,
-        {
-          handleError: (rnohError) => {
-            devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-          }, getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics()
-        });
+      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true);
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,

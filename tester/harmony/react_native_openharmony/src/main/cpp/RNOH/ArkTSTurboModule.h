@@ -126,6 +126,10 @@ class ArkTSTurboModule : public TurboModule {
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,
       const facebook::jsi::Value* jsiArgs,
       size_t argsCount);
+  
+  Context getContext() {
+    return m_ctx;    
+  }
 
  protected:
   Context m_ctx;

@@ -21,7 +21,6 @@
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
 #include "RNOH/arkui/ArkUINodeRegistry.h"
-#include "napi/native_api.h"
 
 template <typename Map, typename K, typename V>
 auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
@@ -70,41 +69,47 @@ napi_value invoke(napi_env env, std::function<napi_value()> operation) {
 }
 
 static napi_value onInit(napi_env env, napi_callback_info info) {
+  static int nextEnvId = 0;
   HarmonyReactMarker::setLogMarkerIfNeeded();
+#ifdef WITH_HITRACE_REACT_MARKER
   HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
+#endif
   LogSink::initializeLogging();
   auto logVerbosityLevel = 0;
  
 #ifdef LOG_VERBOSITY_LEVEL
-  FLAGS_v = LOG_VERBOSITY_LEVEL;
-  logVerbosityLevel = LOG_VERBOSITY_LEVEL;
+    FLAGS_v = LOG_VERBOSITY_LEVEL;
+    logVerbosityLevel = LOG_VERBOSITY_LEVEL;
 #endif
   DLOG(INFO) << "onInit (LOG_VERBOSITY_LEVEL=" << logVerbosityLevel << ")";
   ArkJS arkJs(env);
   auto args = arkJs.getCallbackArgs(info, 1);
+    nextEnvId++;
   auto shouldClearRNInstances = arkJs.getBoolean(args[0]);
-  if (shouldClearRNInstances) {
-    /**
-     * This CPP code can survive closing an app. The app can be closed before
-     * removing all RNInstances. As a workaround, all rnInstances are removed on
-     * the start.
-     */
-    CLEANUP_RUNNER->runAsyncTask([] {
-      decltype(RN_INSTANCE_BY_ID) instances;
-      {
-        std::lock_guard<std::mutex> lock(RN_INSTANCE_BY_ID_MTX);
-        std::swap(RN_INSTANCE_BY_ID, instances);
-      }
-      instances.clear();
-    });
-  }
-  auto isDebugModeEnabled = false;
+    if (shouldClearRNInstances) {
+      /**
+       * This CPP code can survive closing an app. The app can be closed before
+       * removing all RNInstances. As a workaround, all rnInstances are removed
+       * on the start.
+       */
+      CLEANUP_RUNNER->runAsyncTask([] {
+        decltype(RN_INSTANCE_BY_ID) instances;
+        {
+          std::lock_guard<std::mutex> lock(RN_INSTANCE_BY_ID_MTX);
+          std::swap(RN_INSTANCE_BY_ID, instances);
+        }
+        instances.clear();
+      });
+      ARK_TS_BRIDGE_BY_ENV_ID.clear();
+    }
+    auto isDebugModeEnabled = false;
 #ifdef REACT_NATIVE_DEBUG
   isDebugModeEnabled = true;
 #endif
-  return arkJs.createObjectBuilder()
-      .addProperty("isDebugModeEnabled", isDebugModeEnabled)
-      .build();
+    return arkJs.createObjectBuilder()
+        .addProperty("isDebugModeEnabled", isDebugModeEnabled)
+        .addProperty("envId", nextEnvId)
+        .build();
 }
 
 napi_value initializeArkTSBridge(napi_env env, napi_callback_info info) {
@@ -217,7 +222,6 @@ static napi_value onCreateRNInstance(
     auto rnInstance = createRNInstance(
         instanceId,
         env,
-        arkTsTurboModuleProviderRef,
         workerTurboModuleProviderRefAndEnv.second,
         std::move(workerTaskRunner),
         getOrDefault(ARK_TS_BRIDGE_BY_ENV_ID, envId, nullptr),

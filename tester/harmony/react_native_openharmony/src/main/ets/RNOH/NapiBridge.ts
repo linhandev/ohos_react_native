@@ -24,6 +24,11 @@ type RawRNOHError = {
   suggestions?: string[]
 }
 
+type envINFO = {
+  isDebugModeEnabled: boolean,
+  envId: number
+}
+
 type Result<TOK = null> = {
   ok: TOK,
   err: null
@@ -49,28 +54,7 @@ export class NapiBridge {
     this.logger = logger.clone("NapiBridge")
   }
 
-  private unwrapResult<TOk = null>(result: Result<TOk>): TOk {
-    if (result.err) {
-      throw this.unwrapError(result)
-    }
-    return result.ok
-  }
-
-  private unwrapError(result: Result<unknown>): RNOHError {
-    if (!result.err) {
-      throw new RNOHError({
-        whatHappened: "Called unwrapError on result which doesn't have error",
-        howCanItBeFixed: []
-      })
-    }
-    return new RNOHError({
-      whatHappened: result.err.message,
-      howCanItBeFixed: (result.err.suggestions ?? []),
-      customStack: (result.err.stacktrace ?? []).join("\n"),
-    })
-  }
-
-  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) {
+  onInit(shouldCleanUpRNInstances: boolean): envINFO {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -79,29 +63,16 @@ export class NapiBridge {
       this.logger.fatal(err)
       throw err
     }
-    return this.unwrapResult<{
-      isDebugModeEnabled: boolean,
-      envId: number
-    }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
-      handleError: (err: RawRNOHError) => {
-        arkTSBridgeHandler.handleError(new RNOHError({
-          whatHappened: err.message,
-          howCanItBeFixed: (err.suggestions ?? []),
-          customStack: (err.stacktrace ?? []).join("\n"),
-        }))
-      },
-      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics()
-    } satisfies ArkTSBridgeHandler))
+    return this.libRNOHApp?.onInit(shouldCleanUpRNInstances);
   }
 
   registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,
     rnInstanceId: number) {
-    return this.unwrapResult<undefined>(this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider,
-      rnInstanceId))
+    return this.libRNOHApp?.registerWorkerTurboModuleProvider(turboModuleProvider, rnInstanceId)
   }
 
   getNextRNInstanceId(): number {
-    return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
+    return this.libRNOHApp?.getNextRNInstanceId();
   }
 
   setBundlePath(instanceId: number, path: string): void {
@@ -156,16 +127,16 @@ export class NapiBridge {
       fontFamilyNameByFontPathRelativeToRawfileDir,
       envId
     );
-    return this.unwrapResult(result)
+    return result
   }
 
   onDestroyRNInstance(instanceId: number) {
-    return this.unwrapResult(this.libRNOHApp?.onDestroyRNInstance(instanceId))
+    return this.libRNOHApp?.onDestroyRNInstance(instanceId)
   }
 
   emitComponentEvent(instanceId: number, tag: Tag, eventEmitRequestHandlerName: string, payload: any) {
-    return this.unwrapResult(this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName,
-      payload));
+    return this.libRNOHApp?.emitComponentEvent(instanceId, tag, eventEmitRequestHandlerName,
+      payload);
   }
 
   loadScript(instanceId: number, bundle: ArrayBuffer, sourceURL: string): Promise<void> {
@@ -174,7 +145,7 @@ export class NapiBridge {
         errorMsg ? reject(new Error(errorMsg)) : resolve()
       }) as Result<null>;
       if (result.err) {
-        reject(this.unwrapError(result))
+        reject(result)
       }
     })
   }
@@ -200,7 +171,7 @@ export class NapiBridge {
       isRTL,
       initialProps,
     );
-    return this.unwrapResult(result)
+    return result
   }
 
   updateSurfaceConstraints(
@@ -223,7 +194,7 @@ export class NapiBridge {
       pixelRatio,
       isRTL
     );
-    return this.unwrapResult(result)
+    return result
   }
 
   createSurface(
@@ -236,7 +207,7 @@ export class NapiBridge {
       surfaceTag,
       appKey,
     );
-    return this.unwrapResult(result)
+    return result
   }
 
   setSurfaceProps(
@@ -249,7 +220,7 @@ export class NapiBridge {
       surfaceTag,
       props,
     )
-    return this.unwrapResult(result);
+    return result;
   }
 
   async stopSurface(
@@ -263,12 +234,11 @@ export class NapiBridge {
         resolve()
       }
     })
-    const result = this.libRNOHApp?.stopSurface(
+    this.libRNOHApp?.stopSurface(
       instanceId,
       surfaceTag,
       () => resolveWait()
     );
-    this.unwrapResult(result);
     return wait;
   }
 
@@ -280,27 +250,27 @@ export class NapiBridge {
       instanceId,
       surfaceTag
     );
-    return this.unwrapResult(result)
+    return result
   }
 
   setSurfaceDisplayMode(instanceId: number, surfaceTag: Tag, displayMode: DisplayMode): void {
     const result = this.libRNOHApp?.setSurfaceDisplayMode(instanceId, surfaceTag, displayMode);
-    return this.unwrapResult(result)
+    return result
   }
 
   callRNFunction(instanceId: number, moduleName: string, functionName: string, args: unknown[]): void {
     const result = this.libRNOHApp?.callRNFunction(instanceId, moduleName, functionName, args);
-    return this.unwrapResult(result)
+    return result
   }
 
   onMemoryLevel(level: number): void {
     const result = this.libRNOHApp?.onMemoryLevel(level)
-    return this.unwrapResult(result)
+    return result
   }
 
   updateState(instanceId: number, componentName: string, tag: Tag, state: unknown): void {
     const result = this.libRNOHApp?.updateState(instanceId, componentName, tag, state)
-    return this.unwrapResult(result)
+    return result
   }
 
   getInspectorWrapper(): InspectorInstance {
@@ -329,16 +299,16 @@ export class NapiBridge {
 
   postMessageToCpp(name: string, payload: any) {
     const result = this.libRNOHApp?.onArkTSMessage(name, payload)
-    return this.unwrapResult(result)
+    return result
   }
 
   logMarker(markerId: string, rnInstanceId: number) {
     const result = this.libRNOHApp?.logMarker(markerId, rnInstanceId)
-    return this.unwrapResult(result)
+    return result
   }
 
   getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {
     const result = this.libRNOHApp?.getNativeNodeIdByTag(instanceId, tag)
-    return this.unwrapResult(result)
+    return result
   }
 }
