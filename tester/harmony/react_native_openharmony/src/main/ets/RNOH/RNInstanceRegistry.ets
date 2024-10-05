@@ -77,9 +77,15 @@ export class RNInstanceRegistry {
       await this.createRNInstanceEnvOnWorker(workerThread, id, options)
     }
     const fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string> = {}
-    for (const [fontFamily, fontResource] of Object.entries(options.fontResourceByFontFamily ?? {})) {
-      fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params[0]
-      font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+    for (const fontFamilyAndResource of Object.entries(options.fontResourceByFontFamily ?? {})) {
+      const fontFamily = fontFamilyAndResource[0]
+      const fontResource = fontFamilyAndResource[1]
+      if (typeof fontResource == 'string') {
+        fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource
+      } else {
+        fontFamilyNameByFontPathRelativeToRawfileDir[fontFamily] = fontResource.params![0]
+        font.registerFont({ familyName: fontFamily, familySrc: fontResource })
+      }
     }
     const rnInstance = new RNInstanceImpl(
       this.envId,
@@ -127,6 +133,7 @@ export class RNInstanceRegistry {
     }, 0)
     await workerThread.waitForMessage("RNOH_CREATE_WORKER_RN_INSTANCE_ACK",
       (payload: CreateWorkerRNInstanceAckPayload) => payload.rnInstanceId === rnInstanceId)
+    console.log("wxjer RNOH_CREATE_WORKER_RN_INSTANCE_ACK")
   }
 
   public getInstance(id: number): RNInstance {

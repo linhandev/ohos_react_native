@@ -59,7 +59,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     ArkTSBridge::Shared arkTSBridge,
     napi_ref mainArkTSTurboModuleProviderRef,
     napi_ref workerArkTSTurboModuleProviderRef,
-    napi_ref arkTsTurboModuleProviderRef,
     napi_ref frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,

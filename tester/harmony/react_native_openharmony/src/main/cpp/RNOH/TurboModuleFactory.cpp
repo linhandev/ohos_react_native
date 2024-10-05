@@ -44,8 +44,8 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       {.jsInvoker = jsInvoker,
        .instance = instance,
        .arkTSMessageHub = m_arkTSMessageHub},
-      .env = arkTSTurboModuleEnvironment.napiEnv,
-      .arkTSTurboModuleInstanceRef = arkTSTurboModuleThread == TaskThread::JS
+       .env = arkTSTurboModuleEnvironment.napiEnv,
+       .arkTSTurboModuleInstanceRef = arkTSTurboModuleThread == TaskThread::JS
           ? nullptr
           : this->maybeGetArkTsTurboModuleInstanceRef(
                 name, arkTSTurboModuleThread, arkTSTurboModuleEnvironment),
