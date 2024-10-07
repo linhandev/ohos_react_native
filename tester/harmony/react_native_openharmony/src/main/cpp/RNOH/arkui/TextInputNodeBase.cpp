@@ -1,4 +1,5 @@
 #include "TextInputNodeBase.h"
+#include <arkui/native_node.h>
 #include "NativeNodeApi.h"
 #include "RNOH/arkui/conversions.h"
 
@@ -235,7 +236,7 @@ void TextInputNodeBase::setAutoFocus(bool autoFocus) {
   ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(autoFocus)};
   ArkUI_AttributeItem item = {&value, 1};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUS_STATUS, &item));
+      m_nodeHandle, NODE_DEFAULT_FOCUS, &item));
 }
 
 void TextInputNodeBase::setResponseRegion(

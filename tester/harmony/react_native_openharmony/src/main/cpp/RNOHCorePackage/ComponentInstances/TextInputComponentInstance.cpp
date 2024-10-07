@@ -29,14 +29,17 @@ void TextInputComponentInstance::onChange(std::string text) {
     return;
   }
   m_nativeEventCount++;
-  m_eventEmitter->onChange(getTextInputMetrics());
-  
+  if (m_eventEmitter) {
+    m_eventEmitter->onChange(getTextInputMetrics());
+  }
   auto content = getTextContentFromState(m_state);
   m_valueChanged = content != m_content;
 }
 
 void TextInputComponentInstance::onSubmit() {
-  m_eventEmitter->onSubmitEditing(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onSubmitEditing(getTextInputMetrics());
+  }
 }
 
 void TextInputComponentInstance::onBlur() {
@@ -51,8 +54,10 @@ void TextInputComponentInstance::onBlur() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Always);
   }
-  m_eventEmitter->onBlur(getTextInputMetrics());
-  m_eventEmitter->onEndEditing(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onBlur(getTextInputMetrics());
+    m_eventEmitter->onEndEditing(getTextInputMetrics());
+  }
 }
 
 void TextInputComponentInstance::onFocus() {
@@ -74,7 +79,9 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
-  m_eventEmitter->onFocus(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onFocus(getTextInputMetrics());
+  }
 }
 
 void TextInputComponentInstance::onPasteOrCut() {
@@ -102,13 +109,17 @@ void TextInputComponentInstance::onTextSelectionChange(
     auto keyPressMetrics = facebook::react::KeyPressMetrics();
     keyPressMetrics.text = key;
     keyPressMetrics.eventCount = m_nativeEventCount;
-    m_eventEmitter->onKeyPress(keyPressMetrics);
+    if (m_eventEmitter) {
+      m_eventEmitter->onKeyPress(keyPressMetrics);
+    }
     m_valueChanged = false;
   }
 
   m_selectionLocation = location;
   m_selectionLength = length;
-  m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onSelectionChange(getTextInputMetrics());
+  }
 }
 
 void TextInputComponentInstance::onContentSizeChange(
@@ -116,17 +127,22 @@ void TextInputComponentInstance::onContentSizeChange(
     float height) {
   m_contentSizeWidth = width;
   m_contentSizeHeight = height;
-  m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+  }
 }
 
 void TextInputComponentInstance::onContentScroll() {
-  m_eventEmitter->onScroll(getTextInputMetrics());
+  if (m_eventEmitter) {
+    m_eventEmitter->onScroll(getTextInputMetrics());
+  }
 }
 
-std::string TextInputComponentInstance::getTextContentFromState(SharedConcreteState const& state) {
+std::string TextInputComponentInstance::getTextContentFromState(
+    SharedConcreteState const& state) {
   std::ostringstream contentStream;
   for (auto const& fragment :
-      state->getData().attributedStringBox.getValue().getFragments()) {
+       state->getData().attributedStringBox.getValue().getFragments()) {
     contentStream << fragment.string;
   }
   return contentStream.str();
@@ -454,7 +470,7 @@ void TextInputComponentInstance::onStateChanged(
   if (state->getData().mostRecentEventCount < this->m_nativeEventCount) {
     return;
   }
-  
+
   auto content = getTextContentFromState(state);
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;

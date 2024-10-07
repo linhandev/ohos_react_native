@@ -163,6 +163,22 @@ export function TextInputTest() {
           }}
         />
         <TestCase.Manual
+          modal
+          itShould="automatically focus textInput (multiline) when displayed"
+          initialState={false}
+          arrange={({setState}) => (
+            <TextInputWithText
+              style={styles.textInput}
+              multiline
+              autoFocus
+              onFocus={() => setState(true)}
+            />
+          )}
+          assert={({expect, state}) => {
+            expect(state).to.be.true;
+          }}
+        />
+        <TestCase.Manual
           itShould="focus textInput on click"
           initialState={false}
           arrange={({setState}) => (
