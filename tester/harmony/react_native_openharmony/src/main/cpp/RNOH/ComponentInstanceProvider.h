@@ -1,6 +1,7 @@
 #pragma once
 #include "ComponentInstanceFactory.h"
 #include "ComponentInstancePreallocationRequestQueue.h"
+#include "ComponentInstanceRegistry.h"
 #include "UITicker.h"
 
 namespace rnoh {
@@ -50,7 +51,7 @@ class ComponentInstanceProvider
   void onUITick(UITicker::Timestamp recentVSyncTimestamp);
 
   void processPreallocationRequest(
-      ComponentInstancePreallocationRequest const& request);
+      facebook::react::ShadowView const& shadowView);
 
   bool shouldPausePreallocationToAvoidBlockingMainThread(
       UITicker::Timestamp recentVSyncTimestamp);

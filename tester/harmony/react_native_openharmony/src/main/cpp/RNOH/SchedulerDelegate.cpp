@@ -86,12 +86,7 @@ void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
   if (preallocationRequestQueue == nullptr) {
     return;
   }
-  preallocationRequestQueue->push({
-      shadowNode.getTag(),
-      shadowNode.getComponentHandle(),
-      shadowNode.getComponentName(),
-      shadowNode.getProps(),
-  });
+  preallocationRequestQueue->push(ShadowView{shadowNode});
 }
 
 void SchedulerDelegate::schedulerDidDispatchCommand(
