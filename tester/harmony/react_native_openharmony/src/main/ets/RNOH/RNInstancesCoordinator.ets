@@ -195,7 +195,7 @@ export class RNInstancesCoordinator {
       this.rawLogger,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => new UITurboModuleContext(RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)),
+      (rnInstance) => new UITurboModuleContext(RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance)),
       httpClientProvider,
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
