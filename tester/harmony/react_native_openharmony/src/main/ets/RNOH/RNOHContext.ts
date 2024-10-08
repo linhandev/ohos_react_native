@@ -156,7 +156,7 @@ export class RNOHContext extends RNOHCoreContext {
   /**
    * @internal
    */
-  static fromRNOHCoreContext(
+  static fromCoreContext(
     rnohCoreContext: RNOHCoreContext,
     rnInstance: RNInstance,
   ): RNOHContext {
