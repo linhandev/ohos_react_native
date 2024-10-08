@@ -6,7 +6,7 @@ if [ -z "$OHOS_SDK" ]; then
 fi
 
 SCRIPT_DIR=$(dirname "$0")
-THIRD_PARTY_DIR=$SCRIPT_DIR/../harmony/cpp/third-party
+THIRD_PARTY_DIR=$SCRIPT_DIR/../../tester/harmony/react_native_openharmony/src/main/cpp/third-party
 HERMES_SRC_DIR=$THIRD_PARTY_DIR/hermes
 
 while true; do
@@ -39,23 +39,29 @@ done
 read -p "Provide React Native version (eg. 0.0.0): " REACT_NATIVE_VERSION
 
 ARCHITECTURES=("arm64-v8a" "armeabi-v7a" "x86_64")
-OHOS_SDK_NATIVE_DIR=$OHOS_SDK/10/native
+OHOS_SDK_NATIVE_DIR=$OHOS_SDK/native
 OUTPUT_DIR="$PWD/out"
 BUILD_HERMESC_DIR=$OUTPUT_DIR/hermesc
-JSI_DIR=$THIRD_PARTY_DIR/rn/ReactCommon/jsi
+JSI_DIR=$(realpath "$$THIRD_PARTY_DIR/rn/ReactCommon/jsi")
+
+
+# hermes compiler
+$OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
+  -S$HERMES_SRC_DIR \
+  -B$BUILD_HERMESC_DIR \
+  -DJSI_DIR=$JSI_DIR
+  
+$OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
+  --build $BUILD_HERMESC_DIR \
+  --target hermesc -j 4
 
 for ARCHITECTURE in "${ARCHITECTURES[@]}"; do
   echo "Building Hermes@$ARCHITECTURE"
+
   BUILD_TARGET_DIRECTORY=$OUTPUT_DIR/${ARCHITECTURE}-output
   BUILD_LIBRARY_DIRECTORY=$OUTPUT_DIR/${ARCHITECTURE}-lib
-  $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
-    -S$HERMES_SRC_DIR \
-    -B$BUILD_HERMESC_DIR \
-    -DJSI_DIR=$JSI_DIR
-  $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
-    --build $BUILD_HERMESC_DIR \
-    --target hermesc -j 4
 
+  # hermes engine
   $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
     -H$HERMES_SRC_DIR \
     -B$BUILD_TARGET_DIRECTORY \
@@ -69,16 +75,20 @@ for ARCHITECTURE in "${ARCHITECTURES[@]}"; do
     -DCMAKE_MAKE_PROGRAM=$OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/ninja \
     -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=$BUILD_LIBRARY_DIRECTORY \
     -DIMPORT_HERMESC=$BUILD_HERMESC_DIR/ImportHermesc.cmake \
-    -DJSI_DIR=$THIRD_PARTY_DIR/rn/ReactCommon/jsi \
+    -DJSI_DIR=$JSI_DIR \
     -DHERMES_IS_ANDROID=True \
     -DHERMES_SLOW_DEBUG=False \
     -DHERMES_BUILD_SHARED_JSI=True \
     -DHERMES_RELEASE_VERSION="for RN $REACT_NATIVE_VERSION" \
     -DHERMES_ENABLE_INTL=False \
+    -DHERMES_ENABLE_DEBUGGER=True \
     -DCMAKE_BUILD_WITH_INSTALL_RPATH=On \
     -DHERMES_ENABLE_TEST_SUITE=False \
     -DHERMES_UNICODE_LITE=True \
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
+    -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
+    -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-Wl,--strip-debug" \
 
   $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/ninja \
     -C \
