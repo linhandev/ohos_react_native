@@ -804,12 +804,18 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public onForeground() {
+    if (this.lifecycleState === LifecycleState.BEFORE_CREATE) {
+      return
+    }
     this.lifecycleState = LifecycleState.READY
     this.lifecycleEventEmitter.emit("FOREGROUND")
     this.postMessageToCpp("FOREGROUND", {})
   }
 
   public onBackground() {
+    if (this.lifecycleState === LifecycleState.BEFORE_CREATE) {
+      return
+    }
     this.lifecycleState = LifecycleState.PAUSED
     this.lifecycleEventEmitter.emit("BACKGROUND")
     this.postMessageToCpp("BACKGROUND", {})
