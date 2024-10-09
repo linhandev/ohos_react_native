@@ -150,8 +150,10 @@ export class NapiBridge {
   startSurface(
     instanceId: number,
     surfaceTag: number,
-    initialSurfaceWidth: number,
-    initialSurfaceHeight: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
     surfaceOffsetX: number,
     surfaceOffsetY: number,
     pixelRatio: number,
@@ -160,8 +162,10 @@ export class NapiBridge {
     this.libRNOHApp?.startSurface(
       instanceId,
       surfaceTag,
-      initialSurfaceWidth,
-      initialSurfaceHeight,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -173,8 +177,10 @@ export class NapiBridge {
   updateSurfaceConstraints(
     instanceId: number,
     surfaceTag: number,
-    surfaceWidth: number,
-    surfaceHeight: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
     surfaceOffsetX: number,
     surfaceOffsetY: number,
     pixelRatio: number,
@@ -183,13 +189,42 @@ export class NapiBridge {
     this.libRNOHApp?.updateSurfaceConstraints(
       instanceId,
       surfaceTag,
-      surfaceWidth,
-      surfaceHeight,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
       isRTL
     );
+  }
+
+  measureSurface(
+    instanceId: number,
+    surfaceTag: number,
+    surfaceMinWidth: number,
+    surfaceMinHeight: number,
+    surfaceMaxWidth: number,
+    surfaceMaxHeight: number,
+    surfaceOffsetX: number,
+    surfaceOffsetY: number,
+    pixelRatio: number,
+    isRTL: boolean,
+  ) {
+    const result = this.libRNOHApp?.measureSurface(
+      instanceId,
+      surfaceTag,
+      surfaceMinWidth,
+      surfaceMinHeight,
+      surfaceMaxWidth,
+      surfaceMaxHeight,
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL
+    );
+    return result
   }
 
   createSurface(
