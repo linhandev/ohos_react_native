@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import zlib from 'zlib';
+import zlib from 'node:zlib';
 import tar from 'tar';
 import { AbsolutePath } from '../core';
 
