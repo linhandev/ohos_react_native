@@ -203,6 +203,7 @@ void TextComponentInstance::onStateChanged(
     for (auto& fragment: fragments) {
       textContent += fragment.string;
     }
+    m_textContent = textContent;    
     m_textNode.setTextContent(textContent);
   }
   this->setTextAttributes(fragments[0].textAttributes);
