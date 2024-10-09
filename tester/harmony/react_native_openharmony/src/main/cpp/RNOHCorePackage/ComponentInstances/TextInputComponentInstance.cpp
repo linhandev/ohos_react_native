@@ -439,6 +439,7 @@ void TextInputComponentInstance::onCommandReceived(
     if (args[2].asInt() >= 0 && args[3].asInt() >= args[2].asInt()) {
       m_selectionStart = args[2].asInt();
       m_selectionEnd = args[3].asInt();
+    }
   }
 }
 
