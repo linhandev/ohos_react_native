@@ -465,12 +465,13 @@ static napi_value stopSurface(napi_env env, napi_callback_info info) {
       return arkJs.getUndefined();
     }
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
-    auto n_onStopRef = arkJs.createNapiRef(args[2]);
+    auto n_onStopRef = arkJs.createReference(args[2]);
     DLOG(INFO) << "stopSurface: surfaceId=" << surfaceId << "\n";
     rnInstance->stopSurface(
         surfaceId, [env, n_onStopRef = std::move(n_onStopRef)]() {
           ArkJS arkJS(env);
           arkJS.call(arkJS.getReferenceValue(n_onStopRef), {});
+          arkJS.deleteReference(n_onStopRef);
         });
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
