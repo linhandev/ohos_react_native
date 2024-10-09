@@ -341,11 +341,14 @@ class CppComponentInstance : public ComponentInstance,
         // Do nothing here.   
     }
 
-    if (props->accessibilityActions != old->accessibilityActions) {
-      this->getLocalRootArkUINode().setAccessibilityActions(
-          props->accessibilityActions);
+    if (old) {
+      if (props->accessibilityActions != old->accessibilityActions) {
+        this->getLocalRootArkUINode().setAccessibilityActions(props->accessibilityActions);
+      }
+    } else {
+      this->getLocalRootArkUINode().setAccessibilityActions(props->accessibilityActions);
     }
-
+        
     if (!isTransformManagedByAnimated) {
       if (!old) {
         if (props->transform != defaultTransform || abs(m_oldPointScaleFactor - 0.0f) > 0.001f) {
@@ -480,36 +483,37 @@ class CppComponentInstance : public ComponentInstance,
 
   void onFinalizeUpdates() override {
     ComponentInstance::onFinalizeUpdates();
-    if (m_props->accessibilityLabelledBy.value != m_accessibilityLabelledBy) {
-      std::string targetId = "";
-      if (!m_props->accessibilityLabelledBy.value.empty()) {
-        targetId = m_props->accessibilityLabelledBy.value[0];
-      }
-      if (!targetId.empty()) {
-        auto componentInstance =
-            m_deps->componentInstanceRegistry->findById(targetId);
-        if (componentInstance != nullptr) {
-          std::string newAccessibilityLabel = "";
-          if (m_props->accessibilityLabel != "") {
-            newAccessibilityLabel += m_props->accessibilityLabel;
+    if (m_props != nullptr) {
+      if (m_props->accessibilityLabelledBy.value != m_accessibilityLabelledBy) {
+        std::string targetId = "";
+        if (!m_props->accessibilityLabelledBy.value.empty()) {
+          targetId = m_props->accessibilityLabelledBy.value[0];
+        }
+        if (!targetId.empty()) {
+          auto componentInstance =
+              m_deps->componentInstanceRegistry->findById(targetId);
+          if (componentInstance != nullptr) {
+            std::string newAccessibilityLabel = "";
+            if (m_props->accessibilityLabel != "") {
+              newAccessibilityLabel += m_props->accessibilityLabel;
+            }
+            auto targetAccessibilityLabel =
+                componentInstance->getAccessibilityLabel();
+            if (!targetAccessibilityLabel.empty()) {
+              newAccessibilityLabel += " " + targetAccessibilityLabel;
+            }
+            if (!newAccessibilityLabel.empty()) {
+              this->getLocalRootArkUINode().setAccessibilityText(
+                  newAccessibilityLabel);
+            }
+          } else {
+            DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
+                          << targetId;
           }
-          auto targetAccessibilityLabel =
-              componentInstance->getAccessibilityLabel();
-          if (!targetAccessibilityLabel.empty()) {
-            newAccessibilityLabel += " " + targetAccessibilityLabel;
-          }
-          if (!newAccessibilityLabel.empty()) {
-            this->getLocalRootArkUINode().setAccessibilityText(
-                newAccessibilityLabel);
-          }
-        } else {
-          DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
-                        << targetId;
         }
       }
+      m_accessibilityLabelledBy = m_props->accessibilityLabelledBy.value;
     }
-    m_accessibilityLabelledBy = m_props->accessibilityLabelledBy.value;
-
   }
 
   facebook::react::Rect getHitRect() const {
@@ -577,9 +581,16 @@ class CppComponentInstance : public ComponentInstance,
 
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
-    std::ostringstream id;
-    id << m_tag;
-    return id.str();
+    if (props->testId != "") {
+      return props->testId;
+    } else if (props->nativeId != "") {
+      return props->nativeId;
+    } else {
+      std::ostringstream id;
+      id << ShadowNodeT::Name() << "(" << m_tag << ")"
+         << "@" << this;
+      return id.str();
+    }
   }
 
   struct ViewRawProps {
@@ -620,13 +631,6 @@ class CppComponentInstance : public ComponentInstance,
  private:
   std::vector<std::string> m_accessibilityLabelledBy{};
   std::string m_accessibilityLabel;
-  void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
-    override {
-    if (m_eventEmitter == nullptr) {
-      return;
-    }
-    m_eventEmitter->onAccessibilityAction(actionName);
-  }
 };
 
 inline facebook::react::Rect transformRectAroundPoint(

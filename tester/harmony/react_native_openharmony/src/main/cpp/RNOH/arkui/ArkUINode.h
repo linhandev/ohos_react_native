@@ -149,7 +149,9 @@ class ArkUINode {
       throw std::runtime_error(std::move(message));
     }
   }
-
+    
+  void registerNodeEvent(ArkUI_NodeEventType eventType);
+  void unregisterNodeEvent(ArkUI_NodeEventType eventType);  
   const ArkUI_AttributeItem& getAttribute(
       ArkUI_NodeAttributeType attribute) const;
 
