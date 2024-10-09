@@ -1,4 +1,4 @@
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import React, {useEffect, useState} from 'react';
 import {GestureResponderEvent, ScrollView, TextInput} from 'react-native';
 import {

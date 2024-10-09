@@ -20,7 +20,7 @@ import {NavigationContainer, Page} from '../../../components';
 import {Benchmarker, DeepTree, SierpinskiTriangle} from '../../../benchmarks';
 import {PortalHost, PortalProvider} from '@gorhom/portal';
 import * as tests from '../../../tests';
-import {Tester} from '@rnoh/testerino';
+import { Tester } from '@rnoh/testerino';
 
 function AppTest() {
   return (

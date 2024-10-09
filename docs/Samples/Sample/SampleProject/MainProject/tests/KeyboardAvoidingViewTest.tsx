@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import React from 'react';
 import {Modal} from '../components';
 

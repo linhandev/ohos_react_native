@@ -5,7 +5,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import React, {useState} from 'react';
 import {Button} from '../components';
 

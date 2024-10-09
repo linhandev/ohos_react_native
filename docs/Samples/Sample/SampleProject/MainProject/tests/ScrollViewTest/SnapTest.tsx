@@ -1,4 +1,4 @@
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {ScrollViewProps} from 'react-native';
 import {ScrollViewComparator, getScrollViewContent} from './fixtures';
 

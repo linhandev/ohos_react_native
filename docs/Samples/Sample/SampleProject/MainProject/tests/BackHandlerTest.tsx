@@ -1,5 +1,5 @@
 import {BackHandler, Text, TouchableOpacity, View} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {useCallback, useState} from 'react';
 import {Button} from '../components';
 

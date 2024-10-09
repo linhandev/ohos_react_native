@@ -1,4 +1,4 @@
-import {TestCase} from '@rnoh/testerino';
+import { TestCase } from '@rnoh/testerino';
 import {useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {Button} from '../../components';

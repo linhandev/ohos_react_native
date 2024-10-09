@@ -1,4 +1,4 @@
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import {I18nManager} from 'react-native';
 
 export function I18nManagerTest() {

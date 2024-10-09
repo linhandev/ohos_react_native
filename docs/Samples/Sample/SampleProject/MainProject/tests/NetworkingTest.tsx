@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import React from 'react';
 
 const WebSocketEcho = () => {

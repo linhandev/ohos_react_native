@@ -1,6 +1,9 @@
 {
   "apiType": "stageMode",
   "buildOption": {
+    "nativeLib": {
+      "excludeFromHar": false
+    },
     "externalNativeOptions": {
       "path": "./src/main/cpp/CMakeLists.txt",
       "arguments": "-DCMAKE_BUILD_TYPE=Release",

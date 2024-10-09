@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 
 import {Animated, View, Easing, EasingFunction} from 'react-native';
 
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export function AnimatedEasingTest() {
   return (

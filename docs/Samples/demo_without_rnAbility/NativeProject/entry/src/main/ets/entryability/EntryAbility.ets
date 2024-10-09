@@ -1,7 +1,7 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
-import { UPRNSDK, UPRNSDKImpl } from 'uprnsdk'
+import { UPRNSDK, UPRNSDKImpl } from 'library'
 
 export default class EntryAbility extends UIAbility {
   rnSDK: UPRNSDKImpl | undefined = undefined;

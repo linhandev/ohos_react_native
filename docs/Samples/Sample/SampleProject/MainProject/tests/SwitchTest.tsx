@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Switch, StyleSheet, Text} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export function SwitchTest() {
   const [isEnabled, setIsEnabled] = useState(false);

@@ -6,7 +6,7 @@
 
 **环境变量配置：**
 
-​ SampleApp默认为CAPI版本，该版本需要设置`RNOH_C_API_ARCH`环境变量的值为`1`。如何设置环境变量，您可以参考[配置CAPI版本环境变量](#set_capi_path)。
+​ SampleApp默认为CAPI版本，该版本需要设置`RNOH_C_API_ARCH`环境变量的值为`1`。如何设置环境变量，您可以参考[配置CAPI版本环境变量](..//../zh-cn/环境搭建.md#set_capi_path)。
 
 **React Native工程配置：**
 前提：
@@ -128,7 +128,7 @@
 
 ### Metro服务
 
-​ 本工程实现了Metro加载bundle包服务，请根据[工程运行指导](#工程运行指导)的说明启动Metro服务，您可以在修改React Native侧的代码后保存，即可实时刷新App界面内容。详细介绍可以参考[Metro](调试调测.md#metro热加载)。
+​ 本工程实现了Metro加载bundle包服务，请根据[工程运行指导](#工程运行指导)的说明启动Metro服务，您可以在修改React Native侧的代码后保存，即可实时刷新App界面内容。详细介绍可以参考[Metro](../../zh-cn/调试调测.md#metro热加载)。
 
 ![image](./figures/环境搭建-runStart.png)
 
@@ -144,7 +144,7 @@
 	功能：release版本去除了调试功能，因此想用JS断点调试的话建议先使用debug版本
 	用法：release版本的使用方法跟debug版本小有区别，详见如下：
 
-Release版本用法跟[创建鸿蒙工程](环境搭建.md#创建鸿蒙工程)这一节基本上是一致的，唯一的区别点是<加载har包>这一节中【替换entry文件夹内容】时需要将MyApplicationReplace/entry/src/main/cpp/CMakeLists - release.txt文件重命名为CMakeLists.txt。
+Release版本用法跟[创建鸿蒙工程](../../zh-cn/环境搭建.md#创建鸿蒙工程)这一节基本上是一致的，唯一的区别点是<加载har包>这一节中【替换entry文件夹内容】时需要将MyApplicationReplace/entry/src/main/cpp/CMakeLists - release.txt文件重命名为CMakeLists.txt。
 
 CMakeLists - release.txt与原CMakeLists.txt的区别详见CMakeLists - release.txt里的注释说明。
 

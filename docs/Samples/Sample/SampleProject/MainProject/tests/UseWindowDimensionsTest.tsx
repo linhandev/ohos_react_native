@@ -1,5 +1,5 @@
 import {useWindowDimensions} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 
 export function UseWindowDimensionsTest() {
   const {height, width, scale, fontScale} = useWindowDimensions();

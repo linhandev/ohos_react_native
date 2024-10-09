@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, StatusBar, Text, View, StatusBarStyle} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export function StatusBarTest() {
   return (

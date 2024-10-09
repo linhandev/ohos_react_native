@@ -1,4 +1,4 @@
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import React from 'react';
 import {AppParamsContext} from '../contexts';
 import {Button} from '../components';

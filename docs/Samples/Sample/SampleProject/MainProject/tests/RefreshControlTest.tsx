@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {useEffect, useState} from 'react';
 
 export const RefreshControlTest = () => {
@@ -76,7 +76,7 @@ export const RefreshControlTest = () => {
       <TestCase
         itShould="display double refresh control for 2 seconds in nested scroll view"
         modal
-        skip={Platform.select({harmony: true, android: false})} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/770
+        skip={Platform.select({ harmony: true, android: false })} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/770
       >
         <PullToRefreshInNestedScrollViews />
       </TestCase>
