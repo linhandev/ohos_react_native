@@ -224,7 +224,7 @@ export class NapiBridge {
       pixelRatio,
       isRTL
     );
-    return result
+    return result.ok
   }
 
   createSurface(
