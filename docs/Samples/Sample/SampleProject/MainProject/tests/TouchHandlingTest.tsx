@@ -1,4 +1,4 @@
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {useEffect, useRef, useState} from 'react';
 import {
   Animated,

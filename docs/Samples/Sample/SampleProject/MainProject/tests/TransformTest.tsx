@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 
 export function TransformTest() {
   return (

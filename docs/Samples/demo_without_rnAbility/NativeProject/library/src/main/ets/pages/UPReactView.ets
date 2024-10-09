@@ -1,7 +1,7 @@
 import { UPRNSDK } from '../UPRNSDK'
 import { createRNPackages } from '../rn/RNPackagesFactory'
 import { RNInfo } from '../model/RNInfo'
-import { RNInstance, ResourceJSBundleProvider, RNSurface, ComponentBuilderContext, RNAbility, RNOHCoreContext, RNComponentContext, RNOHContext, buildRNComponentForTag } from "rnoh";
+import { RNInstance, ResourceJSBundleProvider, RNSurface, ComponentBuilderContext, RNAbility, RNOHCoreContext, RNComponentContext, RNOHContext, buildRNComponentForTag } from "@rnoh/react-native-openharmony";
 
 @Builder
 export function buildCustomComponent(ctx: ComponentBuilderContext) { }
@@ -22,7 +22,7 @@ export struct UPReactView {
       this.rnInstance = await this.rnohCoreContext!.createAndRegisterRNInstance({
         createRNPackages: createRNPackages,
         enableNDKTextMeasuring: true,
-        enableBackgroundExecutor: false,
+        enableBackgroundExecutor: true,
         enableCAPIArchitecture: true,
         arkTsComponentNames: []
       });

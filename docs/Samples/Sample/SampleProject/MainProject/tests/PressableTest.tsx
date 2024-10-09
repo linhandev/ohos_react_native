@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export function PressableTest() {
   return (

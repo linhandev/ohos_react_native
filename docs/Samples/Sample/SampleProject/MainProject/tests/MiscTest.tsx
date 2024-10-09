@@ -12,7 +12,7 @@ import {
   RootTagContext,
   View,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {useContext} from 'react';
 import React from 'react';
 import {Button} from '../components';

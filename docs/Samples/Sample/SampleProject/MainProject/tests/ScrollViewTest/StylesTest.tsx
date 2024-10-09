@@ -1,5 +1,5 @@
 import {View, ScrollView, StyleSheet} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import {COMMON_PROPS} from './fixtures';
 
 export function StylesTest() {

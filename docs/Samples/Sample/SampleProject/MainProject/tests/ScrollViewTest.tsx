@@ -9,7 +9,7 @@ import {
   Platform,
   ScrollViewProps,
 } from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import React, {useEffect, useRef, useState} from 'react';
 import {Button, ObjectDisplayer} from '../components';
 import {GestureResponderEvent} from 'react-native/Libraries/Types/CoreEventTypes';

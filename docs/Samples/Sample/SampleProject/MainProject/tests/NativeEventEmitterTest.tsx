@@ -1,5 +1,5 @@
 import {NativeEventEmitter} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export const NativeEventEmitterTest = () => {
   return (

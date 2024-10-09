@@ -1,5 +1,5 @@
 import {Text, TouchableOpacity, View, ViewProps} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {useState} from 'react';
 
 export const TouchableOpacityTest = () => {

@@ -11,7 +11,7 @@ import {
   ScrollResponderMixin,
   Platform,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Button, ObjectDisplayer} from '../components';
 interface ItemData {
   title: string;

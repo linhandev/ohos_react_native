@@ -8,6 +8,6 @@
     "@ohos/hamock": "1.0.1-rc2"
   },
   "overrides": {
-    "rnoh": "file:./libs/react_native_openharmony-5.0.0.490.har"
+    "@rnoh/react-native-openharmony": "file:./libs/react_native_openharmony-5.0.0.601.har"
   }
 }

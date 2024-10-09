@@ -1,4 +1,4 @@
-import { RNInfo, UPReactView, UPRNSDK } from 'uprnsdk'
+import { RNInfo, UPReactView, UPRNSDK } from 'library'
 @Entry
 @Component
 export struct RNPage {

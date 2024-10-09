@@ -1,4 +1,4 @@
-import {Tester, Filter} from '@rnoh/testerino';
+import { Tester, Filter } from '@rnoh/testerino';
 import * as React from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {TextTest} from '../tests';
