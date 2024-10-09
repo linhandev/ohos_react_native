@@ -195,13 +195,13 @@ static napi_value onCreateRNInstance(
     for (size_t i = 0; i < arkTsComponentNamesDynamic.size(); ++i) {
         arkTsComponentNames.emplace(arkTsComponentNamesDynamic[i].asString());
     }
-    auto n_fontPathRelativeToRawfileDirByFontFamily =
+    auto fontPathByFontFamilyEntries =
         arkJs.getObjectProperties(args[12]);
     std::unordered_map<std::string, std::string>
-        fontPathRelativeToRawfileDirByFontFamily;
+        fontPathByFontFamily;
     for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
-         n_fontPathRelativeToRawfileDirByFontFamily) {
-      fontPathRelativeToRawfileDirByFontFamily.emplace(
+         fontPathByFontFamilyEntries) {
+      fontPathByFontFamily.emplace(
           arkJs.getString(fontFamily),
           arkJs.getString(fontPathRelativeToRawfileDir));
     }
@@ -272,7 +272,7 @@ static napi_value onCreateRNInstance(
         shouldEnableDebugger,
         shouldEnableBackgroundExecutor,
         arkTsComponentNames,
-        std::move(fontPathRelativeToRawfileDirByFontFamily));
+        std::move(fontPathByFontFamily));
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(instanceId) != RN_INSTANCE_BY_ID.end()) {
@@ -697,6 +697,27 @@ static napi_value setBundlePath(napi_env env, napi_callback_info info)
   return arkJs.getUndefined();
 }
 
+static napi_value registerFont(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 3);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
+      return arkJS.getUndefined();
+    }
+    auto const& rnInstance = it->second;
+
+    auto fontName = arkJS.getString(args[1]);
+    auto fontPath = arkJS.getString(args[2]);
+
+    rnInstance->registerFont(fontName, fontPath);
+
+    return arkJS.getUndefined();
+  });
+}
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
@@ -867,8 +888,15 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        nullptr,
        napi_default,
-       nullptr}
-  };
+       nullptr},
+      {"registerFont",
+       nullptr,
+       ::registerFont,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr}};
 
   napi_define_properties(
       env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc);

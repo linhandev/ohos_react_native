@@ -81,7 +81,7 @@ struct Index {
             enableCAPIArchitecture: true,
             arkTsComponentNames: arkTsComponentNames,
             fontResourceByFontFamily: {
-              'Pacifico-Regular': $rawfile("fonts/Pacifico-Regular.ttf"),
+              // NOTE: you can provide fonts in `RNInstanceConfig` ahead of time, when creating the RN application
               "StintUltraCondensed-Regular": $rawfile('fonts/StintUltraCondensed-Regular.ttf'),
             }
           },
@@ -90,6 +90,9 @@ struct Index {
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {
             rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
+            // NOTE: you can provide fonts dynamically at runtime by calling `RNInstance.registerFont`
+            rnInstance.registerFont('Pacifico-Regular', $rawfile("fonts/Pacifico-Regular.ttf"))
+            // rnInstance.registerFont('Pacifico-Regular', "/data/storage/el2/base/files/Pacifico-Regular.ttf");
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([

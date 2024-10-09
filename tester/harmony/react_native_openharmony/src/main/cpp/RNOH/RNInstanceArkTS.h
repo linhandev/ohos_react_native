@@ -172,6 +172,9 @@ class RNInstanceArkTS : public RNInstanceInternal,
   NativeResourceManager const* getNativeResourceManager() const override;
   void setBundlePath(std::string const& path) override;
   std::string getBundlePath() override;
+  void registerFont(
+      std::string const& fontFamily,
+      std::string const& fontFilePath) override;
 
   std::shared_ptr<TaskExecutor> taskExecutor;
 

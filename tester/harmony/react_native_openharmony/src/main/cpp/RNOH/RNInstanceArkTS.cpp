@@ -453,3 +453,9 @@ NativeResourceManager const* rnoh::RNInstanceArkTS::getNativeResourceManager()
   throw RNOHError(
       "NativeResourceManager is not supported in ArkTS architecture");
 }
+
+void RNInstanceArkTS::registerFont(
+    std::string const& fontFamily,
+    std::string const& fontFilePath) {
+  // not needed to register here
+}

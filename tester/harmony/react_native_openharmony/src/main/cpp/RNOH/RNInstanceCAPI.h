@@ -187,6 +187,9 @@ class RNInstanceCAPI : public RNInstanceInternal,
     
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
+  void registerFont(
+      std::string const& fontFamily,
+      std::string const& fontFilePath) override;
     
 
  protected:
