@@ -102,18 +102,32 @@ class RNInstanceInternal : public RNInstance,
   virtual void createSurface(
       facebook::react::Tag surfaceId,
       std::string const& moduleName) = 0;
+  virtual facebook::react::Size measureSurface(
+      facebook::react::Tag surfaceId,
+      float minWidth,
+      float minHeight,
+      float maxWidth,
+      float maxHeight,
+      float viewportOffsetX,
+      float viewportOffsetY,
+      float pixelRatio,
+      bool isRTL) = 0;
   virtual void updateSurfaceConstraints(
       facebook::react::Tag surfaceId,
-      float width,
-      float height,
+      float minWidth,
+      float minHeight,
+      float maxWidth,
+      float maxHeight,
       float viewportOffsetX,
       float viewportOffsetY,
       float pixelRatio,
       bool isRTL) = 0;
   virtual void startSurface(
       facebook::react::Tag surfaceId,
-      float width,
-      float height,
+      float minWidth,
+      float minHeight,
+      float maxWidth,
+      float maxHeight,
       float viewportOffsetX,
       float viewportOffsetY,
       float pixelRatio,

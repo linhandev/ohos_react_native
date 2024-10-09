@@ -56,6 +56,15 @@ std::unordered_map<int, std::unique_ptr<NapiTaskRunner>>
     WORKER_TASK_RUNNER_BY_RN_INSTANCE_ID;
 std::mutex WORKER_DATA_MTX;
 
+std::shared_ptr<RNInstanceInternal> maybeGetInstanceById(size_t instanceId) {
+  auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+  auto it = RN_INSTANCE_BY_ID.find(instanceId);
+  if (it == RN_INSTANCE_BY_ID.end()) {
+    return nullptr;
+  }
+  return it->second;
+}
+
 auto UI_TICKER = std::make_shared<UITicker>();
 static auto CLEANUP_RUNNER = std::make_unique<ThreadTaskRunner>("RNOH_CLEANUP");
 
@@ -319,12 +328,10 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     auto onFinishRef = arkJs.createReference(args[3]);
     rnInstance->loadScript(
         arkJs.getArrayBuffer(args[1]),
@@ -351,14 +358,12 @@ static napi_value updateSurfaceConstraints(
   DLOG(INFO) << "updateSurfaceConstraints\n";
   ArkJS arkJs(env);
   try {
-    auto args = arkJs.getCallbackArgs(info, 8);
+    auto args = arkJs.getCallbackArgs(info, 10);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     rnInstance->updateSurfaceConstraints(
         arkJs.getDouble(args[1]),
         arkJs.getDouble(args[2]),
@@ -366,7 +371,9 @@ static napi_value updateSurfaceConstraints(
         arkJs.getDouble(args[4]),
         arkJs.getDouble(args[5]),
         arkJs.getDouble(args[6]),
-        arkJs.getBoolean(args[7]));
+        arkJs.getDouble(args[7]),
+        arkJs.getDouble(args[8]),
+        arkJs.getBoolean(args[9]));
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
   }
@@ -374,17 +381,42 @@ static napi_value updateSurfaceConstraints(
   return arkJs.getUndefined();
 }
 
+static napi_value measureSurface(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    DLOG(INFO) << "measureSurface";
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 10);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.getUndefined();
+    }
+    auto size = rnInstance->measureSurface(
+        arkJS.getDouble(args[1]),
+        arkJS.getDouble(args[2]),
+        arkJS.getDouble(args[3]),
+        arkJS.getDouble(args[4]),
+        arkJS.getDouble(args[5]),
+        arkJS.getDouble(args[6]),
+        arkJS.getDouble(args[7]),
+        arkJS.getDouble(args[8]),
+        arkJS.getBoolean(args[9]));
+    return arkJS.createObjectBuilder()
+        .addProperty("width", size.width)
+        .addProperty("height", size.height)
+        .build();
+  });
+}
+
 static napi_value createSurface(napi_env env, napi_callback_info info) {
   ArkJS arkJs(env);
   try {
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "createSurface: surfaceId=" << surfaceId;
     auto appKey = arkJs.getString(args[2]);
@@ -398,14 +430,12 @@ static napi_value createSurface(napi_env env, napi_callback_info info) {
 static napi_value startSurface(napi_env env, napi_callback_info info) {
   ArkJS arkJs(env);
   try {
-    auto args = arkJs.getCallbackArgs(info, 9);
+    auto args = arkJs.getCallbackArgs(info, 11);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "startSurface: surfaceId=" << surfaceId << "\n";
     rnInstance->startSurface(
@@ -415,8 +445,10 @@ static napi_value startSurface(napi_env env, napi_callback_info info) {
         arkJs.getDouble(args[4]),
         arkJs.getDouble(args[5]),
         arkJs.getDouble(args[6]),
-        arkJs.getBoolean(args[7]),
-        arkJs.getDynamic(args[8]));
+        arkJs.getDouble(args[7]),
+        arkJs.getDouble(args[8]),
+        arkJs.getBoolean(args[9]),
+        arkJs.getDynamic(args[10]));
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
   }
@@ -428,12 +460,10 @@ static napi_value stopSurface(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     auto n_onStopRef = arkJs.createNapiRef(args[2]);
     DLOG(INFO) << "stopSurface: surfaceId=" << surfaceId << "\n";
@@ -455,12 +485,10 @@ static napi_value destroySurface(napi_env env, napi_callback_info info) {
     size_t instanceId = arkJs.getDouble(args[0]);
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "destroySurface: surfaceId=" << surfaceId << "\n";
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     rnInstance->destroySurface(surfaceId);
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
@@ -473,12 +501,10 @@ static napi_value setSurfaceDisplayMode(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 3);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     facebook::react::Tag surfaceId = arkJs.getDouble(args[1]);
     DLOG(INFO) << "setSurfaceDisplayMode: surfaceId=" << surfaceId << "\n";
     rnInstance->setSurfaceDisplayMode(
@@ -495,12 +521,10 @@ static napi_value emitComponentEvent(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 5);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     rnInstance->emitComponentEvent(
         env, arkJs.getDouble(args[1]), arkJs.getString(args[2]), args[3]);
   } catch (...) {
@@ -514,12 +538,10 @@ static napi_value callRNFunction(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     auto moduleString = arkJs.getString(args[1]);
     auto nameString = arkJs.getString(args[2]);
     auto argsDynamic = arkJs.getDynamic(args[3]);
@@ -536,8 +558,10 @@ static napi_value onMemoryLevel(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 1);
     auto memoryLevel = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    for (auto& [id, instance] : RN_INSTANCE_BY_ID) {
+    auto lock = std::unique_lock<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto instances = RN_INSTANCE_BY_ID;
+    lock.unlock();
+    for (auto& [id, instance] : instances) {
       if (instance != nullptr) {
         instance->onMemoryLevel(static_cast<size_t>(memoryLevel));
       }
@@ -554,12 +578,10 @@ static napi_value updateState(napi_env env, napi_callback_info info) {
   try {
     auto args = arkJs.getCallbackArgs(info, 4);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     auto componentName = arkJs.getString(args[1]);
     auto tag = arkJs.getDouble(args[2]);
     auto state = args[3];
@@ -594,12 +616,10 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
     auto wrappedPayload = arkJs.getDynamic(args[1]);
     auto rnInstanceId = wrappedPayload["rnInstanceId"].getDouble();
     auto messagePayload = wrappedPayload["payload"];
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(rnInstanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(rnInstanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
 	std::weak_ptr<RNInstanceInternal> weakRNInstance = rnInstance;
     auto taskExecutor = rnInstance->getTaskExecutor();
     if (taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
@@ -683,12 +703,10 @@ static napi_value setBundlePath(napi_env env, napi_callback_info info)
   try {
     auto args = arkJs.getCallbackArgs(info, 2);
     size_t instanceId = arkJs.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJs.getUndefined();
     }
-    auto& rnInstance = it->second;
     rnInstance->setBundlePath(arkJs.getString(args[1]));
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());
@@ -702,12 +720,10 @@ static napi_value registerFont(napi_env env, napi_callback_info info) {
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 3);
     size_t instanceId = arkJS.getDouble(args[0]);
-    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-    auto it = RN_INSTANCE_BY_ID.find(instanceId);
-    if (it == RN_INSTANCE_BY_ID.end()) {
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
       return arkJS.getUndefined();
     }
-    auto const& rnInstance = it->second;
 
     auto fontName = arkJS.getString(args[1]);
     auto fontPath = arkJS.getString(args[2]);
@@ -804,6 +820,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"createSurface",
        nullptr,
        createSurface,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"measureSurface",
+       nullptr,
+       measureSurface,
        nullptr,
        nullptr,
        nullptr,

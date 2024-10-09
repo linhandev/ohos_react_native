@@ -29,8 +29,10 @@ import font from "@ohos.font"
 export type Resource = Exclude<font.FontOptions["familySrc"], string>
 
 export type SurfaceContext = {
-  width: number
-  height: number
+  minWidth: number
+  minHeight: number
+  maxWidth: number
+  maxHeight: number
   surfaceOffsetX: number
   surfaceOffsetY: number
   pixelRatio: number
