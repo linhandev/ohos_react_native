@@ -19,7 +19,8 @@ const TEMPLATE = `
 namespace facebook {
 namespace react {
 
-extern const char {{name}}ComponentName[] = "{{name}}";
+// RNOH patch
+constexpr char {{name}}ComponentName[] = "{{name}}";
 
 class {{name}}Props : public ViewProps {
   public:
