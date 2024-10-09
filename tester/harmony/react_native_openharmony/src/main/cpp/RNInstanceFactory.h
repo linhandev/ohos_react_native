@@ -70,7 +70,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableDebugger,
     bool shouldEnableBackgroundExecutor,
     std::unordered_set<std::string> arkTsComponentNames,
-    std::unordered_map<std::string, std::string> fontPathRelativeToRawfileDirByFontFamily
+    std::unordered_map<std::string, std::string> fontPathByFontFamily
     ) {  
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
@@ -236,7 +236,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
       OH_ResourceManager_ReleaseNativeResourceManager);
     for (auto& [fontFamilyName, fontPathRelativeToRawfileDir] :
-       fontPathRelativeToRawfileDirByFontFamily) {
+       fontPathByFontFamily) {
       textMeasurer->registerFont(nativeResourceManager, fontFamilyName, fontPathRelativeToRawfileDir);
     }
     auto rnInstance = std::make_shared<RNInstanceCAPI>(

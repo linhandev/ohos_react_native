@@ -144,6 +144,9 @@ class RNInstanceInternal : public RNInstance,
       folly::dynamic const& payload) = 0;
   virtual void setBundlePath(std::string const& path) = 0;
   virtual std::string getBundlePath() = 0;
+  virtual void registerFont(
+      std::string const& fontFamily,
+      std::string const& fontFilePath) = 0;
 };
 
 } // namespace rnoh

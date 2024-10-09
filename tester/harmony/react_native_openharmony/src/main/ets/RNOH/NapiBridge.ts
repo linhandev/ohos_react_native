@@ -95,7 +95,7 @@ export class NapiBridge {
     cppFeatureFlags: CppFeatureFlag[],
     resourceManager: ohosResourceManager.ResourceManager,
     arkTsComponentNames: Array<string>,
-    fontFamilyNameByFontPathRelativeToRawfileDir: Record<string, string>
+    fontPathByFontFamily: Record<string, string>
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -125,7 +125,7 @@ export class NapiBridge {
       frameNodeFactoryRef,
       resourceManager,
       arkTsComponentNames,
-      fontFamilyNameByFontPathRelativeToRawfileDir,
+      fontPathByFontFamily,
       envId
     );
   }
@@ -294,6 +294,9 @@ export class NapiBridge {
     this.libRNOHApp?.logMarker(markerId, rnInstanceId)
   }
 
+  registerFont(instanceId: number, fontFamily: string, path: string) {
+    return this.libRNOHApp?.registerFont(instanceId, fontFamily, path);
+  }
   getNativeNodeIdByTag(instanceId: number, tag: Tag): string | undefined {
     const result = this.libRNOHApp?.getNativeNodeIdByTag(instanceId, tag)
     return result

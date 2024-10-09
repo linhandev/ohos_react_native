@@ -547,4 +547,10 @@ void RNInstanceCAPI::setBundlePath(std::string const& path)
 std::string RNInstanceCAPI::getBundlePath() {
   return m_bundlePath;
 }
+void RNInstanceCAPI::registerFont(
+    std::string const& fontFamily,
+    std::string const& fontFilePath) {
+  m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate")
+    ->registerFont(m_nativeResourceManager, fontFamily, fontFilePath);
+}
 }
