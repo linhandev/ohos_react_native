@@ -28,7 +28,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
 
     ImageSourceUpdateListener(
         ImageSourceResolver::Shared const& imageSourceResolver)
-        : m_imageSourceResolver(imageSourceResolver){};
+        : m_imageSourceResolver(imageSourceResolver) {};
 
     ~ImageSourceUpdateListener() {
       m_imageSourceResolver->removeListener(this);
@@ -40,16 +40,20 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
     ImageSourceResolver::Shared const& m_imageSourceResolver;
   };
 
-  facebook::react::ImageSources resolveImageSources(
+  std::optional<facebook::react::ImageSource> resolveImageSource(
       ImageSourceUpdateListener& listener,
-      facebook::react::ImageSources const& newSourcesCandidate) {
+      facebook::react::LayoutMetrics const& layoutMetrics,
+      facebook::react::ImageSources const& newSourcesCandidates) {
     assertMainThread();
 
-    // Currently, only one image source is supported.
-    auto& imageCandidate = newSourcesCandidate[0];
+    auto imageCandidate = getBestSourceForSize(
+        layoutMetrics.frame.size.width,
+        layoutMetrics.frame.size.height,
+        layoutMetrics.pointScaleFactor,
+        newSourcesCandidates);
 
     if (imageCandidate.type != facebook::react::ImageSource::Type::Remote) {
-      return newSourcesCandidate;
+      return imageCandidate;
     }
 
     // Subscribe to get information about prefetched URIs.
@@ -67,17 +71,46 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
       }
     }
 
-    auto resolvedSource = newSourcesCandidate[0];
     if (auto it = remoteImageSourceMap.find(imageCandidate.uri);
         it != remoteImageSourceMap.end()) {
       if (it->second == IMAGE_SOURCE_PENDING) {
-        return {};
+        return std::nullopt;
       }
-      resolvedSource.uri = it->second;
-    } else {
-      resolvedSource.uri = imageCandidate.uri;
+      imageCandidate.uri = it->second;
     }
-    return {resolvedSource};
+
+    return imageCandidate;
+  }
+
+  // Based on Android MultiSourceHelper class, see:
+  // https://github.com/facebook/react-native/blob/v0.72.5/packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/imagehelper/MultiSourceHelper.java
+  facebook::react::ImageSource getBestSourceForSize(
+      double width,
+      double height,
+      double pointScaleFactor,
+      facebook::react::ImageSources const& sources) {
+    RNOH_ASSERT_MSG(sources.size() > 0, "ImageSources vector should not be empty");
+
+    if (sources.size() == 1) {
+      return sources[0];
+    }
+
+    auto bestSourceIndex = 0;
+    auto targetImagePixels = width * height * pointScaleFactor;
+    auto bestPixelsFit = std::numeric_limits<double>::max();
+
+    for (auto i = 0; i < sources.size(); i++) {
+      auto& source = sources[i];
+      auto imagePixels = source.size.width * source.size.height;
+      auto pixelsFit = std::abs(1.0 - imagePixels / targetImagePixels);
+
+      if (pixelsFit < bestPixelsFit) {
+        bestPixelsFit = pixelsFit;
+        bestSourceIndex = i;
+      }
+    }
+
+    return sources[bestSourceIndex];
   }
 
   void addListenerForURI(

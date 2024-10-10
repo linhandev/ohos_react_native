@@ -1,6 +1,13 @@
-import {Image, ImageSourcePropType, ScrollView, Text, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  ImageSourcePropType,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Button, TestCase} from '../components';
 import {getScrollViewContentHorizontal} from './ScrollViewTest/fixtures';
 import {useEnvironment} from '../contexts';
@@ -562,6 +569,11 @@ export const ImageTest = () => {
       <TestCase.Example modal itShould="Prefetch large number of images">
         <ImagePrefetchTest />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="Load proper image source for different container dimensions">
+        <MultipleSourceImage />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -774,5 +786,84 @@ const ImagePrefetchTest = () => {
         </ScrollView>
       )}
     </>
+  );
+};
+
+const MultipleSourceImage = () => {
+  const {containerSizes, imageSources} = useMemo(() => {
+    const imageContainerSizes = [
+      [100, 100],
+      [200, 200],
+      [300, 300],
+    ];
+    const imageSourcesArr = [
+      {
+        uri: 'https://images.pexels.com/photos/5370674/pexels-photo-5370674.jpeg?cs=tinysrgb&w=100&h=100',
+        width: 100,
+        height: 100,
+      },
+      {
+        uri: 'https://images.pexels.com/photos/5475178/pexels-photo-5475178.jpeg?w=200&h=200',
+        width: 200,
+        height: 200,
+      },
+      {
+        uri: 'https://images.pexels.com/photos/27849695/pexels-photo-27849695/free-photo-of-a-man-riding-a-motorcycle-down-a-narrow-street.jpeg?cs=tinysrgb&w=300&h=300',
+        width: 300,
+        height: 300,
+      },
+    ];
+    const pointScaleFactor = Dimensions.get('screen').scale;
+    imageContainerSizes.map(el => [
+      el[0] * pointScaleFactor,
+      el[1] * pointScaleFactor,
+    ]);
+    imageSourcesArr.map(el => {
+      el.width = el.width * pointScaleFactor;
+      el.height = el.height * pointScaleFactor;
+    });
+
+    return {
+      containerSizes: imageContainerSizes,
+      imageSources: imageSourcesArr,
+    };
+  }, []);
+
+  const [containerSizeIndex, setContainerSizeIndex] = useState(0);
+  const [mountImageComponent, setMountImageComponent] = useState(true);
+
+  return (
+    <View>
+      <Button
+        label="Change container size"
+        onPress={() => {
+          setContainerSizeIndex(
+            (containerSizeIndex + 1) % containerSizes.length,
+          );
+          // Make sure that component is re-mounted to apply new size
+          setMountImageComponent(false);
+          setTimeout(() => {
+            setMountImageComponent(true);
+          }, 50);
+        }}
+      />
+      <View
+        style={{
+          padding: 16,
+          backgroundColor: 'red',
+          width: '100%',
+          height: 325,
+        }}>
+        {mountImageComponent && (
+          <Image
+            source={imageSources}
+            style={{
+              width: containerSizes[containerSizeIndex][0],
+              height: containerSizes[containerSizeIndex][1],
+            }}
+          />
+        )}
+      </View>
+    </View>
   );
 };

@@ -32,21 +32,27 @@ std::string ImageComponentInstance::resolveSourceWithAssetPrefix(
 
 void ImageComponentInstance::setSources(
     facebook::react::ImageSources const& sources) {
-  auto newSources =
-      m_deps->imageSourceResolver->resolveImageSources(*this, sources);
-
-  if (!newSources.empty()) {
-    std::string imageSource = newSources[0].uri;
-
-    if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
-      std::string assetsPrefix = this->getAssetsPrefix();
-      imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
-    }
-
-    this->getLocalRootArkUINode().setSource(imageSource);
-  } else {
-    this->getLocalRootArkUINode().resetSource();
+  // Defined layoutMetrics are necessary for determining the best source
+  // for current container dimensions
+  if (m_layoutMetrics == facebook::react::EmptyLayoutMetrics) {
+    return;
   }
+
+  auto newSource = m_deps->imageSourceResolver->resolveImageSource(
+      *this, m_layoutMetrics, sources);
+
+  if (!newSource.has_value()) {
+    this->getLocalRootArkUINode().resetSource();
+    return;
+  }
+
+  auto imageSource = newSource.value().uri;
+  if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
+    std::string assetsPrefix = this->getAssetsPrefix();
+    imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
+  }
+
+  this->getLocalRootArkUINode().setSource(imageSource);
 }
 
 void ImageComponentInstance::onEventEmitterChanged(
