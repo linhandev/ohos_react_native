@@ -51,5 +51,6 @@ void ColumnNode::onClick() {
 
 ColumnNode::~ColumnNode() {
   unregisterNodeEvent(NODE_ON_CLICK);
+  NativeNodeApi::getInstance()->removeAllChildren(m_nodeHandle);
 }
 } // namespace rnoh

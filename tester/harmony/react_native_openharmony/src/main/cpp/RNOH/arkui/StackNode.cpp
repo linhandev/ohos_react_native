@@ -56,6 +56,7 @@ void StackNode::onClick() {
 StackNode::~StackNode() {
   unregisterNodeEvent(NODE_ON_CLICK);
   unregisterNodeEvent(NODE_ON_HOVER);
+  NativeNodeApi::getInstance()->removeAllChildren(m_nodeHandle);
 }
 
 StackNode& StackNode::setAlign(int32_t align) {

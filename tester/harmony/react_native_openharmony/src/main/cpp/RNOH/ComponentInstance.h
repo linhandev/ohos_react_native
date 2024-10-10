@@ -41,7 +41,7 @@ class ComponentInstance
 
   class Registry {
    public:
-    using Shared = std::shared_ptr<Registry>;
+    using Weak = std::weak_ptr<Registry>;
     virtual ComponentInstance::Shared findById(const std::string& id) const = 0;
   };
 
@@ -63,7 +63,7 @@ class ComponentInstance
     RNInstance::Weak rnInstance;
     DisplayMetricsManager::Shared displayMetricsManager;
     ImageSourceResolver::Shared imageSourceResolver;
-    Registry::Shared componentInstanceRegistry;
+    Registry::Weak componentInstanceRegistry;
   };
 
   struct Context {

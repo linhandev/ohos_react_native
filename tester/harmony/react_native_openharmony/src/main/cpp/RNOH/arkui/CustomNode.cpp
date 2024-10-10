@@ -101,6 +101,9 @@ CustomNode::~CustomNode() {
       m_nodeHandle, ARKUI_NODE_CUSTOM_EVENT_ON_LAYOUT);
   NativeNodeApi::getInstance()->removeNodeCustomEventReceiver(
       m_nodeHandle, receiveCustomEvent);
+  NativeNodeApi::getInstance()->removeAllChildren(
+      m_nodeHandle); // memory leaks if not called, can't be called in ArkUINode
+                     // because ArkUI crashes
 }
 
 CustomNode& CustomNode::setAlign(int32_t align) {

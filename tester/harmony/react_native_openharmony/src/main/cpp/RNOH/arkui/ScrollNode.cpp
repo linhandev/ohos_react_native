@@ -23,6 +23,7 @@ ScrollNode::~ScrollNode() {
   for (auto eventType : SCROLL_NODE_EVENT_TYPES) {
     unregisterNodeEvent(eventType);
   }
+  NativeNodeApi::getInstance()->removeAllChildren(m_nodeHandle);
 }
 
 void ScrollNode::onNodeEvent(

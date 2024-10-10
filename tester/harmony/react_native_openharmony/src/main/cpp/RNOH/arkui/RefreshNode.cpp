@@ -17,6 +17,7 @@ RefreshNode::~RefreshNode() {
   for (auto eventType : REFRESH_NODE_EVENT_TYPES) {
     unregisterNodeEvent(eventType);
   }
+  NativeNodeApi::getInstance()->removeAllChildren(m_nodeHandle);
 }
 
 RefreshNode& RefreshNode::setRefreshContent(ArkUINode& refreshContent) {
