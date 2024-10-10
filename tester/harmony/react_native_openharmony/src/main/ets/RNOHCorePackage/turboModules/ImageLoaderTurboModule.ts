@@ -1,9 +1,12 @@
 import { UITurboModule } from '../../RNOH/TurboModule';
 import {
   RemoteImageDiskCache,
-  RemoteImageLoader, RemoteImageMemoryCache
+  RemoteImageLoader, RemoteImageMemoryCache,
+  RemoteImageLoaderError
 } from '../../RemoteImageLoader';
 import { UITurboModuleContext } from '../../RNOH/RNOHContext';
+import image from '@ohos.multimedia.image';
+import { RemoteImageSource } from '../../RemoteImageLoader/RemoteImageSource';
 
 export class ImageLoaderTurboModule extends UITurboModule {
   static NAME = "ImageLoader" as const
@@ -74,10 +77,6 @@ export class ImageLoaderTurboModule extends UITurboModule {
   public prefetchImageWithMetadata(uri: string, queryRootName: string, rootTag: number): Promise<boolean> {
     this.ctx.logger.warn("ImageLoader::prefetchImageWithMetadata is not supported")
     return Promise.resolve(false)
-  }
-
-  public getPrefetchResult(uri: string): string | undefined {
-    return this.imageLoader.getPrefetchResult(uri);
   }
 
   public queryCache(uris: Array<string>): Promise<Object> {
