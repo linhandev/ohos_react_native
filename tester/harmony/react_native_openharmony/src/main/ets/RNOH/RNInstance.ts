@@ -1047,6 +1047,7 @@ export class RNInstanceImpl implements RNInstance {
             ],
           });
         }
+        font.registerFont({familyName: fontFamily, familySrc: `file://${fontResource}`})
         return fontResource;
       } else {
         font.registerFont({familyName: fontFamily, familySrc: fontResource});
