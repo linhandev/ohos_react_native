@@ -30,7 +30,6 @@ import {
   ToastAndroidTurboModule,
   VibrationTurboModule,
   WebSocketTurboModule,
-  ImageLoaderWorkerTurboModule,
   LinkingManagerTurboModule
 } from './turboModules';
 import { ViewDescriptorWrapper } from './components/ts';
@@ -82,7 +81,6 @@ export class RNOHCorePackage extends RNPackage {
   override getAnyThreadTurboModuleFactoryByNameMap(): Map<string, (ctx: AnyThreadTurboModuleContext) => AnyThreadTurboModule | null> {
     return new Map<string, ((ctx: AnyThreadTurboModuleContext) => AnyThreadTurboModule)>()
       .set(AppearanceTurboModule.NAME, (ctx) => new AppearanceTurboModule(ctx))
-      //.set(ImageLoaderWorkerTurboModule.NAME, (ctx) => new ImageLoaderWorkerTurboModule(ctx))
       .set(NetworkingTurboModule.NAME, (ctx) => new NetworkingTurboModule(ctx))
       .set(WebSocketTurboModule.NAME, (ctx) => new WebSocketTurboModule(ctx))
       .set(BlobTurboModule.NAME, (ctx) => new BlobTurboModule(ctx))
