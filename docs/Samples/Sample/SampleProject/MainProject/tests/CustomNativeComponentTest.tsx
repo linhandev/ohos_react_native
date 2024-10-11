@@ -1,5 +1,5 @@
 import React from 'react';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 
 export function CustomNativeComponentTest() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Vibration} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Button} from '../components';
 
 export const VibrationTest = () => {

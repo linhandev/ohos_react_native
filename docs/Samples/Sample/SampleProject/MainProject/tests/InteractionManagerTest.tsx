@@ -1,5 +1,5 @@
 import {InteractionManager} from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 
 export function InteractionManagerTest() {
   return (

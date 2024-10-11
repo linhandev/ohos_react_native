@@ -1,5 +1,5 @@
 import {View, ScrollView, Text, StyleSheet} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import React, {useState} from 'react';
 import {Button} from '../../components';
 import {StylesTest} from './StylesTest';

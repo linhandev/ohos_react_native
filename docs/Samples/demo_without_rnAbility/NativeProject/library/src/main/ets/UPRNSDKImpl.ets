@@ -1,14 +1,14 @@
 import UIAbility from '@ohos.app.ability.UIAbility';
-import type { RNOHLogger } from 'rnoh/src/main/ets/RNOH/RNOHLogger';
-import { StandardRNOHLogger } from 'rnoh/src/main/ets/RNOH/RNOHLogger';
-import { RNOHCoreContext } from "rnoh/src/main/ets/RNOH/RNOHCoreContext"
+import type { RNOHLogger } from '@rnoh/react-native-openharmony/src/main/ets/RNOH/RNOHLogger';
+import { StandardRNOHLogger } from '@rnoh/react-native-openharmony/src/main/ets/RNOH/RNOHLogger';
+import { RNOHCoreContext } from "@rnoh/react-native-openharmony/src/main/ets/RNOH/RNOHCoreContext"
 import {
   RNInstanceRegistry,
-} from 'rnoh/ts'
+} from '@rnoh/react-native-openharmony/ts'
 import window from '@ohos.window';
 import Want from '@ohos.app.ability.Want';
-import { RNInstancesCoordinator } from "rnoh/src/main/ets/RNOH/RNInstancesCoordinator"
-import { HttpClient, DefaultHttpClient } from "rnoh/src/main/ets/HttpClient"
+import { RNInstancesCoordinator } from "@rnoh/react-native-openharmony/src/main/ets/RNOH/RNInstancesCoordinator"
+import { HttpClient, DefaultHttpClient } from "@rnoh/react-native-openharmony/src/main/ets/HttpClient"
 import { EnvironmentCallback } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import common from '@ohos.app.ability.common';

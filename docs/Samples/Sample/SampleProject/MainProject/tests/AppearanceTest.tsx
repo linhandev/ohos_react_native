@@ -1,4 +1,4 @@
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import React, {useState, useEffect} from 'react';
 import {Text, Appearance, ColorSchemeName} from 'react-native';
 import {Button} from '../components';

@@ -7,7 +7,7 @@ import {
   UIManager,
   findNodeHandle,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Effect, Ref, Button} from '../components';
 
 export function UIManagerTest() {

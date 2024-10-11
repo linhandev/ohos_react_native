@@ -1,4 +1,4 @@
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import {View, ScrollView, StyleSheet, ScrollViewProps} from 'react-native';
 import {COMMON_PROPS} from './fixtures';
 import React from 'react';

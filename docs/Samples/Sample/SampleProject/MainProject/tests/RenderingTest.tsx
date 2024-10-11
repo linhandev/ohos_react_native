@@ -1,5 +1,5 @@
 import React from 'react';
-import {TestSuite} from '@rnoh/testerino';
+import { TestSuite } from '@rnoh/testerino';
 import {Text} from 'react-native';
 
 export function RenderingTest() {
