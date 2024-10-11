@@ -1,41 +1,30 @@
-import type UIAbility from '@ohos.app.ability.UIAbility';
-import {UIContext} from '@kit.ArkUI';
-import {
-  CommandDispatcher,
-  RNComponentCommandHub,
-} from './RNComponentCommandHub';
-import {
-  DescriptorRegistry,
-  DescriptorWrapperFactory,
-} from './DescriptorRegistry';
-import {ComponentManagerRegistry} from './ComponentManagerRegistry';
-import {SurfaceHandle} from './SurfaceHandle';
-import {TurboModuleProvider} from './TurboModuleProvider';
-import {EventEmitter} from './EventEmitter';
-import type {RNOHLogger} from './RNOHLogger';
-import type {CppFeatureFlag, NapiBridge} from './NapiBridge';
-import type {UITurboModuleContext} from './RNOHContext';
-import type {JSBundleProvider} from './JSBundleProvider';
-import {JSBundleProviderError} from './JSBundleProvider';
-import type {Tag} from './DescriptorBase';
-import type {
-  AnyThreadTurboModuleFactory,
-  RNPackage,
-  RNPackageContext,
-  UITurboModuleFactory,
-} from './RNPackage';
-import type {AnyThreadTurboModule, UITurboModule} from './TurboModule';
-import {ResponderLockDispatcher} from './ResponderLockDispatcher';
-import {DevToolsController} from './DevToolsController';
-import {RNOHError} from './RNOHError';
-import window from '@ohos.window';
-import {DevServerHelper} from './DevServerHelper';
-import {HttpClient} from '../HttpClient/HttpClient';
-import type {HttpClientProvider} from './HttpClientProvider';
-import resourceManager from '@ohos.resourceManager';
-import {DisplayMetricsManager} from './DisplayMetricsManager';
-import {WorkerThread} from './WorkerThread';
-import font from '@ohos.font';
+import type UIAbility from '@ohos.app.ability.UIAbility'
+import { UIContext } from '@kit.ArkUI'
+import { CommandDispatcher, RNComponentCommandHub } from './RNComponentCommandHub'
+import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegistry'
+import { ComponentManagerRegistry } from './ComponentManagerRegistry'
+import { SurfaceHandle } from './SurfaceHandle'
+import { TurboModuleProvider } from './TurboModuleProvider'
+import { EventEmitter } from './EventEmitter'
+import type { RNOHLogger } from './RNOHLogger'
+import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
+import type { UITurboModuleContext } from './RNOHContext'
+import type { JSBundleProvider } from './JSBundleProvider'
+import { JSBundleProviderError } from './JSBundleProvider'
+import type { Tag } from './DescriptorBase'
+import type { AnyThreadTurboModuleFactory, RNPackage, RNPackageContext, UITurboModuleFactory } from './RNPackage'
+import type { AnyThreadTurboModule, UITurboModule } from './TurboModule'
+import { ResponderLockDispatcher } from './ResponderLockDispatcher'
+import { DevToolsController } from './DevToolsController'
+import { RNInstanceError, RNInstanceErrorEventEmitter, RNOHError, RNOHErrorEventEmitter } from './RNOHError'
+import window from '@ohos.window'
+import { DevServerHelper } from './DevServerHelper'
+import { HttpClient } from '../HttpClient/HttpClient'
+import type { HttpClientProvider } from './HttpClientProvider'
+import resourceManager from '@ohos.resourceManager'
+import { DisplayMetricsManager } from './DisplayMetricsManager'
+import { WorkerThread } from "./WorkerThread"
+import font from "@ohos.font"
 
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
 
@@ -66,7 +55,7 @@ export type LifecycleEventArgsByEventName = {
       appKeys: string[];
     },
   ];
-  RELOAD: [{reason: string | undefined}];
+  RELOAD: [{ reason: string | undefined }];
   WINDOW_SIZE_CHANGE: [windowSize: window.Size];
 };
 
@@ -119,6 +108,7 @@ export interface RNInstance {
    * Relays messages emitted from C++ by RNInstanceCAPI::postMessageToArkTS
    */
   cppEventEmitter: EventEmitter<Record<string, unknown[]>>;
+
   /**
    * @deprecated Use RNOHContext::componentCommandReceiver
    */
@@ -139,9 +129,7 @@ export interface RNInstance {
   /**
    * Allows subscribing to various events. Check LifecycleEventArgsByEventName type for more information.
    */
-  subscribeToLifecycleEvents: <
-    TEventName extends keyof LifecycleEventArgsByEventName,
-  >(
+  subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void,
   ) => () => void;
@@ -149,9 +137,7 @@ export interface RNInstance {
   /**
    * Similar to subscribeToLifecycleEvents but handles different set of events. It may be removed to unify subscribing to events.
    */
-  subscribeToStageChangeEvents: <
-    TEventName extends keyof StageChangeEventArgsByEventName,
-  >(
+  subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void,
   ) => () => void;
@@ -233,6 +219,11 @@ export interface RNInstance {
   getId(): number;
 
   /**
+   * @returns RNInstance name.
+   */
+  getName(): string | undefined;
+
+  /**
    * This method can be used to replace a core component with a custom one.
    * @param descriptorType - type of the descriptor
    * @param componentName - value to be provided in ComponentBuilderContext for given `descriptorType`
@@ -283,6 +274,12 @@ export interface RNInstance {
    * Sends message to C++ side. Handled by ArkTSMessageHub::Observer or ArkTSMessageHandler.
    */
   postMessageToCpp(name: string, payload: any): void;
+
+  /**
+   * Subscribes to exceptions in the framework, specific to this instance.
+   * @returns A callback to unsubscribe.
+   */
+  subscribeToRNOHErrors(listener: (err: RNOHError) => void): () => void
 
   /**
    * @architecture: C-API
@@ -400,13 +397,11 @@ export interface FrameNodeFactory {
 }
 
 export class RNInstanceImpl implements RNInstance {
-  private turboModuleProvider: TurboModuleProvider<
-    UITurboModule | AnyThreadTurboModule
-  >;
+  private turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>;
   private surfaceCounter = 0;
-  private lifecycleState: LifecycleState = LifecycleState.BEFORE_CREATE;
-  private bundleExecutionStatusByBundleURL: Map<string, BundleExecutionStatus> =
-    new Map();
+  private lifecycleState: LifecycleState = LifecycleState.BEFORE_CREATE
+  private bundleExecutionStatusByBundleURL: Map<string, BundleExecutionStatus> = new Map()
+  private rnInstanceErrorEventEmitter: RNInstanceErrorEventEmitter = new EventEmitter();
   public descriptorRegistry: DescriptorRegistry;
   public componentCommandHub: RNComponentCommandHub;
   public componentManagerRegistry: ComponentManagerRegistry;
@@ -423,10 +418,11 @@ export class RNInstanceImpl implements RNInstance {
   private responderLockDispatcher: ResponderLockDispatcher;
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>();
   private initialBundleUrl: string | undefined = undefined;
-  private frameNodeFactoryRef: {frameNodeFactory: FrameNodeFactory | null} = {
+  private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = {
     frameNodeFactory: null,
   };
-  private unregisterWorkerMessageListener = () => {};
+  private unregisterWorkerMessageListener = () => {
+  };
   private uiCtx: UIContext;
 
   /**
@@ -442,7 +438,9 @@ export class RNInstanceImpl implements RNInstance {
   constructor(
     private envId: number,
     private id: number,
+    private name: string | undefined,
     private injectedLogger: RNOHLogger,
+    private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
     private napiBridge: NapiBridge,
     disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
@@ -460,10 +458,10 @@ export class RNInstanceImpl implements RNInstance {
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
   ) {
-    this.defaultProps = {concurrentRoot: !disableConcurrentRoot};
+    this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this);
     this.logger = injectedLogger.clone('RNInstance');
-    this.frameNodeFactoryRef = {frameNodeFactory: null};
+    this.frameNodeFactoryRef = { frameNodeFactory: null };
     this.backPressHandler = backPressHandler;
     this.onCreate();
   }
@@ -496,7 +494,7 @@ export class RNInstanceImpl implements RNInstance {
       if (surfaceHandle.isRunning()) {
         this.logger.warn(
           'Destroying instance with running surface with tag: ' +
-            surfaceHandle.getTag(),
+          surfaceHandle.getTag(),
         );
         await surfaceHandle.stop();
       }
@@ -509,6 +507,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public getId(): number {
     return this.id;
+  }
+
+  public getName() {
+    return this.name;
   }
 
   enableFeatureFlag(featureFlagName: FeatureFlagName): void {
@@ -526,12 +528,12 @@ export class RNInstanceImpl implements RNInstance {
   public async initialize(packages: RNPackage[]) {
     const stopTracing = this.logger.clone('initialize').startTracing();
     this.packages = packages;
-    const {descriptorWrapperFactoryByDescriptorType, turboModuleProvider} =
+    const { descriptorWrapperFactoryByDescriptorType, turboModuleProvider } =
       await this.processPackages(packages);
     this.turboModuleProvider = turboModuleProvider;
     this.descriptorRegistry = new DescriptorRegistry(
       {
-        '1': {...rootDescriptor},
+        '1': { ...rootDescriptor },
       },
       this.updateState.bind(this),
       this,
@@ -596,26 +598,22 @@ export class RNInstanceImpl implements RNInstance {
           }
           break;
         }
-        case 'RNOH_ERROR': {
-          this.logger.error(
-            new RNOHError({
-              whatHappened: payload.message,
-              howCanItBeFixed: [],
-              customStack: payload.stack,
-              extraData: payload.nested,
-            }),
-          );
+        case "RNOH_ERROR": {
+          this.reportRNOHError(new RNOHError({
+            whatHappened: payload.message,
+            howCanItBeFixed: [],
+            customStack: payload.stack,
+            extraData: payload.nested,
+          }));
           break;
         }
       }
     } catch (err) {
-      this.logger.error(
-        new RNOHError({
-          whatHappened: `Failed to handle CPP Message: ${type}`,
-          howCanItBeFixed: [],
-          extraData: err,
-        }),
-      );
+      this.reportRNOHError(new RNOHError({
+        whatHappened: `Failed to handle CPP Message: ${type}`,
+        howCanItBeFixed: [],
+        extraData: err
+      }))
     }
   }
 
@@ -689,9 +687,7 @@ export class RNInstanceImpl implements RNInstance {
         }
         return acc;
       }, new Map<string, DescriptorWrapperFactory>()),
-      turboModuleProvider: new TurboModuleProvider<
-        UITurboModule | AnyThreadTurboModule
-      >(
+      turboModuleProvider: new TurboModuleProvider<UITurboModule | AnyThreadTurboModule>(
         (await Promise.all(uiThreadTMFactoryPromises)).filter(
           factory => factory != null,
         ),
@@ -722,18 +718,14 @@ export class RNInstanceImpl implements RNInstance {
     return result;
   }
 
-  public subscribeToLifecycleEvents<
-    TEventName extends keyof LifecycleEventArgsByEventName,
-  >(
+  public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName,>(
     type: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void,
   ) {
     return this.lifecycleEventEmitter.subscribe(type, listener);
   }
 
-  public subscribeToStageChangeEvents<
-    TEventName extends keyof StageChangeEventArgsByEventName,
-  >(
+  public subscribeToStageChangeEvents<TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void,
   ): () => void {
@@ -851,7 +843,7 @@ export class RNInstanceImpl implements RNInstance {
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL);
       if (err instanceof JSBundleProviderError) {
-        this.logger.error(err);
+        this.reportRNOHError(err)
       } else {
         const suggestions: string[] = [];
         if (isMetroServer) {
@@ -859,16 +851,12 @@ export class RNInstanceImpl implements RNInstance {
             'Please check your Metro Server console. Likely, the error details you need are displayed there.',
           );
         }
-        suggestions.push(
-          'Please revise your application code. It may contain syntax errors or unhandled exceptions at the top level that could be causing runtime failures.',
-        );
-        this.logger.error(
-          new RNOHError({
-            whatHappened: "Couldn't run a JS bundle",
-            howCanItBeFixed: suggestions,
-            extraData: err,
-          }),
-        );
+        suggestions.push("Please revise your application code. It may contain syntax errors or unhandled exceptions at the top level that could be causing runtime failures.")
+        this.reportRNOHError(new RNOHError({
+          whatHappened: "Couldn't run a JS bundle",
+          howCanItBeFixed: suggestions,
+          extraData: err,
+        }))
       }
     } finally {
       this.devToolsController.eventEmitter.emit(
@@ -938,7 +926,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public onNewWant(url: string) {
-    this.emitDeviceEvent('url', {url: url});
+    this.emitDeviceEvent('url', { url: url });
   }
 
   public onConfigurationUpdate(
@@ -991,13 +979,13 @@ export class RNInstanceImpl implements RNInstance {
   private subscribeToDevTools() {
     const emitter = this.devToolsController.eventEmitter;
     emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
-      this.emitDeviceEvent('toggleElementInspector', {}),
+    this.emitDeviceEvent('toggleElementInspector', {}),
     );
     emitter.subscribe('DEV_MENU_SHOWN', () =>
-      this.emitDeviceEvent('RCTDevMenuShown', {}),
+    this.emitDeviceEvent('RCTDevMenuShown', {}),
     );
     emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
-      this.emitDeviceEvent('didPressMenuItem', item),
+    this.emitDeviceEvent('didPressMenuItem', item),
     );
     emitter.subscribe('OPEN_URL', (url, onError) => {
       DevServerHelper.openUrl(url, this.getInitialBundleUrl(), onError);
@@ -1005,11 +993,21 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public postMessageToCpp(name: string, payload: any): void {
-    this.napiBridge.postMessageToCpp(name, {rnInstanceId: this.id, payload});
+    this.napiBridge.postMessageToCpp(name, { rnInstanceId: this.id, payload });
   }
 
   public logMarker(markerId: string): void {
     this.napiBridge.logMarker(markerId, this.id);
+  }
+
+  public subscribeToRNOHErrors(listener: (err: RNInstanceError) => void): () => void {
+    return this.rnInstanceErrorEventEmitter.subscribe("NEW_ERROR", listener)
+  }
+
+  public reportRNOHError(rnohError: RNOHError) {
+    const rnInstanceError = new RNInstanceError(rnohError, { name: this.name, id: this.id });
+    this.globalRNOHErrorEventEmitter.emit('NEW_ERROR', rnInstanceError);
+    this.rnInstanceErrorEventEmitter.emit('NEW_ERROR', rnInstanceError)
   }
 
   public setFrameNodeFactory(frameNodeFactory: FrameNodeFactory | null) {
@@ -1017,7 +1015,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public cancelTouches() {
-    this.postMessageToCpp('CANCEL_TOUCHES', {rnInstanceId: this.id});
+    this.postMessageToCpp('CANCEL_TOUCHES', { rnInstanceId: this.id });
   }
 
   public getNativeNodeIdByTag(tag: Tag): string | undefined {
@@ -1041,7 +1039,7 @@ export class RNInstanceImpl implements RNInstance {
         if (!fontResource.startsWith('/')) {
           throw new RNOHError({
             whatHappened:
-              'Font path must be an absolute path or a $rawfile Resource',
+            'Font path must be an absolute path or a $rawfile Resource',
             howCanItBeFixed: [
               'Provide an absolute path to the font (starting with a "/")',
             ],
@@ -1050,7 +1048,7 @@ export class RNInstanceImpl implements RNInstance {
         font.registerFont({familyName: fontFamily, familySrc: `file://${fontResource}`})
         return fontResource;
       } else {
-        font.registerFont({familyName: fontFamily, familySrc: fontResource});
+        font.registerFont({ familyName: fontFamily, familySrc: fontResource });
         return fontResource.params![0];
       }
     })();

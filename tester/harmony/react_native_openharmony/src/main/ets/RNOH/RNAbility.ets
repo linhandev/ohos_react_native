@@ -8,6 +8,7 @@ import { RNInstancesCoordinator } from "./RNInstancesCoordinator"
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClient, DefaultHttpClient } from "../HttpClient"
+import { EventEmitter } from './EventEmitter';
 
 /**
  Application developers are expected to extend this class. RNAbility aims to move much of the code to the RNOH side in order to improve stability.
@@ -16,10 +17,9 @@ import { HttpClient, DefaultHttpClient } from "../HttpClient"
 export abstract class RNAbility extends UIAbility {
   // region RNAbility methods that can be safely overridden.
   protected createLogger(): RNOHLogger {
-    return new StandardRNOHLogger((err) => {
-      this.rnInstancesCoordinator?.getRNOHCoreContext().reportRNOHError(err)
-    });
+    return new StandardRNOHLogger();
   }
+
 
   /**
    * Override this method if you want to create an RNInstance, and load bundle here, rather than in an ArkUI component.
@@ -94,7 +94,8 @@ export abstract class RNAbility extends UIAbility {
       rnohWorkerScriptUrl: this.getRNOHWorkerScriptUrl(),
     }, {
       disableCleaningRNInstances: this.onShouldDisableCleaningRNInstances(),
-      launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
+      launchURI: want.uri,
+      onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
         host: "localhost",
         port: 8081
       } : undefined,
@@ -107,7 +108,7 @@ export abstract class RNAbility extends UIAbility {
    * @returns HttpClient shared by RNInstances
    */
   protected onCreateDefaultHttpClient(): undefined | HttpClient {
-    return new DefaultHttpClient({logger: this.logger});
+    return new DefaultHttpClient({ logger: this.logger });
   }
 
   onDestroy() {

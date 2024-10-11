@@ -96,7 +96,7 @@ export struct RNSurface {
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
     if (!(this.ctx instanceof RNComponentContext)) {
-      this.logger.error(new RNOHError({
+      this.ctx.reportRNOHError(new RNOHError({
         whatHappened: "RNSurface received RNOHContext instead of RNComponentContext. Custom RN components won't be visible.",
         howCanItBeFixed: ["Provide RNComponentContext instead of RNOHContext"]
       }))

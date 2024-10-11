@@ -171,7 +171,7 @@ export struct RNApp {
       stopTracing()
     } catch (err) {
       if (err instanceof RNOHError) {
-        this.rnohCoreContext!.logger.error(err)
+        this.rnohCoreContext!.reportRNOHError(err)
       } else if (typeof err === "string") {
         this.rnohCoreContext!.logger.error(err)
       } else if (err instanceof Error) {
