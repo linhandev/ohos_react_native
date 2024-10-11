@@ -12,6 +12,7 @@ import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
 import common from '@ohos.app.ability.common'
 import { RNOHCorePackage } from '../RNOHCorePackage/Package'
+import { RNOHErrorEventEmitter } from './RNOHError';
 
 const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
@@ -29,6 +30,7 @@ export class RNInstanceRegistry {
   private uiAbilityContext: common.UIAbilityContext
   private envId: number
   private logger: RNOHLogger
+  private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter;
   private napiBridge: NapiBridge
   private devToolsController: DevToolsController
   private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext
@@ -42,6 +44,7 @@ export class RNInstanceRegistry {
     uiAbilityContext: common.UIAbilityContext,
     envId: number,
     logger: RNOHLogger,
+    rnohErrorEventEmitter: RNOHErrorEventEmitter,
     napiBridge: NapiBridge,
     devToolsController: DevToolsController,
     createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
@@ -54,6 +57,7 @@ export class RNInstanceRegistry {
     this.uiAbilityContext = uiAbilityContext
     this.envId = envId
     this.logger = logger
+    this.globalRNOHErrorEventEmitter = rnohErrorEventEmitter
     this.napiBridge = napiBridge
     this.devToolsController = devToolsController
     this.createUITurboModuleContext = createUITurboModuleContext
@@ -90,7 +94,9 @@ export class RNInstanceRegistry {
     const rnInstance = new RNInstanceImpl(
       this.envId,
       id,
+      options?.name,
       this.logger,
+      this.globalRNOHErrorEventEmitter,
       this.napiBridge,
       options.disableConcurrentRoot,
       this.devToolsController,

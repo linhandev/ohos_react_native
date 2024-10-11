@@ -1,20 +1,19 @@
-import {RNInstanceImpl} from './RNInstance';
-import {RNOHError} from './RNOHError';
+import { RNInstanceImpl } from './RNInstance';
+import { RNInstanceError, RNOHError, RNOHErrorEventEmitter } from './RNOHError';
 import type common from '@ohos.app.ability.common';
-import {UIContext} from '@kit.ArkUI';
-import type {DescriptorRegistry} from './DescriptorRegistry';
-import type {RNComponentCommandReceiver} from './RNComponentCommandHub';
-import type {RNInstance} from './RNInstance';
-import type {ComponentManagerRegistry} from './ComponentManagerRegistry';
-import type {HttpClient} from '../HttpClient/HttpClient';
-import type {RNOHLogger} from './RNOHLogger';
-import type {WorkerRNInstance} from './WorkerRNInstance';
-import type {DevMenu} from './DevMenu';
-import type {DevToolsController} from './DevToolsController';
-import type {DisplayMetrics} from './types';
-import type {RNInstanceOptions} from './RNInstance';
-import type {SafeAreaInsetsProvider} from './SafeAreaInsetsProvider';
-import {TurboModule} from './TurboModule';
+import { UIContext } from '@kit.ArkUI';
+import type { DescriptorRegistry } from './DescriptorRegistry';
+import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
+import type { RNInstance } from './RNInstance';
+import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
+import type { HttpClient } from '../HttpClient/HttpClient';
+import type { RNOHLogger } from './RNOHLogger';
+import type { WorkerRNInstance } from './WorkerRNInstance';
+import type { DevMenu } from './DevMenu';
+import type { DevToolsController } from './DevToolsController';
+import type { DisplayMetrics } from './types';
+import type { RNInstanceOptions } from './RNInstance';
+import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 
 export type UIAbilityState = 'FOREGROUND' | 'BACKGROUND';
 
@@ -27,6 +26,7 @@ type RNOHCoreContextDependencies = {
   };
   displayMetricsProvider: () => DisplayMetrics;
   uiAbilityStateProvider: () => UIAbilityState;
+  rnohErrorEventEmitter: RNOHErrorEventEmitter;
   logger: RNOHLogger;
   uiAbilityContext: common.UIAbilityContext;
   isDebugModeEnabled: boolean;
@@ -46,16 +46,21 @@ export class RNOHCoreContext {
   /**
    * @internal
    */
-  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {}
+  constructor(public _rnohCoreContextDeps: RNOHCoreContextDependencies) {
+  }
 
   get reactNativeVersion() {
     return this._rnohCoreContextDeps.reactNativeVersion;
   }
 
-  public reportRNOHError(rnohError: RNOHError) {
-    this.devToolsController.setLastError(rnohError);
-    this.devToolsController.eventEmitter.emit('NEW_ERROR', rnohError);
+  reportRNOHError(rnohError: RNOHError) {
+    this._rnohCoreContextDeps.rnohErrorEventEmitter.emit('NEW_ERROR', rnohError)
   }
+
+  subscribeToRNOHErrors(listener: (err: RNOHError) => void): () => void {
+    return this._rnohCoreContextDeps.rnohErrorEventEmitter.subscribe('NEW_ERROR', listener);
+  }
+
 
   async createAndRegisterRNInstance(
     options: RNInstanceOptions,
@@ -94,7 +99,7 @@ export class RNOHCoreContext {
 
   dispatchBackPress(): void {
     this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance =>
-      rnInstance.onBackPress(),
+    rnInstance.onBackPress(),
     );
   }
 
@@ -102,7 +107,8 @@ export class RNOHCoreContext {
    * @deprecated - This function shouldn't be in RNOHCoreContext because readiness is relative to a RNInstance and this context is shared across instances.
    * @depreciationDate 2024-04-08
    */
-  markReadiness(): void {}
+  markReadiness(): void {
+  }
 
   cancelTouches(): void {
     this._rnohCoreContextDeps.rnInstanceRegistry.forEach(rnInstance => {
@@ -172,6 +178,14 @@ export class RNOHContext extends RNOHCoreContext {
 
   protected get rnInstanceImpl() {
     return this._rnohContextDeps.rnInstance as RNInstanceImpl;
+  }
+
+  reportRNOHError(rnohError: RNOHError) {
+    this.rnInstanceImpl.reportRNOHError(rnohError);
+  }
+
+  subscribeToRNInstanceErrors(listener: (err: RNInstanceError) => void): () => void {
+    return this.rnInstanceImpl.subscribeToRNOHErrors(listener);
   }
 
   /**
@@ -256,8 +270,7 @@ export interface AnyThreadTurboModuleContext {
  */
 export class UITurboModuleContext
   extends RNOHContext
-  implements AnyThreadTurboModuleContext
-{
+implements AnyThreadTurboModuleContext {
   constructor(rnohContext: RNOHContext) {
     super(rnohContext._rnohContextDeps);
   }
@@ -294,7 +307,8 @@ export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {
    */
   constructor(
     public _workerTurboModuleContextDeps: WorkerTurboModuleContextDependencies,
-  ) {}
+  ) {
+  }
 
   get logger() {
     return this._workerTurboModuleContextDeps.logger;

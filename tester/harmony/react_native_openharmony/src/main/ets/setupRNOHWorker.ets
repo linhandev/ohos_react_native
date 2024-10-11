@@ -105,7 +105,7 @@ class SendableRNOHError {
 
   constructor(rnohError: RNOHError) {
     this.message = rnohError.getMessage();
-    this.stack = rnohError.getStack() ?? ""
+    this.stack = rnohError.getStack()?.toString() ?? ""
   }
 }
 

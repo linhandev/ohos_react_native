@@ -16,7 +16,7 @@ import type { AnyThreadTurboModuleFactory, RNPackage, RNPackageContext, UITurboM
 import type { AnyThreadTurboModule, UITurboModule } from './TurboModule'
 import { ResponderLockDispatcher } from './ResponderLockDispatcher'
 import { DevToolsController } from './DevToolsController'
-import { RNOHError } from './RNOHError'
+import { RNInstanceError, RNInstanceErrorEventEmitter, RNOHError, RNOHErrorEventEmitter } from './RNOHError'
 import window from '@ohos.window'
 import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
@@ -49,10 +49,12 @@ export type LifecycleEventArgsByEventName = {
   CONFIGURATION_UPDATE: Parameters<UIAbility["onConfigurationUpdate"]>
   FOREGROUND: [];
   BACKGROUND: [];
-  JS_BUNDLE_EXECUTION_FINISH: [{
-    jsBundleUrl: string,
-    appKeys: string[]
-  }];
+  JS_BUNDLE_EXECUTION_FINISH: [
+    {
+      jsBundleUrl: string;
+      appKeys: string[];
+    },
+  ];
   RELOAD: [{ reason: string | undefined }];
   WINDOW_SIZE_CHANGE: [windowSize: window.Size];
 }
@@ -104,7 +106,8 @@ export interface RNInstance {
    * @architecture: C-API
    * Relays messages emitted from C++ by RNInstanceCAPI::postMessageToArkTS
    */
-  cppEventEmitter: EventEmitter<Record<string, unknown[]>>
+  cppEventEmitter: EventEmitter<Record<string, unknown[]>>;
+
   /**
    * @deprecated Use RNOHContext::componentCommandReceiver
    */
@@ -125,7 +128,7 @@ export interface RNInstance {
   /**
    * Allows subscribing to various events. Check LifecycleEventArgsByEventName type for more information.
    */
-  subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName>(
+  subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void
   ) => () => void;
@@ -133,7 +136,7 @@ export interface RNInstance {
   /**
    * Similar to subscribeToLifecycleEvents but handles different set of events. It may be removed to unify subscribing to events.
    */
-  subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName>(
+  subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void
   ) => () => void;
@@ -209,6 +212,11 @@ export interface RNInstance {
   getId(): number;
 
   /**
+   * @returns RNInstance name.
+   */
+  getName(): string | undefined;
+
+  /**
    * This method can be used to replace a core component with a custom one.
    * @param descriptorType - type of the descriptor
    * @param componentName - value to be provided in ComponentBuilderContext for given `descriptorType`
@@ -255,6 +263,12 @@ export interface RNInstance {
    * Sends message to C++ side. Handled by ArkTSMessageHub::Observer or ArkTSMessageHandler.
    */
   postMessageToCpp(name: string, payload: any): void
+
+  /**
+   * Subscribes to exceptions in the framework, specific to this instance.
+   * @returns A callback to unsubscribe.
+   */
+  subscribeToRNOHErrors(listener: (err: RNOHError) => void): () => void
 
   /**
    * @architecture: C-API
@@ -381,10 +395,11 @@ export interface FrameNodeFactory {
 
 
 export class RNInstanceImpl implements RNInstance {
-  private turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>
+  private turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>;
   private surfaceCounter = 0;
   private lifecycleState: LifecycleState = LifecycleState.BEFORE_CREATE
   private bundleExecutionStatusByBundleURL: Map<string, BundleExecutionStatus> = new Map()
+  private rnInstanceErrorEventEmitter: RNInstanceErrorEventEmitter = new EventEmitter();
   public descriptorRegistry: DescriptorRegistry;
   public componentCommandHub: RNComponentCommandHub;
   public componentManagerRegistry: ComponentManagerRegistry;
@@ -393,15 +408,17 @@ export class RNInstanceImpl implements RNInstance {
   public cppEventEmitter = new EventEmitter<Record<string, unknown[]>>()
   public httpClient: HttpClient;
   public backPressHandler: () => void | undefined;
-  private componentNameByDescriptorType = new Map<string, string>()
-  private logger: RNOHLogger
-  private surfaceHandles: Set<SurfaceHandle> = new Set()
-  private responderLockDispatcher: ResponderLockDispatcher
-  private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>()
-  private initialBundleUrl: string | undefined = undefined
-  private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = { frameNodeFactory: null };
+  private componentNameByDescriptorType = new Map<string, string>();
+  private logger: RNOHLogger;
+  private surfaceHandles: Set<SurfaceHandle> = new Set();
+  private responderLockDispatcher: ResponderLockDispatcher;
+  private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>();
+  private initialBundleUrl: string | undefined = undefined;
+  private frameNodeFactoryRef: { frameNodeFactory: FrameNodeFactory | null } = {
+    frameNodeFactory: null,
+  };
   private unregisterWorkerMessageListener = () => {
-  }
+  };
   private uiCtx: UIContext;
 
   /**
@@ -417,7 +434,9 @@ export class RNInstanceImpl implements RNInstance {
   constructor(
     private envId: number,
     private id: number,
+    private name: string | undefined,
     private injectedLogger: RNOHLogger,
+    private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
     private napiBridge: NapiBridge,
     disableConcurrentRoot: boolean | undefined,
     private devToolsController: DevToolsController,
@@ -437,10 +456,10 @@ export class RNInstanceImpl implements RNInstance {
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler: () => void,
   ) {
-    this.defaultProps = { concurrentRoot: !disableConcurrentRoot }
-    this.httpClient = httpClient ?? httpClientProvider.getInstance(this)
-    this.logger = injectedLogger.clone("RNInstance")
-    this.frameNodeFactoryRef = { frameNodeFactory: null }
+    this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
+    this.httpClient = httpClient ?? httpClientProvider.getInstance(this);
+    this.logger = injectedLogger.clone('RNInstance');
+    this.frameNodeFactoryRef = { frameNodeFactory: null };
     this.backPressHandler = backPressHandler;
     if (this.shouldUseNDKToMeasureText) {
       this.enableFeatureFlag("NDK_TEXT_MEASUREMENTS")
@@ -475,7 +494,10 @@ export class RNInstanceImpl implements RNInstance {
     this.unregisterWorkerMessageListener()
     for (const surfaceHandle of this.surfaceHandles) {
       if (surfaceHandle.isRunning()) {
-        this.logger.warn("Destroying instance with running surface with tag: " + surfaceHandle.getTag());
+        this.logger.warn(
+          'Destroying instance with running surface with tag: ' +
+          surfaceHandle.getTag(),
+        );
         await surfaceHandle.stop();
       }
       surfaceHandle.destroy()
@@ -489,6 +511,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public getId(): number {
     return this.id;
+  }
+
+  public getName() {
+    return this.name;
   }
 
   enableFeatureFlag(featureFlagName: FeatureFlagName): void {
@@ -506,8 +532,9 @@ export class RNInstanceImpl implements RNInstance {
   public async initialize(packages: RNPackage[]) {
     const stopTracing = this.logger.clone("initialize").startTracing()
     this.packages = packages;
-    const { descriptorWrapperFactoryByDescriptorType, turboModuleProvider } = await this.processPackages(packages)
-    this.turboModuleProvider = turboModuleProvider
+    const { descriptorWrapperFactoryByDescriptorType, turboModuleProvider } =
+      await this.processPackages(packages);
+    this.turboModuleProvider = turboModuleProvider;
     this.descriptorRegistry = new DescriptorRegistry(
       {
         '1': { ...rootDescriptor },
@@ -577,7 +604,7 @@ export class RNInstanceImpl implements RNInstance {
           break;
         }
         case "RNOH_ERROR": {
-          this.logger.error(new RNOHError({
+          this.reportRNOHError(new RNOHError({
             whatHappened: payload.message,
             howCanItBeFixed: [],
             customStack: payload.stack,
@@ -587,7 +614,7 @@ export class RNInstanceImpl implements RNInstance {
         }
       }
     } catch (err) {
-      this.logger.error(new RNOHError({
+      this.reportRNOHError(new RNOHError({
         whatHappened: `Failed to handle CPP Message: ${type}`,
         howCanItBeFixed: [],
         extraData: err
@@ -670,12 +697,14 @@ export class RNInstanceImpl implements RNInstance {
     return result
   }
 
-  public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName>(type: TEventName,
-    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void) {
-    return this.lifecycleEventEmitter.subscribe(type, listener)
+  public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName,>(
+    type: TEventName,
+    listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void,
+  ) {
+    return this.lifecycleEventEmitter.subscribe(type, listener);
   }
 
-  public subscribeToStageChangeEvents<TEventName extends keyof StageChangeEventArgsByEventName>(
+  public subscribeToStageChangeEvents<TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void
   ): (() => void) {
@@ -755,14 +784,14 @@ export class RNInstanceImpl implements RNInstance {
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL)
       if (err instanceof JSBundleProviderError) {
-        this.logger.error(err)
+        this.reportRNOHError(err)
       } else {
         const suggestions: string[] = []
         if (isMetroServer) {
           suggestions.push("Please check your Metro Server console. Likely, the error details you need are displayed there.")
         }
         suggestions.push("Please revise your application code. It may contain syntax errors or unhandled exceptions at the top level that could be causing runtime failures.")
-        this.logger.error(new RNOHError({
+        this.reportRNOHError(new RNOHError({
           whatHappened: "Couldn't run a JS bundle",
           howCanItBeFixed: suggestions,
           extraData: err,
@@ -827,7 +856,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public onNewWant(url: string) {
-    this.emitDeviceEvent("url", { url: url })
+    this.emitDeviceEvent('url', { url: url });
   }
 
   public onConfigurationUpdate(...args: Parameters<UIAbility["onConfigurationUpdate"]>) {
@@ -875,10 +904,16 @@ export class RNInstanceImpl implements RNInstance {
 
   private subscribeToDevTools() {
     const emitter = this.devToolsController.eventEmitter;
-    emitter.subscribe("TOGGLE_ELEMENT_INSPECTOR", () => this.emitDeviceEvent("toggleElementInspector", {}))
-    emitter.subscribe("DEV_MENU_SHOWN", () => this.emitDeviceEvent("RCTDevMenuShown", {}))
-    emitter.subscribe("DID_PRESS_MENU_ITEM", (item) => this.emitDeviceEvent("didPressMenuItem", item))
-    emitter.subscribe("OPEN_URL", (url, onError) => {
+    emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
+    this.emitDeviceEvent('toggleElementInspector', {}),
+    );
+    emitter.subscribe('DEV_MENU_SHOWN', () =>
+    this.emitDeviceEvent('RCTDevMenuShown', {}),
+    );
+    emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
+    this.emitDeviceEvent('didPressMenuItem', item),
+    );
+    emitter.subscribe('OPEN_URL', (url, onError) => {
       DevServerHelper.openUrl(url, this.getInitialBundleUrl(), onError);
     })
   }
@@ -891,12 +926,22 @@ export class RNInstanceImpl implements RNInstance {
     this.napiBridge.logMarker(markerId, this.id);
   }
 
+  public subscribeToRNOHErrors(listener: (err: RNInstanceError) => void): () => void {
+    return this.rnInstanceErrorEventEmitter.subscribe("NEW_ERROR", listener)
+  }
+
+  public reportRNOHError(rnohError: RNOHError) {
+    const rnInstanceError = new RNInstanceError(rnohError, { name: this.name, id: this.id });
+    this.globalRNOHErrorEventEmitter.emit('NEW_ERROR', rnInstanceError);
+    this.rnInstanceErrorEventEmitter.emit('NEW_ERROR', rnInstanceError)
+  }
+
   public setFrameNodeFactory(frameNodeFactory: FrameNodeFactory | null) {
     this.frameNodeFactoryRef.frameNodeFactory = frameNodeFactory
   }
 
   public cancelTouches() {
-    this.postMessageToCpp("CANCEL_TOUCHES", { rnInstanceId: this.id })
+    this.postMessageToCpp('CANCEL_TOUCHES', { rnInstanceId: this.id });
   }
 
   public getNativeNodeIdByTag(tag: Tag): string | undefined {
@@ -917,14 +962,17 @@ export class RNInstanceImpl implements RNInstance {
       if (typeof fontResource === 'string') {
         if (!fontResource.startsWith("/")) {
           throw new RNOHError({
-            whatHappened: "Font path must be an absolute path or a $rawfile Resource",
-            howCanItBeFixed: ["Provide an absolute path to the font (starting with a \"/\")"]
-          })
+            whatHappened:
+            'Font path must be an absolute path or a $rawfile Resource',
+            howCanItBeFixed: [
+              'Provide an absolute path to the font (starting with a "/")',
+            ],
+          });
         }
         return fontResource;
       } else {
-        font.registerFont({ familyName: fontFamily, familySrc: fontResource })
-        return fontResource.params![0]
+        font.registerFont({ familyName: fontFamily, familySrc: fontResource });
+        return fontResource.params![0];
       }
     })()
     this.fontPathByFontFamily[fontFamily] = fontPath
