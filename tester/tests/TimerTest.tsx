@@ -15,7 +15,7 @@ export function TimerTest() {
   return (
     <TestSuite name="Timer">
       <TestCase.Manual
-        itShould="take three seconds to finish this test (setTimeout)"
+        itShould="take three seconds to finish this test (setTimeout, 3s)"
         initialState={0}
         arrange={({setState}) => {
           return (
@@ -29,6 +29,32 @@ export function TimerTest() {
         }}
         assert={async ({expect}) => {
           const waitTimeInMs = 3000;
+          const time1 = new Date().getTime();
+          await wait(waitTimeInMs);
+          const time2 = new Date().getTime();
+
+          expect(time1).to.be.greaterThan(0);
+          expect(time2).to.be.greaterThan(0);
+          expect(Math.abs(time2 - time1 - waitTimeInMs)).to.be.lessThan(
+            PRECISION_IN_MS,
+          );
+        }}
+      />
+      <TestCase.Manual
+        itShould="take a short time to finish this test (setTimeout, 0ms)"
+        initialState={0}
+        arrange={({setState}) => {
+          return (
+            <Button
+              label="Start Timeout"
+              onPress={() => {
+                setState(prev => prev + 1);
+              }}
+            />
+          );
+        }}
+        assert={async ({expect}) => {
+          const waitTimeInMs = 0;
           const time1 = new Date().getTime();
           await wait(waitTimeInMs);
           const time2 = new Date().getTime();

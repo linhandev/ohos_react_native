@@ -1,8 +1,11 @@
 #pragma once
 
+#include <limits>
+#include <optional>
 #include <unordered_map>
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/ArkTSTurboModule.h"
+#include "RNOH/VSyncListener.h"
 
 namespace rnoh {
 
@@ -48,21 +51,28 @@ class JSI_EXPORT TimingTurboModule
     Weak m_timingTurboModule;
   };
 
-  void triggerTimer(double id);
+  void triggerExpiredTimers();
+  void triggerTimers(std::vector<double> const& timerIds);
   void resumeTimers();
   void pauseTimers();
+  void scheduleWakeUp();
+  void cancelWakeUp();
+  double getNextDeadline();
 
   void assertJSThread() const;
 
   struct Timer {
     double id;
+    double deadline;
     double duration;
-    double jsSchedulingTime;
     bool repeats;
   };
 
   bool isForeground{true};
-  std::unordered_map<double, TaskExecutor::DelayedTask> m_timerTaskById{};
+  std::shared_ptr<VSyncListener> m_vsyncListener =
+      std::make_shared<VSyncListener>("TimingTurboModule");
+  std::optional<TaskExecutor::DelayedTask> m_wakeUpTask = std::nullopt;
+  double m_nextTimerDeadline = std::numeric_limits<double>::max();
   std::unordered_map<double, Timer> m_activeTimerById{};
   std::shared_ptr<LifecycleObserver> m_lifecycleObserver = nullptr;
 };
