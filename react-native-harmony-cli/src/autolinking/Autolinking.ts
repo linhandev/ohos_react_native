@@ -81,7 +81,7 @@ const CPP_RNOH_PACKAGES_FACTORY_TEMPLATE = `
 #pragma once
 #include "RNOH/Package.h"
 {{#libraries}}
-#include "{{etsRNOHPackageClassName}}.h"
+#include "{{cppRNOHPackageClassName}}.h"
 {{/libraries}}
 
 std::vector<rnoh::Package::Shared> createRNOHPackages(const rnoh::Package::Context &ctx) {

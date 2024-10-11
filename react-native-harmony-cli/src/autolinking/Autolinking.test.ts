@@ -200,8 +200,14 @@ it('should handle custom autolinking configuration', async () => {
   expect(memFS.readTextSync(output.etsRNOHPackagesFactoryPath)).toContain(
     'CustomEtsClass'
   );
+  expect(memFS.readTextSync(output.etsRNOHPackagesFactoryPath)).not.toContain(
+    'CustomCppClass'
+  );
   expect(memFS.readTextSync(output.cppRNOHPackagesFactoryPath)).toContain(
     'CustomCppClass'
+  );
+  expect(memFS.readTextSync(output.cppRNOHPackagesFactoryPath)).not.toContain(
+    'CustomEtsClass'
   );
   expect(memFS.readTextSync(output.cmakeAutolinkingPath)).toContain(
     'custom_cmake_target'
