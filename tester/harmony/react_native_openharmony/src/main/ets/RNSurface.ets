@@ -79,16 +79,10 @@ interface Constraints {
  */
 @Component
 export struct RNSurface {
+  @Require public ctx!: RNOHContext | RNComponentContext;
+
+  @Require public surfaceConfig!: SurfaceConfig;
   /**
-   * Required.
-   */
-  public ctx!: RNOHContext | RNComponentContext;
-  /**
-   * Required
-   */
-  public surfaceConfig!: SurfaceConfig;
-  /**
-   * Optional
    * If provided, those constraints will be used instead of those provided by ArkUI. Useful, if maxWidth or maxHeight
    * must be different than the default values with .width(...) and .height(...).
    *

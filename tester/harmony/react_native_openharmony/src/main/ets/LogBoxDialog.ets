@@ -7,9 +7,18 @@ import { RNSurface, SurfaceConfig2 } from "./RNSurface"
 @CustomDialog
 export struct LogBoxDialog {
   public ctx!: RNComponentContext
-  public controller: CustomDialogController
-  public rnInstance!: RNInstance
   public initialProps: Record<string, string> = {}
+  /**
+   * @deprecated: do not use it (latestRNOHVersion: 0.72.39)
+   */
+  public controller: CustomDialogController
+  /**
+   * @deprecated: do not use it (latestRNOHVersion: 0.72.39)
+   */
+  public rnInstance!: RNInstance
+  /**
+   * @deprecated: do not use it (latestRNOHVersion 0.72.39)
+   */
   @BuilderParam public buildCustomComponent!: CustomComponentBuilder
 
   build() {
@@ -18,7 +27,7 @@ export struct LogBoxDialog {
       surfaceConfig: {
         initialProps: this.initialProps ?? {},
         appKey: "LogBox",
-      } as SurfaceConfig2,
+      },
       buildCustomComponent: this.buildCustomComponent,
     })
   }

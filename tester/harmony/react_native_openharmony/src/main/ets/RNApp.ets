@@ -63,29 +63,29 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)
 @Preview
 export struct RNApp {
   /**
-   * Required. RNInstance or RNInstanceOptions used to create RNInstance.
+   * RNInstance or RNInstanceOptions used to create RNInstance.
    * If RNInstanceOptions is provided, this component takes the responsibility for creating and managing RNInstance.
    */
-  public rnInstanceConfig!: RNInstanceConfig
+  @Require public rnInstanceConfig!: RNInstanceConfig
   /**
-   * Required. App name. Check react-native/Libraries/AppRegistry for more info.
+   * App name. Check react-native/Libraries/AppRegistry for more info.
    */
-  public appKey: string = ''
+  @Require public appKey: string = ''
   /**
-   * Optional. If provided, runs JS Bundle in the rnInstance. Creates a surface after bundle has been loaded.
+   * If provided, runs JS Bundle in the rnInstance. Creates a surface after bundle has been loaded.
    */
   public jsBundleProvider: JSBundleProvider | undefined = undefined
   /**
-   * Optional. Initial properties for the main component of the React Native app.
+   * Initial properties for the main component of the React Native app.
    */
   public initialProps: Record<string, string> = {}
   /**
    * Required if wrappedCustomRNComponentBuilder is not provided. Builds a custom fabric component.
-   * @deprecated: use wrappedCustomRNComponentBuilder instead
+   * @deprecated: use wrappedCustomRNComponentBuilder instead (latestRNOHVersion: 0.72.21)
    */
   @BuilderParam public buildCustomComponent: CustomComponentBuilder
   /**
-   * Optional. Builds custom fabric components.
+   * Builds custom fabric components.
    *
    * It's possible now for library devs to register custom components in RNOHPackage
    * and RNApp handles extracting those components.
@@ -100,7 +100,7 @@ export struct RNApp {
    */
   public wrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder | undefined = undefined
   /**
-   * Optional. Called before a surface is visible, and rnInstance is available.
+   * Called before a surface is visible, and rnInstance is available.
    */
   public onSetUp: (rnInstance: RNInstance) => Promise<void> | void = () => Promise.resolve()
   // -------------------------------------------------------------------------------------------------------------------
@@ -146,8 +146,7 @@ export struct RNApp {
           builder: LogBoxDialog({
             ctx: this.ctx,
             rnInstance: this.rnInstance,
-            initialProps: this.initialProps,
-            buildCustomComponent: this.buildCustomComponent,
+            initialProps: this.initialProps
           })
         })
         this.cleanUpCallbacks.push(this.rnInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("SHOW",

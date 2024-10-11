@@ -7,8 +7,8 @@ import { DevToolsController } from './RNOH/DevToolsController'
  */
 @Component
 export struct RNOHErrorDialog {
-  public controller!: CustomDialogController
-  public ctx!: RNOHCoreContext
+  @Require public ctx!: RNOHCoreContext
+  private controller!: CustomDialogController
   private isOpened: boolean = false
   private cleanUpListeners: (() => void)[] = []
 

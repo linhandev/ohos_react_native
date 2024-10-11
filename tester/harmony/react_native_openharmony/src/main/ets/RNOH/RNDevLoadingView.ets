@@ -4,7 +4,7 @@ import { SafeAreaInsets } from "./SafeAreaInsetsProvider"
 @Component
 export struct RNDevLoadingView {
   public useSafeAreaInsets: boolean = false
-  public ctx!: RNOHCoreContext
+  @Require public ctx!: RNOHCoreContext
   private cleanUpCallbacks: (() => void)[] = []
   @State private message: string = ""
   @State private safeAreaInsets: SafeAreaInsets | undefined = undefined

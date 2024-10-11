@@ -124,8 +124,8 @@ export class RNViewBaseAttributeModifier extends BaseAttributeModifier<ViewDescr
 
 @Component
 export struct RNViewBase {
-  public ctx!: RNOHContext
-  public tag: number = 0
+  @Require public ctx!: RNOHContext
+  @Require public tag: number = 0
   public componentManager!: RNViewManager;
   @Prop public customAlign: Alignment = Alignment.TopStart;
   @Prop public controlsFocus: boolean = true;

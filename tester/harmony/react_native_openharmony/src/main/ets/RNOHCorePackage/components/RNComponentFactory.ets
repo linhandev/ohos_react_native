@@ -27,7 +27,7 @@ export function buildRNComponent(ctx: RNComponentContext, descriptorWrapper: Des
 }
 
 /**
- * @deprecated
+ * @deprecated (latestRNOHVersion: 0.72.21)
  */
 @Component
 export struct RNComponentFactory {

@@ -110,7 +110,7 @@ export interface RNInstance {
   cppEventEmitter: EventEmitter<Record<string, unknown[]>>;
 
   /**
-   * @deprecated Use RNOHContext::componentCommandReceiver
+   * @deprecated Use RNOHContext::componentCommandReceiver (latestRNOHVersion: 0.72.21)
    */
   commandDispatcher: CommandDispatcher;
 
@@ -214,12 +214,12 @@ export interface RNInstance {
   updateState(componentName: string, tag: Tag, state: unknown): void;
 
   /**
-   * @returns RNInstance ID.
+   * @returns RNInstance ID. ID is internally to differentiate between RNInstance version.
    */
   getId(): number;
 
   /**
-   * @returns RNInstance name.
+   * @returns RNInstance name. Name allows RN App developers to differentiate between RNInstances.
    */
   getName(): string | undefined;
 
@@ -253,7 +253,7 @@ export interface RNInstance {
   getInitialBundleUrl(): string | undefined;
 
   /**
-   * @deprecated
+   * @deprecated (latestRNOHVersion: 0.72.39)
    * @returns current RNOH architecture name
    */
   getArchitecture(): 'C_API' | 'ARK_TS';
@@ -342,12 +342,11 @@ export type RNInstanceOptions = {
   /**
    * Manages image loading and caching. When enabled, RNOH takes responsibility; when disabled, it delegates to ArkUI's Image component.
    * Each approach presents issues under different scenarios.
-   * @deprecated this flag was only used in the old ArkTS architecture. It's not used in the C-API architecture.
+   * @deprecated this flag was only used in the old ArkTS architecture. It's not used in the C-API architecture. (latestRNOHVersion: 0.72.39)
    */
   enableImageLoader?: boolean;
   /**
-   * @deprecated
-   * ArkTS architecture has been removed, and C-API architecture is always enabled
+   * @deprecated ArkTS architecture has been removed, and C-API architecture is always enabled (latestRNOHVersion: 0.72.39)
    */
   enableCAPIArchitecture?: boolean;
 
@@ -426,7 +425,7 @@ export class RNInstanceImpl implements RNInstance {
   private uiCtx: UIContext;
 
   /**
-   * @deprecated
+   * @deprecated (latestRNOHVersion: 0.72.21)
    */
   public get commandDispatcher() {
     return this.componentCommandHub;
