@@ -145,7 +145,7 @@ struct RNOHErrorCustomDialog {
       const errorData = this.lastError.getExtraData();
       let rnInstanceNameString = "";
       if (errorData.rnInstanceName) {
-        rnInstanceNameString = `rnInstanceName="${errorData.rnInstanceName}, `;
+        rnInstanceNameString = `rnInstanceName="${errorData.rnInstanceName}", `;
       }
       let str = `(${rnInstanceNameString}rnInstanceId=${errorData.rnInstanceId})\n`
       str += processData(this.lastError.getExtraData().wrappedData);

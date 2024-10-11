@@ -96,9 +96,9 @@ export class StandardRNOHLogger implements RNOHLogger {
     if (rnohError instanceof RNInstanceError) {
       let rnInstanceNameString = "";
       if (rnohError.getRNInstanceName()) {
-        rnInstanceNameString = `rnInstanceName="${rnohError.getRNInstanceName()}, `;
+        rnInstanceNameString = `rnInstanceName="${rnohError.getRNInstanceName()}", `;
       }
-      return `(${rnInstanceNameString}rnInstanceId="${rnohError.getRNInstanceId()}")` +
+      return `(${rnInstanceNameString}rnInstanceId=${rnohError.getRNInstanceId()})` +
       rnohError.getMessage()
     } else {
       return rnohError.getMessage();
