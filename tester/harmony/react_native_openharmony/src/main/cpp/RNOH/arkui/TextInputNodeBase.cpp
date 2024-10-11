@@ -58,6 +58,9 @@ void TextInputNodeBase::setTextInputLineHeight(
         allowFontScaling = textAttributes.allowFontScaling.value();
   }
   float lineHeight = static_cast<float>(textAttributes.lineHeight);
+  if (isnan(lineHeight)){ //if lineHeight is NAN,make it 0
+    lineHeight = 0;
+  }
   if (!allowFontScaling) {
     maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
         m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
