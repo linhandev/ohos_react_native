@@ -7,14 +7,13 @@ import type {
   Point,
   RNOHContext,
   RNOHLogger,
-  Tag,
-  TouchTargetHelperDelegate
+  Tag
 } from '../../RNOH/ts';
 import { ComponentManager } from '../../RNOH/ComponentManager';
 import { ViewDescriptorWrapperBase } from '../components/RNViewBase/ViewDescriptorWrapper';
 
 
-export class RNViewManager extends ComponentManager implements TouchTargetHelperDelegate {
+export class RNViewManager extends ComponentManager {
   protected boundingBox: BoundingBox = {
     left: 0,
     right: 0,
