@@ -14,6 +14,8 @@
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/FeatureFlagRegistry.h"
+#include "ArkTSChannel.h"
+#include "RNOH/ArkTSChannel.h"
 
 namespace facebook {
 namespace react {
@@ -37,13 +39,15 @@ class MountingManagerCAPI final : public MountingManager {
       MountingManager::Shared arkTsMountingManager,
       std::unordered_set<std::string> arkTsComponentNames,
       PreAllocationBuffer::Shared preAllocationBuffer,
-      FeatureFlagRegistry::Shared featureFlagRegistry)
+      FeatureFlagRegistry::Shared featureFlagRegistry,
+      ArkTSChannel::Shared arkTSChannel)
       : m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_arkTsMountingManager(std::move(arkTsMountingManager)),
         m_arkTsComponentNames(std::move(arkTsComponentNames)) ,
         m_preAllocationBuffer(std::move(preAllocationBuffer)),
-        m_featureFlagRegistry(std::move(featureFlagRegistry)) {};
+        m_featureFlagRegistry(std::move(featureFlagRegistry)),
+        m_arkTSChannel(std::move(arkTSChannel)){};
     
     ~MountingManagerCAPI() {
     DLOG(INFO) << "~MountingManagerCAPI";
@@ -81,7 +85,9 @@ class MountingManagerCAPI final : public MountingManager {
       folly::dynamic props,
       facebook::react::ComponentDescriptor const& componentDescriptor) override;
     
-  
+  void schedulerDidSendAccessibilityEvent(
+      const facebook::react::ShadowView& shadowView,
+      std::string const& eventType) override;
 
  private:
   void updateComponentWithShadowView(
@@ -100,5 +106,6 @@ class MountingManagerCAPI final : public MountingManager {
   PreAllocationBuffer::Shared m_preAllocationBuffer;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   std::unordered_set<std::string> m_cApiComponentNames;
+  ArkTSChannel::Shared m_arkTSChannel;
 };
 } // namespace rnoh

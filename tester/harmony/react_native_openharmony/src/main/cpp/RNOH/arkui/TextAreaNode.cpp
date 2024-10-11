@@ -36,6 +36,7 @@ TextAreaNode::~TextAreaNode() {
 void TextAreaNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
+  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_ON_FOCUS) {
     if (m_textAreaNodeDelegate != nullptr) {
       m_textAreaNodeDelegate->onFocus();
