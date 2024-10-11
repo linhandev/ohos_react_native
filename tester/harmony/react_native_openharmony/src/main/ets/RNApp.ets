@@ -14,15 +14,27 @@ import {
   RNOHContext,
   ComponentBuilderContext,
 } from './RNOH';
-import { RNSurface, SurfaceConfig2 } from './RNSurface';
+import { RNSurface } from './RNSurface';
 import { LogBoxDialog } from "./LogBoxDialog"
 
-
-interface CustomRNInstance {
+/**
+ * @api: RN_APP_DEVELOPER
+ * RN_APP_DEVELOPER is responsible for creating and deleting an RNInstance.
+ */
+interface UnmanagedRNInstanceConfig {
   rnInstance: RNInstance
 }
 
-export type RNInstanceConfig = CustomRNInstance | RNInstanceOptions
+/**
+ * @api: RN_APP_DEVELOPER
+ * RNOH is responsible for creating and deleting an RNInstance.
+ */
+type ManagedRNInstanceConfig = RNInstanceOptions
+
+/**
+ * @api: RN_APP_DEVELOPER
+ */
+export type RNInstanceConfig = UnmanagedRNInstanceConfig | ManagedRNInstanceConfig
 
 @Builder
 export function buildRNComponentForTag(ctx: RNComponentContext, tag: Tag) {
@@ -195,12 +207,11 @@ export struct RNApp {
 
   private getOrCreateRNInstance(): Promise<RNInstance> {
     if (Object.keys(this.rnInstanceConfig).includes("rnInstance")) {
-      return Promise.resolve((this.rnInstanceConfig as CustomRNInstance).rnInstance)
+      return Promise.resolve((this.rnInstanceConfig as UnmanagedRNInstanceConfig).rnInstance)
     } else {
-
       const options = this.rnInstanceConfig
       this.shouldDestroyRNInstance = true
-      return this.rnohCoreContext!.createAndRegisterRNInstance(options as RNInstanceOptions)
+      return this.rnohCoreContext!.createAndRegisterRNInstance(options as ManagedRNInstanceConfig)
     }
   }
 
@@ -212,7 +223,7 @@ export struct RNApp {
           surfaceConfig: {
             initialProps: this.initialProps ?? {},
             appKey: this.appKey,
-          } as SurfaceConfig2,
+          },
         })
       }
       if (this.rnohCoreContext!.isDebugModeEnabled) {

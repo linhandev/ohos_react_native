@@ -6,6 +6,9 @@ import { NodeContent } from '@ohos.arkui.node';
 
 export type SurfaceProps = Record<string, any>;
 
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 export class SurfaceHandle {
   private destroyed: boolean = false;
   private displayMode: DisplayMode = DisplayMode.Suspended;

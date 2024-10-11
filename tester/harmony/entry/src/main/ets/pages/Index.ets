@@ -63,15 +63,13 @@ struct Index {
           rnInstanceConfig: {
             name: "app_name",
             createRNPackages: getRNOHPackages,
-            enableBackgroundExecutor: false,
-            enableCAPIArchitecture: true,
             enablePartialSyncOfDescriptorRegistryInCAPI: true,
             fontResourceByFontFamily: {
               // NOTE: you can provide fonts in `RNInstanceConfig` ahead of time, when creating the RN application
               "StintUltraCondensed-Regular": $rawfile('fonts/StintUltraCondensed-Regular.ttf'),
             },
           },
-          initialProps: { "foo": "bar" } as Record<string, string>,
+          initialProps: { "foo": "bar" },
           appKey: "app_name",
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {

@@ -10,7 +10,6 @@ import {
   RNOHLogger,
 } from './RNOH';
 import { ViewBaseProps, ViewRawProps } from './RNOHCorePackage/components/RNViewBase';
-import { TouchDispatcher } from './RNOH/TouchDispatcher';
 import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
 import type { SurfaceContext } from './RNOH/RNInstance';
@@ -20,16 +19,39 @@ interface RootViewState {}
 
 export type RootDescriptor = Descriptor<"RootView", ViewBaseProps, RootViewState, ViewRawProps>;
 
-export interface SurfaceConfig {}
-
-export interface SurfaceConfig1 extends SurfaceConfig {
+/**
+ * @api: RN_APP_DEVELOPER
+ * RN_APP_DEVELOPER is responsible for creating and deleting a SurfaceHandle.
+ */
+export interface UnmanagedSurfaceConfig {
   surfaceHandle: SurfaceHandle
 }
 
-export interface SurfaceConfig2 extends SurfaceConfig {
+/**
+ * @api: RN_APP_DEVELOPER
+ * @deprecated: use UnmanagedSurfaceConfig instead (latestRNOHVersion: 0.72.39)
+ */
+export type SurfaceConfig1 = UnmanagedSurfaceConfig
+
+/**
+ * @api: RN_APP_DEVELOPER
+ * RNOH is responsible for creating and deleting a SurfaceHandle.
+ */
+export interface ManagedSurfaceConfig {
   appKey: string,
   initialProps: SurfaceProps,
 }
+
+/**
+ * @api: RN_APP_DEVELOPER
+ * @deprecated: use ManagedSurfaceConfig instead (latestRNOHVersion: 0.72.39)
+ */
+export type SurfaceConfig2 = ManagedSurfaceConfig
+
+/**
+ * @api: RN_APP_DEVELOPER
+ */
+export type SurfaceConfig = UnmanagedSurfaceConfig | ManagedSurfaceConfig
 
 interface RootComponentDimensionsChangedPayload {
   surfaceId: number,
@@ -87,7 +109,6 @@ export struct RNSurface {
   @State private shouldStartSurface: boolean = false;
   private surfaceHandle!: SurfaceHandle;
   private cleanUpCallbacks: (() => void)[] = [];
-  private touchDispatcher!: TouchDispatcher;
   private shouldStopSurface: boolean = false;
   private initialProps!: SurfaceProps;
   private logger!: RNOHLogger
@@ -108,16 +129,14 @@ export struct RNSurface {
         return this.ctx as RNComponentContext
       }))
     if (Object.keys(this.surfaceConfig).includes("surfaceHandle")) {
-      this.surfaceHandle = (this.surfaceConfig as SurfaceConfig1).surfaceHandle;
+      this.surfaceHandle = (this.surfaceConfig as UnmanagedSurfaceConfig).surfaceHandle;
       this.surfaceHandle.setDisplayMode(DisplayMode.Visible);
     } else {
-      this.surfaceHandle = this.ctx.rnInstance.createSurface((this.surfaceConfig as SurfaceConfig2).appKey);
-      this.initialProps = (this.surfaceConfig as SurfaceConfig2).initialProps;
+      this.surfaceHandle = this.ctx.rnInstance.createSurface((this.surfaceConfig as ManagedSurfaceConfig).appKey);
+      this.initialProps = (this.surfaceConfig as ManagedSurfaceConfig).initialProps;
       this.shouldStartSurface = true;
       this.shouldStopSurface = true;
     }
-    const tag = this.surfaceHandle.getTag();
-    this.touchDispatcher = new TouchDispatcher(tag, this.ctx.rnInstance, this.ctx.logger)
     this.cleanUpCallbacks.push(this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::ROOT_COMPONENT_DIMENSIONS_CHANGED",
       (payload: RootComponentDimensionsChangedPayload) => {
         if (payload.surfaceId === this.surfaceHandle.getTag()) {
