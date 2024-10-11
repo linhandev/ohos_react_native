@@ -292,11 +292,6 @@ export interface RNInstance {
   getNativeNodeIdByTag(tag: Tag): string | undefined
 
   /**
-   * @returns UIContext
-   */
-  getUIContext(): UIContext
-
-  /**
    * Registers a custom font used by the RN application.
    * NOTE: Due to ArkUI limitations, fonts from the application sandbox can only be used by the <Text> component.
    * @param fontFamily name of the font family
@@ -910,10 +905,6 @@ export class RNInstanceImpl implements RNInstance {
 
   public setUIContext(uiCtx: UIContext): void {
     this.uiCtx = uiCtx;
-  }
-
-  public getNativeNodeIdByTag(tag: Tag): string | undefined {
-    return this.napiBridge.getNativeNodeIdByTag(this.id, tag);
   }
 
   public getUIContext(): UIContext {
