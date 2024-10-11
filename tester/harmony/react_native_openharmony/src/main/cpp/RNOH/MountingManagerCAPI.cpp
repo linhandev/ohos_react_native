@@ -344,4 +344,15 @@ void MountingManagerCAPI::finalizeMutationUpdates(
   }
 }
 
+void MountingManagerCAPI::schedulerDidSendAccessibilityEvent(
+  const facebook::react::ShadowView& shadowView,
+  std::string const& eventType) {
+    auto componentInstance =
+      m_componentInstanceRegistry->findByTag(shadowView.tag);
+    folly::dynamic payload = folly::dynamic::object("type", eventType)(
+      "targetId", componentInstance->getLocalRootArkUINode().getId());
+    m_arkTSChannel->postMessage(
+      "RNOH::schedulerDidSendAccessibilityEvent", payload);
+};
+
 } // namespace rnoh

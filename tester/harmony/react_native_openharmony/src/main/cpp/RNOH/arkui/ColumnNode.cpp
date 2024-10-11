@@ -37,6 +37,7 @@ void ColumnNode::setColumnNodeDelegate(ColumnNodeDelegate* columnNodeDelegate) {
 void ColumnNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
+  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_ON_CLICK &&
       eventArgs[3].i32 != 2) {
     onClick();
