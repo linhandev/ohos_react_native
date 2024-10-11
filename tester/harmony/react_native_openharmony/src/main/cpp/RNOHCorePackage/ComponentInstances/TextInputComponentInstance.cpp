@@ -31,6 +31,15 @@ void TextInputComponentInstance::onContentScroll() {
   m_eventEmitter->onScroll(getTextInputMetrics());
 }
 
+std::string TextInputComponentInstance::getTextContentFromState(SharedConcreteState const& state) {
+  std::ostringstream contentStream;
+  for (auto const& fragment :
+      state->getData().attributedStringBox.getValue().getFragments()) {
+    contentStream << fragment.string;
+  }
+  return contentStream.str();
+}
+
 void TextInputComponentInstance::onChange(std::string text) {
   if (m_content == text) {
     m_shouldIgnoreNextChangeEvent = false;
@@ -42,8 +51,10 @@ void TextInputComponentInstance::onChange(std::string text) {
     return;
   }
   m_nativeEventCount++;
-  m_valueChanged = true;
   m_eventEmitter->onChange(getOnChangeMetrics());
+  
+  auto content = getTextContentFromState(m_state);
+  m_valueChanged = content != m_content;
 }
 
 void TextInputComponentInstance::onSubmit() {
@@ -489,12 +500,7 @@ void TextInputComponentInstance::onStateChanged(
     return;
   }
 
-  std::ostringstream contentStream;
-  for (auto const& fragment :
-       state->getData().attributedStringBox.getValue().getFragments()) {
-    contentStream << fragment.string;
-  }
-  auto content = contentStream.str();
+  auto content = getTextContentFromState(state);
   if (m_content != content) {
     m_shouldIgnoreNextChangeEvent = true;
   }
