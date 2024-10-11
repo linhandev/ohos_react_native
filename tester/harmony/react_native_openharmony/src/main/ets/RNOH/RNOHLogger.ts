@@ -1,5 +1,6 @@
 import hilog from '@ohos.hilog';
-import { RNOHError } from "./RNOHError"
+import hiTrace from '@ohos.hiTraceMeter';
+import { RNInstanceError, RNOHError } from "./RNOHError"
 
 export interface RNOHLogger {
   info(...args: any[]): void
@@ -52,8 +53,6 @@ export class StandardRNOHLogger implements RNOHLogger {
   }
 
   constructor(
-    private onRNOHError: (error: RNOHError) => void = () => {
-    },
     private minSeverity: Severity = "debug",
     protected pathSegments: string[] = [],
     protected tracer: Tracer | undefined = undefined) {
@@ -89,21 +88,21 @@ export class StandardRNOHLogger implements RNOHLogger {
     } else {
       this.log("error", this.getCurrentOffset(), ...args)
     }
-    this.maybeHandleRNOHError(args)
   }
 
   private stringifyRNOHError(rnohError: RNOHError): string {
-    return rnohError.getMessage()
-  }
-
-  private maybeHandleRNOHError(args: any[]) {
-    for (let arg of args) {
-      if (arg instanceof RNOHError) {
-        this.onRNOHError(arg)
+    if (rnohError instanceof RNInstanceError) {
+      let rnInstanceNameString = "";
+      if (rnohError.getRNInstanceName()) {
+        rnInstanceNameString = `rnInstanceName="${rnohError.getRNInstanceName()}", `;
       }
-      return;
+      return `(${rnInstanceNameString}rnInstanceId=${rnohError.getRNInstanceId()})` +
+      rnohError.getMessage()
+    } else {
+      return rnohError.getMessage();
     }
   }
+
 
   public fatal(...args: any[]): void {
     if (args[0] instanceof RNOHError) {
@@ -111,7 +110,6 @@ export class StandardRNOHLogger implements RNOHLogger {
     } else {
       hilog.fatal(this.getDomain(), this.getTag(), `${this.threadPrefix} %{public}s`, ...args)
     }
-    this.maybeHandleRNOHError(args)
   }
 
   public debug(...args: any[]): void {
@@ -152,7 +150,7 @@ export class StandardRNOHLogger implements RNOHLogger {
 
   public clone(pathSegment: string | string[]): RNOHLogger {
     const newPathSegments = Array.isArray(pathSegment) ? pathSegment : [pathSegment]
-    const newLogger = new StandardRNOHLogger(this.onRNOHError, this.minSeverity, [...this.pathSegments, ...newPathSegments], this.tracer)
+    const newLogger = new StandardRNOHLogger(this.minSeverity, [...this.pathSegments, ...newPathSegments], this.tracer)
     newLogger.setThreadPrefix(this.threadPrefix)
     return newLogger
   }

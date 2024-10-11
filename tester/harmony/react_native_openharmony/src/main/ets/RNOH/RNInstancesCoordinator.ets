@@ -10,7 +10,7 @@ import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
 import { DevMenu } from "./DevMenu"
 import { JSPackagerClientConfig } from "./JSPackagerClient"
-import { RNOHError } from "./RNOHError"
+import { RNOHError, RNOHErrorEventEmitter } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
 import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
 import type { HttpClient } from "../HttpClient/ts"
@@ -18,6 +18,7 @@ import { AbilityConstant, Want } from '@kit.AbilityKit';
 import { WorkerThread } from "./WorkerThread"
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 import { bundleManager } from '@kit.AbilityKit';
+import { EventEmitter } from './EventEmitter';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -100,9 +101,26 @@ export class RNInstancesCoordinator {
     dependencies.logger.info(RNOH_BANNER)
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale??1, dependencies.logger);
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale ?? 1, dependencies.logger);
+    const globalRNOHErrorEventEmitter: RNOHErrorEventEmitter = new EventEmitter();
+    globalRNOHErrorEventEmitter.subscribe("NEW_ERROR", (err) => {
+      dependencies.logger.error(err);
+      devToolsController.setLastError(err);
+      devToolsController.eventEmitter.emit("NEW_ERROR", err);
+    })
     const envInfo =
-      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true);
+      napiBridge.onInit(options?.disableCleaningRNInstances !== undefined ? !options.disableCleaningRNInstances : true,
+        {
+          handleError: (rnohError) => {
+            globalRNOHErrorEventEmitter.emit("NEW_ERROR", rnohError)
+          },
+          getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
+          getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
+          getFoldStatus: () => displayMetricsManager.getFoldStatus(),
+          getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
+          getMetadata,
+        });
+
     const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
@@ -135,6 +153,7 @@ export class RNInstancesCoordinator {
       devMenu,
       jsPackagerClient,
       dependencies.defaultBackPressHandler,
+      globalRNOHErrorEventEmitter,
       dependencies.rnohWorkerScriptUrl,
       options);
   }
@@ -153,6 +172,7 @@ export class RNInstancesCoordinator {
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
   private defaultBackPressHandler: () => void
+  private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter
   private envId: number;
 
   private constructor(napiBridge: NapiBridge,
@@ -165,6 +185,7 @@ export class RNInstancesCoordinator {
     devMenu: DevMenu,
     jsPackagerClient: JSPackagerClient,
     defaultBackPressHandler: () => void,
+    globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
     rnohWorkerScriptUrl?: string | undefined,
     options?: RNInstancesCoordinatorOptions) {
     this.envId = envId;
@@ -179,20 +200,21 @@ export class RNInstancesCoordinator {
     this.options = options;
     this.jsPackagerClient = jsPackagerClient;
     this.defaultBackPressHandler = defaultBackPressHandler;
+    this.globalRNOHErrorEventEmitter = globalRNOHErrorEventEmitter;
     const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     const workerThreadPromise = rnohWorkerScriptUrl !== undefined ? WorkerThread.create({
-        scriptUrl: rnohWorkerScriptUrl,
-        name: "RNOHWorker",
-        logger: logger,
-        onWorkerError: (rnohError) => {
-          this.devToolsController.setLastError(rnohError)
-          this.devToolsController.eventEmitter.emit("NEW_ERROR", rnohError)
-        }
-      }) : undefined
+      scriptUrl: rnohWorkerScriptUrl,
+      name: "RNOHWorker",
+      logger: logger,
+      onWorkerError: (rnohError) => {
+        this.rnohCoreContext.reportRNOHError(rnohError);
+      }
+    }) : undefined
     this.rnInstanceRegistry = new RNInstanceRegistry(
       uiAbilityContext,
       this.envId,
       this.rawLogger,
+      this.globalRNOHErrorEventEmitter,
       napiBridge,
       this.devToolsController,
       (rnInstance) => new UITurboModuleContext(RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance)),
@@ -214,7 +236,8 @@ export class RNInstancesCoordinator {
       launchUri: this.options?.launchURI,
       defaultBackPressHandler: this.defaultBackPressHandler,
       devToolsController: this.devToolsController,
-      devMenu: this.devMenu
+      devMenu: this.devMenu,
+      rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter
     });
   }
 

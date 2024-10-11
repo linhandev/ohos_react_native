@@ -55,7 +55,29 @@ export class NapiBridge {
     this.logger = logger.clone("NapiBridge")
   }
 
-  onInit(shouldCleanUpRNInstances: boolean): envINFO {
+  private unwrapResult<TOk = null>(result: Result<TOk>): TOk {
+    if (result.err) {
+      throw this.unwrapError(result)
+    }
+    return result.ok
+  }
+
+  private unwrapError(result: Result<unknown>): RNOHError {
+    if (!result.err) {
+      throw new RNOHError({
+        whatHappened: "Called unwrapError on result which doesn't have error",
+        howCanItBeFixed: []
+      })
+    }
+    return new RNOHError({
+      whatHappened: result.err.message,
+      howCanItBeFixed: (result.err.suggestions ?? []),
+      customStack: (result.err.stacktrace ?? []).join("\n"),
+    })
+  }
+
+
+  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) : envINFO {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -64,7 +86,20 @@ export class NapiBridge {
       this.logger.fatal(err)
       throw err
     }
-    return this.libRNOHApp?.onInit(shouldCleanUpRNInstances);
+    return this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
+      handleError: (err: RawRNOHError) => {
+        arkTSBridgeHandler.handleError(new RNOHError({
+          whatHappened: err.message,
+          howCanItBeFixed: (err.suggestions ?? []),
+          customStack: (err.stacktrace ?? []).join("\n"),
+        }))
+      },
+      getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics(),
+      getFoldStatus: () => arkTSBridgeHandler.getFoldStatus(),
+      getIsSplitScreenMode: () => arkTSBridgeHandler.getIsSplitScreenMode(),
+      getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale(),
+      getMetadata: (name: string) => arkTSBridgeHandler.getMetadata(name),
+    } satisfies ArkTSBridgeHandler)
   }
 
   registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,
