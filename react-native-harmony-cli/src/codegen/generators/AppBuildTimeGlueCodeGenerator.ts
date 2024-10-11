@@ -2,11 +2,11 @@ import Case from 'case';
 import { AbsolutePath } from '../../core';
 import { CodeGenerator } from '../core';
 import { IndexTSTemplate, RNOHGeneratedPackageHTemplate } from '../templates';
-import { BasePackageHTemplate } from '../templates/GeneratedPackageHTemplate';
+import { BasePackageHTemplate } from '../templates/BasePackageHTemplate';
 
 export type GlueCodeComponentDataV1 = { name: string; eventNames: string[] };
 
-export type GlueCodeComponentDataV2 = { name: string; libraryName: string };
+export type GlueCodeComponentDataV2 = { name: string; libraryCppName: string };
 
 export type GlueCodeTurboModuleData = { name: string };
 
@@ -33,18 +33,21 @@ export type GlueCodeData = {
  * Generates code based on UberGenerators results. If UberGenerators produce "leaves" (concrete turbo module or component classes),
  * this class generates "branches" (barrel files like index.ts) and "trunks" (package file or files).
  */
-export class GlueCodeGenerator implements CodeGenerator<GlueCodeData> {
+export class AppBuildTimeGlueCodeGenerator
+  implements CodeGenerator<GlueCodeData>
+{
   constructor(
     private cppOutputPath: AbsolutePath,
-    private etsOutputPath: AbsolutePath
+    private etsOutputPath: AbsolutePath,
+    private codegenNoticeLines: string[]
   ) {}
 
   generate({ v1, v2 }: GlueCodeData): Map<AbsolutePath, string> {
     const fileContentByPath = new Map<AbsolutePath, string>();
     const generatedPackageH_v1 = new RNOHGeneratedPackageHTemplate();
-    const components_indexTS = new IndexTSTemplate();
-    const turboModules_indexTS = new IndexTSTemplate();
-    const generated_indexETS = new IndexTSTemplate();
+    const components_indexTS = new IndexTSTemplate(this.codegenNoticeLines);
+    const turboModules_indexTS = new IndexTSTemplate(this.codegenNoticeLines);
+    const generated_indexETS = new IndexTSTemplate(this.codegenNoticeLines);
 
     generated_indexETS.addReexport({ from: './ts' });
     v1.components.forEach(({ name, eventNames }) => {
@@ -62,7 +65,8 @@ export class GlueCodeGenerator implements CodeGenerator<GlueCodeData> {
     v2.forEach(({ components, turboModules }, libraryName) => {
       const basePackageClassName = `Base${Case.pascal(libraryName)}Package`;
       const generatedPackageH_v2 = new BasePackageHTemplate(
-        basePackageClassName
+        basePackageClassName,
+        this.codegenNoticeLines
       );
       components.forEach((component) => {
         generatedPackageH_v2.addComponent(component);
@@ -87,7 +91,7 @@ export class GlueCodeGenerator implements CodeGenerator<GlueCodeData> {
     );
     fileContentByPath.set(
       this.etsOutputPath.copyWithNewSegment('ts.ts'),
-      new IndexTSTemplate()
+      new IndexTSTemplate(this.codegenNoticeLines)
         .addReexport({ from: './components/ts', as: 'RNC' })
         .addReexport({ from: './turboModules/ts', as: 'TM' })
         .build()

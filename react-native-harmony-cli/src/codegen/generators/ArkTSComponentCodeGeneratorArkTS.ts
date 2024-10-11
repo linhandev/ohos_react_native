@@ -12,14 +12,16 @@ import {
   ComponentJSIBinderHTemplate,
   ComponentUtilsTSTemplate,
 } from '../templates';
-import { GlueCodeComponentDataV1 } from './GlueCodeGenerator';
+import { GlueCodeComponentDataV1 } from './AppBuildTimeGlueCodeGenerator';
 
-export class ComponentCodeGeneratorArkTS implements SpecCodeGenerator {
+export class ArkTSComponentCodeGeneratorArkTS implements SpecCodeGenerator {
   private glueCodeDataItems: GlueCodeComponentDataV1[] = [];
 
   constructor(
     private cppOutputPath: AbsolutePath,
-    private tsOutputPath: AbsolutePath
+    private tsOutputPath: AbsolutePath,
+    private codegenNoticeLines: string[],
+    private rnohImport: string
   ) {}
 
   getGlueCodeData(): GlueCodeComponentDataV1[] {
@@ -41,9 +43,13 @@ export class ComponentCodeGeneratorArkTS implements SpecCodeGenerator {
       );
       const componentJSIBinderHTemplate = new ComponentJSIBinderHTemplate(
         name,
-        1
+        this.codegenNoticeLines
       );
-      const componentUtilsTSTemplate = new ComponentUtilsTSTemplate(name);
+      const componentUtilsTSTemplate = new ComponentUtilsTSTemplate(
+        name,
+        this.codegenNoticeLines,
+        this.rnohImport
+      );
 
       shape.props.forEach((prop) => {
         componentJSIBinderHTemplate.addProp({

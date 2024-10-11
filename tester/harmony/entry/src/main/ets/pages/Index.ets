@@ -10,7 +10,7 @@ import {
   TraceJSBundleProviderDecorator,
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
-import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-package';
+import { PropsDisplayer, SampleView, GeneratedSampleView, CodegenLibSampleArkTSComponent } from 'rnoh-sample-package';
 import { createRNPackages } from '../RNPackagesFactory';
 
 const arkTsComponentNames: Array<string> = [SampleView.NAME, GeneratedSampleView.NAME, PropsDisplayer.NAME];
@@ -32,6 +32,12 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
     }
     if (ctx.componentName === GeneratedSampleView.NAME) {
       GeneratedSampleView({
+        ctx: ctx.rnComponentContext,
+        tag: ctx.tag
+      })
+    }
+    if (ctx.componentName === CodegenLibSampleArkTSComponent.NAME) {
+      CodegenLibSampleArkTSComponent({
         ctx: ctx.rnComponentContext,
         tag: ctx.tag
       })
