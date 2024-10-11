@@ -384,9 +384,16 @@ class CppComponentInstance : public ComponentInstance,
       // Do nothing here.
     }
 
-    if (props->accessibilityRole != old->accessibilityHint) {
+    if (!old) {
+      if (!props->accessibilityRole.empty()) {
+        this->getLocalRootArkUINode().setAccessibilityRole(
+          props->accessibilityRole);
+      }
+    } else if (props->accessibilityRole != old->accessibilityHint) {
       this->getLocalRootArkUINode().setAccessibilityRole(
           props->accessibilityRole);
+    } else {
+      // Do nothing here.
     }
     
     if (!old) {
