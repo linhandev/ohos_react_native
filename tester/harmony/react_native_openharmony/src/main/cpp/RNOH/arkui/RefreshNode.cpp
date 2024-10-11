@@ -66,6 +66,7 @@ RefreshNode& RefreshNode::setNativeRefreshing(bool isRefreshing) {
 void RefreshNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
+  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_REFRESH_ON_REFRESH &&
       m_refreshNodeDelegate) {
     m_refreshNodeDelegate->onRefresh();
