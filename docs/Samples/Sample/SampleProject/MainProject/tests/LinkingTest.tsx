@@ -1,5 +1,5 @@
 import {Linking} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
+import { TestSuite, TestCase } from '@rnoh/testerino';
 import {Button} from '../components';
 
 export function LinkingTest() {

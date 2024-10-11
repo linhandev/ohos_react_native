@@ -9,7 +9,7 @@ import {
   Platform,
   ViewabilityConfig,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Button, Modal, ObjectDisplayer} from '../components';
 
 interface SectionData {

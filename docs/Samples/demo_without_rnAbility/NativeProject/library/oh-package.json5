@@ -6,6 +6,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "rnoh": "file:../libs/react_native_openharmony-5.0.0.490.har"
+    "@rnoh/react-native-openharmony": "file:../libs/react_native_openharmony-5.0.0.601.har"
   }
 }

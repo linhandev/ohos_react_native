@@ -6,7 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "uprnsdk": "file:../library"
+    "library": "file:../library"
   }
 }
 

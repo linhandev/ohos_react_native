@@ -2,7 +2,7 @@ import React, {useRef, useState} from 'react';
 
 import {Animated, Pressable, Text, View} from 'react-native';
 
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Button} from '../components';
 
 export function AnimatedTest() {

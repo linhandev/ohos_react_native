@@ -7,7 +7,7 @@ import {
   ViewabilityConfig,
   VirtualizedList,
 } from 'react-native';
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import { TestCase, TestSuite } from '@rnoh/testerino';
 import {Button} from '../components';
 
 type OnScrollToIndexFailed = {
