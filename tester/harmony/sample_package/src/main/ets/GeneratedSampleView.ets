@@ -43,7 +43,7 @@ export struct GeneratedSampleView {
     RNViewBase({ ctx: this.ctx, tag: this.tag }) {
       Column() {
         Text(JSON.stringify(this.getDirectProps(), null, 2)).width("100%").fontSize(8)
-      }.width("100%").height("100%").backgroundColor(this.descriptorWrapper.props.colorTest.toRGBAString())
+      }.width("100%").height("100%").backgroundColor(this.descriptorWrapper?.props.colorTest.toRGBAString())
 
       this.ctx.wrappedRNChildrenBuilder.builder(this.ctx, this.tag)
     }

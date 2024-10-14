@@ -354,7 +354,10 @@ export class DescriptorRegistry {
       return [mutation.childTag, mutation.parentTag];
     } else if (mutation.type === MutationType.UPDATE) {
       const currentDescriptor = this.descriptorByTag.get(mutation.descriptor.tag);
-      const children = currentDescriptor!.childrenTags;
+      if (!currentDescriptor) {
+        return [];
+      }
+      const children = currentDescriptor.childrenTags;
       const mutationDescriptor = this.maybeOverwriteProps(mutation.descriptor)
       const animatedProps = this.animatedRawPropsByTag.get(mutation.descriptor.tag);
 
@@ -362,9 +365,9 @@ export class DescriptorRegistry {
         ...currentDescriptor,
         ...mutation.descriptor,
         // NOTE: animated props override the ones from the mutation
-        props: { ...currentDescriptor!.props, ...mutationDescriptor.props, ...animatedProps },
-        rawProps: { ...currentDescriptor!.rawProps, ...mutationDescriptor.rawProps, ...animatedProps },
-        state: { ...currentDescriptor!.state, ...mutationDescriptor.state },
+        props: { ...currentDescriptor.props, ...mutationDescriptor.props, ...animatedProps },
+        rawProps: { ...currentDescriptor.rawProps, ...mutationDescriptor.rawProps, ...animatedProps },
+        state: { ...currentDescriptor.state, ...mutationDescriptor.state },
         childrenTags: children,
       };
       this.saveDescriptor(newDescriptor)
@@ -385,7 +388,7 @@ export class DescriptorRegistry {
     } else if (mutation.type === MutationType.REMOVE) {
       const parentDescriptor = this.descriptorByTag.get(mutation.parentTag);
       const childDescriptor = this.descriptorByTag.get(mutation.childTag);
-      const idx = parentDescriptor.childrenTags.indexOf(mutation.childTag);
+      const idx = parentDescriptor?.childrenTags.indexOf(mutation.childTag);
       this.descriptorMutationListenersByTag.get(mutation.parentTag)?.forEach((cb) => cb({
         descriptorMutationType: "REMOVE_CHILD",
         childTag: mutation.childTag,
