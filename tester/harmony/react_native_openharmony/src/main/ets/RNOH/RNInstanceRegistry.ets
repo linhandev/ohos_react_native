@@ -85,6 +85,7 @@ export class RNInstanceRegistry {
       const fontFamily = entry[0]
       const fontResource = entry[1]
       if (typeof fontResource == 'string') {
+        font.registerFont({ familyName: fontFamily, familySrc: `file://${fontResource}` })
         fontPathByFontFamily[fontFamily] = fontResource
       } else {
         fontPathByFontFamily[fontFamily] = fontResource.params![0]
