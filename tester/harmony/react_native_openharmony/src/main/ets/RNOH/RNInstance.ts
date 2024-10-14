@@ -969,6 +969,7 @@ export class RNInstanceImpl implements RNInstance {
             ],
           });
         }
+        font.registerFont({familyName: fontFamily, familySrc: `file://${fontResource}`})
         return fontResource;
       } else {
         font.registerFont({ familyName: fontFamily, familySrc: fontResource });
@@ -976,10 +977,6 @@ export class RNInstanceImpl implements RNInstance {
       }
     })()
     this.fontPathByFontFamily[fontFamily] = fontPath
-    font.registerFont({
-      familyName: fontFamily,
-      familySrc: `file://${fontPath}`,
-    });
     this.napiBridge.registerFont(this.id, fontFamily, fontPath)
   }
 }
