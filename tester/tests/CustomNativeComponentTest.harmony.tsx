@@ -363,12 +363,38 @@ function GeneratedCustomComponentTest() {
 }
 
 function ContainerViewTest() {
+  const [childCount, setChildCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (childCount === 0) {
+        setChildCount(5);
+      } else {
+        setChildCount(childCount - 1);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [childCount]);
+
   return (
     <TestSuite name="Custom container component">
       <TestCase.Example itShould="display a custom component with children">
         <ContainerView>
           <View style={{width: 100, height: 100, backgroundColor: 'red'}} />
           <Text>Content</Text>
+        </ContainerView>
+      </TestCase.Example>
+
+      <TestCase.Example itShould="maintain correct positions of custom components when removing">
+        <ContainerView>
+          <View collapsable={false}>
+            {Array.from({length: childCount}, (_v, k) => (
+              <ContainerView key={k}>
+                <Text>Element no. {k + 1}</Text>
+              </ContainerView>
+            ))}
+          </View>
         </ContainerView>
       </TestCase.Example>
 
@@ -380,9 +406,11 @@ function ContainerViewTest() {
           </Blinker>
         </ContainerView>
       </TestCase.Example>
+
       <TestCase.Example itShould="support arbitrary levels of custom component nesting">
         <ArbitraryNestingTest />
       </TestCase.Example>
+
       <TestCase.Example itShould="display a custom component with ArkTS and CAPI children">
         <ContainerView>
           <View
