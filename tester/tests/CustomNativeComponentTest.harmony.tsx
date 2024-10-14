@@ -17,7 +17,7 @@ import {
   IncomingData as GeneratedSampleNativeComponentCAPICustomProps,
   SupportedCommandArgs as GeneratedSampleNativeComponentCAPICommandArgs,
 } from 'react-native-harmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
-import {Text, View} from 'react-native';
+import {Text, TextInput, View} from 'react-native';
 
 export function CustomNativeComponentTest() {
   return (
@@ -380,6 +380,66 @@ function ContainerViewTest() {
           </Blinker>
         </ContainerView>
       </TestCase.Example>
+      <TestCase.Example itShould="support arbitrary levels of custom component nesting">
+        <ArbitraryNestingTest />
+      </TestCase.Example>
+      <TestCase.Example itShould="display a custom component with ArkTS and CAPI children">
+        <ContainerView>
+          <View
+            collapsable={false}
+            style={{backgroundColor: 'blue', padding: 40}}>
+            <GeneratedSampleComponentArkTS
+              testProps={{
+                booleanTest: true,
+                intTest: 42,
+                floatTest: 42.5,
+                doubleTest: 42.5,
+                stringTest: 'foobar',
+                objectTest: {foo: {bar: 'baz'}},
+                colorTest: 'red',
+                arrayTest: ['foo', 'bar'],
+                readOnlyArrayTest: ['foo', 'bar'],
+                intEnumTest: 1,
+              }}
+            />
+          </View>
+        </ContainerView>
+      </TestCase.Example>
     </TestSuite>
+  );
+}
+
+function ArbitraryNestingTest() {
+  const [depthString, setDepthString] = React.useState('3');
+  const depth = Math.min(parseInt(depthString) ?? 0, 15);
+
+  return (
+    <View>
+      <TextInput
+        value={depthString}
+        onChange={e => setDepthString(e.nativeEvent.text)}
+        style={{height: 30}}
+      />
+      <IterativeContainer depth={depth} />
+    </View>
+  );
+}
+
+function IterativeContainer({depth}: {depth: number}) {
+  const COLORS = ['red', 'blue', 'white'];
+
+  if (depth <= 0 || isNaN(depth)) {
+    return null;
+  }
+
+  const backgroundColor = COLORS[depth % COLORS.length];
+
+  return (
+    <ContainerView>
+      <View collapsable={false} style={{backgroundColor, padding: 10}}>
+        <Text>Depth: {depth}</Text>
+        <IterativeContainer depth={depth - 1} />
+      </View>
+    </ContainerView>
   );
 }
