@@ -1,4 +1,4 @@
-import { Command } from '@react-native-community/cli-types';
+import { Command } from './types';
 import {
   AbsolutePath,
   DescriptiveError,
@@ -30,22 +30,22 @@ export const commandCodegenLibHarmony: Command = {
         'Name of your React Native library. This value is processed and used as a directory name for C++ files to reduce the chances of conflicts between libraries.',
     },
     {
-      name: '--turbo-modules-spec-paths [path]',
+      name: '--turbo-modules-spec-paths [path...]',
       description:
         'Path or paths to Turbo Module spec files. Each path can point to a spec file or a directory containing spec files.',
-      parse: (val: string) => val.split(' '),
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
     {
-      name: '--arkts-components-spec-paths [path]',
+      name: '--arkts-components-spec-paths [path...]',
       description:
         'Path or paths to component spec files used to generate code for components to be implemented on the ArkTS side. Each path can point to a spec file or a directory containing spec files.',
-      parse: (val: string) => val.split(' '),
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
     {
-      name: '--cpp-components-spec-paths [path]',
+      name: '--cpp-components-spec-paths [path...]',
       description:
         'Path or paths to component spec files used to generate code for components to be implemented on the C++ side. Each path can point to a spec file or a directory containing spec files.',
-      parse: (val: string) => val.split(' '),
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
     {
       name: '--cpp-output-path <path>',

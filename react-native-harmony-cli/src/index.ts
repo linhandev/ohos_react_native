@@ -1,4 +1,4 @@
-import { Config } from '@react-native-community/cli-types';
+import { Config, Command } from '@react-native-community/cli-types';
 import {
   commandBundleHarmony,
   commandCodegenHarmony,
@@ -14,5 +14,5 @@ export const config = {
     commandVerifyPackageHarmony,
     commandCodegenLibHarmony,
     commandLinkHarmony,
-  ],
+  ] as Command[],
 } satisfies Partial<Config>;

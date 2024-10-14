@@ -102,7 +102,7 @@ it('should export codegen-lib-harmony command', () => {
 
 it('should generate components and Turbo Module code to the desired output directory based on provided paths to specs', () => {
   const specsDirPath = tmpDir.copyWithNewSegment('specs');
-  createSampleSpecFiles(specsDirPath, ['MyView'], ['MyModule']);
+  createSampleSpecFiles(specsDirPath, ['MyView', 'MyView2'], ['MyModule']);
   const cppOutputPath = tmpDir.copyWithNewSegment('codegen', 'cpp');
   const etsOutputPath = tmpDir.copyWithNewSegment('codegen', 'ets');
 
@@ -120,7 +120,7 @@ it('should generate components and Turbo Module code to the desired output direc
     getFileNamesFromDirPath(
       cppOutputPath.copyWithNewSegment('RNOH', 'generated', 'components')
     ).length
-  ).toBeGreaterThan(0);
+  ).toBeGreaterThanOrEqual(4);
   expect(
     getFileNamesFromDirPath(
       cppOutputPath.copyWithNewSegment('RNOH', 'generated', 'turbo_modules')

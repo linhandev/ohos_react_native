@@ -1,4 +1,4 @@
-import { Command } from '@react-native-community/cli-types';
+import { Command } from './types';
 import fs from 'fs';
 import fse from 'fs-extra';
 import Metro from 'metro';

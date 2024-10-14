@@ -1,6 +1,6 @@
 import pathUtils from 'node:path';
 import Case from 'case';
-import { Command } from '@react-native-community/cli-types';
+import { Command } from './types';
 import {
   AbsolutePath,
   DescriptiveError,

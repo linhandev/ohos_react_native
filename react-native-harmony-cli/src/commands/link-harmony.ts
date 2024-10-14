@@ -1,4 +1,4 @@
-import { Command } from '@react-native-community/cli-types';
+import { Command } from './types';
 import { AbsolutePath, DescriptiveError } from '../core';
 import { Logger, RealFS } from '../io';
 import { Autolinking } from '../autolinking';
@@ -46,14 +46,16 @@ export const commandLinkHarmony: Command = {
       default: './oh-package.json5',
     },
     {
-      name: '--exclude-npm-packages [string]',
+      name: '--exclude-npm-packages [string...]',
       description:
-        "Lists npm package names to be excluded from the autolinking process, separated by semicolons. By default every library is included. Can't be used with --included-npm-packages.",
+        "Lists npm package names to be excluded from the autolinking process. By default every library is included. Can't be used with --included-npm-packages.",
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
     {
-      name: '--include-npm-packages [string]',
+      name: '--include-npm-packages [string...]',
       description:
-        "Lists npm package names to be included from the autolinking process, separated by semicolons. By default every library is included. Can't be used with --excluded-npm-packages.",
+        "Lists npm package names to be included from the autolinking process. By default every library is included. Can't be used with --excluded-npm-packages.",
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
   ],
   func: async (_argv, _config, rawArgs: any) => {
@@ -72,14 +74,14 @@ export const commandLinkHarmony: Command = {
           rawArgs.etsRnohPackagesFactoryPathRelativeToHarmony,
         ohPackagePathRelativeToHarmony: rawArgs.ohPackagePathRelativeToHarmony,
         excludedNpmPackageNames: new Set(
-          rawArgs.excludeNpmPackages
-            ? (rawArgs.excludeNpmPackages ?? '').split(';')
-            : undefined
+          rawArgs.excludeNpmPackages.length === 1
+            ? rawArgs.excludeNpmPackages[0].split(';')
+            : rawArgs.excludeNpmPackages
         ),
         includedNpmPackageNames: new Set(
-          rawArgs.includeNpmPackages
-            ? (rawArgs.includeNpmPackages ?? '').split(';')
-            : undefined
+          rawArgs.excludeNpmPackages.length === 1
+            ? rawArgs[0].includeNpmPackages.split(';')
+            : rawArgs.includeNpmPackages
         ),
       });
       const result = autolinking.evaluate(config);

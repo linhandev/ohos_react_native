@@ -1,4 +1,4 @@
-import { Command } from '@react-native-community/cli-types';
+import { Command } from './types';
 import { getLoader, Loader } from '@react-native-community/cli-tools';
 import chalk from 'chalk';
 import { DescriptiveError, AbsolutePath } from '../core';
@@ -18,8 +18,9 @@ export const commandVerifyPackageHarmony: Command = {
       description: 'Disable har verification',
     },
     {
-      name: '--skip-checks <string>',
-      description: 'Disable certain checks by their names separated by ";"',
+      name: '--skip-checks <string...>',
+      description: 'Disable certain checks by their names',
+      parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
   ],
   func: async (argv, config, rawArgs: any) => {
@@ -81,7 +82,10 @@ function validateArgs(args: any): Args {
   return {
     packagePath: new AbsolutePath(args.packagePath),
     hasHarmonyCode: args.harmonyCode,
-    checkNamesToSkip: ((args.skipChecks ?? '') as string).split(';'),
+    checkNamesToSkip:
+      args.skipChecks.length === 1
+        ? args.skipChecks[0].split(';')
+        : args.skipChecks,
   };
 }
 
