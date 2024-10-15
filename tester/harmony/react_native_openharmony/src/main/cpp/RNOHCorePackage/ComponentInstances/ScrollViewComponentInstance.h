@@ -93,10 +93,10 @@ class ScrollViewComponentInstance
   void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) override;
 
+  void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;
+
   void onStateChanged(SharedConcreteState const& state) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
-  void onLayoutChanged(
-      facebook::react::LayoutMetrics const& layoutMetrics) override;
 
   void onCommandReceived(
       std::string const& commandName,
