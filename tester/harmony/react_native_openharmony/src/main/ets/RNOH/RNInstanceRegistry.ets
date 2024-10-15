@@ -105,8 +105,7 @@ export class RNInstanceRegistry {
       fontPathByFontFamily,
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
-      options.backPressHandler ?? (() => {
-      }),
+      options.backPressHandler,
     );
     const packages = options.createRNPackages({})
     packages.unshift(new RNOHCorePackage({}));
