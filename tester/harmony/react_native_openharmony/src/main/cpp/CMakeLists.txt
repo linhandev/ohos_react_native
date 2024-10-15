@@ -180,8 +180,9 @@ target_include_directories(folly_futures PUBLIC
 target_compile_options(folly_futures PRIVATE
     ${folly_compile_options}
     "-Wno-nullability-completeness"
-    "-std=c++17"
 )
+target_compile_features(folly_futures PUBLIC cxx_std_17)
+
 target_sources(folly_futures PRIVATE
     "${patches_dir}/folly/Demangle.cpp"
     "${folly_src_dir}/ExceptionString.cpp"
@@ -531,8 +532,8 @@ target_link_libraries(rnoh PUBLIC
 target_compile_options(rnoh PUBLIC
     ${folly_compile_options}
     -DRAW_PROPS_ENABLED
-    -std=c++17
 )
+target_compile_features(rnoh PUBLIC cxx_std_17)
 
 if("$ENV{RNOH_C_API_ARCH}" STREQUAL "1")
     message("Experimental C-API architecture enabled")
