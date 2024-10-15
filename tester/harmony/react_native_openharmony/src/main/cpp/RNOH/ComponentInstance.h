@@ -43,7 +43,6 @@ class ComponentInstance
     ArkTSChannel::Shared arkTSChannel;
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
-    Registry::Shared componentInstanceRegistry;
     ImageSourceResolver::Shared imageSourceResolver;
   };
 
