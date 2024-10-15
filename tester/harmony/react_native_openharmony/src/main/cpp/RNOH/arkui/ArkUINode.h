@@ -12,6 +12,7 @@
 #include <react/renderer/graphics/Float.h>
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
+#include <initializer_list>
 #include <stdexcept>
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
@@ -149,7 +150,7 @@ class ArkUINode {
   virtual ~ArkUINode() noexcept;
 
  protected:
-  void maybeThrow(int32_t status) {
+  void maybeThrow(int32_t status) const {
     // TODO: map status to error message, maybe add a new error type
     static const auto ARKUI_ERROR_CODE_NOT_SUPPORTED_FOR_ARKTS_NODE = 106103;
     if (status == ARKUI_ERROR_CODE_NOT_SUPPORTED_FOR_ARKTS_NODE) {
@@ -168,8 +169,25 @@ class ArkUINode {
 
   void registerNodeEvent(ArkUI_NodeEventType eventType);
   void unregisterNodeEvent(ArkUI_NodeEventType eventType);
+
   const ArkUI_AttributeItem& getAttribute(
       ArkUI_NodeAttributeType attribute) const;
+
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      ArkUI_AttributeItem const& item);
+
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      std::initializer_list<ArkUI_NumberValue> values);
+
+  template <size_t N>
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      std::array<ArkUI_NumberValue, N> const& values) {
+    ArkUI_AttributeItem item{.value = values.data(), .size = N};
+    setAttribute(attribute, item);
+  }
 
   ArkUI_NodeHandle m_nodeHandle;
 };
