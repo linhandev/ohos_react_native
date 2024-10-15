@@ -39,10 +39,11 @@ void ScrollViewComponentInstance::onChildRemoved(
       childComponentInstance->getLocalRootArkUINode());
 }
 
-void ScrollViewComponentInstance::onLayoutChanged(
-    facebook::react::LayoutMetrics const& layoutMetrics) {
-  CppComponentInstance::onLayoutChanged(layoutMetrics);
+void ScrollViewComponentInstance::setLayout(
+    facebook::react::LayoutMetrics layoutMetrics) {
+  getLocalRootArkUINode().setSize(layoutMetrics.frame.size);
   m_scrollNode.setSize(layoutMetrics.frame.size);
+  m_layoutMetrics = layoutMetrics;
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
   }
@@ -50,6 +51,7 @@ void ScrollViewComponentInstance::onLayoutChanged(
     m_scrollNode.setDirection(
         convertLayoutDirection(layoutMetrics.layoutDirection));
   }
+  markBoundingBoxAsDirty();
 }
 
 void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
