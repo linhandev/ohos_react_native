@@ -454,7 +454,7 @@ export class RNInstanceImpl implements RNInstance {
     private fontPathByFontFamily: Record<string, string>,
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
-    backPressHandler: () => void,
+    backPressHandler?: () => void,
   ) {
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this);
