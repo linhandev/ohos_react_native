@@ -74,13 +74,13 @@ export const commandLinkHarmony: Command = {
           rawArgs.etsRnohPackagesFactoryPathRelativeToHarmony,
         ohPackagePathRelativeToHarmony: rawArgs.ohPackagePathRelativeToHarmony,
         excludedNpmPackageNames: new Set(
-          rawArgs.excludeNpmPackages.length === 1
+          rawArgs.excludeNpmPackages?.length === 1
             ? rawArgs.excludeNpmPackages[0].split(';')
             : rawArgs.excludeNpmPackages
         ),
         includedNpmPackageNames: new Set(
-          rawArgs.excludeNpmPackages.length === 1
-            ? rawArgs[0].includeNpmPackages.split(';')
+          rawArgs.includeNpmPackages?.length === 1
+            ? rawArgs.includeNpmPackages[0].split(';')
             : rawArgs.includeNpmPackages
         ),
       });

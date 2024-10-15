@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "i": "npm run pack_react_native_harmony && npm run pack_react_native_harmony_sample_package && npm run install:react_native_harmony && npm run install:react_native_harmony_sample_package && npm install && npm run install:hooks",
-    "install:hooks": "cd .. && husky install tester/.husky && cd tester && npx husky add .husky/pre-push \"cd tester && npm run verify\"",
+    "install:hooks": "cd .. && husky install tester/.husky && cd tester && if ! grep -q \"npm run verify\" .husky/pre-push; then npx husky add .husky/pre-push \"cd tester && npm run verify && cd ..\"; fi",
     "postinstall": "node ./scripts/create-build-profile && npm run reinstall:react_native_harmony && npm run reinstall:react_native_harmony_sample_package",
     "reinstall:react_native_harmony": "npm uninstall react-native-harmony && npm run pack_react_native_harmony && npm run install:react_native_harmony",
     "reinstall:react_native_harmony_sample_package": "npm uninstall react-native-harmony-sample-package && npm run pack_react_native_harmony_sample_package && npm run install:react_native_harmony_sample_package",
