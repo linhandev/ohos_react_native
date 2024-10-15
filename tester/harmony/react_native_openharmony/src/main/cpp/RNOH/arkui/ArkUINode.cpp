@@ -751,4 +751,11 @@ void ArkUINode::setAttribute(
   ArkUI_AttributeItem item{.value = std::data(values), .size = size};
   setAttribute(attribute, item);
 }
+
+ArkUINode& ArkUINode::setAccessibilityMode(ArkUI_AccessibilityMode mode) {
+  ArkUI_NumberValue value = {.i32 = mode};
+  setAttribute(NODE_ACCESSIBILITY_MODE, {value});
+  return *this;
+}
+
 } // namespace rnoh
