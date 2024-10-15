@@ -149,7 +149,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void setSurfaceDisplayMode(
       facebook::react::Tag surfaceId,
       facebook::react::DisplayMode displayMode) override;
-  void callFunction(
+  void callJSFunction(
       std::string&& module,
       std::string&& method,
       folly::dynamic&& params) override;
@@ -197,8 +197,6 @@ class RNInstanceCAPI : public RNInstanceInternal,
       folly::dynamic const& payload) override;
   void setBundlePath(std::string const& path) override;
   std::string getBundlePath() override;
-  void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
-  void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   int getId() override { return m_id; }
   NativeResourceManager const* getNativeResourceManager() const override;
     
