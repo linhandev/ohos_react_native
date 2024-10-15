@@ -101,6 +101,7 @@ class ArkUINode {
   virtual ArkUINode& setAccessibilityText(
       std::string const& accessibilityLabel);
   virtual ArkUINode& setAccessibilityGroup(bool accessible);
+  virtual ArkUINode& setAccessibilityMode(ArkUI_AccessibilityMode mode);
   virtual ArkUINode& setId(std::string const& id);
   virtual std::string getId() const;  
   virtual ArkUINode& setOpacity(facebook::react::Float opacity);
@@ -154,6 +155,22 @@ class ArkUINode {
   void unregisterNodeEvent(ArkUI_NodeEventType eventType);  
   const ArkUI_AttributeItem& getAttribute(
       ArkUI_NodeAttributeType attribute) const;
+
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      ArkUI_AttributeItem const& item);
+
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      std::initializer_list<ArkUI_NumberValue> values);
+
+  template <size_t N>
+  void setAttribute(
+      ArkUI_NodeAttributeType attribute,
+      std::array<ArkUI_NumberValue, N> const& values) {
+    ArkUI_AttributeItem item{.value = values.data(), .size = N};
+    setAttribute(attribute, item);
+  }
 
   ArkUI_NodeHandle m_nodeHandle;
 
