@@ -287,16 +287,6 @@ export interface RNInstance {
    */
   cancelTouches(): void
 
-   /**
-   * @architecture: C-API
-   * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
-   */
-   getNativeNodeIdByTag(tag: Tag): string | undefined
-
-   /**
-    * @returns UIContext
-   */
-
   getUIContext(): UIContext
 
   /**
@@ -304,6 +294,11 @@ export interface RNInstance {
    * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
    */
   getNativeNodeIdByTag(tag: Tag): string | undefined
+
+  /**
+   * @returns UIContext
+   */
+  getUIContext(): UIContext
 
   /**
    * Registers a custom font used by the RN application.

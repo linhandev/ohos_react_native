@@ -51,13 +51,6 @@ void TextComponentInstance::onChildRemoved(
   }
 }
 
-const std::string& TextComponentInstance::getAccessibilityLabel() const {
-  auto const& superAccessibilityLabel =
-      CppComponentInstance::getAccessibilityLabel();
-  return superAccessibilityLabel.empty() ? m_textContent
-                                         : superAccessibilityLabel;
-}
-
 void TextComponentInstance::onPropsChanged(
     SharedConcreteProps const& textProps) {
   CppComponentInstance::onPropsChanged(textProps);
@@ -203,7 +196,6 @@ void TextComponentInstance::onStateChanged(
     for (auto& fragment: fragments) {
       textContent += fragment.string;
     }
-    m_textContent = textContent;    
     m_textNode.setTextContent(textContent);
   }
   this->setTextAttributes(fragments[0].textAttributes);

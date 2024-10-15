@@ -52,8 +52,7 @@ inline facebook::react::Rect transformRectAroundPoint(
  * @api
  */
 template <typename ShadowNodeT>
-class CppComponentInstance : public ComponentInstance,
-                             public ArkUINodeDelegate {
+class CppComponentInstance : public ComponentInstance {
   static_assert(
       std::is_base_of_v<facebook::react::ShadowNode, ShadowNodeT>,
       "ShadowNodeT must be a subclass of facebook::react::ShadowNode");
@@ -73,10 +72,6 @@ class CppComponentInstance : public ComponentInstance,
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
 
-  void onCreate() override {
-    this->getLocalRootArkUINode().setArkUINodeDelegate(this);
-  }
-
   facebook::react::Tag getTag() const {
     return m_tag;
   }
@@ -91,10 +86,6 @@ class CppComponentInstance : public ComponentInstance,
 
   SharedConcreteEventEmitter const& getEventEmitter() const {
     return m_eventEmitter;
-  }
-
-  const std::string& getAccessibilityLabel() const override {
-    return m_accessibilityLabel;
   }
 
   /**
@@ -256,22 +247,7 @@ class CppComponentInstance : public ComponentInstance,
     } else {
       // Do nothing here.
     }
-    m_accessibilityLabel = props->accessibilityLabel;
-    if (old) {
-      if (props->accessibilityState.disabled !=
-              old->accessibilityState.disabled ||
-          props->accessibilityState.checked !=
-              old->accessibilityState.checked ||
-          props->accessibilityState.selected !=
-              old->accessibilityState.selected) {
-        this->getLocalRootArkUINode().setAccessibilityState(
-            props->accessibilityState);
-      }
-    } else {
-        this->getLocalRootArkUINode().setAccessibilityState(
-            props->accessibilityState);
-    }
-
+    
     facebook::react::BorderMetrics borderMetrics =
       props->resolveBorderMetrics(this->m_layoutMetrics);
     
@@ -341,14 +317,6 @@ class CppComponentInstance : public ComponentInstance,
         // Do nothing here.   
     }
 
-    if (old) {
-      if (props->accessibilityActions != old->accessibilityActions) {
-        this->getLocalRootArkUINode().setAccessibilityActions(props->accessibilityActions);
-      }
-    } else {
-      this->getLocalRootArkUINode().setAccessibilityActions(props->accessibilityActions);
-    }
-        
     if (!isTransformManagedByAnimated) {
       if (!old) {
         if (props->transform != defaultTransform || abs(m_oldPointScaleFactor - 0.0f) > 0.001f) {
@@ -383,19 +351,7 @@ class CppComponentInstance : public ComponentInstance,
     } else {
       // Do nothing here.
     }
-
-    if (!old) {
-      if (!props->accessibilityRole.empty()) {
-        this->getLocalRootArkUINode().setAccessibilityRole(
-          props->accessibilityRole);
-      }
-    } else if (props->accessibilityRole != old->accessibilityHint) {
-      this->getLocalRootArkUINode().setAccessibilityRole(
-          props->accessibilityRole);
-    } else {
-      // Do nothing here.
-    }
-    
+        
     if (!old) {
       if (!props->accessibilityHint.empty()) {
         this->getLocalRootArkUINode().setAccessibilityDescription(
@@ -488,41 +444,6 @@ class CppComponentInstance : public ComponentInstance,
     m_boundingBox = newBoundingBox;
   };
 
-  void onFinalizeUpdates() override {
-    ComponentInstance::onFinalizeUpdates();
-    if (m_props != nullptr) {
-      if (m_props->accessibilityLabelledBy.value != m_accessibilityLabelledBy) {
-        std::string targetId = "";
-        if (!m_props->accessibilityLabelledBy.value.empty()) {
-          targetId = m_props->accessibilityLabelledBy.value[0];
-        }
-        if (!targetId.empty()) {
-          auto componentInstance =
-              m_deps->componentInstanceRegistry->findById(targetId);
-          if (componentInstance != nullptr) {
-            std::string newAccessibilityLabel = "";
-            if (m_props->accessibilityLabel != "") {
-              newAccessibilityLabel += m_props->accessibilityLabel;
-            }
-            auto targetAccessibilityLabel =
-                componentInstance->getAccessibilityLabel();
-            if (!targetAccessibilityLabel.empty()) {
-              newAccessibilityLabel += " " + targetAccessibilityLabel;
-            }
-            if (!newAccessibilityLabel.empty()) {
-              this->getLocalRootArkUINode().setAccessibilityText(
-                  newAccessibilityLabel);
-            }
-          } else {
-            DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
-                          << targetId;
-          }
-        }
-      }
-      m_accessibilityLabelledBy = m_props->accessibilityLabelledBy.value;
-    }
-  }
-
   facebook::react::Rect getHitRect() const {
     facebook::react::Point origin = {0, 0};
     auto size = m_layoutMetrics.frame.size;
@@ -578,26 +499,11 @@ class CppComponentInstance : public ComponentInstance,
 
     
  protected:
-  void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
-      override {
-    if (m_eventEmitter == nullptr) {
-      return;
-    }
-    m_eventEmitter->onAccessibilityAction(actionName);
-  }
-
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
-    if (props->testId != "") {
-      return props->testId;
-    } else if (props->nativeId != "") {
-      return props->nativeId;
-    } else {
-      std::ostringstream id;
-      id << ShadowNodeT::Name() << "(" << m_tag << ")"
-         << "@" << this;
-      return id.str();
-    }
+    std::ostringstream id;
+    id << m_tag;
+    return id.str();
   }
 
   struct ViewRawProps {
@@ -635,9 +541,6 @@ class CppComponentInstance : public ComponentInstance,
         return ArkUI_Direction::ARKUI_DIRECTION_AUTO;
     }
   }
- private:
-  std::vector<std::string> m_accessibilityLabelledBy{};
-  std::string m_accessibilityLabel;
 };
 
 inline facebook::react::Rect transformRectAroundPoint(

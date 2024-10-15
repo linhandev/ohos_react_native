@@ -42,10 +42,6 @@ class MountingManager {
       bool isJsResponder,
       bool blockNativeResponder) = 0;
 
-     virtual void schedulerDidSendAccessibilityEvent(
-      const facebook::react::ShadowView& shadowView,
-      std::string const& eventType) {}
-
   virtual void updateView(
       facebook::react::Tag tag,
       folly::dynamic props,

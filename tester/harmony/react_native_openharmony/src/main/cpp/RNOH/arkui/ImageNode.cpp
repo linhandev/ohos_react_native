@@ -38,7 +38,6 @@ void ImageNode::setNodeDelegate(ImageNodeDelegate* imageNodeDelegate) {
 void ImageNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
-  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_IMAGE_ON_COMPLETE) {
     if (m_imageNodeDelegate != nullptr && eventArgs[0].i32 == 1) {
       m_imageNodeDelegate->onComplete(eventArgs[1].f32, eventArgs[2].f32);

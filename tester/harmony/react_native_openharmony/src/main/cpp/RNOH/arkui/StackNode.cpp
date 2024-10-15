@@ -37,7 +37,6 @@ void StackNode::setStackNodeDelegate(StackNodeDelegate* stackNodeDelegate) {
 void StackNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
-  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_ON_CLICK &&
       eventArgs[3].i32 != 2) {
     onClick();
