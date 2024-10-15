@@ -2,6 +2,7 @@
 #include <react/renderer/components/view/ViewShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUINode.h"
+#include "arkui/ArkUINode.h"
 
 namespace rnoh {
 /**
@@ -9,7 +10,8 @@ namespace rnoh {
  * It is used for backward compatibility reasons with ArkTS-based architecture.
  */
 class FallbackComponentInstance
-    : public CppComponentInstance<facebook::react::ViewShadowNode> {
+    : public CppComponentInstance<facebook::react::ViewShadowNode>,
+      public ArkUINodeDelegate {
  private:
   std::unique_ptr<ArkUINode> m_arkUINode;
   std::function<void()> m_arkUIBuilderNodeDestroyer;

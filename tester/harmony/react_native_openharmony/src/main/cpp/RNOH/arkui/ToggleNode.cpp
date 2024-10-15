@@ -20,7 +20,6 @@ ToggleNode::~ToggleNode() {
 void ToggleNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
-  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_TOGGLE_ON_CHANGE) {
     auto value = eventArgs[0].i32;
     if (m_toggleNodeDelegate != nullptr) {

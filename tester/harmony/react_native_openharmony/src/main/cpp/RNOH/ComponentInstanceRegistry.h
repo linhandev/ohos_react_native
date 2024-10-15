@@ -16,7 +16,7 @@ namespace rnoh {
  * ComponentInstanceRegistry stores the ComponentInstance objects and allows
  * retrieving them by tag or id.
  */
-class ComponentInstanceRegistry : public ComponentInstance::Registry {
+class ComponentInstanceRegistry {
  public:
   using Shared = std::shared_ptr<ComponentInstanceRegistry>;
 
@@ -25,7 +25,7 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
     assertMainThread();
   }
 
-  ComponentInstance::Shared findByTag(facebook::react::Tag tag) const {
+  ComponentInstance::Shared findByTag(facebook::react::Tag tag) {
     assertMainThread();
     auto it = m_componentInstanceByTag.find(tag);
     if (it != m_componentInstanceByTag.end()) {
@@ -34,22 +34,13 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
     return nullptr;
   }
 
-  std::optional<facebook::react::Tag> findTagById(const std::string& id) const {
+  std::optional<facebook::react::Tag> findTagById(const std::string& id) {
     assertMainThread();
     auto it = m_tagById.find(id);
     if (it != m_tagById.end()) {
       return it->second;
     }
     return std::nullopt;
-  }
-
-  ComponentInstance::Shared findById(const std::string& id) const override {
-    assertMainThread();
-    auto maybeTag = this->findTagById(id);
-    if (!maybeTag.has_value()) {
-      return nullptr;
-    }
-    return this->findByTag(maybeTag.value());
   }
 
   void insert(ComponentInstance::Shared componentInstance) {
@@ -90,7 +81,7 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
       m_componentInstanceByTag = {};
   std::unordered_map<std::string, facebook::react::Tag> m_tagById = {};
 
-  void assertMainThread() const {
+  void assertMainThread() {
     RNOH_ASSERT_MSG(
         m_mainThreadId == std::this_thread::get_id(),
         "ComponentInstanceRegistry must only be accessed on the main thread");

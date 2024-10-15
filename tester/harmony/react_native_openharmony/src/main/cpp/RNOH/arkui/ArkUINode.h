@@ -26,15 +26,12 @@ enum class ArkuiHitTestMode : int32_t {
   TRANSPARENT,
   NONE,
 };
-} // namespace
+}
 
 class ArkUINodeDelegate {
  public:
   virtual ~ArkUINodeDelegate() = default;
   virtual void onArkUINodeDestroy(ArkUINode* /*node*/){};
-  virtual void onArkUINodeAccessibilityAction(
-      ArkUINode* node,
-      const std::string& actionName){};
 };
 
 class ArkUINode {
@@ -60,7 +57,6 @@ class ArkUINode {
   int32_t getSavedWidth();
   int32_t getSavedHeight();
 
-  virtual ArkUINode& setAccessibilityRole(std::string const& role);
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
   virtual ArkUINode& setLayoutRect(
@@ -90,19 +86,14 @@ class ArkUINode {
       facebook::react::Float pointScaleFactor);
   virtual ArkUINode& setHitTestMode(
       facebook::react::PointerEventsMode const& pointerEvents);
-  virtual ArkUINode& setAccessibilityActions(
-      const std::vector<facebook::react::AccessibilityAction>& rnActions);
   virtual ArkUINode& setAccessibilityDescription(
       std::string const& accessibilityDescription);
-  virtual ArkUINode& setAccessibilityState(
-      const facebook::react::AccessibilityState& state);
   virtual ArkUINode& setAccessibilityLevel(
       facebook::react::ImportantForAccessibility importance);
   virtual ArkUINode& setAccessibilityText(
       std::string const& accessibilityLabel);
   virtual ArkUINode& setAccessibilityGroup(bool accessible);
   virtual ArkUINode& setId(std::string const& id);
-  virtual std::string getId() const;  
   virtual ArkUINode& setOpacity(facebook::react::Float opacity);
   virtual ArkUINode& setClip(bool clip);
   virtual ArkUINode& setAlignment(Alignment alignment);
@@ -149,9 +140,7 @@ class ArkUINode {
       throw std::runtime_error(std::move(message));
     }
   }
-    
-  void registerNodeEvent(ArkUI_NodeEventType eventType);
-  void unregisterNodeEvent(ArkUI_NodeEventType eventType);  
+
   const ArkUI_AttributeItem& getAttribute(
       ArkUI_NodeAttributeType attribute) const;
 
