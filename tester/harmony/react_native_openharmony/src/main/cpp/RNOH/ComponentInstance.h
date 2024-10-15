@@ -11,6 +11,7 @@
 #include <vector>
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHub.h"
+#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
@@ -42,6 +43,8 @@ class ComponentInstance
     ArkTSChannel::Shared arkTSChannel;
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
+    Registry::Shared componentInstanceRegistry;
+    ImageSourceResolver::Shared imageSourceResolver;
   };
 
   struct Context {

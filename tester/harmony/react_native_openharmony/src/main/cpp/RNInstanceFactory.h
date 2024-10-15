@@ -14,6 +14,7 @@
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/EventEmitRequestHandler.h"
 #include "RNOH/FeatureFlagRegistry.h"
+#include "RNOH/ImageSourceResolver.h"
 #include "RNOH/MountingManagerArkTS.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
@@ -262,6 +263,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     componentInstanceDependencies->rnInstance = rnInstance;
     HarmonyReactMarker::logMarker(
         HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
+    auto imageSourceResolver =
+        std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
+    componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
     return rnInstance;
 #else
     LOG(FATAL)

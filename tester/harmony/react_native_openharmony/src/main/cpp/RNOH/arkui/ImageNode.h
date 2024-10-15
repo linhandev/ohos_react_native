@@ -41,6 +41,7 @@ class ImageNode : public ArkUINode {
 
   ImageNode& resetFocusable();
   ImageNode& resetResizeMethod();
+  ImageNode& resetSources();
 
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
