@@ -1,4 +1,4 @@
-import type { BorderMetrics, ColorSegments, ColorValue } from './DescriptorBase'
+import type { ColorSegments, ColorValue } from './DescriptorBase'
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -35,10 +35,11 @@ export enum DisplayMode {
 
 /**
  * @api
- * @deprecated Use "Color.fromColorSegments().toRGBAString()" instead (latestRNOHVersion: 0.72.26)
  */
 export function convertColorSegmentsToString(colorSegments?: ColorSegments) {
-  if (!colorSegments) return undefined
+  if (!colorSegments) {
+    return undefined
+  }
   const [r, g, b, a] = colorSegments
   return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(
     b * 255
@@ -79,8 +80,13 @@ export class Color {
     return Color.fromColorSegments(convertColorValueToColorSegments(colorValue))
   }
 
-  static fromColorSegments([r,g,b,a]: ColorSegments) {
-    return new Color({ r: r * 255, g: g * 255, b: b * 255, a: a * 255 })
+  static fromColorSegments([r, g, b, a]: ColorSegments) {
+    return new Color({
+      r: r * 255,
+      g: g * 255,
+      b: b * 255,
+      a: a * 255
+    })
   }
 
   constructor(private rgba: {
@@ -94,14 +100,19 @@ export class Color {
   toRGBAString() {
     return `rgba(${this.rgba.r}, ${this.rgba.g}, ${this.rgba.b}, ${this.rgba.a / 255})`
   }
+
+  toSegments(): ColorSegments {
+    return [this.rgba.r / 255, this.rgba.g / 255, this.rgba.b / 255, this.rgba.a / 255]
+  }
 }
 
 /**
  * @api
- * @deprecated Use Color::fromColorValue().toRGBAString() instead (latestRNOHVersion: 0.72.26)
  */
 export function convertColorValueToRGBA(colorValue: ColorValue | undefined, defaultColor: string = "rgba(0,0,0,0.0)") {
-  if (colorValue === undefined) return defaultColor;
+  if (colorValue === undefined) {
+    return defaultColor;
+  }
   const rgba = {
     a: ((colorValue >> 24) & 0xff) / 255,
     r: (colorValue >> 16) & 0xff,
@@ -115,7 +126,9 @@ export function convertColorValueToRGBA(colorValue: ColorValue | undefined, defa
  * @api
  */
 export function convertColorValueToHex(colorValue: ColorValue | undefined, defaultColor: string = "#00000000") {
-  if (colorValue === undefined) return defaultColor;
+  if (colorValue === undefined) {
+    return defaultColor;
+  }
   const toHex = (num, padding) => num.toString(16).padStart(padding, '0');
   const argb = {
     a: (colorValue >> 24) & 0xff,
@@ -130,7 +143,9 @@ export function convertColorValueToHex(colorValue: ColorValue | undefined, defau
  * @api
  */
 export function convertColorValueToColorSegments(colorValue: ColorValue | undefined): ColorSegments | undefined {
-  if (colorValue === undefined) return undefined
+  if (colorValue === undefined) {
+    return undefined
+  }
   const rgba = {
     a: ((colorValue >> 24) & 0xff) / 255,
     r: ((colorValue >> 16) & 0xff) / 255,
@@ -184,72 +199,12 @@ export type ReadonlyTransformationMatrix = readonly [
   number
 ]
 
-/**
- * @api
- * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead (latestRNOHVersion: 0.72.26)
- */
-export enum BorderEdgePropsType {
-  COLOR = "Color",
-  WIDTH = "Width",
-}
-
-/**
- * @api
- * @deprecated Use ViewDescriptorWrapperBase::resolveEdges and ViewDescriptorWrapperBase::resolveCorners instead (latestRNOHVersion: 0.72.26)
- */
-export function resolveBorderMetrics(props: BorderMetrics, isRTL: boolean): BorderMetrics {
-  const colorProps = resolveBorderEdgeProps(props, BorderEdgePropsType.COLOR, isRTL);
-  const widthProps = resolveBorderEdgeProps(props, BorderEdgePropsType.WIDTH, isRTL);
-  const radiusProps = resolveBorderRadius(props);
-  return { ...colorProps, ...widthProps, ...radiusProps, borderStyle: props.borderStyle };
-}
-
-/**
- * @api
- * @deprecated Use ViewDescriptorWrapperBase::resolveCorners instead (latestRNOHVersion: 0.72.26)
- */
-export function resolveBorderRadius(props: BorderMetrics): BorderMetrics {
-  const topLeft = props.borderTopLeftRadius;
-  const topRight = props.borderTopRightRadius;
-  const bottomLeft = props.borderBottomLeftRadius;
-  const bottomRight = props.borderBottomRightRadius;
-  const all = props.borderRadius;
-  const resolvedProps = {
-    borderTopLeftRadius: topLeft ?? all,
-    borderTopRightRadius: topRight ?? all,
-    borderBottomLeftRadius: bottomLeft ?? all,
-    borderBottomRightRadius: bottomRight ?? all,
-  }
-  return resolvedProps;
-}
-
-/**
- * @api
- * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead (latestRNOHVersion: 0.72.26)
- */
-export function resolveBorderEdgeProps(props: BorderMetrics, type: BorderEdgePropsType, isRTL: boolean): BorderMetrics {
-  const left = props[`borderLeft${type}`]
-  const top = props[`borderTop${type}`]
-  const right = props[`borderRight${type}`]
-  const bottom = props[`borderBottom${type}`]
-  const all = props[`border${type}`]
-  const start = props[`borderStart${type}`]
-  const end = props[`borderEnd${type}`]
-
-  const resolvedProps = {
-    [`borderLeft${type}`]: left ?? ((isRTL ? end : start) ?? all),
-    [`borderTop${type}`]: top ?? all,
-    [`borderRight${type}`]: right ?? ((isRTL ? start : end) ?? all),
-    [`borderBottom${type}`]: bottom ?? all,
-  };
-
-  return resolvedProps;
-}
 
 /**
  * @api
  */
-export function getTransformedVector(transformMatrix: ReadonlyTransformationMatrix, vector: Array<number>): Array<number> {
+export function getTransformedVector(transformMatrix: ReadonlyTransformationMatrix,
+  vector: Array<number>): Array<number> {
   const resultVector = [0, 0, 0, 0]
   for (let i = 0; i < 4; ++i) {
     for (let j = 0; j < 4; ++j) {

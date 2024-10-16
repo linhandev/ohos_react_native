@@ -80,11 +80,6 @@ export struct RNApp {
    */
   public initialProps: Record<string, string> = {}
   /**
-   * Required if wrappedCustomRNComponentBuilder is not provided. Builds a custom fabric component.
-   * @deprecated: use wrappedCustomRNComponentBuilder instead (latestRNOHVersion: 0.72.21)
-   */
-  @BuilderParam public buildCustomComponent: CustomComponentBuilder
-  /**
    * Builds custom fabric components.
    *
    * It's possible now for library devs to register custom components in RNOHPackage

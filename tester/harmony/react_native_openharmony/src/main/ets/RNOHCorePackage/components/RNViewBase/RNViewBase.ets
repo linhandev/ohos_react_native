@@ -139,9 +139,10 @@ export struct RNViewBase {
   aboutToAppear() {
     const descriptor = this.ctx.descriptorRegistry.getDescriptor<ViewBaseDescriptor>(this.tag)
     if (!this.componentManager) {
-      this.componentManager = new RNViewManager(this.tag, this.ctx)
-      this.unregisterComponentManager =
-        this.ctx.componentManagerRegistry.registerComponentManager(this.tag, this.componentManager)
+      this.componentManager = this.ctx.componentManagerRegistry.findOrCreateComponentManager(this.tag, () => new RNViewManager(this.tag, this.ctx))
+      this.unregisterComponentManager = () => {
+        this.ctx.componentManagerRegistry.releaseComponentManager(this.tag)
+      }
     }
     this.onDescriptorChange(descriptor)
     this.maybeLogStartUpTime()

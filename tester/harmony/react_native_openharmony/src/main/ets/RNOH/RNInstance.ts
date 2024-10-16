@@ -110,11 +110,6 @@ export interface RNInstance {
   cppEventEmitter: EventEmitter<Record<string, unknown[]>>;
 
   /**
-   * @deprecated Use RNOHContext::componentCommandReceiver (latestRNOHVersion: 0.72.21)
-   */
-  commandDispatcher: CommandDispatcher;
-
-  /**
    * Check ComponentManagerRegistry documentation for more information.
    */
   componentManagerRegistry: ComponentManagerRegistry;
@@ -423,14 +418,6 @@ export class RNInstanceImpl implements RNInstance {
   private unregisterWorkerMessageListener = () => {
   };
   private uiCtx: UIContext;
-
-  /**
-   * @deprecated (latestRNOHVersion: 0.72.21)
-   */
-  public get commandDispatcher() {
-    return this.componentCommandHub;
-  }
-
   private defaultProps: Record<string, any>;
   private packages: RNPackage[] = [];
 

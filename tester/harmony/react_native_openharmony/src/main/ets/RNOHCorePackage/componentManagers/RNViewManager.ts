@@ -119,10 +119,7 @@ export class RNViewManager extends ComponentManager {
   }
 
   /**
-   * @deprecated. Do not call this method.
-   * Make sure that onDestroy is called though. This method should be protected.
-   * should calculate a new bounding box for the view,
-   * and call this method on its parent view if the bounding box changed.
+   * @deprecated Do not call this method. It will be protected in the future. (latestRNOHVersion: 0.72.40)
    */
   public updateBoundingBox(): void {
     this.markBoundingBoxAsDirty()

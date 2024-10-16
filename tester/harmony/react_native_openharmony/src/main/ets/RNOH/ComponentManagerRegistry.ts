@@ -31,15 +31,16 @@ export class ComponentManagerRegistry {
       return undefined
     }
     if (componentManagers.length > 1) {
-      this.logger.clone("getComponentManager").warn(`Found ${componentManagers.length} component managers with the same tag (${tag})`)
+      this.logger.clone("getComponentManager")
+        .warn(`Found ${componentManagers.length} component managers with the same tag (${tag})`)
     }
     return componentManagers[componentManagers.length - 1]
   }
 
   /**
-   * @param tag
-   * @param manager
-   * @deprecated Use findOrCreateComponentManager instead (latestRNOHVersion: 0.72.26)
+   * @deprecated Use findOrCreateComponentManager, and releaseComponentManager instead. (latestRNOHVersion: 0.72.40).
+   *
+   * NOTE: This method was actually deprecated in 0.72.27, but the removal is postponed.
    */
   public registerComponentManager(tag: Tag, manager: ComponentManager) {
     const componentManagers = this.componentManagersByTag.get(tag)
@@ -62,14 +63,10 @@ export class ComponentManagerRegistry {
   }
 
   /**
-   * Returns the `ComponentManager` for a view,
-   * creating it if there's none registered.
+   * Returns the existing `ComponentManager` or creates a new one for the given tag.
+   *
    * Each call to `findOrCreateComponentManager` must be matched 1:1
    * with a call to `releaseComponentManager` for the same `tag`
-   * @param tag
-   * tag of the view
-   * @param createComponentManager
-   * factory function to call when the manager has not yet been registered
    */
   public findOrCreateComponentManager<TComponentManager extends ComponentManager>(
     tag: Tag,
@@ -80,18 +77,17 @@ export class ComponentManagerRegistry {
       entry.refCounter += 1
       return entry.componentManager as TComponentManager
     }
-
     const componentManager = createComponentManager();
     this.entryByTag.set(tag, { componentManager, refCounter: 1 });
     return componentManager;
   }
 
   /**
-   * Called to allow releasing a `ComponentManager`
-   * previously obtained from `findOrCreateComponentManager`.
-   * Each call to `findOrCreateComponentManager` must be matched 1:1
-   * with a call to `releaseComponentManager` for the same `tag`
-   * @param tag
+   * Releases a ComponentManager previously obtained from findOrCreateComponentManager.
+   *
+   * This method must be called to properly release resources associated with a ComponentManager.
+   * It's crucial to maintain a 1:1 relationship between findOrCreateComponentManager and
+   * releaseComponentManager calls for the same tag.
    */
   public releaseComponentManager(tag: Tag) {
     const entry = this.entryByTag.get(tag);
