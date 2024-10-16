@@ -30,7 +30,7 @@
 //  both headers in the same translation unit fails due to the two conflicting
 //  declarations. Since <demangle.h> includes <libiberty.h> we must be careful.
 
-// RNOH: patch
+// RNOH patch
 // #if __has_include(<demangle.h>)
 // #pragma push_macro("HAVE_DECL_BASENAME")
 // #define HAVE_DECL_BASENAME 1
@@ -60,7 +60,7 @@ static constexpr auto cxxabi_demangle = static_cast<char* (*)(...)>(nullptr);
 //
 //  in contrast with cxxabi, where there are certainly other referenced symbols
 
-// RNOH: patch
+// RNOH patch
 // #if __has_include(<demangle.h>)
 // 
 // static constexpr auto liberty_demangle = cplus_demangle_v3_callback;

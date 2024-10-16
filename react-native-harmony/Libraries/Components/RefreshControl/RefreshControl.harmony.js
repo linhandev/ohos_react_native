@@ -8,9 +8,9 @@
  * @flow
  */
 
-const OS = "ios"; // RNOH: patch - replaced occurrences Platform.OS with OS
+const OS = "ios"; // RNOH patch - replaced occurrences Platform.OS with OS
 
-//RNOH: patch - fix imports
+//RNOH patch - fix imports
 import type { ColorValue } from "react-native/Libraries/StyleSheet/StyleSheet";
 import type { ViewProps } from "react-native/Libraries/Components/View/ViewPropTypes";
 
@@ -145,7 +145,7 @@ class RefreshControl extends React.Component<RefreshControlProps> {
       this.props.refreshing !== this._lastNativeRefreshing &&
       this._nativeRef
     ) {
-      // RNOH: patch - replaced occurrences Platform.OS with OS
+      // RNOH patch - replaced occurrences Platform.OS with OS
       if (OS === "android") {
         AndroidSwipeRefreshLayoutCommands.setNativeRefreshing(
           this._nativeRef,
@@ -162,9 +162,9 @@ class RefreshControl extends React.Component<RefreshControlProps> {
   }
 
   render(): React.Node {
-    // RNOH: patch - replaced occurrences Platform.OS with OS
+    // RNOH patch - replaced occurrences Platform.OS with OS
     if (OS === "ios") {
-      // RNOH: patch - change descructuring to pass "progressBackgroundColor", "enabled" and "size" to PullToRefreshViewNativeComponent
+      // RNOH patch - change descructuring to pass "progressBackgroundColor", "enabled" and "size" to PullToRefreshViewNativeComponent
       // BEFORE: const { enabled, colors, progressBackgroundColor, size, ...props } =
       const {colors, ...props } =
         this.props;

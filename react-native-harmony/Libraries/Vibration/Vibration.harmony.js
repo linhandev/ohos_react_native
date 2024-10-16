@@ -1,5 +1,5 @@
 // This implementation is based on iOS logic from file - react-native/Libraries/Vibration/Vibration.js
-import NativeVibration from 'react-native/Libraries/Vibration/NativeVibration'; // RNOH: patch
+import NativeVibration from 'react-native/Libraries/Vibration/NativeVibration'; // RNOH patch
 
 /**
  * Vibration API

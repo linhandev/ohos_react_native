@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '500',
       },
-      // RNOH: patch - add harmony default button text style
+      // RNOH patch - add harmony default button text style
       harmony: {
         color: '#FFFFFF',
         fontSize: 16
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
       elevation: 0,
       backgroundColor: '#dfdfdf',
     },
-    // RNOH: patch - add harmony default button disabled style
+    // RNOH patch - add harmony default button disabled style
     harmony: {
         opacity: 0.4
     }
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     android: {
       color: '#a1a1a1',
     },
-    // RNOH: patch - add harmony default button disabled text style
+    // RNOH patch - add harmony default button disabled text style
     harmony: {}
   }),
 });

@@ -12,7 +12,7 @@ import type { ColorValue } from "react-native/Libraries/StyleSheet/StyleSheet";
 
 import processColor from "react-native/Libraries/StyleSheet/processColor";
 import Platform from "react-native/Libraries/Utilities/Platform";
-//RNOH: patch - fix imports
+//RNOH patch - fix imports
 import NativeStatusBarManagerHarmony from "./NativeStatusBarManagerHarmony";
 import invariant from "invariant";
 import * as React from "react";
@@ -226,7 +226,7 @@ class StatusBar extends React.Component<Props> {
   static _propsStack: Array<any> = [];
 
   static _defaultProps: any = createStackEntry({
-    // RNOH: patch - use NativeStatusBarManager harmony
+    // RNOH patch - use NativeStatusBarManager harmony
     backgroundColor:
       NativeStatusBarManagerHarmony.getConstants().DEFAULT_BACKGROUND_COLOR ??
       "#00000000",
@@ -249,7 +249,7 @@ class StatusBar extends React.Component<Props> {
    *
    * @platform android
    */
-  // RNOH: patch - use NativeStatusBarManagerHarmony
+  // RNOH patch - use NativeStatusBarManagerHarmony
   static currentHeight: ?number =
     NativeStatusBarManagerHarmony.getConstants().HEIGHT;
 
@@ -264,7 +264,7 @@ class StatusBar extends React.Component<Props> {
    */
   static setHidden(hidden: boolean, animation?: StatusBarAnimation) {
     animation = animation || "none";
-    //RNOH: patch - delete code specific to other platforms
+    //RNOH patch - delete code specific to other platforms
     StatusBar._defaultProps.hidden.value = hidden;
     NativeStatusBarManagerHarmony.setHidden(hidden, animation);
   }
@@ -275,7 +275,7 @@ class StatusBar extends React.Component<Props> {
    * @param animated Animate the style change.
    */
   static setBarStyle(style: StatusBarStyle, animated?: boolean) {
-    //RNOH: patch - delete code specific to other platforms
+    //RNOH patch - delete code specific to other platforms
     StatusBar._defaultProps.barStyle.value = style;
     NativeStatusBarManagerHarmony.setStyle(style, animated);
   }
@@ -285,7 +285,7 @@ class StatusBar extends React.Component<Props> {
    * @param visible Show the indicator.
    */
   static setNetworkActivityIndicatorVisible(visible: boolean) {
-    //RNOH: patch - delete code specific to other platforms
+    //RNOH patch - delete code specific to other platforms
     if (Platform.OS !== "ios") {
       console.warn(
         "`setNetworkActivityIndicatorVisible` is only available on iOS"
@@ -302,7 +302,7 @@ class StatusBar extends React.Component<Props> {
   static setBackgroundColor(color: string, animated?: boolean): void {
     animated = animated || false;
     StatusBar._defaultProps.backgroundColor.value = color;
-    //RNOH: patch - delete platform check
+    //RNOH patch - delete platform check
     const processedColor = processColor(color);
     if (processedColor == null) {
       console.warn(
@@ -314,7 +314,7 @@ class StatusBar extends React.Component<Props> {
       typeof processedColor === "number",
       "Unexpected color given for StatusBar.setBackgroundColor"
     );
-    //RNOH: patch - use harmony NativeStatusBarManager
+    //RNOH patch - use harmony NativeStatusBarManager
     NativeStatusBarManagerHarmony.setColor(processedColor, animated);
   }
 
@@ -323,7 +323,7 @@ class StatusBar extends React.Component<Props> {
    * @param translucent Set as translucent.
    */
   static setTranslucent(translucent: boolean) {
-    //RNOH: patch - delete platform check and use NativeStatusBarManagerHarmony
+    //RNOH patch - delete platform check and use NativeStatusBarManagerHarmony
     StatusBar._defaultProps.translucent = translucent;
     NativeStatusBarManagerHarmony.setTranslucent(translucent);
   }
@@ -405,8 +405,8 @@ class StatusBar extends React.Component<Props> {
         StatusBar._propsStack,
         StatusBar._defaultProps
       );
-      //RNOH: patch - delete code specific to IOS and Android
-      //RNOH: patch - execute setHidden before changing other props to avoid a bug in ArkUI.
+      //RNOH patch - delete code specific to IOS and Android
+      //RNOH patch - execute setHidden before changing other props to avoid a bug in ArkUI.
       if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
         NativeStatusBarManagerHarmony.setHidden(mergedProps.hidden.value);
       }

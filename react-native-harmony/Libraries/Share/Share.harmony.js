@@ -12,7 +12,7 @@ import NativeActionSheetManager from 'react-native/Libraries/ActionSheetIOS/Nati
 import NativeShareModule from 'react-native/Libraries/Share/NativeShareModule';
 
 const processColor = require('react-native/Libraries/StyleSheet/processColor').default;
-const PlatformOS = 'android'; // rnoh: patch
+const PlatformOS = 'android'; // RNOH patch
 const invariant = require('invariant');
 
 type Content =
@@ -81,8 +81,8 @@ class Share {
       'Content to share must be a valid object',
     );
     invariant(
-      typeof content.url === 'string' || typeof content.message === 'string' || typeof content.title === 'string', // rnoh: patch
-      'At least one of URL, title and message is required', // rnoh: patch
+      typeof content.url === 'string' || typeof content.message === 'string' || typeof content.title === 'string', // RNOH patch
+      'At least one of URL, title and message is required', // RNOH patch
     );
     invariant(
       typeof options === 'object' && options !== null,
@@ -103,7 +103,7 @@ class Share {
         title: content.title,
         message:
           typeof content.message === 'string' ? content.message : undefined,
-        url: typeof content.url === 'string' ? content.url : undefined, // rnoh: patch
+        url: typeof content.url === 'string' ? content.url : undefined, // RNOH patch
       };
 
       return NativeShareModule.share(newContent, options.dialogTitle)
@@ -113,7 +113,7 @@ class Share {
             ...result,
           }),
         );
-    } else if (PlatformOS=== 'ios') {  // rnoh: patch
+    } else if (PlatformOS=== 'ios') {  // RNOH patch
       return new Promise((resolve, reject) => {
         const tintColor = processColor(options.tintColor);
 

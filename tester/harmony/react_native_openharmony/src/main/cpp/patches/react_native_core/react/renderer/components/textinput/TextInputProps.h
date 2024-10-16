@@ -56,7 +56,7 @@ class TextInputProps final : public ViewProps, public BaseTextProps {
   SharedColor const selectionColor{};
   // TODO: Rename to `tintColor` and make universal.
   SharedColor const underlineColorAndroid{};
-  bool blurOnSubmit{}; // RNOH: patch
+  bool blurOnSubmit{}; // RNOH patch
 
   /*
    * "Private" (only used by TextInput.js) props

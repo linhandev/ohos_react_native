@@ -7,9 +7,9 @@
  * @flow strict-local
  * @format
  */
-const OS = "ios" // RNOH: patch - replaced occurrences Platform.OS with OS
+const OS = "ios" // RNOH patch - replaced occurrences Platform.OS with OS
 
-// RNOH: patch - updated imports
+// RNOH patch - updated imports
 import type {HostComponent} from 'react-native/Libraries/shims/ReactNativeTypes';
 import type {
   PressEvent,

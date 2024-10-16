@@ -20,7 +20,7 @@ target_compile_options(
         -fexceptions
 )
 
-# RNOH: patch
+# RNOH patch
 # if(${CMAKE_BUILD_TYPE} MATCHES Debug) 
 #         target_compile_options(
 #                 hermes_inspector

@@ -33,7 +33,7 @@ static jsi::Value textInputMetricsPayload(
     payload.setProperty(runtime, "selection", selection);
   }
 
-//RNOH: patch
+//RNOH patch
   {
     auto contentSize = jsi::Object(runtime);
     contentSize.setProperty(

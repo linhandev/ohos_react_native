@@ -17,18 +17,18 @@ add_compile_options(
 
 file(GLOB react_render_textlayourmanager_SRC CONFIGURE_DEPENDS
         *.cpp
-        platform/harmony/react/renderer/textlayoutmanager/*.cpp) # RNOH: patch
+        platform/harmony/react/renderer/textlayoutmanager/*.cpp) # RNOH patch
 
 add_library(react_render_textlayoutmanager
         SHARED
-        ${REACT_COMMON_DIR}/react/renderer/textlayoutmanager/TextMeasureCache.cpp # RNOH: patch
+        ${REACT_COMMON_DIR}/react/renderer/textlayoutmanager/TextMeasureCache.cpp # RNOH patch
         ${react_render_textlayourmanager_SRC})
 
 target_include_directories(react_render_textlayoutmanager
         PUBLIC
         ${REACT_COMMON_DIR}
-        ${REACT_COMMON_DIR}/react/renderer/textlayoutmanager # RNOH: patch
-        ${CMAKE_CURRENT_SOURCE_DIR}/platform/harmony/ # RNOH: patch
+        ${REACT_COMMON_DIR}/react/renderer/textlayoutmanager # RNOH patch
+        ${CMAKE_CURRENT_SOURCE_DIR}/platform/harmony/ # RNOH patch
 )
 
 target_link_libraries(react_render_textlayoutmanager

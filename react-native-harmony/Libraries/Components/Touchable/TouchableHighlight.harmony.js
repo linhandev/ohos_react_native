@@ -352,7 +352,7 @@ class TouchableHighlight extends React.Component<Props, State> {
         testID={this.props.testID}
         ref={this.props.hostRef}
         {...eventHandlersWithoutBlurAndFocus}
-        collapsable={false} // RNOH: patch
+        collapsable={false} // RNOH patch
       >
         {React.cloneElement(child, {
           style: StyleSheet.compose(

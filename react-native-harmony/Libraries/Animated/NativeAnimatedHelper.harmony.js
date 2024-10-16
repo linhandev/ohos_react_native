@@ -40,7 +40,7 @@ let queue: Array<() => void> = [];
 // $FlowFixMe
 let singleOpQueue: Array<any> = [];
 
-// RNOH: patch
+// RNOH patch
 const useSingleOpBatching = true; // while we do not use operationBatching we want to use logic for listening to events
 let flushQueueTimeout = null;
 
@@ -53,7 +53,7 @@ const eventListenerAnimationFinishedCallbacks: {
 let globalEventEmitterGetValueListener: ?EventSubscription = null;
 let globalEventEmitterAnimationFinishedListener: ?EventSubscription = null;
 
-// RNOH: patch
+// RNOH patch
 const nativeOps = NativeAnimatedModule;
 /**
  * Wrappers around NativeAnimatedModule to provide flow and autocomplete support for
@@ -133,7 +133,7 @@ const API = {
       // JSI functions across to native code; but also, TM infrastructure currently
       // does not support packing a function into native arrays.
 
-      // RNOH: patch
+      // RNOH patch
       for (let q = 0, l = singleOpQueue.length; q < l; q++) {
         singleOpQueue[q]();
       }
@@ -157,7 +157,7 @@ const API = {
     // If queueing is explicitly on, *or* the queue has not yet
     // been flushed, use the queue. This is to prevent operations
     // from being executed out of order.
-    // RNOH: patch
+    // RNOH patch
     const currentlyUsedQueue = useSingleOpBatching ? singleOpQueue : queue;
     if (queueOperations || currentlyUsedQueue.length !== 0) {
       currentlyUsedQueue.push(() => fn(...args));

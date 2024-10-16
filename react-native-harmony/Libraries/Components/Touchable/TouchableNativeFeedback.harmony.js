@@ -332,7 +332,7 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
         nextFocusUp: this.props.nextFocusUp,
         onLayout: this.props.onLayout,
         testID: this.props.testID,
-        collapsable: false, // RNOH: patch
+        collapsable: false, // RNOH patch
       },
       ...children
     );

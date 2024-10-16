@@ -69,7 +69,7 @@ TextInputProps::TextInputProps(
           sourceProps.underlineColorAndroid,
           {})),
       text(convertRawProp(context, rawProps, "text", sourceProps.text, {})),
-      blurOnSubmit(convertRawProp( // RNOH: patch
+      blurOnSubmit(convertRawProp( // RNOH patch
           context, 
           rawProps, 
           "blurOnSubmit", 

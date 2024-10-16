@@ -16,7 +16,7 @@ export type PlatformOSType =
   | 'macos'
   | 'windows'
   | 'web'
-  | "harmony" // RNOH: patch
+  | "harmony" // RNOH patch
   | 'native';
 type PlatformConstants = {
   isTesting: boolean;
@@ -93,7 +93,7 @@ interface PlatformWebStatic extends PlatformStatic {
   OS: 'web';
 }
 
-// begin RNOH: patch
+// begin RNOH patch
 export type PlatformHarmonyConstants = PlatformConstants & {
   deviceType: "default" | "phone" | "wearable" | "liteWearable" | "tablet" | "tv" | "car" | "smartVision";
   osFullName: string;
@@ -104,7 +104,7 @@ export interface PlatformHarmonyStatic extends PlatformStatic {
   OS: 'harmony';
   constants: PlatformHarmonyConstants;
 }
-// end RNOH: patch
+// end RNOH patch
 
 export type Platform =
   | PlatformIOSStatic
@@ -112,6 +112,6 @@ export type Platform =
   | PlatformWindowsOSStatic
   | PlatformMacOSStatic
   | PlatformWebStatic
-  | PlatformHarmonyStatic; // RNOH: patch
+  | PlatformHarmonyStatic; // RNOH patch
 
 export const Platform: Platform;

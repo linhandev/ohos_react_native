@@ -199,7 +199,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
             flex: 0,
           };
         }
-        /* RNOH: patch */
+        /* RNOH patch */
         return (
           <View
             ref={this.viewRef}
@@ -227,7 +227,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
         );
 
       case 'padding':
-        /* RNOH: patch */
+        /* RNOH patch */
         return (
           <View
             ref={this.viewRef}

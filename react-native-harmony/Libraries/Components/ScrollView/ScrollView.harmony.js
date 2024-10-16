@@ -8,7 +8,7 @@
  * @flow strict-local
  */
 
-//RNOH: patch - fix imports
+//RNOH patch - fix imports
 import type { HostComponent } from "react-native/Libraries/Renderer/shims/ReactNativeTypes";
 import type { EdgeInsetsProp } from "react-native/Libraries/StyleSheet/EdgeInsetsPropType";
 import type { PointProp } from "react-native/Libraries/StyleSheet/PointPropType";
@@ -1332,7 +1332,7 @@ class ScrollView extends React.Component<Props, State> {
     FrameRateLogger.beginScroll(); // TODO: track all scrolls after implementing onScrollEndAnimation
 
     if (
-      // RNOH: patch - add support for OpenHarmony
+      // RNOH patch - add support for OpenHarmony
       (Platform.OS === "android" || Platform.OS === "harmony") &&
       this.props.keyboardDismissMode === "on-drag"
     ) {
@@ -1848,7 +1848,7 @@ class ScrollView extends React.Component<Props, State> {
     );
 
     if (refreshControl) {
-      // RNOH: patch - use Android implementation
+      // RNOH patch - use Android implementation
       const { outer, inner } = splitLayoutProps(flattenStyle(props.style));
       return React.cloneElement(
         refreshControl,

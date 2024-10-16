@@ -128,7 +128,7 @@ const View: React.AbstractComponent<
           }
           accessibilityLabelledBy={_accessibilityLabelledBy}
           accessibilityValue={_accessibilityValue}
-          collapsable={["box-only", "none"].includes(newPointerEvents) ? false : collapsable} // RNOH: patch
+          collapsable={["box-only", "none"].includes(newPointerEvents) ? false : collapsable} // RNOH patch
           importantForAccessibility={
             ariaHidden === true
               ? 'no-hide-descendants'

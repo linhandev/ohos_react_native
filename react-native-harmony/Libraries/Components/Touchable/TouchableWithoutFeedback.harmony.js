@@ -176,7 +176,7 @@ class TouchableWithoutFeedback extends React.Component<Props, State> {
           ? "none"
           : ariaLive ?? this.props.accessibilityLiveRegion,
       nativeID: this.props.id ?? this.props.nativeID,
-      collapsable: false, // RNOH: patch
+      collapsable: false, // RNOH patch
     };
     for (const prop of PASSTHROUGH_PROPS) {
       if (this.props[prop] !== undefined) {

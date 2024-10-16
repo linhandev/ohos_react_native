@@ -8,14 +8,14 @@
  * @format
  */
 
-// RNOH: patch
+// RNOH patch
 // COPIED FROM: https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
 
 import type { HostComponent } from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
 import type { EventSubscription } from 'react-native/Libraries/vendor/emitter/EventEmitter';
 import type { ElementRef } from 'react';
 
-// RNOH: patch - imports fixed
+// RNOH patch - imports fixed
 import RCTDeviceEventEmitter from 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter';
 import { sendAccessibilityEvent } from 'react-native/Libraries/ReactNative/RendererProxy';
 import Platform from '../../Utilities/Platform';

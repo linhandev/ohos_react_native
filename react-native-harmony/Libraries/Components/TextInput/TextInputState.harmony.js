@@ -12,7 +12,7 @@
 // TextInputs. All calls relating to the keyboard should be funneled
 // through here.
 
-// RNOH: patch - update imports
+// RNOH patch - update imports
 
 import type {
   HostComponent,
@@ -30,7 +30,7 @@ const {
 const React = require("react");
 type ComponentRef = React.ElementRef<HostComponent<mixed>>;
 
-// RNOH: patch - replace Platform.OS occurences with hardcoded PlatformOS
+// RNOH patch - replace Platform.OS occurences with hardcoded PlatformOS
 const PlatformOS = "ios";
 
 let currentlyFocusedInputRef: ?ComponentRef = null;

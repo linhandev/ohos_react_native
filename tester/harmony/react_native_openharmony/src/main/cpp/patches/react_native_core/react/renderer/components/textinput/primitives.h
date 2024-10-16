@@ -210,7 +210,7 @@ class TextInputTraits final {
    * Some values iOS- or Android-only (inherently particular-OS-specific)
    * Default value: `Default`.
    */
-  std::string returnKeyLabel{}; // RNOH: patch
+  std::string returnKeyLabel{}; // RNOH patch
 
   /*
    * iOS & Android
