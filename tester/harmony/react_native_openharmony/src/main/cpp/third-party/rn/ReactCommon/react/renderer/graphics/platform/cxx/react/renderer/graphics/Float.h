@@ -9,14 +9,12 @@
 
 #include <limits>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 /*
  * Exact type of float numbers which ideally should match a type behing
  * platform- and chip-architecture-specific float type.
  */
-using Float = double; // RNOH patch
+using Float = float;
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react
