@@ -26,7 +26,6 @@ class ImageComponentInstance
   std::string getBundlePath();
   std::string getAbsolutePathPrefix(std::string const& bundlePath);
   void setSources(facebook::react::ImageSources const& sources);
-  std::string getAssetsPrefix();
 
  public:
   ImageComponentInstance(Context context);
