@@ -433,6 +433,10 @@ class CppComponentInstance : public ComponentInstance,
     return {origin, size};
   };
 
+  facebook::react::Transform getTransform() {
+    return m_transform;
+  }
+
  private:
   facebook::react::Transform m_transform =
       facebook::react::Transform::Identity();

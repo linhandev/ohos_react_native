@@ -217,8 +217,32 @@ void ScrollViewComponentInstance::onChildRemoved(
 
 void ScrollViewComponentInstance::onLayoutChanged(
     facebook::react::LayoutMetrics const& layoutMetrics) {
-  CppComponentInstance::onLayoutChanged(layoutMetrics);
-  m_scrollNode.setSize(layoutMetrics.frame.size);
+  // Not calling CppComponentInstance::onLayoutChanged due to bug in
+  // setLayoutRect()
+  if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
+    this->getLocalRootArkUINode().setTransform(
+        getTransform(), layoutMetrics.pointScaleFactor);
+    if (m_props) {
+      auto props =
+          std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
+      this->getLocalRootArkUINode().setShadow(
+          props->shadowColor,
+          props->shadowOffset,
+          props->shadowOpacity,
+          props->shadowRadius,
+          layoutMetrics.pointScaleFactor);
+    }
+  }
+  if (layoutMetrics.layoutDirection != m_layoutMetrics.layoutDirection) {
+    ArkUI_Direction direction =
+        convertLayoutDirection(layoutMetrics.layoutDirection);
+    this->getLocalRootArkUINode().setDirection(direction);
+  }
+  markBoundingBoxAsDirty();
+
+  m_scrollContainerNode.setSize(layoutMetrics.frame.size);
+  m_scrollContainerNode.setPosition(layoutMetrics.frame.origin);
+
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
   }

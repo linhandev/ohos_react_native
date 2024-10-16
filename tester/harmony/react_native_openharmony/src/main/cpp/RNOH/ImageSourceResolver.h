@@ -28,7 +28,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
 
     ImageSourceUpdateListener(
         ImageSourceResolver::Shared const& imageSourceResolver)
-        : m_imageSourceResolver(imageSourceResolver) {};
+        : m_imageSourceResolver(imageSourceResolver){};
 
     ~ImageSourceUpdateListener() {
       m_imageSourceResolver->removeListener(this);
@@ -89,7 +89,8 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
       double height,
       double pointScaleFactor,
       facebook::react::ImageSources const& sources) {
-    RNOH_ASSERT_MSG(sources.size() > 0, "ImageSources vector should not be empty");
+    RNOH_ASSERT_MSG(
+        sources.size() > 0, "ImageSources vector should not be empty");
 
     if (sources.size() == 1) {
       return sources[0];
