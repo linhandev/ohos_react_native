@@ -17,7 +17,7 @@ add_compile_options(
 
 file(GLOB react_debug_SRC CONFIGURE_DEPENDS ${REACT_COMMON_DIR}/react/debug/*.cpp)
 
-if(${CMAKE_BUILD_TYPE} MATCHES Release)
+if(DEFINED NODEBUGSO_IN_RELEASE AND ${CMAKE_BUILD_TYPE} MATCHES Release)
     add_library(react_debug STATIC ${react_debug_SRC})
 else()
     add_library(react_debug SHARED ${react_debug_SRC})
