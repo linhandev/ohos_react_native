@@ -45,18 +45,6 @@ std::string ImageComponentInstance::getBundlePath() {
   return bundlePath;
 }
 
-std::string ImageComponentInstance::getAssetsPrefix() {
-  auto bundlePath = getBundlePath();
-  auto position = bundlePath.rfind('/');
-
-  if (position == std::string::npos) {
-    return std::string(RAWFILE_PREFIX);
-  }
-
-  auto prefix = std::string(FILE_PREFIX) + bundlePath.substr(0, position + 1);
-  return prefix;
-}
-
 std::string ImageComponentInstance::getAbsolutePathPrefix(std::string const& bundlePath) {
   if (bundlePath == INVALID_PATH_PREFIX) {
     return INVALID_PATH_PREFIX;
@@ -84,10 +72,9 @@ void ImageComponentInstance::setSources(
     std::string imageSource = newSources[0].uri;
 
     if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
-      std::string assetsPrefix = this->getAssetsPrefix();
+      std::string assetsPrefix = getAbsolutePathPrefix(getBundlePath());
       imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
     }
-
     this->getLocalRootArkUINode().setSources(imageSource);
   } else {
     this->getLocalRootArkUINode().resetSources();
