@@ -89,7 +89,9 @@ TimingTurboModule::TimingTurboModule(
 }
 
 TimingTurboModule::~TimingTurboModule() {
-  cancelWakeUp();
+  if (m_wakeUpTask.has_value()) {
+    m_ctx.taskExecutor->cancelDelayedTask(m_wakeUpTask.value());
+  }
   m_ctx.taskExecutor->runTask(
       TaskThread::MAIN,
       [lifecycleObserver = std::move(m_lifecycleObserver)] {});
