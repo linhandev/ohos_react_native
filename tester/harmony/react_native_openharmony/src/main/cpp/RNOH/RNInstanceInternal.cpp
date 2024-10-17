@@ -139,8 +139,7 @@ void RNInstanceInternal::initializeScheduler(
   };
 
   react::EventBeat::Factory asyncEventBeatFactory =
-      [runtimeExecutor = m_reactInstance->getRuntimeExecutor(),
-       uiTicker = m_uiTicker](auto ownerBox) {
+      [runtimeExecutor, uiTicker = m_uiTicker](auto ownerBox) {
         return std::make_unique<AsynchronousEventBeat>(
             ownerBox, runtimeExecutor, uiTicker);
       };
