@@ -1,27 +1,57 @@
-import { TurboModule, RNOHError, Tag } from '@rnoh/react-native-openharmony/ts';
+import { RNOHError, Tag } from '@rnoh/react-native-openharmony/ts';
 import { TM } from "@rnoh/react-native-openharmony/generated/ts"
+import { EtsUITurboModule } from '@rnoh/react-native-openharmony/ets';
+import { ErrorData } from '@rnoh/react-native-openharmony';
+import { WorkerTaskRunnable, AnyThreadRNInstance } from '@rnoh/react-native-openharmony/src/main/ets/RNOH';
 
+interface Constants {
+  const1: boolean,
+  const2: number,
+  const3: string
+}
 
-export class SampleTurboModule extends TurboModule implements TM.GeneratedSampleTurboModule.Spec, TM.GeneratedSampleTurboModule2.Spec {
+interface Empty {}
+
+interface Vec3 {
+  x: number,
+  y: string,
+  z: Object,
+}
+
+interface CppMessagePayload {
+  foo: string
+}
+
+interface EnumPack {
+  enum1: TM.GeneratedSampleTurboModule.SomeEnum1;
+  enum2: TM.GeneratedSampleTurboModule.SomeEnum2;
+  enum3: TM.GeneratedSampleTurboModule.SomeEnum3;
+  hardcodedEnum1: TM.GeneratedSampleTurboModule.SomeEnum1;
+}
+
+export class SampleTurboModule extends EtsUITurboModule implements TM.GeneratedSampleTurboModule.Spec, TM.GeneratedSampleTurboModule2.Spec {
   getConstants(): Object {
-    return {const1: true, const2: 1228, const3: "something"}
+    return { const1: true, const2: 1228, const3: "something" } as Constants
   }
 
   getUnionValue(arg: null | Object): Object {
-    return arg ?? {}
+    return arg ?? {} as Empty
   }
 
   getRootTag(arg: Tag): Tag {
     return arg
   }
 
-  getEnum(enum1: TM.GeneratedSampleTurboModule.SomeEnum1, enum2: TM.GeneratedSampleTurboModule.SomeEnum2, enum3: TM.GeneratedSampleTurboModule.SomeEnum3): {
-    enum1: TM.GeneratedSampleTurboModule.SomeEnum1;
-    enum2: TM.GeneratedSampleTurboModule.SomeEnum2;
-    enum3: TM.GeneratedSampleTurboModule.SomeEnum3;
-    hardcodedEnum1: TM.GeneratedSampleTurboModule.SomeEnum1;
-  } {
-    return { enum1, enum2, enum3, hardcodedEnum1: TM.GeneratedSampleTurboModule.SomeEnum1.FOO }
+  getEnum(
+    enum1: TM.GeneratedSampleTurboModule.SomeEnum1,
+    enum2: TM.GeneratedSampleTurboModule.SomeEnum2,
+    enum3: TM.GeneratedSampleTurboModule.SomeEnum3): EnumPack {
+    return {
+      enum1,
+      enum2,
+      enum3,
+      hardcodedEnum1: TM.GeneratedSampleTurboModule.SomeEnum1.FOO
+    }
   }
 
   voidFunc() {
@@ -58,14 +88,14 @@ export class SampleTurboModule extends TurboModule implements TM.GeneratedSample
     return arg;
   }
 
-  getArray(args: any[]): any[] {
+  getArray(args: Object[]): Object[] {
     console.log(`RNOH SampleTurboModule::getArray(${args})`);
     return args;
   }
 
   getValue(x: number, y: string, z: Object): Object {
     console.log(`RNOH SampleTurboModule::getValue(${x} ${y} ${z})`);
-    return {x: x, y: y, z:z};
+    return { x: x, y: y, z: z } as Vec3;
   }
 
   getValueWithCallback(onComplete: (value: string) => void): void {
@@ -106,12 +136,7 @@ export class SampleTurboModule extends TurboModule implements TM.GeneratedSample
     return Promise.resolve([1, 2, 3])
   }
 
-  displayRNOHError(data: {
-    whatHappened: string,
-    howCanItBeFixed: string[]
-    extraData?: any
-    customStack?: string
-  }) {
+  displayRNOHError(data: ErrorData) {
     this.ctx.reportRNOHError(new RNOHError(data))
   }
 
@@ -123,17 +148,53 @@ export class SampleTurboModule extends TurboModule implements TM.GeneratedSample
     return arg
   }
 
-  async emitEventFromArkTS2Cpp(payload: { foo: string }): Promise<{ foo: string }> {
+  async emitEventFromArkTS2Cpp(payload: CppMessagePayload): Promise<CppMessagePayload> {
     return await new Promise((resolve) => {
-      const unsubscribe = this.ctx.rnInstance.cppEventEmitter.subscribe("SAMPLE_MESSAGE", (value: { foo: string }) => {
-        resolve(value)
-        unsubscribe();
-      })
+      const unsubscribe =
+        this.ctx.rnInstance.cppEventEmitter.subscribe("SAMPLE_MESSAGE", (value: CppMessagePayload) => {
+          resolve(value);
+          unsubscribe();
+        })
       this.ctx.rnInstance.postMessageToCpp("SAMPLE_MESSAGE", payload);
     })
   }
 
   setNativeResponderBlocked(isBlocked: boolean, origin: string, componentInstanceId: string): void {
     this.ctx.rnInstance.postMessageToCpp("BLOCK_NATIVE_RESPONDER", { isBlocked, origin, componentInstanceId })
+  }
+
+  // demonstrates calling `runOnWorkerThread` as well as
+  // sharing state between the MAIN and Worker runtimes through `params`
+  async calculateOnWorker(n: number): Promise<number> {
+    const params = new FibonacciRunnableParams(n);
+    await this.ctx.runOnWorkerThread(new FibonacciRunnable(), params);
+    return params.result
+  }
+}
+
+@Sendable
+class FibonacciRunnableParams {
+  public n: number
+  public result: number = 0
+
+  constructor(n: number) {
+    this.n = n;
+  }
+}
+
+@Sendable
+class FibonacciRunnable implements WorkerTaskRunnable<FibonacciRunnableParams> {
+  run(rnInstance: AnyThreadRNInstance, params: FibonacciRunnableParams): void {
+    const fibo = (n: number): number => {
+      if (n <= 0) {
+        return 0;
+      }
+      if (n <= 1) {
+        return 1;
+      }
+      return fibo(n - 1) + fibo(n - 2);
+    }
+
+    params.result = fibo(params.n);
   }
 }

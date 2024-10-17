@@ -2,6 +2,13 @@ import { StackFrame } from '../RNOHCorePackage/turboModules';
 import { EventEmitter } from './EventEmitter'
 import { RNInstance } from './RNInstance'
 
+export interface ErrorData {
+  whatHappened: string,
+  howCanItBeFixed: string[]
+  extraData?: any
+  customStack?: RNOHErrorStack | string
+}
+
 export class RNOHError extends Error {
   protected data: undefined | {
     whatHappened: string,
@@ -22,12 +29,7 @@ export class RNOHError extends Error {
   }
 
 
-  constructor(data: {
-    whatHappened: string,
-    howCanItBeFixed: string[]
-    extraData?: any
-    customStack?: RNOHErrorStack | string
-  } | RNOHError) {
+  constructor(data: ErrorData | RNOHError) {
     super(data instanceof RNOHError ? data.getMessage() : data.whatHappened)
     if (data instanceof RNOHError) {
       this.rnohError = data;

@@ -1,5 +1,5 @@
-import { TurboModuleRegistry, RootTag } from 'react-native';
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
+import { TurboModuleRegistry, RootTag } from "react-native";
+import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
 
 /**
  * Codegen restriction: All TypeScript interfaces extending TurboModule must be called 'Spec'.
@@ -18,8 +18,8 @@ export enum SomeEnum2 {
 }
 
 export enum SomeEnum3 {
-  FOO = 'FOO',
-  BAR = 'BAR',
+  FOO = "FOO",
+  BAR = "BAR",
   DOUBLE_QUOTE = 'FOO"BAR',
   SINGLE_QUOTE = "FOO'BAR",
 }
@@ -36,7 +36,7 @@ export interface Spec extends TurboModule {
   getEnum(
     enum1: SomeEnum1,
     enum2: SomeEnum2,
-    enum3: SomeEnum3
+    enum3: SomeEnum3,
   ): {
     enum1: SomeEnum1;
     enum2: SomeEnum2;
@@ -50,6 +50,7 @@ export interface Spec extends TurboModule {
   getValueWithCallback(callback: (value: string) => void): void;
   getValueWithPromise(error: boolean): Promise<string>;
   getUnsafeObject(arg: Object): Object;
+  calculateOnWorker(n: number): Promise<number>;
 }
 
-export default TurboModuleRegistry.get<Spec>('GeneratedSampleTurboModule')!;
+export default TurboModuleRegistry.get<Spec>("GeneratedSampleTurboModule")!;

@@ -3,8 +3,7 @@ import window from '@ohos.window';
 import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
-import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
-import { UITurboModuleContext } from './TurboModule'
+import { RNOHContext, RNOHCoreContext, UITurboModuleContext } from "./RNOHContext"
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -19,6 +18,8 @@ import { WorkerThread } from "./WorkerThread"
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 import { bundleManager } from '@kit.AbilityKit';
 import { EventEmitter } from './EventEmitter';
+import { WorkerTaskRunner } from './WorkerTaskRunner';
+import { EtsUITurboModuleContext } from '.';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -161,6 +162,7 @@ export class RNInstancesCoordinator {
   private defaultBackPressHandler: () => void
   private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter
   private envId: number;
+  private workerTaskRunner: WorkerTaskRunner
 
   private constructor(napiBridge: NapiBridge,
     logger: RNOHLogger,
@@ -197,6 +199,8 @@ export class RNInstancesCoordinator {
         this.rnohCoreContext.reportRNOHError(rnohError);
       }
     }) : undefined
+    this.workerTaskRunner = new WorkerTaskRunner(workerThreadPromise)
+
     this.rnInstanceRegistry = new RNInstanceRegistry(
       uiAbilityContext,
       this.envId,
@@ -204,7 +208,9 @@ export class RNInstancesCoordinator {
       this.globalRNOHErrorEventEmitter,
       napiBridge,
       this.devToolsController,
-      (rnInstance) => new UITurboModuleContext(RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)),
+      (rnInstance) => new EtsUITurboModuleContext({
+        rnohContext: RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)
+      }),
       httpClientProvider,
       options?.defaultHttpClient,
       this.uiAbilityContext.resourceManager,
@@ -224,7 +230,8 @@ export class RNInstancesCoordinator {
       defaultBackPressHandler: this.defaultBackPressHandler,
       devToolsController: this.devToolsController,
       devMenu: this.devMenu,
-      rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter
+      rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter,
+      erasedWorkerTaskRunner: this.workerTaskRunner
     });
   }
 
@@ -234,6 +241,7 @@ export class RNInstancesCoordinator {
     this.rnInstanceRegistry.forEach(instance => {
       instance.onDestroy()
     })
+    this.workerTaskRunner.onDestroy()
     stopTracing()
   }
 
