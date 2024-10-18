@@ -27,7 +27,7 @@ class ArkTSChannel {
     if (executor) {
       executor->runTask(
           TaskThread::MAIN,
-          [env = m_arkJS.getEnv(),
+          [env = m_arkJs.getEnv(),
            eventDispatcherRef = m_napi_event_dispatcher_ref,
            type = std::move(type),
            payload = std::move(payload)]() {
