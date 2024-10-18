@@ -80,10 +80,12 @@ void TextInputNode::onNodeEvent(
         m_nodeHandle, NODE_FOCUS_STATUS, &item));
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
-    ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
-    ArkUI_AttributeItem item = {&value, 1};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUS_STATUS, &item));
+    if (getTextFocusStatus() == true){
+      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
+      ArkUI_AttributeItem item = {&value, 1};
+      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_FOCUS_STATUS, &item));
+    }
   }
 }
 
