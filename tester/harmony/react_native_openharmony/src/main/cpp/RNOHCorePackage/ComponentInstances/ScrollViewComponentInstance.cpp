@@ -444,7 +444,9 @@ void ScrollViewComponentInstance::scrollToEnd(bool animated) {
         horizontal = m_props->alwaysBounceHorizontal ||
       m_contentSize.width > m_containerSize.width;
   }
-  auto x = horizontal ? m_contentSize.width : 0.0;
+  auto x = (horizontal && m_layoutMetrics.layoutDirection == facebook::react::LayoutDirection::LeftToRight)
+    ? m_contentSize.width
+    : 0.0;
   auto y = horizontal ? 0.0 : m_contentSize.height;
   m_scrollNode.scrollTo(x, y, animated);
 }
