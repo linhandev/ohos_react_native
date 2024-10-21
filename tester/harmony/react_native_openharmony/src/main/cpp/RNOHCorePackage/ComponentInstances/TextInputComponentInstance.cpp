@@ -487,8 +487,7 @@ void TextInputComponentInstance::onCommandReceived(
     if (m_selectionStart < 0) {
       setTextContent(textContent);
     } else {
-      m_textInputNode.setTextContent(textContent);
-      m_textAreaNode.setTextContent(textContent);
+      setTextContentAndSelection(textContent, m_selectionStart, m_selectionEnd);
     }
   }
 }
