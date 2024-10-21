@@ -233,7 +233,7 @@ void TimingTurboModule::triggerExpiredTimers() {
   if (!expiredTimers.empty()) {
     // timers with earlier deadlines should fire sooner
     std::sort(expiredTimers.begin(), expiredTimers.end(), [](auto a, auto b) {
-      return a.deadline <= b.deadline;
+      return a.deadline < b.deadline;
     });
     std::vector<double> expiredTimerIds;
     std::transform(
