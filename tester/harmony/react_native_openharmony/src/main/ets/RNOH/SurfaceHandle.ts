@@ -5,6 +5,24 @@ import type { RNInstance, SurfaceContext } from './RNInstance';
 
 export type SurfaceProps = Record<string, any>;
 
+function getConstraints(ctx: SurfaceContext): {
+  minWidth: number
+  minHeight: number
+  maxWidth: number
+  maxHeight: number
+} {
+  if ('width' in ctx) {
+    return {
+      minWidth: ctx.width,
+      minHeight: ctx.height,
+      maxWidth: ctx.width,
+      maxHeight: ctx.height,
+    }
+  } else {
+    return ctx
+  }
+}
+
 export class SurfaceHandle {
   private destroyed: boolean = false;
   private displayMode: DisplayMode = DisplayMode.Suspended;
@@ -37,13 +55,19 @@ export class SurfaceHandle {
 
     this.surfaceCtx = ctx;
     this.props = { ...this.defaultProps, ...props };
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
     this.napiBridge.startSurface(
       this.rnInstance.getId(),
       this.tag,
-      ctx.minWidth,
-      ctx.minHeight,
-      ctx.maxWidth,
-      ctx.maxHeight,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       ctx.surfaceOffsetX,
       ctx.surfaceOffsetY,
       ctx.pixelRatio,
@@ -61,20 +85,23 @@ export class SurfaceHandle {
   }
 
   public updateConstraints(
-    {
-      minWidth,
-      minHeight,
-      maxWidth,
-      maxHeight,
-      surfaceOffsetX,
-      surfaceOffsetY,
-      pixelRatio,
-      isRTL,
-    }: SurfaceContext
+    ctx: SurfaceContext
   ) {
     if (this.destroyed) {
       throw new Error("updateConstraints called on a destroyed surface");
     }
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
+    const {
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL,
+    } = ctx;
     this.surfaceCtx = {
       minWidth,
       minHeight,
@@ -106,6 +133,8 @@ export class SurfaceHandle {
       minHeight,
       maxWidth,
       maxHeight,
+    } = getConstraints(this.surfaceCtx);
+    const {
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -136,16 +165,19 @@ export class SurfaceHandle {
     );
   }
 
-  measure({
-    minWidth,
-    minHeight,
-    maxWidth,
-    maxHeight,
-    surfaceOffsetX,
-    surfaceOffsetY,
-    pixelRatio,
-    isRTL,
-  }: SurfaceContext) {
+  measure(ctx: SurfaceContext) {
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
+    const {
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL,
+    } = ctx
     return this.napiBridge.measureSurface(this.rnInstance.getId(), this.tag, minWidth, minHeight, maxWidth, maxHeight,
       surfaceOffsetX,
       surfaceOffsetY, pixelRatio, isRTL)
