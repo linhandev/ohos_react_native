@@ -7,7 +7,7 @@ import {
   SurfaceHandle,
 } from 'rnoh/ts';
 import { RNAbility } from 'rnoh';
-import { createRNPackages } from '../RNPackagesFactory';
+import { createRNPackages } from '../PackageProvider';
 
 
 export default class EntryAbility extends RNAbility {

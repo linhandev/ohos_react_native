@@ -1,7 +1,7 @@
 import type { ComponentBuilderContext, RNOHCoreContext } from 'rnoh';
 import { RNApp, RNAbility, AnyJSBundleProvider, MetroJSBundleProvider, ResourceJSBundleProvider, } from 'rnoh'
 import { SampleView, PropsDisplayer, GeneratedSampleView } from "rnoh-sample-package"
-import { createRNPackages } from '../RNPackagesFactory'
+import { createRNPackages } from '../PackageProvider'
 import router from '@ohos.router';
 
 @Builder

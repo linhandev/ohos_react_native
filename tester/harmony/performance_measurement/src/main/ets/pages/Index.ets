@@ -12,7 +12,7 @@ import {
 } from '@rnoh/react-native-openharmony';
 import { PropsDisplayer, SampleView, GeneratedSampleView } from 'rnoh-sample-package';
 import font from '@ohos.font';
-import { createRNPackages } from '../RNPackagesFactory';
+import { createRNPackages } from '../PackageProvider';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
