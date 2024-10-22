@@ -6,20 +6,47 @@
 
 namespace rnoh {
 
-using namespace std::literals;
-constexpr std::string_view ASSET_PREFIX = "asset://"sv;
-constexpr std::string_view RAWFILE_PREFIX = "resource://RAWFILE/assets/";
-constexpr std::string_view FILE_PREFIX = "file://";
+const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 const std::string INVALID_PATH_PREFIX = "invalidpathprefix/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)),
-      ImageSourceResolver::ImageSourceUpdateListener(
-          m_deps->imageSourceResolver) {
+    : CppComponentInstance(std::move(context)) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);
   this->getLocalRootArkUINode().setDraggable(false);
+}
+
+std::string ImageComponentInstance::FindLocalCacheByUri(std::string const& uri) {
+  if(uri.find("http", 0) != 0) {
+    return uri;
+  }
+
+  if (!m_deps) {
+    return uri;
+  }
+
+  auto rnInstance = m_deps->rnInstance.lock();
+  if (!rnInstance) {
+    return uri;
+  }
+
+  auto turboModule = rnInstance->getTurboModule("ImageLoader");
+  if (!turboModule) {
+    return uri;
+  }
+
+  auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
+  if (!arkTsTurboModule) {
+    return uri;
+  }
+
+  auto cache = arkTsTurboModule->callSync("getPrefetchResult", {uri});
+  if (!cache.isString()) {
+    return uri;
+  }
+
+  return cache.asString();
 }
 
 std::string ImageComponentInstance::getBundlePath() {
@@ -45,53 +72,22 @@ std::string ImageComponentInstance::getBundlePath() {
   return bundlePath;
 }
 
-std::string ImageComponentInstance::getAssetsPrefix() {
-  auto bundlePath = getBundlePath();
-  auto position = bundlePath.rfind('/');
-
-  if (position == std::string::npos) {
-    return std::string(RAWFILE_PREFIX);
-  }
-
-  auto prefix = std::string(FILE_PREFIX) + bundlePath.substr(0, position + 1);
-  return prefix;
-}
-
 std::string ImageComponentInstance::getAbsolutePathPrefix(std::string const& bundlePath) {
   if (bundlePath == INVALID_PATH_PREFIX) {
     return INVALID_PATH_PREFIX;
   }
 
   if (bundlePath.find('/', 0) != 0) {
-    return std::string(RAWFILE_PREFIX);
+    return RAWFILE_PREFIX;
   }
 
   auto pos = bundlePath.rfind('/');
   if (pos == std::string::npos) {
-    return std::string(RAWFILE_PREFIX);
+    return RAWFILE_PREFIX;
   }
 
   std::string prefix = "file://" + bundlePath.substr(0, pos + 1);
   return prefix;
-}
-
-void ImageComponentInstance::setSources(
-    facebook::react::ImageSources const& sources) {
-  auto newSources =
-      m_deps->imageSourceResolver->resolveImageSources(*this, sources);
-
-  if (!newSources.empty()) {
-    std::string imageSource = newSources[0].uri;
-
-    if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
-      std::string assetsPrefix = this->getAssetsPrefix();
-      imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
-    }
-
-    this->getLocalRootArkUINode().setSources(imageSource);
-  } else {
-    this->getLocalRootArkUINode().resetSources();
-  }
 }
 
 void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
@@ -100,7 +96,8 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   auto rawProps = ImageRawProps::getFromDynamic(props->rawProps);
 
   if (!m_props || m_props->sources != props->sources) {
-    setSources(props->sources);
+    std::string uri = FindLocalCacheByUri(props->sources[0].uri);
+    this->getLocalRootArkUINode().setSources(uri, getAbsolutePathPrefix(getBundlePath()));
     if (!this->getLocalRootArkUINode().getUri().empty()) {
       onLoadStart();
     }
@@ -175,13 +172,10 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   }
 }
 
-void ImageComponentInstance::onImageSourceCacheUpdate() {
-  setSources({m_state->getData().getImageSource()});
-}
-
 void ImageComponentInstance::onStateChanged(SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
-  setSources({state->getData().getImageSource()});
+  auto source = state->getData().getImageSource();
+  this->getLocalRootArkUINode().setSources(FindLocalCacheByUri(source.uri), getAbsolutePathPrefix(getBundlePath()));
   this->getLocalRootArkUINode().setBlur(state->getData().getBlurRadius());
 }
 
