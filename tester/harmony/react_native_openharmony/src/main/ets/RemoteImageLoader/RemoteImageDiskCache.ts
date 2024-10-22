@@ -23,7 +23,7 @@ export class RemoteImageDiskCache extends RemoteImageCache<boolean> {
     const cachedKey = this.getCacheKey(key);
     if (this.data.has(cachedKey)) {
       try {
-        fs.unlinkSync(this.getFilePath(cachedKey));
+        fs.unlinkSync(cachedKey);
       } catch (reason) {
         throw new Error('Cache file was not deleted ' + reason);
       }
