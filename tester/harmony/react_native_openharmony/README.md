@@ -1,7 +1,7 @@
 # React Native OpenHarmony
 
 ## 简介
-本库是react-native在OpenHarmony上进行适配的原生侧har包，匹配React Native 5.0.0.601版本。
+本库是react-native在OpenHarmony上进行适配的原生侧har包。
 
 ## 下载安装
 ```text
