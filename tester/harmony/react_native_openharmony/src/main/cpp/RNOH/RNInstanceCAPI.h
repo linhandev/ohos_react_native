@@ -93,7 +93,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {
           this->unsubscribeUITickListener =
-              this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
+              this->m_uiTicker->subscribe([this](long long timestamp){ 
               this->taskExecutor->runTask(
                 TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
         }

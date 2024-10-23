@@ -74,7 +74,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
         m_arkTSChannel(std::move(arkTSChannel)),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor) {
     this->unsubscribeUITickListener =
-        this->m_uiTicker->subscribe(m_id, [this](long long timestamp) {
+        this->m_uiTicker->subscribe([this](long long timestamp) {
           this->taskExecutor->runTask(
               TaskThread::MAIN, [this, timestamp]() { this->onUITick(timestamp); });
         });
