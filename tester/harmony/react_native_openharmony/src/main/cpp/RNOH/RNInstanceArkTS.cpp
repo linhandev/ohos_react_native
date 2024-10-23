@@ -6,7 +6,8 @@
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "NativeLogger.h"
-#include "RNOH/EventBeat.h"
+#include "RNOH/AsynchronousEventBeat.h"
+#include "RNOH/SynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/RNOHError.h"
@@ -85,9 +86,17 @@ void RNInstanceArkTS::initializeScheduler(
     runtimeScheduler->scheduleWork(std::move(rawCallback));
   };
 
-  react::EventBeat::Factory eventBeatFactory =
-      [runtimeExecutor = this->instance->getRuntimeExecutor()](auto ownerBox) {
-        return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
+  react::EventBeat::Factory asyncEventBeatFactory =
+      [runtimeExecutor, uiTicker = m_uiTicker](auto ownerBox) {
+        return std::make_unique<AsynchronousEventBeat>(
+            ownerBox, runtimeExecutor, uiTicker);
+      };
+
+  react::EventBeat::Factory syncEventBeatFactory =
+      [runtimeScheduler = m_runtimeScheduler,
+       taskExecutor = this->taskExecutor](auto ownerBox) {
+        return std::make_unique<SynchronousEventBeat>(
+            ownerBox, runtimeScheduler, taskExecutor);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =
@@ -101,8 +110,8 @@ void RNInstanceArkTS::initializeScheduler(
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
       .runtimeExecutor = runtimeExecutor,
-      .asynchronousEventBeatFactory = eventBeatFactory,
-      .synchronousEventBeatFactory = eventBeatFactory,
+      .asynchronousEventBeatFactory = asyncEventBeatFactory,
+      .synchronousEventBeatFactory = syncEventBeatFactory,
   };
 
   if (m_shouldEnableBackgroundExecutor) {
