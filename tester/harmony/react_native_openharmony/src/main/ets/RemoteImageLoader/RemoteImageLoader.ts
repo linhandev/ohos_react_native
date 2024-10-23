@@ -225,12 +225,9 @@ export class RemoteImageLoader {
   }
 
   public getPrefetchResult(uri: string) {
-    if (this.activePrefetchByUrl.has(uri)) {
-      return 'pending';
-    }
     if (this.diskCache.has(uri)) {
       return `file://${this.diskCache.getLocation(uri)}`;
     }
-    return undefined;
+    return uri;
   }
 }
