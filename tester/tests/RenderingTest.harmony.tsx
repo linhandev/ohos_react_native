@@ -1,6 +1,5 @@
 import {TestSuite} from '@rnoh/testerino';
-import React from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   registerViewConfig,
@@ -53,28 +52,30 @@ export function RenderingTest() {
           ms={0}
           renderItem={refreshColor => {
             return (
-              <PropsDisplayer
-                style={{
-                  backgroundColor: refreshColor % 2 ? 'red' : 'blue',
-                  opacity: 0.9,
-                  borderWidth: 4,
-                  borderTopWidth: 4,
-                  borderColor: 'orange',
-                  borderTopColor: 'red',
-                  borderRadius: 4,
-                  borderBottomRightRadius: 8,
-                  transform: [{translateX: 1}],
-                  pointerEvents: 'auto',
-                  shadowOffset: {width: 0, height: 0},
-                  shadowOpacity: 0.9,
-                  shadowRadius: 9,
-                  flexDirection: 'row',
-                  overflow: 'hidden',
-                  backfaceVisibility: 'visible',
-                  width: '100%',
-                  height: 2000,
-                }}
-              />
+              <View style={{padding: 64, width: '100%', height: 1500}}>
+                <PropsDisplayer
+                  style={{
+                    backgroundColor: refreshColor % 2 ? 'red' : 'blue',
+                    opacity: 0.9,
+                    borderWidth: 4,
+                    borderTopWidth: 4,
+                    borderColor: 'orange',
+                    borderTopColor: 'red',
+                    borderRadius: 4,
+                    borderBottomRightRadius: 8,
+                    transform: [{translateX: 1}],
+                    pointerEvents: 'auto',
+                    shadowOffset: {width: 0, height: 0},
+                    shadowOpacity: 0.9,
+                    shadowRadius: 9,
+                    flexDirection: 'row',
+                    overflow: 'hidden',
+                    backfaceVisibility: 'visible',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+              </View>
             );
           }}
         />

@@ -13,7 +13,8 @@ import {
   ReadonlyTransformationMatrix,
   TransformMatrix,
   PropsSelectorBase,
-  Color
+  Color,
+  ColorSegments
 } from '../../../RNOH/ts'
 import { AccessibilityLevel, ViewBaseProps, ViewRawProps } from './types'
 import matrix4 from '@ohos.matrix4'
@@ -185,7 +186,7 @@ export class ViewDescriptorWrapperBase<
   }
 
   protected get shadowColor() {
-    const colorSegments = Color.fromColorValue(this.rawProps.shadowColor).toSegments()
+    const colorSegments: ColorSegments = this.rawProps.shadowColor ? Color.fromColorValue(this.rawProps.shadowColor).toSegments() : [0,0,0,1]
     colorSegments[3] *= this.shadowOpacity
     return Color.fromColorSegments(colorSegments).toRGBAString()
   }
