@@ -1,9 +1,10 @@
 {
-  license: 'ISC',
+  license: 'MIT',
   types: '',
   devDependencies: {},
   name: '@rnoh/react-native-openharmony',
   description: 'React Native for OpenHarmony',
+  author: "rnoh",
   ohos: {
     org: '',
   },
