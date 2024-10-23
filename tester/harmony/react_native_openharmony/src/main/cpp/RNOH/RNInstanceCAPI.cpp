@@ -23,6 +23,8 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TaskExecutor/TaskExecutor.h"
+#include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
+#include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 
 using namespace facebook;
 namespace rnoh {
@@ -56,12 +58,22 @@ void RNInstanceCAPI::start() {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START);
   this->initialize();
+
+  m_runtimeScheduler = std::make_shared<react::RuntimeScheduler>(
+      this->instance->getRuntimeExecutor(), std::chrono::steady_clock::now);
+
+  m_contextContainer->insert<std::weak_ptr<react::RuntimeScheduler>>(
+      "RuntimeScheduler", m_runtimeScheduler);
+
   m_turboModuleProvider = this->createTurboModuleProvider();
   this->initializeScheduler(m_turboModuleProvider);
   this->instance->getRuntimeExecutor()(
-      [binders = this->m_globalJSIBinders,
+      [runtimeScheduler = m_runtimeScheduler,
+       binders = m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
+        react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
+            rt, runtimeScheduler);
         for (auto& binder : binders) {
           binder->createBindings(rt, turboModuleProvider);
         }
@@ -117,6 +129,11 @@ void RNInstanceCAPI::initializeScheduler(
   auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
   m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
 
+  auto runtimeExecutor = [runtimeScheduler =
+                              m_runtimeScheduler](auto&& rawCallback) {
+    runtimeScheduler->scheduleWork(std::move(rawCallback));
+  };
+
   react::EventBeat::Factory eventBeatFactory =
       [runtimeExecutor = this->instance->getRuntimeExecutor()](auto ownerBox) {
         return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
@@ -132,7 +149,7 @@ void RNInstanceCAPI::initializeScheduler(
   react::SchedulerToolbox schedulerToolbox{
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
-      .runtimeExecutor = this->instance->getRuntimeExecutor(),
+      .runtimeExecutor = runtimeExecutor,
       .asynchronousEventBeatFactory = eventBeatFactory,
       .synchronousEventBeatFactory = eventBeatFactory,
   };
@@ -150,7 +167,7 @@ void RNInstanceCAPI::initializeScheduler(
   }
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
-      this->instance->getRuntimeExecutor(), m_contextContainer, this);
+      runtimeExecutor, m_contextContainer, this);
      m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
       m_mountingManager, taskExecutor, m_mountingManager->getPreAllocationBuffer());
   this->scheduler = std::make_shared<react::Scheduler>(
@@ -164,7 +181,8 @@ RNInstanceCAPI::createTurboModuleProvider() {
   DLOG(INFO) << "RNInstanceCAPI::createTurboModuleProvider";
   auto sharedInstance = shared_from_this();
   auto turboModuleProvider = std::make_shared<TurboModuleProvider>(
-      this->instance->getJSCallInvoker(),
+      std::make_shared<facebook::react::RuntimeSchedulerCallInvoker>(
+          m_runtimeScheduler),
       std::move(m_turboModuleFactory),
       m_eventDispatcher,
       std::move(m_jsQueue),
