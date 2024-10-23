@@ -29,6 +29,7 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOH/UITicker.h"
+#include <react/renderer/runtimescheduler/RuntimeScheduler.h>
 
 namespace rnoh {
 
@@ -222,6 +223,8 @@ class RNInstanceArkTS : public RNInstanceInternal,
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
   std::string m_bundlePath;
+  std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
+      nullptr;
 
   void initialize();
   void initializeScheduler(
