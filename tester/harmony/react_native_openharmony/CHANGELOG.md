@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.72.37
+## v0.72.38
 - fix: Share problem ([963c228ee](https://github.com/react-native-openharmony/rnoh/commit/963c228eeee4ad383c8d65ba4df72482cf97dd90))
 - 修改版本号 ([7bfdec573](https://github.com/react-native-openharmony/rnoh/commit/7bfdec5736210b75a3bdf4d4f5da8b5fba6d47e5))
 - fix: incorrect cursor placement when setting content through props ([dc20cf7d8](https://github.com/react-native-openharmony/rnoh/commit/dc20cf7d849a301a5183143addf204135298fb40))
