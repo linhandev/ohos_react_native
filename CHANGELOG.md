@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.75.0
+- [breaking] updated peer dependency to react-native to 0.75.4 and other NPM dependencies related to react-native — app projects may need to update their configuration files (package.json, babel.config.js, metro.config.js, .eslintrc, and tsconfig.json) to be in sync with RN (use https://react-native-community.github.io/upgrade-helper/ to update platform-agnostic files in your React Native project): (react: 18.3.1; react-native: 0.75.4; @react-native/eslint-config: 0.75.4; @react-native/metro-config: 0.75.4; @react-native/typescript-config: 0.75.4; @types/react: ^18.2.6; babel-jest: ^29.6.3) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- [breaking] changed props->yogaStyle in ComponentInstances (C++) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- deprecated `ArkUINode::setAccessibilityState(const facebook::react::AccessibilityState& state)` in favor of `ArkUINode& setAccessibilityState(const std::optional<facebook::react::AccessibilityState>& state)` ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- added codegen support for object props ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+
+
 ## v0.72.41
 - added `EtsUITurboModule` which provides ets-only TurboModule APIs by using `EtsUITurboModuleContext` ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
 - added `EtsUITurboModuleContext.runOnWorkerThread` to allow scheduling tasks on the worker thread from `EtsUITurboModule`s ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
