@@ -25,11 +25,11 @@ while true; do
 done
 
 while true; do
-  read -p "Did you comment out lines 619 and 632 in $HERMES_SRC_DIR/CMakeLists.txt (y/n): " answer
+  read -p "Did you comment out lines 675 and 688 in $HERMES_SRC_DIR/CMakeLists.txt (y/n): " answer
   if [[ $answer == "y" ]]; then
     break
   elif [[ $answer == "n" ]]; then
-    echo "Comment out lines: 619 (find_package(fbjni REQUIRED CONFIG)) and 632 (add_subdirectory(android/intltest/java/com/facebook/hermes/test)"
+    echo "Comment out lines: 675 (find_package(fbjni REQUIRED CONFIG)) and 688 (add_subdirectory(android/intltest/java/com/facebook/hermes/test))"
     exit 1
   else
     echo "Invalid response. Please enter 'y' or 'n'."

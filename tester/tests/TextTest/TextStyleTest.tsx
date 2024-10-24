@@ -282,11 +282,7 @@ export function TextStyleTest() {
           </Text>
         </View>
       </TestCase.Example>
-      <TestCase.Example
-        itShould="show text with different writing direction"
-        skip={{harmony: true, android: false}}
-        //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/280
-      >
+      <TestCase.Example itShould="show text with different writing direction">
         <View style={styles.container}>
           <Text style={styles.smallText}>Writing direction auto</Text>
           <Text

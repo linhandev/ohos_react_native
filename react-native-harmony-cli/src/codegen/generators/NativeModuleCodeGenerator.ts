@@ -77,7 +77,7 @@ export class NativeModuleCodeGenerator implements SpecCodeGenerator {
       });
     });
 
-    schema.spec.properties.map((prop) => {
+    schema.spec.methods.map((prop) => {
       if (prop.typeAnnotation.type === 'FunctionTypeAnnotation') {
         turboModuleCpp.addMethod({
           name: prop.name,

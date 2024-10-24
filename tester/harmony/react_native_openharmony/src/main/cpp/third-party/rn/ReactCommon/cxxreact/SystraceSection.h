@@ -62,8 +62,9 @@ struct DummySystraceSection {
  public:
   template <typename... ConvertsToStringPiece>
   explicit DummySystraceSection(
-      const __unused char* name,
-      __unused ConvertsToStringPiece&&... args) {}
+      // RNOH patch: remove unsupported `__unused` qualifier
+      const char* name,
+      ConvertsToStringPiece&&... args) {}
 };
 using SystraceSectionUnwrapped = DummySystraceSection;
 #endif

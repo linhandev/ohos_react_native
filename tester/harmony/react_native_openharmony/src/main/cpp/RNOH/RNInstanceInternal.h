@@ -7,6 +7,7 @@
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 
 namespace rnoh {
@@ -55,6 +56,8 @@ class RNInstanceInternal
         m_arkTSBridge(std::move(arkTSBridge)),
         m_componentInstancePreallocationRequestQueue(
             std::move(componentInstancePreallocationRequestQueue)) {
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::INIT_REACT_RUNTIME_START);
     m_unsubscribeUITickListener =
         m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
           m_taskExecutor->runTask(

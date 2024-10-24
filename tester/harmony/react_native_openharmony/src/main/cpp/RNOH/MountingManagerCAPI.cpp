@@ -1,5 +1,5 @@
 #include "MountingManagerCAPI.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 #include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
@@ -132,7 +132,7 @@ void MountingManagerCAPI::updateView(
       facebook::react::PropsParserContext{
           surfaceId.value(), *m_contextContainer},
       oldProps,
-      std::move(props));
+      RawProps(props));
 
   componentInstance->setIgnoredPropKeys({});
   componentInstance->setProps(newProps);

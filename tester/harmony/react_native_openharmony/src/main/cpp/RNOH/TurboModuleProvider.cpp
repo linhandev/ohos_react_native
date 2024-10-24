@@ -49,9 +49,7 @@ void TurboModuleProvider::installJSBindings(
   runtimeExecutor([turboModuleProvider = std::move(turboModuleProvider)](
                       facebook::jsi::Runtime& runtime) {
     react::TurboModuleBinding::install(
-        runtime,
-        react::TurboModuleBindingMode::HostObject,
-        std::move(turboModuleProvider));
+        runtime, std::move(turboModuleProvider), nullptr, nullptr);
   });
 }
 
@@ -61,14 +59,14 @@ std::shared_ptr<react::TurboModule> TurboModuleProvider::getTurboModule(
     std::unique_lock lock(m_cacheMtx);
     if (auto it = m_cache.find(moduleName); it != m_cache.end()) {
       DLOG(INFO) << "Cache hit. Providing '" << moduleName << "' Turbo Module";
-      return it->second;
+      return m_cache[moduleName];
     }
   }
   auto turboModule = m_createTurboModule(moduleName, m_jsInvoker, m_scheduler);
   if (turboModule != nullptr) {
     std::unique_lock lock(m_cacheMtx);
-    auto [it, inserted] = m_cache.emplace(moduleName, std::move(turboModule));
-    return it->second;
+    m_cache.emplace(moduleName, turboModule);
+    return turboModule;
   }
   LOG(ERROR) << "Couldn't provide turbo module \"" << moduleName << "\"";
   return nullptr;

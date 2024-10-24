@@ -27,9 +27,9 @@ void Props::initialize(
   nativeId = CoreFeatures::enablePropIteratorSetter
       ? sourceProps.nativeId
       : convertRawProp(context, rawProps, "nativeID", sourceProps.nativeId, {});
-#ifdef ANDROID
+// #ifdef ANDROID // RNOH patch — RAW_PROPS_ENABLED
   this->rawProps = (folly::dynamic)rawProps;
-#endif
+// #endif
 }
 
 void Props::setProp(

@@ -84,6 +84,8 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #ifdef WITH_HITRACE_REACT_MARKER
     HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
 #endif
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::APP_STARTUP_START);
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
 #ifdef LOG_VERBOSITY_LEVEL

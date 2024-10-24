@@ -1,5 +1,6 @@
 #pragma once
 
+#include <folly/dynamic.h>
 #include <vector>
 #include "react/renderer/core/ReactPrimitives.h"
 

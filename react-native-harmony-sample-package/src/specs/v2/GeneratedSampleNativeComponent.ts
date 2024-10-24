@@ -21,7 +21,7 @@ export interface OutgoingAndIncomingData {
   stringWithDefaultTest?: WithDefault<string, 'foobar'>;
   booleanTest: boolean;
   booleanWithDefaultTest?: WithDefault<boolean, true>;
-  // objectTest: { foo: { bar: string } }; // codegen issue: generated C++ code is not compatible with the library - probably caused by a mismatch between codegen and react-native version
+  objectTest: { foo: { bar: string } };
   arrayTest: string[];
   stringEnumTest?: WithDefault<'foo' | 'bar', 'foo'>; // codegen restriction: A default enum value is required
   // intEnumTest?: WithDefault<0 | 1, 0>; // codegen bug on RN side: crashes with input.split is not a function

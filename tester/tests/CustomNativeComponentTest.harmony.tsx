@@ -221,6 +221,7 @@ function GeneratedCustomComponentTest() {
                       colorTest: 'red',
                       arrayTest: ['foo', 'bar'],
                       readOnlyArrayTest: ['foo', 'bar'],
+                      objectTest: {foo: {bar: 'baz'}},
                     }}
                     onDirectEvent={setState}>
                     <Effect
@@ -255,6 +256,7 @@ function GeneratedCustomComponentTest() {
             expect(state?.readOnlyArrayTest).to.deep.eq(['foo', 'bar']);
             expect(state?.stringEnumTest).to.be.eq('foo');
             expect(state?.colorTest).to.be.not.undefined;
+            expect(state?.objectTest?.foo?.bar).to.be.eq('baz');
           }}
         />
         <TestCase.Manual<
@@ -284,6 +286,7 @@ function GeneratedCustomComponentTest() {
                       colorTest: 'blue',
                       arrayTest: [],
                       readOnlyArrayTest: [],
+                      objectTest: {foo: {bar: ''}},
                     }}
                     onReceivedCommandArgs={setState}>
                     <Effect

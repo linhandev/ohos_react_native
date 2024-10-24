@@ -12,6 +12,7 @@
 #include <memory>
 
 #include <react/bridging/LongLivedObject.h>
+#include <ReactCommon/CallInvoker.h> // RNOH patch
 
 namespace facebook::react {
 

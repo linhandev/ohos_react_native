@@ -9,7 +9,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 add_compile_options(
         -fexceptions
         -frtti
-        -std=c++17
+        -std=c++20
         -Wall
         -Wpedantic
         -Wno-gnu-zero-variadic-macro-arguments
@@ -47,7 +47,7 @@ target_link_libraries(react_render_textlayoutmanager
         react_render_mapbuffer
         react_render_mounting
         react_render_telemetry
-        react_render_uimanager
+#        react_render_uimanager # RNOH patch — breaking cyclic dependency
         react_utils
         reactnativejni
         yoga

@@ -5,6 +5,7 @@
 // interface cannot be found, please include "napi/native_api.h".
 
 #include "TextConversions.h"
+#include <yoga/Yoga.h>
 #include "react/renderer/components/view/conversions.h"
 
 using namespace rnoh;
@@ -85,68 +86,51 @@ int32_t TextConversions::getArkUIEllipsizeMode(
   return arkEllipsizeMode;
 }
 
-std::pair<std::optional<float>, std::optional<float>>
-TextConversions::calcHorizontalPadding(
-    YGStyle::Edges const& yogaPadding,
+std::pair<std::optional<float>, std::optional<float>> calcHorizontalPadding(
+    const facebook::yoga::Style& yogaStyle,
     bool isRTL) {
   std::optional<float> left = std::nullopt;
   std::optional<float> right = std::nullopt;
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeLeft])
-          .has_value()) {
-    left = facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeLeft])
-               .value();
+  if (yogaStyle.padding(facebook::yoga::Edge::Left).isDefined()) {
+    left = yogaStyle.padding(facebook::yoga::Edge::Left).value().unwrap();
   }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeRight])
-          .has_value()) {
-    right =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeRight])
-            .value();
+  if (yogaStyle.padding(facebook::yoga::Edge::Right).isDefined()) {
+    right = yogaStyle.padding(facebook::yoga::Edge::Right).value().unwrap();
   }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeStart])
-          .has_value()) {
+  if (yogaStyle.padding(facebook::yoga::Edge::Start).isDefined()) {
     float paddingStart =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeStart])
-            .value();
+        yogaStyle.padding(facebook::yoga::Edge::Start).value().unwrap();
     isRTL ? (right = paddingStart) : (left = paddingStart);
   }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeEnd])
-          .has_value()) {
+  if (yogaStyle.padding(facebook::yoga::Edge::End).isDefined()) {
     float paddingEnd =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeEnd])
-            .value();
+        yogaStyle.padding(facebook::yoga::Edge::End).value().unwrap();
     isRTL ? (left = paddingEnd) : (right = paddingEnd);
   }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeHorizontal])
-          .has_value()) {
-    float paddingHorizontal = facebook::react::optionalFloatFromYogaValue(
-                                  yogaPadding[YGEdgeHorizontal])
-                                  .value();
-    left = right = paddingHorizontal;
+  if (yogaStyle.padding(facebook::yoga::Edge::Horizontal).isDefined()) {
+    float paddingHorizontal =
+        yogaStyle.padding(facebook::yoga::Edge::Horizontal).value().unwrap();
+    left = paddingHorizontal;
+    right = paddingHorizontal;
   }
   return std::make_pair(left, right);
 };
 
-std::pair<std::optional<float>, std::optional<float>>
-TextConversions::calcVerticalPadding(YGStyle::Edges const& yogaPadding) {
+std::pair<std::optional<float>, std::optional<float>> calcVerticalPadding(
+    const facebook::yoga::Style& yogaStyle) {
   std::optional<float> top = std::nullopt;
   std::optional<float> bottom = std::nullopt;
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeTop])
-          .has_value()) {
-    top = facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeTop])
-              .value();
-  }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeBottom])
-          .has_value()) {
-    bottom =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeBottom])
-            .value();
-  }
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeVertical])
-          .has_value()) {
+  if (yogaStyle.padding(facebook::yoga::Edge::Vertical).isDefined()) {
     float paddingVertical =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeVertical])
-            .value();
-    top = bottom = paddingVertical;
+        yogaStyle.padding(facebook::yoga::Edge::Vertical).value().unwrap();
+    top = paddingVertical;
+    bottom = paddingVertical;
+  }
+  if (yogaStyle.padding(facebook::yoga::Edge::Top).isDefined()) {
+    top = yogaStyle.padding(facebook::yoga::Edge::Top).value().unwrap();
+  }
+  if (yogaStyle.padding(facebook::yoga::Edge::Bottom).isDefined()) {
+    bottom = yogaStyle.padding(facebook::yoga::Edge::Bottom).value().unwrap();
   }
   return std::make_pair(top, bottom);
 };
@@ -154,17 +138,19 @@ TextConversions::calcVerticalPadding(YGStyle::Edges const& yogaPadding) {
 TextPaddingInfo TextConversions::getArkUIPadding(
     std::shared_ptr<const facebook::react::ParagraphProps> props) {
   TextPaddingInfo info;
-  auto yogaPadding = props->yogaStyle.padding();
-  bool isRTL = false; // 标识布局是否为从右到左，当前无法获取。
-  if (facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeAll])
+  bool isRTL = false;
+  if (facebook::react::optionalFloatFromYogaValue(
+          props->yogaStyle.padding(facebook::yoga::Edge::All))
           .has_value()) {
-    float padding =
-        facebook::react::optionalFloatFromYogaValue(yogaPadding[YGEdgeAll])
-            .value();
+    float padding = facebook::react::optionalFloatFromYogaValue(
+                        props->yogaStyle.padding(facebook::yoga::Edge::All))
+                        .value();
     info.top = info.right = info.bottom = info.left = padding;
   }
-  auto horizonPadding = calcHorizontalPadding(yogaPadding, isRTL);
-  auto verticalPadding = calcVerticalPadding(yogaPadding);
+  std::pair<std::optional<float>, std::optional<float>> horizonPadding =
+      calcHorizontalPadding(props->yogaStyle, isRTL);
+  std::pair<std::optional<float>, std::optional<float>> verticalPadding =
+      calcVerticalPadding(props->yogaStyle);
   info.left = horizonPadding.first.has_value() ? horizonPadding.first.value()
                                                : info.left;
   info.right = horizonPadding.second.has_value() ? horizonPadding.second.value()

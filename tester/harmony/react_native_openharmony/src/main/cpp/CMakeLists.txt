@@ -8,6 +8,7 @@ set(patches_dir "${RNOH_CPP_DIR}/patches")
 
 add_compile_options("-Wno-error=unused-command-line-argument")
 
+
 include_directories(${NATIVERENDER_ROOT_PATH} ${NATIVERENDER_ROOT_PATH}/include)
 
 # FMT
@@ -295,36 +296,39 @@ add_react_common_subdir(jsiexecutor)
 add_react_common_subdir(cxxreact)
 # add_react_common_subdir(jsc)
 add_react_common_subdir(jsi)
-add_react_common_subdir(butter)
 add_react_common_subdir(callinvoker)
-add_react_common_subdir(jsinspector)
+add_react_common_subdir(jsinspector-modern)
 add_react_common_subdir(hermes/executor)
 target_include_directories(
   hermes_executor_common PRIVATE "${folly_include_dir}" "${boost_include_dirs}"
                                  "${hermes_include_dirs}")
 # add_react_common_subdir(hermes/inspector)
+add_react_common_subdir(react/featureflags)
+add_react_common_subdir(react/performance/timeline)
 add_react_common_subdir(react/renderer/runtimescheduler)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/debug)
 add_react_common_subdir(react/config)
 add_react_common_subdir(react/renderer/animations)
 add_react_common_subdir(react/renderer/attributedstring)
+add_react_common_subdir(react/renderer/components/view)
 add_react_common_subdir(react/renderer/componentregistry)
 add_react_common_subdir(react/renderer/mounting)
 add_react_common_subdir(react/renderer/scheduler)
 add_react_common_subdir(react/renderer/telemetry)
-add_react_common_subdir(react/renderer/templateprocessor)
 add_react_common_subdir(react/renderer/uimanager)
 add_react_common_subdir(react/renderer/core)
+add_react_common_subdir(react/renderer/consistency)
+add_react_common_subdir(react/renderer/uimanager/consistency)
+add_react_common_subdir(react/renderer/dom)
 add_react_common_subdir(react/renderer/graphics)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/debug)
 add_react_common_subdir(react/renderer/imagemanager)
-add_react_common_subdir(react/renderer/components/view)
 # add_react_common_subdir(react/renderer/components/switch)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/components/textinput)
 # add_react_common_subdir(react/renderer/components/progressbar)
 add_react_common_subdir(react/renderer/components/root)
 add_react_common_subdir(react/renderer/components/image)
-# add_react_common_subdir(react/renderer/components/legacyviewmanagerinterop)
+add_react_common_subdir(react/renderer/components/legacyviewmanagerinterop)
 # add_react_common_subdir(react/renderer/componentregistry/native)
 add_react_common_subdir(react/renderer/components/text)
 # add_react_common_subdir(react/renderer/components/unimplementedview)
@@ -332,6 +336,7 @@ add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/components/rncore)
 add_react_common_subdir(react/renderer/components/modal)
 add_react_common_subdir(react/renderer/components/scrollview)
 add_react_common_subdir(react/renderer/leakchecker)
+add_react_common_subdir(react/renderer/observers/events)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/textlayoutmanager)
 add_react_common_subdir(react/utils)
 add_react_common_subdir(react/bridging)
@@ -341,11 +346,11 @@ target_include_directories(react_nativemodule_core
                            PRIVATE "${REACT_COMMON_DIR}/callinvoker")
 
 # HERMES INSPECTOR
-add_subdirectory("${REACT_COMMON_DIR}/hermes/inspector")
+add_subdirectory("${REACT_COMMON_DIR}/hermes/inspector-modern")
 target_include_directories(
-  hermes_inspector PRIVATE "${folly_include_dir}" "${boost_include_dirs}"
+  hermes_inspector_modern PRIVATE "${folly_include_dir}" "${boost_include_dirs}"
                            "${hermes_include_dirs}" "${libevent_include_dirs}")
-target_compile_options(hermes_inspector PRIVATE ${folly_compile_options})
+target_compile_options(hermes_inspector_modern PRIVATE ${folly_compile_options})
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -379,7 +384,6 @@ add_library(
   "${RNOH_CPP_DIR}/RNOH/TextMeasurer.cpp"
   "${RNOH_CPP_DIR}/RNOH/StyledStringWrapper.cpp"
   "${RNOH_CPP_DIR}/RNOH/AsynchronousEventBeat.cpp"
-  "${RNOH_CPP_DIR}/RNOH/SynchronousEventBeat.cpp"
   "${RNOH_CPP_DIR}/RNOH/TaskExecutor/TaskExecutor.cpp"
   "${RNOH_CPP_DIR}/RNOH/TaskExecutor/NapiTaskRunner.cpp"
   "${RNOH_CPP_DIR}/RNOH/TaskExecutor/EventLoopTaskRunner.cpp"
@@ -474,7 +478,7 @@ option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation"
 option(WITH_HITRACE_REACT_MARKER
        "enables HiTrace-based React Marker implementation" OFF)
 if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
-  target_link_libraries(reactnative libhitrace_ndk.z.so)
+  target_link_libraries(react_cxxreact libhitrace_ndk.z.so)
   target_link_libraries(react_nativemodule_core libhitrace_ndk.z.so)
   target_link_libraries(react_render_debug libhitrace_ndk.z.so)
   if(WITH_HITRACE_SYSTRACE)
@@ -494,7 +498,7 @@ target_link_libraries(
          libnative_drawing.so
          uv
          Boost::context
-         reactnative
+         react_cxxreact
          react_render_scheduler
          hermes_executor_common
          rrc_image
@@ -507,8 +511,8 @@ target_link_libraries(
          react_bridging
          react_render_animations)
 
-target_compile_options(rnoh PUBLIC ${folly_compile_options} -DRAW_PROPS_ENABLED)
-target_compile_features(rnoh PUBLIC cxx_std_17)
+target_compile_options(rnoh PUBLIC ${folly_compile_options})
+target_compile_features(rnoh PUBLIC cxx_std_20)
 
 target_link_libraries(rnoh PUBLIC libqos.so)
 

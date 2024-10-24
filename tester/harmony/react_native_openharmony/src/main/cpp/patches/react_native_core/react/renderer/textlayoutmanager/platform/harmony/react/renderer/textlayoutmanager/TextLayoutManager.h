@@ -12,8 +12,8 @@
 #include <react/renderer/attributedstring/AttributedString.h>
 #include <react/renderer/attributedstring/AttributedStringBox.h>
 #include <react/renderer/attributedstring/ParagraphAttributes.h>
-#include <react/renderer/core/CoreFeatures.h>
 #include <react/renderer/core/LayoutConstraints.h>
+#include <react/renderer/textlayoutmanager/TextLayoutContext.h>
 #include <react/renderer/textlayoutmanager/TextMeasureCache.h>
 #include <react/utils/ContextContainer.h>
 
@@ -44,9 +44,7 @@ class TextLayoutManager {
  public:
   TextLayoutManager(const ContextContainer::Shared& contextContainer)
       : m_measureCache(
-            CoreFeatures::cacheLastTextMeasurement
-                ? 8096
-                : kSimpleThreadSafeCacheSizeCap) {
+            kSimpleThreadSafeCacheSizeCap) {
     m_textLayoutManagerDelegate =
         contextContainer->at<std::shared_ptr<TextLayoutManagerDelegate>>(
             "textLayoutManagerDelegate");
@@ -55,22 +53,33 @@ class TextLayoutManager {
   /*
    * Measures `attributedStringBox` using native text rendering infrastructure.
    */
-  TextMeasurement measure(
-      AttributedStringBox attributedStringBox,
-      ParagraphAttributes paragraphAttributes,
+  virtual TextMeasurement measure(
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
+      const TextLayoutContext& layoutContext,
       LayoutConstraints layoutConstraints) const;
 
+  // RNOH patch
   TextMeasurement measure(
-      AttributedStringBox attributedStringBox,
-      ParagraphAttributes paragraphAttributes,
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
       LayoutConstraints layoutConstraints,
       std::shared_ptr<void> hostTextStorage) const;
 
+  /**
+   * Measures an AttributedString on the platform, as identified by some
+   * opaque cache ID.
+   */
+  virtual TextMeasurement measureCachedSpannableById(
+      int64_t cacheId,
+      const ParagraphAttributes& paragraphAttributes,
+      LayoutConstraints layoutConstraints) const;
+  
   /*
    * Measures lines of `attributedString` using native text rendering
    * infrastructure.
    */
-  LinesMeasurements measureLines(
+  virtual LinesMeasurements measureLines(
       AttributedString attributedString,
       ParagraphAttributes paragraphAttributes,
       Size size) const;
@@ -81,6 +90,11 @@ class TextLayoutManager {
    */
   void* getNativeTextLayoutManager() const;
 
+  /**
+   * RNOH patch
+   * This method was preserved to make the RN update to RN@0.75.4 easier. The method was available in RN@0.72.5,
+   * but that's no longer the case in RN@0.75.4. RNOH should consider finding an alternative approach.
+   */
   std::shared_ptr<void> getHostTextStorage(
       AttributedString attributedString,
       ParagraphAttributes paragraphAttributes,

@@ -1,4 +1,5 @@
 #include "OHReactMarkerListener.h"
+#include <glog/logging.h>
 
 namespace rnoh {
 
@@ -147,6 +148,20 @@ void OHReactMarkerListener::logMarker(
     case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
     case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
       break;
+    case HarmonyReactMarkerId::APP_STARTUP_START:
+      logMarkerStart("APP_STARTUP", "");
+      break;
+    case HarmonyReactMarkerId::APP_STARTUP_STOP:
+      logMarkerFinish("APP_STARTUP", "");
+      break;
+    case HarmonyReactMarkerId::INIT_REACT_RUNTIME_START:
+      logMarkerStart("INIT_REACT_RUNTIME", "");
+      break;
+    case HarmonyReactMarkerId::INIT_REACT_RUNTIME_STOP:
+      logMarkerFinish("INIT_REACT_RUNTIME", "");
+      break;
+    default:
+      DLOG(WARNING) << "Unexpected marker";
   }
 }
 

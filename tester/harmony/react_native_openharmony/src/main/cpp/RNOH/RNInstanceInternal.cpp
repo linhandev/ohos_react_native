@@ -14,7 +14,6 @@
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
-#include "RNOH/SynchronousEventBeat.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "TextMeasurer.h"
 #include "hermes/executor/HermesExecutorFactory.h"
@@ -144,13 +143,6 @@ void RNInstanceInternal::initializeScheduler(
             ownerBox, runtimeExecutor, uiTicker);
       };
 
-  react::EventBeat::Factory syncEventBeatFactory =
-      [runtimeScheduler = m_runtimeScheduler,
-       taskExecutor = m_taskExecutor](auto ownerBox) {
-        return std::make_unique<SynchronousEventBeat>(
-            ownerBox, runtimeScheduler, taskExecutor);
-      };
-
   react::ComponentRegistryFactory componentRegistryFactory =
       [registry = m_componentDescriptorProviderRegistry](
           auto eventDispatcher, auto contextContainer) {
@@ -162,9 +154,7 @@ void RNInstanceInternal::initializeScheduler(
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
       .runtimeExecutor = runtimeExecutor,
-      .asynchronousEventBeatFactory = asyncEventBeatFactory,
-      .synchronousEventBeatFactory = syncEventBeatFactory,
-  };
+      .asynchronousEventBeatFactory = asyncEventBeatFactory};
 
   if (m_shouldEnableBackgroundExecutor) {
     schedulerToolbox.backgroundExecutor =

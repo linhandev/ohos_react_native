@@ -1,6 +1,6 @@
 #include "ComponentInstance.h"
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
-#include <react/renderer/debug/SystraceSection.h>
 
 namespace rnoh {
 ComponentInstance::ComponentInstance(Context ctx)

@@ -203,10 +203,12 @@ class ScrollViewComponentInstance
       facebook::react::ScrollViewSnapToAlignment snapToAlignment);
   bool scrollMovedBySignificantOffset(facebook::react::Point newOffset);
   folly::dynamic getScrollEventPayload(
-      facebook::react::ScrollViewMetrics const& scrollViewMetrics);
+      facebook::react::ScrollViewEventEmitter::Metrics const&
+          scrollViewMetrics);
 
   void sendEventForNativeAnimations(
-      facebook::react::ScrollViewMetrics const& scrollViewMetrics);
+      facebook::react::ScrollViewEventEmitter::Metrics const&
+          scrollViewMetrics);
   bool isHorizontal(ScrollViewRawProps const& props);
   void disableIntervalMomentum();
   std::optional<float> getNextSnapTarget();
@@ -255,7 +257,7 @@ class ScrollViewComponentInstance
   // TouchTarget implementation
   facebook::react::Point getCurrentOffset() const override;
 
-  facebook::react::ScrollViewMetrics getScrollViewMetrics();
+  facebook::react::ScrollViewEventEmitter::Metrics getScrollViewMetrics();
 
   bool isHandlingTouches() const override;
 

@@ -1,5 +1,5 @@
 #include "SchedulerDelegate.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 #include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
@@ -8,7 +8,7 @@ SchedulerDelegate::~SchedulerDelegate() {
 }
 
 void SchedulerDelegate::schedulerDidFinishTransaction(
-    MountingCoordinator::Shared mountingCoordinator) {
+    const MountingCoordinator::Shared& mountingCoordinator) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction");
   performOnMainThread([mountingCoordinator](auto mountingManager) {
@@ -78,7 +78,6 @@ void SchedulerDelegate::logTransactionTelemetryMarkers(
 }
 
 void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
-    SurfaceId /*surfaceId*/,
     const ShadowNode& shadowNode) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation");

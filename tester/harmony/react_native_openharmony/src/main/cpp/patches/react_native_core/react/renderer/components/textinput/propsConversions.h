@@ -7,18 +7,18 @@
 
 #pragma once
 
-#include <react/renderer/components/textinput/primitives.h>
+#include <react/debug/react_native_expect.h>
+#include <react/renderer/components/textinput/primitives.h> // RNOH patch
 #include <react/renderer/core/PropsParserContext.h>
 #include <react/renderer/core/propsConversions.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 static TextInputTraits convertRawProp(
-    const PropsParserContext &context,
-    RawProps const &rawProps,
-    TextInputTraits const &sourceTraits,
-    TextInputTraits const &defaultTraits) {
+    const PropsParserContext& context,
+    const RawProps& rawProps,
+    const TextInputTraits& sourceTraits,
+    const TextInputTraits& defaultTraits) {
   auto traits = TextInputTraits{};
 
   traits.multiline = convertRawProp(
@@ -141,33 +141,39 @@ static TextInputTraits convertRawProp(
       "passwordRules",
       sourceTraits.passwordRules,
       defaultTraits.passwordRules);
+  traits.smartInsertDelete = convertRawProp(
+      context,
+      rawProps,
+      "smartInsertDelete",
+      sourceTraits.smartInsertDelete,
+      defaultTraits.smartInsertDelete);
 
   return traits;
 }
 
 inline void fromRawValue(
-    const PropsParserContext &context,
-    const RawValue &value,
-    Selection &result) {
-  if (value.hasType<butter::map<std::string, int>>()) {
-    auto map = (butter::map<std::string, int>)value;
-    for (const auto &pair : map) {
+    const PropsParserContext& context,
+    const RawValue& value,
+    Selection& result) {
+  if (value.hasType<std::unordered_map<std::string, int>>()) {
+    auto map = (std::unordered_map<std::string, int>)value;
+    for (const auto& pair : map) {
       if (pair.first == "start") {
         result.start = pair.second;
       } else if (pair.first == "end") {
         result.end = pair.second;
       } else {
         LOG(ERROR) << "Unsupported Selection map key: " << pair.first;
-        react_native_assert(false);
+        react_native_expect(false);
       }
     }
     return;
   }
 
-  react_native_assert(value.hasType<std::vector<int>>());
+  react_native_expect(value.hasType<std::vector<int>>());
   if (value.hasType<std::vector<int>>()) {
     auto array = (std::vector<int>)value;
-    react_native_assert(array.size() == 2);
+    react_native_expect(array.size() == 2);
     if (array.size() >= 2) {
       result = {array.at(0), array.at(1)};
     } else {
@@ -178,5 +184,4 @@ inline void fromRawValue(
     LOG(ERROR) << "Unsupported Selection type";
   }
 }
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

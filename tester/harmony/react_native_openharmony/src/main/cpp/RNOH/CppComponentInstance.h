@@ -3,6 +3,7 @@
  */
 #pragma once
 #include <arkui/native_type.h>
+#include <cxxreact/SystraceSection.h>
 #include <react/renderer/components/view/TouchEventEmitter.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/EventEmitter.h>
@@ -10,7 +11,6 @@
 #include <react/renderer/core/Props.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include <react/renderer/core/State.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include <vector>
 #include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
@@ -241,13 +241,7 @@ class CppComponentInstance : public ComponentInstance,
       this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
     }
 
-    m_accessibilityLabel = props->accessibilityLabel;
-
-    if (props->accessibilityState.disabled !=
-            old->accessibilityState.disabled ||
-        props->accessibilityState.checked != old->accessibilityState.checked ||
-        props->accessibilityState.selected !=
-            old->accessibilityState.selected) {
+    if (props->accessibilityState != old->accessibilityState) {
       this->getLocalRootArkUINode().setAccessibilityState(
           props->accessibilityState);
     }

@@ -122,6 +122,8 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
 StyledStringWrapper TextMeasurer::createStyledString(
     AttributedString const& attributedString,
     ParagraphAttributes const& paragraphAttributes) const {
+  UniqueTypographyStyle typographyStyle(
+      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
   float fontMultiplier = 1.0;
   if (paragraphAttributes.allowFontScaling) {
     fontMultiplier = m_fontScale;
@@ -130,8 +132,6 @@ StyledStringWrapper TextMeasurer::createStyledString(
           m_fontScale, (float)paragraphAttributes.maxFontSizeMultiplier);
     }
   }
-  UniqueTypographyStyle typographyStyle(
-      OH_Drawing_CreateTypographyStyle(), OH_Drawing_DestroyTypographyStyle);
 
   if (paragraphAttributes.ellipsizeMode !=
       facebook::react::EllipsizeMode::Clip) {

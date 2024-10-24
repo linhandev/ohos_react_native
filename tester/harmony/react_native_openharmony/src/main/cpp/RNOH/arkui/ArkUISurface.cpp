@@ -1,7 +1,7 @@
 #include "ArkUISurface.h"
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"

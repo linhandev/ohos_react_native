@@ -10,57 +10,48 @@
 #include <react/renderer/attributedstring/AttributedString.h>
 #include <react/renderer/components/view/ViewEventEmitter.h>
 
-namespace facebook {
-namespace react {
-
-class TextInputMetrics {
- public:
-  std::string text;
-  AttributedString::Range selectionRange;
-  // ScrollView-like metrics
-  Size contentSize;
-  Point contentOffset;
-  EdgeInsets contentInset;
-  Size containerSize;
-  int eventCount;
-  Size layoutMeasurement;
-  float zoomScale;
-};
-
-class KeyPressMetrics {
- public:
-  std::string text;
-  int eventCount;
-};
-
-class OnChangeMetrics {
- public:
-  std::string text;
-  int eventCount;
-};
+namespace facebook::react {
 
 class TextInputEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
 
-  void onFocus(TextInputMetrics const& textInputMetrics) const;
-  void onBlur(TextInputMetrics const& textInputMetrics) const;
-  void onChange(TextInputMetrics const& textInputMetrics) const;
-  void onChangeSync(TextInputMetrics const& textInputMetrics) const;
-  void onContentSizeChange(TextInputMetrics const& textInputMetrics) const;
-  void onSelectionChange(TextInputMetrics const& textInputMetrics) const;
-  void onEndEditing(TextInputMetrics const& textInputMetrics) const;
-  void onSubmitEditing(TextInputMetrics const& textInputMetrics) const;
-  void onKeyPress(KeyPressMetrics const& keyPressMetrics) const;
-  void onKeyPressSync(KeyPressMetrics const& keyPressMetrics) const;
-  void onScroll(TextInputMetrics const& textInputMetrics) const;
+  struct Metrics {
+    std::string text;
+    AttributedString::Range selectionRange;
+    // ScrollView-like metrics
+    Size contentSize;
+    Point contentOffset;
+    EdgeInsets contentInset;
+    Size containerSize;
+    int eventCount;
+    Size layoutMeasurement;
+    Float zoomScale;
+  };
+
+  struct KeyPressMetrics {
+    std::string text;
+    int eventCount;
+  };
+
+  void onFocus(const Metrics& textInputMetrics) const;
+  void onBlur(const Metrics& textInputMetrics) const;
+  void onChange(const Metrics& textInputMetrics) const;
+  void onContentSizeChange(const Metrics& textInputMetrics) const;
+  void onSelectionChange(const Metrics& textInputMetrics) const;
+  void onEndEditing(const Metrics& textInputMetrics) const;
+  void onSubmitEditing(const Metrics& textInputMetrics) const;
+  void onKeyPress(const KeyPressMetrics& keyPressMetrics) const;
+  void onScroll(const Metrics& textInputMetrics) const;
 
  private:
   void dispatchTextInputEvent(
-      std::string const& name,
-      TextInputMetrics const& textInputMetrics,
-      EventPriority priority = EventPriority::AsynchronousBatched) const;
+      const std::string& name,
+      const Metrics& textInputMetrics) const;
+
+  void dispatchTextInputContentSizeChangeEvent(
+      const std::string& name,
+      const Metrics& textInputMetrics) const;
 };
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

@@ -1,8 +1,8 @@
 #include <ReactCommon/CallbackWrapper.h>
 #include <ReactCommon/TurboModuleUtils.h>
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <jsi/JSIDynamic.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include <exception>
 
 #include "ArkTSTurboModule.h"
@@ -154,7 +154,7 @@ jsi::Value ArkTSTurboModule::callAsync(
       [&, args = std::move(args)](
           jsi::Runtime& runtime2,
           std::shared_ptr<react::Promise> jsiPromise) mutable {
-        react::LongLivedObjectCollection::get().add(jsiPromise);
+        react::LongLivedObjectCollection::get(runtime2).add(jsiPromise);
         m_ctx.taskExecutor->runTask(
             m_ctx.turboModuleThread,
             [name = this->name_,

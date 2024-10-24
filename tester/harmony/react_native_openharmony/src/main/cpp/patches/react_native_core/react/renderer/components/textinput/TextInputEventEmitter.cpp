@@ -10,8 +10,8 @@
 namespace facebook::react {
 
 static jsi::Value textInputMetricsPayload(
-    jsi::Runtime &runtime,
-    TextInputMetrics const &textInputMetrics) {
+    jsi::Runtime& runtime,
+    const TextInputEventEmitter::Metrics& textInputMetrics) {
   auto payload = jsi::Object(runtime);
 
   payload.setProperty(
@@ -33,7 +33,74 @@ static jsi::Value textInputMetricsPayload(
     payload.setProperty(runtime, "selection", selection);
   }
 
-//RNOH patch
+  // RNOH patch
+  {
+    auto contentSize = jsi::Object(runtime);
+    contentSize.setProperty(
+        runtime, "width", textInputMetrics.contentSize.width);
+    contentSize.setProperty(
+        runtime, "height", textInputMetrics.contentSize.height);
+    payload.setProperty(runtime, "contentSize", contentSize);
+  }
+
+  return payload;
+};
+
+static jsi::Value textInputMetricsScrollPayload(
+    jsi::Runtime& runtime,
+    const TextInputEventEmitter::Metrics& textInputMetrics) {
+  auto payload = jsi::Object(runtime);
+
+  {
+    auto contentOffset = jsi::Object(runtime);
+    contentOffset.setProperty(runtime, "x", textInputMetrics.contentOffset.x);
+    contentOffset.setProperty(runtime, "y", textInputMetrics.contentOffset.y);
+    payload.setProperty(runtime, "contentOffset", contentOffset);
+  }
+
+  {
+    auto contentInset = jsi::Object(runtime);
+    contentInset.setProperty(runtime, "top", textInputMetrics.contentInset.top);
+    contentInset.setProperty(
+        runtime, "left", textInputMetrics.contentInset.left);
+    contentInset.setProperty(
+        runtime, "bottom", textInputMetrics.contentInset.bottom);
+    contentInset.setProperty(
+        runtime, "right", textInputMetrics.contentInset.right);
+    payload.setProperty(runtime, "contentInset", contentInset);
+  }
+
+  {
+    auto contentSize = jsi::Object(runtime);
+    contentSize.setProperty(
+        runtime, "width", textInputMetrics.contentSize.width);
+    contentSize.setProperty(
+        runtime, "height", textInputMetrics.contentSize.height);
+    payload.setProperty(runtime, "contentSize", contentSize);
+  }
+
+  {
+    auto layoutMeasurement = jsi::Object(runtime);
+    layoutMeasurement.setProperty(
+        runtime, "width", textInputMetrics.layoutMeasurement.width);
+    layoutMeasurement.setProperty(
+        runtime, "height", textInputMetrics.layoutMeasurement.height);
+    payload.setProperty(runtime, "layoutMeasurement", layoutMeasurement);
+  }
+
+  payload.setProperty(
+      runtime,
+      "zoomScale",
+      textInputMetrics.zoomScale ? textInputMetrics.zoomScale : 1);
+
+  return payload;
+};
+
+static jsi::Value textInputMetricsContentSizePayload(
+    jsi::Runtime& runtime,
+    const TextInputEventEmitter::Metrics& textInputMetrics) {
+  auto payload = jsi::Object(runtime);
+
   {
     auto contentSize = jsi::Object(runtime);
     contentSize.setProperty(
@@ -47,8 +114,8 @@ static jsi::Value textInputMetricsPayload(
 };
 
 static jsi::Value keyPressMetricsPayload(
-    jsi::Runtime &runtime,
-    KeyPressMetrics const &keyPressMetrics) {
+    jsi::Runtime& runtime,
+    const TextInputEventEmitter::KeyPressMetrics& keyPressMetrics) {
   auto payload = jsi::Object(runtime);
   payload.setProperty(runtime, "eventCount", keyPressMetrics.eventCount);
 
@@ -69,82 +136,66 @@ static jsi::Value keyPressMetricsPayload(
   return payload;
 };
 
-void TextInputEventEmitter::onFocus(
-    TextInputMetrics const &textInputMetrics) const {
+void TextInputEventEmitter::onFocus(const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("focus", textInputMetrics);
 }
 
-void TextInputEventEmitter::onBlur(
-    TextInputMetrics const &textInputMetrics) const {
+void TextInputEventEmitter::onBlur(const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("blur", textInputMetrics);
 }
 
-void TextInputEventEmitter::onChange(
-    TextInputMetrics const &textInputMetrics) const {
+void TextInputEventEmitter::onChange(const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("change", textInputMetrics);
 }
 
-void TextInputEventEmitter::onChangeSync(
-    TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent(
-      "changeSync", textInputMetrics, EventPriority::SynchronousBatched);
-}
-
 void TextInputEventEmitter::onContentSizeChange(
-    TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent("contentSizeChange", textInputMetrics);
+    const Metrics& textInputMetrics) const {
+  dispatchTextInputContentSizeChangeEvent(
+      "contentSizeChange", textInputMetrics);
 }
 
 void TextInputEventEmitter::onSelectionChange(
-    TextInputMetrics const &textInputMetrics) const {
+    const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("selectionChange", textInputMetrics);
 }
 
 void TextInputEventEmitter::onEndEditing(
-    TextInputMetrics const &textInputMetrics) const {
+    const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("endEditing", textInputMetrics);
 }
 
 void TextInputEventEmitter::onSubmitEditing(
-    TextInputMetrics const &textInputMetrics) const {
+    const Metrics& textInputMetrics) const {
   dispatchTextInputEvent("submitEditing", textInputMetrics);
 }
 
 void TextInputEventEmitter::onKeyPress(
-    KeyPressMetrics const &keyPressMetrics) const {
-  dispatchEvent(
-      "keyPress",
-      [keyPressMetrics](jsi::Runtime &runtime) {
-        return keyPressMetricsPayload(runtime, keyPressMetrics);
-      },
-      EventPriority::AsynchronousBatched);
+    const KeyPressMetrics& keyPressMetrics) const {
+  dispatchEvent("keyPress", [keyPressMetrics](jsi::Runtime& runtime) {
+    return keyPressMetricsPayload(runtime, keyPressMetrics);
+  });
 }
 
-void TextInputEventEmitter::onKeyPressSync(
-    KeyPressMetrics const &keyPressMetrics) const {
-  dispatchEvent(
-      "keyPressSync",
-      [keyPressMetrics](jsi::Runtime &runtime) {
-        return keyPressMetricsPayload(runtime, keyPressMetrics);
-      },
-      EventPriority::SynchronousBatched);
-}
-
-void TextInputEventEmitter::onScroll(
-    TextInputMetrics const &textInputMetrics) const {
-  dispatchTextInputEvent("scroll", textInputMetrics);
+void TextInputEventEmitter::onScroll(const Metrics& textInputMetrics) const {
+  dispatchEvent("scroll", [textInputMetrics](jsi::Runtime& runtime) {
+    return textInputMetricsScrollPayload(runtime, textInputMetrics);
+  });
 }
 
 void TextInputEventEmitter::dispatchTextInputEvent(
-    std::string const &name,
-    TextInputMetrics const &textInputMetrics,
-    EventPriority priority) const {
-  dispatchEvent(
-      name,
-      [textInputMetrics](jsi::Runtime &runtime) {
-        return textInputMetricsPayload(runtime, textInputMetrics);
-      },
-      priority);
+    const std::string& name,
+    const Metrics& textInputMetrics) const {
+  dispatchEvent(name, [textInputMetrics](jsi::Runtime& runtime) {
+    return textInputMetricsPayload(runtime, textInputMetrics);
+  });
+}
+
+void TextInputEventEmitter::dispatchTextInputContentSizeChangeEvent(
+    const std::string& name,
+    const Metrics& textInputMetrics) const {
+  dispatchEvent(name, [textInputMetrics](jsi::Runtime& runtime) {
+    return textInputMetricsContentSizePayload(runtime, textInputMetrics);
+  });
 }
 
 } // namespace facebook::react

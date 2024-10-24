@@ -15,6 +15,11 @@ namespace rnoh {
 class HarmonyReactMarker {
  public:
   enum class HarmonyReactMarkerId {
+    UNKNOWN_REACT_MARKER,
+    APP_STARTUP_START,
+    APP_STARTUP_STOP,
+    INIT_REACT_RUNTIME_START,
+    INIT_REACT_RUNTIME_STOP,
     NATIVE_REQUIRE_START,
     NATIVE_REQUIRE_STOP,
     RUN_JS_BUNDLE_START,

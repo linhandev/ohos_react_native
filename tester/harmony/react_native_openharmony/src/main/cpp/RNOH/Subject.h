@@ -1,6 +1,6 @@
 #pragma
 
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 #include <vector>
 
 namespace rnoh {

@@ -7,10 +7,11 @@
  * @flow strict-local
  * @format
  */
-const OS = "ios" // RNOH patch - replaced occurrences Platform.OS with OS
+
+const OS = "ios" // RNOH patch - replaced occurrences Platform.OS with OS // RNOH patch
 
 // RNOH patch - updated imports
-import type {HostComponent} from 'react-native/Libraries/shims/ReactNativeTypes';
+import type {HostComponent} from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
 import type {
   PressEvent,
   ScrollEvent,
@@ -30,14 +31,19 @@ import Text from 'react-native/Libraries/Text/Text';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 import Platform from '../../Utilities/Platform';
 import useMergeRefs from 'react-native/Libraries/Utilities/useMergeRefs';
-import TextInputState from './TextInputState.harmony';
+import TextInputState from './TextInputState';
 import invariant from 'invariant';
 import nullthrows from 'nullthrows';
 import * as React from 'react';
-
-const {useLayoutEffect, useRef, useState, useCallback} = React;
+import {useCallback, useLayoutEffect, useRef, useState} from 'react';
 
 type ReactRefSetter<T> = {current: null | T, ...} | ((ref: null | T) => mixed);
+type TextInputInstance = React.ElementRef<HostComponent<mixed>> & {
+  +clear: () => void,
+  +isFocused: () => boolean,
+  +getNativeRef: () => ?React.ElementRef<HostComponent<mixed>>,
+  +setSelection: (start: number, end: number) => void,
+};
 
 let AndroidTextInput;
 let AndroidTextInputCommands;
@@ -46,6 +52,7 @@ let RCTSinglelineTextInputNativeCommands;
 let RCTMultilineTextInputView;
 let RCTMultilineTextInputNativeCommands;
 
+// RNOH patch: BEGIN
 if (OS === 'android') {
   AndroidTextInput = require('react-native/Libraries/Components/TextInput/AndroidTextInputNativeComponent').default;
   AndroidTextInputCommands =
@@ -60,6 +67,7 @@ if (OS === 'android') {
   RCTMultilineTextInputNativeCommands =
     require('react-native/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
 }
+ // RNOH patch: END
 
 export type ChangeEvent = SyntheticEvent<
   $ReadOnly<{|
@@ -134,6 +142,9 @@ type DataDetectorTypesType =
   | 'link'
   | 'address'
   | 'calendarEvent'
+  | 'trackingNumber'
+  | 'flightNumber'
+  | 'lookupSuggestion'
   | 'none'
   | 'all';
 
@@ -197,6 +208,15 @@ export type TextContentType =
   | 'addressState'
   | 'countryName'
   | 'creditCardNumber'
+  | 'creditCardExpiration'
+  | 'creditCardExpirationMonth'
+  | 'creditCardExpirationYear'
+  | 'creditCardSecurityCode'
+  | 'creditCardType'
+  | 'creditCardName'
+  | 'creditCardGivenName'
+  | 'creditCardMiddleName'
+  | 'creditCardFamilyName'
   | 'emailAddress'
   | 'familyName'
   | 'fullStreetAddress'
@@ -217,16 +237,23 @@ export type TextContentType =
   | 'username'
   | 'password'
   | 'newPassword'
-  | 'oneTimeCode';
+  | 'oneTimeCode'
+  | 'birthdate'
+  | 'birthdateDay'
+  | 'birthdateMonth'
+  | 'birthdateYear';
 
 export type enterKeyHintType =
-  | 'enter'
+  // Cross Platform
   | 'done'
   | 'go'
   | 'next'
-  | 'previous'
   | 'search'
-  | 'send';
+  | 'send'
+  // Android-only
+  | 'previous'
+  // iOS-only
+  | 'enter';
 
 type PasswordRules = string;
 
@@ -333,6 +360,16 @@ type IOSProps = $ReadOnly<{|
    * @platform ios
    */
   lineBreakStrategyIOS?: ?('none' | 'standard' | 'hangul-word' | 'push-out'),
+
+  /**
+   * If `false`, the iOS system will not insert an extra space after a paste operation
+   * neither delete one or two spaces after a cut or delete operation.
+   *
+   * The default value is `true`.
+   *
+   * @platform ios
+   */
+  smartInsertDelete?: ?boolean,
 |}>;
 
 type AndroidProps = $ReadOnly<{|
@@ -446,7 +483,16 @@ export type Props = $ReadOnly<{|
    * - `additional-name`
    * - `address-line1`
    * - `address-line2`
+   * - `birthdate-day` (iOS 17+)
+   * - `birthdate-full` (iOS 17+)
+   * - `birthdate-month` (iOS 17+)
+   * - `birthdate-year` (iOS 17+)
    * - `cc-number`
+   * - `cc-csc` (iOS 17+)
+   * - `cc-exp` (iOS 17+)
+   * - `cc-exp-day` (iOS 17+)
+   * - `cc-exp-month` (iOS 17+)
+   * - `cc-exp-year` (iOS 17+)
    * - `country`
    * - `current-password`
    * - `email`
@@ -465,6 +511,11 @@ export type Props = $ReadOnly<{|
    *
    * The following values work on iOS only:
    *
+   * - `cc-name` (iOS 17+)
+   * - `cc-given-name` (iOS 17+)
+   * - `cc-middle-name` (iOS 17+)
+   * - `cc-family-name` (iOS 17+)
+   * - `cc-type` (iOS 17+)
    * - `nickname`
    * - `organization`
    * - `organization-title`
@@ -472,15 +523,6 @@ export type Props = $ReadOnly<{|
    *
    * The following values work on Android only:
    *
-   * - `birthdate-day`
-   * - `birthdate-full`
-   * - `birthdate-month`
-   * - `birthdate-year`
-   * - `cc-csc`
-   * - `cc-exp`
-   * - `cc-exp-day`
-   * - `cc-exp-month`
-   * - `cc-exp-year`
    * - `gender`
    * - `name-family`
    * - `name-given`
@@ -516,6 +558,11 @@ export type Props = $ReadOnly<{|
     | 'cc-exp-month'
     | 'cc-exp-year'
     | 'cc-number'
+    | 'cc-name'
+    | 'cc-given-name'
+    | 'cc-middle-name'
+    | 'cc-family-name'
+    | 'cc-type'
     | 'country'
     | 'current-password'
     | 'email'
@@ -700,31 +747,10 @@ export type Props = $ReadOnly<{|
   onChange?: ?(e: ChangeEvent) => mixed,
 
   /**
-   * DANGER: this API is not stable and will change in the future.
-   *
-   * Callback will be called on the main thread and may result in dropped frames.
-   * Callback that is called when the text input's text changes.
-   *
-   * @platform ios
-   */
-  unstable_onChangeSync?: ?(e: ChangeEvent) => mixed,
-
-  /**
    * Callback that is called when the text input's text changes.
    * Changed text is passed as an argument to the callback handler.
    */
   onChangeText?: ?(text: string) => mixed,
-
-  /**
-   * DANGER: this API is not stable and will change in the future.
-   *
-   * Callback will be called on the main thread and may result in dropped frames.
-   * Callback that is called when the text input's text changes.
-   * Changed text is passed as an argument to the callback handler.
-   *
-   * @platform ios
-   */
-  unstable_onChangeTextSync?: ?(text: string) => mixed,
 
   /**
    * Callback that is called when the text input's content size changes.
@@ -755,19 +781,9 @@ export type Props = $ReadOnly<{|
   onKeyPress?: ?(e: KeyPressEvent) => mixed,
 
   /**
-   * DANGER: this API is not stable and will change in the future.
-   *
-   * Callback will be called on the main thread and may result in dropped frames.
-   *
-   * Callback that is called when a key is pressed.
-   * This will be called with `{ nativeEvent: { key: keyValue } }`
-   * where `keyValue` is `'Enter'` or `'Backspace'` for respective keys and
-   * the typed-in character otherwise including `' '` for space.
-   * Fires before `onChange` callbacks.
-   *
-   * @platform ios
+   * Called when a single tap gesture is detected.
    */
-  unstable_onKeyPressSync?: ?(e: KeyPressEvent) => mixed,
+  onPress?: ?(event: PressEvent) => mixed,
 
   /**
    * Called when a touch is engaged.
@@ -869,6 +885,12 @@ export type Props = $ReadOnly<{|
    * The highlight and cursor color of the text input.
    */
   selectionColor?: ?ColorValue,
+
+  /**
+   * The text selection handle color.
+   * @platform android
+   */
+  selectionHandleColor?: ?ColorValue,
 
   /**
    * If `true`, all text will automatically be selected on focus.
@@ -996,8 +1018,8 @@ const emptyFunctionThatReturnsTrue = () => true;
  *     return (
  *       <TextInput
  *         {...this.props} // Inherit any props passed to it; e.g., multiline, numberOfLines below
- *         editable = {true}
- *         maxLength = {40}
+ *         editable={true}
+ *         maxLength={40}
  *       />
  *     );
  *   }
@@ -1021,8 +1043,8 @@ const emptyFunctionThatReturnsTrue = () => true;
  *        borderBottomWidth: 1 }}
  *      >
  *        <UselessTextInput
- *          multiline = {true}
- *          numberOfLines = {4}
+ *          multiline={true}
+ *          numberOfLines={4}
  *          onChangeText={(text) => this.setState({text})}
  *          value={this.state.text}
  *        />
@@ -1064,6 +1086,9 @@ function InternalTextInput(props: Props): React.Node {
     id,
     tabIndex,
     selection: propsSelection,
+    selectionColor,
+    selectionHandleColor,
+    cursorColor,
     ...otherProps
   } = props;
 
@@ -1079,12 +1104,14 @@ function InternalTextInput(props: Props): React.Node {
         };
 
   const [mostRecentEventCount, setMostRecentEventCount] = useState<number>(0);
-
   const [lastNativeText, setLastNativeText] = useState<?Stringish>(props.value);
   const [lastNativeSelectionState, setLastNativeSelection] = useState<{|
-    selection: ?Selection,
+    selection: Selection,
     mostRecentEventCount: number,
-  |}>({selection, mostRecentEventCount});
+  |}>({
+    selection: {start: -1, end: -1},
+    mostRecentEventCount: mostRecentEventCount,
+  });
 
   const lastNativeSelection = lastNativeSelectionState.selection;
 
@@ -1102,8 +1129,8 @@ function InternalTextInput(props: Props): React.Node {
     typeof props.value === 'string'
       ? props.value
       : typeof props.defaultValue === 'string'
-      ? props.defaultValue
-      : '';
+        ? props.defaultValue
+        : '';
 
   // This is necessary in case native updates the text and JS decides
   // that the update should be ignored and we should stick with the value
@@ -1231,35 +1258,12 @@ function InternalTextInput(props: Props): React.Node {
     [mostRecentEventCount, viewCommands],
   );
 
-  const ref = useMergeRefs<TextInputInstance | null>(
-    setLocalRef,
-    props.forwardedRef,
-  );
+  const ref = useMergeRefs<TextInputInstance>(setLocalRef, props.forwardedRef);
 
   const _onChange = (event: ChangeEvent) => {
     const currentText = event.nativeEvent.text;
     props.onChange && props.onChange(event);
     props.onChangeText && props.onChangeText(currentText);
-
-    if (inputRef.current == null) {
-      // calling `props.onChange` or `props.onChangeText`
-      // may clean up the input itself. Exits here.
-      return;
-    }
-
-    setLastNativeText(currentText);
-    // This must happen last, after we call setLastNativeText.
-    // Different ordering can cause bugs when editing AndroidTextInputs
-    // with multiple Fragments.
-    // We must update this so that controlled input updates work.
-    setMostRecentEventCount(event.nativeEvent.eventCount);
-  };
-
-  const _onChangeSync = (event: ChangeEvent) => {
-    const currentText = event.nativeEvent.text;
-    props.unstable_onChangeSync && props.unstable_onChangeSync(event);
-    props.unstable_onChangeTextSync &&
-      props.unstable_onChangeTextSync(currentText);
 
     if (inputRef.current == null) {
       // calling `props.onChange` or `props.onChangeText`
@@ -1339,25 +1343,37 @@ function InternalTextInput(props: Props): React.Node {
   const accessible = props.accessible !== false;
   const focusable = props.focusable !== false;
 
+  const {
+    editable,
+    hitSlop,
+    onPress,
+    onPressIn,
+    onPressOut,
+    rejectResponderTermination,
+  } = props;
+
   const config = React.useMemo(
     () => ({
+      hitSlop,
       onPress: (event: PressEvent) => {
-        if (props.editable !== false) {
+        onPress?.(event);
+        if (editable !== false) {
           if (inputRef.current != null) {
             inputRef.current.focus();
           }
         }
       },
-      onPressIn: props.onPressIn,
-      onPressOut: props.onPressOut,
-      cancelable:
-        OS === 'ios' ? !props.rejectResponderTermination : null,
+      onPressIn: onPressIn,
+      onPressOut: onPressOut,
+      cancelable: OS === 'ios' ? !rejectResponderTermination : null, // RNOH patch
     }),
     [
-      props.editable,
-      props.onPressIn,
-      props.onPressOut,
-      props.rejectResponderTermination,
+      editable,
+      hitSlop,
+      onPress,
+      onPressIn,
+      onPressOut,
+      rejectResponderTermination,
     ],
   );
 
@@ -1390,8 +1406,13 @@ function InternalTextInput(props: Props): React.Node {
     };
   }
 
-  // $FlowFixMe[underconstrained-implicit-instantiation]
-  let style = flattenStyle(props.style);
+  const style = flattenStyle<TextStyleProp>(props.style);
+
+  if (typeof style?.fontWeight === 'number') {
+    // $FlowFixMe[prop-missing]
+    // $FlowFixMe[cannot-write]
+    style.fontWeight = style?.fontWeight.toString();
+  }
 
   if (OS === 'ios') {
     // RNOH patch
@@ -1403,15 +1424,15 @@ function InternalTextInput(props: Props): React.Node {
         ? RCTMultilineTextInputView
         : RCTSinglelineTextInputView;
 
-    style = props.multiline === true ? [styles.multilineInput, style] : style;
-
-    const useOnChangeSync =
-      (props.unstable_onChangeSync || props.unstable_onChangeTextSync) &&
-      !(props.onChange || props.onChangeText);
+    const useMultilineDefaultStyle =
+      props.multiline === true &&
+      (style == null ||
+        (style.padding == null &&
+          style.paddingVertical == null &&
+          style.paddingTop == null));
 
     textInput = (
       <RCTTextInputView
-        // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
         ref={ref}
         {...otherProps}
         {...eventHandlers}
@@ -1425,16 +1446,18 @@ function InternalTextInput(props: Props): React.Node {
         mostRecentEventCount={mostRecentEventCount}
         nativeID={id ?? props.nativeID}
         onBlur={_onBlur}
-        onKeyPressSync={props.unstable_onKeyPressSync}
         onChange={_onChange}
-        onChangeSync={useOnChangeSync === true ? _onChangeSync : null}
         onContentSizeChange={props.onContentSizeChange}
         onFocus={_onFocus}
         onScroll={_onScroll}
         onSelectionChange={_onSelectionChange}
         onSelectionChangeShouldSetResponder={emptyFunctionThatReturnsTrue}
         selection={selection}
-        style={style}
+        selectionColor={selectionColor}
+        style={StyleSheet.compose(
+          useMultilineDefaultStyle ? styles.multilineDefault : null,
+          style,
+        )}
         text={text}
       />
     );
@@ -1452,7 +1475,15 @@ function InternalTextInput(props: Props): React.Node {
     if (childCount > 1) {
       children = <Text>{children}</Text>;
     }
-
+    // For consistency with iOS set cursor/selectionHandle color as selectionColor
+    const colorProps = {
+      selectionColor,
+      selectionHandleColor:
+        selectionHandleColor === undefined
+          ? selectionColor
+          : selectionHandleColor,
+      cursorColor: cursorColor === undefined ? selectionColor : cursorColor,
+    };
     textInput = (
       /* $FlowFixMe[prop-missing] the types for AndroidTextInput don't match up
        * exactly with the props for TextInput. This will need to get fixed */
@@ -1466,6 +1497,7 @@ function InternalTextInput(props: Props): React.Node {
         // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
         ref={ref}
         {...otherProps}
+        {...colorProps}
         {...eventHandlers}
         accessibilityState={_accessibilityState}
         accessibilityLabelledBy={_accessibilityLabelledBy}
@@ -1518,7 +1550,7 @@ const inputModeToKeyboardTypeMap = {
   decimal: 'decimal-pad',
   numeric: 'number-pad',
   tel: 'phone-pad',
-  search: OS === 'ios' ? 'web-search' : 'default',
+  search: OS === 'ios' ? 'web-search' : 'default', // RNOH patch
   email: 'email-address',
   url: 'url',
 };
@@ -1561,7 +1593,20 @@ const autoCompleteWebToAutoCompleteAndroidMap = {
 const autoCompleteWebToTextContentTypeMap = {
   'address-line1': 'streetAddressLine1',
   'address-line2': 'streetAddressLine2',
+  bday: 'birthdate',
+  'bday-day': 'birthdateDay',
+  'bday-month': 'birthdateMonth',
+  'bday-year': 'birthdateYear',
+  'cc-csc': 'creditCardSecurityCode',
+  'cc-exp-month': 'creditCardExpirationMonth',
+  'cc-exp-year': 'creditCardExpirationYear',
+  'cc-exp': 'creditCardExpiration',
+  'cc-given-name': 'creditCardGivenName',
+  'cc-additional-name': 'creditCardMiddleName',
+  'cc-family-name': 'creditCardFamilyName',
+  'cc-name': 'creditCardName',
   'cc-number': 'creditCardNumber',
+  'cc-type': 'creditCardType',
   'current-password': 'password',
   country: 'countryName',
   email: 'emailAddress',
@@ -1605,8 +1650,7 @@ const ExportedForwardRef: React.AbstractComponent<
   },
   forwardedRef: ReactRefSetter<TextInputInstance>,
 ) {
-  // $FlowFixMe[underconstrained-implicit-instantiation]
-  let style = flattenStyle(restProps.style);
+  let style = flattenStyle<TextStyleProp>(restProps.style);
 
   if (style?.verticalAlign != null) {
     style.textAlignVertical =
@@ -1641,9 +1685,7 @@ const ExportedForwardRef: React.AbstractComponent<
       }
       autoComplete={
         OS === 'android'
-          ? // $FlowFixMe[invalid-computed-prop]
-            // $FlowFixMe[prop-missing]
-            autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
+          ? autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
             autoComplete
           : undefined
       }
@@ -1653,9 +1695,7 @@ const ExportedForwardRef: React.AbstractComponent<
           : OS === 'ios' &&
             autoComplete &&
             autoComplete in autoCompleteWebToTextContentTypeMap
-          ? // $FlowFixMe[invalid-computed-prop]
-            // $FlowFixMe[prop-missing]
-            autoCompleteWebToTextContentTypeMap[autoComplete]
+          ? autoCompleteWebToTextContentTypeMap[autoComplete]
           : textContentType
       }
       {...restProps}
@@ -1666,13 +1706,6 @@ const ExportedForwardRef: React.AbstractComponent<
 });
 
 ExportedForwardRef.displayName = 'TextInput';
-
-/**
- * Switch to `deprecated-react-native-prop-types` for compatibility with future
- * releases. This is deprecated and will be removed in the future.
- */
-ExportedForwardRef.propTypes =
-  require('deprecated-react-native-prop-types').TextInputPropTypes;
 
 // $FlowFixMe[prop-missing]
 ExportedForwardRef.State = {
@@ -1693,7 +1726,7 @@ export type TextInputComponentStatics = $ReadOnly<{|
 |}>;
 
 const styles = StyleSheet.create({
-  multilineInput: {
+  multilineDefault: {
     // This default top inset makes RCTMultilineTextInputView seem as close as possible
     // to single-line RCTSinglelineTextInputView defaults, using the system defaults
     // of font size 17 and a height of 31 points.

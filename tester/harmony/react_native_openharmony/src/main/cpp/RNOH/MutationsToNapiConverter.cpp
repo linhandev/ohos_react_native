@@ -1,5 +1,5 @@
 #include "RNOH/MutationsToNapiConverter.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 #include "MutationsToNapiConverter.h"
 #include "RNOH/ArkJS.h"
 #include "RNOH/BaseComponentNapiBinder.h"

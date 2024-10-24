@@ -144,19 +144,23 @@ void TextComponentInstance::onStateChanged(
     m_textStorage.reset();
     return;
   }
-  auto const& paragraphLayoutManager = stateData.paragraphLayoutManager;
+  auto const& paragraphLayoutManager = stateData.layoutManager.lock();
+  facebook::react::LayoutConstraints layoutConstraints = {
+      m_layoutMetrics.frame.size, m_layoutMetrics.frame.size};
   auto textStorage = std::static_pointer_cast<TextMeasurer::TextStorage>(
-      paragraphLayoutManager.getHostTextStorage());
+      paragraphLayoutManager->getHostTextStorage(
+          stateData.attributedString,
+          stateData.paragraphAttributes,
+          layoutConstraints));
   auto textMeasurer = static_cast<const TextMeasurer*>(
-      paragraphLayoutManager.getTextLayoutManager()
-          ->getNativeTextLayoutManager());
+      paragraphLayoutManager->getNativeTextLayoutManager());
   RNOH_ASSERT(textMeasurer);
 
   if (!textStorage) {
     m_textStorage = textMeasurer->createTextStorage(
         stateData.attributedString,
         stateData.paragraphAttributes,
-        {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size});
+        layoutConstraints);
   } else {
     textMeasurer->maybeUpdateTextStorage(
         stateData.attributedString,

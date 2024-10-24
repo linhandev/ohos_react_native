@@ -45,12 +45,6 @@ class TextConversions {
   static bool getArkUITextDataDetectorEnable(folly::dynamic dataDetectorType);
   static std::optional<ArkUI_TextDataDetectorType>
   getArkUITextDataDetectorTypes(folly::dynamic dataDetectorType);
-
- private:
-  static std::pair<std::optional<float>, std::optional<float>>
-  calcHorizontalPadding(const YGStyle::Edges& yogaPadding, bool isRTL);
-  static std::pair<std::optional<float>, std::optional<float>>
-  calcVerticalPadding(YGStyle::Edges const& yogaPadding);
 };
 } // namespace rnoh
 #endif // HARMONY_TEXTCONVERSIONS_H

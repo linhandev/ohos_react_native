@@ -479,9 +479,9 @@ void rnoh::ScrollViewComponentInstance::updateStateWithContentOffset(
   }
 }
 
-facebook::react::ScrollViewMetrics
+facebook::react::ScrollViewEventEmitter::Metrics
 ScrollViewComponentInstance::getScrollViewMetrics() {
-  auto scrollViewMetrics = facebook::react::ScrollViewMetrics();
+  auto scrollViewMetrics = facebook::react::ScrollViewEventEmitter::Metrics();
   scrollViewMetrics.responderIgnoreScroll = true;
   scrollViewMetrics.zoomScale = 1;
   scrollViewMetrics.contentSize = m_contentSize;
@@ -643,7 +643,7 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
 }
 
 folly::dynamic ScrollViewComponentInstance::getScrollEventPayload(
-    facebook::react::ScrollViewMetrics const& scrollViewMetrics) {
+    facebook::react::ScrollViewEventEmitter::Metrics const& scrollViewMetrics) {
   using folly::dynamic;
 
   dynamic contentSize =
@@ -668,7 +668,7 @@ folly::dynamic ScrollViewComponentInstance::getScrollEventPayload(
 }
 
 void rnoh::ScrollViewComponentInstance::sendEventForNativeAnimations(
-    facebook::react::ScrollViewMetrics const& scrollViewMetrics) {
+    facebook::react::ScrollViewEventEmitter::Metrics const& scrollViewMetrics) {
   auto nativeAnimatedTurboModule = m_nativeAnimatedTurboModule.lock();
   if (nativeAnimatedTurboModule == nullptr) {
     auto instance = m_deps->rnInstance.lock();

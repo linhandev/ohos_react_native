@@ -1,4 +1,6 @@
 #include "HarmonyReactMarker.h"
+#include <glog/logging.h>
+#include "RNOH/Assert.h"
 
 namespace rnoh {
 
@@ -10,7 +12,6 @@ void HarmonyReactMarker::setLogMarkerIfNeeded() {
   std::call_once(flag, []() {
     ReactMarker::logTaggedMarkerImpl = HarmonyReactMarker::logMarker;
     ReactMarker::logTaggedMarkerBridgelessImpl = HarmonyReactMarker::logMarker;
-    ReactMarker::getAppStartTimeImpl = HarmonyReactMarker::getAppStartTime;
   });
 }
 
@@ -99,6 +100,18 @@ HarmonyReactMarker::harmonyMarkerIdForReactMarkerId(
       return HarmonyReactMarkerId::REACT_INSTANCE_INIT_START;
     case ReactMarker::ReactMarkerId::REACT_INSTANCE_INIT_STOP:
       return HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP;
+    case ReactMarker::ReactMarkerId::APP_STARTUP_START:
+      return HarmonyReactMarkerId::APP_STARTUP_START;
+    case ReactMarker::ReactMarkerId::APP_STARTUP_STOP:
+      return HarmonyReactMarkerId::APP_STARTUP_STOP;
+    case ReactMarker::ReactMarkerId::INIT_REACT_RUNTIME_START:
+      return HarmonyReactMarkerId::INIT_REACT_RUNTIME_START;
+    case ReactMarker::ReactMarkerId::INIT_REACT_RUNTIME_STOP:
+      return HarmonyReactMarkerId::INIT_REACT_RUNTIME_STOP;
+    default:
+      DLOG(WARNING) << "Unhandled ReactMarkerId " << markerId;
+      RNOH_ASSERT(false);
+      return HarmonyReactMarkerId::UNKNOWN_REACT_MARKER;
   }
 }
 

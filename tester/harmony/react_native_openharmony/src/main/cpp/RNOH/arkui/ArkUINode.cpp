@@ -433,6 +433,31 @@ ArkUINode& ArkUINode::setAccessibilityState(
   return *this;
 }
 
+ArkUINode& ArkUINode::setAccessibilityState(
+    const std::optional<facebook::react::AccessibilityState>& maybeA11yState) {
+  if (!maybeA11yState.has_value()) {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_ACCESSIBILITY_STATE));
+    return *this;
+  }
+  auto a11yState = maybeA11yState.value();
+  std::unique_ptr<
+      ArkUI_AccessibilityState,
+      decltype(&OH_ArkUI_AccessibilityState_Dispose)>
+      state(
+          OH_ArkUI_AccessibilityState_Create(),
+          OH_ArkUI_AccessibilityState_Dispose);
+  OH_ArkUI_AccessibilityState_SetDisabled(state.get(), a11yState.disabled);
+  OH_ArkUI_AccessibilityState_SetCheckedState(
+      state.get(),
+      a11yState.checked == facebook::react::AccessibilityState::Checked);
+  OH_ArkUI_AccessibilityState_SetSelected(state.get(), a11yState.selected);
+  ArkUI_AttributeItem item = {.object = state.get()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_ACCESSIBILITY_STATE, &item));
+  return *this;
+}
+
 ArkUINode& ArkUINode::setAccessibilityLevel(
     facebook::react::ImportantForAccessibility importance) {
   ArkUI_NumberValue levelValue[] = {{.i32 = static_cast<int32_t>(importance)}};

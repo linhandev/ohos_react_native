@@ -19,59 +19,46 @@ inline ArkUI_ScrollSnapAlign getArkUI_ScrollSnapAlign(
     return ArkUI_ScrollSnapAlign::ARKUI_SCROLL_SNAP_ALIGN_NONE;
   }
 }
-
+/**
+ * @internal
+ */
 inline facebook::react::RectangleEdges<facebook::react::Float> resolveEdges(
-    YGStyle::Edges const& yogaEdges,
+    std::function<facebook::yoga::StyleLength(facebook::yoga::Edge)>
+        getEdgeValue,
     bool isRTL = false) {
-  auto left =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeLeft]);
-  auto top = facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeTop]);
-  auto right =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeRight]);
-  auto bottom =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeBottom]);
-
-  auto start =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeStart]);
-  auto end = facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeEnd]);
-
-  auto horizontal =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeHorizontal]);
-  auto vertical =
-      facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeVertical]);
-
-  auto all = facebook::react::optionalFloatFromYogaValue(yogaEdges[YGEdgeAll]);
-
+  auto left = getEdgeValue(facebook::yoga::Edge::Left);
+  auto top = getEdgeValue(facebook::yoga::Edge::Top);
+  auto right = getEdgeValue(facebook::yoga::Edge::Right);
+  auto bottom = getEdgeValue(facebook::yoga::Edge::Bottom);
+  auto start = getEdgeValue(facebook::yoga::Edge::Start);
+  auto end = getEdgeValue(facebook::yoga::Edge::End);
+  auto horizontal = getEdgeValue(facebook::yoga::Edge::Horizontal);
+  auto vertical = getEdgeValue(facebook::yoga::Edge::Vertical);
+  auto all = getEdgeValue(facebook::yoga::Edge::All);
   facebook::react::Float leftEdge = 0.0;
   facebook::react::Float topEdge = 0.0;
   facebook::react::Float bottomEdge = 0.0;
   facebook::react::Float rightEdge = 0.0;
-
-  if (all.has_value()) {
-    leftEdge = topEdge = bottomEdge = rightEdge = all.value();
+  if (all.isDefined()) {
+    leftEdge = topEdge = bottomEdge = rightEdge = all.value().unwrap();
   }
-
-  if (horizontal.has_value()) {
-    leftEdge = rightEdge = horizontal.value();
+  if (horizontal.isDefined()) {
+    leftEdge = rightEdge = horizontal.value().unwrap();
   }
-
-  if (vertical.has_value()) {
-    topEdge = bottomEdge = vertical.value();
+  if (vertical.isDefined()) {
+    topEdge = bottomEdge = vertical.value().unwrap();
   }
-
   if (isRTL) {
-    leftEdge = end.value_or(leftEdge);
-    rightEdge = start.value_or(rightEdge);
+    leftEdge = end.value().unwrapOrDefault(leftEdge);
+    rightEdge = start.value().unwrapOrDefault(rightEdge);
   } else {
-    leftEdge = start.value_or(leftEdge);
-    rightEdge = end.value_or(rightEdge);
+    leftEdge = start.value().unwrapOrDefault(leftEdge);
+    rightEdge = end.value().unwrapOrDefault(rightEdge);
   }
-
-  leftEdge = left.value_or(leftEdge);
-  topEdge = top.value_or(topEdge);
-  rightEdge = right.value_or(rightEdge);
-  bottomEdge = bottom.value_or(bottomEdge);
-
+  leftEdge = left.value().unwrapOrDefault(leftEdge);
+  topEdge = top.value().unwrapOrDefault(topEdge);
+  rightEdge = right.value().unwrapOrDefault(rightEdge);
+  bottomEdge = bottom.value().unwrapOrDefault(bottomEdge);
   return {leftEdge, topEdge, rightEdge, bottomEdge};
 }
 

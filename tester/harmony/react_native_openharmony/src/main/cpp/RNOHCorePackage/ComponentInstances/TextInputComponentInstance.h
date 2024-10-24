@@ -22,9 +22,7 @@ class TextInputComponentInstance
   int32_t m_nativeEventCount = 0;
 
   static std::string getTextContentFromState(SharedConcreteState const& state);
-  facebook::react::TextInputMetrics getTextInputMetrics();
-  facebook::react::TextInputMetrics getTextInputMetrics(std::string text);
-  facebook::react::OnChangeMetrics getOnChangeMetrics();
+  facebook::react::TextInputEventEmitter::Metrics getTextInputMetrics();
   facebook::react::Size getOnContentSizeChangeMetrics();
 
   bool m_secureInput{false};

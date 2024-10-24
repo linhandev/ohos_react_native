@@ -1,9 +1,9 @@
 #include "ArkTSBridge.h"
 
 #include <boost/exception/diagnostic_information.hpp>
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <jsi/jsi.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Assert.h"
 #include "RNOH/RNOHError.h"
 

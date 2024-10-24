@@ -49,6 +49,7 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
     // can't mount views inside `TextView`.
     traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
 #endif
+    traits.unset(ShadowNodeTraits::Trait::FormsStackingContext); // RNOH patch
 
     return traits;
   }

@@ -19,12 +19,13 @@ target_compile_options(
         -fexceptions
 )
 
+
 if(${CMAKE_BUILD_TYPE} MATCHES Debug)
-        target_compile_options(
-                hermes_inspector_modern
-                PRIVATE
-                -DHERMES_ENABLE_DEBUGGER=1
-        )
+     target_compile_options(
+             hermes_inspector_modern
+             PRIVATE
+             -DHERMES_ENABLE_DEBUGGER=1
+     )
 endif()
 
 target_include_directories(hermes_inspector_modern PUBLIC ${REACT_COMMON_DIR})

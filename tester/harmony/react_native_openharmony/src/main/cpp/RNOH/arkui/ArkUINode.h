@@ -104,8 +104,15 @@ class ArkUINode {
       const std::vector<facebook::react::AccessibilityAction>& rnActions);
   virtual ArkUINode& setAccessibilityDescription(
       std::string const& accessibilityDescription);
+  /**
+   * @deprecated: Use setAccessibilityState(const
+   * std::optional<facebook::react::AccessibilityState>& state) instead.
+   * (latestRNOHVersion 0.72.40)
+   */
   virtual ArkUINode& setAccessibilityState(
       const facebook::react::AccessibilityState& state);
+  virtual ArkUINode& setAccessibilityState(
+      const std::optional<facebook::react::AccessibilityState>& state);
   virtual ArkUINode& setAccessibilityLevel(
       facebook::react::ImportantForAccessibility importance);
   virtual ArkUINode& setAccessibilityText(

@@ -1,9 +1,3 @@
-/*
-* RNOH patches:
-* - imports
-* - disable view flattening (collapsable prop) for box-only and none pointer events
-*/
-
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -16,9 +10,7 @@
 
 import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
 
-import flattenStyle from 'react-native/Libraries/StyleSheet/flattenStyle';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
-import {getAccessibilityRoleFromRole} from 'react-native/Libraries/Utilities/AcessibilityMapping';
 import ViewNativeComponent from 'react-native/Libraries/Components/View/ViewNativeComponent';
 import * as React from 'react';
 
@@ -41,7 +33,6 @@ const View: React.AbstractComponent<
       accessibilityLabel,
       accessibilityLabelledBy,
       accessibilityLiveRegion,
-      accessibilityRole,
       accessibilityState,
       accessibilityValue,
       'aria-busy': ariaBusy,
@@ -61,14 +52,12 @@ const View: React.AbstractComponent<
       id,
       importantForAccessibility,
       nativeID,
-      pointerEvents,
-      role,
       tabIndex,
-      collapsable,
       ...otherProps
     }: ViewProps,
     forwardedRef,
   ) => {
+    const hasTextAncestor = React.useContext(TextAncestor);
     const _accessibilityLabelledBy =
       ariaLabelledBy?.split(/\s*,\s*/g) ?? accessibilityLabelledBy;
 
@@ -105,42 +94,38 @@ const View: React.AbstractComponent<
       };
     }
 
-    // $FlowFixMe[underconstrained-implicit-instantiation]
-    let style = flattenStyle(otherProps.style);
-
-    const newPointerEvents = style?.pointerEvents || pointerEvents;
-
-    return (
-      <TextAncestor.Provider value={false}>
-        <ViewNativeComponent
-          {...otherProps}
-          accessibilityLiveRegion={
-            ariaLive === 'off' ? 'none' : ariaLive ?? accessibilityLiveRegion
-          }
-          accessibilityLabel={ariaLabel ?? accessibilityLabel}
-          focusable={tabIndex !== undefined ? !tabIndex : focusable}
-          accessibilityState={_accessibilityState}
-          accessibilityRole={
-            role ? getAccessibilityRoleFromRole(role) : accessibilityRole
-          }
-          accessibilityElementsHidden={
-            ariaHidden ?? accessibilityElementsHidden
-          }
-          accessibilityLabelledBy={_accessibilityLabelledBy}
-          accessibilityValue={_accessibilityValue}
-          collapsable={["box-only", "none"].includes(newPointerEvents) ? false : collapsable} // RNOH patch
-          importantForAccessibility={
-            ariaHidden === true
-              ? 'no-hide-descendants'
-              : importantForAccessibility
-          }
-          nativeID={id ?? nativeID}
-          style={style}
-          pointerEvents={newPointerEvents}
-          ref={forwardedRef}
-        />
-      </TextAncestor.Provider>
+    const actualView = (
+      <ViewNativeComponent
+        {...otherProps}
+        accessibilityLiveRegion={
+          ariaLive === 'off' ? 'none' : ariaLive ?? accessibilityLiveRegion
+        }
+        accessibilityLabel={ariaLabel ?? accessibilityLabel}
+        focusable={tabIndex !== undefined ? !tabIndex : focusable}
+        accessibilityState={_accessibilityState}
+        accessibilityElementsHidden={ariaHidden ?? accessibilityElementsHidden}
+        accessibilityLabelledBy={_accessibilityLabelledBy}
+        accessibilityValue={_accessibilityValue}
+        collapsable={["box-only", "none"].includes(otherProps.pointerEvents) ? false : otherProps.collapsable} // RNOH patch
+        importantForAccessibility={
+          ariaHidden === true
+            ? 'no-hide-descendants'
+            : importantForAccessibility
+        }
+        nativeID={id ?? nativeID}
+        ref={forwardedRef}
+      />
     );
+
+    if (hasTextAncestor) {
+      return (
+        <TextAncestor.Provider value={false}>
+          {actualView}
+        </TextAncestor.Provider>
+      );
+    }
+
+    return actualView;
   },
 );
 

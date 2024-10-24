@@ -37,7 +37,8 @@ void RemoteConnection::onDisconnect() {
 
 static napi_value wrapLocalConnection(
     napi_env env,
-    std::unique_ptr<facebook::react::ILocalConnection> localConnection) {
+    std::unique_ptr<facebook::react::jsinspector_modern::ILocalConnection>
+        localConnection) {
   ArkJS arkJS(env);
   auto connectionRawPtr = localConnection.release();
 
@@ -46,7 +47,7 @@ static napi_value wrapLocalConnection(
         "sendMessage",
         [](auto env, auto cbInfo) {
           ArkJS arkJS(env);
-          facebook::react::ILocalConnection* connection;
+          facebook::react::jsinspector_modern::ILocalConnection* connection;
           size_t argc = 1;
           napi_value args[1];
           napi_get_cb_info(
@@ -64,7 +65,7 @@ static napi_value wrapLocalConnection(
     auto disconnect = arkJS.createFunction(
         "disconnect",
         [](auto env, auto cbInfo) {
-          facebook::react::ILocalConnection* connection;
+          facebook::react::jsinspector_modern::ILocalConnection* connection;
           napi_get_cb_info(
               env, cbInfo, 0, nullptr, nullptr, (void**)&connection);
           connection->disconnect();
@@ -96,14 +97,16 @@ static napi_value connect(napi_env env, napi_callback_info info) {
   }
   auto pageId = static_cast<int>(arkJS.getDouble(args[0]));
   auto remoteConnection = std::make_unique<RemoteConnection>(env, args[1]);
-  auto localConnection = ::facebook::react::getInspectorInstance().connect(
-      pageId, std::move(remoteConnection));
+  auto localConnection =
+      ::facebook::react::jsinspector_modern::getInspectorInstance().connect(
+          pageId, std::move(remoteConnection));
   return wrapLocalConnection(env, std::move(localConnection));
 }
 
 static napi_value getPages(napi_env env, napi_callback_info info) {
   ArkJS arkJS(env);
-  auto pages = ::facebook::react::getInspectorInstance().getPages();
+  auto pages =
+      ::facebook::react::jsinspector_modern::getInspectorInstance().getPages();
   std::vector<napi_value> pageObjects(pages.size());
   for (size_t i = 0; i < pages.size(); i++) {
     auto page = pages[i];

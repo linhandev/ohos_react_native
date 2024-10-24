@@ -106,7 +106,8 @@ void TextInputComponentInstance::onTextSelectionChange(
           m_selectionLocation, location - m_selectionLocation);
       key = boost::locale::conv::utf_to_utf<char>(wideKey);
     }
-    auto keyPressMetrics = facebook::react::KeyPressMetrics();
+    auto keyPressMetrics =
+        facebook::react::TextInputEventEmitter::KeyPressMetrics();
     keyPressMetrics.text = key;
     keyPressMetrics.eventCount = m_nativeEventCount;
     if (m_eventEmitter) {
@@ -148,9 +149,9 @@ std::string TextInputComponentInstance::getTextContentFromState(
   return contentStream.str();
 }
 
-facebook::react::TextInputMetrics
+facebook::react::TextInputEventEmitter::Metrics
 TextInputComponentInstance::getTextInputMetrics() {
-  auto textInputMetrics = facebook::react::TextInputMetrics();
+  auto textInputMetrics = facebook::react::TextInputEventEmitter::Metrics();
   auto contentOffset = m_multiline
       ? m_textAreaNode.getTextContentRect().origin
       : m_textInputNode.getTextContentRect().origin;
@@ -171,14 +172,6 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.zoomScale = 1;
   textInputMetrics.text = this->m_content;
   return textInputMetrics;
-}
-
-facebook::react::OnChangeMetrics
-TextInputComponentInstance::getOnChangeMetrics() {
-  auto OnChangeMetrics = facebook::react::OnChangeMetrics();
-  OnChangeMetrics.eventCount = this->m_nativeEventCount;
-  OnChangeMetrics.text = this->m_content;
-  return OnChangeMetrics;
 }
 
 facebook::react::Size
@@ -359,9 +352,12 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setCancelButtonMode(props->traits.clearButtonMode);
     }
   }
-  if (!(props->yogaStyle.padding() == m_props->yogaStyle.padding())) {
-    m_textInputNode.setPadding(resolveEdges(props->yogaStyle.padding()));
-    m_textAreaNode.setPadding(resolveEdges(props->yogaStyle.padding()));
+
+  if (!(props->yogaStyle == m_props->yogaStyle)) {
+    m_textInputNode.setPadding(resolveEdges(
+        [&props](auto edge) { return props->yogaStyle.padding(edge); }));
+    m_textAreaNode.setPadding(resolveEdges(
+        [&props](auto edge) { return props->yogaStyle.padding(edge); }));
   }
 
   if (!m_props) {

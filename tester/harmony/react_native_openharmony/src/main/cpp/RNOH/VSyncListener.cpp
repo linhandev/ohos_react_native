@@ -1,5 +1,5 @@
 #include "VSyncListener.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 
 namespace rnoh {
 

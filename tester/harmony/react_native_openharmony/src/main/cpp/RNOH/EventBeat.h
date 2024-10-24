@@ -1,6 +1,6 @@
 #include <ReactCommon/RuntimeExecutor.h>
+#include <cxxreact/SystraceSection.h>
 #include <react/renderer/core/EventBeat.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 
 namespace rnoh {

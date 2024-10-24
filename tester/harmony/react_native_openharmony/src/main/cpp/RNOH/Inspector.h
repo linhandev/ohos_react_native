@@ -1,10 +1,12 @@
-#include <jsinspector/InspectorInterfaces.h>
+#pragma once
+#include <jsinspector-modern/InspectorInterfaces.h>
 #include <string>
 #include "RNOH/ArkJS.h"
 
 namespace rnoh {
 
-class RemoteConnection : public facebook::react::IRemoteConnection {
+class RemoteConnection
+    : public facebook::react::jsinspector_modern::IRemoteConnection {
  public:
   RemoteConnection(napi_env env, napi_value connection);
   ~RemoteConnection() override;

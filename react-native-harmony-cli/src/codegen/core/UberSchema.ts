@@ -12,15 +12,13 @@ import {
   FS,
 } from '../../core';
 // @ts-expect-error
-import extractUberSchemaFromSpecFilePaths_ from '@react-native/codegen/lib/cli/combine/combine-js-to-schema.js';
+import { combineSchemas } from '@react-native/codegen/lib/cli/combine/combine-js-to-schema.js';
 import { CodegenError } from './CodegenError';
 
 function createRawUberSchemaFromSpecFilePaths(
   projectSourceFilePaths: AbsolutePath[]
 ): RawUberSchema {
-  return extractUberSchemaFromSpecFilePaths_(
-    projectSourceFilePaths.map((p) => p.getValue())
-  );
+  return combineSchemas(projectSourceFilePaths.map((p) => p.getValue()));
 }
 
 export type SpecSchema = ComponentSchema | NativeModuleSchema;

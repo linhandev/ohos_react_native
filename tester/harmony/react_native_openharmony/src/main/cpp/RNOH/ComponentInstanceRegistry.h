@@ -5,8 +5,8 @@
 #include <memory>
 #include <thread>
 
+#include <cxxreact/SystraceSection.h>
 #include <react/renderer/core/ReactPrimitives.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
 

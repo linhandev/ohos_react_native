@@ -45,6 +45,7 @@ class GeneratedSampleViewComponentInstance
     textContent << "stringEnum: "
                 << facebook::react::toString(props->stringEnumTest) << "\n";
     textContent << "color: " << Color::from(props->colorTest) << "\n";
+    textContent << "object::foo::bar: " << props->objectTest.foo.bar << "\n";
     m_textNode.setTextContent(textContent.str());
   };
 
@@ -64,6 +65,7 @@ class GeneratedSampleViewComponentInstance
            .arrayTest = m_props->arrayTest,
            .readOnlyArrayTest = m_props->readOnlyArrayTest,
            .colorTest = Color::from(m_props->colorTest).toRGBA(),
+           .objectTest = {.foo = {.bar = m_props->objectTest.foo.bar}},
            .stringEnumTest =
                directEventTestEnumFromPropEnum(m_props->stringEnumTest)});
     }

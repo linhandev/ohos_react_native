@@ -34,11 +34,17 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
 
   ~SchedulerDelegate() override;
 
+  void schedulerShouldRenderTransactions(
+      const MountingCoordinator::Shared& mountingCoordinator) override{
+      /**
+       * A method introduced in RN@0.74.1. Currently, it's not utilized by RNOH.
+       */
+  };
+
   void schedulerDidFinishTransaction(
-      MountingCoordinator::Shared mountingCoordinator) override;
+      const MountingCoordinator::Shared& mountingCoordinator) override;
 
   void schedulerDidRequestPreliminaryViewAllocation(
-      SurfaceId surfaceId,
       const ShadowNode& shadowView) override;
 
   void schedulerDidDispatchCommand(

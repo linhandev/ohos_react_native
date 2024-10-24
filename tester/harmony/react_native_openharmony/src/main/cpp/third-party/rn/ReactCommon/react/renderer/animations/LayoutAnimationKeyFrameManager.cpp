@@ -1630,7 +1630,7 @@ Props::Shared LayoutAnimationKeyFrameManager::interpolateProps(
     const Props::Shared& props,
     const Props::Shared& newProps,
     const Size& size) const {
-#ifdef ANDROID
+// #ifdef ANDROID // RNOH patch — RAW_PROPS_ENABLED
   // On Android only, the merged props should have the same RawProps as the
   // final props struct
   Props::Shared interpolatedPropsShared =
@@ -1638,10 +1638,10 @@ Props::Shared LayoutAnimationKeyFrameManager::interpolateProps(
            ? componentDescriptor.cloneProps(
                  context, newProps, RawProps(newProps->rawProps))
            : componentDescriptor.cloneProps(context, newProps, {}));
-#else
-  Props::Shared interpolatedPropsShared =
-      componentDescriptor.cloneProps(context, newProps, {});
-#endif
+// #else
+//   Props::Shared interpolatedPropsShared =
+//       componentDescriptor.cloneProps(context, newProps, {});
+// #endif
 
   if (componentDescriptor.getTraits().check(
           ShadowNodeTraits::Trait::ViewKind)) {

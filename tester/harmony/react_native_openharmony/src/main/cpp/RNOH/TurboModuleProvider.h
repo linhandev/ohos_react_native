@@ -1,9 +1,7 @@
 #pragma once
 #include <ReactCommon/CallInvoker.h>
-#include <ReactCommon/LongLivedObject.h>
 #include <ReactCommon/RuntimeExecutor.h>
 #include <ReactCommon/TurboModule.h>
-#include <butter/map.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include <functional>
 #include "EventDispatcher.h"
@@ -39,9 +37,8 @@ class TurboModuleProvider
       std::shared_ptr<facebook::react::Scheduler>)>
       m_createTurboModule;
   std::mutex m_cacheMtx{};
-  facebook::butter::
-      map<std::string, std::shared_ptr<facebook::react::TurboModule>>
-          m_cache;
+  std::unordered_map<std::string, std::shared_ptr<facebook::react::TurboModule>>
+      m_cache;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler;
 };
 

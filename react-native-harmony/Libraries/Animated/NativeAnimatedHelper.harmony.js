@@ -20,7 +20,7 @@ import type {InterpolationConfigType} from 'react-native/Libraries/Animated/node
 
 import NativeEventEmitter from 'react-native/Libraries/EventEmitter/NativeEventEmitter';
 import RCTDeviceEventEmitter from 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter';
-import ReactNativeFeatureFlags from 'react-native/Libraries/ReactNative/ReactNativeFeatureFlags';
+import * as ReactNativeFeatureFlags from 'react-native/src/private/featureflags/ReactNativeFeatureFlags';
 import Platform from '../Utilities/Platform';
 import NativeAnimatedNonTurboModule from 'react-native/Libraries/Animated/NativeAnimatedModule';
 import NativeAnimatedTurboModule from 'react-native/Libraries/Animated/NativeAnimatedTurboModule';
@@ -45,16 +45,17 @@ const useSingleOpBatching = true; // while we do not use operationBatching we wa
 let flushQueueTimeout = null;
 
 const eventListenerGetValueCallbacks: {
-  [$FlowFixMe | number]: ((value: number) => void) | void,
+  [number]: (value: number) => void,
 } = {};
 const eventListenerAnimationFinishedCallbacks: {
-  [$FlowFixMe | number]: EndCallback | void,
+  [number]: EndCallback,
 } = {};
 let globalEventEmitterGetValueListener: ?EventSubscription = null;
 let globalEventEmitterAnimationFinishedListener: ?EventSubscription = null;
 
 // RNOH patch
 const nativeOps = NativeAnimatedModule;
+
 /**
  * Wrappers around NativeAnimatedModule to provide flow and autocomplete support for
  * the native module methods, and automatic queue management on Android
@@ -128,11 +129,6 @@ const API = {
       ) {
         setupGlobalEventEmitterListeners();
       }
-      // Single op batching doesn't use callback functions, instead we
-      // use RCTDeviceEventEmitter. This reduces overhead of sending lots of
-      // JSI functions across to native code; but also, TM infrastructure currently
-      // does not support packing a function into native arrays.
-
       // RNOH patch
       for (let q = 0, l = singleOpQueue.length; q < l; q++) {
         singleOpQueue[q]();
@@ -154,9 +150,6 @@ const API = {
     fn: Fn,
     ...args: Args
   ): void => {
-    // If queueing is explicitly on, *or* the queue has not yet
-    // been flushed, use the queue. This is to prevent operations
-    // from being executed out of order.
     // RNOH patch
     const currentlyUsedQueue = useSingleOpBatching ? singleOpQueue : queue;
     if (queueOperations || currentlyUsedQueue.length !== 0) {
@@ -303,7 +296,7 @@ const API = {
 function setupGlobalEventEmitterListeners() {
   globalEventEmitterGetValueListener = RCTDeviceEventEmitter.addListener(
     'onNativeAnimatedModuleGetValue',
-    function (params) {
+    params => {
       const {tag} = params;
       const callback = eventListenerGetValueCallbacks[tag];
       if (!callback) {
@@ -316,14 +309,17 @@ function setupGlobalEventEmitterListeners() {
   globalEventEmitterAnimationFinishedListener =
     RCTDeviceEventEmitter.addListener(
       'onNativeAnimatedModuleAnimationFinished',
-      function (params) {
-        const {animationId} = params;
-        const callback = eventListenerAnimationFinishedCallbacks[animationId];
-        if (!callback) {
-          return;
+      params => {
+        // TODO: remove Array.isArray once native changes have propagated
+        const animations = Array.isArray(params) ? params : [params];
+        for (const animation of animations) {
+          const {animationId} = animation;
+          const callback = eventListenerAnimationFinishedCallbacks[animationId];
+          if (callback) {
+            callback(animation);
+            delete eventListenerAnimationFinishedCallbacks[animationId];
+          }
         }
-        callback(params);
-        delete eventListenerAnimationFinishedCallbacks[animationId];
       },
     );
 }
@@ -387,6 +383,9 @@ const SUPPORTED_TRANSFORMS = {
   rotateY: true,
   rotateZ: true,
   perspective: true,
+  skewX: true,
+  skewY: true,
+  matrix: ReactNativeFeatureFlags.shouldUseAnimatedObjectForTransform(),
 };
 
 const SUPPORTED_INTERPOLATION_PARAMS = {
@@ -413,19 +412,23 @@ function addWhitelistedInterpolationParam(param: string): void {
 }
 
 function isSupportedColorStyleProp(prop: string): boolean {
-  return SUPPORTED_COLOR_STYLES.hasOwnProperty(prop);
+  // $FlowFixMe[invalid-computed-prop]
+  return SUPPORTED_COLOR_STYLES[prop] === true;
 }
 
 function isSupportedStyleProp(prop: string): boolean {
-  return SUPPORTED_STYLES.hasOwnProperty(prop);
+  // $FlowFixMe[invalid-computed-prop]
+  return SUPPORTED_STYLES[prop] === true;
 }
 
 function isSupportedTransformProp(prop: string): boolean {
-  return SUPPORTED_TRANSFORMS.hasOwnProperty(prop);
+  // $FlowFixMe[invalid-computed-prop]
+  return SUPPORTED_TRANSFORMS[prop] === true;
 }
 
 function isSupportedInterpolationParam(param: string): boolean {
-  return SUPPORTED_INTERPOLATION_PARAMS.hasOwnProperty(param);
+  // $FlowFixMe[invalid-computed-prop]
+  return SUPPORTED_INTERPOLATION_PARAMS[param] === true;
 }
 
 function validateTransform(
@@ -524,10 +527,13 @@ function transformDataType(value: number | string): number | string {
   if (typeof value !== 'string') {
     return value;
   }
-  if (/deg$/.test(value)) {
+
+  // Normalize degrees and radians to a number expressed in radians
+  if (value.endsWith('deg')) {
     const degrees = parseFloat(value) || 0;
-    const radians = (degrees * Math.PI) / 180.0;
-    return radians;
+    return (degrees * Math.PI) / 180.0;
+  } else if (value.endsWith('rad')) {
+    return parseFloat(value) || 0;
   } else {
     return value;
   }

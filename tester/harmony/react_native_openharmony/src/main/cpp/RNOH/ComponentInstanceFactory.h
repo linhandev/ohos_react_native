@@ -2,9 +2,9 @@
  * Used only in C-API based Architecture.
  */
 #pragma once
+#include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <react/renderer/core/ReactPrimitives.h>
-#include <react/renderer/debug/SystraceSection.h>
 #include <memory>
 #include <vector>
 #include "RNOH/ComponentInstance.h"

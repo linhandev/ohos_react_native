@@ -8,18 +8,38 @@
 #include "TextInputShadowNode.h"
 
 #include <react/debug/react_native_assert.h>
+#include <react/featureflags/ReactNativeFeatureFlags.h>
 #include <react/renderer/attributedstring/AttributedStringBox.h>
 #include <react/renderer/attributedstring/TextAttributes.h>
 #include <react/renderer/core/LayoutConstraints.h>
 #include <react/renderer/core/LayoutContext.h>
 #include <react/renderer/core/conversions.h>
+#include <react/renderer/textlayoutmanager/TextLayoutContext.h>
 
 namespace facebook::react {
 
-extern char const TextInputComponentName[] = "TextInput";
+extern const char TextInputComponentName[] = "TextInput";
+
+TextInputShadowNode::TextInputShadowNode(
+    const ShadowNode& sourceShadowNode,
+    const ShadowNodeFragment& fragment)
+    : ConcreteViewShadowNode(sourceShadowNode, fragment) {
+  auto& sourceTextInputShadowNode =
+      static_cast<const TextInputShadowNode&>(sourceShadowNode);
+
+  if (ReactNativeFeatureFlags::enableCleanTextInputYogaNode()) {
+    if (!fragment.children && !fragment.props &&
+        sourceTextInputShadowNode.getIsLayoutClean()) {
+      // This ParagraphShadowNode was cloned but did not change
+      // in a way that affects its layout. Let's mark it clean
+      // to stop Yoga from traversing it.
+      cleanLayout();
+    }
+  }
+}
 
 AttributedStringBox TextInputShadowNode::attributedStringBoxToMeasure(
-    LayoutContext const &layoutContext) const {
+    const LayoutContext& layoutContext) const {
   bool hasMeaningfulState =
       getState() && getState()->getRevision() != State::initialRevisionValue;
 
@@ -54,13 +74,16 @@ AttributedStringBox TextInputShadowNode::attributedStringBoxToMeasure(
 }
 
 AttributedString TextInputShadowNode::getAttributedString(
-    LayoutContext const &layoutContext) const {
+    const LayoutContext& layoutContext) const {
   auto textAttributes = getConcreteProps().getEffectiveTextAttributes(
       layoutContext.fontSizeMultiplier);
   auto attributedString = AttributedString{};
 
-  attributedString.appendFragment(
-      AttributedString::Fragment{getConcreteProps().text, textAttributes});
+  attributedString.appendFragment(AttributedString::Fragment{
+      .string = getConcreteProps().text,
+      .textAttributes = textAttributes,
+      // TODO: Is this really meant to be by value?
+      .parentShadowView = ShadowView{}});
 
   auto attachments = Attachments{};
   BaseTextShadowNode::buildAttributedString(
@@ -70,17 +93,17 @@ AttributedString TextInputShadowNode::getAttributedString(
 }
 
 void TextInputShadowNode::setTextLayoutManager(
-    std::shared_ptr<TextLayoutManager const> textLayoutManager) {
+    std::shared_ptr<const TextLayoutManager> textLayoutManager) {
   ensureUnsealed();
   textLayoutManager_ = std::move(textLayoutManager);
 }
 
 void TextInputShadowNode::updateStateIfNeeded(
-    LayoutContext const &layoutContext) {
+    const LayoutContext& layoutContext) {
   ensureUnsealed();
 
   auto reactTreeAttributedString = getAttributedString(layoutContext);
-  auto const &state = getStateData();
+  const auto& state = getStateData();
 
   react_native_assert(textLayoutManager_);
   react_native_assert(
@@ -104,12 +127,15 @@ void TextInputShadowNode::updateStateIfNeeded(
 #pragma mark - LayoutableShadowNode
 
 Size TextInputShadowNode::measureContent(
-    LayoutContext const &layoutContext,
-    LayoutConstraints const &layoutConstraints) const {
+    const LayoutContext& layoutContext,
+    const LayoutConstraints& layoutConstraints) const {
+  TextLayoutContext textLayoutContext{};
+  textLayoutContext.pointScaleFactor = layoutContext.pointScaleFactor;
   return textLayoutManager_
       ->measure(
           attributedStringBoxToMeasure(layoutContext),
           getConcreteProps().getEffectiveParagraphAttributes(),
+          textLayoutContext,
           layoutConstraints)
       .size;
 }

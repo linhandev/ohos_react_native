@@ -1,5 +1,5 @@
 #include "TouchTarget.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include <cxxreact/SystraceSection.h>
 
 std::optional<facebook::react::Transform> invertTransform(
     const facebook::react::Transform& transform);
