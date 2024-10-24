@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.72.41
+- added `EtsUITurboModule` which provides ets-only TurboModule APIs by using `EtsUITurboModuleContext` ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- added `EtsUITurboModuleContext.runOnWorkerThread` to allow scheduling tasks on the worker thread from `EtsUITurboModule`s ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- added `RNComponentContext.runOnWorkerThread` to allow scheduling tasks on the worker thread from custom ArkTS components ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- fixed crash when shadowColor was used in ArkTS component ([086971ca73](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/086971ca733fc27b37d93602a41821cc467d580d))
+- fixed possible deadlock when calling TurboModuleProvider::getTurboModule ([9d329d2973](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9d329d2973af36b472c982838d8351c85641c88d))
+- fixed crashes in TimingTurboModule ([79db3615f9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/79db3615f9334d1cc9e9b342ee32303b94a5c245))
+- fixed crashes due to unsynchronized access to TurboModule cache ([41a1551d82](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/41a1551d82b90244d11f9023bcaa7312e9af2da0))
+- fixed crashes when an ArkTSTurboModule is registered on ArkTS side, but not on CPP side ([41a1551d82](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/41a1551d82b90244d11f9023bcaa7312e9af2da0))
+- fixed incorrect thread assertion inside `TimingTurboModule` destructor ([d4d47e2cce](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d4d47e2ccee94959c5250ab0317ff59eb1188965))
+- fixed ScrollView with refresh control ([4085845307](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4085845307922a1ad47cb8826cbb18d8ae0d05e7))
+- fixed `accessible` View property not applying correctly ([7994e7f977](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7994e7f97797b2f923128f5b4cd4057128921dc2))
+- removed deprecated `resolveBorderEdgeProps` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderMetrics` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderRadius` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderEdges` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `RNInstance::commandDispatcher` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `RNApp::buildCustomComponent` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- undeprecated `convertColorValueToRGBA` (ets) — there are use cases where this method must be used because Color class cannot ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `ComponentInstanceRegistry::registerComponentManager` ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `RNComponentFactory` and changed this component to be NOOP ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `RNViewManager::updateBoundingBox` ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+
+
 ## v0.72.40
 - [breaking] removed TouchDispatcher and TouchTargetHelper (those classes were used internally in ArkTS architecture, it's unlikely libraries or project used them) ([bcf1490d2f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bcf1490d2f6360639d4f8e8694559a46f6d57c6e))
 - [breaking] changed `m_deps->componentInstanceRegistry` from shared to weak pointer ([9a835de206](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a835de2068ce0e095fa1200770c45988bdcbced))
