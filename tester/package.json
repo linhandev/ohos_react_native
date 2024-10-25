@@ -35,7 +35,7 @@
     "benchmark-fps": "node ./scripts/get-frame-times | node ./scripts/create-fps-stats",
     "find_changed_files": "{ git diff --name-only $(git rev-list --exclude $(git branch --show-current) --branches -1) HEAD; git diff --name-only; git diff --name-only --cached; } | sort | uniq",
     "find_changed_files:cpp": "npm run find_changed_files | grep -E '\\.(h|cpp)$' | grep -v '/generated/' | grep -v '/third-party/' | grep -v '/patches/'",
-    "test": "jest ./jests",
+    "test": "jest ./jests && cd ../react-native-harmony && npm test && cd ../tester",
     "hiprofiler": "./scripts/run-hiprofiler-cmd.sh",
     "measure-performance": "./scripts/performance_measurement/measure-performance.sh"
   },
