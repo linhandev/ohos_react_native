@@ -147,7 +147,7 @@ jsi::Value ArkTSTurboModule::callAsync(
       [&, args = std::move(args)](
           jsi::Runtime& runtime2,
           std::shared_ptr<react::Promise> jsiPromise) mutable {
-        react::LongLivedObjectCollection::get().add(jsiPromise);
+        react::LongLivedObjectCollection::get(runtime2).add(jsiPromise);
         m_ctx.taskExecutor->runTask(
             m_ctx.turboModuleThread,
             [name = this->name_,
