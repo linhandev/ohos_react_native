@@ -4,11 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "update": "npm run version --allow-same-version",
-    "update:force": "npm run build && npm pack --pack-destination ../react-native-harmony/harmony",
-    "bump:patch": "npm version patch",
-    "preversion": "npm run verify",
-    "version": "npm run build && npm pack --pack-destination ../react-native-harmony/harmony",
+    "deploy": "npm run verify && npm run build && mkdir -p ../react-native-harmony/harmony && npm pack --pack-destination ../react-native-harmony/harmony",
     "build": "tsc -p ./tsconfig.build.json",
     "verify": "tsc --noEmit && npm run test",
     "test": "jest"

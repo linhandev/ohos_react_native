@@ -72,7 +72,7 @@ function runDeployment() {
 
           console.log('Refreshing rnoh-hvigor-plugin.tgz...');
           execSync(
-            'cd ../react-native-harmony-hvigor-plugin && npm run update && cd ../react-native-harmony'
+            'cd ../react-native-harmony-hvigor-plugin && npm run deploy && cd ../react-native-harmony'
           );
 
           const changelogForCurrentVersion = execSync(
