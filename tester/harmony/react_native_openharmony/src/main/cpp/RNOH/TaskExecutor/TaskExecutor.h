@@ -12,7 +12,11 @@ namespace rnoh {
 enum TaskThread {
   MAIN = 0, // main thread running the eTS event loop
   JS, // React Native's JS runtime thread
-  BACKGROUND, // background tasks queue
+  /* @deprecated Use other thread instead —
+   * https://github.com/react-native-community/discussions-and-proposals/blob/main/proposals/0744-well-defined-event-loop.md
+   * (latestRNOHVersion: 0.75.0)
+   */
+  BACKGROUND,
   WORKER, // used by some turbo modules
 };
 
@@ -43,8 +47,7 @@ class TaskExecutor {
 
   TaskExecutor(
       napi_env mainEnv,
-      std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
-      bool shouldEnableBackground = false);
+      std::unique_ptr<AbstractTaskRunner> workerTaskRunner);
   ~TaskExecutor() noexcept;
 
   void runTask(TaskThread thread, Task&& task);

@@ -181,17 +181,16 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto commandDispatcherRef = arkJS.createNapiRef(args[3]);
     auto eventDispatcherRef = arkJS.createNapiRef(args[4]);
     auto shouldEnableDebugger = arkJS.getBoolean(args[5]);
-    auto shouldEnableBackgroundExecutor = arkJS.getBoolean(args[6]);
     auto featureFlagRegistry = std::make_shared<FeatureFlagRegistry>();
-    for (auto featureFlagNameAndStatus : arkJS.getObjectProperties(args[7])) {
+    for (auto featureFlagNameAndStatus : arkJS.getObjectProperties(args[6])) {
       featureFlagRegistry->setFeatureFlagStatus(
           arkJS.getString(featureFlagNameAndStatus.first),
           arkJS.getBoolean(featureFlagNameAndStatus.second));
     }
-    auto frameNodeFactoryRef = arkJS.createNapiRef(args[8]);
-    auto jsResourceManager = args[9];
-    int envId = arkJS.getDouble(args[10]);
-    auto fontPathByFontFamilyEntries = arkJS.getObjectProperties(args[11]);
+    auto frameNodeFactoryRef = arkJS.createNapiRef(args[7]);
+    auto jsResourceManager = args[8];
+    int envId = arkJS.getDouble(args[9]);
+    auto fontPathByFontFamilyEntries = arkJS.getObjectProperties(args[10]);
     std::unordered_map<std::string, std::string> fontPathByFontFamily;
     for (auto& [fontFamily, fontPathRelativeToRawfileDir] :
          fontPathByFontFamilyEntries) {
@@ -268,7 +267,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         UI_TICKER,
         jsResourceManager,
         shouldEnableDebugger,
-        shouldEnableBackgroundExecutor,
         std::move(fontPathByFontFamily));
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);

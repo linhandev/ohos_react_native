@@ -156,18 +156,6 @@ void RNInstanceInternal::initializeScheduler(
       .runtimeExecutor = runtimeExecutor,
       .asynchronousEventBeatFactory = asyncEventBeatFactory};
 
-  if (m_shouldEnableBackgroundExecutor) {
-    schedulerToolbox.backgroundExecutor =
-        [executor = m_taskExecutor](std::function<void()>&& callback) {
-          if (executor->isOnTaskThread(TaskThread::MAIN)) {
-            callback();
-            return;
-          }
-
-          executor->runTask(TaskThread::BACKGROUND, std::move(callback));
-        };
-  }
-
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       runtimeExecutor, m_contextContainer, this);
   m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(

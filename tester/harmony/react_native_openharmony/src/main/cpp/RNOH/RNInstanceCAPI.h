@@ -42,7 +42,6 @@ class RNInstanceCAPI : public RNInstanceInternal {
           componentInstancePreallocationRequestQueue,
       SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
-      bool shouldEnableBackgroundExecutor,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared FontRegistry)
       : RNInstanceInternal(
@@ -61,7 +60,6 @@ class RNInstanceCAPI : public RNInstanceInternal {
             std::move(arkTSMessageHandlers),
             std::move(componentInstancePreallocationRequestQueue),
             shouldEnableDebugger,
-            shouldEnableBackgroundExecutor,
             std::move(arkTSBridge),
             std::move(FontRegistry)),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),

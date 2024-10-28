@@ -119,7 +119,6 @@ export class NapiBridge {
       args: unknown) => void,
     onCppMessage: (type: string, payload: any) => void,
     shouldEnableDebugger: boolean,
-    shouldEnableBackgroundExecutor: boolean,
     cppFeatureFlags: CppFeatureFlag[],
     resourceManager: ohosResourceManager.ResourceManager,
     fontPathByFontFamily: Record<string, string>
@@ -135,7 +134,6 @@ export class NapiBridge {
       componentCommandsListener,
       onCppMessage,
       shouldEnableDebugger,
-      shouldEnableBackgroundExecutor,
       cppFeatureFlagStatusByName,
       frameNodeFactoryRef,
       resourceManager,

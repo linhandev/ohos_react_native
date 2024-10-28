@@ -94,7 +94,6 @@ struct Index {
         RNApp({
           rnInstanceConfig: {
             createRNPackages,
-            enableBackgroundExecutor: false,
             enableCAPIArchitecture: true,
             enablePartialSyncOfDescriptorRegistryInCAPI: true,
             name: "performance_measurement"

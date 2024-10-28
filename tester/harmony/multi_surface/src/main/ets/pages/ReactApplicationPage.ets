@@ -48,8 +48,6 @@ struct ReactApplicationPage {
       RNApp({
         rnInstanceConfig: {
           createRNPackages,
-          enableBackgroundExecutor: false,
-          enableCAPIArchitecture: true,
           backPressHandler: () => {
             router.back();
           },

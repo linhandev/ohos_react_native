@@ -62,12 +62,11 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
-    bool shouldEnableBackgroundExecutor,
     std::unordered_map<std::string, std::string> fontPathByFontFamily) {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
-  auto taskExecutor = std::make_shared<TaskExecutor>(
-      env, std::move(workerTaskRunner), shouldEnableBackgroundExecutor);
+  auto taskExecutor =
+      std::make_shared<TaskExecutor>(env, std::move(workerTaskRunner));
   auto arkTSChannel = std::make_shared<ArkTSChannel>(
       taskExecutor, ArkJS(env), napiEventDispatcherRef);
 
@@ -258,7 +257,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       componentInstancePreallocationRequestQueue,
       std::move(resourceManager),
       shouldEnableDebugger,
-      shouldEnableBackgroundExecutor,
       arkTSBridge,
       std::move(fontRegistry));
   componentInstanceDependencies->rnInstance = rnInstance;

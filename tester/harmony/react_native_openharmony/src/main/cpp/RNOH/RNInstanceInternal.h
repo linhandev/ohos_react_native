@@ -34,7 +34,6 @@ class RNInstanceInternal
       ComponentInstancePreallocationRequestQueue::Shared
           componentInstancePreallocationRequestQueue,
       bool shouldEnableDebugger,
-      bool shouldEnableBackgroundExecutor,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared fontRegistry)
       : m_id(id),
@@ -50,7 +49,6 @@ class RNInstanceInternal
         m_globalJSIBinders(std::move(globalJSIBinders)),
         m_uiTicker(std::move(uiTicker)),
         m_shouldEnableDebugger(shouldEnableDebugger),
-        m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_arkTSChannel(std::move(arkTSChannel)),
         m_arkTSBridge(std::move(arkTSBridge)),
@@ -202,7 +200,6 @@ class RNInstanceInternal
   std::atomic<bool> m_shouldRelayUITick = false;
   std::shared_ptr<MessageQueueThread> m_jsQueue = nullptr;
   bool m_shouldEnableDebugger;
-  bool m_shouldEnableBackgroundExecutor;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
   ComponentInstancePreallocationRequestQueue::Shared

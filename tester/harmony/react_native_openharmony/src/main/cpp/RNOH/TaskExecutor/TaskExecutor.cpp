@@ -11,26 +11,17 @@ namespace rnoh {
 
 TaskExecutor::TaskExecutor(
     napi_env mainEnv,
-    std::unique_ptr<AbstractTaskRunner> workerTaskRunner,
-    bool shouldEnableBackground) {
+    std::unique_ptr<AbstractTaskRunner> workerTaskRunner) {
   auto mainTaskRunner = std::make_shared<NapiTaskRunner>("RNOH_MAIN", mainEnv);
   auto jsTaskRunner = std::make_shared<ThreadTaskRunner>("RNOH_JS");
-  auto backgroundExecutor = shouldEnableBackground
-      ? std::make_shared<ThreadTaskRunner>("RNOH_BACKGROUND")
-      : nullptr;
   m_taskRunners = {
       mainTaskRunner,
       jsTaskRunner,
-      backgroundExecutor,
+      nullptr, // backgroundTaskRunner
       std::move(workerTaskRunner)};
   this->runTask(TaskThread::JS, [this]() {
     this->setTaskThreadPriority(QoS_Level::QOS_USER_INTERACTIVE);
   });
-  if (shouldEnableBackground) {
-    this->runTask(TaskThread::BACKGROUND, [this]() {
-      this->setTaskThreadPriority(QoS_Level::QOS_USER_INTERACTIVE);
-    });
-  }
 }
 
 TaskExecutor::~TaskExecutor() noexcept {

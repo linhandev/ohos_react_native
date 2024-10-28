@@ -91,7 +91,6 @@ export class RNInstanceRegistry {
       this.createUITurboModuleContext,
       workerThread,
       options.enableDebugger ?? false,
-      options.enableBackgroundExecutor ?? false,
       options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
