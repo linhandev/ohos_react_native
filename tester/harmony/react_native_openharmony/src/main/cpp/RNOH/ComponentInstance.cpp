@@ -1,6 +1,7 @@
 #include "ComponentInstance.h"
 #include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
+#include "RNOHError.h"
 
 namespace rnoh {
 ComponentInstance::ComponentInstance(Context ctx)
@@ -30,4 +31,9 @@ void ComponentInstance::removeChild(
     onChildRemoved(childComponentInstance);
   }
 }
+
+ComponentInstance::NoArkUINodeError::NoArkUINodeError(
+    std::string whatHappened,
+    std::vector<std::string> howCanItBeFixed)
+    : RNOHError{std::move(whatHappened), std::move(howCanItBeFixed)} {}
 } // namespace rnoh

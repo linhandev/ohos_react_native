@@ -48,7 +48,11 @@ class CppComponentInstance : public ComponentInstance,
       : ComponentInstance(std::move(context)) {}
 
   void onCreate() override {
-    this->getLocalRootArkUINode().setArkUINodeDelegate(this);
+    try {
+      this->getLocalRootArkUINode().setArkUINodeDelegate(this);
+    } catch (NoArkUINodeError&) {
+      // NOOP
+    }
   }
 
   facebook::react::Tag getTag() const {
@@ -198,17 +202,22 @@ class CppComponentInstance : public ComponentInstance,
  protected:
   virtual void onLayoutChanged(
       facebook::react::LayoutMetrics const& layoutMetrics) {
-    this->getLocalRootArkUINode().setLayoutRect(
+    auto maybeLocalRoot = maybeGetLocalRoot();
+    if (!maybeLocalRoot) {
+      return;
+    }
+    auto& localRoot = *maybeLocalRoot;
+
+    localRoot.setLayoutRect(
         layoutMetrics.frame.origin,
         layoutMetrics.frame.size,
         layoutMetrics.pointScaleFactor);
     if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
-      this->getLocalRootArkUINode().setTransform(
-          m_transform, layoutMetrics.pointScaleFactor);
+      localRoot.setTransform(m_transform, layoutMetrics.pointScaleFactor);
       if (m_props) {
         auto props =
             std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
-        this->getLocalRootArkUINode().setShadow(
+        localRoot.setShadow(
             props->shadowColor,
             props->shadowOffset,
             props->shadowOpacity,
@@ -219,7 +228,7 @@ class CppComponentInstance : public ComponentInstance,
     if (layoutMetrics.layoutDirection != m_layoutMetrics.layoutDirection) {
       ArkUI_Direction direction =
           convertLayoutDirection(layoutMetrics.layoutDirection);
-      this->getLocalRootArkUINode().setDirection(direction);
+      localRoot.setDirection(direction);
     }
     markBoundingBoxAsDirty();
   }
@@ -230,6 +239,12 @@ class CppComponentInstance : public ComponentInstance,
                                            this->getComponentName() +
                                            ")::onPropsChanged")
                                            .c_str());
+    auto maybeLocalRoot = maybeGetLocalRoot();
+    if (!maybeLocalRoot) {
+      return;
+    }
+    auto& localRoot = *maybeLocalRoot;
+
     auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
         concreteProps);
     auto old =
@@ -238,19 +253,18 @@ class CppComponentInstance : public ComponentInstance,
     auto isTransformManagedByAnimated =
         getIgnoredPropKeys().count("transform") > 0;
     if (*(props->backgroundColor) != *(old->backgroundColor)) {
-      this->getLocalRootArkUINode().setBackgroundColor(props->backgroundColor);
+      localRoot.setBackgroundColor(props->backgroundColor);
     }
 
     if (props->accessibilityState != old->accessibilityState) {
-      this->getLocalRootArkUINode().setAccessibilityState(
-          props->accessibilityState);
+      localRoot.setAccessibilityState(props->accessibilityState);
     }
 
     if (props->shadowColor != old->shadowColor ||
         props->shadowOffset != old->shadowOffset ||
         props->shadowOpacity != old->shadowOpacity ||
         props->shadowRadius != old->shadowRadius) {
-      this->getLocalRootArkUINode().setShadow(
+      localRoot.setShadow(
           props->shadowColor,
           props->shadowOffset,
           props->shadowOpacity,
@@ -259,48 +273,43 @@ class CppComponentInstance : public ComponentInstance,
     }
 
     if (props->accessibilityActions != old->accessibilityActions) {
-      this->getLocalRootArkUINode().setAccessibilityActions(
-          props->accessibilityActions);
+      localRoot.setAccessibilityActions(props->accessibilityActions);
     }
 
     if (!isTransformManagedByAnimated && props->transform != old->transform) {
       this->setTransform(props->transform);
-      this->getLocalRootArkUINode().setTransform(
+      localRoot.setTransform(
           props->transform, m_layoutMetrics.pointScaleFactor);
       markBoundingBoxAsDirty();
     }
 
     if (props->pointerEvents != old->pointerEvents) {
-      this->getLocalRootArkUINode().setHitTestMode(props->pointerEvents);
-      this->getLocalRootArkUINode().setEnabled(
+      localRoot.setHitTestMode(props->pointerEvents);
+      localRoot.setEnabled(
           props->pointerEvents != facebook::react::PointerEventsMode::None);
     }
 
     if (props->accessibilityRole != old->accessibilityHint) {
-      this->getLocalRootArkUINode().setAccessibilityRole(
-          props->accessibilityRole);
+      localRoot.setAccessibilityRole(props->accessibilityRole);
     }
 
     if (props->accessibilityHint != old->accessibilityHint) {
-      this->getLocalRootArkUINode().setAccessibilityDescription(
-          props->accessibilityHint);
+      localRoot.setAccessibilityDescription(props->accessibilityHint);
     }
 
     if (props->importantForAccessibility != old->importantForAccessibility) {
-      this->getLocalRootArkUINode().setAccessibilityLevel(
-          props->importantForAccessibility);
+      localRoot.setAccessibilityLevel(props->importantForAccessibility);
     }
 
     if (props->accessibilityLabel != old->accessibilityLabel) {
-      this->getLocalRootArkUINode().setAccessibilityText(
-          props->accessibilityLabel);
+      localRoot.setAccessibilityText(props->accessibilityLabel);
     }
 
     if (props->accessible != old->accessible) {
       ArkUI_AccessibilityMode mode = props->accessible
           ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
           : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-      this->getLocalRootArkUINode().setAccessibilityMode(mode);
+      localRoot.setAccessibilityMode(mode);
     }
 
     this->setOpacity(props);
@@ -308,7 +317,7 @@ class CppComponentInstance : public ComponentInstance,
     auto newOverflow = props->getClipsContentToBounds();
     if ((old->getClipsContentToBounds() != newOverflow)) {
       m_isClipping = newOverflow;
-      this->getLocalRootArkUINode().setClip(newOverflow);
+      localRoot.setClip(newOverflow);
       markBoundingBoxAsDirty();
     }
 
@@ -317,11 +326,10 @@ class CppComponentInstance : public ComponentInstance,
         rawProps.needsOffscreenAlphaCompositing) {
       m_rawProps.needsOffscreenAlphaCompositing =
           rawProps.needsOffscreenAlphaCompositing;
-      this->getLocalRootArkUINode().setRenderGroup(
-          m_rawProps.needsOffscreenAlphaCompositing);
+      localRoot.setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing);
     }
 
-    this->getLocalRootArkUINode().setId(getIdFromProps(props));
+    localRoot.setId(getIdFromProps(props));
   };
 
   virtual void onStateChanged(SharedConcreteState const& /*state*/) {
@@ -359,6 +367,12 @@ class CppComponentInstance : public ComponentInstance,
   };
 
   void onFinalizeUpdates() override {
+    auto maybeLocalRoot = maybeGetLocalRoot();
+    if (!maybeLocalRoot) {
+      return;
+    }
+    auto& localRoot = *maybeLocalRoot;
+
     ComponentInstance::onFinalizeUpdates();
     if (m_props->accessibilityLabelledBy.value != m_accessibilityLabelledBy) {
       std::string targetId = "";
@@ -382,8 +396,7 @@ class CppComponentInstance : public ComponentInstance,
               newAccessibilityLabel += " " + targetAccessibilityLabel;
             }
             if (!newAccessibilityLabel.empty()) {
-              this->getLocalRootArkUINode().setAccessibilityText(
-                  newAccessibilityLabel);
+              localRoot.setAccessibilityText(newAccessibilityLabel);
             }
           } else {
             DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
@@ -397,20 +410,20 @@ class CppComponentInstance : public ComponentInstance,
     facebook::react::BorderMetrics borderMetrics =
         m_props->resolveBorderMetrics(this->m_layoutMetrics);
     if (borderMetrics.borderWidths != m_oldBorderMetrics.borderWidths) {
-      this->getLocalRootArkUINode().setBorderWidth(borderMetrics.borderWidths);
+      localRoot.setBorderWidth(borderMetrics.borderWidths);
     }
     if (borderMetrics.borderColors != m_oldBorderMetrics.borderColors) {
-      this->getLocalRootArkUINode().setBorderColor(borderMetrics.borderColors);
+      localRoot.setBorderColor(borderMetrics.borderColors);
     }
     if (borderMetrics.borderRadii != m_oldBorderMetrics.borderRadii ||
         !m_isRadiusSetValid) {
       if (this->m_layoutMetrics.frame.size != facebook::react::Size{0, 0}) {
         m_isRadiusSetValid = true;
       }
-      this->getLocalRootArkUINode().setBorderRadius(borderMetrics.borderRadii);
+      localRoot.setBorderRadius(borderMetrics.borderRadii);
     }
     if (borderMetrics.borderStyles != m_oldBorderMetrics.borderStyles) {
-      this->getLocalRootArkUINode().setBorderStyle(borderMetrics.borderStyles);
+      localRoot.setBorderStyle(borderMetrics.borderStyles);
     }
     m_oldBorderMetrics = borderMetrics;
   }
@@ -487,6 +500,14 @@ class CppComponentInstance : public ComponentInstance,
       id << ShadowNodeT::Name() << "(" << m_tag << ")"
          << "@" << this;
       return id.str();
+    }
+  }
+
+  ArkUINode* maybeGetLocalRoot() {
+    try {
+      return &getLocalRootArkUINode();
+    } catch (NoArkUINodeError&) {
+      return nullptr;
     }
   }
 

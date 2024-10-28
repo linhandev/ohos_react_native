@@ -1,4 +1,6 @@
 #include "SampleViewComponentInstance.h"
+#include <memory>
+#include "BlankComponentInstance.h"
 
 namespace rnoh {
 
@@ -15,6 +17,10 @@ void SampleViewComponentInstance::onChildInserted(
     ComponentInstance::Shared const& childComponentInstance,
     std::size_t index) {
   CppComponentInstance::onChildInserted(childComponentInstance, index);
+  if (auto blank = std::dynamic_pointer_cast<BlankComponentInstance>(
+          childComponentInstance)) {
+    return;
+  }
   m_stackNode.insertChild(
       childComponentInstance->getLocalRootArkUINode(), index + 1);
 }

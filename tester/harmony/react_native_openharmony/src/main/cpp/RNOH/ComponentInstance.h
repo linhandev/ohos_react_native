@@ -73,6 +73,14 @@ class ComponentInstance
     Dependencies::Shared dependencies;
   };
 
+  class NoArkUINodeError final : public RNOHError {
+   public:
+    NoArkUINodeError(
+        std::string whatHappened =
+            "Called `getLocalRootArkUINode` on a ComponentInstance with no `ArkUINode`s",
+        std::vector<std::string> howCanItBeFixed = {});
+  };
+
   virtual ArkUINode& getLocalRootArkUINode() = 0;
 
   ComponentInstance(Context ctx);

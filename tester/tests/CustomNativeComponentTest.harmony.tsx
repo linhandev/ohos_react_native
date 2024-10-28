@@ -8,6 +8,7 @@ import {
   GeneratedSampleComponentArkTS,
   CodegenLibSampleComponent,
   ContainerView,
+  Blank,
 } from 'react-native-sample-package';
 import {useEffect, useState} from 'react';
 import React from 'react';
@@ -107,6 +108,13 @@ function ManualCustomComponentImplementationTest() {
             );
           }}
         />
+      </TestCase.Example>
+      <TestCase.Example itShould="not report an error when Blank is added as a child to SampleComponent">
+        <SampleComponent backgroundColor="blue" size={32}>
+          <Blank />
+          <Blank />
+          <Blank />
+        </SampleComponent>
       </TestCase.Example>
     </TestSuite>
   );

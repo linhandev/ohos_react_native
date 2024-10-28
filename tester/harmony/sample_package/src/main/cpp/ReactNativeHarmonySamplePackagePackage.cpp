@@ -1,4 +1,6 @@
 #include "ReactNativeHarmonySamplePackagePackage.h"
+#include <memory>
+#include "BlankComponentInstance.h"
 #include "CodegenLibCppSampleComponentInstance.h"
 #include "GeneratedSampleViewComponentInstance.h"
 #include "NativeCxxModuleExampleCxxSpec.h"
@@ -132,6 +134,8 @@ ReactNativeHarmonySamplePackagePackage::
     ComponentInstance::Shared create(ComponentInstance::Context ctx) override {
       if (ctx.componentName == "SampleView") {
         return std::make_shared<SampleViewComponentInstance>(ctx);
+      } else if (ctx.componentName == "Blank") {
+        return std::make_shared<BlankComponentInstance>(ctx);
       }
       return nullptr;
     }
