@@ -240,9 +240,6 @@ void ScrollViewComponentInstance::onLayoutChanged(
   }
   markBoundingBoxAsDirty();
 
-  m_scrollContainerNode.setSize(layoutMetrics.frame.size);
-  m_scrollContainerNode.setPosition(layoutMetrics.frame.origin);
-
   if (m_containerSize != layoutMetrics.frame.size) {
     m_containerSize = layoutMetrics.frame.size;
   }
