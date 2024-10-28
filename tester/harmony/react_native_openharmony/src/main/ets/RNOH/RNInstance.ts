@@ -1,6 +1,6 @@
 import type UIAbility from '@ohos.app.ability.UIAbility'
 import { UIContext } from '@kit.ArkUI'
-import { CommandDispatcher, RNComponentCommandHub } from './RNComponentCommandHub'
+import { RNComponentCommandHub } from './RNComponentCommandHub'
 import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegistry'
 import { ComponentManagerRegistry } from './ComponentManagerRegistry'
 import { SurfaceHandle } from './SurfaceHandle'
@@ -20,9 +20,7 @@ import { RNInstanceError, RNInstanceErrorEventEmitter, RNOHError, RNOHErrorEvent
 import window from '@ohos.window'
 import { DevServerHelper } from './DevServerHelper'
 import { HttpClient } from '../HttpClient/HttpClient'
-import type { HttpClientProvider } from './HttpClientProvider'
 import resourceManager from '@ohos.resourceManager'
-import { DisplayMetricsManager } from './DisplayMetricsManager'
 import { WorkerThread } from "./WorkerThread"
 import font from "@ohos.font"
 
@@ -404,7 +402,6 @@ export class RNInstanceImpl implements RNInstance {
   public stageEventEmitter =
     new EventEmitter<StageChangeEventArgsByEventName>();
   public cppEventEmitter = new EventEmitter<Record<string, unknown[]>>();
-  public httpClient: HttpClient;
   public backPressHandler: () => void | undefined;
   private componentNameByDescriptorType = new Map<string, string>();
   private logger: RNOHLogger;
@@ -440,12 +437,10 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private fontPathByFontFamily: Record<string, string>,
-    httpClientProvider: HttpClientProvider,
-    httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
+    private _httpClient: HttpClient,
     backPressHandler?: () => void,
   ) {
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
-    this.httpClient = httpClient ?? httpClientProvider.getInstance(this);
     this.logger = injectedLogger.clone('RNInstance');
     this.frameNodeFactoryRef = { frameNodeFactory: null };
     this.backPressHandler = backPressHandler;
@@ -454,6 +449,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public getArchitecture(): 'C_API' {
     return 'C_API';
+  }
+
+  public get httpClient() {
+    return this._httpClient;
   }
 
   public getAssetsDest(): string {

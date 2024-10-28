@@ -3,7 +3,7 @@ import window from '@ohos.window';
 import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
-import { RNOHContext, RNOHCoreContext, UITurboModuleContext } from "./RNOHContext"
+import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
@@ -11,15 +11,14 @@ import { DevMenu } from "./DevMenu"
 import { JSPackagerClientConfig } from "./JSPackagerClient"
 import { RNOHError, RNOHErrorEventEmitter } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
-import { HttpClientProvider, DefaultHttpClientProvider } from './HttpClientProvider';
-import type { HttpClient } from "../HttpClient/ts"
+import { HttpClient, DefaultHttpClient } from "../HttpClient"
 import { AbilityConstant, Want } from '@kit.AbilityKit';
 import { WorkerThread } from "./WorkerThread"
 import { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 import { bundleManager } from '@kit.AbilityKit';
 import { EventEmitter } from './EventEmitter';
 import { WorkerTaskRunner } from './WorkerTaskRunner';
-import { EtsUITurboModuleContext } from '.';
+import { EtsUITurboModuleContext } from './EtsRNOHContext';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -43,8 +42,6 @@ export type BuildMode = "DEBUG" | "RELEASE"
 export interface RNInstancesCoordinatorOptions {
   launchURI?: string
   onGetPackagerClientConfig?: (buildMode: BuildMode) => JSPackagerClientConfig | undefined
-  /** @deprecated: Use `defaultHttpClient` instead (latestRNOHVersion: 0.72.27) */
-  httpClientProvider?: HttpClientProvider
   defaultHttpClient?: HttpClient
   /**
    * Set to `true` (in each UIAbility), if your app bundle provides multiple UIAbilities that use RNOH.
@@ -190,7 +187,6 @@ export class RNInstancesCoordinator {
     this.jsPackagerClient = jsPackagerClient;
     this.defaultBackPressHandler = defaultBackPressHandler;
     this.globalRNOHErrorEventEmitter = globalRNOHErrorEventEmitter;
-    const httpClientProvider = options?.httpClientProvider ?? new DefaultHttpClientProvider()
     const workerThreadPromise = rnohWorkerScriptUrl !== undefined ? WorkerThread.create({
       scriptUrl: rnohWorkerScriptUrl,
       name: "RNOHWorker",
@@ -211,10 +207,8 @@ export class RNInstancesCoordinator {
       (rnInstance) => new EtsUITurboModuleContext({
         rnohContext: RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)
       }),
-      httpClientProvider,
-      options?.defaultHttpClient,
+      options?.defaultHttpClient ?? new DefaultHttpClient(),
       this.uiAbilityContext.resourceManager,
-      displayMetricsManager,
       workerThreadPromise
     )
     this.rnohCoreContext = new RNOHCoreContext({

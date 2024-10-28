@@ -5,8 +5,7 @@ import type { NapiBridge } from './NapiBridge';
 import type { UITurboModuleContext } from './TurboModule'
 import type { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from './DevToolsController';
-import { HttpClientProvider } from './HttpClientProvider';
-import { HttpClient } from '../HttpClient/ts';
+import { HttpClient, DefaultHttpClient } from '../HttpClient';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
@@ -34,10 +33,8 @@ export class RNInstanceRegistry {
   private napiBridge: NapiBridge
   private devToolsController: DevToolsController
   private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext
-  private httpClientProvider: HttpClientProvider
-  private defaultHttpClient: HttpClient | undefined
+  private defaultHttpClient: HttpClient
   private resourceManager: resourceManager.ResourceManager
-  private displayMetricsManager: DisplayMetricsManager
   private workerThreadPromise: Promise<WorkerThread> | undefined
 
   constructor(
@@ -48,10 +45,8 @@ export class RNInstanceRegistry {
     napiBridge: NapiBridge,
     devToolsController: DevToolsController,
     createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
-    httpClientProvider: HttpClientProvider,
-    defaultHttpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
+    defaultHttpClient: HttpClient,
     resourceManager: resourceManager.ResourceManager,
-    displayMetricsManager: DisplayMetricsManager,
     workerThreadPromise: Promise<WorkerThread> | undefined,
   ) {
     this.uiAbilityContext = uiAbilityContext
@@ -61,10 +56,8 @@ export class RNInstanceRegistry {
     this.napiBridge = napiBridge
     this.devToolsController = devToolsController
     this.createUITurboModuleContext = createUITurboModuleContext
-    this.httpClientProvider = httpClientProvider
     this.defaultHttpClient = defaultHttpClient
     this.resourceManager = resourceManager
-    this.displayMetricsManager = displayMetricsManager
     this.workerThreadPromise = workerThreadPromise
   }
 
@@ -103,7 +96,6 @@ export class RNInstanceRegistry {
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
       fontPathByFontFamily,
-      this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,
     );
