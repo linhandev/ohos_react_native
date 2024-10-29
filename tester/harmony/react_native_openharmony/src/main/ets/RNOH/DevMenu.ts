@@ -1,6 +1,7 @@
 import window from '@ohos.window';
 import { DevToolsController } from './DevToolsController';
 import { RNOHLogger } from './RNOHLogger';
+import { ShakeDetector } from './ShakeDetector';
 import type common from '@ohos.app.ability.common';
 
 
@@ -20,10 +21,12 @@ export class DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
   private logger: RNOHLogger
+  private shakeDetector: ShakeDetector
 
   constructor(private devToolsController: DevToolsController, private uiAbilityContext: common.UIAbilityContext, logger: RNOHLogger) {
     this.logger = logger.clone("DevMenu")
     this.createDevMenuDefaultButtons()
+    this.shakeDetector = new ShakeDetector(this.show.bind(this))
   }
 
   public addMenuItem(title: string): void {
@@ -31,7 +34,7 @@ export class DevMenu {
       value: title,
       action: () => {
         this.devToolsController.emitDidPressMenuItem(title);
-        this.devMenuDialogVisible = false;
+        this.hideDevMenuDialog();
       }
     })
   }
@@ -41,28 +44,28 @@ export class DevMenu {
       value: "Reload",
       action: () => {
         this.devToolsController.reload(undefined)
-        this.devMenuDialogVisible = false;
+        this.hideDevMenuDialog();
       },
     });
     this.devMenuButtons.push({
       value: "Toggle Element Inspector",
       action: () => {
         this.devToolsController.toggleElementInspector()
-        this.devMenuDialogVisible = false;
+        this.hideDevMenuDialog();
       },
     });
     this.devMenuButtons.push({
       value: "Open Debugger",
       action: () => {
         this.devToolsController.openDebugger();
-        this.devMenuDialogVisible = false;
+        this.hideDevMenuDialog();
       }
     });
     this.devMenuButtons.push({
       value: "Open React DevTools",
       action: () => {
         this.devToolsController.openDevTools();
-        this.devMenuDialogVisible = false;
+        this.hideDevMenuDialog();
       }
     });
   }
@@ -82,9 +85,7 @@ export class DevMenu {
           message: "",
           buttons: this.devMenuButtons,
           buttonDirection: DialogButtonDirection.VERTICAL,
-          cancel: () => {
-            this.devMenuDialogVisible = false;
-          },
+          cancel: this.hideDevMenuDialog.bind(this),
         }
         uiContext.showAlertDialog(dialogParams)
         this.devMenuDialogVisible = true;
@@ -92,7 +93,12 @@ export class DevMenu {
       }
     }).catch(() => {
       this.logger.error("DevMenu dialog couldn't be displayed.");
-      this.devMenuDialogVisible = false;
+      this.hideDevMenuDialog();
     })
+  }
+
+  private hideDevMenuDialog() {
+    this.devMenuDialogVisible = false;
+    this.shakeDetector.resetDetector();
   }
 }
