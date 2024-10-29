@@ -142,7 +142,6 @@ class ScrollViewComponentInstance
   ScrollViewInternalState::Unique m_internalState;
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
-  StackNode m_scrollContainerNode;
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
   facebook::react::Point m_currentOffset = {0, 0};
@@ -228,7 +227,7 @@ class ScrollViewComponentInstance
 
   ScrollViewComponentInstance(Context context);
 
-  StackNode& getLocalRootArkUINode() override;
+  ScrollNode& getLocalRootArkUINode() override;
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
