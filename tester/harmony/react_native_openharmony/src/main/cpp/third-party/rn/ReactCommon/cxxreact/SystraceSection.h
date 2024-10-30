@@ -10,6 +10,9 @@
 #ifdef WITH_FBSYSTRACE
 #include <fbsystrace.h>
 #endif
+#ifdef WITH_HITRACE_SYSTRACE // RNOH patch
+#include <extras/HiTraceSystraceSection.h>
+#endif
 
 #if defined(__APPLE__)
 // This is required so that OS_LOG_TARGET_HAS_10_15_FEATURES will be set.
@@ -57,6 +60,8 @@ struct ConcreteSystraceSection {
   fbsystrace::FbSystraceSection m_section;
 };
 using SystraceSectionUnwrapped = ConcreteSystraceSection;
+#elif defined(WITH_HITRACE_SYSTRACE) // RNOH patch
+using SystraceSectionUnwrapped = HiTraceSystraceSection;
 #else
 struct DummySystraceSection {
  public:
