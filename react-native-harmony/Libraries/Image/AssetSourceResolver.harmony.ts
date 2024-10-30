@@ -1,11 +1,33 @@
 import {
   getAssetDestRelativePath,
   Asset,
-} from '@rnoh/react-native-harmony-cli/src/assetResolver';
-import {
-  getBasePath,
-} from '@react-native/assets-registry/path-support';
-import { Platform } from 'react-native';
+} from "@rnoh/react-native-harmony-cli/src/assetResolver";
+import { getBasePath } from "@react-native/assets-registry/path-support";
+import { Dimensions, Platform } from "react-native";
+
+function pickScale(scales: Array<number>, deviceScale?: number): number {
+  if (deviceScale == null) {
+    deviceScale = Dimensions.get("window").scale;
+  }
+  // Packager guarantees that `scales` array is sorted
+  for (let i = 0; i < scales.length; i++) {
+    if (scales[i] >= deviceScale) {
+      return scales[i];
+    }
+  }
+
+  // If nothing matches, device scale is larger than any available
+  // scales, so we return the biggest one. Unless the array is empty,
+  // in which case we default to 1
+  return scales[scales.length - 1] || 1;
+}
+
+function getScaledAssetPath(asset: Asset): string {
+  const scale = pickScale(asset.scales);
+  const scaleSuffix = scale === 1 ? "" : "@" + scale + "x";
+  const assetDir = getBasePath(asset);
+  return assetDir + "/" + asset.name + scaleSuffix + "." + asset.type;
+}
 
 type ResolvedAssetSource = {
   readonly __packager_asset: boolean;
@@ -14,11 +36,6 @@ type ResolvedAssetSource = {
   readonly uri: string;
   readonly scale: number;
 };
-
-function getAssetPath(asset: Asset): string {
-  const assetDir = getBasePath(asset);
-  return assetDir + '/' + asset.name + '.' + asset.type;
-}
 
 class AssetSourceResolver {
   constructor(
@@ -51,16 +68,16 @@ class AssetSourceResolver {
    */
   assetServerURL(): ResolvedAssetSource {
     if (!this.serverUrl) {
-      throw new Error('need server to load from');
+      throw new Error("need server to load from");
     }
 
     return this.fromSource(
       this.serverUrl +
-      getAssetPath(this.asset) +
-        '?platform=' +
+        getScaledAssetPath(this.asset) +
+        "?platform=" +
         Platform.OS +
-        '&hash=' +
-        this.asset.hash,
+        "&hash=" +
+        this.asset.hash
     );
   }
 

@@ -569,6 +569,9 @@ export const ImageTest = () => {
         itShould="Load proper image source for different container dimensions">
         <MultipleSourceImage />
       </TestCase.Example>
+      <TestCase.Example modal itShould="Use higher resolution image">
+        <ImageSuffixesTest />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -613,7 +616,7 @@ const ImageExampleCase = ({
     <Image
       style={{borderRadius: 8, borderWidth: 1, height: 150}}
       source={source}
-      onError={e => console.error(e.nativeEvent.error)}
+      onError={e => console.error(e.nativeEvent.error, source)}
       // resizeMode="contain"
     />
   </TestCase.Example>
@@ -862,3 +865,11 @@ const MultipleSourceImage = () => {
     </View>
   );
 };
+
+function ImageSuffixesTest() {
+  return (
+    <View>
+      <Image source={require('../assets/fig-without-poppy.jpeg')} />
+    </View>
+  );
+}
