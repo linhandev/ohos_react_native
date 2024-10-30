@@ -87,11 +87,12 @@ function createHarmonyMetroConfig(options) {
                   pathUtils.dirname(ctx.originModulePath),
                   moduleName,
                 );
+                const slashes = new RegExp('/', 'g');
                 const [_, modulePathRelativeToOriginalPackage] = moduleAbsPath.split(
-                  `${pathUtils.sep}node_modules${pathUtils.sep}${alias}${pathUtils.sep}`,
+                  `${pathUtils.sep}node_modules${pathUtils.sep}${alias.replace(slashes, pathUtils.sep)}${pathUtils.sep}`,
                 );
                 const backslashes = new RegExp('\\\\', 'g');
-                const pathToHarmonyModule = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(backslashes, "/")}`;
+                const pathToHarmonyModule = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(backslashes, pathUtils.sep)}`;
                 try {
                   return ctx.resolveRequest(
                     ctx,
