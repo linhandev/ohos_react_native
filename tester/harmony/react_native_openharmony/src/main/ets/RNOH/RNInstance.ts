@@ -26,16 +26,26 @@ import font from "@ohos.font"
 
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
 
-export type SurfaceContext = {
-  minWidth: number;
-  minHeight: number;
-  maxWidth: number;
-  maxHeight: number;
+type SurfaceContextCommon = {
   surfaceOffsetX: number;
   surfaceOffsetY: number;
   pixelRatio: number;
   isRTL: boolean;
 };
+
+export type SurfaceContextWithConstraints = {
+  minWidth: number;
+  minHeight: number;
+  maxWidth: number;
+  maxHeight: number;
+} & SurfaceContextCommon;
+
+export type SurfaceContextWithSize = {
+  width: number;
+  height: number;
+} & SurfaceContextCommon;
+
+export type SurfaceContext = SurfaceContextWithConstraints | SurfaceContextWithSize;
 
 export enum LifecycleState {
   BEFORE_CREATE,
@@ -1022,7 +1032,7 @@ export class RNInstanceImpl implements RNInstance {
             ],
           });
         }
-        font.registerFont({familyName: fontFamily, familySrc: `file://${fontResource}`})
+        font.registerFont({ familyName: fontFamily, familySrc: `file://${fontResource}` })
         return fontResource;
       } else {
         font.registerFont({ familyName: fontFamily, familySrc: fontResource });
