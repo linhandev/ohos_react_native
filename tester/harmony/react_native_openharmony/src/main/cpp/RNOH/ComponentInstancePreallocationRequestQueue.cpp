@@ -1,11 +1,16 @@
 #include "ComponentInstancePreallocationRequestQueue.h"
 #include <optional>
+#include "RNOH/RNOHError.h"
 
 namespace rnoh {
 
 void ComponentInstancePreallocationRequestQueue::push(ShadowView request) {
   auto lock = std::lock_guard(m_mtx);
   m_queue.push(std::move(request));
+  auto delegate = m_weakDelegate.lock();
+  if (delegate != nullptr) {
+    delegate->onPushPreallocationRequest();
+  }
 }
 
 bool ComponentInstancePreallocationRequestQueue::isEmpty() {
@@ -22,6 +27,11 @@ auto ComponentInstancePreallocationRequestQueue::pop()
     return request;
   }
   return std::nullopt;
+}
+
+void ComponentInstancePreallocationRequestQueue::setDelegate(
+    Delegate::Weak weakDelegate) {
+  m_weakDelegate = weakDelegate;
 }
 
 void ComponentInstancePreallocationRequestQueue::clear() {

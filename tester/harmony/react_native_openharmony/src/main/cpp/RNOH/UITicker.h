@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glog/logging.h>
 #include <chrono>
 #include <functional>
 #include <future>
@@ -26,9 +27,9 @@ class UITicker {
   using Shared = std::shared_ptr<UITicker>;
 
   std::function<void()> subscribe(std::function<void(Timestamp)>&& listener) {
+    std::lock_guard lock(listenersMutex);
     auto id = m_nextListenerId;
     m_nextListenerId++;
-    std::lock_guard lock(listenersMutex);
     auto listenersCount = m_listenerById.size();
     m_listenerById.insert_or_assign(id, std::move(listener));
     if (listenersCount == 0) {
@@ -52,6 +53,9 @@ class UITicker {
 
   void tick(Timestamp timestamp) {
     std::lock_guard lock(listenersMutex);
+    if (m_listenerById.empty()) {
+      return;
+    }
     for (const auto& idAndListener : m_listenerById) {
       idAndListener.second(timestamp);
     }

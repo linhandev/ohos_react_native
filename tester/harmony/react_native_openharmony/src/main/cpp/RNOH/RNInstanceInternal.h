@@ -56,13 +56,6 @@ class RNInstanceInternal
             std::move(componentInstancePreallocationRequestQueue)) {
     HarmonyReactMarker::logMarker(
         HarmonyReactMarker::HarmonyReactMarkerId::INIT_REACT_RUNTIME_START);
-    m_unsubscribeUITickListener =
-        m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
-          m_taskExecutor->runTask(
-              TaskThread::MAIN, [this, recentVSyncTimestamp]() {
-                onUITick(recentVSyncTimestamp);
-              });
-        }),
     m_fontRegistry = std::move(fontRegistry);
   }
 
@@ -196,8 +189,8 @@ class RNInstanceInternal
   std::shared_ptr<facebook::react::LayoutAnimationDriver> m_animationDriver =
       nullptr;
   UITicker::Shared m_uiTicker;
+  std::mutex m_unsubscribeUITickListenerMtx;
   std::function<void()> m_unsubscribeUITickListener = nullptr;
-  std::atomic<bool> m_shouldRelayUITick = false;
   std::shared_ptr<MessageQueueThread> m_jsQueue = nullptr;
   bool m_shouldEnableDebugger;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;

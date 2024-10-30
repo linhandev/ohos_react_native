@@ -4,24 +4,48 @@
 using namespace rnoh;
 
 ComponentInstanceProvider::ComponentInstanceProvider(
-    TaskExecutor::Weak weakTaskExecutor,
     ComponentInstancePreallocationRequestQueue::Shared
         preallocationRequestQueue,
     ComponentInstanceFactory::Shared componentInstanceFactory,
+    ComponentInstanceRegistry::Shared componentInstanceRegistry,
     UITicker::Shared uiTicker,
-    ComponentInstanceRegistry::Shared componentInstanceRegistry)
+    TaskExecutor::Weak weakTaskExecutor)
     : m_componentInstanceFactory(std::move(componentInstanceFactory)),
       m_preallocationRequestQueue(std::move(preallocationRequestQueue)),
-      m_componentInstanceRegistry(std::move(componentInstanceRegistry)) {
-  m_unsubscribeUITickerListener =
-      uiTicker->subscribe([&, weakTaskExecutor](auto recentVSyncTimestamp) {
+      m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
+      m_uiTicker(std::move(uiTicker)),
+      m_weakTaskExecutor(std::move(weakTaskExecutor)) {}
+
+void ComponentInstanceProvider::initialize() {
+  m_preallocationRequestQueue->setDelegate(this->weak_from_this());
+}
+
+ComponentInstanceProvider::~ComponentInstanceProvider() {
+  m_threadGuard.assertThread();
+  LOG(INFO) << "~ComponentInstanceProvider";
+  std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
+  if (m_unsubscribeUITickerListener != nullptr) {
+    m_unsubscribeUITickerListener();
+  }
+}
+
+/**
+ * @thread: JS
+ */
+void ComponentInstanceProvider::onPushPreallocationRequest() {
+  std::lock_guard lock(this->m_unsubscribeUITickerListenerMtx);
+  if (m_unsubscribeUITickerListener != nullptr) {
+    return;
+  }
+  m_unsubscribeUITickerListener = m_uiTicker->subscribe(
+      [weakSelf = this->weak_from_this(),
+       weakTaskExecutor = this->m_weakTaskExecutor](auto recentVSyncTimestamp) {
         auto taskExecutor = weakTaskExecutor.lock();
         if (taskExecutor == nullptr) {
           return;
         }
         taskExecutor->runTask(
-            TaskThread::MAIN,
-            [weakSelf = this->weak_from_this(), recentVSyncTimestamp] {
+            TaskThread::MAIN, [weakSelf, recentVSyncTimestamp] {
               auto self = weakSelf.lock();
               if (self == nullptr) {
                 return;
@@ -29,12 +53,6 @@ ComponentInstanceProvider::ComponentInstanceProvider(
               self->onUITick(recentVSyncTimestamp);
             });
       });
-}
-
-ComponentInstanceProvider::~ComponentInstanceProvider() {
-  m_threadGuard.assertThread();
-  LOG(INFO) << "~ComponentInstanceProvider";
-  m_unsubscribeUITickerListener();
 }
 
 ComponentInstance::Shared ComponentInstanceProvider::getComponentInstance(
@@ -75,6 +93,11 @@ void ComponentInstanceProvider::onUITick(
   facebook::react::SystraceSection s("ComponentInstanceProvider::onUITick");
   m_threadGuard.assertThread();
   if (m_preallocationRequestQueue->isEmpty()) {
+    std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
+    if (m_unsubscribeUITickerListener != nullptr) {
+      m_unsubscribeUITickerListener();
+      m_unsubscribeUITickerListener = nullptr;
+    }
     return;
   }
   while (true) {

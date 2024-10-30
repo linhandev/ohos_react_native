@@ -192,7 +192,7 @@ void RNInstanceInternal::updateState(
 void RNInstanceInternal::onUITick(
     UITicker::Timestamp /*recentVSyncTimestamp*/) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
-  if (m_shouldRelayUITick.load() && m_scheduler != nullptr) {
+  if (m_scheduler != nullptr) {
     m_scheduler->animationTick();
   }
 }
@@ -276,8 +276,7 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
-  facebook::react::SystraceSection s(
-      "#RNOH::RNInstanceInternal::handleArkTSMessage");
+  facebook::react::SystraceSection s("RNInstanceInternal::handleArkTSMessage");
   for (auto const& arkTSMessageHandler : m_arkTSMessageHandlers) {
     arkTSMessageHandler->handleArkTSMessage(
         {.messageName = name,
@@ -287,16 +286,29 @@ void RNInstanceInternal::handleArkTSMessage(
 }
 
 void RNInstanceInternal::onAnimationStarted() {
-  facebook::react::SystraceSection s(
-      "#RNOH::RNInstanceInternal::onAnimationStarted");
-  m_shouldRelayUITick.store(true);
+  facebook::react::SystraceSection s("RNInstanceInternal::onAnimationStarted");
+  if (m_unsubscribeUITickListener != nullptr) {
+    return;
+  }
+  m_unsubscribeUITickListener =
+      m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
+        m_taskExecutor->runTask(
+            TaskThread::MAIN, [this, recentVSyncTimestamp]() {
+              this->onUITick(recentVSyncTimestamp);
+            });
+      });
 }
 
 void RNInstanceInternal::onAllAnimationsComplete() {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::onAllAnimationsComplete");
-  m_shouldRelayUITick.store(false);
+  if (m_unsubscribeUITickListener == nullptr) {
+    return;
+  }
+  m_unsubscribeUITickListener();
+  m_unsubscribeUITickListener = nullptr;
 }
+
 void RNInstanceInternal::registerFont(
     std::string const& fontFamily,
     std::string const& fontFilePath) {

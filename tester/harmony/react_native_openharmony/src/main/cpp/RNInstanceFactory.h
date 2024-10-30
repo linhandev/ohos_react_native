@@ -226,11 +226,12 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   auto componentInstancePreallocationRequestQueue =
       std::make_shared<ComponentInstancePreallocationRequestQueue>();
   auto componentInstanceProvider = std::make_shared<ComponentInstanceProvider>(
-      taskExecutor,
       componentInstancePreallocationRequestQueue,
       componentInstanceFactory,
+      componentInstanceRegistry,
       uiTicker,
-      componentInstanceRegistry);
+      taskExecutor);
+  componentInstanceProvider->initialize();
   auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
       componentInstanceRegistry,
       componentInstanceProvider,
