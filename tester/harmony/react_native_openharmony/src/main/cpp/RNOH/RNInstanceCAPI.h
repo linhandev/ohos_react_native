@@ -7,7 +7,6 @@
 #include <thread>
 #include <utility>
 
-#include <ace/xcomponent/native_interface_xcomponent.h>
 #include <cxxreact/Instance.h>
 #include <cxxreact/ModuleRegistry.h>
 #include <cxxreact/NativeModule.h>
@@ -36,6 +35,7 @@
 #include "RNOH/ComponentInstanceFactory.h"
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/arkui/ArkUISurface.h"
+#include "RNOH/arkui/NodeContentHandle.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -171,9 +171,11 @@ class RNInstanceCAPI : public RNInstanceInternal,
 
   facebook::react::ContextContainer const& getContextContainer() const override;
 
-  void registerNativeXComponentHandle(
-      OH_NativeXComponent* nativeXComponent,
+  void attachRootView(
+      NodeContentHandle nodeContentHandle,
       facebook::react::Tag surfaceId);
+
+  void detachRootView(facebook::react::Tag surfaceId);
 
   TurboModule::Shared getTurboModule(const std::string& name) override;
 
