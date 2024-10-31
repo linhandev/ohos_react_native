@@ -15,15 +15,15 @@ namespace rnoh {
 /**
  * @Thread: MAIN
  * Wraps the `react::SurfaceHandle` and attaches the root component of the
- * React Native `Surface` to the native `XComponent`
+ * React Native `Surface` to the ArkUI native component.
  */
-class XComponentSurface
+class ArkUISurface
     : public Surface,
-      public std::enable_shared_from_this<XComponentSurface> {
+      public std::enable_shared_from_this<ArkUISurface> {
  public:
-  using Shared = std::shared_ptr<XComponentSurface>;
+  using Shared = std::shared_ptr<ArkUISurface>;
 
-  XComponentSurface(
+  ArkUISurface(
       TaskExecutor::Shared taskExecutor,
       std::shared_ptr<facebook::react::Scheduler> scheduler,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
@@ -33,13 +33,13 @@ class XComponentSurface
       int rnInstanceId,
       std::string const& appKey);
 
-  XComponentSurface(XComponentSurface const& other) = delete;
-  XComponentSurface& operator=(XComponentSurface const& other) = delete;
+  ArkUISurface(ArkUISurface const& other) = delete;
+  ArkUISurface& operator=(ArkUISurface const& other) = delete;
 
-  XComponentSurface(XComponentSurface&& other) noexcept;
-  XComponentSurface& operator=(XComponentSurface&& other) noexcept;
+  ArkUISurface(ArkUISurface&& other) noexcept;
+  ArkUISurface& operator=(ArkUISurface&& other) noexcept;
 
-  ~XComponentSurface() noexcept;
+  ~ArkUISurface() noexcept;
 
   void attachNativeXComponent(OH_NativeXComponent* nativeXComponent);
 
