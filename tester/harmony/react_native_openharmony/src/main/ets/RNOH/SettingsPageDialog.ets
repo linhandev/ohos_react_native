@@ -26,7 +26,6 @@ struct DevSetHostAndPortContent {
       putPromise.then(() => {
         this.settingsPreferences?.flush((err: BusinessError) => {
           if (err) {
-            console.error("Failed to flush. code =" + err.code + ", message =" + err.message);
             return;
           }
         })
@@ -39,11 +38,9 @@ struct DevSetHostAndPortContent {
   }
   aboutToAppear() {
     this.settingsPreferences?.get('devHostAndPortAddress', '', (err: BusinessError, val: preferences.ValueType) => {
-      if (err) {
-        console.error("Failed to get value of 'devHostAndPortAddress'. code =" + err.code + ", message =" + err.message);
-        return;
+      if (!err) {
+        this.address = val.toString()
       }
-      this.address = val.toString()
     })
   }
   build() {
@@ -112,11 +109,9 @@ struct SettingsPageDialog {
 
   aboutToAppear() {
     preferences.getPreferences(this.uiAbilityContext, "devSettings", (err: BusinessError, val: preferences.Preferences) => {
-      if (err) {
-        console.error("Failed to get 'devSettings' preferences. code =" + err.code + ", message =" + err.message);
-        return;
+      if (!err) {
+        this.settingsPreferences = val
       }
-      this.settingsPreferences = val
     })
   }
   aboutToDisappear() {
