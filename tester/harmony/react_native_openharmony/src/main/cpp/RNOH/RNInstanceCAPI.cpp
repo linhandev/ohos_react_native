@@ -39,7 +39,7 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
       [mountingManager = std::move(m_mountingManager),
         componentInstanceRegistry = std::move(m_componentInstanceRegistry),
         componentInstanceFactory = std::move(m_componentInstanceFactory),
-       // NOTE: `XComponentSurface` is not copyable, but `std::function` is, so
+       // NOTE: `ArkUISurface` is not copyable, but `std::function` is, so
        // we need to move the map into a shared_ptr first in order to capture it
        surfaces = std::make_shared<decltype(m_surfaceById)>(
            std::move(m_surfaceById))] {});
@@ -359,24 +359,26 @@ void RNInstanceCAPI::schedulerTransactionByVsync(long long timestamp, long long 
   }
 }
 
-void RNInstanceCAPI::registerNativeXComponentHandle(
-    OH_NativeXComponent* nativeXComponent,
+void RNInstanceCAPI::attachRootView(
+    NodeContentHandle nodeContentHandle,
     facebook::react::Tag surfaceId) {
-  DLOG(INFO) << "RNInstanceCAPI::registerNativeXComponentHandle";
-  if (nativeXComponent == nullptr) {
+  DLOG(INFO) << "RNInstanceCAPI::registerNodeContentHandle";
+  auto it = m_surfaceById.find(surfaceId);
+  if (it == m_surfaceById.end()) {
+    LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
     return;
   }
-  // NOTE: for some reason, attaching in the NAPI call made by XComponent
-  // fails to mount the ArkUI node. Posting a task to be executed separately
-  // fixes the issue.
-  taskExecutor->runTask(TaskThread::MAIN, [this, nativeXComponent, surfaceId] {
-    auto it = m_surfaceById.find(surfaceId);
-    if (it == m_surfaceById.end()) {
-      LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
-      return;
-    }
-    it->second->attachNativeXComponent(nativeXComponent);
-  });
+  it->second->attachToNodeContent(std::move(nodeContentHandle));
+}
+
+void RNInstanceCAPI::detachRootView(facebook::react::Tag surfaceId) {
+  DLOG(INFO) << "RNInstanceCAPI::registerNodeContentHandle";
+  auto it = m_surfaceById.find(surfaceId);
+  if (it == m_surfaceById.end()) {
+    LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
+    return;
+  }
+  it->second->detachFromNodeContent();
 }
 
 TurboModule::Shared RNInstanceCAPI::getTurboModule(const std::string& name) {
@@ -400,7 +402,7 @@ void RNInstanceCAPI::createSurface(
   DLOG(INFO) << "RNInstanceCAPI::createSurface";
   m_surfaceById.emplace(
       surfaceId,
-      std::make_shared<XComponentSurface>(
+      std::make_shared<ArkUISurface>(
           taskExecutor,
           scheduler,
           m_componentInstanceRegistry,
