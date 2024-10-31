@@ -358,24 +358,26 @@ void RNInstanceCAPI::schedulerTransactionByVsync(long long timestamp, long long 
   }
 }
 
-void RNInstanceCAPI::registerNativeXComponentHandle(
-    OH_NativeXComponent* nativeXComponent,
+void RNInstanceCAPI::attachRootView(
+    NodeContentHandle nodeContentHandle,
     facebook::react::Tag surfaceId) {
-  DLOG(INFO) << "RNInstanceCAPI::registerNativeXComponentHandle";
-  if (nativeXComponent == nullptr) {
+  DLOG(INFO) << "RNInstanceCAPI::registerNodeContentHandle";
+  auto it = m_surfaceById.find(surfaceId);
+  if (it == m_surfaceById.end()) {
+    LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
     return;
   }
-  // NOTE: for some reason, attaching in the NAPI call made by XComponent
-  // fails to mount the ArkUI node. Posting a task to be executed separately
-  // fixes the issue.
-  taskExecutor->runTask(TaskThread::MAIN, [this, nativeXComponent, surfaceId] {
-    auto it = m_surfaceById.find(surfaceId);
-    if (it == m_surfaceById.end()) {
-      LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
-      return;
-    }
-    it->second->attachNativeXComponent(nativeXComponent);
-  });
+  it->second->attachToNodeContent(std::move(nodeContentHandle));
+}
+
+void RNInstanceCAPI::detachRootView(facebook::react::Tag surfaceId) {
+  DLOG(INFO) << "RNInstanceCAPI::registerNodeContentHandle";
+  auto it = m_surfaceById.find(surfaceId);
+  if (it == m_surfaceById.end()) {
+    LOG(ERROR) << "Surface with id: " << surfaceId << " not found";
+    return;
+  }
+  it->second->detachFromNodeContent();
 }
 
 TurboModule::Shared RNInstanceCAPI::getTurboModule(const std::string& name) {
