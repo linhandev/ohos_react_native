@@ -224,6 +224,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         customComponentArkUINodeFactory);
     auto componentInstanceRegistry =
         std::make_shared<ComponentInstanceRegistry>();
+    componentInstanceDependencies->componentInstanceRegistry =
+        componentInstanceRegistry;
     auto preAllocationBuffer = std::make_shared<PreAllocationBuffer>(componentInstanceFactory, componentInstanceRegistry);
     auto mountingManagerCAPI = std::make_shared<MountingManagerCAPI>(
         componentInstanceRegistry,
@@ -231,7 +233,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         mountingManager,
         arkTsComponentNames,
 		preAllocationBuffer,
-        featureFlagRegistry);
+        featureFlagRegistry,
+        arkTSChannel);
     SharedNativeResourceManager nativeResourceManager(
       OH_ResourceManager_InitNativeResourceManager(env, jsResourceManager),
       OH_ResourceManager_ReleaseNativeResourceManager);

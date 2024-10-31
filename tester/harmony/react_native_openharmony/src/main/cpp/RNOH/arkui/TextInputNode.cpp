@@ -41,6 +41,7 @@ TextInputNode::~TextInputNode() {
 void TextInputNode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     EventArgs& eventArgs) {
+  ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_SUBMIT) {
     if (m_textInputNodeDelegate != nullptr) {
       m_textInputNodeDelegate->onSubmit();

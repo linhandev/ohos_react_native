@@ -721,6 +721,31 @@ static napi_value registerFont(napi_env env, napi_callback_info info) {
   });
 }
 
+static napi_value getNativeNodeIdByTag(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJs(env);
+    auto args = arkJs.getCallbackArgs(info, 2);
+    size_t instanceId = arkJs.getDouble(args[0]);
+    // auto lock = std::lock_guard<std::mutex>(rnInstanceByIdMutex);
+    // auto it = rnInstanceById.find(instanceId);
+    // if (it == rnInstanceById.end()) {
+    auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
+    auto it = RN_INSTANCE_BY_ID.find(instanceId);
+    if (it == RN_INSTANCE_BY_ID.end()) {
+      return arkJs.getUndefined();
+    }
+    auto rnInstanceCapi = std::dynamic_pointer_cast<RNInstanceCAPI>(it->second);
+    if (rnInstanceCapi == nullptr) {
+      return arkJs.getUndefined();
+    }
+    auto tag = arkJs.getDouble(args[1]);
+    auto nativeNodeId = rnInstanceCapi->getNativeNodeIdByTag(tag);
+    return nativeNodeId.has_value() ? arkJs.createString(nativeNodeId.value())
+                                    : arkJs.getUndefined();
+  });
+}
+
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
@@ -908,7 +933,15 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        napi_default,
        nullptr},
-      {"attachRootView",
+       {"getNativeNodeIdByTag",
+       nullptr,
+       ::getNativeNodeIdByTag,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+       {"attachRootView",
        nullptr,
        ::attachRootView,
        nullptr,
@@ -923,8 +956,7 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        nullptr,
        napi_default,
-       nullptr},
-  };
+       nullptr}};
 
   napi_define_properties(
       env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc);
