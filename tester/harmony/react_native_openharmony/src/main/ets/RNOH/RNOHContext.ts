@@ -9,9 +9,8 @@ import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
 import type { HttpClient } from '../HttpClient/HttpClient';
 import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
-import type { DevMenu } from './DevMenu';
 import type { DevToolsController } from './DevToolsController';
-import type { DisplayMetrics } from './types';
+import type { DisplayMetrics, DevMenu } from './types';
 import type { RNInstanceOptions } from './RNInstance';
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 
