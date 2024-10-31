@@ -238,6 +238,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   MountingManager::Shared m_mountingManager;
   std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
+  float m_densityDpi;
   /**
    * NOTE: Order matters. m_scheduler holds indirectly jsi::Values.
    * These values must be destructed before the runtime.
@@ -261,6 +262,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()
       override; // react::LayoutAnimationStatusDelegate
+  void onConfigurationChange(folly::dynamic const& payload);
 };
 
 } // namespace rnoh
