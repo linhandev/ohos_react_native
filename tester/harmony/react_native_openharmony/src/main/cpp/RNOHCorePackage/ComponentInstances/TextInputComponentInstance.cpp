@@ -260,6 +260,21 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setBackgroundColor(facebook::react::clearColor());
     }
   }
+  if (props->rawProps.count("textAlignVertical") != 0){
+    std::string rawAlignment = props->rawProps["textAlignVertical"].asString();
+    ArkUI_Alignment aligment;
+    if (rawAlignment == "top"){
+      aligment = ARKUI_ALIGNMENT_TOP;
+    } else if(rawAlignment == "center"){
+      aligment = ARKUI_ALIGNMENT_CENTER;
+    } else if(rawAlignment == "bottom"){
+      aligment = ARKUI_ALIGNMENT_BOTTOM;
+    } else if(rawAlignment == "auto"){
+      aligment = ARKUI_ALIGNMENT_CENTER;
+    }
+    m_textInputNode.setAlignment(aligment);
+    m_textAreaNode.setAlignment(aligment);
+  }
   if (props->textAttributes.alignment) {
     if (!m_props ||
         *(props->textAttributes.alignment) !=
