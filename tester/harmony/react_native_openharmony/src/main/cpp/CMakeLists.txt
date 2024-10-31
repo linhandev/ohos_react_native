@@ -458,7 +458,7 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/arkui/NativeDialogApi.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINodeRegistry.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/NodeContentHandle.cpp"
-    "${RNOH_CPP_DIR}/RNOH/arkui/XComponentSurface.cpp"
+    "${RNOH_CPP_DIR}/RNOH/arkui/ArkUISurface.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ColumnNode.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ImageNode.cpp"
