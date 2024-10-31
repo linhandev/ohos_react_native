@@ -138,17 +138,22 @@ class JSVMRuntime : public Runtime {
       size_t length,
       JSVM_Value* args,
       uint32_t argc);
-  void LoadCodeCache();
-  void SaveCodeCache(const std::string &sourceURL, uint8_t *cache, size_t len);
-  void FreeCodeCache();
-
+  std::vector<uint8_t> GetCodeCache(const std::string &sourceURL);
+  void UpdateCodeCache(const std::string &sourceURL, const std::vector<uint8_t>& buffer);
  private:
   JSVM_CreateVMOptions options;
   JSVM_VM vm;
   JSVM_VMScope vmScope;
   JSVM_Env env;
   JSVM_EnvScope envScope;
-  std::unordered_map<std::string, std::pair<uint8_t *, size_t>> codeCache;
+  static std::mutex codeCacheMtx;
+  // L1 code cahce is in the disk
+  // L2 code cache is in the memory
+  static std::unordered_map<std::string, std::vector<uint8_t>> codeCacheL2;
+  std::vector<uint8_t> GetCodeCacheL1(const std::string &sourceURL);
+  void UpdateCodeCacheL1(const std::string &sourceURL, const std::vector<uint8_t>& buffer);
+  std::vector<uint8_t> GetCodeCacheL2(const std::string &sourceURL);
+  void UpdateCodeCacheL2(const std::string &sourceURL, const std::vector<uint8_t>& buffer);
   const char *cachePath = "/data/storage/el2/base/cache/js";
   static bool initialized;
   std::shared_ptr<facebook::react::MessageQueueThread> jsQueue;

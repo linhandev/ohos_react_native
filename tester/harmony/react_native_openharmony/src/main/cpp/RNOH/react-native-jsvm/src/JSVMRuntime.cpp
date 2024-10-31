@@ -5,6 +5,7 @@
 #include "hostProxy.h"
 #include "JSVMUtil.h"
 #include <filesystem>
+#include <fstream>
 
 #define DFX()                  \
     do {                       \
@@ -15,6 +16,8 @@
 namespace rnjsvm {
 
 bool JSVMRuntime::initialized = false;
+std::mutex JSVMRuntime::codeCacheMtx;
+std::unordered_map<std::string, std::vector<uint8_t>> JSVMRuntime::codeCacheL2 = {};
 thread_local bool JSVMPointerValue::isJsThread = false;
 
 JSVMRuntime::JSVMRuntime() : hostObjectClass(nullptr)
@@ -35,7 +38,6 @@ JSVMRuntime::JSVMRuntime() : hostObjectClass(nullptr)
     OH_JSVM_OpenVMScope(vm, &vmScope);
     OH_JSVM_CreateEnv(vm, 0, nullptr, &env);
     OH_JSVM_OpenEnvScope(env, &envScope);
-    LoadCodeCache();
 }
 
 JSVMRuntime::JSVMRuntime(std::shared_ptr<facebook::react::MessageQueueThread> jsQueue) : JSVMRuntime() {
@@ -49,7 +51,6 @@ JSVMRuntime::~JSVMRuntime()
     OH_JSVM_DestroyEnv(env);
     OH_JSVM_CloseVMScope(vm, vmScope);
     OH_JSVM_DestroyVM(vm);
-    FreeCodeCache();
 }
 
 Value JSVMRuntime::evaluateJavaScript(const std::shared_ptr<const Buffer> &buffer, const std::string &sourceURL)
@@ -58,40 +59,34 @@ Value JSVMRuntime::evaluateJavaScript(const std::shared_ptr<const Buffer> &buffe
     JSVMUtil::HandleScopeWrapper scope(env);
 
     // 编译js代码
-    const char *src = reinterpret_cast<const char *>(buffer->data());
-    JSVM_Value jsSrc = nullptr;
-    OH_JSVM_CreateStringUtf8(env, src, buffer->size(), &jsSrc);
-    bool findCache = false, cacheRejected = true;
-    size_t len = 0;
-    uint8_t *cache = nullptr;
-    JSVM_Script script = nullptr;
-    std::string name;
-    if( std::filesystem::is_regular_file(sourceURL) ){
-        name = cachePath + sourceURL;
-    }else{
-        name = cachePath/std::filesystem::path(sourceURL);
-    }
-    if (auto it = codeCache.find(name); it != codeCache.end()) {
-        findCache = true;
-        cache = it->second.first;
-        len = it->second.second;
-    }
-    CALL_JSVM_AND_THROW(OH_JSVM_CompileScript(env, jsSrc, cache, len, true, &cacheRejected, &script));
+    auto jsSrc = std::make_shared<JSVM_Value>();
+    OH_JSVM_CreateStringUtf8(env, reinterpret_cast<const char *>(buffer->data()), buffer->size(), jsSrc.get());
+    bool cacheRejected = true;
+    std::string name = std::filesystem::is_regular_file(sourceURL)
+      ? cachePath + sourceURL
+      : (cachePath/std::filesystem::path(sourceURL)).string();
+    auto cache = GetCodeCache(name);
+
+    // Memory leaks! OH_JSVM_ReleaseScript not available on NEXT-DB3
+    auto script = std::make_shared<JSVM_Script>();
+
+    CALL_JSVM_AND_THROW(OH_JSVM_CompileScript(env, *jsSrc, cache.empty() ? nullptr : cache.data(), cache.size(), true,
+      &cacheRejected, script.get()));
 
     // 执行js代码
-    JSVM_Value result = nullptr;
-    CALL_JSVM_AND_THROW(OH_JSVM_RunScript(env, script, &result));
+    auto result = std::make_shared<JSVM_Value>();
+    CALL_JSVM_AND_THROW(OH_JSVM_RunScript(env, *script, result.get()));
 
-    if (!findCache || cacheRejected) {
-      auto status = OH_JSVM_CreateCodeCache(
-          env, script, const_cast<const uint8_t**>(&cache), &len);
-      if (status == JSVM_OK) {
-        codeCache[name] = std::make_pair(cache, len);
-        SaveCodeCache(name, cache, len);
-      }
+    if (cache.empty() || cacheRejected) {
+      const uint8_t* data;
+      size_t len;
+      CALL_JSVM_AND_THROW(OH_JSVM_CreateCodeCache(env, *script, &data, &len));
+      // Memory leaks! OH_JSVM_ReleaseCache not available on NEXT-DB3
+      auto buffer = std::make_shared<std::vector<uint8_t>>(data, data + len);
+      UpdateCodeCache(name, *buffer);
     }
 
-    return JSVMConverter::JSVMToJsi(env, result);
+    return JSVMConverter::JSVMToJsi(env, *result);
 }
 
 std::shared_ptr<const PreparedJavaScript> JSVMRuntime::prepareJavaScript(
@@ -997,63 +992,61 @@ inline JSVM_Value JSVMRuntime::CallGlobalFunction(
   return result;
 }
 
-void JSVMRuntime::LoadCodeCache() {
-    if (!std::filesystem::exists(cachePath) && !std::filesystem::is_directory(cachePath)) {
-        LOG(ERROR) << "CODECACHE not exist";
-        return ;
-    }
-
-    // Load all cache
-   for (const auto& cacheFile : std::filesystem::recursive_directory_iterator(cachePath)) {
-        if (cacheFile.is_regular_file()) {
-            auto *file = std::fopen(cacheFile.path().string().c_str(), "rb");
-            std::fseek(file, 0, SEEK_END);
-            size_t size = std::ftell(file);
-            uint8_t *buffer = new uint8_t[size];
-            std::rewind(file);
-            std::fread(buffer, size, 1, file);
-            std::fclose(file);
-            std::string name = cacheFile.path();
-            LOG(INFO) << "LOAD CACHE:" << cacheFile.path().string().c_str()<<"  buff size ="<<size;
-            codeCache[name] = std::make_pair(buffer, size);
-        }
-    }
+std::vector<uint8_t> JSVMRuntime::GetCodeCache(const std::string &sourceURL) {
+  return GetCodeCacheL2(sourceURL);
 }
 
-void JSVMRuntime::SaveCodeCache(const std::string &codeCachePath, uint8_t *cache, size_t len) {
-    LOG(INFO) << "Save CODECACHE";
-    std::filesystem::path cachePath(codeCachePath);
-
-    if (std::filesystem::exists(cachePath)) {
-        if (std::filesystem::is_regular_file(cachePath)) {
-            LOG(INFO) << "The codeCache Path is an existing file: " << codeCachePath ;
-        } else if (std::filesystem::is_directory(cachePath)) {
-            LOG(INFO)<< "The codeCache Path is an existing directory: " << codeCachePath;
-        } else {
-            LOG(WARNING)<< "The codeCache Path exists but is neither a file nor a directory.";
-        }
-    } else {
-        std::filesystem::path dir = cachePath.parent_path();
-        if (!dir.empty() && !std::filesystem::exists(dir)) {
-            LOG(INFO) << "The codeCache Path contains directories. Creating directories..." ;
-            std::filesystem::create_directories(dir);
-        } else {
-            LOG(INFO) << "The codeCache Path does not contain any new directories.";
-        }
-         if (auto *file = std::fopen(codeCachePath.c_str(), "wb")) {
-            std::fwrite(cache, 1, len, file);
-            std::fclose(file);
-            LOG(INFO) << "The codeCachePath create file success" << codeCachePath;
-        } else {
-            LOG(ERROR) << "Cannot save codeCache file: " << codeCachePath;
-        }
-    }
+void JSVMRuntime::UpdateCodeCache(const std::string &sourceURL, const std::vector<uint8_t>& buffer) {
+  UpdateCodeCacheL1(sourceURL, buffer);
 }
 
-void JSVMRuntime::FreeCodeCache() {
-    for (auto it = codeCache.begin(); it != codeCache.end(); ++it) {
-        delete [](it->second.first);
+std::vector<uint8_t> JSVMRuntime::GetCodeCacheL1(const std::string &sourceURL) {
+  try {
+    std::ifstream file(sourceURL, std::ifstream::binary);
+    file.seekg(0, std::ios::end);
+    auto size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<uint8_t> buffer(size);
+    file.read(reinterpret_cast<char*>(buffer.data()), size);
+    DLOG(INFO) << "L1 CACHE HIT: " << sourceURL << "; size = " << size;
+    UpdateCodeCacheL2(sourceURL, buffer);
+    return buffer;
+  } catch (...) {
+    DLOG(INFO) << "L1 CACHE MISS: " << sourceURL;
+    return std::vector<uint8_t>{};
+  }
+}
+
+void JSVMRuntime::UpdateCodeCacheL1(const std::string &sourceURL, const std::vector<uint8_t>& buffer) {
+  DLOG(INFO) << "Update L1 CACHE: " << sourceURL << "; size = " << buffer.size();
+
+  if (auto *file = std::fopen(sourceURL.c_str(), "wb")) {
+    std::fwrite(buffer.data(), 1, buffer.size(), file);
+    std::fclose(file);
+    DLOG(INFO) << "Updating L1 CACHE success: " << sourceURL;
+    UpdateCodeCacheL2(sourceURL, buffer);
+  } else {
+    LOG(ERROR) << "Updating L1 CACHE failed: " << sourceURL;
+  }
+}
+
+std::vector<uint8_t> JSVMRuntime::GetCodeCacheL2(const std::string &sourceURL) {
+  {
+    std::lock_guard<std::mutex> lock(codeCacheMtx);
+    if (auto it = codeCacheL2.find(sourceURL); it != codeCacheL2.end()) {
+      DLOG(INFO) << "L2 CACHE HIT: " << sourceURL
+                 << "; size = " << it->second.size();
+      return it->second;
     }
+    DLOG(INFO) << "L2 CACHE MISS: " << sourceURL;
+  }
+  return GetCodeCacheL1(sourceURL);
+}
+
+void JSVMRuntime::UpdateCodeCacheL2(const std::string &sourceURL, const std::vector<uint8_t>& buffer) {
+  std::lock_guard<std::mutex> lock(codeCacheMtx);
+  DLOG(INFO) << "Update L2 CACHE: " << sourceURL << "; size = " << buffer.size();
+  codeCacheL2[sourceURL] = buffer;
 }
 
 void JSVMRuntime::ThrowError() {
