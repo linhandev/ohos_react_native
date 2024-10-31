@@ -290,7 +290,7 @@ export class RNInstancesCoordinator {
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
-    this.displayMetricsManager?.updateDisplayMetrics()
+    this.displayMetricsManager?.updateDisplayMetrics( systemConfiguration.fontSizeScale )
     this.rnInstanceRegistry?.forEach((rnInstance) => {
       rnInstance.onConfigurationUpdate(systemConfiguration)
     })
