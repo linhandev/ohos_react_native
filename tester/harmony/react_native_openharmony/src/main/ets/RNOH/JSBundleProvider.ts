@@ -124,13 +124,11 @@ export class MetroJSBundleProvider extends JSBundleProvider {
   setBundleUrl() {
     preferences.getPreferences(this.UIAbilityContext, "devSettings", (err: BusinessError, val: preferences.Preferences) => {
       if (err) {
-        console.error("Failed to get 'devSettings' preferences. code =" + err.code + ", message =" + err.message);
         this.bundleUrl = DEFAULT_BUNDLE_URL
         return;
       }
       val.get('devHostAndPortAddress', DEFAULT_ADDRESS, (err: BusinessError, val: preferences.ValueType) => {
         if (err) {
-          console.error("Failed to get value of 'devHostAndPortAddress'. code =" + err.code + ", message =" + err.message);
           this.bundleUrl = DEFAULT_BUNDLE_URL
           return;
         }
@@ -149,7 +147,6 @@ export class MetroJSBundleProvider extends JSBundleProvider {
       urlObj = urlUtils.URL.parseURL(this.getURL());
     } catch (err) {
       urlObj = urlUtils.URL.parseURL(DEFAULT_BUNDLE_URL);
-      console.error("Failed to get bundle url. code =" + err.code + ", message =" + err.message);
     }
     const pathParts = urlObj.pathname.split('/');
     const bundleEntry = pathParts[pathParts.length - 1];
