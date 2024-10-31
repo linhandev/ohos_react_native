@@ -545,26 +545,27 @@ RNInstanceCAPI::findComponentInstanceTagById(const std::string& id) {
 }
 
 void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
-  if(!payload.isNull()){
-    folly::dynamic screenPhysicalPixels = payload["screenPhysicalPixels"];
-    if(!screenPhysicalPixels.isNull()){
-      if(screenPhysicalPixels["densityDpi"].isDouble()){
-        float densityDpi = screenPhysicalPixels["densityDpi"].asDouble();
-        if(densityDpi != m_densityDpi){
-          m_densityDpi = densityDpi;
-          if(screenPhysicalPixels["scale"].isDouble() &&
-            screenPhysicalPixels["fontScale"].isDouble()){
-            float scale = screenPhysicalPixels["scale"].asDouble();
-            float fontScale = screenPhysicalPixels["fontScale"].asDouble();
-            auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
-            auto textMeasurer = m_contextContainer->
-               at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
-            if (textMeasurer) {
-              textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi, halfLeading);
-            }
-          }
-        } 
-      }
+  if(payload.isNull()){
+    return;
+  }
+  folly::dynamic screenPhysicalPixels = payload["screenPhysicalPixels"];
+  if(screenPhysicalPixels.isNull() || !screenPhysicalPixels["densityDpi"].isDouble()){
+    return;
+  }
+  float densityDpi = screenPhysicalPixels["densityDpi"].asDouble();
+  if(densityDpi == m_densityDpi){
+    return;
+  }
+  m_densityDpi = densityDpi;
+  if(screenPhysicalPixels["scale"].isDouble() &&
+    screenPhysicalPixels["fontScale"].isDouble()){
+    float scale = screenPhysicalPixels["scale"].asDouble();
+    float fontScale = screenPhysicalPixels["fontScale"].asDouble();
+    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
+    auto textMeasurer = m_contextContainer->
+       at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
+    if (textMeasurer) {
+      textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi, halfLeading);
     }
   }
 }
