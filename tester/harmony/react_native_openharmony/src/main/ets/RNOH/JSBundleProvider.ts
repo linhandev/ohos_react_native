@@ -5,6 +5,10 @@ import { RNOHLogger } from './RNOHLogger';
 import urlUtils from '@ohos.url';
 import { fetchDataFromUrl } from './HttpRequestHelper';
 import fs from '@ohos.file.fs';
+import type common from '@ohos.app.ability.common'
+import { preferences } from '@kit.ArkData'
+import { BusinessError } from '@kit.BasicServicesKit';
+import { RNOHCoreContext } from "./RNOHContext"
 
 export interface HotReloadConfig {
   bundleEntry: string,
@@ -93,26 +97,60 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
   }
 }
 
-
+const DEFAULT_ADDRESS = 'localhost:8081'
+const DEFAULT_BUNDLE_URL = `http://${DEFAULT_ADDRESS}/index.bundle?platform=harmony&dev=true&minify=false`
 export class MetroJSBundleProvider extends JSBundleProvider {
   static fromServerIp(ip: string, port: number = 8081, appKeys: string[] = []): MetroJSBundleProvider {
     return new MetroJSBundleProvider(`http://${ip}:${port}/index.bundle?platform=harmony&dev=true&minify=false`, appKeys)
   }
 
-  constructor(private bundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false", private appKeys: string[] = []) {
+  private UIAbilityContext: common.UIAbilityContext
+
+  constructor(private bundleUrl: string = DEFAULT_BUNDLE_URL, private appKeys: string[] = []) {
     super()
+    this.setConText()
+  }
+
+  public setConText() {
+    const rnohCoreContext: RNOHCoreContext = AppStorage.get("RNOHCoreContext")
+    this.UIAbilityContext = rnohCoreContext.uiAbilityContext
+    this.setBundleUrl()
   }
 
   getAppKeys() {
     return this.appKeys
   }
 
-  getURL() {
+  setBundleUrl() {
+    preferences.getPreferences(this.UIAbilityContext, "devSettings", (err: BusinessError, val: preferences.Preferences) => {
+      if (err) {
+        console.error("Failed to get 'devSettings' preferences. code =" + err.code + ", message =" + err.message);
+        this.bundleUrl = DEFAULT_BUNDLE_URL
+        return;
+      }
+      val.get('devHostAndPortAddress', DEFAULT_ADDRESS, (err: BusinessError, val: preferences.ValueType) => {
+        if (err) {
+          console.error("Failed to get value of 'devHostAndPortAddress'. code =" + err.code + ", message =" + err.message);
+          this.bundleUrl = DEFAULT_BUNDLE_URL
+          return;
+        }
+        this.bundleUrl = `http://${val.toString() || DEFAULT_ADDRESS}/index.bundle?platform=harmony&dev=true&minify=false`
+      })
+    })
+  }
+
+  getURL(): string {
     return this.bundleUrl
   }
 
   getHotReloadConfig(): HotReloadConfig | null {
-    const urlObj = urlUtils.URL.parseURL(this.getURL());
+    let urlObj: urlUtils.URL = null;
+    try {
+      urlObj = urlUtils.URL.parseURL(this.getURL());
+    } catch (err) {
+      urlObj = urlUtils.URL.parseURL(DEFAULT_BUNDLE_URL);
+      console.error("Failed to get bundle url. code =" + err.code + ", message =" + err.message);
+    }
     const pathParts = urlObj.pathname.split('/');
     const bundleEntry = pathParts[pathParts.length - 1];
     const port = urlObj.port ?? 8081;

@@ -1,6 +1,6 @@
 import { RNOHLogger } from './RNOHLogger';
 import type { DevToolsController } from "./DevToolsController"
-import type { DevMenu } from "./DevMenu"
+// import type { DevMenu } from "./DevMenu"
 import { ReconnectingWebSocket } from './ReconnectingWebSocket';
 
 export interface JSPackagerClientConfig {
@@ -12,7 +12,7 @@ export class JSPackagerClient {
   private webSocket: ReconnectingWebSocket;
   private logger: RNOHLogger;
 
-  constructor(logger: RNOHLogger, private devToolsController: DevToolsController, private devMenu: DevMenu) {
+  constructor(logger: RNOHLogger, private devToolsController: DevToolsController, private devMenu) {
     this.logger = logger.clone("JSPackagerClient");
   }
 
