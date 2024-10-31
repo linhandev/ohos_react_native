@@ -5,6 +5,7 @@ import { ShakeDetector } from './ShakeDetector';
 import type common from '@ohos.app.ability.common';
 import { ComponentContent, PromptAction } from '@kit.ArkUI';
 import SettingsPageDialog, { SettingsPageParams } from './SettingsPageDialog'
+import { DevMenu as DevMenuClass } from './types'
 
 interface AlertDialogButtonOptions {
   value: string,
@@ -63,7 +64,7 @@ class SettingDialog {
 /**
  * @api
  */
-export class DevMenu {
+export class DevMenu implements DevMenuClass {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
   private logger: RNOHLogger

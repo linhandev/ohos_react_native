@@ -73,3 +73,8 @@ export interface InspectorInstance {
   getPages(): InspectorPage[]
   connect(pageId: InspectorPageId, remote: InspectorRemoteConnection): InspectorLocalConnection
 }
+
+export interface DevMenu {
+  addMenuItem: (title: string) => void;
+  show: () => void;
+}
