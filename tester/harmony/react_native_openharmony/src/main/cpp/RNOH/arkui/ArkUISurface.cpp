@@ -1,4 +1,4 @@
-#include "XComponentSurface.h"
+#include "ArkUISurface.h"
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
 #include "ArkUINodeRegistry.h"
@@ -13,42 +13,6 @@ namespace rnoh {
 using facebook::react::Scheduler;
 using facebook::react::SurfaceHandler;
 using facebook::react::SurfaceId;
-
-void maybeAttachRootNode(
-    OH_NativeXComponent* nativeXComponent,
-    ComponentInstance& rootView) {
-  if (nativeXComponent != nullptr) {
-   DLOG(INFO)
-       << "Attaching native root node to nativeXComponent for surface with id: "
-       << rootView.getTag();
-#ifdef C_API_ARCH
-    auto result = OH_NativeXComponent_AttachNativeRootNode(
-        nativeXComponent,
-        rootView.getLocalRootArkUINode().getArkUINodeHandle());
-    if (result == ARKUI_ERROR_CODE_NO_ERROR) {
-      HarmonyReactMarker::logMarker(
-          HarmonyReactMarker::HarmonyReactMarkerId::CONTENT_APPEARED,
-          rootView.getTag());
-    } else {
-      LOG(ERROR) << "Failed to attach native root node to nativeXComponent for "
-                    "surface with id: "
-                 << rootView.getTag();
-    }
-#endif
-  }
-}
-
-void maybeDetachRootNode(
-    OH_NativeXComponent* nativeXComponent,
-    ComponentInstance& /* rootView */) {
-  if (nativeXComponent != nullptr) {
-#ifdef C_API_ARCH
-    // NOTE: this is noop, because detaching a destroyed XComponent is
-    // incorrect, and we're not notified when it's destroyed. We may want to
-    // detach it from `RNSurface` in the future.
-#endif
-  }
-}
 
 class SurfaceTouchEventHandler : public TouchEventHandler,
                                  public ArkTSMessageHub::Observer {
@@ -102,7 +66,7 @@ class SurfaceTouchEventHandler : public TouchEventHandler,
   }
 };
 
-XComponentSurface::XComponentSurface(
+ArkUISurface::ArkUISurface(
     TaskExecutor::Shared taskExecutor,
     std::shared_ptr<Scheduler> scheduler,
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
@@ -130,26 +94,26 @@ XComponentSurface::XComponentSurface(
       m_rootView, std::move(arkTSMessageHub), rnInstanceId);
 }
 
-XComponentSurface::XComponentSurface(XComponentSurface&& other) noexcept
+ArkUISurface::ArkUISurface(ArkUISurface&& other) noexcept
     : m_surfaceId(other.m_surfaceId),
       m_scheduler(std::move(other.m_scheduler)),
       m_taskExecutor(std::move(other.m_taskExecutor)),
-      m_nativeXComponent(other.m_nativeXComponent),
+      m_nodeContentHandle(std::move(other.m_nodeContentHandle)),
       m_rootView(std::move(other.m_rootView)),
       m_componentInstanceRegistry(std::move(other.m_componentInstanceRegistry)),
       m_surfaceHandler(std::move(other.m_surfaceHandler)),
       m_touchEventHandler(std::move(other.m_touchEventHandler)) {
   m_threadGuard.assertThread();
-  other.m_nativeXComponent = nullptr;
+  other.m_nodeContentHandle.reset();
 }
 
-XComponentSurface& XComponentSurface::operator=(
-    XComponentSurface&& other) noexcept {
+ArkUISurface& ArkUISurface::operator=(
+    ArkUISurface&& other) noexcept {
   m_threadGuard.assertThread();
   std::swap(m_taskExecutor, other.m_taskExecutor);
   std::swap(m_surfaceId, other.m_surfaceId);
   std::swap(m_scheduler, other.m_scheduler);
-  std::swap(m_nativeXComponent, other.m_nativeXComponent);
+  std::swap(m_nodeContentHandle, other.m_nodeContentHandle);
   std::swap(m_rootView, other.m_rootView);
   std::swap(m_componentInstanceRegistry, other.m_componentInstanceRegistry);
   std::swap(m_surfaceHandler, other.m_surfaceHandler);
@@ -157,7 +121,7 @@ XComponentSurface& XComponentSurface::operator=(
   return *this;
 }
 
-XComponentSurface::~XComponentSurface() noexcept {
+ArkUISurface::~ArkUISurface() noexcept {
  if (m_surfaceHandler.getStatus() == SurfaceHandler::Status::Running) {
     LOG(WARNING) << "Tried to unregister a running surface with id "
                  << m_surfaceId;
@@ -165,24 +129,35 @@ XComponentSurface::~XComponentSurface() noexcept {
   }
   m_scheduler->unregisterSurface(m_surfaceHandler);
   if (m_componentInstanceRegistry != nullptr && m_rootView != nullptr) {
-    // NOTE: we don't detach the view from XComponent here,
+    // NOTE: we don't detach the view from NodeContent here,
     // since the Surface must already be `.stop()`ed before it's `unregistered`
     m_componentInstanceRegistry->deleteByTag(m_rootView->getTag());
   }
 }
 
-void XComponentSurface::attachNativeXComponent(
-    OH_NativeXComponent* nativeXComponent) {
+void ArkUISurface::attachToNodeContent(NodeContentHandle nodeContentHandle) {
   m_threadGuard.assertThread();
-  if (nativeXComponent == m_nativeXComponent) {
-    return;
+  if (m_nodeContentHandle.has_value()) {
+    throw RNOHError(
+        "ArkUISurface: calling attachToNodeContent on an already attached Surface");
   }
-  maybeDetachRootNode(m_nativeXComponent, *m_rootView);
-  m_nativeXComponent = nativeXComponent;
-  maybeAttachRootNode(nativeXComponent, *m_rootView);
+  m_nodeContentHandle = nodeContentHandle;
+  m_nodeContentHandle.value().addNode(m_rootView->getLocalRootArkUINode());
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CONTENT_APPEARED,
+      m_rootView->getTag());
 }
 
-void XComponentSurface::updateConstraints(
+void ArkUISurface::detachFromNodeContent() {
+  if (!m_nodeContentHandle.has_value()) {
+    throw RNOHError(
+        "ArkUISurface: calling detachFromNodeContent on an already detached Surface");
+  }
+  m_nodeContentHandle.value().removeNode(m_rootView->getLocalRootArkUINode());
+  m_nodeContentHandle.reset();
+}
+
+void ArkUISurface::updateConstraints(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -204,7 +179,7 @@ void XComponentSurface::updateConstraints(
   m_surfaceHandler.constraintLayout(layoutConstraints, layoutContext);
 }
 
-facebook::react::Size XComponentSurface::measure(
+facebook::react::Size ArkUISurface::measure(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -227,7 +202,7 @@ facebook::react::Size XComponentSurface::measure(
   return m_surfaceHandler.measure(layoutConstraints, layoutContext);
 }
 
-void XComponentSurface::start(
+void ArkUISurface::start(
     float minWidth,
     float minHeight,
     float maxWidth,
@@ -255,12 +230,12 @@ void XComponentSurface::start(
   mountingCoordinator->setMountingOverrideDelegate(animationDriver);
 }
 
-void XComponentSurface::setProps(folly::dynamic const& props) {
+void ArkUISurface::setProps(folly::dynamic const& props) {
   m_threadGuard.assertThread();
   m_surfaceHandler.setProps(props);
 }
 
-void XComponentSurface::stop(std::function<void()> onStop) {
+void ArkUISurface::stop(std::function<void()> onStop) {
     m_threadGuard.assertThread();
             m_taskExecutor->runTask(
       TaskThread::JS,
@@ -278,20 +253,20 @@ void XComponentSurface::stop(std::function<void()> onStop) {
         taskExecutor->runTask(
             TaskThread::MAIN,
             [onStop = std::move(onStop),
-             // moving self here releases XComponentSurface on the main thread
+             // moving self here releases ArkUISurface on the main thread
              self = std::move(self)
 
         ] { onStop(); });
       });
 }
 
-void XComponentSurface::setDisplayMode(
+void ArkUISurface::setDisplayMode(
     facebook::react::DisplayMode displayMode) {
   m_threadGuard.assertThread();
   m_surfaceHandler.setDisplayMode(displayMode);
 }
 
-Surface::LayoutContext XComponentSurface::getLayoutContext() {
+Surface::LayoutContext ArkUISurface::getLayoutContext() {
   m_threadGuard.assertThread();
   return Surface::LayoutContext::from(m_surfaceHandler.getLayoutContext());
 }
