@@ -1,8 +1,8 @@
 #pragma once
 
-#include <unordered_map>
-
+#include <glog/logging.h>
 #include <react/renderer/mounting/ShadowView.h>
+#include <unordered_map>
 
 namespace rnoh {
 
