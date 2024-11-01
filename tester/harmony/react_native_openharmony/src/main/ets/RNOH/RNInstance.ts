@@ -787,7 +787,7 @@ export class RNInstanceImpl implements RNInstance {
         jsBundleUrl: bundleURL,
         appKeys: jsBundleProvider.getAppKeys()
       })
-      this.workerThread?.postMessage("JS_BUNDLE_EXECUTION_FINISH", { rnInstanceId: this.id })
+      this.workerThread?.postMessage("JS_BUNDLE_EXECUTION_FINISH", { rnInstanceId: this.id, bundleURL })
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL)
       if (err instanceof JSBundleProviderError) {

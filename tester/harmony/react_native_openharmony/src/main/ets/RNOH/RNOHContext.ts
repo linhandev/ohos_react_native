@@ -251,6 +251,8 @@ export interface AnyThreadRNInstance extends Partial<RNInstance> {
   getTurboModule<T>(name: string): T;
 
   getAssetsDest(): string;
+
+  getInitialBundleUrl(): string | undefined
 }
 
 /**
