@@ -982,7 +982,7 @@ rnInstancesCoordinator?.onNewWant(want: Want, launchParam: AbilityConstant.Launc
 
 | 参数名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| fontSizeScale | number \| undefined | 是 | 字体大小缩放比例。 |
+| fontSizeScale | number \| undefined | 是 | 字体大小缩放比例，值为 1 的时候为正常大小字体，小于1缩小，大于 1 放大。 |
 | logger | RNOHLogger | 是 | 用于打印日志。 |
 | uiAbilityContext | [UIAbilityContext](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-inner-application-uiabilitycontext-V5) | 是 | 使用 React Native 的 Ability 的上下文信息。 |
 | rnohWorkerScriptUrl | string | 否 | 部分TurboModule需要启动Worker线程才可以正常启用，需要设置该属性，启用对应 name 的 `RNInstance` 的 Worker 线程。 |
