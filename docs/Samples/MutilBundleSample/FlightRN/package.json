@@ -15,8 +15,7 @@
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.72.5",
-    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.72.38.tgz"
+    "react-native": "0.72.5"
   },
   "devDependencies": {
     "crypto-js": "^4.2.0",
@@ -35,13 +34,6 @@
     "prettier": "^2.4.1",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4"
-  },
-  "overrides": {
-    "@react-native-community/cli": "11.3.6",
-    "@react-native/codegen": "0.74.0"
-  },
-  "resolutions": {
-    "@react-native-community/cli": "11.3.6"
   },
   "engines": {
     "node": ">=16"
