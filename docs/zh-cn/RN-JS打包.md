@@ -11,15 +11,15 @@
 
 - `react-native-harmony.tgz` 中包含了适配 HarmonyOS 的 Metro 打包配置项，这是至关重要的，能让工程在打包的过程中识别 HarmonyOS 平台，同时按照配置的路径优先寻找项目中已进行 HarmonyOS 化适配的依赖文件去加载打包。若您已在您的 JS 工程中依赖 `react-native-harmony.tgz`，那么在编译构建 JS 工程时，工程内就会带有适配 HarmonyOS 的 Metro 打包配置项文件。
 
-  文件路径：`node_modules/react-native-harmony/metro.config.js`。
+  文件路径：`node_modules/@react-native-oh/react-native-harmony/metro.config.js`。
   
-- 要想应用 HarmonyOS Metro 打包配置项，需要在 JS 工程最外层的 `metro.config.js` 文件中引入 `react-native-harmony/metro.config.js` 配置文件，自定义修改 `config` 的 `transformer` 配置选项，通过 Metro 自带的 `mergeConfig` 方法，融合 HarmonyOS 打包配置项。
+- 要想应用 HarmonyOS Metro 打包配置项，需要在 JS 工程最外层的 `metro.config.js` 文件中引入 `@react-native-oh/react-native-harmony/metro.config.js` 配置文件，自定义修改 `config` 的 `transformer` 配置选项，通过 Metro 自带的 `mergeConfig` 方法，融合 HarmonyOS 打包配置项。
   
   ```javascript
   // AwesomeProject/metro.config.js
   
   const {mergeConfig, getDefaultConfig} = require('@react-native/metro-config');
-  const {createHarmonyMetroConfig} = require('react-native-harmony/metro.config');
+  const {createHarmonyMetroConfig} = require('@react-native-oh/react-native-harmony/metro.config');
   
   /**
    * @type {import("metro-config").ConfigT}
@@ -38,13 +38,13 @@
   module.exports = mergeConfig(
     getDefaultConfig(__dirname),
     createHarmonyMetroConfig({
-      reactNativeHarmonyPackageName: 'react-native-harmony',
+      reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
     }),
     config,
   );
   ```
 
-- `react-native-harmony-cli.tgz` 中包含了 HarmonyOS 打包命令，其文件路径为 `node_modules/@rnoh/react-native-harmony-cli/dist/commands/bundle-harmony.js`。
+- `react-native-harmony-cli.tgz` 中包含了 HarmonyOS 打包命令，其文件路径为 `node_modules/@react-native-oh/react-native-harmony-cli/dist/commands/bundle-harmony.js`。
   
   HarmonyOS 打包命令示例如下：
   
@@ -268,7 +268,7 @@ module.exports = {
      // SampleProject/MainProject/basic.config.js
      
      const {mergeConfig, getDefaultConfig} = require('@react-native/metro-config');
-     const {createHarmonyMetroConfig} = require('react-native-harmony/metro.config');
+     const {createHarmonyMetroConfig} = require('@react-native-oh/react-native-harmony/metro.config');
      const path = require('path');
      const projectRootPath = path.join(__dirname);
      const moduleId = require('./build/multibundle/moduleId');
@@ -283,7 +283,7 @@ module.exports = {
      };
      
      module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
-         reactNativeHarmonyPackageName: 'react-native-harmony',
+         reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
      }), config);
      ```
 
@@ -293,7 +293,7 @@ module.exports = {
      // SampleProject/MainProject/homepage.config.js
      
      const {mergeConfig, getDefaultConfig} = require('@react-native/metro-config');
-     const {createHarmonyMetroConfig} = require('react-native-harmony/metro.config');
+     const {createHarmonyMetroConfig} = require('@react-native-oh/react-native-harmony/metro.config');
      const path = require('path');
      const projectRootPath = path.join(__dirname);
      const moduleId = require('./build/multibundle/moduleId');
@@ -311,7 +311,7 @@ module.exports = {
      };
      
      module.exports = mergeConfig(getDefaultConfig(__dirname), createHarmonyMetroConfig({
-         reactNativeHarmonyPackageName: 'react-native-harmony',
+         reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
      }), config);
      ```
 
