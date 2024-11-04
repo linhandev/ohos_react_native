@@ -9,7 +9,7 @@ import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
 import type { HttpClient } from '../HttpClient/HttpClient';
 import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
-import type { DevMenu } from './DevMenu';
+import type { DevMenu, InternalDevMenu } from './DevMenu';
 import type { DevToolsController } from './DevToolsController';
 import type { DisplayMetrics } from './types';
 import type { RNInstanceOptions } from './RNInstance';
@@ -32,7 +32,7 @@ type RNOHCoreContextDependencies = {
   isDebugModeEnabled: boolean;
   defaultBackPressHandler: () => void;
   devToolsController: DevToolsController;
-  devMenu: DevMenu;
+  devMenu: InternalDevMenu;
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
   launchUri?: string;
   erasedWorkerTaskRunner: unknown;
@@ -151,6 +151,15 @@ export class RNOHCoreContext {
 
   protected get erasedWorkerTaskRunner() {
     return this._rnohCoreContextDeps.erasedWorkerTaskRunner;
+  }
+}
+
+/**
+ * @internal
+ */
+export class InternalRNOHCoreContext extends RNOHCoreContext {
+  onDestroy() {
+    this._rnohCoreContextDeps.devMenu.onDestroy()
   }
 }
 

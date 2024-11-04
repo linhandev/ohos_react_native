@@ -3,11 +3,11 @@ import window from '@ohos.window';
 import { RNOHLogger } from "./RNOHLogger"
 import { NapiBridge } from './NapiBridge';
 import { RNInstanceRegistry } from "./RNInstanceRegistry"
-import { RNOHContext, RNOHCoreContext } from "./RNOHContext"
+import { RNOHContext, RNOHCoreContext, InternalRNOHCoreContext } from "./RNOHContext"
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
-import { DevMenu } from "./DevMenu"
+import { InternalDevMenu } from "./DevMenu"
 import { JSPackagerClientConfig } from "./JSPackagerClient"
 import { RNOHError, RNOHErrorEventEmitter } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
@@ -116,7 +116,7 @@ export class RNInstancesCoordinator {
           getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
           getMetadata,
         });
-    const devMenu = new DevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
+    const devMenu = new InternalDevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
       devToolsController,
@@ -146,13 +146,13 @@ export class RNInstancesCoordinator {
   private rawLogger: RNOHLogger;
   private logger: RNOHLogger;
   private rnInstanceRegistry: RNInstanceRegistry
-  private rnohCoreContext: RNOHCoreContext;
+  private rnohCoreContext: InternalRNOHCoreContext;
   private napiBridge: NapiBridge;
   private displayMetricsManager: DisplayMetricsManager;
   private isDebugModeEnabled: boolean
   private uiAbilityContext: common.UIAbilityContext
   private devToolsController: DevToolsController
-  private devMenu: DevMenu
+  private devMenu: InternalDevMenu
   private jsPackagerClient: JSPackagerClient
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
@@ -168,7 +168,7 @@ export class RNInstancesCoordinator {
     envId: number,
     uiAbilityContext: common.UIAbilityContext,
     devToolsController: DevToolsController,
-    devMenu: DevMenu,
+    devMenu: InternalDevMenu,
     jsPackagerClient: JSPackagerClient,
     defaultBackPressHandler: () => void,
     globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
@@ -211,7 +211,7 @@ export class RNInstancesCoordinator {
       this.uiAbilityContext.resourceManager,
       workerThreadPromise
     )
-    this.rnohCoreContext = new RNOHCoreContext({
+    this.rnohCoreContext = new InternalRNOHCoreContext({
       reactNativeVersion: "0.75.4",
       safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
       logger: this.rawLogger,
@@ -236,6 +236,7 @@ export class RNInstancesCoordinator {
       instance.onDestroy()
     })
     this.workerTaskRunner.onDestroy()
+    this.rnohCoreContext.onDestroy()
     stopTracing()
   }
 
@@ -243,7 +244,7 @@ export class RNInstancesCoordinator {
     return this.isDebugModeEnabled ? "DEBUG" : "RELEASE"
   }
 
-  public getRNOHCoreContext() {
+  public getRNOHCoreContext(): RNOHCoreContext {
     return this.rnohCoreContext
   }
 

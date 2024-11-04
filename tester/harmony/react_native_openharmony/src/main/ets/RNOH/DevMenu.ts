@@ -2,6 +2,7 @@ import window from '@ohos.window';
 import { DevToolsController } from './DevToolsController';
 import { RNOHLogger } from './RNOHLogger';
 import { ShakeDetector } from './ShakeDetector';
+import { RNOHError } from "./RNOHError"
 import type common from '@ohos.app.ability.common';
 
 
@@ -21,15 +22,31 @@ export class DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
   private logger: RNOHLogger
-  private shakeDetector: ShakeDetector
+  protected shakeDetector: ShakeDetector | null = null
 
-  constructor(private devToolsController: DevToolsController, private uiAbilityContext: common.UIAbilityContext, logger: RNOHLogger) {
+  /**
+   * @internal
+   */
+  constructor(private devToolsController: DevToolsController,
+    private uiAbilityContext: common.UIAbilityContext, logger: RNOHLogger) {
     this.logger = logger.clone("DevMenu")
+    const localLogger = this.logger.clone("constructor")
     this.createDevMenuDefaultButtons()
-    this.shakeDetector = new ShakeDetector(this.show.bind(this))
+    try {
+      this.shakeDetector = ShakeDetector.from(this.show.bind(this))
+    } catch (err) {
+      if (err instanceof RNOHError) {
+        localLogger.error(new RNOHError({
+          whatHappened: "Shake to open Dev Menu is disabled. " + err.getMessage(),
+          howCanItBeFixed: err.getSuggestions()
+        }))
+      } else {
+        throw err;
+      }
+    }
   }
 
-  public addMenuItem(title: string): void {
+  addMenuItem(title: string): void {
     this.devMenuButtons.push({
       value: title,
       action: () => {
@@ -99,6 +116,15 @@ export class DevMenu {
 
   private hideDevMenuDialog() {
     this.devMenuDialogVisible = false;
-    this.shakeDetector.resetDetector();
+    this.shakeDetector?.resetDetector();
+  }
+}
+
+/**
+ * @internal
+ */
+export class InternalDevMenu extends DevMenu {
+  onDestroy() {
+    this.shakeDetector?.onDestroy()
   }
 }
