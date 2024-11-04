@@ -1,4 +1,5 @@
 #include "ArkUISurface.h"
+#include <arkui/ui_input_event.h>
 #include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <react/renderer/components/root/RootComponentDescriptor.h>
@@ -42,6 +43,11 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
 
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     auto action = OH_ArkUI_UIInputEvent_GetAction(event);
+    if (action == UI_TOUCH_EVENT_ACTION_DOWN) {
+      // NOTE: DOWN is handled in `onTouchIntercept` to allow for ignoring
+      // touches for which a target was not found
+      return;
+    }
     auto actionName = "UNKNOWN";
     switch (action) {
       case UI_TOUCH_EVENT_ACTION_UP:
@@ -60,6 +66,16 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
     facebook::react::SystraceSection s(
         (std::string("#RNOH::ArkUISurface::onTouchEvent::") + actionName)
             .c_str());
+    m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
+  }
+
+  void onTouchIntercept(ArkUI_UIInputEvent* event) override {
+    auto action = OH_ArkUI_UIInputEvent_GetAction(event);
+    if (action != UI_TOUCH_EVENT_ACTION_DOWN) {
+      return;
+    }
+    facebook::react::SystraceSection s(
+        "#RNOH::ArkUISurface::onTouchEvent::DOWN");
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
 

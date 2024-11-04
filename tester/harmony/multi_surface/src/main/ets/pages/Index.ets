@@ -40,6 +40,16 @@ struct Index {
             .margin(12)
           }
         }, (appKeyAndTitle: [string, string]) => appKeyAndTitle[0])
+        ListItem() {
+          Navigator({target: "pages/TransparentPage", type: NavigationType.Push}) {
+            Text("Go to Transparent Example")
+              .fontColor(Color.Blue)
+              .width('100%')
+              .textAlign(TextAlign.Center)
+          }
+          .params({appKey: 'transparent'})
+          .margin(12)
+        }
       }
       .height('100%')
       .width('100%')

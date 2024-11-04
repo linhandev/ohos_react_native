@@ -229,5 +229,6 @@ export struct RNSurface {
       this.surfaceOffsetX = newArea.globalPosition.x as number
       this.surfaceOffsetY = newArea.globalPosition.y as number
     })
+    .hitTestBehavior(HitTestMode.Transparent)
   }
 }

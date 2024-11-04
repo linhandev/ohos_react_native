@@ -19,15 +19,6 @@
 
 namespace rnoh {
 
-namespace {
-enum class ArkuiHitTestMode : int32_t {
-  DEFAULT,
-  BLOCK,
-  TRANSPARENT,
-  NONE,
-};
-} // namespace
-
 class ArkUINode;
 
 /**
@@ -98,6 +89,7 @@ class ArkUINode {
       float const shadowOpacity,
       float const shadowRadius,
       facebook::react::Float pointScaleFactor);
+  virtual ArkUINode& setHitTestMode(ArkUI_HitTestMode hitTestMode);
   virtual ArkUINode& setHitTestMode(
       facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setAccessibilityActions(

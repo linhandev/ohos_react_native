@@ -25,3 +25,5 @@ export * from './SimpleFlatListExample';
 export * from './SimpleSectionListExample';
 export * from './SimpleVirtualizedListExample';
 export * from './RemoveClippedSubviewsRTLExample';
+export * from './TestTextsExample';
+export * from './TransparentExample';

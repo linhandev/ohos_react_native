@@ -225,6 +225,7 @@ export struct RNApp {
       }
     }
     .expandSafeArea([SafeAreaType.KEYBOARD])
+    .hitTestBehavior(HitTestMode.Transparent)
     .width("100%")
     .height("100%")
   }

@@ -263,8 +263,13 @@ void TouchEventDispatcher::dispatchTouchEvent(
   }
 
   if (changedTouches.empty()) {
+    // NOTE: since there are no changed touches in this event,
+    // we want to pass it to the native components covered by this one
+    OH_ArkUI_PointerEvent_SetInterceptHitTestMode(event, HitTestMode::HTM_NONE);
     return;
   }
+
+  OH_ArkUI_PointerEvent_SetStopPropagation(event, true);
 
   if (action == UI_TOUCH_EVENT_ACTION_MOVE) {
     touches = changedTouches;

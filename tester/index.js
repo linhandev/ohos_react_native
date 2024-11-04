@@ -17,8 +17,9 @@ import {
   TesterExample,
   TextScrollExample,
   TogglingComponentExample,
+  TextTestsExample,
+  TransparentExample,
 } from './examples';
-import {TextTestsExample} from './examples/TestTextsExample';
 import PerformanceMeasurement from './tests/Performance/PerformanceMeasurement';
 
 AppRegistry.setWrapperComponentProvider(appParams => {
@@ -36,7 +37,10 @@ ReactNativeFeatureFlags.shouldPressibilityUseW3CPointerEventsForHover = () =>
 AppRegistry.registerComponent(appName, () => App);
 
 AppRegistry.registerComponent('tester', () => TesterExample);
-AppRegistry.registerComponent('performance_measurement', () => PerformanceMeasurement);
+AppRegistry.registerComponent(
+  'performance_measurement',
+  () => PerformanceMeasurement,
+);
 AppRegistry.registerComponent('animations', () => AnimationsExample);
 AppRegistry.registerComponent('text_tests', () => TextTestsExample);
 AppRegistry.registerComponent('checkerboard', () => CheckerboardExample);
@@ -51,3 +55,4 @@ AppRegistry.registerComponent('text_scroll', () => TextScrollExample);
 AppRegistry.registerComponent('flat_list', () => FlatListVsScrollViewExample);
 AppRegistry.registerComponent('toggling', () => TogglingComponentExample);
 AppRegistry.registerComponent('sticky_headers', () => StickyHeadersExample);
+AppRegistry.registerComponent('transparent', () => TransparentExample);

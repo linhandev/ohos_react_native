@@ -341,21 +341,20 @@ ArkUINode& ArkUINode::setShadow(
   return *this;
 }
 
+ArkUINode& ArkUINode::setHitTestMode(ArkUI_HitTestMode hitTestMode) {
+  setAttribute(
+      NODE_HIT_TEST_BEHAVIOR, {{.i32 = static_cast<int32_t>(hitTestMode)}});
+  return *this;
+}
+
 ArkUINode& ArkUINode::setHitTestMode(
     facebook::react::PointerEventsMode const& pointerEvents) {
-  ArkuiHitTestMode hitTestMode =
+  ArkUI_HitTestMode hitTestMode =
       (pointerEvents == facebook::react::PointerEventsMode::None ||
        pointerEvents == facebook::react::PointerEventsMode::BoxNone)
-      ? ArkuiHitTestMode::NONE
-      : ArkuiHitTestMode::DEFAULT;
-  ArkUI_NumberValue hitTestModeValue[] = {
-      {.i32 = static_cast<int32_t>(hitTestMode)}};
-  ArkUI_AttributeItem hitTestModeItem = {
-      .value = hitTestModeValue,
-      .size = sizeof(hitTestModeValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_HIT_TEST_BEHAVIOR, &hitTestModeItem));
-  return *this;
+      ? ArkUI_HitTestMode::ARKUI_HIT_TEST_MODE_NONE
+      : ArkUI_HitTestMode::ARKUI_HIT_TEST_MODE_DEFAULT;
+  return setHitTestMode(hitTestMode);
 }
 
 ArkUINode& ArkUINode::setAccessibilityRole(std::string const& roleName) {

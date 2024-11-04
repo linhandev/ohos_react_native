@@ -26,5 +26,9 @@ class RootViewComponentInstance
   void onHoverIn() override;
   void onHoverOut() override;
   StackNode& getLocalRootArkUINode() override;
+
+  bool canHandleTouch() const override {
+    return false;
+  }
 };
 } // namespace rnoh
