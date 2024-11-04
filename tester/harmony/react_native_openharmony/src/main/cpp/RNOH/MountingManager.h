@@ -2,7 +2,6 @@
 
 #include <react/renderer/mounting/ShadowViewMutation.h>
 #include "RNOH/ComponentInstance.h"
-#include "RNOH/PreAllocationBuffer.h"
 
 namespace rnoh {
 
@@ -23,8 +22,6 @@ class MountingManager {
   using Weak = std::weak_ptr<MountingManager>;
 
   virtual ~MountingManager() noexcept = default;
-    
-  virtual PreAllocationBuffer::Shared getPreAllocationBuffer() = 0;
 
   virtual void willMount(MutationList const& mutations) = 0;
 

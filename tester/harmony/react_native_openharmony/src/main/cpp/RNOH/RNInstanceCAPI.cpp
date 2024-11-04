@@ -26,6 +26,7 @@
 #include "TaskExecutor/TaskExecutor.h"
 #include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
+#include <react/renderer/debug/SystraceSection.h>
 
 using namespace facebook;
 namespace rnoh {
@@ -177,8 +178,10 @@ void RNInstanceCAPI::initializeScheduler(
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       runtimeExecutor, m_contextContainer, this);
-     m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
-      m_mountingManager, taskExecutor, m_mountingManager->getPreAllocationBuffer());
+  m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
+      m_mountingManager,
+      this->taskExecutor,
+      m_componentInstancePreallocationRequestQueue);
   this->scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
   turboModuleProvider->setScheduler(this->scheduler);
@@ -353,34 +356,34 @@ void RNInstanceCAPI::callJSFunction(
 }
 
 void RNInstanceCAPI::onAnimationStarted() {
-  m_shouldRelayUITick.store(true);
+  facebook::react::SystraceSection s("RNInstanceCAPI::onAnimationStarted");
+  if (this->unsubscribeUITickListener != nullptr) {
+    return;
+  }
+  this->unsubscribeUITickListener =
+      m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
+        this->taskExecutor->runTask(
+            TaskThread::MAIN, [this, recentVSyncTimestamp]() {
+              this->onUITick(recentVSyncTimestamp);
+            });
+      });
 }
 
 void RNInstanceCAPI::onAllAnimationsComplete() {
-  m_shouldRelayUITick.store(false);
-}
-
-void RNInstanceCAPI::onUITick(long long timestamp) {
-  if (this->m_shouldRelayUITick.load() && this->scheduler != nullptr) {
-    this->scheduler->animationTick();
-  }
-  if( this->m_uiTicker != nullptr){
-    long long vsyncPeriod = 0;
-    auto ret = this->m_uiTicker->getVsyncPeriod(&vsyncPeriod);
-    if( ret != 0){
-        LOG(ERROR)<<"failed to get vsyncPeriod";
-        return;  
-    }
-    schedulerTransactionByVsync(timestamp, vsyncPeriod);   
-  }
-}
-
-void RNInstanceCAPI::schedulerTransactionByVsync(long long timestamp, long long period) {
-  auto schedulerDelegateCapi =
-      dynamic_cast<SchedulerDelegate *>(m_schedulerDelegate.get());
-  if (schedulerDelegateCapi != nullptr) {
-    schedulerDelegateCapi->schedulerDidViewAllocationByVsync(timestamp, period);
+  facebook::react::SystraceSection s(
+      "#RNOH::RNInstanceCAPI::onAllAnimationsComplete");
+  if (this->unsubscribeUITickListener == nullptr) {
     return;
+  }
+  this->unsubscribeUITickListener();
+  this->unsubscribeUITickListener = nullptr;
+}
+
+void RNInstanceCAPI::onUITick(
+    UITicker::Timestamp /*recentVSyncTimestamp*/) {
+  facebook::react::SystraceSection s("#RNOH::RNInstanceCAPI::onUITick");
+  if (this->scheduler != nullptr) {
+    this->scheduler->animationTick();
   }
 }
 
@@ -609,6 +612,7 @@ void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
 void RNInstanceCAPI::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
+  facebook::react::SystraceSection s("RNInstanceCAPI::handleArkTSMessage");
   if( name == "CONFIGURATION_UPDATE"){
     onConfigurationChange(payload);
   }
