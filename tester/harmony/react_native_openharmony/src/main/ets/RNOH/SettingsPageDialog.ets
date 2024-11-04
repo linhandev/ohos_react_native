@@ -3,10 +3,12 @@ import { BusinessError } from '@kit.BasicServicesKit';
 import type common from '@ohos.app.ability.common';
 
 export class SettingsPageParams {
-  public uiAbilityContext: common.UIAbilityContext
+  public uiAbilityContext: common.UIAbilityContext;
+  public offsetY: number;
 
-  constructor(uiAbilityContext: common.UIAbilityContext) {
+  constructor(uiAbilityContext: common.UIAbilityContext, offsetY: number) {
     this.uiAbilityContext = uiAbilityContext
+    this.offsetY = offsetY
   }
 }
 
@@ -100,6 +102,7 @@ struct SettingsClickItem {
 struct SettingsPageDialog {
   uiAbilityContext: common.UIAbilityContext | null = null
   settingsPreferences : preferences.Preferences | null = null
+  offsetY: number = 0
   setHostAndPortDialogController: CustomDialogController | null = new CustomDialogController({
     builder: DevSetHostAndPortContent({ uiAbilityContext: this.uiAbilityContext, settingsPreferences: this.settingsPreferences }),
     cancel: ()=> {},
@@ -124,7 +127,7 @@ struct SettingsPageDialog {
           .width('100%').fontWeight(FontWeight.Bold).textAlign(TextAlign.Start).fontColor(0X32cd32).fontSize(18).padding(12)
         SettingsClickItem({
           title: 'Debug Server host & port for device',
-          description: 'Debug Server host & port for downloading JS bundle or communicating with JS debugger. With this setting empty launcher should work fine when running on emulator (or genymotion) and connection to debug server running on emulator\'s host.',
+          description: 'Debug server host & port for downloading JS bundle or communicating with JS debugger. With this setting empty launcher should work fine when running on emulator (or genymotion) and connection to debug server running on emulator\'s host.',
           click:() => {
             if (this.setHostAndPortDialogController != null) {
               this.setHostAndPortDialogController.open()
@@ -132,13 +135,13 @@ struct SettingsPageDialog {
           }
         })
       }
-    }.backgroundColor(Color.White).width('100%')
+    }.backgroundColor(Color.White).width('100%').padding({ top: this.offsetY })
   }
 }
 
 @Builder
 function SettingsPageDialogBuilder(Params: SettingsPageParams) {
-  SettingsPageDialog({ uiAbilityContext: Params.uiAbilityContext })
+  SettingsPageDialog({ uiAbilityContext: Params.uiAbilityContext, offsetY: Params.offsetY })
 }
 
 export default SettingsPageDialogBuilder

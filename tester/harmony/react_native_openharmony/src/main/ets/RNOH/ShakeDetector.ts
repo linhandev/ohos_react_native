@@ -1,15 +1,43 @@
 import sensor from '@ohos.sensor';
+import { RNOHError } from './RNOHError';
 
 export type ShakeListener = () => void;
 
+
+/**
+ * @Internal
+ */
 export class ShakeDetector {
-  static readonly MIN_TIME_BETWEEN_SAMPLES_NS = 20000000;
-  static readonly SHAKING_WINDOW_MS = 3000;
-  static readonly GRAVITY_EARTH = 9.80665;
-  static readonly MIN_NUM_SHAKES: number = 2 * 8;
-  // Required force to constitute a rage shake. Need to multiply Earth's gravity by 1.33 because a rage
-  // shake in one direction should have more force than just the magnitude of free fall.
-  static readonly REQUIRED_FORCE = ShakeDetector.GRAVITY_EARTH * 1.33;
+  static from(shakeListener: ShakeListener) {
+    try {
+      return new ShakeDetector(shakeListener)
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new RNOHError({
+          whatHappened: "Couldn't create a ShakeDetector",
+          howCanItBeFixed: ["Did you add a permission request for ohos.permission.ACCELEROMETER in module.json5::module::requestPermissions?"],
+          extraData: err,
+        })
+      }
+      throw new RNOHError({
+        whatHappened: "Failed to create a RealShakeDetector",
+        howCanItBeFixed: [],
+        extraData: err
+      });
+    }
+  }
+
+  private readonly config = {
+    MIN_TIME_BETWEEN_SAMPLES_NS: 20000000,
+    SHAKING_WINDOW_MS: 3000,
+    GRAVITY_EARTH: 9.80665,
+    MIN_NUM_SHAKES: 2 * 8,
+    /**
+     *  Required force to constitute a rage shake. Need to multiply Earth's gravity by 1.33 because a rage
+     *  shake in one direction should have more force than just the magnitude of free fall.
+     */
+    REQUIRED_FORCE: 9.80665 * 1.33
+  }
 
   private mAccelerationX: number = 0;
   private mAccelerationY: number = 0;
@@ -17,13 +45,17 @@ export class ShakeDetector {
   private mNumShakes: number = 0;
   private mLastShakeTimestamp: number = 0;
 
-  private shakeListener: ShakeListener;
+  private internalShakeListener: (data: sensor.AccelerometerResponse) => void
 
-  constructor(shakeListener: ShakeListener) {
-    this.shakeListener = shakeListener;
-    sensor.on(sensor.SensorId.ACCELEROMETER, this.onSensorChanged.bind(this), {
-      interval: ShakeDetector.MIN_TIME_BETWEEN_SAMPLES_NS,
+  private constructor(private shakeListener: ShakeListener) {
+    this.internalShakeListener = this.onSensorChanged.bind(this)
+    sensor.on(sensor.SensorId.ACCELEROMETER, this.internalShakeListener, {
+      interval: this.config.MIN_TIME_BETWEEN_SAMPLES_NS,
     });
+  }
+
+  onDestroy() {
+    sensor.off(sensor.SensorId.ACCELEROMETER, this.internalShakeListener)
   }
 
   resetDetector() {
@@ -38,7 +70,7 @@ export class ShakeDetector {
   }
 
   private atLeastRequiredForce(a: number): boolean {
-    return Math.abs(a) > ShakeDetector.REQUIRED_FORCE;
+    return Math.abs(a) > this.config.REQUIRED_FORCE;
   }
 
   private recordShake(timestamp: number): void {
@@ -48,8 +80,8 @@ export class ShakeDetector {
 
   private onSensorChanged(data: sensor.AccelerometerResponse) {
     const timestamp = Date.now();
-    const {x, y} = data;
-    const z = data.z - ShakeDetector.GRAVITY_EARTH;
+    const { x, y } = data;
+    const z = data.z - this.config.GRAVITY_EARTH;
 
     if (this.atLeastRequiredForce(x) && x * this.mAccelerationX <= 0) {
       this.recordShake(timestamp);
@@ -66,14 +98,14 @@ export class ShakeDetector {
   }
 
   private maybeDispatchShake(timestamp: number) {
-    if (this.mNumShakes >= ShakeDetector.MIN_NUM_SHAKES) {
+    if (this.mNumShakes >= this.config.MIN_NUM_SHAKES) {
       this.reset();
       this.shakeListener();
     }
 
     if (
       timestamp - this.mLastShakeTimestamp >
-      ShakeDetector.SHAKING_WINDOW_MS
+      this.config.SHAKING_WINDOW_MS
     ) {
       this.reset();
     }
