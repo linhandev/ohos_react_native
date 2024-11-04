@@ -10,7 +10,7 @@ import type { HttpClient } from '../HttpClient/HttpClient';
 import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
 import type { DevToolsController } from './DevToolsController';
-import type { DisplayMetrics, DevMenu } from './types';
+import type { DisplayMetrics, DevMenu, InternalDevMenu } from './types';
 import type { RNInstanceOptions } from './RNInstance';
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 
@@ -31,7 +31,7 @@ type RNOHCoreContextDependencies = {
   isDebugModeEnabled: boolean;
   defaultBackPressHandler: () => void;
   devToolsController: DevToolsController;
-  devMenu: DevMenu;
+  devMenu: InternalDevMenu;
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
   launchUri?: string;
 };
@@ -145,6 +145,15 @@ export class RNOHCoreContext {
 
   get safeAreaInsetsProvider() {
     return this._rnohCoreContextDeps.safeAreaInsetsProvider;
+  }
+}
+
+/**
+ * @internal
+ */
+export class InternalRNOHCoreContext extends RNOHCoreContext {
+  onDestroy() {
+    this._rnohCoreContextDeps.devMenu.onDestroy()
   }
 }
 

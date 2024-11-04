@@ -108,10 +108,10 @@ export class MetroJSBundleProvider extends JSBundleProvider {
 
   constructor(private bundleUrl: string = DEFAULT_BUNDLE_URL, private appKeys: string[] = []) {
     super()
-    this.setConText()
+    this.setUIAbilityContext()
   }
 
-  public setConText() {
+  public setUIAbilityContext() {
     const rnohCoreContext: RNOHCoreContext = AppStorage.get("RNOHCoreContext")
     this.UIAbilityContext = rnohCoreContext.uiAbilityContext
     this.setBundleUrl()
