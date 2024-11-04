@@ -43,11 +43,6 @@ class MountingManagerArkTS final : public MountingManager {
         triggerUICallback(std::move(triggerUICallback)),
         commandDispatcher(std::move(commandDispatcher)),
         m_arkTsChannel(std::move(arkTsChannel)) {}
-    
-    PreAllocationBuffer::Shared getPreAllocationBuffer() override{
-        return nullptr;
-    }
-
   void willMount(MutationList const& mutations) override;
 
   void doMount(MutationList const& mutations) override;
