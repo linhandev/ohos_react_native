@@ -15,6 +15,7 @@ const static float DEFAULT_LINE_SPACING = 0.15f;
 TextComponentInstance::TextComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   m_textNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
+  m_textNode.setTextOverflow(ARKUI_TEXT_OVERFLOW_ELLIPSIS);
 }
 
 void TextComponentInstance::onChildInserted(
@@ -92,6 +93,8 @@ void TextComponentInstance::onPropsChanged(
               << ", oldAlignment=" << oldAlignment;
       m_textNode.setAlignment(alignment);
     }
+      
+      
 
     // enable
     if (textProps->rawProps.count("disabled") != 0) {

@@ -168,6 +168,17 @@ export function TextTest() {
           <Text style={{fontSize: 20, backgroundColor: 'lightblue'}} />
         </View>
       </TestCase.Example>
+      <TestCase.Example itShould="render <Text /> with fontSize larger than lineHeight. Text should be clipped">
+        <View style={{width: '100%', height: 50}}>
+          <Text numberOfLines={3} style={{fontSize: 20, lineHeight: 10}}>
+            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
+            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
+            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+            Lorem ipsum dolor sit amet
+          </Text>
+        </View>
+      </TestCase.Example>
     </TestSuite>
   );
 }
