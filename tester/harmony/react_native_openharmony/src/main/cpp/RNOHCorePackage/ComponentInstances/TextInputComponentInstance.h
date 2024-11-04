@@ -44,6 +44,9 @@ class TextInputComponentInstance
   bool m_focused{false};
   bool m_shouldIgnoreNextChangeEvent = false;
 
+  size_t m_selectionStart = -1;
+  size_t m_selectionEnd = -1;
+
   void focus();
   void blur();
 
