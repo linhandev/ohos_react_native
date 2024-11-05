@@ -207,23 +207,24 @@ class CppComponentInstance : public ComponentInstance,
       return;
     }
     auto& localRoot = *maybeLocalRoot;
-
     localRoot.setLayoutRect(
         layoutMetrics.frame.origin,
         layoutMetrics.frame.size,
         layoutMetrics.pointScaleFactor);
-    if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
+    auto transform = m_props->resolveTransform(layoutMetrics);
+    if (transform != m_transform) {
+      m_transform = transform;
       localRoot.setTransform(m_transform, layoutMetrics.pointScaleFactor);
-      if (m_props) {
-        auto props =
-            std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
-        localRoot.setShadow(
-            props->shadowColor,
-            props->shadowOffset,
-            props->shadowOpacity,
-            props->shadowRadius,
-            layoutMetrics.pointScaleFactor);
-      }
+    }
+    if (layoutMetrics.pointScaleFactor != m_layoutMetrics.pointScaleFactor) {
+      auto props =
+          std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
+      localRoot.setShadow(
+          props->shadowColor,
+          props->shadowOffset,
+          props->shadowOpacity,
+          props->shadowRadius,
+          layoutMetrics.pointScaleFactor);
     }
     if (layoutMetrics.layoutDirection != m_layoutMetrics.layoutDirection) {
       ArkUI_Direction direction =
@@ -276,10 +277,14 @@ class CppComponentInstance : public ComponentInstance,
       localRoot.setAccessibilityActions(props->accessibilityActions);
     }
 
-    if (!isTransformManagedByAnimated && props->transform != old->transform) {
-      this->setTransform(props->transform);
-      localRoot.setTransform(
-          props->transform, m_layoutMetrics.pointScaleFactor);
+    /**
+     * NOTE: resolveTransform returns identity when layoutMetrics width or
+     * height is 0, which happens during the preallocation phase.
+     */
+    auto transform = props->resolveTransform(m_layoutMetrics);
+    if (!isTransformManagedByAnimated && transform != m_transform) {
+      m_transform = transform;
+      localRoot.setTransform(transform, m_layoutMetrics.pointScaleFactor);
       markBoundingBoxAsDirty();
     }
 
@@ -447,10 +452,6 @@ class CppComponentInstance : public ComponentInstance,
  private:
   facebook::react::Transform m_transform =
       facebook::react::Transform::Identity();
-
-  void setTransform(facebook::react::Transform const& transform) {
-    m_transform = transform;
-  }
 
   void setOpacity(facebook::react::SharedViewProps const& props) {
     auto isOpacityManagedByAnimated = getIgnoredPropKeys().count("opacity") > 0;
