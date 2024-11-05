@@ -224,7 +224,7 @@ export class RNInstancesCoordinator {
       workerThreadPromise
     )
     this.rnohCoreContext = new InternalRNOHCoreContext({
-      reactNativeVersion: "0.75.4",
+      reactNativeVersion: "0.72.5",
       safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
       logger: this.rawLogger,
       uiAbilityContext: this.uiAbilityContext,
