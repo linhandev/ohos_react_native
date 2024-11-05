@@ -3,6 +3,8 @@
 
 #include <folly/Function.h>
 #include <folly/dynamic.h>
+#include <js_native_api.h>
+#include <js_native_api_types.h>
 #include <jsi/jsi.h>
 #include <react/renderer/graphics/Color.h>
 #include <react/renderer/graphics/Float.h>
@@ -15,7 +17,6 @@
 #include "RNOH/RNOHError.h"
 #include "RNOH/Result.h"
 #include "ThreadGuard.h"
-#include "napi/native_api.h"
 
 class RNOHNapiObjectBuilder;
 class RNOHNapiObject;
@@ -64,8 +65,52 @@ class ArkJS {
 
   NapiRef createNapiRef(napi_value value);
 
+  /*
+   * @deprecated
+   */
   napi_value createSingleUseCallback(
-      std::function<void(std::vector<folly::dynamic>)>&& callback);
+      std::function<void(std::vector<folly::dynamic>)>&& callback) {
+    return createCallback([cb = std::move(callback)](auto args) mutable {
+      RNOH_ASSERT_MSG(
+          cb != nullptr,
+          "Callback returned from `createSingleUseCallback` may only be called once");
+      cb(std::move(args));
+      cb = nullptr;
+    });
+  }
+
+  template <typename F>
+  napi_value createCallback(F&& callback) {
+    auto* allocatedCallback = new F(std::forward<F>(callback));
+    try {
+      auto function = createFunction(
+          "callback",
+          [](napi_env env, napi_callback_info info) {
+            void* data;
+            napi_get_cb_info(env, info, nullptr, nullptr, nullptr, &data);
+            auto callback = static_cast<F*>(data);
+            ArkJS arkJS(env);
+            (*callback)(arkJS.getDynamics(arkJS.getCallbackArgs(info)));
+            return arkJS.getUndefined();
+          },
+          allocatedCallback);
+
+      napi_add_finalizer(
+          m_env,
+          function,
+          allocatedCallback,
+          [](napi_env /*env*/, void* data, void* /*hint*/) {
+            auto callback = static_cast<F*>(data);
+            delete callback;
+          },
+          nullptr,
+          nullptr);
+      return function;
+    } catch (...) {
+      delete allocatedCallback;
+      throw;
+    }
+  }
 
   napi_value createFunction(
       std::string const& name,

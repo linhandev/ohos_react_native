@@ -1,7 +1,7 @@
 #include "ArkJS.h"
+#include <js_native_api.h>
 #include <stdexcept>
 #include <string>
-#include "napi/native_api.h"
 
 static void
 maybeThrowFromStatus(napi_env env, napi_status status, const char* message) {
@@ -232,41 +232,6 @@ NapiRef ArkJS::createNapiRef(napi_value value) {
   return {m_env, createReference(value)};
 }
 
-std::function<napi_value(napi_env, std::vector<napi_value>)>*
-createNapiCallback(
-    std::function<void(std::vector<folly::dynamic>)>&& callback) {
-  return new std::function(
-      [callback = std::move(callback)](
-          napi_env env,
-          std::vector<napi_value> callbackNapiArgs) mutable -> napi_value {
-        ArkJS arkJS(env);
-        callback(arkJS.getDynamics(callbackNapiArgs));
-        return arkJS.getUndefined();
-      });
-}
-
-napi_value singleUseCallback(napi_env env, napi_callback_info info) {
-  void* data;
-  napi_get_cb_info(env, info, nullptr, nullptr, nullptr, &data);
-  auto callback = static_cast<
-      std::function<napi_value(napi_env, std::vector<napi_value>)>*>(data);
-  ArkJS arkJS(env);
-  (*callback)(env, arkJS.getCallbackArgs(info));
-  delete callback;
-  return arkJS.getUndefined();
-}
-
-/*
- * The callback will be deallocated after is called. It cannot be called more
- * than once. Creates memory leaks if the callback is not called. Consider
- * changing this implementation when adding napi finalizers is supported. .
- */
-napi_value ArkJS::createSingleUseCallback(
-    std::function<void(std::vector<folly::dynamic>)>&& callback) {
-  return createFunction(
-      "callback", singleUseCallback, createNapiCallback(std::move(callback)));
-}
-
 napi_value ArkJS::createFunction(
     std::string const& name,
     napi_callback callback,
@@ -473,7 +438,7 @@ napi_value ArkJS::convertIntermediaryValueToNapiValue(IntermediaryArg arg) {
         if constexpr (std::is_same_v<T, folly::dynamic>) {
           return this->createFromDynamic(std::move(arg));
         } else if constexpr (std::is_same_v<T, IntermediaryCallback>) {
-          return this->createSingleUseCallback(std::move(arg));
+          return this->createCallback(std::move(arg));
         } else {
           static_assert(
               std::is_same_v<T, folly::dynamic> ||
@@ -684,13 +649,13 @@ Promise::Promise(napi_env env, napi_value value)
 Promise& Promise::then(
     std::function<void(std::vector<folly::dynamic>)>&& callback) {
   auto obj = m_arkJS.getObject(m_value);
-  obj.call("then", {m_arkJS.createSingleUseCallback(std::move(callback))});
+  obj.call("then", {m_arkJS.createCallback(std::move(callback))});
   return *this;
 }
 
 Promise& Promise::catch_(
     std::function<void(std::vector<folly::dynamic>)>&& callback) {
   auto obj = m_arkJS.getObject(m_value);
-  obj.call("catch", {m_arkJS.createSingleUseCallback(std::move(callback))});
+  obj.call("catch", {m_arkJS.createCallback(std::move(callback))});
   return *this;
 }
