@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
-cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different directories than targets
+cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different
+                              # directories than targets
 
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")
 set(third_party_dir "${RNOH_CPP_DIR}/third-party")
@@ -309,7 +310,6 @@ add_library(fbjni INTERFACE)
 add_library(reactnativejni INTERFACE)
 add_library(mapbufferjni INTERFACE)
 
-
 function(add_react_common_subdir relative_path)
   add_subdirectory(${REACT_COMMON_DIR}/${relative_path})
 endfunction()
@@ -349,7 +349,7 @@ add_react_common_subdir(react/renderer/graphics)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/debug)
 add_react_common_subdir(react/renderer/imagemanager)
 add_react_common_subdir(react/renderer/components/view)
-#add_react_common_subdir(react/renderer/components/switch)
+# add_react_common_subdir(react/renderer/components/switch)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/components/textinput)
 # add_react_common_subdir(react/renderer/components/progressbar)
 add_react_common_subdir(react/renderer/components/root)
@@ -455,9 +455,9 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/Animated/Drivers/EventAnimationDriver.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/TurboModules/I18nManagerTurboModule.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/EventEmitRequestHandlers/TouchEventEmitRequestHandler.cpp"
+    "${RNOH_CPP_DIR}/RNOH/arkui/UIInputEventHandler.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/NativeNodeApi.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/NativeDialogApi.cpp"
-    "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINodeRegistry.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/NodeContentHandle.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUISurface.cpp"
     "${RNOH_CPP_DIR}/RNOH/arkui/ArkUINode.cpp"

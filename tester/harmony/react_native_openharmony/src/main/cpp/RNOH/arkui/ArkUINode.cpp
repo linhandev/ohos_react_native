@@ -3,8 +3,8 @@
 #include <arkui/native_type.h>
 #include <bits/alltypes.h>
 #include <algorithm>
-#include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
+#include "RNOH/Assert.h"
 #include "conversions.h"
 
 namespace rnoh {
@@ -130,16 +130,6 @@ ArkUINode::~ArkUINode() noexcept {
 
 void ArkUINode::setArkUINodeDelegate(ArkUINodeDelegate* delegate) {
   m_arkUINodeDelegate = delegate;
-}
-
-ArkUINode::ArkUINode(ArkUINode&& other) noexcept
-    : m_nodeHandle(std::move(other.m_nodeHandle)) {
-  other.m_nodeHandle = nullptr;
-}
-
-ArkUINode& ArkUINode::operator=(ArkUINode&& other) noexcept {
-  std::swap(m_nodeHandle, other.m_nodeHandle);
-  return *this;
 }
 
 ArkUI_NodeHandle ArkUINode::getArkUINodeHandle() {

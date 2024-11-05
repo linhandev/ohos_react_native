@@ -13,7 +13,6 @@
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
 #include <stdexcept>
-#include "ArkUINodeRegistry.h"
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
 
@@ -27,6 +26,8 @@ enum class ArkuiHitTestMode : int32_t {
   NONE,
 };
 } // namespace
+
+class ArkUINode;
 
 class ArkUINodeDelegate {
  public:
@@ -44,8 +45,10 @@ class ArkUINode {
   ArkUINode(const ArkUINode& other) = delete;
   ArkUINode& operator=(const ArkUINode& other) = delete;
 
-  ArkUINode& operator=(ArkUINode&& other) noexcept;
-  ArkUINode(ArkUINode&& other) noexcept;
+  ArkUINode& operator=(ArkUINode&& other) = delete;
+  ArkUINode(ArkUINode&& other) = delete;
+
+  using EventArgs = ArkUI_NumberValue[MAX_COMPONENT_EVENT_ARG_NUM];
 
  public:
   using Alignment = ArkUI_Alignment;
@@ -137,7 +140,7 @@ class ArkUINode {
       ArkUI_NodeEventType eventType,
       std::string_view eventString);
 
-  virtual ~ArkUINode();
+  virtual ~ArkUINode() noexcept;
 
  protected:
   void maybeThrow(int32_t status) {

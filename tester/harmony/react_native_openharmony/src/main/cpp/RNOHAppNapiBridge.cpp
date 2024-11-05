@@ -83,7 +83,6 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #endif
   LogSink::initializeLogging();
   auto logVerbosityLevel = 0;
- 
 #ifdef LOG_VERBOSITY_LEVEL
     FLAGS_v = LOG_VERBOSITY_LEVEL;
     logVerbosityLevel = LOG_VERBOSITY_LEVEL;
@@ -124,9 +123,6 @@ napi_value initializeArkTSBridge(napi_env env, napi_callback_info info) {
   auto args = arkJs.getCallbackArgs(info, 1);
   auto bridgeHandlerRef = arkJs.createReference(args[0]);
   ArkTSBridge::initializeInstance(env, bridgeHandlerRef);
-#ifdef C_API_ARCH
-  ArkUINodeRegistry::initialize(ArkTSBridge::getInstance());
-#endif
   return arkJs.getUndefined();
 }
 
