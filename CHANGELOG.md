@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.75.1
+- added support for @2x @3x image suffixes ([7a26d1dc7e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7a26d1dc7ebc3fef76e5447224546e36a0907073))
+- added shake to open dev menu feature ([eba4c3d728](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eba4c3d728cde8a460d73e555930de40d3a817bc))
+- added possibility to pass touches through RNSurface to its siblings when no RN touch target is found ([3ce303c40d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3ce303c40d23847e04aadbc1f1497d386c013e4f))
+- added support for `facebook::react::SystraceSection` ([37cc8ca57e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37cc8ca57efb692529b156a0ea3e25c9005debbe))
+- added `NoArkUINodeError` for representing Components with no native nodes ([4b8397b0bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4b8397b0bb9f34ffa0d9da0d96698062bc4ca124), [512bf12ae2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/512bf12ae2bc1c19bd793eb973231ce780052814))
+- added automatic Metro reconnecting support ([689f76a81d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/689f76a81d7b20badad3b495af2a17fcf9580fa4))
+- optimized power consumption by ~4% of the power used by a screen by not requesting VSync frames if it's not necessary ([42f054b88f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/42f054b88f13e55a241be4024a5cb2956bcbb2f7))
+- fixed `style::transform` issue introduced when updating RN to 0.75.4 ([99a35016c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/99a35016c340d8e4f1f24ca7717191294dfd3ea1))
+- fixed unexpected text overflowing ([d6d70530b3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d6d70530b3f44cefc85e92be6444c089aac593cb))
+- fixed breaking change introduced in SurfaceContext in v0.72.40 ([89c0d254bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/89c0d254bb624a3a5950663d7b8a61ff7f15bcb1))
+- fixed cleanup of callbacks passed to ArkTS runtime ([2ab4b6e606](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2ab4b6e6064ecc6a2fb69b5cd5193e15d1639b37))
+- fixed not applying selection when focused for the first time ([6e9b078647](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6e9b0786479eac8a29626f7b418669102f7cb1ab))
+- fixed compilation error related to DLOG(INFO) in ~ShadowViewRegistry when compiling in the release mode ([c85ec42e70](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c85ec42e70789e372aa4cd54e06ee32a058429f4))
+- fixed wrong alignment of `ScrollView` when it's larger than its content ([f703eb09dd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f703eb09dd4d385b6dfa9fae8db485b966afc18b))
+- fixed `ScrollView` with `refreshControl` not moving down when pulled ([637165669b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/637165669b0f097d53876b7e56b075b9bab20e58))
+- fixed `tsconfig.json` ([65c6dc0e16](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/65c6dc0e16104e1469b70d482409646ec95739ea))
+- fixed internal redirects for aliases with scoped package name on Windows ([febf0e97b9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/febf0e97b935717066649f9ff675dee1b00e089c))
+- removed deprecated `ComponentBuilderContext::descriptor`, `ComponentBuilderContext::rnohContext`, `DescriptorEssence` type ([10d72501dd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/10d72501dd817834a4dba4fb8b2ef81b303dffc9))
+- removed deprecated `HttpClientProvider` and `RNInstancesCoordinatorOptions::httpClientProvider` ([ccadd1fc13](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ccadd1fc1399bc31c010d39ecab5833dc9d1736f))
+
+
 ## v0.75.0
 - [breaking] updated peer dependency to react-native to 0.75.4 and other NPM dependencies related to react-native — app projects may need to update their configuration files (package.json, babel.config.js, metro.config.js, .eslintrc, and tsconfig.json) to be in sync with RN (use https://react-native-community.github.io/upgrade-helper/ to update platform-agnostic files in your React Native project): (react: 18.3.1; react-native: 0.75.4; @react-native/eslint-config: 0.75.4; @react-native/metro-config: 0.75.4; @react-native/typescript-config: 0.75.4; @types/react: ^18.2.6; babel-jest: ^29.6.3) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
 - [breaking] changed props->yogaStyle in ComponentInstances (C++) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
