@@ -15,6 +15,7 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
     functionName: string;
     args: unknown[];
   }[] = [];
+  protected initialBundleUrl: string | undefined = undefined;
 
   constructor(
     protected id: number,
@@ -69,6 +70,10 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
   getAssetsDest(): string {
     return this.assetsDest;
   }
+
+  getInitialBundleUrl(): string | undefined {
+    return this.initialBundleUrl
+  }
 }
 
 /**
@@ -81,5 +86,9 @@ export class WorkerRNInstanceInternal extends WorkerRNInstance {
     });
     this.rnFunctionCallsQueue = [];
     this.canCallRNFunction = true;
+  }
+
+  setBundleUrl(bundleURL: string) {
+    this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
   }
 }

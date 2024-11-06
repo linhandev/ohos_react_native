@@ -65,6 +65,7 @@ interface DestroyWorkerRNInstancePayload {
 
 interface JSBundleExecutionFinish {
   rnInstanceId: number
+  bundleURL: string
 }
 
 class DestroyWorkerRNInstanceAckPayload {
@@ -200,6 +201,7 @@ export async function setupRNOHWorker(config: RNOHWorkerConfig) {
             const rnInstance =
               turboModuleDepsByRNInstanceId.get(jsBundleExecutionFinishPayload.rnInstanceId)!.rnInstance
             rnInstance.flushRNFunctionCalls()
+            rnInstance.setBundleUrl(jsBundleExecutionFinishPayload.bundleURL)
             break;
           }
           case "RNOH_TURBO_MODULE_UI_TASK_RESULT":

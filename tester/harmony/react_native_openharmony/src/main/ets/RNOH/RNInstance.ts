@@ -826,6 +826,7 @@ export class RNInstanceImpl implements RNInstance {
       });
       this.workerThread?.postMessage('JS_BUNDLE_EXECUTION_FINISH', {
         rnInstanceId: this.id,
+        bundleURL: jsBundleProvider.getURL()
       });
     } catch (err) {
       this.bundleExecutionStatusByBundleURL.delete(bundleURL);
