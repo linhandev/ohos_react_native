@@ -53,7 +53,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
  
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START); 
-  m_preAllocationBuffer->clear();
+  m_componentInstanceProvider->clearPreallocationRequestQueue();
   for (auto const& mutation : mutations) {
     try {
       this->handleMutation(mutation);
@@ -63,6 +63,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
+  m_componentInstanceProvider->clearPreallocatedViews();
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
@@ -194,7 +195,8 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       case facebook::react::ShadowViewMutation::Create: {
         auto newChild = mutation.newChildShadowView;
         auto componentInstance =
-              m_preAllocationBuffer->getComponentInstance(newChild.tag, newChild.componentHandle, newChild.componentName);
+              m_componentInstanceProvider->getComponentInstance(
+                  newChild.tag, newChild.componentHandle, newChild.componentName);
         if (componentInstance == nullptr) {
           LOG(ERROR) << "Couldn't create CppComponentInstance for: "
                      << newChild.componentName;

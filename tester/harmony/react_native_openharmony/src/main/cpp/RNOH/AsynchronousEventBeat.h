@@ -13,17 +13,21 @@ class AsynchronousEventBeat final : public facebook::react::EventBeat {
   AsynchronousEventBeat(
       SharedOwnerBox ownerBox,
       RuntimeExecutor runtimeExecutor,
-      UITicker::Shared const& uiTicker);
+      UITicker::Shared uiTicker);
 
   ~AsynchronousEventBeat();
+
+  void request() const override;
 
  protected:
   void induce() const override;
 
  private:
   RuntimeExecutor m_runtimeExecutor;
-  std::function<void()> m_unsubscribeUITickerListener;
+  mutable std::function<void()> m_unsubscribeUITickerListener = nullptr;
+  mutable std::mutex m_unsubscribeUITickerListenerMtx;
   mutable std::atomic<bool> m_isBeatScheduled{false};
+  UITicker::Shared m_uiTicker;
 };
 
 } // namespace rnoh
