@@ -132,6 +132,16 @@ void ArkUINode::setArkUINodeDelegate(ArkUINodeDelegate* delegate) {
   m_arkUINodeDelegate = delegate;
 }
 
+ArkUINode::ArkUINode(ArkUINode&& other) noexcept
+    : m_nodeHandle(std::move(other.m_nodeHandle)) {
+  other.m_nodeHandle = nullptr;
+}
+
+ArkUINode& ArkUINode::operator=(ArkUINode&& other) noexcept {
+  std::swap(m_nodeHandle, other.m_nodeHandle);
+  return *this;
+}
+
 ArkUI_NodeHandle ArkUINode::getArkUINodeHandle() {
   return m_nodeHandle;
 }
