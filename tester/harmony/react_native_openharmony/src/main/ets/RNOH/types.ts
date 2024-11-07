@@ -78,3 +78,7 @@ export interface DevMenu {
   addMenuItem: (title: string) => void;
   show: () => void;
 }
+
+export interface InternalDevMenu extends DevMenu {
+  onDestroy: () => void;
+}
