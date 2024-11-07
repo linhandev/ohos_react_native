@@ -10,6 +10,8 @@ TextNode::TextNode()
           ArkUI_NodeType::ARKUI_NODE_TEXT)) {
   maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
       m_nodeHandle, NODE_EVENT_ON_DISAPPEAR, NODE_EVENT_ON_DISAPPEAR, this));
+
+  this->setClip(true);
 }
 
 void TextNode::insertChild(ArkUINode& child, std::size_t index) {

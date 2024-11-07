@@ -168,16 +168,11 @@ export function TextTest() {
           <Text style={{fontSize: 20, backgroundColor: 'lightblue'}} />
         </View>
       </TestCase.Example>
-      <TestCase.Example itShould="render <Text /> with fontSize larger than lineHeight. Text should be clipped">
-        <View style={{width: '100%', height: 50}}>
-          <Text numberOfLines={3} style={{fontSize: 20, lineHeight: 10}}>
-            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-            Lorem ipsum dolor sit amet
-          </Text>
-        </View>
+      <TestCase.Example itShould="render <Text /> with constant fontSize and diffent lineHeight. Text should be clipped">
+        {textLineHeight(5)}
+        {textLineHeight(10)}
+        {textLineHeight(15)}
+        {textLineHeight(30)}
       </TestCase.Example>
     </TestSuite>
   );
@@ -239,6 +234,21 @@ const OnTextLayoutView = (props: {
     </View>
   );
 };
+
+function textLineHeight(lineHeight: number) {
+  return (
+    <View
+      style={{
+        alignItems: 'center',
+        height: 10 + (lineHeight > 50 ? lineHeight : 50),
+        flexDirection: 'row',
+      }}>
+      <Text style={{backgroundColor: 'pink', lineHeight: lineHeight}}>
+        lineHeight {lineHeight}
+      </Text>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
