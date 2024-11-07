@@ -2,10 +2,11 @@ import window from '@ohos.window';
 import { DevToolsController } from './DevToolsController';
 import { RNOHLogger } from './RNOHLogger';
 import { ShakeDetector } from './ShakeDetector';
+import { RNOHError } from "./RNOHError";
 import type common from '@ohos.app.ability.common';
 import { ComponentContent, PromptAction } from '@kit.ArkUI';
 import SettingsPageDialog, { SettingsPageParams } from './SettingsPageDialog'
-import { DevMenu as DevMenuInterface } from './types'
+import { InternalDevMenu as InternalDevMenuInterface } from './types'
 
 interface AlertDialogButtonOptions {
   value: string,
@@ -38,7 +39,7 @@ class SettingDialog {
       const avoidAreaHeight = avoidArea.topRect.height;
       this.offsetY = uiContext.px2vp(avoidAreaHeight)
       this.promptAction = uiContext.getPromptAction();
-      this.contentNode = new ComponentContent(uiContext, wrapBuilder(SettingsPageDialog), new SettingsPageParams(this.uiAbilityContext));
+      this.contentNode = new ComponentContent(uiContext, wrapBuilder(SettingsPageDialog), new SettingsPageParams(this.uiAbilityContext, this.offsetY));
     }).catch(() => {
       this.logger.error("Debug Server host & port for device dialog couldn't be displayed.");
     })
@@ -50,7 +51,6 @@ class SettingDialog {
       onWillDismiss: this.close.bind(this),
       autoCancel: false,
       keyboardAvoidMode: KeyboardAvoidMode.NONE,
-      offset: { dx: 0, dy: this.offsetY },
     });
     this.visible = true
   }
@@ -64,11 +64,11 @@ class SettingDialog {
 /**
  * @api
  */
-export class DevMenu implements DevMenuInterface {
+export class DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
   private logger: RNOHLogger
-  private shakeDetector: ShakeDetector
+  protected shakeDetector: ShakeDetector | null = null;
   private devToolsController: DevToolsController;
   private uiAbilityContext: common.UIAbilityContext;
   private settingDialog: SettingDialog | undefined = undefined;
@@ -77,11 +77,23 @@ export class DevMenu implements DevMenuInterface {
     this.devToolsController = devToolsController;
     this.uiAbilityContext = uiAbilityContext;
     this.logger = logger.clone("DevMenu");
+    const localLogger = this.logger.clone("constructor")
     this.createDevMenuDefaultButtons();
-    this.shakeDetector = new ShakeDetector(this.show.bind(this))
+    try {
+      this.shakeDetector = ShakeDetector.from(this.show.bind(this))
+    } catch (err) {
+      if (err instanceof RNOHError) {
+        localLogger.error(new RNOHError({
+          whatHappened: "Shake to open Dev Menu is disabled. " + err.getMessage(),
+          howCanItBeFixed: err.getSuggestions()
+        }))
+      } else {
+        console.error(err)
+      }
+    }
   }
 
-  public addMenuItem(title: string): void {
+  addMenuItem(title: string): void {
     this.devMenuButtons.push({
       value: title,
       action: () => {
@@ -158,6 +170,15 @@ export class DevMenu implements DevMenuInterface {
   }
   private hideDevMenuDialog() {
     this.devMenuDialogVisible = false;
-    this.shakeDetector.resetDetector();
+    this.shakeDetector?.resetDetector();
+  }
+}
+
+/**
+ * @internal
+ */
+export class InternalDevMenu extends DevMenu implements InternalDevMenuInterface {
+  onDestroy() {
+    this.shakeDetector?.onDestroy()
   }
 }
