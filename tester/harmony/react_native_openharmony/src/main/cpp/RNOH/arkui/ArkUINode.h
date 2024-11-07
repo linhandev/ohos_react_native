@@ -45,8 +45,8 @@ class ArkUINode {
   ArkUINode(const ArkUINode& other) = delete;
   ArkUINode& operator=(const ArkUINode& other) = delete;
 
-  ArkUINode& operator=(ArkUINode&& other) = delete;
-  ArkUINode(ArkUINode&& other) = delete;
+  ArkUINode& operator=(ArkUINode&& other) noexcept;
+  ArkUINode(ArkUINode&& other) noexcept;
 
   using EventArgs = ArkUI_NumberValue[MAX_COMPONENT_EVENT_ARG_NUM];
 
