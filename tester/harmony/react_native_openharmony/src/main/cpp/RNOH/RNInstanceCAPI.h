@@ -36,6 +36,7 @@
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/arkui/ArkUISurface.h"
 #include "RNOH/arkui/NodeContentHandle.h"
+#include <react/renderer/runtimescheduler/RuntimeScheduler.h>
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -93,7 +94,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_nativeResourceManager(std::move(nativeResourceManager)) {
           this->unsubscribeUITickListener =
-              this->m_uiTicker->subscribe(m_id, [this](long long timestamp){ 
+              this->m_uiTicker->subscribe([this](long long timestamp){ 
               this->taskExecutor->runTask(
                 TaskThread::MAIN, [this, timestamp](){ this->onUITick(timestamp); }); });
         }
@@ -254,6 +255,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
   SharedNativeResourceManager m_nativeResourceManager;
   std::string m_bundlePath;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
+  std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
+      nullptr;
 
   void initialize();
   void initializeScheduler(
