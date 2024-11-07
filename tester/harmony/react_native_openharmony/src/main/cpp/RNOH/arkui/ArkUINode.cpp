@@ -3,8 +3,8 @@
 #include <arkui/native_type.h>
 #include <bits/alltypes.h>
 #include <algorithm>
-#include "ArkUINodeRegistry.h"
 #include "NativeNodeApi.h"
+#include "RNOH/Assert.h"
 #include "conversions.h"
 
 namespace rnoh {
