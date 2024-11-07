@@ -19,6 +19,7 @@
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
+#include "RNOH/arkui/ArkUINodeRegistry.h"
 
 template <typename Map, typename K, typename V>
 auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
