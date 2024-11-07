@@ -20,7 +20,9 @@ class UITicker {
 
   using Shared = std::shared_ptr<UITicker>;
 
-  std::function<void()> subscribe(int id, std::function<void(long long)>&& listener) {
+  std::function<void()> subscribe(std::function<void(long long)>&& listener) {
+    auto id = m_nextListenerId;
+    m_nextListenerId++;
     std::lock_guard lock(listenersMutex);
     auto listenersCount = m_listenerById.size();
     m_listenerById.insert_or_assign(id, std::move(listener));
@@ -41,6 +43,7 @@ class UITicker {
    std::unordered_map < int, std::function <void(long long)>> m_listenerById;
    std::mutex listenersMutex;
    NativeVsyncHandle m_vsyncHandle;
+  int m_nextListenerId = 0;
 
   void requestNextTick() {
     m_vsyncHandle.requestFrame(scheduleNextTick, this);
