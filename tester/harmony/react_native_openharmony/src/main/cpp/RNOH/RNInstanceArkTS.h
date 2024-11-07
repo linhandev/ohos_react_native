@@ -67,18 +67,12 @@ class RNInstanceArkTS : public RNInstanceInternal,
         m_mutationsToNapiConverter(mutationsToNapiConverter),
         m_eventEmitRequestHandlers(eventEmitRequestHandlers),
         m_globalJSIBinders(globalJSIBinders),
-        m_shouldRelayUITick(false),
         m_uiTicker(uiTicker),
         m_mountingManager(std::move(mountingManager)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_shouldEnableDebugger(shouldEnableDebugger),
         m_arkTSChannel(std::move(arkTSChannel)),
         m_shouldEnableBackgroundExecutor(shouldEnableBackgroundExecutor) {
-    this->unsubscribeUITickListener =
-        this->m_uiTicker->subscribe([this](long long timestamp) {
-          this->taskExecutor->runTask(
-              TaskThread::MAIN, [this, timestamp]() { this->onUITick(timestamp); });
-        });
   }
 
   ~RNInstanceArkTS() {
@@ -215,8 +209,8 @@ class RNInstanceArkTS : public RNInstanceInternal,
   GlobalJSIBinders m_globalJSIBinders;
   std::shared_ptr<facebook::react::LayoutAnimationDriver> m_animationDriver;
   UITicker::Shared m_uiTicker;
+  std::mutex m_unsubscribeUITickListenerMtx;
   std::function<void()> unsubscribeUITickListener = nullptr;
-  std::atomic<bool> m_shouldRelayUITick;
   std::shared_ptr<MessageQueueThread> m_jsQueue;
   bool m_shouldEnableDebugger;
   bool m_shouldEnableBackgroundExecutor;
@@ -230,7 +224,7 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void initializeScheduler(
       std::shared_ptr<TurboModuleProvider> turboModuleProvider);
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider();
-  void onUITick(long long timestamp);
+  void onUITick(UITicker::Timestamp recentVSyncTimestamp);
 
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()

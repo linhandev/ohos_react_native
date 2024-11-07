@@ -5,7 +5,7 @@
 #include <native_drawing/drawing_text_typography.h>
 #include <string>
 #include "ArkUITypography.h"
-#include "RNInstanceCAPI.h"
+#include <rawfile/raw_file_manager.h>
 #include "RNOH/FeatureFlagRegistry.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "napi/native_api.h"
