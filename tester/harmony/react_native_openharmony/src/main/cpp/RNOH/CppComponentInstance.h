@@ -434,10 +434,16 @@ class CppComponentInstance : public ComponentInstance,
 
     if (!old) {
       if (static_cast<int32_t>(props->accessible) != 0) {
-        this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
+          ArkUI_AccessibilityMode mode = props->accessible
+              ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
+              : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
+          this->getLocalRootArkUINode().setAccessibilityMode(mode);
       }
     } else if (props->accessible != old->accessible) {
-      this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
+        ArkUI_AccessibilityMode mode = props->accessible
+            ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
+            : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
+        this->getLocalRootArkUINode().setAccessibilityMode(mode);
     } else {
       // Do nothing here.
     }

@@ -755,4 +755,29 @@ ArkUINode& ArkUINode::setDirection(ArkUI_Direction direction) {
       m_nodeHandle, NODE_DIRECTION, &item));
   return *this;
 }
+
+void ArkUINode::setAttribute(
+    ArkUI_NodeAttributeType attribute,
+    ArkUI_AttributeItem const& item) 
+{
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, attribute, &item));
+}
+
+void ArkUINode::setAttribute(
+    ArkUI_NodeAttributeType attribute,
+    std::initializer_list<ArkUI_NumberValue> values) 
+{
+    int32_t size = values.size();
+    ArkUI_AttributeItem item{.value = std::data(values), .size = size};
+    setAttribute(attribute, item);
+}
+
+ArkUINode& ArkUINode::setAccessibilityMode(ArkUI_AccessibilityMode mode) 
+{
+    ArkUI_NumberValue value = {.i32 = mode};
+    setAttribute(NODE_ACCESSIBILITY_MODE, {value});
+    return *this;
+}
+
 } // namespace rnoh
