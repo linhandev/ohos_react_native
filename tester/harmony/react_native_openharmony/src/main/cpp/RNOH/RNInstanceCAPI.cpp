@@ -74,8 +74,8 @@ void RNInstanceCAPI::start() {
        binders = m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
-        react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
-            rt, runtimeScheduler);
+        // react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
+        //     rt, runtimeScheduler);
         for (auto& binder : binders) {
           binder->createBindings(rt, turboModuleProvider);
         }
