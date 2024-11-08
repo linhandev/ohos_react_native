@@ -212,3 +212,55 @@
       }
       })
     ```
+
+### hermes 编译教程
+
+- 现象
+
+    如果业务场景有诉求，需要自定义编译hermes，可参考下面步骤。
+
+- 原因
+
+    无。
+
+- 解决
+
+    > 如非必要，不推荐自行编译hermes。
+
+    - 资源准备
+
+      - 编译脚本: 可以通过[RN鸿蒙化仓库](https://gitee.com/openharmony-sig/ohos_react_native/blob/0.72.5-ohos-5.0-release/react-native-harmony/scripts/build-hermes.sh)获取；
+
+      - hermes源码及相关依赖：编译需要[hermes源码](https://github.com/facebook/hermes/tree/hermes-2023-08-07-RNv0.72.4-813b2def12bc9df02654b3e3653ae4a68d0572e0)和JSI源码（可通过解压rnoh的源码包获得，如：react_native_openharmony-5.0.0.601.har）；
+
+      - SDK：直接使用IDE自带的SDK；
+
+      - 操作系统：MacOS 或 Linux。
+
+    - 编译流程
+
+      1. 解压har包：找一个空目录（比如temp），将har包复制到改目录，然后解压，解压后将看到一个 `package` 文件夹；
+      2. 下载hermes源码：通过[hermes源码](https://github.com/facebook/hermes/tree/hermes-2023-08-07-RNv0.72.4-813b2def12bc9df02654b3e3653ae4a68d0572e0)的链接下载hermes源码，然后替换掉 `package/src/main/cpp/third-party/hermes` 文件夹；
+      3. 下载编译脚本：通过上述链接下载编译脚本，然后将其拷贝到 `package/src/main/cpp/third-party/scripts` 路径下（没有scripts目录就自己建）；
+      4. 配置 SDK 环境变量：将 IDE 中 `sdk/default/openharmony` 的路径配置在系统的环境变量中，环境变量名为 `OHOS_SDK`，或者也可以将这个路径写在编译脚本中，见4；
+      5. 调整编译脚本：见下面的文件变更：
+          ```diff
+          #!/bin/bash
+
+          + OHOS_SDK=你的SDK路径 # 若做了第3步，这里可以忽略
+          ...
+          - THIRD_PARTY_DIR=$SCRIPT_DIR/../harmony/cpp/third-party
+          + THIRD_PARTY_DIR=../
+          ...
+          - OHOS_SDK_NATIVE_DIR=$OHOS_SDK/10/native
+          + OHOS_SDK_NATIVE_DIR=$OHOS_SDK/native
+          ...
+          - JSI_DIR=$THIRD_PARTY_DIR/rn/ReactCommon/jsi
+          + JSI_DIR=jsi 的绝对路径
+          ...
+          - -DJSI_DIR=$THIRD_PARTY_DIR/rn/ReactCommon/jsi \
+          + -DJSI_DIR=$JSI_DIR \
+          ```
+      6. 调整 `hermes/CMakeLists.txt`：注释掉 619 和 632 行，编译时也会有提示；
+      7. 编译：在scripts目录下打开命令行工具，然后执行 `./build-hermes.sh`；
+      8. 编译完成，编译好的so会覆盖掉原先 `prebuilt` 目录中的文件。
