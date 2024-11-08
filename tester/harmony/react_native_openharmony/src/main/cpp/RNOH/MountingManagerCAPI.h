@@ -61,6 +61,7 @@ class MountingManagerCAPI final : public MountingManager {
     
   facebook::react::ShadowViewMutationList getValidMutations(
       facebook::react::ShadowViewMutationList const& mutations);
+  bool isCAPIComponent(facebook::react::ShadowView const& shadowView);
     
   void dispatchCommand(
       const facebook::react::ShadowView& shadowView,

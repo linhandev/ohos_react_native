@@ -34,4 +34,11 @@ void NodeContentHandle::maybeThrow(int32_t status) {
   }
 }
 
+NodeContentHandle& NodeContentHandle::insertNode(
+    ArkUINode& node,
+    int32_t index) {
+  maybeThrow(OH_ArkUI_NodeContent_InsertNode(
+      m_contentHandle, node.getArkUINodeHandle(), index));
+  return *this;
+}
 } // namespace rnoh
