@@ -54,7 +54,6 @@
 #include "RNOHCorePackage/TurboModules/ShareTurboModule.h"
 #include "RNOHCorePackage/TurboModules/SourceCodeTurboModule.h"
 #include "RNOHCorePackage/TurboModules/StatusBarTurboModule.h"
-#include "RNOHCorePackage/TurboModules/TimingTurboModule.h"
 #include "RNOHCorePackage/TurboModules/ToastAndroidTurboModule.h"
 #include "RNOHCorePackage/TurboModules/VibrationTurboModule.h"
 #include "RNOHCorePackage/TurboModules/WebSocketTurboModule.h"
@@ -101,8 +100,6 @@ class RNOHCoreTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
       return std::make_shared<SourceCodeTurboModule>(ctx, name);
     } else if (name == "StatusBarManager") {
       return std::make_shared<StatusBarTurboModule>(ctx, name);
-    } else if (name == "Timing") {
-      return std::make_shared<TimingTurboModule>(ctx, name);
     } else if (name == "WebSocketModule") {
       return std::make_shared<WebSocketTurboModule>(ctx, name);
     } else if (name == "SafeAreaTurboModule") {

@@ -1,7 +1,12 @@
 #include "RNInstanceCAPI.h"
 
+#include <react/renderer/componentregistry/native/NativeComponentRegistryBinding.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
+#include <react/runtime/nativeviewconfig/LegacyUIManagerConstantsProviderBinding.h>
+#include <memory>
 #include "Assert.h"
+#include "NativeLogger.h"
+#include "Performance/NativeTracing.h"
 #include "RNInstance.h"
 #include "RNOH/Assert.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
@@ -278,7 +283,8 @@ RNInstanceCAPI::createTurboModuleProvider() {
       m_eventDispatcher,
       std::move(m_jsQueue),
       sharedInstance);
-  turboModuleProvider->installJSBindings(m_reactInstance->getRuntimeExecutor());
+  turboModuleProvider->installJSBindings(
+      m_reactInstance->getUnbufferedRuntimeExecutor());
   return turboModuleProvider;
 }
 
@@ -290,4 +296,33 @@ std::optional<Surface::Weak> RNInstanceCAPI::getSurfaceByRootTag(
   }
   return it->second;
 };
+
+void RNInstanceCAPI::installJSBindings(facebook::jsi::Runtime& rt) {
+  // install `console.log` (etc.) implementation
+  react::bindNativeLogger(rt, nativeLogger);
+  // install tracing functions
+  rnoh::setupTracing(rt);
+  facebook::react::bindHasComponentProvider(
+      rt, [this](std::string const& name) {
+        return m_componentJSIBinderByName.contains(name);
+      });
+
+  facebook::react::LegacyUIManagerConstantsProviderBinding::install(
+      rt,
+      "getConstantsForViewManager",
+      [this](auto& rt, auto const& name) -> jsi::Value {
+        auto componentJSIBinder = m_componentJSIBinderByName.find(name);
+        if (componentJSIBinder != m_componentJSIBinderByName.end()) {
+          return componentJSIBinder->second->createBindings(rt);
+        }
+        LOG(ERROR) << "Couldn't find ComponentJSIBinder for: " << name;
+        return nullptr;
+      });
+
+  facebook::react::LegacyUIManagerConstantsProviderBinding::install(
+      rt, "getConstants", [](auto& rt) {
+        return facebook::jsi::Value(facebook::jsi::Object(rt));
+      });
+}
+
 } // namespace rnoh

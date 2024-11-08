@@ -26,7 +26,6 @@ import {
   ShareTurboModule,
   SourceCodeTurboModule,
   StatusBarTurboModule,
-  TimingTurboModule,
   ToastAndroidTurboModule,
   VibrationTurboModule,
   WebSocketTurboModule,
@@ -57,7 +56,6 @@ export class RNOHCorePackage extends RNPackage {
       .set(PlatformConstantsTurboModule.NAME, (ctx) => new PlatformConstantsTurboModule(ctx))
       .set(ShareTurboModule.NAME, (ctx) => new ShareTurboModule(ctx))
       .set(SourceCodeTurboModule.NAME, (ctx) => new SourceCodeTurboModule(ctx))
-      .set(TimingTurboModule.NAME, (ctx) => new TimingTurboModule(ctx))
       .set(I18nManagerTurboModule.NAME, (ctx) => new I18nManagerTurboModule(ctx))
       .set(LogBoxTurboModule.NAME, (ctx) => new LogBoxTurboModule(ctx))
       .set(DevLoadingViewTurboModule.NAME, (ctx) => new DevLoadingViewTurboModule(ctx))

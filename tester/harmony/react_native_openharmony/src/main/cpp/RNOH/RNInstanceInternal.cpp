@@ -7,16 +7,16 @@
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/scheduler/Scheduler.h>
-#include "NativeLogger.h"
+#include <react/runtime/hermes/HermesInstance.h>
+#include <memory>
+#include "HarmonyTimerRegistry.h"
 #include "RNOH/AsynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
-#include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "TextMeasurer.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 
 namespace rnoh {
 
@@ -60,21 +60,17 @@ void RNInstanceInternal::start() {
       HarmonyReactMarker::HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START);
   initialize();
 
-  m_runtimeScheduler = std::make_shared<react::RuntimeScheduler>(
-      m_reactInstance->getRuntimeExecutor(), std::chrono::steady_clock::now);
-
+  m_runtimeScheduler = m_reactInstance->getRuntimeScheduler();
   m_contextContainer->insert<std::weak_ptr<react::RuntimeScheduler>>(
       "RuntimeScheduler", m_runtimeScheduler);
 
   m_turboModuleProvider = createTurboModuleProvider();
   initializeScheduler(m_turboModuleProvider);
-  m_reactInstance->getRuntimeExecutor()(
+  m_reactInstance->getBufferedRuntimeExecutor()(
       [runtimeScheduler = m_runtimeScheduler,
        binders = m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
-        react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
-            rt, runtimeScheduler);
         for (auto& binder : binders) {
           binder->createBindings(rt, turboModuleProvider);
         }
@@ -97,31 +93,38 @@ void RNInstanceInternal::start() {
 
 void RNInstanceInternal::initialize() {
   DLOG(INFO) << "RNInstanceInternal::initialize";
+  auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
+  m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
+
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
-  std::vector<std::unique_ptr<react::NativeModule>> modules;
-  auto instanceCallback = std::make_unique<react::InstanceCallback>();
-  auto jsExecutorFactory = std::make_shared<react::HermesExecutorFactory>(
+  m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
+
+  auto onJSError = [this](const JsErrorHandler::ParsedError& error) {
+    // TODO: implement `ArkTSBridge::handleError(ParsedError)` and call it here
+    LOG(ERROR) << "Error raised when executing JS: " << error.message;
+  };
+
+  auto jsRuntime = facebook::react::HermesInstance::createJSRuntime(
+      std::move(reactConfig), nullptr, m_jsQueue);
+
+  auto timerRegistry = std::make_unique<HarmonyTimerRegistry>(m_taskExecutor);
+  auto rawTimerRegistry = timerRegistry.get();
+  auto timerManager =
+      std::make_shared<facebook::react::TimerManager>(std::move(timerRegistry));
+  rawTimerRegistry->setTimerManager(timerManager);
+  m_reactInstance = std::make_shared<facebook::react::ReactInstance>(
+      std::move(jsRuntime), m_jsQueue, timerManager, onJSError);
+  m_reactInstance->initializeRuntime(
+      {},
       // runtime installer, which is run when the runtime
       // is first initialized and provides access to the runtime
       // before the JS code is executed
-      [](facebook::jsi::Runtime& rt) {
-        // install `console.log` (etc.) implementation
-        react::bindNativeLogger(rt, nativeLogger);
-        // install tracing functions
-        rnoh::setupTracing(rt);
-      });
-  jsExecutorFactory->setEnableDebugger(m_shouldEnableDebugger);
-  m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
-  auto moduleRegistry =
-      std::make_shared<react::ModuleRegistry>(std::move(modules));
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
-  m_reactInstance->initializeBridge(
-      std::move(instanceCallback),
-      std::move(jsExecutorFactory),
-      m_jsQueue,
-      std::move(moduleRegistry));
+      [this](facebook::jsi::Runtime& rt) { installJSBindings(rt); });
+  timerManager->setRuntimeExecutor(
+      m_reactInstance->getBufferedRuntimeExecutor());
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
 }
@@ -129,13 +132,7 @@ void RNInstanceInternal::initialize() {
 void RNInstanceInternal::initializeScheduler(
     std::shared_ptr<TurboModuleProvider> turboModuleProvider) {
   DLOG(INFO) << "RNInstanceInternal::initializeScheduler";
-  auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
-  m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
-
-  auto runtimeExecutor = [runtimeScheduler =
-                              m_runtimeScheduler](auto&& rawCallback) {
-    runtimeScheduler->scheduleWork(std::move(rawCallback));
-  };
+  auto runtimeExecutor = m_reactInstance->getBufferedRuntimeExecutor();
 
   react::EventBeat::Factory asyncEventBeatFactory =
       [runtimeExecutor, uiTicker = m_uiTicker](auto ownerBox) {
@@ -174,9 +171,10 @@ void RNInstanceInternal::callJSFunction(
     folly::dynamic params) {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::callJSFunction");
-  m_reactInstance->callJSFunction(
+  m_reactInstance->callFunctionOnModule(
       std::move(module), std::move(method), std::move(params));
 }
+
 void RNInstanceInternal::updateState(
     napi_env env,
     std::string const& componentName,
@@ -189,6 +187,7 @@ void RNInstanceInternal::updateState(
         env, componentName, state, newState);
   }
 }
+
 void RNInstanceInternal::onUITick(
     UITicker::Timestamp /*recentVSyncTimestamp*/) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceInternal::onUITick");
@@ -205,37 +204,21 @@ void RNInstanceInternal::loadScript(
     m_bundlePath = sourceURL;
   }
 
-  m_taskExecutor->runTask(
-      TaskThread::JS,
-      [this,
-       bundle = std::move(bundle),
-       sourceURL,
-       onFinish = std::move(onFinish)]() mutable {
-        std::unique_ptr<react::JSBigBufferString> jsBundle;
-        jsBundle = std::make_unique<react::JSBigBufferString>(bundle.size());
-        memcpy(jsBundle->data(), bundle.data(), bundle.size());
+  std::unique_ptr<react::JSBigBufferString> jsBundle;
+  jsBundle = std::make_unique<react::JSBigBufferString>(bundle.size());
+  memcpy(jsBundle->data(), bundle.data(), bundle.size());
 
-        react::BundleHeader header;
-        memcpy(&header, bundle.data(), sizeof(react::BundleHeader));
-        react::ScriptTag scriptTag = react::parseTypeFromHeader(header);
-        // NOTE: Hermes bytecode bundles are treated as String bundles,
-        // and don't throw an error here.
-        if (scriptTag != react::ScriptTag::String) {
-          throw new std::runtime_error("RAM bundles are not yet supported");
-        }
-        try {
-          m_reactInstance->loadScriptFromString(
-              std::move(jsBundle), sourceURL, true);
-          onFinish("");
-        } catch (std::exception const& e) {
-          try {
-            std::rethrow_if_nested(e);
-            onFinish(e.what());
-          } catch (const std::exception& nested) {
-            onFinish(e.what() + std::string("\n") + nested.what());
-          }
-        }
-      });
+  try {
+    m_reactInstance->loadScript(std::move(jsBundle), sourceURL);
+    onFinish("");
+  } catch (std::exception const& e) {
+    try {
+      std::rethrow_if_nested(e);
+      onFinish(e.what());
+    } catch (const std::exception& nested) {
+      onFinish(e.what() + std::string("\n") + nested.what());
+    }
+  }
 }
 
 void RNInstanceInternal::emitComponentEvent(
@@ -269,7 +252,7 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::onMemoryLevel");
   if (m_reactInstance) {
-    m_reactInstance->handleMemoryPressure(memoryLevels[memoryLevel]);
+    m_reactInstance->handleMemoryPressureJs(memoryLevels[memoryLevel]);
   }
 }
 
@@ -318,4 +301,48 @@ void RNInstanceInternal::registerFont(
 std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
+
+RNInstanceInternal::RNInstanceInternal(
+    int id,
+    std::shared_ptr<facebook::react::ContextContainer> contextContainer,
+    TurboModuleFactory turboModuleFactory,
+    TaskExecutor::Shared taskExecutor,
+    std::shared_ptr<facebook::react::ComponentDescriptorProviderRegistry>
+        componentDescriptorProviderRegistry,
+    MutationsToNapiConverter::Shared mutationsToNapiConverter,
+    EventEmitRequestHandlers eventEmitRequestHandlers,
+    GlobalJSIBinders globalJSIBinders,
+    UITicker::Shared uiTicker,
+    ShadowViewRegistry::Shared shadowViewRegistry,
+    ArkTSChannel::Shared arkTSChannel,
+    MountingManager::Shared mountingManager,
+    std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
+    ComponentInstancePreallocationRequestQueue::Shared
+        componentInstancePreallocationRequestQueue,
+    bool shouldEnableDebugger,
+    ArkTSBridge::Shared arkTSBridge,
+    FontRegistry::Shared fontRegistry)
+    : m_id(id),
+      m_taskExecutor(std::move(taskExecutor)),
+      m_contextContainer(std::move(contextContainer)),
+      m_mountingManager(std::move(mountingManager)),
+      m_componentDescriptorProviderRegistry(
+          std::move(componentDescriptorProviderRegistry)),
+      m_shadowViewRegistry(std::move(shadowViewRegistry)),
+      m_turboModuleFactory(std::move(turboModuleFactory)),
+      m_mutationsToNapiConverter(std::move(mutationsToNapiConverter)),
+      m_eventEmitRequestHandlers(std::move(eventEmitRequestHandlers)),
+      m_globalJSIBinders(std::move(globalJSIBinders)),
+      m_uiTicker(std::move(uiTicker)),
+      m_shouldEnableDebugger(shouldEnableDebugger),
+      m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
+      m_arkTSChannel(std::move(arkTSChannel)),
+      m_arkTSBridge(std::move(arkTSBridge)),
+      m_componentInstancePreallocationRequestQueue(
+          std::move(componentInstancePreallocationRequestQueue)) {
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::INIT_REACT_RUNTIME_START);
+  m_fontRegistry = std::move(fontRegistry);
+}
+
 } // namespace rnoh

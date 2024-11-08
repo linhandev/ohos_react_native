@@ -3,8 +3,6 @@
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNOHError.h"
-#include "RNOH/StubModule.h"
-#include "RNOH/UIManagerModule.h"
 #include "TaskExecutor/TaskExecutor.h"
 #include "TurboModuleFactory.h"
 
@@ -15,14 +13,12 @@ TurboModuleFactory::TurboModuleFactory(
     std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
         arkTSTurboModuleEnvironmentByTaskThread,
     FeatureFlagRegistry::Shared featureFlagRegistry,
-    const ComponentJSIBinderByString&& componentBinderByString,
     TaskExecutor::Shared taskExecutor,
     std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
     std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
     : m_arkTSTurboModuleEnvironmentByTaskThread(
           std::move(arkTSTurboModuleEnvironmentByTaskThread)),
       m_featureFlagRegistry(std::move(featureFlagRegistry)),
-      m_componentBinderByString(std::move(componentBinderByString)),
       m_taskExecutor(taskExecutor),
       m_delegates(delegates),
       m_arkTSMessageHub(arkTSMessageHub) {}
@@ -64,61 +60,52 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       .eventDispatcher = eventDispatcher,
       .jsQueue = jsQueue,
       .scheduler = scheduler};
-  if (name == "UIManager") {
-    HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
-                                      CREATE_UI_MANAGER_MODULE_START);
-    auto uiManagerModule = std::make_shared<UIManagerModule>(
-        ctx, name, std::move(m_componentBinderByString));
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::CREATE_UI_MANAGER_MODULE_END);
-    return uiManagerModule;
-  } else {
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_START);
-    auto result = this->delegateCreatingTurboModule(ctx, name);
-    if (result != nullptr) {
-      auto arkTSTurboModule =
-          std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
-      if (arkTSTurboModule != nullptr && !ctx.arkTSTurboModuleInstanceRef) {
-        std::vector<std::string> suggestions = {
-            "Have you linked a package that provides this turbo module on the ArkTS side?"};
-        if (!m_featureFlagRegistry->isFeatureFlagOn("WORKER_THREAD_ENABLED")) {
-          suggestions.push_back(
-              "Is this a WorkerTurboModule? If so, it requires the Worker thread to be enabled. Check RNAbility::getRNOHWorkerScriptUrl.");
-        }
-        HarmonyReactMarker::logMarker(
-            HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
-        throw FatalRNOHError(
-            std::string("Couldn't find Turbo Module '")
-                .append(name)
-                .append("' on the ArkTS side."),
-            suggestions);
-      }
-      HarmonyReactMarker::logMarker(
-          HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
-      return result;
-    }
 
-    // ArkTS module was created, but CPP module was not found
-    if (ctx.arkTSTurboModuleInstanceRef) {
-      // NOTE: move the ref to the correct thread to ensure proper cleanup
-      m_taskExecutor->runTask(
-          arkTSTurboModuleThread,
-          [tmRef = std::move(ctx.arkTSTurboModuleInstanceRef)] {});
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_START);
+  auto result = this->delegateCreatingTurboModule(ctx, name);
+  if (result != nullptr) {
+    auto arkTSTurboModule =
+        std::dynamic_pointer_cast<const ArkTSTurboModule>(result);
+    if (arkTSTurboModule != nullptr && !ctx.arkTSTurboModuleInstanceRef) {
       std::vector<std::string> suggestions = {
-          "Have you linked a package that provides this turbo module on the CPP side?"};
+          "Have you linked a package that provides this turbo module on the ArkTS side?"};
+      if (!m_featureFlagRegistry->isFeatureFlagOn("WORKER_THREAD_ENABLED")) {
+        suggestions.push_back(
+            "Is this a WorkerTurboModule? If so, it requires the Worker thread to be enabled. Check RNAbility::getRNOHWorkerScriptUrl.");
+      }
       HarmonyReactMarker::logMarker(
           HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
       throw FatalRNOHError(
           std::string("Couldn't find Turbo Module '")
               .append(name)
-              .append("' on the CPP side."),
+              .append("' on the ArkTS side."),
           suggestions);
     }
-
     HarmonyReactMarker::logMarker(
         HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+    return result;
   }
+
+  // ArkTS module was created, but CPP module was not found
+  if (ctx.arkTSTurboModuleInstanceRef) {
+    // NOTE: move the ref to the correct thread to ensure proper cleanup
+    m_taskExecutor->runTask(
+        arkTSTurboModuleThread,
+        [tmRef = std::move(ctx.arkTSTurboModuleInstanceRef)] {});
+    std::vector<std::string> suggestions = {
+        "Have you linked a package that provides this turbo module on the CPP side?"};
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+    throw FatalRNOHError(
+        std::string("Couldn't find Turbo Module '")
+            .append(name)
+            .append("' on the CPP side."),
+        suggestions);
+  }
+
+  HarmonyReactMarker::logMarker(
+      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
 
   return this->handleUnregisteredModuleRequest(ctx, name);
 }

@@ -10,6 +10,7 @@
 #include "RNOH/RNInstanceInternal.h"
 #include "RNOH/arkui/ArkUISurface.h"
 #include "RNOH/arkui/NodeContentHandle.h"
+#include "UIManagerModule.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -18,7 +19,7 @@ using MutationsListener = std::function<void(
 
 using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
 
-class RNInstanceCAPI : public RNInstanceInternal {
+class RNInstanceCAPI final : public RNInstanceInternal {
  public:
   RNInstanceCAPI(
       int id,
@@ -43,7 +44,8 @@ class RNInstanceCAPI : public RNInstanceInternal {
       SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
-      FontRegistry::Shared FontRegistry)
+      FontRegistry::Shared FontRegistry,
+      ComponentJSIBinderByString componentJSIBinderByName)
       : RNInstanceInternal(
             id,
             contextContainer,
@@ -65,7 +67,8 @@ class RNInstanceCAPI : public RNInstanceInternal {
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
-        m_nativeResourceManager(std::move(nativeResourceManager)) {}
+        m_nativeResourceManager(std::move(nativeResourceManager)),
+        m_componentJSIBinderByName(std::move(componentJSIBinderByName)) {}
 
   ~RNInstanceCAPI() noexcept override;
 
@@ -141,12 +144,15 @@ class RNInstanceCAPI : public RNInstanceInternal {
  protected:
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() override;
 
+  void installJSBindings(facebook::jsi::Runtime& rt) override;
+
   std::unordered_map<facebook::react::SurfaceId, ArkUISurface::Shared>
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   SharedNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
+  ComponentJSIBinderByString m_componentJSIBinderByName;
 };
 
 } // namespace rnoh

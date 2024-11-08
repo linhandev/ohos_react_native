@@ -80,6 +80,8 @@ export struct RNApp {
    */
   public initialProps: Record<string, string> = {}
   /**
+   * @deprecated: register custom components using RNOHPackage instead (latestRNOHVersion: 0.75.1)
+   *
    * Builds custom fabric components.
    *
    * It's possible now for library devs to register custom components in RNOHPackage

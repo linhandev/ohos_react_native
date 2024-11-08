@@ -1,11 +1,11 @@
 #pragma once
-#include <react/renderer/components/view/ViewShadowNode.h>
+#include <react/renderer/components/root/RootShadowNode.h>
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/StackNode.h"
 
 namespace rnoh {
 class RootViewComponentInstance
-    : public CppComponentInstance<facebook::react::ViewShadowNode>,
+    : public CppComponentInstance<facebook::react::RootShadowNode>,
       public StackNodeDelegate {
  private:
   StackNode m_stackNode;

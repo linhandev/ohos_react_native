@@ -177,7 +177,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
         {TaskThread::WORKER, {.napiEnv = workerEnv, .arkTSTurboModuleProviderRef = std::move(workerArkTSTurboModuleProviderRef)}},
       }, // clang-format on
       featureFlagRegistry,
-      std::move(componentJSIBinderByName),
       taskExecutor,
       std::move(turboModuleFactoryDelegates),
       arkTSMessageHub);
@@ -259,7 +258,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::move(resourceManager),
       shouldEnableDebugger,
       arkTSBridge,
-      std::move(fontRegistry));
+      std::move(fontRegistry),
+      std::move(componentJSIBinderByName));
   componentInstanceDependencies->rnInstance = rnInstance;
   auto imageSourceResolver =
       std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);

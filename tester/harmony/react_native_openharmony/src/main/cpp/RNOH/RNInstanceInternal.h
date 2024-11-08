@@ -1,13 +1,13 @@
 #pragma once
 #include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 #include <react/renderer/runtimescheduler/RuntimeScheduler.h>
+#include <react/runtime/ReactInstance.h>
 #include <string_view>
 #include "FontRegistry.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/RNInstance.h"
 
 namespace rnoh {
@@ -35,29 +35,7 @@ class RNInstanceInternal
           componentInstancePreallocationRequestQueue,
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
-      FontRegistry::Shared fontRegistry)
-      : m_id(id),
-        m_taskExecutor(std::move(taskExecutor)),
-        m_contextContainer(std::move(contextContainer)),
-        m_mountingManager(std::move(mountingManager)),
-        m_componentDescriptorProviderRegistry(
-            std::move(componentDescriptorProviderRegistry)),
-        m_shadowViewRegistry(std::move(shadowViewRegistry)),
-        m_turboModuleFactory(std::move(turboModuleFactory)),
-        m_mutationsToNapiConverter(std::move(mutationsToNapiConverter)),
-        m_eventEmitRequestHandlers(std::move(eventEmitRequestHandlers)),
-        m_globalJSIBinders(std::move(globalJSIBinders)),
-        m_uiTicker(std::move(uiTicker)),
-        m_shouldEnableDebugger(shouldEnableDebugger),
-        m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
-        m_arkTSChannel(std::move(arkTSChannel)),
-        m_arkTSBridge(std::move(arkTSBridge)),
-        m_componentInstancePreallocationRequestQueue(
-            std::move(componentInstancePreallocationRequestQueue)) {
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::INIT_REACT_RUNTIME_START);
-    m_fontRegistry = std::move(fontRegistry);
-  }
+      FontRegistry::Shared fontRegistry);
 
   virtual ~RNInstanceInternal() noexcept = default;
 
@@ -158,6 +136,8 @@ class RNInstanceInternal
   void onAllAnimationsComplete()
       override; // react::LayoutAnimationStatusDelegate
 
+  virtual void installJSBindings(facebook::jsi::Runtime& rt) = 0;
+
   int m_id;
   TaskExecutor::Shared m_taskExecutor;
   facebook::react::ContextContainer::Shared m_contextContainer;
@@ -173,8 +153,7 @@ class RNInstanceInternal
    * The runtime is destructed when `m_reactInstance` is destructed.
    * Therefore, `m_scheduler` must be declared after `m_reactInstance`.
    */
-  std::shared_ptr<facebook::react::Instance> m_reactInstance =
-      std::make_shared<facebook::react::Instance>();
+  std::shared_ptr<facebook::react::ReactInstance> m_reactInstance;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler = nullptr;
 
   TurboModuleProvider::Shared m_turboModuleProvider = nullptr;

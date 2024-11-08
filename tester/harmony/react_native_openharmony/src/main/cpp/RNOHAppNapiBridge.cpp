@@ -287,17 +287,16 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 1);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
-    CLEANUP_RUNNER->runAsyncTask([rnInstanceId] {
-      std::shared_ptr<RNInstanceInternal> instance;
-      {
-        auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
-        if (auto it = RN_INSTANCE_BY_ID.find(rnInstanceId);
-            it != RN_INSTANCE_BY_ID.end()) {
-          std::swap(it->second, instance);
-          RN_INSTANCE_BY_ID.erase(rnInstanceId);
-        }
-      }
-    });
+    std::shared_ptr<RNInstanceInternal> instance;
+    {
+      auto lock = std::lock_guard(RN_INSTANCE_BY_ID_MTX);
+      instance = extractOrDefault(RN_INSTANCE_BY_ID, rnInstanceId, nullptr);
+    }
+    if (instance != nullptr) {
+      auto taskExecutor = instance->getTaskExecutor();
+      taskExecutor->runTask(
+          TaskThread::JS, [instance = std::move(instance)] {});
+    }
     return arkJS.getNull();
   });
 }

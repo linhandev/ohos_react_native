@@ -3,8 +3,7 @@
 #include <ReactCommon/TurboModule.h>
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/FeatureFlagRegistry.h"
-#include "RNOH/UIManagerModule.h"
-#include "napi/native_api.h"
+
 namespace rnoh {
 
 class TurboModuleProvider;
@@ -34,7 +33,6 @@ class TurboModuleFactory final {
       std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
           arkTSTurboModuleEnvironmentByTaskThread,
       FeatureFlagRegistry::Shared featureFlagRegistry,
-      const ComponentJSIBinderByString&&,
       TaskExecutor::Shared,
       std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
       std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
@@ -75,7 +73,6 @@ class TurboModuleFactory final {
       Context ctx,
       const std::string& name) const;
 
-  const ComponentJSIBinderByString m_componentBinderByString;
   std::unordered_map<TaskThread, ArkTSTurboModuleEnvironment>
       m_arkTSTurboModuleEnvironmentByTaskThread;
   TaskExecutor::Shared m_taskExecutor;

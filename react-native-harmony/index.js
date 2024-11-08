@@ -159,7 +159,7 @@ module.exports = {
     return require('react-native/Libraries/TurboModule/TurboModuleRegistry');
   },
   get UIManager() {
-    return require('./Libraries/ReactNative/UIManager');
+    return require('react-native/Libraries/ReactNative/UIManager');
   },
   get unstable_batchedUpdates() {
     return require('react-native/Libraries/ReactNative/RendererProxy')
@@ -176,7 +176,7 @@ module.exports = {
       .default;
   },
   get View() {
-    return require('./Libraries/Components/View/View');
+    return require('react-native/Libraries/Components/View/View');
   },
   get InteractionManager() {
     return require('react-native/Libraries/Interaction/InteractionManager');
