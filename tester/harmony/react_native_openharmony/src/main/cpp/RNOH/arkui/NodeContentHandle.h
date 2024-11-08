@@ -15,6 +15,8 @@ class NodeContentHandle final {
 
   NodeContentHandle& addNode(ArkUINode& node);
 
+  NodeContentHandle& insertNode(ArkUINode& node, int32_t index);
+
   NodeContentHandle& removeNode(ArkUINode& node);
 
  private:
