@@ -5,6 +5,7 @@ import {
   commandVerifyPackageHarmony,
   commandCodegenLibHarmony,
   commandLinkHarmony,
+  commandRunHarmony,
 } from './commands';
 
 export const config = {
@@ -14,5 +15,6 @@ export const config = {
     commandVerifyPackageHarmony,
     commandCodegenLibHarmony,
     commandLinkHarmony,
+    commandRunHarmony,
   ] as Command[],
 } satisfies Partial<Config>;

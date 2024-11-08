@@ -45,11 +45,9 @@ export class UberSchema implements ValueObject {
       if (err instanceof Error) {
         throw new CodegenError({
           whatHappened: "Couldn't create the schema",
-          whatCanUserDo: {
-            default: [
-              `There's probably at least one spec file defined in your project or in a third-party package that breaks some code generation restrictions. Please check the message below. If it's ambiguous, debug the problem with divide and conquer strategy.\n\n${err.message}`,
-            ],
-          },
+          whatCanUserDo: [
+            `There's probably at least one spec file defined in your project or in a third-party package that breaks some code generation restrictions. Please check the message below. If it's ambiguous, debug the problem with divide and conquer strategy.\n\n${err.message}`,
+          ],
         });
       }
       throw err;
@@ -110,11 +108,9 @@ export class UberSchema implements ValueObject {
       if (err instanceof Error) {
         throw new CodegenError({
           whatHappened: "Couldn't create the schema",
-          whatCanUserDo: {
-            default: [
-              `There's probably at least one spec file defined in your project or in a third-party package that breaks some code generation restrictions. Please check the message below. If it's ambiguous, debug the problem with divide and conquer strategy.\n\n${err.message}`,
-            ],
-          },
+          whatCanUserDo: [
+            `There's probably at least one spec file defined in your project or in a third-party package that breaks some code generation restrictions. Please check the message below. If it's ambiguous, debug the problem with divide and conquer strategy.\n\n${err.message}`,
+          ],
         });
       }
       throw err;

@@ -1,5 +1,5 @@
 import { AbsolutePath, DescriptiveError, Dirent, FS } from '../core';
-import { CliExecutor } from './CliExecutor';
+import { CliExecutor, CliOptions } from './CliExecutor';
 import { IFs, memfs, NestedDirectoryJSON } from 'memfs';
 import RawMemDirent from 'memfs/lib/Dirent';
 import { Logger } from './Logger';
@@ -8,17 +8,11 @@ import chalk from 'chalk';
 export class FakeCliExecutor extends CliExecutor {
   private commands: string[] = [];
 
-  constructor(private onRun: (command: string) => string) {
+  constructor(private onRun: (command: string) => Promise<string>) {
     super();
   }
 
-  run(
-    command: string,
-    options: {
-      args?: Record<string, string | number | boolean>;
-      cwd?: AbsolutePath;
-    } = {}
-  ): string {
+  run(command: string, options: CliOptions = {}): Promise<string> {
     let commandWithArgs = command;
     if (options.args) {
       commandWithArgs += ' ' + this.stringifyCliArgs(options.args);

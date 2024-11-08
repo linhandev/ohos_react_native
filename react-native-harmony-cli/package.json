@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony-cli",
-  "version": "0.75.0",
+  "version": "0.75.1",
   "description": "",
   "scripts": {
     "build": "tsc --outDir dist -p tsconfig.build.json",

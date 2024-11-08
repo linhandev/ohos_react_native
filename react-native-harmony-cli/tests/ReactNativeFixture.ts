@@ -72,6 +72,12 @@ export class ReactNativeFixture {
     ).stdout;
   }
 
+  runHarmony(args: { help: true }) {
+    return execaCommandSync(
+      `react-native run-harmony ${this.createCliArgs(args)}`
+    ).stdout;
+  }
+
   codegenLibHarmony(
     args:
       | { help: true }

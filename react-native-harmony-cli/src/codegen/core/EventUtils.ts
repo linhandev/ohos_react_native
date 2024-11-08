@@ -7,11 +7,9 @@ export function createEventNameFromEventHandlerName(
   if (eventName.length === 0) {
     throw new CodegenError({
       whatHappened: `Received invalid event handler name: ${eventHandlerName}`,
-      whatCanUserDo: {
-        default: [
-          'Change your event listener name to match naming convention "onEventName" e.g. "onPress"',
-        ],
-      },
+      whatCanUserDo: [
+        'Change your event listener name to match naming convention "onEventName" e.g. "onPress"',
+      ],
     });
   }
   return eventName.charAt(0).toLowerCase() + eventName.slice(1);

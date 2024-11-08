@@ -162,11 +162,9 @@ function validateArgs(args: any) {
   if (!args.rnohModulePath) {
     throw new DescriptiveError({
       whatHappened: "--rnoh-module-path argument wasn't provided",
-      whatCanUserDo: {
-        default: [
-          'Please provide a path to the native React Native for Open Harmony module (rnoh) which is probably located somewhere in "<PROJECT_ROOT>/harmony" directory',
-        ],
-      },
+      whatCanUserDo: [
+        'Please provide a path to the native React Native for Open Harmony module (rnoh) which is probably located somewhere in "<PROJECT_ROOT>/harmony" directory',
+      ],
     });
   }
 }
@@ -215,12 +213,10 @@ function throwErrorIfUnsupportedCodegenVersion(
   if (codegenVersion > maxSupportedCodegenVersion) {
     throw new CodegenError({
       whatHappened: `Package "${packageName}" requires codegenVersion: ${codegenVersion}, which is not supported (maxSupportedCodegenVersion=${maxSupportedCodegenVersion}).`,
-      whatCanUserDo: {
-        rnAppDeveloper: [
-          `Try downgrading "${packageName}".`,
-          'Update the "@rnoh/react-native-harmony-cli" package.',
-        ],
-      },
+      whatCanUserDo: [
+        `Try downgrading "${packageName}".`,
+        'Update the "@rnoh/react-native-harmony-cli" package.',
+      ],
     });
   }
 }
@@ -255,7 +251,7 @@ function prepareDirectory(path: AbsolutePath, enableSafetyCheck: boolean) {
   if (enableSafetyCheck && !path.getValue().startsWith(process.cwd())) {
     throw new DescriptiveError({
       whatHappened: `Tried to remove files in ${path.getValue()}\nand that path is outside current working directory`,
-      whatCanUserDo: { default: ['Run codegen from different location'] },
+      whatCanUserDo: ['Run codegen from different location'],
     });
   }
   maybeRemoveFilesInDirectory(path);
@@ -271,15 +267,14 @@ function logCodegenResult(
   );
   sortedRelativePathStrings.sort();
   sortedRelativePathStrings.forEach((pathStr) => {
-    logger.info((styles) => styles.gray(`• ${pathStr}`));
+    logger.debug((styles) => styles.gray(`• ${pathStr}`));
   });
-  logger.info(() => '');
+  logger.debug(() => '');
   logger.info(
     (styles) =>
-      `Generated ${styles.green(styles.bold(fileContentByPath.size))} file(s)`,
-    { prefix: true }
+      `Generated ${styles.green(styles.bold(fileContentByPath.size))} file(s)`
   );
-  logger.info(() => '');
+  logger.debug(() => '');
 }
 
 function deriveCppDirectoryNameFromNpmPackageName(

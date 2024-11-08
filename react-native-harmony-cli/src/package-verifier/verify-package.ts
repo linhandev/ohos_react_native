@@ -53,12 +53,10 @@ export async function* verifyRNOHPackage({
     if (!harPath) {
       throw new DescriptiveError({
         whatHappened: 'Attempted to verify har but no har was found',
-        whatCanUserDo: {
-          default: [
-            'Run this command without --no-harmony-code flag.',
-            'Create har files by running DevEco Studio > Build > Make Module (MODULE_NAME). The har file can be later found in MODULE_NAME/build/default/outputs/default/MODULE_NAME.har. Copy that file to the PACKAGE_ROOT/harmony directory.',
-          ],
-        },
+        whatCanUserDo: [
+          'Run this command without --no-harmony-code flag.',
+          'Create har files by running DevEco Studio > Build > Make Module (MODULE_NAME). The har file can be later found in MODULE_NAME/build/default/outputs/default/MODULE_NAME.har. Copy that file to the PACKAGE_ROOT/harmony directory.',
+        ],
       });
     }
     const tmpDirPath = new AbsolutePath(tmp.dirSync().name);

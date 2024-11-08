@@ -16,7 +16,7 @@ export function maybeRemoveFilesInDirectory(path: AbsolutePath): void {
     throw new DescriptiveError({
       whatHappened:
         "Tried to remove all files from a path that doesn't point to a directory",
-      whatCanUserDo: { default: [`Verify path: ${path.getValue()}`] },
+      whatCanUserDo: [`Verify path: ${path.getValue()}`],
     });
   }
   const fileOrDirNames = fs.readdirSync(path.getValue());

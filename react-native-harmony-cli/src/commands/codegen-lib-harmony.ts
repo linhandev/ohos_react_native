@@ -140,19 +140,19 @@ function validateRawArgs(rawArgs: RawArgs): Args {
   if (!rawArgs.npmPackageName) {
     throw new DescriptiveError({
       whatHappened: '--npm-package-name is required',
-      whatCanUserDo: { default: ['Please specify --npm-package-name'] },
+      whatCanUserDo: ['Please specify --npm-package-name'],
     });
   }
   if (!rawArgs.cppOutputPath) {
     throw new DescriptiveError({
       whatHappened: '--cpp-output-path is required',
-      whatCanUserDo: { default: ['Please specify --cpp-output-path'] },
+      whatCanUserDo: ['Please specify --cpp-output-path'],
     });
   }
   if (!rawArgs.etsOutputPath) {
     throw new DescriptiveError({
       whatHappened: '--ets-output-path is required',
-      whatCanUserDo: { default: ['Please specify --ets-output-path'] },
+      whatCanUserDo: ['Please specify --ets-output-path'],
     });
   }
   return {
@@ -178,9 +178,7 @@ function specPathsToSpecFilePaths(specPaths: AbsolutePath[]): AbsolutePath[] {
     if (!fs.existsSync(specPath.getValue())) {
       throw new DescriptiveError({
         whatHappened: `No such file or directory: ${specPath.getValue()}`,
-        whatCanUserDo: {
-          default: [`Are you sure provided specPath exists?`],
-        },
+        whatCanUserDo: [`Are you sure provided specPath exists?`],
       });
     }
     if (fs.lstatSync(specPath.getValue()).isDirectory()) {
@@ -354,12 +352,10 @@ function prepareDirectory(path: AbsolutePath, enableSafetyCheck: boolean) {
   if (enableSafetyCheck && !path.getValue().startsWith(process.cwd())) {
     throw new DescriptiveError({
       whatHappened: `Tried to remove files in ${path.getValue()}\nand that path is outside current working directory`,
-      whatCanUserDo: {
-        default: [
-          'Run this command with --no-safety-check flag',
-          'Run codegen from different location',
-        ],
-      },
+      whatCanUserDo: [
+        'Run this command with --no-safety-check flag',
+        'Run codegen from different location',
+      ],
     });
   }
   maybeRemoveFilesInDirectory(path);
@@ -380,8 +376,7 @@ function logCodegenResult(
   logger.info(() => '');
   logger.info(
     (styles) =>
-      `Generated ${styles.green(styles.bold(fileContentByPath.size))} file(s)`,
-    { prefix: true }
+      `Generated ${styles.green(styles.bold(fileContentByPath.size))} file(s)`
   );
   logger.info(() => '');
 }

@@ -126,9 +126,8 @@ export class Autolinking {
     ) {
       throw new DescriptiveError({
         whatHappened: 'Tried to exclude and include npm packages.',
-        whatCanUserDo: {
-          default: ['Include or exclude npm packages, but not both.'],
-        },
+        whatCanUserDo: ['Include or exclude npm packages, but not both.'],
+
         extraData: {
           includedNpmPackageNamesCount: config.includedNpmPackageNames.size,
           excludedNpmPackageNamesCount: config.excludedNpmPackageNames.size,
@@ -341,23 +340,23 @@ export class Autolinking {
       this.fs.writeTextSync(path, content);
     });
     output.linkedLibraryNpmPackageNames.forEach((npmPackageName) => {
-      this.logger.info(
+      this.logger.debug(
         (styles) => `[${styles.green(styles.bold('link'))}] ${npmPackageName}`
       );
     });
     output.skippedLibraryNpmPackageNames.forEach((npmPackageName) => {
-      this.logger.warn(
+      this.logger.debug(
         (styles) => `[${styles.yellow(styles.bold('skip'))}] ${npmPackageName}`
       );
     });
-    this.logger.info(() => '');
+    this.logger.debug(() => '');
     const sortedPathsRelativeToRoot = pathAndContentPairs
       .map(([path]) => path.relativeTo(output.projectRootPath).toString())
       .sort();
     sortedPathsRelativeToRoot.forEach((pathStr) => {
-      this.logger.info((styles) => styles.gray(`• ${pathStr}`));
+      this.logger.debug((styles) => styles.gray(`• ${pathStr}`));
     });
-    this.logger.info(() => '');
+    this.logger.debug(() => '');
     this.logger.info(
       (styles) =>
         `updated ${styles.green(
@@ -366,9 +365,8 @@ export class Autolinking {
           styles.bold(output.linkedLibraryNpmPackageNames.length)
         )} libraries, skipped ${styles.yellow(
           styles.bold(output.skippedLibraryNpmPackageNames.length)
-        )} libraries`,
-      { prefix: true }
+        )} libraries`
     );
-    this.logger.info(() => '');
+    this.logger.debug(() => '');
   }
 }

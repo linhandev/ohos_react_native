@@ -17,7 +17,17 @@ export class AbsolutePath implements ValueObject {
   }
 
   toString(): string {
-    return this.value;
+    if (!this.value.includes(' ')) {
+      return this.value;
+    }
+    if (process.platform === 'win32') {
+      if (!this.value.startsWith('"') || !this.value.endsWith('"')) {
+        return `"${this.value.replace(/"/g, '\\"')}"`;
+      }
+      return this.value;
+    } else {
+      return this.value.replace(/ /g, '\\ ');
+    }
   }
 
   copyWithNewSegment(...relativePath: string[]): AbsolutePath {

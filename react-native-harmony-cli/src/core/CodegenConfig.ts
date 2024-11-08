@@ -27,11 +27,9 @@ export class CodegenConfig {
       if (!fs.existsSync(specPath.getValue())) {
         throw new DescriptiveError({
           whatHappened: `No such file or directory: ${specPath.getValue()}`,
-          whatCanUserDo: {
-            default: [
-              `Please verify "${packageName}/package.json::harmony::codegenConfig". If you are not the maintainer of this package, please report this problem to the package maintainer.`,
-            ],
-          },
+          whatCanUserDo: [
+            `Please verify "${packageName}/package.json::harmony::codegenConfig". If you are not the maintainer of this package, please report this problem to the package maintainer.`,
+          ],
         });
       }
       if (fs.lstatSync(specPath.getValue()).isDirectory()) {

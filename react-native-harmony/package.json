@@ -46,7 +46,7 @@
     "./harmony/*"
   ],
   "dependencies": {
-    "@rnoh/react-native-harmony-cli": "^0.75.0",
+    "@rnoh/react-native-harmony-cli": "^0.75.1",
     "colors": "^1.4.0",
     "fs-extra": "^11.1.1",
     "metro-runtime": "0.80.12",

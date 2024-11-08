@@ -20,12 +20,10 @@ export class PackageJSON {
     if (!fs.existsSync(packageJSONPath)) {
       throw new DescriptiveError({
         whatHappened: "Couldn't find 'package.json'",
-        whatCanUserDo: {
-          default: [
-            'Check if the path to project root is correct',
-            'Try changing working directory to project root',
-          ],
-        },
+        whatCanUserDo: [
+          'Check if the path to project root is correct',
+          'Try changing working directory to project root',
+        ],
         extraData: packageJSONPath.getValue(),
       });
     }
@@ -38,7 +36,6 @@ export class PackageJSON {
     } catch (err) {
       throw new DescriptiveError({
         whatHappened: "Couldn't parse package.json",
-        whatCanUserDo: {},
         extraData: { packageJSONPath, err },
       });
     }

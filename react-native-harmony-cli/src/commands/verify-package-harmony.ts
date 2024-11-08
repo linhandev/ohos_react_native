@@ -76,7 +76,7 @@ function validateArgs(args: any): Args {
   if (!args.packagePath) {
     throw new DescriptiveError({
       whatHappened: 'package-path is undefined',
-      whatCanUserDo: { default: ['Please provide --package-path'] },
+      whatCanUserDo: ['Please provide --package-path'],
     });
   }
   return {
