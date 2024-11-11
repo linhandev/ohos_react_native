@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
 | 参数名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | appKey | string | 是 | 开发者在 JS 侧使用 `AppRegistry.registerComponent` 注册的名称。 |
-| initialProps | Record<string, any> | 是 | React Native应用的初始化原生参数。 |
+| initialProps | Record<string, any> | 是 | React Native 应用的初始化原生参数。 |
 
 ### updateViewRootTag
 
@@ -337,7 +337,6 @@ const styles = StyleSheet.create({
  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
 ```
 返回该 `RNSurface` 对应的 `RNInstance` 以及 rootViewTag。
-
 
 ## RNInstance
 

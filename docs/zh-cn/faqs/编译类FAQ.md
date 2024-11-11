@@ -28,7 +28,7 @@
 - 原因  
 该问题是没有配置 HarmonyOS 打包参数导致的，请参考[如何配置HarmonyOS打包参数](常见开发场景.md#如何配置harmonyos打包参数)，配置完成后重新打包。
 
-### 找不到HiTrace编译选项
+## 找不到HiTrace编译选项
 - 错误截图  
 ![faq-HiTrace](./figures/faq-HiTrace.png)
 - 原因  
@@ -44,7 +44,7 @@
     ···
     ```
 
-### react-native不是内部或外部命令
+## react-native不是内部或外部命令
 - 解决  
 ![faq-RNnoExist](./figures/faq-RNnoExist.png)  
 该问题为 `npm install` 的时候存在问题，请确认 `package.json` 的正确性，并重新执行以下命令：
@@ -53,7 +53,7 @@
     npm install
     ```
 
-### MAC环境下Cannot find module ‘@react-native/babel-preset’
+## MAC环境下Cannot find module ‘@react-native/babel-preset’
 - 错误截图  
 ![faq-babel-preset](./figures/faq-babel-preset.png)
  - 原因  
@@ -61,7 +61,7 @@
 - 解决  
 您可以将复制的命令格式化之后再执行，或者手动输入创建工程的命令。
 
-### 找不到libhermes.so
+## 找不到libhermes.so
  
 该问题可能会分为以下三种表现情况：
  
@@ -85,7 +85,7 @@
  
 ![faq-libhermes-answer](./figures/faq-libhermes-answer.png)
 
-### RNOH_CAPI_ARCH环境变量相关
+## RNOH_CAPI_ARCH环境变量相关
 
 - 现象
 
@@ -105,7 +105,7 @@
     set(RNOH_C_API_ARCH, 1)
     ```
 
-### Release版本C++编译问题
+## Release版本C++编译问题
 
 - 背景
 
@@ -133,7 +133,7 @@
     - 错误1：根据提示，在 `include_directories` 选项中补充对应三方库的头文件路径。
     - 错误2：三方包得加上 `folly` 编译配置，如 `target_compile_options` (三方库包名 PUBLIC${folly_compile_options})。
 
-### hvigor ERROR：Exceptions happend while excuting：ninja：Entering directory...
+## hvigor ERROR：Exceptions happend while excuting：ninja：Entering directory...
 
 - 现象
 	
@@ -148,7 +148,7 @@
 
     native 工程根目录太深或者工程名称过长，建议将 native 工程目录级别缩短或者尝试将工程命名缩短。
 
-### hvigor ERROR: Failed :entry:default@HotReloadArkTS...
+## hvigor ERROR: Failed :entry:default@HotReloadArkTS...
 
 - 现象
 	
@@ -171,4 +171,29 @@
 - 解决
 
     删除项目中的 `oh_modules` 文件夹，点击同步重新加载。
+
+## ERROR: missing: @rnoh/react-native-openharmony@D:\SampleRN\AwesomeApp\oh_modules\.ohpm\@react-native-oh-tpl+react-native-linear-gradient@boyzfjkz+1u0h9qytn7nrfzxgndfqxrq3gwpaleooou=\oh_modules\@react-native-oh-tpl\react_native_openharmony, required by @react-native-oh-tpl/react-native-linear-gradient@D:\SampleRN\AwesomeApp\libs\linear_gradient.har
+
+- 现象
+
+  在引入RN三方库，或自定义TurboModule/组件的场景下，点击 `flie ---> sync and refresh project` 后报错:
+
+  ![常见开发场景-引入三方库报错](./faqs/figures/常见开发场景-引入三方库报错.png)
+
+- 原因
+
+  三方库中需要引入rnoh的依赖。
+
+- 解决
+
+  在工程级oh-package.json5文件下加上以下依赖：
+
+  ```json5
+  {
+    ...
+    "overrides":{
+      "@rnoh/react-native-openharmony":"^X.X.X"
+    }
+  }
+  ```
 
