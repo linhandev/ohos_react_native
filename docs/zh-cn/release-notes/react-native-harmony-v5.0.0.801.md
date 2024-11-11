@@ -4,13 +4,13 @@
 | ----------------------------- | -------------------------------|
 | react-native-harmony        | 0.72.39 |
 | react-native-harmony-cli    | 0.0.27 |
-| rnoh                          | 5.0.0.800 |
-| rnoh_release                  | 5.0.0.800 |
+| rnoh                          | 5.0.0.801 |
+| rnoh_release                  | 5.0.0.801 |
 
 配套IDE、SDK版本和手机ROM：
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| DevEco Studio     | DevEco Studio 5.0.5.136 |
-| HarmonyOS SDK     | HarmonyOS SDK 5.0.1.105 |
-| 手机ROM           | ALN-AL00 205.0.0.105(C00E105R4P18) <br> ALN-AL80 205.0.0.105(C00E105R4P18) <br> BRA-AL00 205.0.0.105(C00E105R4P18) |
+| DevEco Studio     | DevEco Studio 5.0.5.141 |
+| HarmonyOS SDK     | HarmonyOS SDK 5.0.1.106 |
+| 手机ROM           | ALN-AL00 205.0.0.106(SP2C00E106R4P19) <br> ALN-AL80 205.0.0.106(SP2C00E106R4P19) <br> BRA-AL00 205.0.0.106(SP2C00E106R4P19) |
 
