@@ -9,6 +9,7 @@
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/RNInstance.h"
+#include "RNOH/SchedulerDelegate.h"
 
 namespace rnoh {
 class RNInstanceInternal
@@ -141,8 +142,7 @@ class RNInstanceInternal
   int m_id;
   TaskExecutor::Shared m_taskExecutor;
   facebook::react::ContextContainer::Shared m_contextContainer;
-  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate =
-      nullptr;
+  std::unique_ptr<rnoh::SchedulerDelegate> m_schedulerDelegate = nullptr;
   MountingManager::Shared m_mountingManager;
 
   ArkTSBridge::Shared m_arkTSBridge;

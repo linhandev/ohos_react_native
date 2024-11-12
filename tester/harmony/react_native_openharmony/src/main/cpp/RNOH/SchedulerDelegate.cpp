@@ -103,11 +103,13 @@ void SchedulerDelegate::schedulerDidSetIsJSResponder(
 
 static void performTransaction(
     MountingCoordinator::Shared const& mountingCoordinator,
-    MountingManager::Shared const& mountingManager) {
+    MountingManager::Shared const& mountingManager,
+    std::weak_ptr<facebook::react::Scheduler> const& weakScheduler) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::performTransaction");
   HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
                                     FABRIC_FINISH_TRANSACTION_START);
+  auto surfaceId = mountingCoordinator->getSurfaceId();
   mountingCoordinator->getTelemetryController().pullTransaction(
       [&mountingManager](
           auto const& transaction, auto const& /*surfaceTelemetry*/) {
@@ -117,9 +119,11 @@ static void performTransaction(
           auto const& transaction, auto const& /*surfaceTelemetry*/) {
         mountingManager->doMount(transaction.getMutations());
       },
-      [&mountingManager](
-          auto const& transaction, auto const& /*surfaceTelemetry*/) {
+      [&](auto const& transaction, auto const& /*surfaceTelemetry*/) {
         mountingManager->didMount(transaction.getMutations());
+        if (auto scheduler = weakScheduler.lock()) {
+          scheduler->reportMount(surfaceId);
+        }
         logTransactionTelemetryMarkers(transaction);
       });
 }
@@ -129,7 +133,8 @@ void SchedulerDelegate::schedulerShouldRenderTransactions(
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions");
   performOnMainThread([transactionState = m_transactionState,
-                       mountingCoordinator](auto mountingManager) {
+                       mountingCoordinator,
+                       scheduler = m_scheduler](auto mountingManager) {
     facebook::react::SystraceSection s(
         "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions::MAIN");
     if (transactionState->transactionInFlight) {
@@ -140,10 +145,15 @@ void SchedulerDelegate::schedulerShouldRenderTransactions(
     do {
       transactionState->followUpTransactionRequired = false;
       transactionState->transactionInFlight = true;
-      performTransaction(mountingCoordinator, mountingManager);
+      performTransaction(mountingCoordinator, mountingManager, scheduler);
       transactionState->transactionInFlight = false;
     } while (transactionState->followUpTransactionRequired);
   });
-};
+}
+
+void SchedulerDelegate::setScheduler(
+    std::shared_ptr<facebook::react::Scheduler> const& scheduler) {
+  m_scheduler = scheduler;
+}
 
 } // namespace rnoh

@@ -161,6 +161,7 @@ void RNInstanceInternal::initializeScheduler(
       m_componentInstancePreallocationRequestQueue);
   m_scheduler = std::make_shared<react::Scheduler>(
       schedulerToolbox, m_animationDriver.get(), m_schedulerDelegate.get());
+  m_schedulerDelegate->setScheduler(m_scheduler);
   turboModuleProvider->setScheduler(m_scheduler);
   DLOG(INFO) << "RNInstanceInternal::initializeScheduler::end";
 }

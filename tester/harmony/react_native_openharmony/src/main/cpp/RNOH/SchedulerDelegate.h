@@ -57,6 +57,9 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
       bool isJSResponder,
       bool blockNativeResponder) override;
 
+  void setScheduler(
+      std::shared_ptr<facebook::react::Scheduler> const& scheduler);
+
  private:
   template <typename Operation>
   void performOnMainThread(Operation operation) {
@@ -88,6 +91,7 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
       m_weakPreallocationRequestQueue;
   std::shared_ptr<TransactionState> m_transactionState =
       std::make_shared<TransactionState>();
+  std::weak_ptr<facebook::react::Scheduler> m_scheduler{};
 };
 
 }; // namespace rnoh
