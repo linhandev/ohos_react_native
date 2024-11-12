@@ -35,11 +35,7 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
   ~SchedulerDelegate() override;
 
   void schedulerShouldRenderTransactions(
-      const MountingCoordinator::Shared& mountingCoordinator) override{
-      /**
-       * A method introduced in RN@0.74.1. Currently, it's not utilized by RNOH.
-       */
-  };
+      const MountingCoordinator::Shared& mountingCoordinator) override;
 
   void schedulerDidFinishTransaction(
       const MountingCoordinator::Shared& mountingCoordinator) override;
@@ -80,13 +76,18 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
           }
         });
   }
-  static void logTransactionTelemetryMarkers(
-      facebook::react::MountingTransaction const& transaction);
+
+  struct TransactionState final {
+    bool transactionInFlight = false;
+    bool followUpTransactionRequired = false;
+  };
 
   MountingManager::Weak m_mountingManager;
   TaskExecutor::Shared m_taskExecutor;
   ComponentInstancePreallocationRequestQueue::Weak
       m_weakPreallocationRequestQueue;
+  std::shared_ptr<TransactionState> m_transactionState =
+      std::make_shared<TransactionState>();
 };
 
 }; // namespace rnoh

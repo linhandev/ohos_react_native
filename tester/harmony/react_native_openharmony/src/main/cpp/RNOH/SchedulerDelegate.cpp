@@ -1,5 +1,6 @@
 #include "SchedulerDelegate.h"
 #include <cxxreact/SystraceSection.h>
+#include "MountingManager.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 
 namespace rnoh {
@@ -8,33 +9,11 @@ SchedulerDelegate::~SchedulerDelegate() {
 }
 
 void SchedulerDelegate::schedulerDidFinishTransaction(
-    const MountingCoordinator::Shared& mountingCoordinator) {
-  facebook::react::SystraceSection s(
-      "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction");
-  performOnMainThread([mountingCoordinator](auto mountingManager) {
-    facebook::react::SystraceSection s(
-        "#RNOH::SchedulerDelegate::schedulerDidFinishTransaction::pullTransaction");
-    HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
-                                      FABRIC_FINISH_TRANSACTION_START);
-    mountingCoordinator->getTelemetryController().pullTransaction(
-        [&mountingManager](
-            auto const& transaction, auto const& /*surfaceTelemetry*/) {
-          mountingManager->willMount(transaction.getMutations());
-        },
-        [&mountingManager](
-            auto const& transaction, auto const& /*surfaceTelemetry*/) {
-          mountingManager->doMount(transaction.getMutations());
-        },
-        [&mountingManager](
-            auto const& transaction, auto const& /*surfaceTelemetry*/) {
-          mountingManager->didMount(transaction.getMutations());
-          logTransactionTelemetryMarkers(transaction);
-        });
-  });
+    const MountingCoordinator::Shared& /*mountingCoordinator*/) {
+  // no-op, we will flush the transaction from schedulerShouldRenderTransactions
 }
 
-void SchedulerDelegate::logTransactionTelemetryMarkers(
-    MountingTransaction const& transaction) {
+void logTransactionTelemetryMarkers(MountingTransaction const& transaction) {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END);
   auto telemetry = transaction.getTelemetry();
@@ -121,5 +100,50 @@ void SchedulerDelegate::schedulerDidSetIsJSResponder(
         shadowView, isJSResponder, blockNativeResponder);
   });
 }
+
+static void performTransaction(
+    MountingCoordinator::Shared const& mountingCoordinator,
+    MountingManager::Shared const& mountingManager) {
+  facebook::react::SystraceSection s(
+      "#RNOH::SchedulerDelegate::performTransaction");
+  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
+                                    FABRIC_FINISH_TRANSACTION_START);
+  mountingCoordinator->getTelemetryController().pullTransaction(
+      [&mountingManager](
+          auto const& transaction, auto const& /*surfaceTelemetry*/) {
+        mountingManager->willMount(transaction.getMutations());
+      },
+      [&mountingManager](
+          auto const& transaction, auto const& /*surfaceTelemetry*/) {
+        mountingManager->doMount(transaction.getMutations());
+      },
+      [&mountingManager](
+          auto const& transaction, auto const& /*surfaceTelemetry*/) {
+        mountingManager->didMount(transaction.getMutations());
+        logTransactionTelemetryMarkers(transaction);
+      });
+}
+
+void SchedulerDelegate::schedulerShouldRenderTransactions(
+    const MountingCoordinator::Shared& mountingCoordinator) {
+  facebook::react::SystraceSection s(
+      "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions");
+  performOnMainThread([transactionState = m_transactionState,
+                       mountingCoordinator](auto mountingManager) {
+    facebook::react::SystraceSection s(
+        "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions::MAIN");
+    if (transactionState->transactionInFlight) {
+      transactionState->followUpTransactionRequired = true;
+      return;
+    }
+
+    do {
+      transactionState->followUpTransactionRequired = false;
+      transactionState->transactionInFlight = true;
+      performTransaction(mountingCoordinator, mountingManager);
+      transactionState->transactionInFlight = false;
+    } while (transactionState->followUpTransactionRequired);
+  });
+};
 
 } // namespace rnoh
