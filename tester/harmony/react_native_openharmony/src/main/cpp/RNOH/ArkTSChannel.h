@@ -13,6 +13,7 @@ class ArkTSChannel {
 
  public:
   using Shared = std::shared_ptr<ArkTSChannel>;
+  using Weak = std::weak_ptr<ArkTSChannel>;
 
   ArkTSChannel(
       TaskExecutor::Shared taskExecutor,

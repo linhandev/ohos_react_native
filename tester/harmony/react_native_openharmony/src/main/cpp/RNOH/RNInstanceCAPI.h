@@ -45,6 +45,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared FontRegistry,
+      HarmonyReactMarker::HarmonyReactMarkerListener::Unique markerListener,
       ComponentJSIBinderByString componentJSIBinderByName)
       : RNInstanceInternal(
             id,
@@ -68,7 +69,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
         m_nativeResourceManager(std::move(nativeResourceManager)),
-        m_componentJSIBinderByName(std::move(componentJSIBinderByName)) {}
+        m_componentJSIBinderByName(std::move(componentJSIBinderByName)),
+        m_markerListener(std::move(markerListener)) {}
 
   ~RNInstanceCAPI() noexcept override;
 
@@ -153,6 +155,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
   SharedNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
   ComponentJSIBinderByString m_componentJSIBinderByName;
+  HarmonyReactMarker::HarmonyReactMarkerListener::Unique m_markerListener;
 };
 
 } // namespace rnoh

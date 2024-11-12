@@ -71,29 +71,41 @@ class HarmonyReactMarker {
 
   class HarmonyReactMarkerListener {
    public:
+    using Unique = std::unique_ptr<HarmonyReactMarkerListener>;
+
     virtual void logMarker(
-        const HarmonyReactMarkerId markerId,
-        const char* tag,
-        const double timestamp) = 0;
+        HarmonyReactMarkerId markerId,
+        const std::string& tag,
+        double timestamp) = 0;
+
+    HarmonyReactMarkerListener(bool autoRegister = true) {
+      if (autoRegister) {
+        HarmonyReactMarker::addListener(this);
+      }
+    }
+
+    ~HarmonyReactMarkerListener() {
+      HarmonyReactMarker::removeListener(this);
+    }
   };
 
   static std::vector<HarmonyReactMarkerListener*> listeners;
 
-  static void addListener(HarmonyReactMarkerListener& listener);
-  static void removeListener(HarmonyReactMarkerListener& listener);
+  static void addListener(HarmonyReactMarkerListener* listener);
+  static void removeListener(HarmonyReactMarkerListener* listener);
   static void setLogMarkerIfNeeded();
-  static void logMarker(const HarmonyReactMarkerId);
-  static void logMarker(const HarmonyReactMarkerId, const char* tag);
+  static void logMarker(HarmonyReactMarkerId);
+  static void logMarker(HarmonyReactMarkerId, const char* tag);
   static void logMarker(
       const HarmonyReactMarkerId markerId,
       facebook::react::Tag tag);
   static void logMarker(const std::string& markerId, const char* tag);
-  static void logMarker(const ReactMarker::ReactMarkerId, const char* tag);
-  static void logMarker(
-      const HarmonyReactMarkerId,
-      const char* tag,
-      const double timestamp);
+  static void logMarker(ReactMarker::ReactMarkerId, const char* tag);
+  static void
+  logMarker(HarmonyReactMarkerId, const char* tag, double timestamp);
   static void setAppStartTime(double startTime);
+  static std::string harmonyMarkerIdToString(
+      const HarmonyReactMarkerId markerId);
 
  private:
   static inline double sAppStartTime = 0.0;

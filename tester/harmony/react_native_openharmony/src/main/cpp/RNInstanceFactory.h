@@ -50,6 +50,9 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     int id,
     napi_env env,
     napi_env workerEnv,
+    std::shared_ptr<TaskExecutor> taskExecutor,
+    std::shared_ptr<ArkTSChannel> arkTSChannel,
+    HarmonyReactMarker::HarmonyReactMarkerListener::Unique markerListener,
     std::unique_ptr<NapiTaskRunner> workerTaskRunner,
     ArkTSBridge::Shared arkTSBridge,
     NapiRef mainArkTSTurboModuleProviderRef,
@@ -57,7 +60,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     NapiRef frameNodeFactoryRef,
     MutationsListener mutationsListener,
     MountingManagerArkTS::CommandDispatcher commandDispatcher,
-    NapiRef napiEventDispatcherRef,
     FeatureFlagRegistry::Shared featureFlagRegistry,
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
@@ -65,10 +67,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     std::unordered_map<std::string, std::string> fontPathByFontFamily) {
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
-  auto taskExecutor =
-      std::make_shared<TaskExecutor>(env, std::move(workerTaskRunner));
-  auto arkTSChannel = std::make_shared<ArkTSChannel>(
-      taskExecutor, ArkJS(env), napiEventDispatcherRef);
 
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
@@ -259,6 +257,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       shouldEnableDebugger,
       arkTSBridge,
       std::move(fontRegistry),
+      std::move(markerListener),
       std::move(componentJSIBinderByName));
   componentInstanceDependencies->rnInstance = rnInstance;
   auto imageSourceResolver =

@@ -6,11 +6,13 @@ class OHReactMarkerListener
  public:
   using HarmonyReactMarkerId = HarmonyReactMarker::HarmonyReactMarkerId;
 
+  OHReactMarkerListener() : HarmonyReactMarkerListener(false) {}
+
   static OHReactMarkerListener& getInstance();
   void logMarker(
-      const HarmonyReactMarkerId markerId,
-      const char* tag,
-      const double timestamp) override;
+      HarmonyReactMarkerId markerId,
+      const std::string& tag,
+      double timestamp) override;
 
  private:
   void logMarker(const std::string& marker, const std::string& tag);

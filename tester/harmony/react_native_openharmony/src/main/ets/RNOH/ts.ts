@@ -24,3 +24,4 @@ export * from "./SafeAreaInsetsProvider"
 export * from "./DisplayMetricsManager"
 export * from "./WorkerThread"
 export * from "./WorkerRNInstance"
+export * from './RNOHMarker'

@@ -299,6 +299,24 @@ void RNInstanceInternal::registerFont(
   m_fontRegistry->registerFont(fontFamily, fontFilePath);
 }
 
+RNInstanceInternal::RNInstanceHarmonyReactMarkerListener::
+    RNInstanceHarmonyReactMarkerListener(ArkTSChannel::Weak arkTSChannel)
+    : m_arkTSChannel(arkTSChannel) {};
+
+void RNInstanceInternal::RNInstanceHarmonyReactMarkerListener::logMarker(
+    const HarmonyReactMarker::HarmonyReactMarkerId markerId,
+    const std::string& tag,
+    const double timestamp) {
+  auto arkTSChannel = m_arkTSChannel.lock();
+  if (!arkTSChannel) {
+    return;
+  }
+  folly::dynamic payload = folly::dynamic::object(
+      "markerId", HarmonyReactMarker::harmonyMarkerIdToString(markerId))(
+      "tag", tag)("timestamp", timestamp);
+  arkTSChannel->postMessage("logRNOHMarker", payload);
+}
+
 std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
@@ -341,8 +359,6 @@ RNInstanceInternal::RNInstanceInternal(
       m_arkTSBridge(std::move(arkTSBridge)),
       m_componentInstancePreallocationRequestQueue(
           std::move(componentInstancePreallocationRequestQueue)) {
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::INIT_REACT_RUNTIME_START);
   m_fontRegistry = std::move(fontRegistry);
 }
 

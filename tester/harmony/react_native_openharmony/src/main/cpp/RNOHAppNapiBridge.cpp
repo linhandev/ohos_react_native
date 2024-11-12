@@ -82,10 +82,8 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     HarmonyReactMarker::setLogMarkerIfNeeded();
 #ifdef WITH_HITRACE_REACT_MARKER
-    HarmonyReactMarker::addListener(OHReactMarkerListener::getInstance());
+    HarmonyReactMarker::addListener(&OHReactMarkerListener::getInstance());
 #endif
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::APP_STARTUP_START);
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
 #ifdef LOG_VERBOSITY_LEVEL
@@ -211,10 +209,21 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         WORKER_TURBO_MODULE_PROVIDER_REF_AND_ENV_BY_RN_INSTANCE_ID,
         rnInstanceId,
         std::make_pair(NapiRef{}, nullptr));
+    auto taskExecutor =
+        std::make_shared<TaskExecutor>(env, std::move(workerTaskRunner));
+    auto arkTSChannel = std::make_shared<ArkTSChannel>(
+        taskExecutor, ArkJS(env), eventDispatcherRef);
+    auto markerListener = std::make_unique<
+        RNInstanceInternal::RNInstanceHarmonyReactMarkerListener>(arkTSChannel);
+    HarmonyReactMarker::logMarker(
+        HarmonyReactMarker::HarmonyReactMarkerId::APP_STARTUP_START);
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,
         workerEnv,
+        std::move(taskExecutor),
+        std::move(arkTSChannel),
+        std::move(markerListener),
         std::move(workerTaskRunner),
         getOrDefault(ARK_TS_BRIDGE_BY_ENV_ID, envId, nullptr),
         std::move(mainArkTSTurboModuleProviderRef),
@@ -262,7 +271,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
               arkJS.getReferenceValue(commandDispatcherRef);
           arkJS.call<3>(commandDispatcher, napiArgsArray);
         },
-        std::move(eventDispatcherRef),
         featureFlagRegistry,
         UI_TICKER,
         jsResourceManager,
@@ -874,7 +882,6 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        napi_default,
        nullptr},
-
   };
 
   napi_define_properties(

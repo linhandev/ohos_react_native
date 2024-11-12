@@ -10,7 +10,7 @@ OHReactMarkerListener& OHReactMarkerListener::getInstance() {
 
 void OHReactMarkerListener::logMarker(
     const HarmonyReactMarkerId markerId,
-    const char* tag,
+    const std::string& tag,
     const double timestamp) {
   switch (markerId) {
     case HarmonyReactMarkerId::RUN_JS_BUNDLE_START:

@@ -23,6 +23,7 @@ import { HttpClient } from '../HttpClient/HttpClient'
 import resourceManager from '@ohos.resourceManager'
 import { WorkerThread } from "./WorkerThread"
 import font from "@ohos.font"
+import { RNOHMarker, RNOHMarkerEventPayload } from './RNOHMarker'
 
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
 
@@ -473,6 +474,7 @@ export class RNInstanceImpl implements RNInstance {
       this.injectedLogger,
     );
     this.subscribeToDevTools();
+    this.registerRNOHMarker();
   }
 
   public async onDestroy() {
@@ -1042,5 +1044,14 @@ export class RNInstanceImpl implements RNInstance {
     })();
     this.fontPathByFontFamily[fontFamily] = fontPath;
     this.napiBridge.registerFont(this.id, fontFamily, fontPath);
+  }
+
+  private registerRNOHMarker() {
+    this.cppEventEmitter.subscribe("logRNOHMarker",
+      (payload: RNOHMarkerEventPayload): void =>
+      RNOHMarker.notifyListeners(payload.markerId, payload.tag,
+        payload.timestamp
+      )
+    )
   }
 }
