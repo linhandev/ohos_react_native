@@ -125,10 +125,6 @@ void ComponentInstanceProvider::processPreallocationRequest(
   auto componentInstance = m_componentInstanceFactory->create(
       shadowView.tag, shadowView.componentHandle, shadowView.componentName);
   if (componentInstance != nullptr) {
-    componentInstance->setLayout(shadowView.layoutMetrics);
-    componentInstance->setEventEmitter(shadowView.eventEmitter);
-    componentInstance->setState(shadowView.state);
-    componentInstance->setProps(shadowView.props);
     m_preallocatedComponentInstanceByTag.emplace(
         shadowView.tag, componentInstance);
   } else {
