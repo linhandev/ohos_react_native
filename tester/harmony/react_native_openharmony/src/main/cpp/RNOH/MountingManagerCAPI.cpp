@@ -63,7 +63,6 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
-  m_componentInstanceProvider->clearPreallocatedViews();
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
@@ -354,4 +353,8 @@ void MountingManagerCAPI::schedulerDidSendAccessibilityEvent(
       "RNOH::schedulerDidSendAccessibilityEvent", payload);
 };
 
+
+void MountingManagerCAPI::clearPreallocatedViews() {
+  m_componentInstanceProvider->clearPreallocatedViews();
+}
 } // namespace rnoh
