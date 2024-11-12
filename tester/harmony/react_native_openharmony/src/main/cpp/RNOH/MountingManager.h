@@ -47,5 +47,7 @@ class MountingManager {
       facebook::react::Tag tag,
       folly::dynamic props,
       facebook::react::ComponentDescriptor const& componentDescriptor) = 0;
+
+  virtual void clearPreallocatedViews() = 0;
 };
 } // namespace rnoh
