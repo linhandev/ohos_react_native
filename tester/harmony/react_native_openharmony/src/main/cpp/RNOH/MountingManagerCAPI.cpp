@@ -1,6 +1,6 @@
 #include "MountingManagerCAPI.h"
 #include <cxxreact/SystraceSection.h>
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 
 namespace rnoh {
 
@@ -55,8 +55,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     m_arkTSMountingManager->didMount(getArkTSMutations(mutations));
   }
 
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::FABRIC_BATCH_EXECUTION_START);
   m_componentInstanceProvider->clearPreallocationRequestQueue();
   for (auto const& mutation : mutations) {
     try {
@@ -68,8 +67,7 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
   }
   this->finalizeMutationUpdates(mutations);
   m_componentInstanceProvider->clearPreallocatedViews();
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
 
 void MountingManagerCAPI::dispatchCommand(

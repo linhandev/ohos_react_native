@@ -5,7 +5,7 @@
 #include <react/renderer/components/root/RootComponentDescriptor.h>
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "TouchEventDispatcher.h"
 #include "UIInputEventHandler.h"
 
@@ -165,9 +165,8 @@ void ArkUISurface::attachToNodeContent(NodeContentHandle nodeContentHandle) {
   }
   m_nodeContentHandle = nodeContentHandle;
   m_nodeContentHandle.value().addNode(m_rootView->getLocalRootArkUINode());
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::CONTENT_APPEARED,
-      m_rootView->getTag());
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::CONTENT_APPEARED, m_rootView->getTag());
 }
 
 void ArkUISurface::detachFromNodeContent() {

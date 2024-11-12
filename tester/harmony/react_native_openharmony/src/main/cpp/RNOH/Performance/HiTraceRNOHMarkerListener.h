@@ -1,16 +1,15 @@
-#include "HarmonyReactMarker.h"
+#include "RNOHMarker.h"
 
 namespace rnoh {
-class OHReactMarkerListener
-    : public HarmonyReactMarker::HarmonyReactMarkerListener {
+class HiTraceRNOHMarkerListener : public RNOHMarker::RNOHMarkerListener {
  public:
-  using HarmonyReactMarkerId = HarmonyReactMarker::HarmonyReactMarkerId;
+  using RNOHMarkerId = RNOHMarker::RNOHMarkerId;
 
-  OHReactMarkerListener() : HarmonyReactMarkerListener(false) {}
+  HiTraceRNOHMarkerListener() : RNOHMarkerListener(false) {}
 
-  static OHReactMarkerListener& getInstance();
+  static HiTraceRNOHMarkerListener& getInstance();
   void logMarker(
-      HarmonyReactMarkerId markerId,
+      RNOHMarkerId markerId,
       const std::string& tag,
       double timestamp) override;
 

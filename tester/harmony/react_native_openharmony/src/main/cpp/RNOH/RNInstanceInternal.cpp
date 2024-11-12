@@ -12,7 +12,7 @@
 #include "HarmonyTimerRegistry.h"
 #include "RNOH/AsynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleProvider.h"
@@ -56,8 +56,7 @@ void RNInstanceInternal::postMessageToArkTS(
 
 void RNInstanceInternal::start() {
   DLOG(INFO) << "RNInstanceInternal::start";
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_REACT_CONTEXT_START);
   initialize();
 
   m_runtimeScheduler = m_reactInstance->getRuntimeScheduler();
@@ -99,8 +98,7 @@ void RNInstanceInternal::initialize() {
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_BRIDGE_LOADING_START);
 
   auto onJSError = [this](const JsErrorHandler::ParsedError& error) {
     // TODO: implement `ArkTSBridge::handleError(ParsedError)` and call it here
@@ -125,8 +123,7 @@ void RNInstanceInternal::initialize() {
       [this](facebook::jsi::Runtime& rt) { installJSBindings(rt); });
   timerManager->setRuntimeExecutor(
       m_reactInstance->getBufferedRuntimeExecutor());
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
 void RNInstanceInternal::initializeScheduler(
@@ -299,12 +296,12 @@ void RNInstanceInternal::registerFont(
   m_fontRegistry->registerFont(fontFamily, fontFilePath);
 }
 
-RNInstanceInternal::RNInstanceHarmonyReactMarkerListener::
-    RNInstanceHarmonyReactMarkerListener(ArkTSChannel::Weak arkTSChannel)
+RNInstanceInternal::RNInstanceRNOHMarkerListener::RNInstanceRNOHMarkerListener(
+    ArkTSChannel::Weak arkTSChannel)
     : m_arkTSChannel(arkTSChannel) {};
 
-void RNInstanceInternal::RNInstanceHarmonyReactMarkerListener::logMarker(
-    const HarmonyReactMarker::HarmonyReactMarkerId markerId,
+void RNInstanceInternal::RNInstanceRNOHMarkerListener::logMarker(
+    const RNOHMarker::RNOHMarkerId markerId,
     const std::string& tag,
     const double timestamp) {
   auto arkTSChannel = m_arkTSChannel.lock();
@@ -312,8 +309,8 @@ void RNInstanceInternal::RNInstanceHarmonyReactMarkerListener::logMarker(
     return;
   }
   folly::dynamic payload = folly::dynamic::object(
-      "markerId", HarmonyReactMarker::harmonyMarkerIdToString(markerId))(
-      "tag", tag)("timestamp", timestamp);
+      "markerId", RNOHMarker::harmonyMarkerIdToString(markerId))("tag", tag)(
+      "timestamp", timestamp);
   arkTSChannel->postMessage("logRNOHMarker", payload);
 }
 

@@ -8,7 +8,7 @@
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/MountingManager.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/SchedulerDelegate.h"
 
@@ -18,15 +18,14 @@ class RNInstanceInternal
       public std::enable_shared_from_this<RNInstance>,
       public facebook::react::LayoutAnimationStatusDelegate {
  public:
-  class RNInstanceHarmonyReactMarkerListener
-      : public HarmonyReactMarker::HarmonyReactMarkerListener {
+  class RNInstanceRNOHMarkerListener : public RNOHMarker::RNOHMarkerListener {
    public:
-    RNInstanceHarmonyReactMarkerListener(ArkTSChannel::Weak arkTSChannel);
+    RNInstanceRNOHMarkerListener(ArkTSChannel::Weak arkTSChannel);
 
     void logMarker(
-        const HarmonyReactMarker::HarmonyReactMarkerId markerId,
+        RNOHMarker::RNOHMarkerId markerId,
         const std::string& tag,
-        const double timestamp) override;
+        double timestamp) override;
 
    private:
     ArkTSChannel::Weak m_arkTSChannel;

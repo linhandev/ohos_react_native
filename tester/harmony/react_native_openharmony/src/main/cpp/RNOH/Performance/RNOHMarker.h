@@ -12,9 +12,9 @@ using namespace facebook::react;
 
 namespace rnoh {
 
-class HarmonyReactMarker {
+class RNOHMarker {
  public:
-  enum class HarmonyReactMarkerId {
+  enum class RNOHMarkerId {
     UNKNOWN_REACT_MARKER,
     APP_STARTUP_START,
     APP_STARTUP_STOP,
@@ -69,51 +69,46 @@ class HarmonyReactMarker {
     FABRIC_UPDATE_UI_MAIN_THREAD_END
   };
 
-  class HarmonyReactMarkerListener {
+  class RNOHMarkerListener {
    public:
-    using Unique = std::unique_ptr<HarmonyReactMarkerListener>;
+    using Unique = std::unique_ptr<RNOHMarkerListener>;
 
     virtual void logMarker(
-        HarmonyReactMarkerId markerId,
+        RNOHMarkerId markerId,
         const std::string& tag,
         double timestamp) = 0;
 
-    HarmonyReactMarkerListener(bool autoRegister = true) {
+    RNOHMarkerListener(bool autoRegister = true) {
       if (autoRegister) {
-        HarmonyReactMarker::addListener(this);
+        RNOHMarker::addListener(this);
       }
     }
 
-    ~HarmonyReactMarkerListener() {
-      HarmonyReactMarker::removeListener(this);
+    ~RNOHMarkerListener() {
+      RNOHMarker::removeListener(this);
     }
   };
 
-  static std::vector<HarmonyReactMarkerListener*> listeners;
+  static std::vector<RNOHMarkerListener*> listeners;
 
-  static void addListener(HarmonyReactMarkerListener* listener);
-  static void removeListener(HarmonyReactMarkerListener* listener);
+  static void addListener(RNOHMarkerListener* listener);
+  static void removeListener(RNOHMarkerListener* listener);
   static void setLogMarkerIfNeeded();
-  static void logMarker(HarmonyReactMarkerId);
-  static void logMarker(HarmonyReactMarkerId, const char* tag);
-  static void logMarker(
-      const HarmonyReactMarkerId markerId,
-      facebook::react::Tag tag);
+  static void logMarker(RNOHMarkerId);
+  static void logMarker(RNOHMarkerId, const char* tag);
+  static void logMarker(const RNOHMarkerId markerId, facebook::react::Tag tag);
   static void logMarker(const std::string& markerId, const char* tag);
   static void logMarker(ReactMarker::ReactMarkerId, const char* tag);
-  static void
-  logMarker(HarmonyReactMarkerId, const char* tag, double timestamp);
+  static void logMarker(RNOHMarkerId, const char* tag, double timestamp);
   static void setAppStartTime(double startTime);
-  static std::string harmonyMarkerIdToString(
-      const HarmonyReactMarkerId markerId);
+  static std::string harmonyMarkerIdToString(const RNOHMarkerId markerId);
 
  private:
   static inline double sAppStartTime = 0.0;
   static double getAppStartTime();
-  static HarmonyReactMarkerId harmonyMarkerIdForReactMarkerId(
+  static RNOHMarkerId harmonyMarkerIdForReactMarkerId(
       const ReactMarker::ReactMarkerId markerId);
-  static HarmonyReactMarkerId harmonyMarkerIdForString(
-      const std::string& markerId);
+  static RNOHMarkerId harmonyMarkerIdForString(const std::string& markerId);
 };
 
 } // namespace rnoh

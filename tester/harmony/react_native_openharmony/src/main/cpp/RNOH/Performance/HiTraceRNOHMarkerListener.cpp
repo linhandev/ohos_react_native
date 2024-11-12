@@ -1,163 +1,163 @@
-#include "OHReactMarkerListener.h"
+#include "HiTraceRNOHMarkerListener.h"
 #include <glog/logging.h>
 
 namespace rnoh {
 
-OHReactMarkerListener& OHReactMarkerListener::getInstance() {
-  static OHReactMarkerListener l;
+HiTraceRNOHMarkerListener& HiTraceRNOHMarkerListener::getInstance() {
+  static HiTraceRNOHMarkerListener l;
   return l;
 }
 
-void OHReactMarkerListener::logMarker(
-    const HarmonyReactMarkerId markerId,
+void HiTraceRNOHMarkerListener::logMarker(
+    const RNOHMarkerId markerId,
     const std::string& tag,
     const double timestamp) {
   switch (markerId) {
-    case HarmonyReactMarkerId::RUN_JS_BUNDLE_START:
+    case RNOHMarkerId::RUN_JS_BUNDLE_START:
       logMarkerStart("RUN_JS_BUNDLE", tag);
       break;
-    case HarmonyReactMarkerId::RUN_JS_BUNDLE_STOP:
+    case RNOHMarkerId::RUN_JS_BUNDLE_STOP:
       logMarkerFinish("RUN_JS_BUNDLE", tag);
       break;
-    case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_START:
+    case RNOHMarkerId::CREATE_REACT_CONTEXT_START:
       logMarkerStart("CREATE_REACT_CONTEXT", "");
       break;
-    case HarmonyReactMarkerId::CREATE_REACT_CONTEXT_STOP:
+    case RNOHMarkerId::CREATE_REACT_CONTEXT_STOP:
       logMarkerFinish("CREATE_REACT_CONTEXT", "");
       break;
-    case HarmonyReactMarkerId::JS_BUNDLE_STRING_CONVERT_START:
+    case RNOHMarkerId::JS_BUNDLE_STRING_CONVERT_START:
       logMarkerStart("loadApplicationScript_StringConvert", "");
       break;
-    case HarmonyReactMarkerId::JS_BUNDLE_STRING_CONVERT_STOP:
+    case RNOHMarkerId::JS_BUNDLE_STRING_CONVERT_STOP:
       logMarkerFinish("loadApplicationScript_StringConvert", "");
       break;
-    case HarmonyReactMarkerId::NATIVE_MODULE_SETUP_START:
+    case RNOHMarkerId::NATIVE_MODULE_SETUP_START:
       logMarkerStart("NATIVE_MODULE_SETUP", tag);
       break;
-    case HarmonyReactMarkerId::NATIVE_MODULE_SETUP_STOP:
+    case RNOHMarkerId::NATIVE_MODULE_SETUP_STOP:
       logMarkerFinish("NATIVE_MODULE_SETUP", tag);
       break;
-    case HarmonyReactMarkerId::REGISTER_JS_SEGMENT_START:
+    case RNOHMarkerId::REGISTER_JS_SEGMENT_START:
       logMarkerStart("REGISTER_JS_SEGMENT", tag);
       break;
-    case HarmonyReactMarkerId::REGISTER_JS_SEGMENT_STOP:
+    case RNOHMarkerId::REGISTER_JS_SEGMENT_STOP:
       logMarkerFinish("REGISTER_JS_SEGMENT", tag);
       break;
-    case HarmonyReactMarkerId::CONTENT_APPEARED:
+    case RNOHMarkerId::CONTENT_APPEARED:
       logMarker("CONTENT_APPEARED", tag);
       break;
-    case HarmonyReactMarkerId::CHANGE_THREAD_PRIORITY:
+    case RNOHMarkerId::CHANGE_THREAD_PRIORITY:
       logMarker("CHANGE_THREAD_PRIORITY", tag);
       break;
-    case HarmonyReactMarkerId::FABRIC_COMMIT_START:
+    case RNOHMarkerId::FABRIC_COMMIT_START:
       logMarkerStart("FABRIC_COMMIT", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_COMMIT_END:
+    case RNOHMarkerId::FABRIC_COMMIT_END:
       logMarkerFinish("FABRIC_COMMIT", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_START:
+    case RNOHMarkerId::FABRIC_FINISH_TRANSACTION_START:
       logMarkerStart("FABRIC_FINISH_TRANSACTION", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END:
+    case RNOHMarkerId::FABRIC_FINISH_TRANSACTION_END:
       logMarkerFinish("FABRIC_FINISH_TRANSACTION", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_DIFF_START:
+    case RNOHMarkerId::FABRIC_DIFF_START:
       logMarkerStart("FABRIC_DIFF", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_DIFF_END:
+    case RNOHMarkerId::FABRIC_DIFF_END:
       logMarkerFinish("FABRIC_DIFF", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_LAYOUT_START:
+    case RNOHMarkerId::FABRIC_LAYOUT_START:
       logMarkerStart("FABRIC_LAYOUT", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_LAYOUT_END:
+    case RNOHMarkerId::FABRIC_LAYOUT_END:
       logMarkerFinish("FABRIC_LAYOUT", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START:
+    case RNOHMarkerId::FABRIC_BATCH_EXECUTION_START:
       logMarkerStart("FABRIC_BATCH_EXECUTION", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END:
+    case RNOHMarkerId::FABRIC_BATCH_EXECUTION_END:
       logMarkerFinish("FABRIC_BATCH_EXECUTION", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_START:
+    case RNOHMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_START:
       logMarkerStart("FABRIC_UPDATE_UI_MAIN_THREAD", "");
       break;
-    case HarmonyReactMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_END:
+    case RNOHMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_END:
       logMarkerFinish("FABRIC_UPDATE_UI_MAIN_THREAD", "");
       break;
-    case HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START:
+    case RNOHMarkerId::REACT_BRIDGE_LOADING_START:
       logMarkerStart("REACT_BRIDGE_LOADING", tag);
       break;
-    case HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END:
+    case RNOHMarkerId::REACT_BRIDGE_LOADING_END:
       logMarkerFinish("REACT_BRIDGE_LOADING", tag);
       break;
-    case HarmonyReactMarkerId::ON_HOST_RESUME_START:
+    case RNOHMarkerId::ON_HOST_RESUME_START:
       logMarkerStart("ON_HOST_RESUME", tag);
       break;
-    case HarmonyReactMarkerId::ON_HOST_RESUME_END:
+    case RNOHMarkerId::ON_HOST_RESUME_END:
       logMarkerFinish("ON_HOST_RESUME", tag);
       break;
-    case HarmonyReactMarkerId::ON_HOST_PAUSE_START:
+    case RNOHMarkerId::ON_HOST_PAUSE_START:
       logMarkerStart("ON_HOST_PAUSE", tag);
       break;
-    case HarmonyReactMarkerId::ON_HOST_PAUSE_END:
+    case RNOHMarkerId::ON_HOST_PAUSE_END:
       logMarkerFinish("ON_HOST_PAUSE", tag);
       break;
-    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_START:
+    case RNOHMarkerId::REACT_INSTANCE_INIT_START:
       logMarkerStart("REACT_INSTANCE_INIT", tag);
       break;
-    case HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP:
+    case RNOHMarkerId::REACT_INSTANCE_INIT_STOP:
       logMarkerFinish("REACT_INSTANCE_INIT", tag);
       break;
-    case HarmonyReactMarkerId::INITIALIZE_MODULE_START:
+    case RNOHMarkerId::INITIALIZE_MODULE_START:
       logMarkerStart("INITIALIZE_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::INITIALIZE_MODULE_END:
+    case RNOHMarkerId::INITIALIZE_MODULE_END:
       logMarkerFinish("INITIALIZE_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::PROCESS_PACKAGES_START:
+    case RNOHMarkerId::PROCESS_PACKAGES_START:
       logMarkerStart("PROCESS_PACKAGES", tag);
       break;
-    case HarmonyReactMarkerId::PROCESS_PACKAGES_END:
+    case RNOHMarkerId::PROCESS_PACKAGES_END:
       logMarkerFinish("PROCESS_PACKAGES", tag);
       break;
-    case HarmonyReactMarkerId::CREATE_UI_MANAGER_MODULE_START:
+    case RNOHMarkerId::CREATE_UI_MANAGER_MODULE_START:
       logMarkerStart("CREATE_UI_MANAGER_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::CREATE_UI_MANAGER_MODULE_END:
+    case RNOHMarkerId::CREATE_UI_MANAGER_MODULE_END:
       logMarkerFinish("CREATE_UI_MANAGER_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::CREATE_MODULE_START:
+    case RNOHMarkerId::CREATE_MODULE_START:
       logMarkerStart("CREATE_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::CREATE_MODULE_END:
+    case RNOHMarkerId::CREATE_MODULE_END:
       logMarkerFinish("CREATE_MODULE", tag);
       break;
-    case HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_START:
+    case RNOHMarkerId::PROCESS_CORE_REACT_PACKAGE_START:
       logMarkerStart("PROCESS_CORE_REACT_PACKAGE", tag);
       break;
-    case HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END:
+    case RNOHMarkerId::PROCESS_CORE_REACT_PACKAGE_END:
       logMarkerFinish("PROCESS_CORE_REACT_PACKAGE", tag);
       break;
-    case HarmonyReactMarkerId::DOWNLOAD_START:
+    case RNOHMarkerId::DOWNLOAD_START:
       logMarkerStart("DOWNLOAD", tag);
       break;
-    case HarmonyReactMarkerId::DOWNLOAD_END:
+    case RNOHMarkerId::DOWNLOAD_END:
       logMarkerFinish("DOWNLOAD", tag);
       break;
-    case HarmonyReactMarkerId::NATIVE_REQUIRE_START:
-    case HarmonyReactMarkerId::NATIVE_REQUIRE_STOP:
+    case RNOHMarkerId::NATIVE_REQUIRE_START:
+    case RNOHMarkerId::NATIVE_REQUIRE_STOP:
       break;
-    case HarmonyReactMarkerId::APP_STARTUP_START:
+    case RNOHMarkerId::APP_STARTUP_START:
       logMarkerStart("APP_STARTUP", "");
       break;
-    case HarmonyReactMarkerId::APP_STARTUP_STOP:
+    case RNOHMarkerId::APP_STARTUP_STOP:
       logMarkerFinish("APP_STARTUP", "");
       break;
-    case HarmonyReactMarkerId::INIT_REACT_RUNTIME_START:
+    case RNOHMarkerId::INIT_REACT_RUNTIME_START:
       logMarkerStart("INIT_REACT_RUNTIME", "");
       break;
-    case HarmonyReactMarkerId::INIT_REACT_RUNTIME_STOP:
+    case RNOHMarkerId::INIT_REACT_RUNTIME_STOP:
       logMarkerFinish("INIT_REACT_RUNTIME", "");
       break;
     default:
@@ -165,14 +165,14 @@ void OHReactMarkerListener::logMarker(
   }
 }
 
-void OHReactMarkerListener::logMarker(
+void HiTraceRNOHMarkerListener::logMarker(
     const std::string& marker,
     const std::string& tag) {
   logMarkerStart(marker, tag);
   logMarkerFinish(marker, tag);
 }
 
-void OHReactMarkerListener::logMarkerStart(
+void HiTraceRNOHMarkerListener::logMarkerStart(
     const std::string& marker,
     const std::string& tag) {
 #ifdef WITH_HITRACE_REACT_MARKER
@@ -181,7 +181,7 @@ void OHReactMarkerListener::logMarkerStart(
 #endif
 }
 
-void OHReactMarkerListener::logMarkerFinish(
+void HiTraceRNOHMarkerListener::logMarkerFinish(
     const std::string& marker,
     const std::string& tag) {
 #ifdef WITH_HITRACE_REACT_MARKER
@@ -190,7 +190,7 @@ void OHReactMarkerListener::logMarkerFinish(
 #endif
 }
 
-std::string OHReactMarkerListener::makeMessage(
+std::string HiTraceRNOHMarkerListener::makeMessage(
     const std::string& marker,
     const std::string& tag) {
   std::string message = "ReactMarker::" + marker;
@@ -201,7 +201,7 @@ std::string OHReactMarkerListener::makeMessage(
   return message;
 };
 
-int32_t OHReactMarkerListener::getMessageId(const std::string& message) {
+int32_t HiTraceRNOHMarkerListener::getMessageId(const std::string& message) {
   std::hash<std::string> hasher;
   size_t hash = hasher(message);
   // Ensure the hash fits into int32_t. We don't care that much about collisions

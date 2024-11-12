@@ -45,7 +45,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared FontRegistry,
-      HarmonyReactMarker::HarmonyReactMarkerListener::Unique markerListener,
+      RNOHMarker::RNOHMarkerListener::Unique markerListener,
       ComponentJSIBinderByString componentJSIBinderByName)
       : RNInstanceInternal(
             id,
@@ -155,7 +155,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
   SharedNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
   ComponentJSIBinderByString m_componentJSIBinderByName;
-  HarmonyReactMarker::HarmonyReactMarkerListener::Unique m_markerListener;
+  RNOHMarker::RNOHMarkerListener::Unique m_markerListener;
 };
 
 } // namespace rnoh

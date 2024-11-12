@@ -1,5 +1,5 @@
 #include "HarmonyTimerRegistry.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 
 namespace rnoh {
 
@@ -110,20 +110,16 @@ void HarmonyTimerRegistry::triggerTimers(
 
 void HarmonyTimerRegistry::resumeTimers() {
   assertJSThread();
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_RESUME_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::ON_HOST_RESUME_START);
   triggerExpiredTimers();
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_RESUME_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::ON_HOST_RESUME_END);
 }
 
 void HarmonyTimerRegistry::pauseTimers() {
   assertJSThread();
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_PAUSE_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::ON_HOST_PAUSE_START);
   cancelWakeUp();
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::ON_HOST_PAUSE_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::ON_HOST_PAUSE_END);
 }
 
 void HarmonyTimerRegistry::assertJSThread() const {

@@ -12,8 +12,8 @@
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/Inspector.h"
 #include "RNOH/LogSink.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
-#include "RNOH/Performance/OHReactMarkerListener.h"
+#include "RNOH/Performance/HiTraceRNOHMarkerListener.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/RNInstanceInternal.h"
@@ -80,9 +80,9 @@ napi_value invoke(napi_env env, std::function<napi_value()> operation) {
 static napi_value onInit(napi_env env, napi_callback_info info) {
   static int nextEnvId = 0;
   return invoke(env, [&] {
-    HarmonyReactMarker::setLogMarkerIfNeeded();
+    RNOHMarker::setLogMarkerIfNeeded();
 #ifdef WITH_HITRACE_REACT_MARKER
-    HarmonyReactMarker::addListener(&OHReactMarkerListener::getInstance());
+    RNOHMarker::addListener(&HiTraceRNOHMarkerListener::getInstance());
 #endif
     LogSink::initializeLogging();
     auto logVerbosityLevel = 0;
@@ -170,8 +170,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
     DLOG(INFO) << "onCreateRNInstance";
-    HarmonyReactMarker::setAppStartTime(
-        facebook::react::JSExecutor::performanceNow());
+    RNOHMarker::setAppStartTime(facebook::react::JSExecutor::performanceNow());
     auto args = arkJS.getCallbackArgs(info, 12);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
     auto mainArkTSTurboModuleProviderRef = arkJS.createNapiRef(args[1]);
@@ -213,10 +212,10 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         std::make_shared<TaskExecutor>(env, std::move(workerTaskRunner));
     auto arkTSChannel = std::make_shared<ArkTSChannel>(
         taskExecutor, ArkJS(env), eventDispatcherRef);
-    auto markerListener = std::make_unique<
-        RNInstanceInternal::RNInstanceHarmonyReactMarkerListener>(arkTSChannel);
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::APP_STARTUP_START);
+    auto markerListener =
+        std::make_unique<RNInstanceInternal::RNInstanceRNOHMarkerListener>(
+            arkTSChannel);
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::APP_STARTUP_START);
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,
@@ -569,7 +568,7 @@ static napi_value logMarker(napi_env env, napi_callback_info info) {
     auto args = arkJS.getCallbackArgs(info, 2);
     auto markerId = arkJS.getString(args[0]);
     auto rnInstanceId = std::to_string(arkJS.getDouble(args[1]));
-    HarmonyReactMarker::logMarker(markerId, rnInstanceId.c_str());
+    RNOHMarker::logMarker(markerId, rnInstanceId.c_str());
     return arkJS.getNull();
   });
 }

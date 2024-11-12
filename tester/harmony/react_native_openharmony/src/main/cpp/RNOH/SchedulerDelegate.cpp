@@ -1,7 +1,7 @@
 #include "SchedulerDelegate.h"
 #include <cxxreact/SystraceSection.h>
 #include "MountingManager.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 
 namespace rnoh {
 SchedulerDelegate::~SchedulerDelegate() {
@@ -14,8 +14,8 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
 }
 
 void logTransactionTelemetryMarkers(MountingTransaction const& transaction) {
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_FINISH_TRANSACTION_END);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_FINISH_TRANSACTION_END);
   auto telemetry = transaction.getTelemetry();
   auto commitStartTime =
       telemetryTimePointToMilliseconds(telemetry.getCommitStartTime());
@@ -30,30 +30,18 @@ void logTransactionTelemetryMarkers(MountingTransaction const& transaction) {
   auto layoutEndTime =
       telemetryTimePointToMilliseconds(telemetry.getLayoutEndTime());
 
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_COMMIT_START,
-      "",
-      commitStartTime);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_COMMIT_END,
-      "",
-      commitEndTime);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_DIFF_START,
-      "",
-      diffStartTime);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_DIFF_END,
-      "",
-      diffEndTime);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_LAYOUT_START,
-      "",
-      layoutStartTime);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_LAYOUT_END,
-      "",
-      layoutEndTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_COMMIT_START, "", commitStartTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_COMMIT_END, "", commitEndTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_DIFF_START, "", diffStartTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_DIFF_END, "", diffEndTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_LAYOUT_START, "", layoutStartTime);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_LAYOUT_END, "", layoutEndTime);
 }
 
 void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
@@ -107,8 +95,8 @@ static void performTransaction(
     std::weak_ptr<facebook::react::Scheduler> const& weakScheduler) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::performTransaction");
-  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
-                                    FABRIC_FINISH_TRANSACTION_START);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::FABRIC_FINISH_TRANSACTION_START);
   auto surfaceId = mountingCoordinator->getSurfaceId();
   mountingCoordinator->getTelemetryController().pullTransaction(
       [&mountingManager](

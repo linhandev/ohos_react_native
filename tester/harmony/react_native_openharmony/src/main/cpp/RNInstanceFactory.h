@@ -22,7 +22,7 @@
 #include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
@@ -52,7 +52,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_env workerEnv,
     std::shared_ptr<TaskExecutor> taskExecutor,
     std::shared_ptr<ArkTSChannel> arkTSChannel,
-    HarmonyReactMarker::HarmonyReactMarkerListener::Unique markerListener,
+    RNOHMarker::RNOHMarkerListener::Unique markerListener,
     std::unique_ptr<NapiTaskRunner> workerTaskRunner,
     ArkTSBridge::Shared arkTSBridge,
     NapiRef mainArkTSTurboModuleProviderRef,
@@ -65,8 +65,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
     std::unordered_map<std::string, std::string> fontPathByFontFamily) {
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_START, id);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_START, id);
 
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
@@ -97,18 +97,17 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::make_shared<TextMeasurer>(featureFlagRegistry, fontRegistry, id);
   auto shadowViewRegistry = std::make_shared<ShadowViewRegistry>();
   contextContainer->insert("textLayoutManagerDelegate", textMeasurer);
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::PROCESS_PACKAGES_START);
   PackageProvider packageProvider;
   auto packages = packageProvider.getPackages({});
-  HarmonyReactMarker::logMarker(HarmonyReactMarker::HarmonyReactMarkerId::
-                                    PROCESS_CORE_REACT_PACKAGE_START);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::PROCESS_CORE_REACT_PACKAGE_START);
   packages.insert(
       packages.begin(),
       std::make_shared<RNOHCorePackage>(
           Package::Context{.shadowViewRegistry = shadowViewRegistry}));
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_CORE_REACT_PACKAGE_END);
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::PROCESS_CORE_REACT_PACKAGE_END);
   auto componentDescriptorProviderRegistry =
       std::make_shared<facebook::react::ComponentDescriptorProviderRegistry>();
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>
@@ -165,8 +164,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       arkTSMessageHandlers.push_back(arkTSMessageHandler);
     }
   }
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::PROCESS_PACKAGES_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::PROCESS_PACKAGES_END);
   auto arkTSMessageHub = std::make_shared<ArkTSMessageHub>();
   auto turboModuleFactory = TurboModuleFactory(
       {
@@ -263,7 +261,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   auto imageSourceResolver =
       std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
   componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::REACT_INSTANCE_INIT_STOP, id);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_STOP, id);
   return rnInstance;
 }

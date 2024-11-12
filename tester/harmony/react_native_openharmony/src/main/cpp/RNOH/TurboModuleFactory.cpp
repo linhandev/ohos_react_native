@@ -1,6 +1,6 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "Assert.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNOHError.h"
 #include "TaskExecutor/TaskExecutor.h"
@@ -61,8 +61,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       .jsQueue = jsQueue,
       .scheduler = scheduler};
 
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_START);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_START);
   auto result = this->delegateCreatingTurboModule(ctx, name);
   if (result != nullptr) {
     auto arkTSTurboModule =
@@ -74,16 +73,14 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
         suggestions.push_back(
             "Is this a WorkerTurboModule? If so, it requires the Worker thread to be enabled. Check RNAbility::getRNOHWorkerScriptUrl.");
       }
-      HarmonyReactMarker::logMarker(
-          HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+      RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
       throw FatalRNOHError(
           std::string("Couldn't find Turbo Module '")
               .append(name)
               .append("' on the ArkTS side."),
           suggestions);
     }
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
     return result;
   }
 
@@ -95,8 +92,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
         [tmRef = std::move(ctx.arkTSTurboModuleInstanceRef)] {});
     std::vector<std::string> suggestions = {
         "Have you linked a package that provides this turbo module on the CPP side?"};
-    HarmonyReactMarker::logMarker(
-        HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
     throw FatalRNOHError(
         std::string("Couldn't find Turbo Module '")
             .append(name)
@@ -104,8 +100,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
         suggestions);
   }
 
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::CREATE_MODULE_END);
+  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
 
   return this->handleUnregisteredModuleRequest(ctx, name);
 }
@@ -165,21 +160,18 @@ TurboModuleFactory::SharedTurboModule
 TurboModuleFactory::delegateCreatingTurboModule(
     Context ctx,
     const std::string& name) const {
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::INITIALIZE_MODULE_START,
-      name.c_str());
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::INITIALIZE_MODULE_START, name.c_str());
   for (auto delegate : m_delegates) {
     auto result = delegate->createTurboModule(ctx, name);
     if (result != nullptr) {
-      HarmonyReactMarker::logMarker(
-          HarmonyReactMarker::HarmonyReactMarkerId::INITIALIZE_MODULE_END,
-          name.c_str());
+      RNOHMarker::logMarker(
+          RNOHMarker::RNOHMarkerId::INITIALIZE_MODULE_END, name.c_str());
       return result;
     }
   }
-  HarmonyReactMarker::logMarker(
-      HarmonyReactMarker::HarmonyReactMarkerId::INITIALIZE_MODULE_END,
-      name.c_str());
+  RNOHMarker::logMarker(
+      RNOHMarker::RNOHMarkerId::INITIALIZE_MODULE_END, name.c_str());
   return nullptr;
 }
 
