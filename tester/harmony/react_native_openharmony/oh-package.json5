@@ -9,7 +9,7 @@
     org: '',
   },
   type: 'module',
-  version: '0.72.39',
+  version: '0.72.40',
   dependencies: {},
   main: 'index.ets'
 }
