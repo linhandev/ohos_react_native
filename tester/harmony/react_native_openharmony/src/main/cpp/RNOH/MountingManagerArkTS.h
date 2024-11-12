@@ -64,6 +64,8 @@ class MountingManagerArkTS final : public MountingManager {
       folly::dynamic props,
       facebook::react::ComponentDescriptor const& componentDescriptor) override;
 
+  void clearPreallocatedViews();
+
  private:
   ShadowViewRegistry::Shared shadowViewRegistry;
   TriggerUICallback triggerUICallback;
