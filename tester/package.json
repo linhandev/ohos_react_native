@@ -31,7 +31,7 @@
     "check:deprecations": "ts-node ./scripts/check-deprecations.ts",
     "start": "react-native start",
     "benchmark-fps": "node ./scripts/get-frame-times | node ./scripts/create-fps-stats",
-    "find_changed_files": "{ git diff --name-only $(git rev-list --exclude $(git branch --show-current) --branches -1) HEAD; git diff --name-only; git diff --name-only --cached; } | sort | uniq",
+    "find_changed_files": "{ git diff --name-only --diff-filter=d $(git rev-list --exclude $(git branch --show-current) --branches -1) HEAD; git diff --name-only --diff-filter=d; git diff --name-only --diff-filter=d --cached; } | sort | uniq",
     "find_changed_files:cpp": "npm run find_changed_files | grep -E '\\.(h|cpp)$' | grep -v '/generated/' | grep -v '/third-party/' | grep -v '/patches/'",
     "test": "jest ./jests && cd ../react-native-harmony && npm test && cd ../tester",
     "hiprofiler": "./scripts/run-hiprofiler-cmd.sh",
