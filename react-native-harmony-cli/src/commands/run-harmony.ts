@@ -40,23 +40,19 @@ export const commandRunHarmony: Command = {
   func: async (_argv, _config, rawArgs: any) => {
     const logger = new Logger();
     try {
-      const RNOH_DEV_ECO_STUDIO_CONTENTS =
-        process.env.RNOH_DEV_ECO_STUDIO_CONTENTS;
-      if (!RNOH_DEV_ECO_STUDIO_CONTENTS) {
+      const DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
+      if (!DEVECO_SDK_HOME) {
         throw new DescriptiveError({
-          whatHappened:
-            'RNOH_DEV_ECO_STUDIO_CONTENTS environment variable is not set',
+          whatHappened: 'DEVECO_SDK_HOME environment variable is not set',
           whatCanUserDo: [
             process.platform === 'darwin'
-              ? 'On MacOS, the contents directory is typically located at: /Applications/DevEco-Studio.app/Contents. Set this path as the value of RNOH_DEV_ECO_STUDIO_CONTENTS'
-              : "Locate the installation directory of DevEco Studio, and set its 'Contents' subdirectory as the value of RNOH_DEV_ECO_STUDIO_CONTENTS environment variable.",
+              ? 'On MacOS, the contents directory is typically located at: /Applications/DevEco-Studio.app/Contents/sdk. Set this path as the value of DEVECO_SDK_HOME'
+              : "Locate the installation directory of DevEco Studio, and set its 'sdk' subdirectory as the value of DEVECO_SDK_HOME environment variable.",
           ],
         });
       }
       const fs = new RealFS();
-      const sdkPath = new AbsolutePath(
-        RNOH_DEV_ECO_STUDIO_CONTENTS
-      ).copyWithNewSegment('sdk');
+      const sdkPath = new AbsolutePath(DEVECO_SDK_HOME);
       const sdkDirectoryNames = fs
         .readDirentsSync(sdkPath)
         .flatMap((dirent) => {
@@ -84,8 +80,13 @@ export const commandRunHarmony: Command = {
       const moduleName: string = rawArgs.module;
       const abilityName: string = rawArgs.ability;
       const devEcoStudioToolsPath = new AbsolutePath(
-        RNOH_DEV_ECO_STUDIO_CONTENTS
-      ).copyWithNewSegment('tools');
+        DEVECO_SDK_HOME
+      ).copyWithNewSegment('..', 'tools');
+      if (!fs.existsSync(devEcoStudioToolsPath)) {
+        throw new DescriptiveError({
+          whatHappened: `${devEcoStudioToolsPath.toString()} doesn't exist`,
+        });
+      }
       const bundleName = JSON5.parse(
         fs.readTextSync(
           harmonyProjectPath.copyWithNewSegment('AppScope', 'app.json5')
@@ -149,6 +150,9 @@ export const commandRunHarmony: Command = {
             onArgsStringified: (commandWithArgs) =>
               logger.debug((s) => s.bold(s.gray(commandWithArgs))),
           });
+          if (result.startsWith('[Fail]')) {
+            throw new DescriptiveError({ whatHappened: result });
+          }
           if (result) {
             logger.debug((s) => s.gray(result.trimEnd() + '\n'));
           } else {

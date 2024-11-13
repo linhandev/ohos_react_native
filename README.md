@@ -25,6 +25,14 @@ NOTE: The SDK version expected by this project can be found in: `tester/harmony/
 
 ### NPM Setup
 
+DevEco Studio tools require global .npmrc configuration that changes target repository for packages prefixed with @ohos to the Huawei NPM repository.
+
+`~/.npmrc`
+```
+registry=https://repo.huaweicloud.com/repository/npm/
+@ohos:registry=https://repo.harmonyos.com/npm/
+```
+
 In order to download NPM dependencies from the SWM git repository, you will have to create the personal access token and save it in environment variables.
 
 #### Creating the Access Token on GitLab
@@ -37,7 +45,7 @@ In order to download NPM dependencies from the SWM git repository, you will have
 
 #### Saving the Access Token in Environment Variables
 
-##### MacOS
+##### macOS
 1. Create a new password in Keychain Access app.
 1. Append `export RNOH_NPM_TOKEN="$(security find-generic-password -w -s 'YOUR_PASSWORD_NAME')"` to `~/.zshrc`.
 1. Save it and reload terminals.
@@ -55,6 +63,7 @@ You can find more details about GitLab access tokens in the [GitLab documentatio
 
 ## Running the `tester` App for the First Time on a Physical Device
 
+1. Set DEVECO_SDK_HOME environment variable (macOS: `/Applications/DevEco-Studio.app/Contents/sdk`)
 1. On the [project repository](https://gl.swmansion.com/rnoh/react-native-harmony) page press the "Code" button and copy the URL labelled "Clone with HTTPS".
 1. Navigate to the directory where you want to store project files in your terminal.
 1. Run the `git clone --recurse-submodules <url>` command to clone the repository with all submodules (replace the `<url>` with the copied url from the repository page on GitLab).
