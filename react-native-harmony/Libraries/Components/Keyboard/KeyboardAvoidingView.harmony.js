@@ -76,7 +76,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
     keyboardFrame: KeyboardMetrics,
   ): Promise<number> {
     const frame = this._frame;
-    if (!frame || !keyboardFrame) {
+    if (!frame || !keyboardFrame || this.props.enabled === false) { // RNOH patch: https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1386
       return 0;
     }
 

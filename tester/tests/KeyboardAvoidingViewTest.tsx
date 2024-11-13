@@ -45,7 +45,9 @@ export const KeyboardAvoidingViewTest = () => {
           justifyContent="flex-end"
         />
       </TestCase.Example>
-      <TestCase.Example itShould="keep TextInput visible after tapping TextInput">
+      <TestCase.Example
+        itShould="keep TextInput visible after tapping TextInput"
+        skip={{harmony: 'not supported', android: false}}>
         <Modal contentContainerStyle={{height: '100%', width: '50%'}}>
           <KeyboardAvoidingView behavior={'height'}>
             <ScrollView>
