@@ -92,11 +92,11 @@ function createHarmonyMetroConfig(options) {
                   `${pathUtils.sep}node_modules${pathUtils.sep}${alias.replace(slashes, pathUtils.sep)}${pathUtils.sep}`,
                 );
                 const backslashes = new RegExp('\\\\', 'g');
-                const pathToHarmonyModule = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(backslashes, pathUtils.sep)}`;
+                const newModuleName = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(backslashes, "/")}`;
                 try {
                   return ctx.resolveRequest(
                     ctx,
-                    pathToHarmonyModule,
+                    newModuleName,
                     'harmony',
                   );
                 } catch (err) {
