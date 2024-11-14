@@ -69,11 +69,16 @@ class CppComponentInstance : public ComponentInstance,
 
  public:
   using Shared = std::shared_ptr<CppComponentInstance>;
+  std::array<std::string, 22> svgTypeArr = {"RNSVGCircle", "RNSVGClipPath", "RNSVGDefs", "RNSVGEllipse", "RNSVGForeignObject", "RNSVGGroup", "RNSVGSvgView", "RNSVGImage", "RNSVGLine", "RNSVGLinearGradient", "RNSVGRadialGradient", "RNSVGMarker", "RNSVGMask", "RNSVGPath", "RNSVGPattern", "RNSVGRadialGradient", "RNSVGRect", "RNSVGSymbol", "RNSVGTSpan", "RNSVGText", "RNSVGTextPath", "RNSVGUse"};
 
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
 
   void onCreate() override {
+    std::string componentName = this->getComponentName();
+    if (std::find(svgTypeArr.begin(), svgTypeArr.end(), componentName) != svgTypeArr.end()) {
+        return;
+    }
     this->getLocalRootArkUINode().setArkUINodeDelegate(this);
   }
 
