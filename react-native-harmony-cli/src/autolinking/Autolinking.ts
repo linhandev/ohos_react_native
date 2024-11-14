@@ -150,10 +150,10 @@ export class Autolinking {
         }
         nodeModuleHarPaths.push(harFilePath);
         const packageJson = dependency.readPackageJSON();
-        const autolinkingConfig = packageJson.harmony?.autolinking;
-
+        const providedAutolinkingConfig = packageJson.harmony?.autolinking;
         if (
-          autolinkingConfig === null ||
+          providedAutolinkingConfig === undefined ||
+          providedAutolinkingConfig === null ||
           (config.excludedNpmPackageNames.has(packageJson.name) &&
             config.excludedNpmPackageNames.size > 0) ||
           (!config.includedNpmPackageNames.has(packageJson.name) &&
@@ -162,6 +162,8 @@ export class Autolinking {
           skippedLibraryNpmPackageNames.push(packageJson.name);
           return;
         }
+        const autolinkingConfig =
+          providedAutolinkingConfig === true ? {} : providedAutolinkingConfig;
         autolinkableLibraries.push({
           npmPackageName: packageJson.name,
           etsRNOHPackageClassName: autolinkingConfig?.etsPackageClassName,
@@ -184,6 +186,7 @@ export class Autolinking {
     const cmakeAutolinkingPath = harmonyProjectPath.copyWithNewSegment(
       config.cmakeAutolinkPathRelativeToHarmony
     );
+
     return {
       projectRootPath,
       skippedLibraryNpmPackageNames,

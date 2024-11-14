@@ -78,6 +78,9 @@ it('should generate correct templates with scoped package default configuration'
             },
             'package.json': JSON.stringify({
               name: '@rnoh/link-scoped',
+              harmony: {
+                autolinking: true,
+              },
             }),
           },
         },
@@ -228,6 +231,9 @@ it('should handle unscoped package correctly', async () => {
           },
           'package.json': JSON.stringify({
             name: 'unscoped-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
       },
@@ -304,6 +310,9 @@ it('should log updated files', async () => {
           },
           'package.json': JSON.stringify({
             name: 'unscoped-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
       },
@@ -334,6 +343,9 @@ it('should log linked and skipped packages', async () => {
           },
           'package.json': JSON.stringify({
             name: 'autolinkable-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
         'ignored-package': {
@@ -342,6 +354,9 @@ it('should log linked and skipped packages', async () => {
           },
           'package.json': JSON.stringify({
             name: 'ignored-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
       },
@@ -401,6 +416,9 @@ it('should link only specified packages', async () => {
           },
           'package.json': JSON.stringify({
             name: 'autolinkable-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
         'ignored-package': {
@@ -409,6 +427,9 @@ it('should link only specified packages', async () => {
           },
           'package.json': JSON.stringify({
             name: 'ignored-package',
+            harmony: {
+              autolinking: true,
+            },
           }),
         },
       },
@@ -422,4 +443,39 @@ it('should link only specified packages', async () => {
   const combinedLogs = logs.map((log) => log.msg).join('\n');
   expect(combinedLogs).toContain('[link] autolinkable-package');
   expect(combinedLogs).toContain('[skip] ignored-package');
+});
+
+it('should link by default only those packages that support autolinking', async () => {
+  const { runAutolinking } = createAutolinking({
+    fsStructure: {
+      ...baseFileStructure,
+      node_modules: {
+        'autolinkable-package': {
+          harmony: {
+            'autolinkable_package.har': '',
+          },
+          'package.json': JSON.stringify({
+            name: 'autolinkable-package',
+            harmony: {
+              autolinking: true,
+            },
+          }),
+        },
+        'not-autolinkable-package': {
+          harmony: {
+            'not_autolinkable_package.har': '',
+          },
+          'package.json': JSON.stringify({
+            name: 'not-autolinkable-package',
+          }),
+        },
+      },
+    },
+  });
+
+  const { logs } = await runAutolinking({});
+
+  const combinedLogs = logs.map((log) => log.msg).join('\n');
+  expect(combinedLogs).toContain('[link] autolinkable-package');
+  expect(combinedLogs).toContain('[skip] not-autolinkable-package');
 });

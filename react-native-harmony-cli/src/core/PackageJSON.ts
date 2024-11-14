@@ -60,7 +60,7 @@ export class PackageJSON {
     | {
         alias?: string;
         codegenConfig?: RawCodegenConfig | RawCodegenConfig[];
-        autolinking?: RawAutolinkingConfig | null;
+        autolinking?: RawAutolinkingConfig | null | true;
       } {
     return this.rawPackageJSON.harmony;
   }

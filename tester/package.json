@@ -13,7 +13,7 @@
     "install:react_native_harmony_sample_package": "npm i ../react-native-harmony-sample-package/react-native-harmony-sample-package-1.0.0.tgz",
     "pack_react_native_harmony": "cd ../react-native-harmony && npm i && npm pack && cd ../tester",
     "pack_react_native_harmony_sample_package": "cd ../react-native-harmony-sample-package && npm i && npm run codegen-lib && npm pack && cd ../tester",
-    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.75.1.tgz",
+    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.75.3.tgz",
     "bundle:dev": "react-native bundle-harmony --dev --minify=false",
     "bundle:prod": "react-native bundle-harmony --dev=false --minify=true --bundle-output /tmp/bundle.harmony.js && ./node_modules/react-native/sdks/hermesc/osx-bin/hermesc --emit-binary /tmp/bundle.harmony.js -out ./harmony/entry/src/main/resources/rawfile/hermes_bundle.hbc",
     "prepare:performance_measurement": "react-native codegen-harmony --rnoh-module-path ./harmony/react_native_openharmony --cpp-output-path ./harmony/performance_measurement/src/main/cpp/generated  && react-native bundle-harmony --dev --bundle-output './harmony/performance_measurement/src/main/resources/rawfile/bundle.harmony.js' --assets-dest './harmony/performance_measurement/src/main/resources/rawfile/assets'",

@@ -7,13 +7,7 @@ export default {
     createRNOHHvigorPlugin({
       codegen: {
         rnohModulePath: "./react_native_openharmony",
-      },
-      autolinking: {
-        excludeNpmPackages: [
-          "@react-native-oh-tpl/react-native-fs",
-          "@react-native-oh-tpl/react-native-safe-area-context",
-        ],
-      },
+      }
     }),
   ],
 }
