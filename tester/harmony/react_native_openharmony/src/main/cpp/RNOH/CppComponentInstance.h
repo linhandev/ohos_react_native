@@ -438,11 +438,11 @@ class CppComponentInstance : public ComponentInstance,
 
     if (!old) {
       if (static_cast<int32_t>(props->importantForAccessibility) != 0) {
-        this->getLocalRootArkUINode().setAccessibilityLevel(
+        this->getLocalRootArkUINode().setAccessibilityMode(
         props->importantForAccessibility);
       }
     } else if (props->importantForAccessibility != old->importantForAccessibility) {
-      this->getLocalRootArkUINode().setAccessibilityLevel(
+      this->getLocalRootArkUINode().setAccessibilityMode(
         props->importantForAccessibility);
     } else {
        // Do nothing here.
@@ -462,16 +462,10 @@ class CppComponentInstance : public ComponentInstance,
 
     if (!old) {
       if (static_cast<int32_t>(props->accessible) != 0) {
-          ArkUI_AccessibilityMode mode = props->accessible
-              ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
-              : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-          this->getLocalRootArkUINode().setAccessibilityMode(mode); 
+        this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
       }
     } else if (props->accessible != old->accessible) {
-        ArkUI_AccessibilityMode mode = props->accessible
-            ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
-            : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-        this->getLocalRootArkUINode().setAccessibilityMode(mode);
+      this->getLocalRootArkUINode().setAccessibilityGroup(props->accessible);
     } else {
       // Do nothing here.
     }
