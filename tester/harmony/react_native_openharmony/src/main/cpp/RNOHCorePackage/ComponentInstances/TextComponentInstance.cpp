@@ -93,8 +93,6 @@ void TextComponentInstance::onPropsChanged(
               << ", oldAlignment=" << oldAlignment;
       m_textNode.setAlignment(alignment);
     }
-      
-      
 
     // enable
     if (textProps->rawProps.count("disabled") != 0) {

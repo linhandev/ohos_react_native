@@ -302,19 +302,16 @@ class CppComponentInstance : public ComponentInstance,
       localRoot.setAccessibilityDescription(props->accessibilityHint);
     }
 
-    if (props->importantForAccessibility != old->importantForAccessibility) {
-      localRoot.setAccessibilityLevel(props->importantForAccessibility);
-    }
-
     if (props->accessibilityLabel != old->accessibilityLabel) {
       localRoot.setAccessibilityText(props->accessibilityLabel);
     }
 
     if (props->accessible != old->accessible) {
-      ArkUI_AccessibilityMode mode = props->accessible
-          ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
-          : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-      localRoot.setAccessibilityMode(mode);
+      localRoot.setAccessibilityGroup(props->accessible);
+    }
+
+    if (props->importantForAccessibility != old->importantForAccessibility) {
+      localRoot.setAccessibilityMode(props->importantForAccessibility);
     }
 
     this->setOpacity(props);

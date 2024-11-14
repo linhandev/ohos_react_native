@@ -105,12 +105,17 @@ class ArkUINode {
       const facebook::react::AccessibilityState& state);
   virtual ArkUINode& setAccessibilityState(
       const std::optional<facebook::react::AccessibilityState>& state);
+  /**
+   * @deprecated Use setAccessibilityMode instead (latestRNOHVersion: 0.75.1)
+   */
   virtual ArkUINode& setAccessibilityLevel(
       facebook::react::ImportantForAccessibility importance);
+  virtual ArkUINode& setAccessibilityMode(
+      facebook::react::ImportantForAccessibility importance);
+  virtual ArkUINode& setAccessibilityMode(ArkUI_AccessibilityMode mode);
   virtual ArkUINode& setAccessibilityText(
       std::string const& accessibilityLabel);
   virtual ArkUINode& setAccessibilityGroup(bool accessible);
-  virtual ArkUINode& setAccessibilityMode(ArkUI_AccessibilityMode mode);
   virtual ArkUINode& setId(std::string const& id);
   virtual std::string getId() const;
   virtual ArkUINode& setOpacity(facebook::react::Float opacity);
