@@ -1316,6 +1316,8 @@ function InternalTextInput(props: Props): React.Node {
 
   const multiline = props.multiline ?? false;
 
+  let blurOnSubmit = props.blurOnSubmit; // RNOH patch
+
   let submitBehavior: SubmitBehavior;
   if (props.submitBehavior != null) {
     // `submitBehavior` is set explicitly
@@ -1334,6 +1336,7 @@ function InternalTextInput(props: Props): React.Node {
   } else {
     // Single line
     if (props.blurOnSubmit !== false) {
+      blurOnSubmit = true; // RNOH patch: The default value is true for single-line fields
       submitBehavior = 'blurAndSubmit';
     } else {
       submitBehavior = 'submit';
@@ -1459,6 +1462,7 @@ function InternalTextInput(props: Props): React.Node {
           style,
         )}
         text={text}
+        blurOnSubmit={blurOnSubmit} // RNOH patch
       />
     );
   } else if (OS === 'android') {
