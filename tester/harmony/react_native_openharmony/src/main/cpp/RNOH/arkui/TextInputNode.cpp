@@ -98,7 +98,7 @@ void TextInputNode::onNodeEvent(
       if (m_setTextContent == true && text==m_textContent){ //it does not trigger onChange when using setTextContent
         m_setTextContent = false;
       } else{
-        m_textAreaNodeDelegate->onChange(std::move(text));
+        m_textInputNodeDelegate->onChange(std::move(text));
       }
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_PASTE) {
