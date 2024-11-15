@@ -298,7 +298,7 @@ void RNInstanceInternal::registerFont(
 
 RNInstanceInternal::RNInstanceRNOHMarkerListener::RNInstanceRNOHMarkerListener(
     ArkTSChannel::Weak arkTSChannel)
-    : m_arkTSChannel(arkTSChannel) {};
+    : m_arkTSChannel(arkTSChannel){};
 
 void RNInstanceInternal::RNInstanceRNOHMarkerListener::logMarker(
     const RNOHMarker::RNOHMarkerId markerId,

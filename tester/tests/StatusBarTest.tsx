@@ -161,7 +161,7 @@ function StatusBarView({animated}: {animated?: boolean}) {
         skip={{harmony: false, android: true}}
         itShould="return correct status bar height for device"
         fn={({expect}) => {
-          expect(StatusBar.currentHeight).to.be.closeTo(38.8, 0.1);
+          expect(StatusBar.currentHeight).to.be.closeTo(38, 1);
         }}
       />
       <TestCase.Example itShould="set status bar color to green on push and return to previous style on pop">

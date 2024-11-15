@@ -15,17 +15,17 @@ import { getRNOHPackages } from '../PackageProvider';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
-    /**
-     * NOTE: This approach of registering components is no longer recommended.
-     * Libraries are expected to use RNOHPackage.ets and register components there.
-     * If a library doesn't use RNOHPackage, then this approach needs to be used.
-     */
-    if (ctx.componentName === GeneratedSampleView.NAME) {
-      GeneratedSampleView({
-        ctx: ctx.rnComponentContext,
-        tag: ctx.tag
-      })
-    }
+  /**
+   * NOTE: This approach of registering components is no longer recommended.
+   * Libraries are expected to use RNOHPackage.ets and register components there.
+   * If a library doesn't use RNOHPackage, then this approach needs to be used.
+   */
+  if (ctx.componentName === GeneratedSampleView.NAME) {
+    GeneratedSampleView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    })
+  }
 
 }
 
@@ -79,6 +79,7 @@ struct Index {
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([
+              MetroJSBundleProvider.fromServerIp("localhost", 8082), // used during E2E testing
               new MetroJSBundleProvider(),
             /**
              * NOTE: to load the bundle from file, place it in
