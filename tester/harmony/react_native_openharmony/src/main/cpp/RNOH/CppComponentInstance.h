@@ -246,8 +246,6 @@ class CppComponentInstance : public ComponentInstance,
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
     auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
         concreteProps);
-        LOG(INFO) << "CHY props->accessible start:" << props->accessible;
-        LOG(INFO) << "CHY props->accessibilityLabel start:" << props->accessibilityLabel;
     auto old =
         std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
     auto isTransformManagedByAnimated =
@@ -438,26 +436,15 @@ class CppComponentInstance : public ComponentInstance,
     } else {
       // Do nothing here.
     }
-            
-    LOG(INFO) << "CHY props->accessible0:" << props->accessible;
-//     LOG(INFO) << "CHY props->nativeID:" << props->nativeID;
+
     if (!old) {
-//       if (static_cast<int32_t>(props->accessible) != 0) {
-                LOG(INFO) << "CHY props->accessible1:" << props->accessible;
-          // 方式1      
-//           ArkUI_AccessibilityMode mode = props->accessible
-//               ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
-//               : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-//           this->getLocalRootArkUINode().setAccessibilityMode(mode);
-         // 方式2         
-         if (props->accessible) {
-            this->getLocalRootArkUINode().setAccessibilityMode(ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED);
-         } else {
-            this->getLocalRootArkUINode().setAccessibilityMode(ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED);
-         }   
-//       }
+      if (static_cast<int32_t>(props->accessible) != 0) {
+          ArkUI_AccessibilityMode mode = props->accessible
+              ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
+              : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
+          this->getLocalRootArkUINode().setAccessibilityMode(mode); 
+      }
     } else if (props->accessible != old->accessible) {
-            LOG(INFO) << "CHY props->accessible2:" << props->accessible;
         ArkUI_AccessibilityMode mode = props->accessible
             ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
             : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
