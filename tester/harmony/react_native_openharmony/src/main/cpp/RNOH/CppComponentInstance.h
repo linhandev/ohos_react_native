@@ -69,14 +69,14 @@ class CppComponentInstance : public ComponentInstance,
 
  public:
   using Shared = std::shared_ptr<CppComponentInstance>;
-  std::array<std::string, 22> svgTypeArr = {"RNSVGCircle", "RNSVGClipPath", "RNSVGDefs", "RNSVGEllipse", "RNSVGForeignObject", "RNSVGGroup", "RNSVGSvgView", "RNSVGImage", "RNSVGLine", "RNSVGLinearGradient", "RNSVGRadialGradient", "RNSVGMarker", "RNSVGMask", "RNSVGPath", "RNSVGPattern", "RNSVGRadialGradient", "RNSVGRect", "RNSVGSymbol", "RNSVGTSpan", "RNSVGText", "RNSVGTextPath", "RNSVGUse"};
+  const std::array<std::string, 22> SVG_TYPE_ARR = {"RNSVGCircle", "RNSVGClipPath", "RNSVGDefs", "RNSVGEllipse", "RNSVGForeignObject", "RNSVGGroup", "RNSVGSvgView", "RNSVGImage", "RNSVGLine", "RNSVGLinearGradient", "RNSVGRadialGradient", "RNSVGMarker", "RNSVGMask", "RNSVGPath", "RNSVGPattern", "RNSVGRadialGradient", "RNSVGRect", "RNSVGSymbol", "RNSVGTSpan", "RNSVGText", "RNSVGTextPath", "RNSVGUse"};
 
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
 
   void onCreate() override {
     std::string componentName = this->getComponentName();
-    if (std::find(svgTypeArr.begin(), svgTypeArr.end(), componentName) != svgTypeArr.end()) {
+    if (std::find(SVG_TYPE_ARR.begin(), SVG_TYPE_ARR.end(), componentName) != SVG_TYPE_ARR.end()) {
         return;
     }
     this->getLocalRootArkUINode().setArkUINodeDelegate(this);
@@ -246,6 +246,8 @@ class CppComponentInstance : public ComponentInstance,
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
     auto props = std::static_pointer_cast<const facebook::react::ViewProps>(
         concreteProps);
+        LOG(INFO) << "CHY props->accessible start:" << props->accessible;
+        LOG(INFO) << "CHY props->accessibilityLabel start:" << props->accessibilityLabel;
     auto old =
         std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
     auto isTransformManagedByAnimated =
@@ -436,15 +438,26 @@ class CppComponentInstance : public ComponentInstance,
     } else {
       // Do nothing here.
     }
-
+            
+    LOG(INFO) << "CHY props->accessible0:" << props->accessible;
+//     LOG(INFO) << "CHY props->nativeID:" << props->nativeID;
     if (!old) {
-      if (static_cast<int32_t>(props->accessible) != 0) {
-          ArkUI_AccessibilityMode mode = props->accessible
-              ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
-              : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
-          this->getLocalRootArkUINode().setAccessibilityMode(mode);
-      }
+//       if (static_cast<int32_t>(props->accessible) != 0) {
+                LOG(INFO) << "CHY props->accessible1:" << props->accessible;
+          // 方式1      
+//           ArkUI_AccessibilityMode mode = props->accessible
+//               ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
+//               : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
+//           this->getLocalRootArkUINode().setAccessibilityMode(mode);
+         // 方式2         
+         if (props->accessible) {
+            this->getLocalRootArkUINode().setAccessibilityMode(ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED);
+         } else {
+            this->getLocalRootArkUINode().setAccessibilityMode(ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED);
+         }   
+//       }
     } else if (props->accessible != old->accessible) {
+            LOG(INFO) << "CHY props->accessible2:" << props->accessible;
         ArkUI_AccessibilityMode mode = props->accessible
             ? ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED
             : ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_DISABLED;
