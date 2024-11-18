@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.75.2
+- [breaking] disable autolinking of libraries by default; enable only for libraries that explicitly support autolinking (CLI: link-harmony) ([cdb02f5b9b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cdb02f5b9b414c4a1d32327f8f0d8848bd98cc52))
+- [breaking] renamed HarmonyReactMarker to RNOHMarker ([eabcfa775b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eabcfa775b0c8693cb2294bec66745f8cc6f5c00))
+- deprecated ArkUINode::setAccessibilityLevel ([33f7d39098](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/33f7d39098bfd9c198635d9673986c26de0ef91c))
+- deprecated `RNApp::wrappedCustomRNComponentBuilder` property ([da736db8c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/da736db8c137e62fabcc13d8e01115cb72a82030))
+- added `RNOHMarker` class to simplify listening to React Marker events in ArkTS ([6dc552093d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6dc552093d954c90272c6d174401dac9425a1f70))
+- added support for `UIManagerMountHook`s ([c81afac77e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c81afac77e4aef0c0674a586a12eee889a3367cb))
+- added `react-native run-harmony` command ([a949e41538](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a949e41538199decdea38899210a2789c9737905))
+- added `getInitialBundleUrl` in `AnyThreadRNInstance` ([9067901709](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9067901709c47b3156fff2c6d33c4396e6baf061))
+- added support for React Native bridgeless mode ([da736db8c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/da736db8c137e62fabcc13d8e01115cb72a82030))
+- fixed text not being clipping by default ([9038018d55](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9038018d5559813446e90df02de8ca9d8749b70b))
+- fixed behavior of the accessible prop  ([33f7d39098](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/33f7d39098bfd9c198635d9673986c26de0ef91c))
+- fixed incorrect keyboard behavior in modals ([78e86bee77](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/78e86bee779f27b2d477aec9b8bf12759615d23e))
+- fixed Metro config on Windows ([37f37074f2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37f37074f2ca8a4b26649accf02f993e32be13bc))
+- fixed deadlocks caused by reentrant mounting transaction ([caf6320d27](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/caf6320d279fe6e441a2abf9b4b9796d2b954687))
+- fixed `setInterval` callback triggering multiple times when restoring the app from background ([1449bc6a95](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1449bc6a95972f025bfe7de1b6d58b0cd662569d))
+- fixed `fetch` for local assets when `FileJSBundleProvider` was used to load a bundle ([9067901709](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9067901709c47b3156fff2c6d33c4396e6baf061))
+
+
 ## v0.75.1
 - added support for @2x @3x image suffixes ([7a26d1dc7e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7a26d1dc7ebc3fef76e5447224546e36a0907073))
 - added shake to open dev menu feature ([eba4c3d728](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eba4c3d728cde8a460d73e555930de40d3a817bc))
