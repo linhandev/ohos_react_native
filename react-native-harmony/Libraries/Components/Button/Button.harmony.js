@@ -22,7 +22,6 @@ import type {
 
 import StyleSheet, {type ColorValue} from 'react-native/Libraries/StyleSheet/StyleSheet';
 // RNOH: patch - updated imports
-// import Text from 'react-native/Libraries/Text/Text';
 import Text from '../Text/Text.harmony';
 import Platform from '../../Utilities/Platform';
 import TouchableNativeFeedback from 'react-native/Libraries/Components/Touchable/TouchableNativeFeedback';

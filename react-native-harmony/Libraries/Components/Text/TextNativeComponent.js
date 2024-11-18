@@ -29,7 +29,7 @@ type NativeTextProps = $ReadOnly<{
 
 const textViewConfig = {
   validAttributes: {
-    // RNOH: patch - updated imports
+    // RNOH: patch - Parameters can be effectively passed
     accessible: true,
     isHighlighted: true,
     isPressable: true,
