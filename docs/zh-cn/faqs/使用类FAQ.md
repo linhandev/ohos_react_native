@@ -264,3 +264,13 @@
       6. 调整 `hermes/CMakeLists.txt`：注释掉 619 和 632 行，编译时也会有提示；
       7. 编译：在scripts目录下打开命令行工具，然后执行 `./build-hermes.sh`；
       8. 编译完成，编译好的so会覆盖掉原先 `prebuilt` 目录中的文件。
+
+### 原生页面切换到RN页面字体偏小问题
+
+- 现象
+![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.png)  
+- 原因
+1.不使用rnability
+2.从原生页面切换到RN页面不会触发onWindiwSizeChange，导致DisplayMetricsManager的displayMetrics默认的scale是1，与预期不符。
+- 解决
+需要手动执行下`this.rnInstancesCoordinator.onWindowSizeChange(windowSize)`来触发displayMetrics更新。
