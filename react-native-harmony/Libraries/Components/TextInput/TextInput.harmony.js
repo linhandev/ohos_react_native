@@ -27,7 +27,6 @@ import StyleSheet, {
   type ViewStyleProp,
 } from 'react-native/Libraries/StyleSheet/StyleSheet';
 // RNOH: patch - updated imports
-// import Text from 'react-native/Libraries/Text/Text';
 import Text from '../Text/Text.harmony';
 import TextAncestor from 'react-native/Libraries/Text/TextAncestor';
 import Platform from '../../Utilities/Platform';
