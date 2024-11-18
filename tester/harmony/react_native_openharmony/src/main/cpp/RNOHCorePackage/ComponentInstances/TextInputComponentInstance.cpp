@@ -41,15 +41,6 @@ std::string TextInputComponentInstance::getTextContentFromState(SharedConcreteSt
 }
 
 void TextInputComponentInstance::onChange(std::string text) {
-  if (m_content == text) {
-    m_shouldIgnoreNextChangeEvent = false;
-    return;
-  }
-  m_content = std::move(text);
-  if (m_shouldIgnoreNextChangeEvent) {
-    m_shouldIgnoreNextChangeEvent = false;
-    return;
-  }
   m_nativeEventCount++;
   m_eventEmitter->onChange(getOnChangeMetrics());
   
@@ -515,9 +506,6 @@ void TextInputComponentInstance::onStateChanged(
   }
 
   auto content = getTextContentFromState(state);
-  if (m_content != content) {
-    m_shouldIgnoreNextChangeEvent = true;
-  }
   setTextContent(content);
 }
 
