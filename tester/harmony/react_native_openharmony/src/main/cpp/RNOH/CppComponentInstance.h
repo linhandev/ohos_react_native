@@ -69,14 +69,14 @@ class CppComponentInstance : public ComponentInstance,
 
  public:
   using Shared = std::shared_ptr<CppComponentInstance>;
-  const std::array<std::string, 22> SVG_TYPE_ARR = {"RNSVGCircle", "RNSVGClipPath", "RNSVGDefs", "RNSVGEllipse", "RNSVGForeignObject", "RNSVGGroup", "RNSVGSvgView", "RNSVGImage", "RNSVGLine", "RNSVGLinearGradient", "RNSVGRadialGradient", "RNSVGMarker", "RNSVGMask", "RNSVGPath", "RNSVGPattern", "RNSVGRadialGradient", "RNSVGRect", "RNSVGSymbol", "RNSVGTSpan", "RNSVGText", "RNSVGTextPath", "RNSVGUse"};
+  const std::unordered_set<std::string> SVG_TYPE_ARR = {"RNSVGCircle", "RNSVGClipPath", "RNSVGDefs", "RNSVGEllipse", "RNSVGForeignObject", "RNSVGGroup", "RNSVGSvgView", "RNSVGImage", "RNSVGLine", "RNSVGLinearGradient", "RNSVGRadialGradient", "RNSVGMarker", "RNSVGMask", "RNSVGPath", "RNSVGPattern", "RNSVGRadialGradient", "RNSVGRect", "RNSVGSymbol", "RNSVGTSpan", "RNSVGText", "RNSVGTextPath", "RNSVGUse"};
 
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
 
   void onCreate() override {
     std::string componentName = this->getComponentName();
-    if (std::find(SVG_TYPE_ARR.begin(), SVG_TYPE_ARR.end(), componentName) != SVG_TYPE_ARR.end()) {
+    if (SVG_TYPE_ARR.find(componentName) != SVG_TYPE_ARR.end()) {
         return;
     }
     this->getLocalRootArkUINode().setArkUINodeDelegate(this);
