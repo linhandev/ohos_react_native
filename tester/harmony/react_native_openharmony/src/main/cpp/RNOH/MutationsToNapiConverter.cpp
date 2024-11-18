@@ -79,13 +79,13 @@ napi_value MutationsToNapiConverter::convertShadowView(
   if (m_componentNapiBinderByName.count(shadowView.componentName) > 0) {
     auto componentNapiBinder =
         m_componentNapiBinderByName.at(shadowView.componentName);
-    descriptorBuilder.addProperty("isDynamicBinder", arkJS.createBoolean(false))
+    descriptorBuilder
         .addProperty("props", componentNapiBinder->createProps(env, shadowView))
         .addProperty(
             "state", componentNapiBinder->createState(env, shadowView));
   } else {
     BaseComponentNapiBinder baseNapiBinder;
-    descriptorBuilder.addProperty("isDynamicBinder", arkJS.createBoolean(true))
+    descriptorBuilder
         .addProperty("props", baseNapiBinder.createProps(env, shadowView))
         .addProperty("state", arkJS.createObjectBuilder().build());
   }

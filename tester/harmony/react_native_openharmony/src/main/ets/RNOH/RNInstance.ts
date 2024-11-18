@@ -76,7 +76,6 @@ export type StageChangeEventArgsByEventName = {
 export type BundleExecutionStatus = 'RUNNING' | 'DONE';
 
 const rootDescriptor = {
-  isDynamicBinder: false,
   type: 'RootView',
   tag: 1,
   childrenTags: [],

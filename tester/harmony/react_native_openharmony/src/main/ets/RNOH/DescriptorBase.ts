@@ -40,7 +40,7 @@ export interface LayoutProps {
 }
 
 /**
- *  @api
+ * @api
  */
 export enum LayoutDirectionRN {
   Undefined = 0,
@@ -49,7 +49,7 @@ export enum LayoutDirectionRN {
 }
 
 /**
- *  @api
+ * @api
  */
 export type LayoutMetrics = {
   frame: {
@@ -91,8 +91,7 @@ export class DescriptorWrapper<TType = string,
 TProps extends PropsBase = PropsBase,
 TState extends StateBase = StateBase,
 TRawProps extends RawPropsBase = RawPropsBase,
-TPropsSelector extends PropsSelectorBase = PropsSelectorBase,
-> {
+TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
   private propsSelector: TPropsSelector
 
   constructor(protected descriptor: Descriptor<TType, TProps, TState, TRawProps>) {
@@ -145,10 +144,7 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,
     return this.descriptor.rawProps
   }
 
-  protected get cppProps(): TProps | Object {
-    if (this.descriptor.isDynamicBinder) {
-      return {}
-    }
+  protected get cppProps(): TProps {
     return this.descriptor.props as TProps
   }
 
@@ -232,15 +228,10 @@ TRawProps extends Object = Object> extends DescriptorEssence<TType> {
   parentTag?: Tag;
 
   /**
-   * @deprecated: Use Descriptor::rawProps or a DescriptorWrapper if no explicit napi binder is provided on CPP side.
-   * 1) If isDynamicBinder is true, those props are generated automatically and this prop is equal to rawProps.
-   * 2) This property can be used to pass properties explicitly by providing NapiBinders on CPP side.
+   * This property can be used to pass properties explicitly by providing NapiBinders on CPP side.
    * It's not advised to use this property because those properties (unlike rawProps) are passed with every mutation
-   * increasing the amount of data that handled by NAPI which is not good for performance. This property won't be removed,
-   * and should be safe to use if your component provide explicit NAPI binder. If that's not the case, please do not use
-   * this property because its content is going to be changed once isDynamicBinder is removed.
-   * (latestRNOHVersion: 0.72.27)
-   * */
+   * increasing the amount of data that handled by NAPI which is not good for performance.
+   */
   props: TProps;
   state: TState;
   rawProps: TRawProps;
@@ -248,48 +239,11 @@ TRawProps extends Object = Object> extends DescriptorEssence<TType> {
   layoutMetrics: LayoutMetrics;
 
   /**
-   * If `true`, `props` are dynamically generated, because no explicit NapiBinder were provided on CPP side.
-   * @deprecated: Use `rawProps` instead (latestRNOHVersion: 0.72.27)
-   */
-  isDynamicBinder: boolean;
-
-  /**
    * A number which changes each time this component is updated
    */
   renderKey?: number;
 }
 ;
-
-/**
- * @api
- * @deprecated: Use "ViewStyle" instead (latestRNOHVersion: 0.72.27)
- */
-export type BorderMetrics = {
-  borderWidth?: number;
-  borderLeftWidth?: number;
-  borderTopWidth?: number;
-  borderRightWidth?: number;
-  borderBottomWidth?: number;
-  borderStartWidth?: number;
-  borderEndWidth?: number;
-  borderColor?: number;
-  borderLeftColor?: number;
-  borderTopColor?: number;
-  borderRightColor?: number;
-  borderBottomColor?: number;
-  borderStartColor?: number;
-  borderEndColor?: number;
-  borderRadius?: number;
-  borderTopStartRadius?: number;
-  borderTopEndRadius?: number;
-  borderTopLeftRadius?: number;
-  borderTopRightRadius?: number;
-  borderBottomLeftRadius?: number;
-  borderBottomRightRadius?: number;
-  borderBottomStartRadius?: number;
-  borderBottomEndRadius?: number;
-  borderStyle?: BorderStyle;
-}
 
 /**
  * @api

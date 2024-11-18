@@ -334,7 +334,7 @@ export class DescriptorRegistry {
 
   private applyMutation(mutation: Mutation): Tag[] {
     if (mutation.type === MutationType.CREATE) {
-      this.saveDescriptor(this.maybeOverwriteProps(mutation.descriptor))
+      this.saveDescriptor(mutation.descriptor)
       return [];
     } else if (mutation.type === MutationType.INSERT) {
       const childDescriptor = this.descriptorByTag.get(mutation.childTag);
@@ -358,16 +358,15 @@ export class DescriptorRegistry {
         return [];
       }
       const children = currentDescriptor.childrenTags;
-      const mutationDescriptor = this.maybeOverwriteProps(mutation.descriptor)
       const animatedProps = this.animatedRawPropsByTag.get(mutation.descriptor.tag);
 
       const newDescriptor = {
         ...currentDescriptor,
         ...mutation.descriptor,
         // NOTE: animated props override the ones from the mutation
-        props: { ...currentDescriptor.props, ...mutationDescriptor.props, ...animatedProps },
-        rawProps: { ...currentDescriptor.rawProps, ...mutationDescriptor.rawProps, ...animatedProps },
-        state: { ...currentDescriptor.state, ...mutationDescriptor.state },
+        props: { ...currentDescriptor.props, ...mutation.descriptor.props, ...animatedProps },
+        rawProps: { ...currentDescriptor.rawProps, ...mutation.descriptor.rawProps, ...animatedProps },
+        state: { ...currentDescriptor.state, ...mutation.descriptor.state },
         childrenTags: children,
       };
       this.saveDescriptor(newDescriptor)
@@ -419,23 +418,11 @@ export class DescriptorRegistry {
     return [];
   }
 
-  private maybeOverwriteProps(descriptor: Descriptor) {
-    /**
-     * This is done to avoid creating breaking changes. Previously isDynamicBinder indicated that a third party package
-     * didn't provided explicit NapiBinder and props were generated from rawProps. Currently, however descriptors have
-     * rawProps property which can be used instead. `isDynamicBinder` and this change is going to be removed in the
-     * future.
-     */
-    const props = descriptor.isDynamicBinder ? descriptor.rawProps : descriptor.props
-    return { ...descriptor, props }
-  }
-
   /**
    * @internal
    */
   public createRootDescriptor(tag: Tag) {
     const rootDescriptor: RootDescriptor = {
-      isDynamicBinder: false,
       type: 'RootView',
       tag,
       childrenTags: [],
@@ -478,13 +465,6 @@ export class DescriptorRegistry {
         this.descriptorByTag.delete(tag);
       }
     });
-  }
-
-  /**
-   * @deprecated: Use other methods from this class instead. (latestRNOHVersion: 0.72.27)
-   */
-  public getDescriptorByTagMap() {
-    return this.descriptorByTag
   }
 
   public getStats() {
