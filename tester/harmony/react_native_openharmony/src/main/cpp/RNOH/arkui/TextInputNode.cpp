@@ -95,7 +95,11 @@ void TextInputNode::onNodeEvent(
   if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_CHANGE) {
     if (m_textInputNodeDelegate != nullptr) {
       std::string text(eventString);
-      m_textInputNodeDelegate->onChange(std::move(text));
+      if (m_setTextContent == true && text==m_textContent){ //it does not trigger onChange when using setTextContent
+        m_setTextContent = false;
+      } else{
+        m_textInputNodeDelegate->onChange(std::move(text));
+      }
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_PASTE) {
     if (m_textInputNodeDelegate != nullptr) {
@@ -134,6 +138,8 @@ facebook::react::Rect TextInputNode::getTextContentRect() const {
 
 void TextInputNode::setTextContent(std::string const& textContent) {
   ArkUI_AttributeItem item = {.string = textContent.c_str()};
+  m_setTextContent = true;
+  m_textContent = textContent;
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_TEXT, &item));
 }
