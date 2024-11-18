@@ -77,14 +77,15 @@ function prefetchWithMetadata(
       rootTag ? rootTag : 0,
     );
   } else {
-    return NativeImageLoaderHarmony.prefetchImage(url);
+    const requestId = generateRequestId();
+    return NativeImageLoaderHarmony.prefetchImage(url, requestId);
   }
 }
 
 function prefetch(url: string, callback: ?(requestId: number) => void): any {
   const requestId = generateRequestId();
   callback && callback(requestId);
-  return NativeImageLoaderHarmony.prefetchImage(url);
+  return NativeImageLoaderHarmony.prefetchImage(url, requestId);
 }
 
 function abortPrefetch(requestId: number): void {
