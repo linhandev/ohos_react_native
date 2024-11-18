@@ -51,3 +51,10 @@ RNOH 5.0.0.715及以上版本，RNSurface可通过接口获取对应RNInstance�
 ### Codegen
 
 RNOH 5.0.0.715及以上版本，Codegen代码能生成在配置文件的lib中。
+
+### RNOHCorePackage export的代码报错，使用到RNOHCorePackage的代码报错
+如果需要继续导入RNOHCorePackage类，需要通过以下方式
+```
+import {RNOHCorePackage} from '@rnoh/react-native-openharmony/src/ets/RNOHCorePackage/Package'
+```
+
