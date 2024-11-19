@@ -21,8 +21,7 @@ import type {
 } from 'react-native/Libraries/Components/View/ViewAccessibility';
 
 import StyleSheet, {type ColorValue} from 'react-native/Libraries/StyleSheet/StyleSheet';
-// RNOH: patch - updated imports
-import Text from '../Text/Text.harmony';
+import Text from 'react-native/Libraries/Text/Text';
 import Platform from '../../Utilities/Platform';
 import TouchableNativeFeedback from 'react-native/Libraries/Components/Touchable/TouchableNativeFeedback';
 import TouchableOpacity from 'react-native/Libraries/Components/Touchable/TouchableOpacity';
