@@ -132,7 +132,7 @@ module.exports = {
     return require('react-native/Libraries/Performance/Systrace');
   },
   get Text() {
-    return require('./Libraries/Components/Text/Text.harmony');
+    return require('react-native/Libraries/Text/Text');
   },
   get TextInput() {
     return require('./Libraries/Components/TextInput/TextInput.harmony');
