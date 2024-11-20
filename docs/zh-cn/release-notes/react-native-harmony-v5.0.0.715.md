@@ -52,6 +52,8 @@ RNOH 5.0.0.715及以上版本，RNSurface可通过接口获取对应RNInstance�
 
 RNOH 5.0.0.715及以上版本，Codegen代码能生成在配置文件的lib中。
 
+## 特性变更
+
 ### RNOH 5.0.0.715及以上版本，RNOHCorePackage导入方式变更
 如果需要继续导入RNOHCorePackage类，需要通过以下方式
 ```
