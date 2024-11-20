@@ -274,3 +274,42 @@
 2.从原生页面切换到RN页面不会触发onWindiwSizeChange，导致DisplayMetricsManager的displayMetrics默认的scale是1，与预期不符。
 - 解决
 需要手动执行下`this.rnInstancesCoordinator.onWindowSizeChange(windowSize)`来触发displayMetrics更新。
+
+### 
+
+- 现象
+
+    使用KeyboardAvoidingView包裹TextInput设置一个底部弹窗，键盘弹出的时候，弹窗底部没有与键盘顶部对齐，中间间隔一段空白。
+
+- 原因
+
+    当TextInput聚焦，键盘弹出的时候，TextInput本身会自动避让键盘抬高组件高度。而当TextInput被KeyboardAvoidingView包裹时，不仅TextInput高度被抬高，其所在的页面会为了躲避键盘而重新计算页面高度，页面整体会被抬升一个键盘的高度。故出现了键盘顶部和弹窗底部中间有一段空白，没有对齐。
+
+- 解决
+
+    在KeyboardAvoidingView所在页面的原生容器中，设置键盘安全区域属性 ".expandSafeArea([SafeAreaType.KEYBOARD])" ，如下示例：
+      ```typescript 
+      build() {
+        Stack() {
+          if (this.shouldShow) {
+            RNSurface({
+              ctx: this.ctx,
+              surfaceConfig: {
+                initialProps: this.initialProps ?? {},
+                appKey: this.appKey,
+              } as SurfaceConfig2,
+            })
+          }
+          if (this.rnohCoreContext!.isDebugModeEnabled) {
+            RNDevLoadingView({ useSafeAreaInsets: true, ctx: this.rnohCoreContext }).position({ x: 0, y: 0 })
+          }
+        }
+        .expandSafeArea([SafeAreaType.KEYBOARD])
+        .width("100%")
+        .height("100%")
+      }
+      ```
+
+- 参考
+
+    鸿蒙[规格文档](https://developer.huawei.com/consumer/cn/doc/best-practices-V5/bpta-keyboard-layout-adapt-V5)。      
