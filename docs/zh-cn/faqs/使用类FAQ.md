@@ -287,7 +287,7 @@
 
 - 解决
 
-    在KeyboardAvoidingView所在页面的原生容器中，设置键盘安全区域属性 ".expandSafeArea([SafeAreaType.KEYBOARD])" ，如下示例：
+    在KeyboardAvoidingView所在页面的原生容器中，设置键盘安全区域属性 `.expandSafeArea([SafeAreaType.KEYBOARD])` ，如下示例：
       ```typescript 
       build() {
         Stack() {
