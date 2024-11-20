@@ -413,6 +413,12 @@ class CppComponentInstance : public ComponentInstance,
       // Do nothing here.
     }
 
+    // Because the default text text in harmony is not focused without barrier, the default value is yes.        
+    if (this->getComponentName() == "Paragraph" && static_cast<int32_t>(props->importantForAccessibility) == 0) {
+        facebook::react::ImportantForAccessibility accessibilityValue = facebook::react::ImportantForAccessibility::Yes;         
+        this->getLocalRootArkUINode().setAccessibilityLevel(accessibilityValue);
+    }
+
     if (!old) {
       if (static_cast<int32_t>(props->importantForAccessibility) != 0) {
         this->getLocalRootArkUINode().setAccessibilityLevel(
