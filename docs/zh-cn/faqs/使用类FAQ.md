@@ -275,7 +275,7 @@
 - 解决
 需要手动执行下`this.rnInstancesCoordinator.onWindowSizeChange(windowSize)`来触发displayMetrics更新。
 
-### 
+### 使用KeyboardAvoidingView组件后页面被异常抬高的问题
 
 - 现象
 
