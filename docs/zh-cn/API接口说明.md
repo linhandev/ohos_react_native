@@ -262,7 +262,7 @@ RNApp({
 
 ### 基本介绍
 
-`RNSurface` 是 React Native 的根容器，它是一个 Native View，用于将 React Native 组件渲染到Native UI 中。`RNSurface` 主要负责将组件树渲染到屏幕上。在基于 ArkUI C-API 的适配方案中，rootView 是一个 `XComponent`，用于占位，并挂载 C-API 的组件。本节主要介绍了 `RNSurface` 的接口类型以及使用方式。
+`RNSurface` 是 React Native 的根容器，它是一个 Native View，用于将 React Native 组件渲染到Native UI 中。`RNSurface` 主要负责将组件树渲染到屏幕上。在基于 ArkUI C-API 的适配方案中，rootView 是一个 `NodeContent`，用于占位，并挂载 C-API 的组件。本节主要介绍了 `RNSurface` 的接口类型以及使用方式。
 
 其中，Surface 的创建需要调用 `RNInstance` 的[createSurface](#createsurface)，并且会在 `RNInstance` 触发 `onDestory` 的时候销毁。Surface 会在 `RNSurface` 的 `onAreaChange` 中启动（执行 start ），需要注意的是，startSurface 需要在 loadJSbundle 完成后执行，否则会导致页面白屏。您可以通过 `RNInstance` 的[getBundleExecutionStatus](#getbundleexecutionstatus)获取 bundle 加载状态，确保时序的正确性。
 
