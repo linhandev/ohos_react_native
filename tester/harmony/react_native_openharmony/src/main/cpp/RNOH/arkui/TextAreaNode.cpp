@@ -89,6 +89,7 @@ void TextAreaNode::onNodeEvent(
       if (m_setTextContent == true && text==m_textContent){ //it does not trigger onChange when using setTextContent
         m_setTextContent = false;
       } else{
+        m_setTextContent = false;
         m_textAreaNodeDelegate->onChange(std::move(text));
       }
     }
