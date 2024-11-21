@@ -42,10 +42,9 @@ std::string TextInputComponentInstance::getTextContentFromState(SharedConcreteSt
 
 void TextInputComponentInstance::onChange(std::string text) {
   m_nativeEventCount++;
+  m_content = std::move(text);
   m_eventEmitter->onChange(getOnChangeMetrics());
-  
-  auto content = getTextContentFromState(m_state);
-  m_valueChanged = content != m_content;
+  m_valueChanged = true;
 }
 
 void TextInputComponentInstance::onSubmit() {
@@ -75,8 +74,9 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setTextContent("");
   }
   if (m_props->traits.selectTextOnFocus) {
-    m_textInputNode.setTextSelection(0, m_content.size());
-    m_textAreaNode.setTextSelection(0, m_content.size());
+    std::string content = getTextContentFromState(m_state);
+    m_textInputNode.setTextSelection(0, content.size());
+    m_textAreaNode.setTextSelection(0, content.size());
   }
   if (m_props->traits.clearButtonMode ==
       facebook::react::TextInputAccessoryVisibilityMode::WhileEditing) {
