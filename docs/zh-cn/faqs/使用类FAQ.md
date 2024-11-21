@@ -313,3 +313,46 @@
 - 参考
 
     鸿蒙[规格文档](https://developer.huawei.com/consumer/cn/doc/best-practices-V5/bpta-keyboard-layout-adapt-V5)。      
+
+### 加载多个实例后，仅进行一次手势侧滑返回，页面却执行了多次返回动作的问题
+
+- 现象
+
+    加载多个实例后，仅进行一次手势侧滑返回，页面却执行了多次返回动作。
+
+- 原因
+
+    1、在原生端的@Entry页面中，`onBackPress`方法拦截返回动作，定义如下：
+    ```typescript
+      onBackPress(): boolean | undefined {
+        if (this.rnohCoreContext) {
+          this.rnohCoreContext!.dispatchBackPress()
+        }
+        return true
+      }
+    ```
+    2、创建实例时，自定义返回拦截处理方法`backPressHandler`如下：
+     ```typescript
+      const rnInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
+        createRNPackages: createRNPackages,
+        ...
+        backPressHandler: () => {
+          router.back()
+        }
+      }
+     ```
+    3、假设用户在首页中依次打开两个页面，每个页面都通过各自的实例`rnInstance`进行加载，当在第二个页面中侧滑返回时，应该返回到第一个页面，然而实际却执行了两次返回动作，直接回到了首页。
+
+- 解决
+
+    有以下两种办法可以选择：
+    - 在`backPressHandler`方法中根据实际情况增加判断逻辑，比如通过路由获取当前页面的路径名称，与创建当前页面实例时所定义的名称对比，如果两者一致，则执行页面返回逻辑，反之则不作任何处理。
+    - 去除实例中的`backPressHandler`拦截方法，且跳过`onBackPress`中定义的`dispatchBackPress`方法，直接执行返回逻辑，比如下面示例的方法：
+      ```typescript 
+        onBackPress(): boolean | undefined {
+          if (this.rnohCoreContext) {
+            router.back()
+          }
+          return true
+        }
+      ``` 
