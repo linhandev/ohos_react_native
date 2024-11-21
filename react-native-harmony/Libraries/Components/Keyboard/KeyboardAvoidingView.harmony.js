@@ -207,7 +207,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
             style={StyleSheet.compose(style, heightStyle)}
             onLayout={this._onLayout}
             {...props}>
-            {React.Children.map(children, child => React.cloneElement(child, {__keyboardAvoidingViewBottomHeight: bottomHeight}))}
+            {React.Children.map(children, child => child && React.cloneElement(child, {__keyboardAvoidingViewBottomHeight: bottomHeight}))}
           </View>
         );
 
@@ -235,7 +235,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
             style={StyleSheet.compose(style, {paddingBottom: bottomHeight})}
             onLayout={this._onLayout}
             {...props}>
-            {React.Children.map(children, child => React.cloneElement(child, {__keyboardAvoidingViewBottomHeight: bottomHeight}))}
+            {React.Children.map(children, child => child && React.cloneElement(child, {__keyboardAvoidingViewBottomHeight: bottomHeight}))}
           </View>
         );
 
