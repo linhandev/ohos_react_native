@@ -26,6 +26,7 @@ class ComponentInstanceProvider
 
  public:
   using Shared = std::shared_ptr<ComponentInstanceProvider>;
+  using PreallocationRequest = ComponentInstancePreallocationRequestQueue::Request;
 
   ComponentInstanceProvider(
       ComponentInstancePreallocationRequestQueue::Shared
@@ -62,7 +63,7 @@ class ComponentInstanceProvider
   void onUITick(UITicker::Timestamp recentVSyncTimestamp);
 
   void processPreallocationRequest(
-      facebook::react::ShadowView const& shadowView);
+      PreallocationRequest const& shadowView);
 
   bool shouldPausePreallocationToAvoidBlockingMainThread(
       UITicker::Timestamp recentVSyncTimestamp);

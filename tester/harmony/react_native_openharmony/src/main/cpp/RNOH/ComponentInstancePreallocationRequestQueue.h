@@ -25,10 +25,14 @@ class ComponentInstancePreallocationRequestQueue {
 
   using Shared = std::shared_ptr<ComponentInstancePreallocationRequestQueue>;
   using Weak = std::weak_ptr<ComponentInstancePreallocationRequestQueue>;
+  using Request = struct {
+    facebook::react::Tag tag;
+    facebook::react::ComponentHandle componentHandle;
+    facebook::react::ComponentName componentName;
+  };
 
  private:
-  using ShadowView = facebook::react::ShadowView;
-  std::queue<ShadowView> m_queue;
+  std::queue<Request> m_queue;
   std::mutex m_mtx;
   Delegate::Weak m_weakDelegate;
 
@@ -36,9 +40,9 @@ class ComponentInstancePreallocationRequestQueue {
   void setDelegate(
       ComponentInstancePreallocationRequestQueue::Delegate::Weak weakDelegate);
 
-  void push(ShadowView request);
+  void push(const Request& request);
 
-  std::optional<ShadowView> pop();
+  std::optional<Request> pop();
 
   void clear();
 
