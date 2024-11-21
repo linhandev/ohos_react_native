@@ -322,26 +322,26 @@
 
 - 原因
 
-    1、在原生端的@Entry页面中，`onBackPress`方法拦截返回动作，定义如下：
-    ```typescript
-      onBackPress(): boolean | undefined {
-        if (this.rnohCoreContext) {
-          this.rnohCoreContext!.dispatchBackPress()
-        }
-        return true
-      }
-    ```
-    2、创建实例时，自定义返回拦截处理方法`backPressHandler`如下：
-     ```typescript
-      const rnInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
-        createRNPackages: createRNPackages,
-        ...
-        backPressHandler: () => {
-          router.back()
-        }
-      }
-     ```
-    3、假设用户在首页中依次打开两个页面，每个页面都通过各自的实例`rnInstance`进行加载，当在第二个页面中侧滑返回时，应该返回到第一个页面，然而实际却执行了两次返回动作，直接回到了首页。
+    1. 在原生端的@Entry页面中，`onBackPress`方法拦截返回动作，定义如下：
+        ```typescript
+          onBackPress(): boolean | undefined {
+            if (this.rnohCoreContext) {
+              this.rnohCoreContext!.dispatchBackPress()
+            }
+            return true
+          }
+        ```
+    2. 创建实例时，自定义返回拦截处理方法`backPressHandler`如下：
+        ```typescript
+          const rnInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
+            createRNPackages: createRNPackages,
+            ...
+            backPressHandler: () => {
+              router.back()
+            }
+          }
+        ```
+    3. 假设开发者在首页中依次打开两个页面，每个页面都通过各自的实例`rnInstance`进行加载，当在第二个页面中侧滑返回时，应该返回到第一个页面，然而实际却执行了两次返回动作，直接回到了首页。
 
 - 解决
 
