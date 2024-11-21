@@ -78,7 +78,13 @@ void TextComponentInstance::onPropsChanged(
     testCopyOption = ArkUI_CopyOptions::ARKUI_COPY_OPTIONS_LOCAL_DEVICE;
   }
   m_textNode.setTextCopyOption(testCopyOption);
-
+    
+  // Because the default text text in harmony is not focused without barrier, the default value is yes.        
+  if (static_cast<int32_t>(textProps->importantForAccessibility) == 0) {
+    facebook::react::ImportantForAccessibility accessibilityValue = facebook::react::ImportantForAccessibility::Yes;         
+    this->getLocalRootArkUINode().setAccessibilityLevel(accessibilityValue);
+  }
+    
   if (textProps->rawProps != nullptr) {
     // stack align
     facebook::react::TextAlignment alignHorizon =
