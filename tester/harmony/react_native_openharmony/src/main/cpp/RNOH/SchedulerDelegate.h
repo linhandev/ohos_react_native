@@ -20,6 +20,7 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
   using ShadowNode = facebook::react::ShadowNode;
   using ShadowView = facebook::react::ShadowView;
   using SurfaceId = facebook::react::SurfaceId;
+  using PreallocationRequest = ComponentInstancePreallocationRequestQueue::Request;
 
  public:
   SchedulerDelegate(

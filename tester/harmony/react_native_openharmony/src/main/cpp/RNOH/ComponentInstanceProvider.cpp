@@ -116,7 +116,7 @@ void ComponentInstanceProvider::onUITick(
 }
 
 void ComponentInstanceProvider::processPreallocationRequest(
-    facebook::react::ShadowView const& shadowView) {
+    PreallocationRequest const& shadowView) {
   bool isRequestOutdated =
       m_componentInstanceRegistry->findByTag(shadowView.tag) != nullptr;
   if (isRequestOutdated) {
