@@ -35,7 +35,9 @@ module.exports = {
     isRTL: boolean,
     localeIdentifier: ?string,
   |} => {
+    // RNOH patch
     return Platform.OS === "harmony" ? getI18nManagerConstants() : i18nConstants;
+    // return i18nConstants;
   },
 
   allowRTL: (shouldAllow: boolean) => {
@@ -62,10 +64,15 @@ module.exports = {
     NativeI18nManager.swapLeftAndRightInRTL(flipStyles);
   },
 
+  // RNOH patch
   get isRTL() {
     return Platform.OS === "harmony" ? getI18nManagerConstants().isRTL : i18nConstants.isRTL;
   },
+  // isRTL: i18nConstants.isRTL,
+
+  // RNOH patch
   get doLeftAndRightSwapInRTL() {
     return Platform.OS === "harmony" ? getI18nManagerConstants().doLeftAndRightSwapInRTL : i18nConstants.doLeftAndRightSwapInRTL;
   },
+  // doLeftAndRightSwapInRTL: i18nConstants.doLeftAndRightSwapInRTL,
 };
