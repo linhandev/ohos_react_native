@@ -9,7 +9,7 @@
 
 ## 找不到generated等文件
 - 错误提示  
-错信息意思是说找不到 `react_native_openharmony/generated/ts` 文件， `react_native_openharmony/generated` 里面的文件是由 Codegen。
+错误信息的意思是说找不到 `react_native_openharmony/generated/ts` 文件， `react_native_openharmony/generated` 里面的文件是由 Codegen生成。
 - 错误截图  
 ![faq-generated](./figures/faq-generated.png)
 - 原因
