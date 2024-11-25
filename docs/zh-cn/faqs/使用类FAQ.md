@@ -268,7 +268,7 @@
 ### 原生页面切换到RN页面字体偏小问题
 
 - 现象
-![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.png)  
+![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.jpg)  
 - 原因
 1.不使用rnability
 2.从原生页面切换到RN页面不会触发onWindiwSizeChange，导致DisplayMetricsManager的displayMetrics默认的scale是1，与预期不符。
