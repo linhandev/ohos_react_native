@@ -19,15 +19,7 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
       ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {}
 
 void TextInputComponentInstance::onChange(std::string text) {
-  if (m_content == text) {
-    m_shouldIgnoreNextChangeEvent = false;
-    return;
-  }
   m_content = std::move(text);
-  if (m_shouldIgnoreNextChangeEvent) {
-    m_shouldIgnoreNextChangeEvent = false;
-    return;
-  }
   m_nativeEventCount++;
   if (m_eventEmitter) {
     m_eventEmitter->onChange(getTextInputMetrics());
@@ -475,9 +467,6 @@ void TextInputComponentInstance::onStateChanged(
   }
 
   auto content = getTextContentFromState(state);
-  if (m_content != content) {
-    m_shouldIgnoreNextChangeEvent = true;
-  }
 
   setTextContent(content);
 }

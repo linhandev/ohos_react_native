@@ -49,6 +49,17 @@ export function TextInputTest() {
           editable={false}
         />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="should log only once, after pressing space">
+        <TextInput
+          style={styles.textInput}
+          value={' '}
+          onChangeText={text => {
+            console.log('text=', text);
+          }}
+        />
+      </TestCase.Example>
       <TestCase.Example itShould="render textInput with Pacifico Regular font">
         <TextInputWithText
           style={[styles.textInput, {fontFamily: 'Pacifico-Regular'}]}
