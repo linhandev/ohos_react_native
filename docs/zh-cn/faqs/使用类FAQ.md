@@ -267,12 +267,12 @@
 
 ### 原生页面切换到RN页面字体偏小问题
 
-- 现象
-![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.jpg)  
-- 原因
+- 现象  
+采用非直板机设备(折叠屏，平板)，在开启capi架构，从原生页面切换到RN页面字体会出现偏小问题。
+- 原因  
 1.不使用rnability
 2.从原生页面切换到RN页面不会触发onWindiwSizeChange，导致DisplayMetricsManager的displayMetrics默认的scale是1，与预期不符。
-- 解决
+- 解决  
 需要手动执行下`this.rnInstancesCoordinator.onWindowSizeChange(windowSize)`来触发displayMetrics更新。
 
 ### 使用KeyboardAvoidingView组件后页面被异常抬高的问题
