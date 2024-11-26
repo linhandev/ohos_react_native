@@ -369,7 +369,7 @@
 
 - 解决
 
-    在滚动事件中调用this.rnohCoreContext?.cancelTouches()主动阻止RN的触摸事件。
+    在滚动事件中调用`this.rnohCoreContext?.cancelTouches()`主动阻止RN的触摸事件。
     ```typescript
     Scroll() {
       RNApp({
@@ -389,9 +389,6 @@
         jsBundleProvider: new TraceJSBundleProviderDecorator(
           new AnyJSBundleProvider([
             new MetroJSBundleProvider(),
-            // NOTE: to load the bundle from file, place it in
-            // `/data/app/el2/100/base/com.rnoh.tester/files/bundle.harmony.js`
-            // on your device. The path mismatch is due to app sandboxing on HarmonyOS
             new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
             new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
             new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
@@ -402,30 +399,17 @@
       this.rnohCoreContext?.cancelTouches()
     })
     ```
-### RN中使用modal组件不起作用
+
+### RN中StatusBar作用域问题
 
 - 现象
 
-    modal没有作用。
+    由原生页面进入RN页面后设置StatusBar的样式，再退到原生页面，原生页面的StatusBar样式没有还原，变成在RN页面中设置的样式了。
 
 - 原因
 
-    没有使用RNAbility所致。
+    ArkUI中设置StatusBar对整个窗口生效，不是对页面生效。
 
 - 解决
 
-    重写RNAbility的onWindowStageCreate 方法之前，需调一下父类的方法。
-
-### RN中statusbar作用域问题
-
-- 现象
-
-    由原生页面进入RN页面后设置Statusbar的样式，再退到原生页面，原生页面的StatusBar样式没有还原，变成在RN页面中设置的样式了。
-
-- 原因
-
-    ArkUI中设置Statusbar对整个窗口生效，不是对页面生效。
-
-- 解决
-
-    由RN页面退到原生页面后重新设置Statusbar的样式。
+    由RN页面退到原生页面后重新设置StatusBar的样式。
