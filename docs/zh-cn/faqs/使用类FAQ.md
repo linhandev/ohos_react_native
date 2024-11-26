@@ -357,3 +357,60 @@
         return true
       }
     ``` 
+
+### 原生组件嵌套RNSurface，滚动时容易触发RN页面的点击事件
+
+- 现象
+
+    原生Scroll组件嵌套RNSurface时，在滚动原生组件时极易触发RN的点击事件。
+
+- 原因
+
+    触摸滑动原生Scroll时，RN监听到了触摸事件从而触发了点击事件。
+
+- 解决
+
+    在滚动事件中调用`this.rnohCoreContext?.cancelTouches()`主动阻止RN的触摸事件。
+    ```typescript
+    Scroll() {
+      RNApp({
+        rnInstanceConfig: {
+          createRNPackages,
+          enableNDKTextMeasuring: true,
+          enableBackgroundExecutor: true,
+          enableCAPIArchitecture: true,
+          enablePartialSyncOfDescriptorRegistryInCAPI: true,
+        },
+        initialProps: { "foo": "bar" } as Record<string, string>,
+        appKey: "app_name",
+        wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
+        onSetUp: (rnInstance) => {
+          rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
+        },
+        jsBundleProvider: new TraceJSBundleProviderDecorator(
+          new AnyJSBundleProvider([
+            new MetroJSBundleProvider(),
+            new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
+            new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
+            new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
+          ]),
+          this.rnohCoreContext.logger),
+      })
+    }.height(2000).backgroundColor("red").onScroll(() => {
+      this.rnohCoreContext?.cancelTouches()
+    })
+    ```
+
+### RN中StatusBar作用域问题
+
+- 现象
+
+    由原生页面进入RN页面后设置StatusBar的样式，再退到原生页面，原生页面的StatusBar样式没有还原，变成在RN页面中设置的样式了。
+
+- 原因
+
+    ArkUI中设置StatusBar对整个窗口生效，不是对页面生效。
+
+- 解决
+
+    由RN页面退到原生页面后重新设置StatusBar的样式。
