@@ -4,17 +4,17 @@
  
 - 现象
  
-    鸿蒙项目中加载本地 rawfile 中的 bundle 时 **RN** 界面Image组件可以正常显示本地图片，从沙盒中加载 bundle 时 **RN** 界面 Image 组件图片显示不出来。
+  鸿蒙项目中加载本地 rawfile 中的 bundle 时 **RN** 界面Image组件可以正常显示本地图片，从沙盒中加载 bundle 时 **RN** 界面 Image 组件图片显示不出来。
  
 - 原因
  
-    对于从沙盒中加载图片，放资源文件，需要按照 bundles 本身文件的解压位置来确定。
+  对于从沙盒中加载图片，放资源文件，需要按照 bundles 本身文件的解压位置来确定。
  
 - 解决
  
-    读取沙箱中的图片资源请参考[文档](../常见开发场景.md#如何加载沙箱路径bundle和图片)。
- 
-    对于从沙盒中加载图片，放资源文件，需要按照 bundles 本身文件的解压位置来确定，可参考以下：
+  读取沙箱中的图片资源请参考[文档](../常见开发场景.md#如何加载沙箱路径bundle和图片)。
+
+  对于从沙盒中加载图片，放资源文件，需要按照 bundles 本身文件的解压位置来确定，可参考以下：
 - 打包场景
   - 打包路径
     
@@ -242,7 +242,7 @@
       1. 解压har包：找一个空目录（比如temp），将har包复制到改目录，然后解压，解压后将看到一个 `package` 文件夹；
       2. 下载hermes源码：通过[hermes源码](https://github.com/facebook/hermes/tree/hermes-2023-08-07-RNv0.72.4-813b2def12bc9df02654b3e3653ae4a68d0572e0)的链接下载hermes源码，然后替换掉 `package/src/main/cpp/third-party/hermes` 文件夹；
       3. 下载编译脚本：通过上述链接下载编译脚本，然后将其拷贝到 `package/src/main/cpp/third-party/scripts` 路径下（没有scripts目录就自己建）；
-      4. 配置 SDK 环境变量：将 IDE 中 `sdk/default/openharmony` 的路径配置在系统的环境变量中，环境变量名为 `OHOS_SDK`，或者也可以将这个路径写在编译脚本中，见4；
+      4. 配置 SDK 环境变量：将 IDE 中 `sdk/default/openharmony` 的路径配置在系统的环境变量中，环境变量名为 `OHOS_SDK`，或者也可以将这个路径写在编译脚本中；
       5. 调整编译脚本：见下面的文件变更：
           ```diff
           #!/bin/bash
@@ -268,7 +268,7 @@
 ### 原生页面切换到RN页面字体偏小问题
 
 - 现象
-![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.png)  
+![原生页面切换到RN页面字体偏小问题](../figures/原生页面切换到RN页面字体偏小问题图.jpg)  
 - 原因
 1.不使用rnability
 2.从原生页面切换到RN页面不会触发onWindiwSizeChange，导致DisplayMetricsManager的displayMetrics默认的scale是1，与预期不符。
@@ -279,83 +279,84 @@
 
 - 现象
 
-    使用KeyboardAvoidingView包裹TextInput设置一个底部弹窗，键盘弹出的时候，弹窗底部没有与键盘顶部对齐，中间间隔一段空白。
+  使用KeyboardAvoidingView包裹TextInput设置一个底部弹窗，键盘弹出的时候，弹窗底部没有与键盘顶部对齐，中间间隔一段空白。
 
 - 原因
 
-    当TextInput聚焦，键盘弹出的时候，TextInput本身会自动避让键盘抬高组件高度。而当TextInput被KeyboardAvoidingView包裹时，不仅TextInput高度被抬高，其所在的页面会为了躲避键盘而重新计算页面高度，页面整体会被抬升一个键盘的高度。故出现了键盘顶部和弹窗底部中间有一段空白，没有对齐。
+  当TextInput聚焦，键盘弹出的时候，TextInput本身会自动避让键盘抬高组件高度。而当TextInput被KeyboardAvoidingView包裹时，不仅TextInput高度被抬高，其所在的页面会为了躲避键盘而重新计算页面高度，页面整体会被抬升一个键盘的高度。故出现了键盘顶部和弹窗底部中间有一段空白，没有对齐。
 
 - 解决
 
-    在KeyboardAvoidingView所在页面的原生容器中，设置键盘安全区域属性 `.expandSafeArea([SafeAreaType.KEYBOARD])` ，如下示例：
-      ```typescript 
-      build() {
-        Stack() {
-          if (this.shouldShow) {
-            RNSurface({
-              ctx: this.ctx,
-              surfaceConfig: {
-                initialProps: this.initialProps ?? {},
-                appKey: this.appKey,
-              } as SurfaceConfig2,
-            })
-          }
-          if (this.rnohCoreContext!.isDebugModeEnabled) {
-            RNDevLoadingView({ useSafeAreaInsets: true, ctx: this.rnohCoreContext }).position({ x: 0, y: 0 })
-          }
-        }
-        .expandSafeArea([SafeAreaType.KEYBOARD])
-        .width("100%")
-        .height("100%")
+  在KeyboardAvoidingView所在页面的原生容器中，设置键盘安全区域属性 `.expandSafeArea([SafeAreaType.KEYBOARD])` ，如下示例：
+
+  ```typescript
+  build() {
+    Stack() {
+      if (this.shouldShow) {
+        RNSurface({
+          ctx: this.ctx,
+          surfaceConfig: {
+            initialProps: this.initialProps ?? {},
+            appKey: this.appKey,
+          } as SurfaceConfig2,
+        })
       }
-      ```
+      if (this.rnohCoreContext!.isDebugModeEnabled) {
+        RNDevLoadingView({ useSafeAreaInsets: true, ctx: this.rnohCoreContext }).position({ x: 0, y: 0 })
+      }
+    }
+    .expandSafeArea([SafeAreaType.KEYBOARD])
+    .width("100%")
+    .height("100%")
+  }
+  ```
 
 - 参考
 
-    鸿蒙[规格文档](https://developer.huawei.com/consumer/cn/doc/best-practices-V5/bpta-keyboard-layout-adapt-V5)。      
+  鸿蒙[规格文档](https://developer.huawei.com/consumer/cn/doc/best-practices-V5/bpta-keyboard-layout-adapt-V5)。      
 
 ### 加载多个实例后，仅进行一次手势侧滑返回，页面却执行了多次返回动作的问题
 
 - 现象
 
-    加载多个实例后，仅进行一次手势侧滑返回，页面却执行了多次返回动作。
+  加载多个实例后，仅进行一次手势侧滑返回，页面却执行了多次返回动作。
 
 - 原因
 
-    1. 在原生端的@Entry页面中，`onBackPress`方法拦截返回动作，定义如下：
-        ```typescript
-          onBackPress(): boolean | undefined {
-            if (this.rnohCoreContext) {
-              this.rnohCoreContext!.dispatchBackPress()
-            }
-            return true
-          }
-        ```
-    2. 创建实例时，自定义返回拦截处理方法`backPressHandler`如下：
-        ```typescript
-          const rnInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
-            createRNPackages: createRNPackages,
-            ...
-            backPressHandler: () => {
-              router.back()
-            }
-          }
-        ```
-    3. 假设开发者在首页中依次打开两个页面，每个页面都通过各自的实例`rnInstance`进行加载，当在第二个页面中侧滑返回时，应该返回到第一个页面，然而实际却执行了两次返回动作，直接回到了首页。
-
-- 解决
-
-    有以下两种办法可以选择：
-    - 在`backPressHandler`方法中根据实际情况增加判断逻辑，比如通过路由获取当前页面的路径名称，与创建当前页面实例时所定义的名称对比，如果两者一致，则执行页面返回逻辑，反之则不作任何处理。
-    - 去除实例中的`backPressHandler`拦截方法，且跳过`onBackPress`中定义的`dispatchBackPress`方法，直接执行返回逻辑，比如下面示例的方法：
-      ```typescript 
+  1. 在原生端的@Entry页面中，`onBackPress`方法拦截返回动作，定义如下：
+      ```typescript
         onBackPress(): boolean | undefined {
           if (this.rnohCoreContext) {
-            router.back()
+            this.rnohCoreContext!.dispatchBackPress()
           }
           return true
         }
-      ``` 
+      ```
+  2. 创建实例时，自定义返回拦截处理方法`backPressHandler`如下：
+      ```typescript
+        const rnInstance: RNInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
+          createRNPackages: createRNPackages,
+          ...
+          backPressHandler: () => {
+            router.back()
+          }
+        }
+      ```
+  3. 假设开发者在首页中依次打开两个页面，每个页面都通过各自的实例`rnInstance`进行加载，当在第二个页面中侧滑返回时，应该返回到第一个页面，然而实际却执行了两次返回动作，直接回到了首页。
+
+- 解决
+
+  有以下两种办法可以选择：
+  - 在`backPressHandler`方法中根据实际情况增加判断逻辑，比如通过路由获取当前页面的路径名称，与创建当前页面实例时所定义的名称对比，如果两者一致，则执行页面返回逻辑，反之则不作任何处理。
+  - 去除实例中的`backPressHandler`拦截方法，且跳过`onBackPress`中定义的`dispatchBackPress`方法，直接执行返回逻辑，比如下面示例的方法：
+    ```typescript 
+      onBackPress(): boolean | undefined {
+        if (this.rnohCoreContext) {
+          router.back()
+        }
+        return true
+      }
+    ``` 
 
 ### 原生组件嵌套RNSurface，滚动时容易触发RN页面的点击事件
 
