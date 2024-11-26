@@ -15,8 +15,6 @@
 #include "RNOH/TurboModuleProvider.h"
 #include "hermes/executor/HermesExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
-#include <react/renderer/runtimescheduler/RuntimeSchedulerCallInvoker.h>
-#include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/debug/SystraceSection.h>
 
 using namespace facebook;
@@ -28,22 +26,12 @@ TaskExecutor::Shared RNInstanceArkTS::getTaskExecutor() {
 
 void RNInstanceArkTS::start() {
   this->initialize();
-
-  m_runtimeScheduler = std::make_shared<react::RuntimeScheduler>(
-      this->instance->getRuntimeExecutor(), std::chrono::steady_clock::now);
-
-  m_contextContainer->insert<std::weak_ptr<react::RuntimeScheduler>>(
-      "RuntimeScheduler", m_runtimeScheduler);
-
   m_turboModuleProvider = this->createTurboModuleProvider();
   this->initializeScheduler(m_turboModuleProvider);
   this->instance->getRuntimeExecutor()(
-      [runtimeScheduler = m_runtimeScheduler,
-       binders = m_globalJSIBinders,
+      [binders = this->m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
-        react::RuntimeSchedulerBinding::createAndInstallIfNeeded(
-            rt, runtimeScheduler);
         for (auto& binder : binders) {
           binder->createBindings(rt, turboModuleProvider);
         }
@@ -81,11 +69,6 @@ void RNInstanceArkTS::initializeScheduler(
   auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
   m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
 
-  auto runtimeExecutor = [runtimeScheduler =
-                              m_runtimeScheduler](auto&& rawCallback) {
-    runtimeScheduler->scheduleWork(std::move(rawCallback));
-  };
-
   react::EventBeat::Factory eventBeatFactory =
       [runtimeExecutor = this->instance->getRuntimeExecutor()](auto ownerBox) {
         return std::make_unique<EventBeat>(runtimeExecutor, ownerBox);
@@ -101,7 +84,7 @@ void RNInstanceArkTS::initializeScheduler(
   react::SchedulerToolbox schedulerToolbox{
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
-      .runtimeExecutor = runtimeExecutor,
+      .runtimeExecutor = this->instance->getRuntimeExecutor(),
       .asynchronousEventBeatFactory = eventBeatFactory,
       .synchronousEventBeatFactory = eventBeatFactory,
   };
@@ -119,7 +102,7 @@ void RNInstanceArkTS::initializeScheduler(
   }
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
-      runtimeExecutor, m_contextContainer, this);
+      this->instance->getRuntimeExecutor(), m_contextContainer, this);
     m_schedulerDelegate = std::make_unique<rnoh::SchedulerDelegate>(
       m_mountingManager, taskExecutor, ComponentInstancePreallocationRequestQueue::Weak());
   this->scheduler = std::make_shared<react::Scheduler>(
@@ -130,8 +113,7 @@ void RNInstanceArkTS::initializeScheduler(
 std::shared_ptr<TurboModuleProvider>
 RNInstanceArkTS::createTurboModuleProvider() {
   auto turboModuleProvider = std::make_shared<TurboModuleProvider>(
-      std::make_shared<facebook::react::RuntimeSchedulerCallInvoker>(
-          m_runtimeScheduler),
+      this->instance->getJSCallInvoker(),
       std::move(m_turboModuleFactory),
       m_eventDispatcher,
       std::move(m_jsQueue));
@@ -438,7 +420,7 @@ void RNInstanceArkTS::onAllAnimationsComplete() {
   this->unsubscribeUITickListener = nullptr;
 }
 
-void RNInstanceArkTS::onUITick(UITicker::Timestamp /*recentVSyncTimestamp*/) {
+void RNInstanceArkTS::onUITick(UITicker::Timestamp timestamp) {
   if (this->scheduler != nullptr) {
     this->scheduler->animationTick();
   }
