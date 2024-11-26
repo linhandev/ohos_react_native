@@ -36,7 +36,6 @@
 #include "RNOH/ComponentInstanceRegistry.h"
 #include "RNOH/arkui/ArkUISurface.h"
 #include "RNOH/arkui/NodeContentHandle.h"
-#include <react/renderer/runtimescheduler/RuntimeScheduler.h>
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 
 namespace rnoh {
@@ -257,8 +256,6 @@ class RNInstanceCAPI : public RNInstanceInternal,
   SharedNativeResourceManager m_nativeResourceManager;
   std::string m_bundlePath;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
-  std::shared_ptr<facebook::react::RuntimeScheduler> m_runtimeScheduler =
-      nullptr;
 
   void initialize();
   void initializeScheduler(
