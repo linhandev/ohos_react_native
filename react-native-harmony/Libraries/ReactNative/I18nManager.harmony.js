@@ -36,8 +36,8 @@ module.exports = {
     localeIdentifier: ?string,
   |} => {
     // RNOH patch
-    return Platform.OS === "harmony" ? getI18nManagerConstants() : i18nConstants;
     // return i18nConstants;
+    return Platform.OS === "harmony" ? getI18nManagerConstants() : i18nConstants;
   },
 
   allowRTL: (shouldAllow: boolean) => {
