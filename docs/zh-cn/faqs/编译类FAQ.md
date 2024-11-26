@@ -178,7 +178,7 @@
 
   在引入RN三方库，或自定义TurboModule/组件的场景下，点击 `flie ---> sync and refresh project` 后报错:
 
-  ![常见开发场景-引入三方库报错](./faqs/figures/常见开发场景-引入三方库报错.png)
+  ![常见开发场景-引入三方库报错](../figures/常见开发场景-引入三方库报错.png)
 
 - 原因
 
