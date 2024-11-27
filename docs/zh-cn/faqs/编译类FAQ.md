@@ -197,3 +197,19 @@
   }
   ```
 
+## RN平台，集成了三方库-FlashList，debug模式编译正常； release模式，编译报错
+- 现象  
+具体报错日志  
+```
+    CMake Error at CMakeLists.txt:168 (target_link_libraries):
+    Attempt to add link library "-DFOLLY_NO_CONFIG=1" to target
+    "rnoh_flash_list" which is not built in this directory.
+
+    This is allowed only when policy CMP0079 is set to NEW.
+
+    -- Configuring incomplete, errors occurred!
+```
+
+- 解决  
+三方包得加上folly编译配置  
+target_link_libraries(rnoh_flash_list PUBLIC ${folly_compile_options})
