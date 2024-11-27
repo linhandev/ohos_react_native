@@ -29,6 +29,9 @@
 
 ​ 该场景为 RN Native 工程中最简单的场景，可直接使用 `RNApp` 进行页面构建。根据您的业务场景，也可将 `RNApp` 拆分成 `RNSurface` 和 `RNInstance` 去灵活使用。详细创建 `RNSurface` 和 `RNInstance` 的过程请参考源码 `@rnoh/react-native-openharmony/src/main/ets/RNApp.ets`。
 
+备注：
+RN侧开发，当用到Modal组件时，在鸿蒙中不起作用。是因为重写RNAbility的onWindowStageCreate()方法之前调一下父类的方法。需要调用super()来解决。
+
 直接使用 `RNApp` 构建步骤如下：
 
 1. 修改 EntryAbility 类，让其继承了 RNAbility 类，用于指定入口页面路径。
