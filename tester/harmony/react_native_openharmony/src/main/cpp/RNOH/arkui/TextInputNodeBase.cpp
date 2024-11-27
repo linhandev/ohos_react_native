@@ -155,11 +155,11 @@ void TextInputNodeBase::setTextSelection(int32_t start, int32_t end) {
       ArkUI_NumberValue value = {.i32 = start};
       ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
       maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_OFFSET, &item));
+          m_nodeHandle, NODE_TEXT_INPUT_CARET_OFFSET, &item));
     } else {
       ArkUI_AttributeItem item = {.value = value.data(), .size = 2};
       maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_TEXT_SELECTION, &item));
-  }
+          m_nodeHandle, NODE_TEXT_INPUT_TEXT_SELECTION, &item));
+    }
 }
 } // namespace rnoh
