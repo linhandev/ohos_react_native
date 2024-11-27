@@ -197,3 +197,22 @@
   }
   ```
 
+## release模式，缺失folly编译报错
+- 现象  
+缺失folly，release模式编译报错。
+
+```bash
+CMake Error at CMakeLists.txt:168 (target_link_libraries):
+Attempt to add link library "-DFOLLY_NO_CONFIG=1" to target
+"xxx" which is not built in this directory.
+This is allowed only when policy CMP0079 is set to NEW.
+
+-- Configuring incomplete, errors occurred!
+```
+
+- 解决  
+
+将folly添加到编译构建，在`CMakeLists.txt`中导入缺失的folly。  
+```CMAKE
+target_link_libraries(xxx PUBLIC ${folly_compile_options})
+```
