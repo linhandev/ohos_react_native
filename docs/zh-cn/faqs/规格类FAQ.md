@@ -21,3 +21,56 @@ RN本身并不直接规定日期字符串的格式，而是依赖于JavaScript�
 
 `2024/10/24`是非标准的日期格式，可以考虑依赖[三方库Moment](https://gitee.com/react-native-oh-library/usage-docs/blob/master/zh-cn/moment.md)进行处理。比如：
 - const date = moment('2024/10/24', 'YYYY/MM/DD').format('YYYY-MM-DD');
+
+### RN setNativeProps只能生效一次问题
+在[React Native启用Fabric渲染器](https://reactnative.cn/docs/fabric-renderer)之后，在使用`setNativeProps`时，只会在应用打开之后生效一次，剩余时间`setNativeProps`无法使用。该问题为[RN框架社区已知问题](https://github.com/facebook/react-native/issues/34391)，且[`setNativeProps`在0.72.5版本已废弃](https://github.com/Expensify/App/issues/26989)。可使用`setState`来进行状态设置。例如，在输入框内进行内容清空时，可以用`setState`来实现：
+
+```javascript
+import React, { useState } from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+} from 'react-native';
+
+const App = () => {
+  const [text, setText] = useState(''); // 保存 TextInput 的值
+
+  const clearText = () => {
+    setText(''); // 清空输入框
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        value={text}
+        onChangeText={setText} // 更新状态
+        placeholder="输入一些内容"
+      />
+      <Button title="清空" onPress={clearText} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 4,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+});
+
+export default App;
+```
