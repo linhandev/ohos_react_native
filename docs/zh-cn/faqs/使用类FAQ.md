@@ -414,3 +414,23 @@
 - 解决
 
     由RN页面退到原生页面后重新设置StatusBar的样式。
+
+### Keyboard下的监听事件未响应的问题
+
+- 现象
+
+    Keyboard下的监听事件未响应。
+
+- 原因
+
+    RNOH只监听了最上层子窗口的键盘事件，如果遇到上述情况，可能原因就是当前应用中RN并不是在最上层子窗口中展示。
+
+- 解决
+
+    根据上面的分析，这个问题可以有2种解决方案：
+    1. 调整RN显示的窗口，让其显示在 `lastWindow`；
+    2. 修改RNOH的源码，让RNOH监听对应窗口（如：`MainWindow`）上的键盘事件。  
+  
+    <br>RNOH中，键盘事件监听的代码位于：  
+    `oh_modules/@rnoh/react-native-openharmony/src/main/ets/RNOHCorePackage/turboModules/KeyboardObserverTurboModule.ts`  
+    具体功能实现可以参考[窗口](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V13/js-apis-window-V13#windowgetlastwindow9)。
