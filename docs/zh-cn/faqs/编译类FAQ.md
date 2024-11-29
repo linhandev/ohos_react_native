@@ -1,7 +1,7 @@
 # 编译类FAQ
 
 ## RN偶现崩溃，报"Fault thread info，Name:RNOH_BACKGROUND"错误
--错误提示
+-错误提示  
 ```
 Process name:xxxxxxxxxx
 Process life time:1584s
@@ -9,7 +9,7 @@ Reason:Signal:SIGSEGV(SEGV_MAPERR)@xxxxxxxxxxxx
 Fault thread info:
 Tid:xxxx, Name:RNOH_BACKGROUND
 ```
--解决
+-解决  
 创建`RNInstance`时将`enableBackgroundExecutor`设置成false。
 
 ## 编译时报错，找不到TextLayoutManager 
