@@ -1,9 +1,11 @@
 
 #pragma once
 
-#include <mutex>
 #include <queue>
-#include "react/renderer/mounting/ShadowView.h"
+#include "ComponentInstanceFactory.h"
+#include "ComponentInstanceRegistry.h"
+#include "react/renderer/core/ReactPrimitives.h"
+#include "react/renderer/core/ShadowNode.h"
 
 namespace rnoh {
 
@@ -25,10 +27,14 @@ class ComponentInstancePreallocationRequestQueue {
 
   using Shared = std::shared_ptr<ComponentInstancePreallocationRequestQueue>;
   using Weak = std::weak_ptr<ComponentInstancePreallocationRequestQueue>;
+  using Request = struct {
+    facebook::react::Tag tag;
+    facebook::react::ComponentHandle componentHandle;
+    std::string componentName;
+  };
 
  private:
-  using ShadowView = facebook::react::ShadowView;
-  std::queue<ShadowView> m_queue;
+  std::queue<Request> m_queue;
   std::mutex m_mtx;
   Delegate::Weak m_weakDelegate;
 
@@ -36,9 +42,9 @@ class ComponentInstancePreallocationRequestQueue {
   void setDelegate(
       ComponentInstancePreallocationRequestQueue::Delegate::Weak weakDelegate);
 
-  void push(ShadowView request);
+  void push(Request request);
 
-  std::optional<ShadowView> pop();
+  std::optional<Request> pop();
 
   void clear();
 

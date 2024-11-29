@@ -116,24 +116,20 @@ void ComponentInstanceProvider::onUITick(
 }
 
 void ComponentInstanceProvider::processPreallocationRequest(
-    facebook::react::ShadowView const& shadowView) {
+    ComponentInstancePreallocationRequestQueue::Request const& request) {
   bool isRequestOutdated =
-      m_componentInstanceRegistry->findByTag(shadowView.tag) != nullptr;
+      m_componentInstanceRegistry->findByTag(request.tag) != nullptr;
   if (isRequestOutdated) {
     return;
   }
   auto componentInstance = m_componentInstanceFactory->create(
-      shadowView.tag, shadowView.componentHandle, shadowView.componentName);
+      request.tag, request.componentHandle, request.componentName);
   if (componentInstance != nullptr) {
-    componentInstance->setLayout(shadowView.layoutMetrics);
-    componentInstance->setEventEmitter(shadowView.eventEmitter);
-    componentInstance->setState(shadowView.state);
-    componentInstance->setProps(shadowView.props);
     m_preallocatedComponentInstanceByTag.emplace(
-        shadowView.tag, componentInstance);
+        request.tag, componentInstance);
   } else {
     VLOG(2) << "Couldn't preallocate CppComponentInstance for: "
-            << shadowView.componentName;
+            << request.componentName;
   }
 }
 
