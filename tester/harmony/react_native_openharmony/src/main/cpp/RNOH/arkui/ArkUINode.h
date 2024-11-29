@@ -31,6 +31,7 @@ class ArkUINodeDelegate {
   virtual void onArkUINodeAccessibilityAction(
       ArkUINode* /*node*/,
       const std::string& /*actionName*/){};
+  virtual void onArkUINodeTouchIntercept(const ArkUI_UIInputEvent* event){};
 };
 
 /**
@@ -65,6 +66,9 @@ class ArkUINode {
       facebook::react::Point const& position,
       facebook::react::Size const& size,
       facebook::react::Float pointScaleFactor);
+  virtual ArkUINode& setHitTestMode(ArkUI_HitTestMode hitTestMode);
+  virtual ArkUINode& setHitTestMode(
+      facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setLayoutRect(
       facebook::react::LayoutMetrics const& layoutMetrics);
   virtual ArkUINode& setHeight(float height);
@@ -89,9 +93,6 @@ class ArkUINode {
       float const shadowOpacity,
       float const shadowRadius,
       facebook::react::Float pointScaleFactor);
-  virtual ArkUINode& setHitTestMode(ArkUI_HitTestMode hitTestMode);
-  virtual ArkUINode& setHitTestMode(
-      facebook::react::PointerEventsMode const& pointerEvents);
   virtual ArkUINode& setAccessibilityActions(
       const std::vector<facebook::react::AccessibilityAction>& rnActions);
   virtual ArkUINode& setAccessibilityDescription(
@@ -151,6 +152,7 @@ class ArkUINode {
   virtual void onNodeEvent(
       ArkUI_NodeEventType eventType,
       std::string_view eventString);
+  virtual void onTouchIntercept(const ArkUI_UIInputEvent* event);
 
   virtual ~ArkUINode() noexcept;
 

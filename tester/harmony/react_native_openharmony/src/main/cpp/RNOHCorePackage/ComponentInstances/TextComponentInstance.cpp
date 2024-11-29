@@ -250,6 +250,10 @@ class TextFragmentTouchTarget : public TouchTarget {
     return false;
   }
 
+  bool canSubtreeHandleTouch(facebook::react::Point const& point) override {
+    return false;
+  }
+
   facebook::react::Tag getTouchTargetTag() const override {
     return m_tag;
   }

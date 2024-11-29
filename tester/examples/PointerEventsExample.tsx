@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -66,6 +66,17 @@ type PointerEventsExample = {
   title: string;
 };
 
+function CounterButton() {
+  const [pressCount, setPressCount] = useState(0);
+  return (
+    <View
+      style={styles.button}
+      onTouchEnd={() => setPressCount(prev => prev + 1)}>
+      <Text style={styles.buttonText}>CLICK ME ({pressCount})</Text>
+    </View>
+  );
+}
+
 export function PointerEventsExample() {
   const [pointerEventsNone, setPointerEventsNone] = React.useState<
     'none' | undefined
@@ -78,6 +89,72 @@ export function PointerEventsExample() {
 
   const onPress = (index: number) => () => {
     setExample(index);
+  };
+
+  const BoxOnlyMultiLayerNestingExample = () => {
+    return (
+      <View style={styles.container}>
+        <Text>Clicking should not increase the counter value</Text>
+        <View
+          style={[
+            styles.box,
+            {
+              backgroundColor: 'pink',
+              flex: 1,
+            },
+          ]}
+          pointerEvents="box-only"
+          collapsable={false}>
+          <Text>box-only</Text>
+          <View
+            style={[styles.button, {backgroundColor: 'lightgreen'}]}
+            pointerEvents="box-none"
+            collapsable={false}>
+            <Text>box-none</Text>
+            <CounterButton />
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const BoxNoneMultiLayerNestingExample = () => {
+    return (
+      <View style={styles.container}>
+        <ScrollView>
+          <View
+            style={[styles.box, {backgroundColor: 'lightblue', width: 300}]}
+          />
+        </ScrollView>
+        <View
+          style={[
+            styles.box,
+            {
+              backgroundColor: 'pink',
+              zIndex: 1,
+              position: 'absolute',
+              height: '100%',
+            },
+          ]}
+          pointerEvents="box-none"
+          collapsable={false}>
+          <Text>
+            Clicking should increase the counter value AND the lightblue
+            ScrollView shouldn't be able to scroll when dragging over 'click me'
+            rectangle
+          </Text>
+          <Text>box-none</Text>
+
+          <View
+            style={[styles.button, {backgroundColor: 'lightgreen'}]}
+            pointerEvents="box-none"
+            collapsable={false}>
+            <Text>box-none</Text>
+            <CounterButton />
+          </View>
+        </View>
+      </View>
+    );
   };
 
   const TouchableOpacityInViewExample = () => {
@@ -105,9 +182,8 @@ export function PointerEventsExample() {
     return (
       <ActivityIndicator
         animating
-        style={{alignSelf: 'center'}}
+        style={{alignSelf: 'center', pointerEvents: pointerEventsNone}}
         size={150}
-        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -155,8 +231,7 @@ export function PointerEventsExample() {
       <>
         <ScrollView
           ref={ref}
-          style={styles.scrollView}
-          pointerEvents={pointerEventsNone}>
+          style={[styles.scrollView, {pointerEvents: pointerEventsNone}]}>
           <ScrollViewItem height={100} color="white" />
           <ScrollViewItem height={100} color="black" />
           <ScrollViewItem height={100} color="white" />
@@ -184,11 +259,11 @@ export function PointerEventsExample() {
   const ImageBareExample = () => {
     return (
       <Image
+        // @ts-ignore
+        style={{pointerEvents: pointerEventsNone}}
         source={{uri: REACT_NATIVE_LOGO_URL}}
         height={100}
         resizeMode="contain"
-        // @ts-ignore
-        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -205,9 +280,9 @@ export function PointerEventsExample() {
   const SwitchBareExample = () => {
     return (
       <Switch
+        style={{pointerEvents: pointerEventsNone}}
         value={value}
         onChange={event => setValue(event.nativeEvent.value)}
-        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -226,10 +301,9 @@ export function PointerEventsExample() {
   const TextInputBareExample = () => {
     return (
       <TextInput
-        style={styles.input}
+        style={[styles.input, {pointerEvents: pointerEventsNone}]}
         onChangeText={onChangeText}
         value={text}
-        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -250,7 +324,22 @@ export function PointerEventsExample() {
       component: TouchableOpacityInViewExample,
       title: 'TouchableOpacity inside View',
     },
+    {
+      component: BoxOnlyMultiLayerNestingExample,
+      title: 'box-only multi-layer nesting',
+    },
+    {
+      component: BoxNoneMultiLayerNestingExample,
+      title: 'box-none multi-layer nesting',
+    },
   ];
+
+  const [horizontal, setHorizontal] = useState(false);
+
+  useEffect(() => {
+    setHorizontal(true);
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.container80}>
@@ -260,7 +349,7 @@ export function PointerEventsExample() {
         </Text>
         <View>
           <FlatList
-            horizontal
+            horizontal={horizontal}
             data={PointerEventsExamples}
             renderItem={item => (
               <Item
@@ -336,5 +425,25 @@ const styles = StyleSheet.create({
     verticalAlign: 'middle',
     textAlign: 'center',
     alignSelf: 'center',
+  },
+  box: {
+    width: 200,
+    height: 1200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    marginTop: 20,
+    width: 160,
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingBottom: 80,
+    paddingTop: 80,
+    backgroundColor: 'lightgray',
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

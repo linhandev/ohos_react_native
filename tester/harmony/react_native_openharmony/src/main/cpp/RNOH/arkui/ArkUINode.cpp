@@ -75,7 +75,7 @@ std::optional<std::string> actionTypeToName(
 
 static constexpr std::array NODE_EVENT_TYPES{
     NODE_ON_ACCESSIBILITY_ACTIONS,
-};
+    NODE_ON_TOUCH_INTERCEPT};
 
 static void receiveEvent(ArkUI_NodeEvent* event) {
   try {
@@ -85,6 +85,12 @@ static void receiveEvent(ArkUI_NodeEvent* event) {
 
     if (eventType == ArkUI_NodeEventType::NODE_TOUCH_EVENT) {
       // Node Touch events are handled in UIInputEventHandler instead
+      return;
+    }
+
+    if (eventType == ArkUI_NodeEventType::NODE_ON_TOUCH_INTERCEPT) {
+      auto inputEvent = OH_ArkUI_NodeEvent_GetInputEvent(event);
+      target->onTouchIntercept(inputEvent);
       return;
     }
 
@@ -341,20 +347,24 @@ ArkUINode& ArkUINode::setShadow(
   return *this;
 }
 
+/**
+ * @deprecated This is internal method. Do not use it, it will be removed in
+ * the future (latestRNOHVersion: 0.75.2)
+ */
 ArkUINode& ArkUINode::setHitTestMode(ArkUI_HitTestMode hitTestMode) {
   setAttribute(
       NODE_HIT_TEST_BEHAVIOR, {{.i32 = static_cast<int32_t>(hitTestMode)}});
   return *this;
 }
 
+/**
+ * @deprecated The matching of pointerEvents and hitTestBehavior has been
+ * moved to CppComponentInstance::onArkUINodeTouchIntercept (latestRNOHVersion:
+ * 0.75.2)
+ */
 ArkUINode& ArkUINode::setHitTestMode(
     facebook::react::PointerEventsMode const& pointerEvents) {
-  ArkUI_HitTestMode hitTestMode =
-      (pointerEvents == facebook::react::PointerEventsMode::None ||
-       pointerEvents == facebook::react::PointerEventsMode::BoxNone)
-      ? ArkUI_HitTestMode::ARKUI_HIT_TEST_MODE_NONE
-      : ArkUI_HitTestMode::ARKUI_HIT_TEST_MODE_DEFAULT;
-  return setHitTestMode(hitTestMode);
+  return *this;
 }
 
 ArkUINode& ArkUINode::setAccessibilityRole(std::string const& roleName) {
@@ -682,6 +692,12 @@ ArkUINode& ArkUINode::resetAccessibilityText() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_TEXT));
   return *this;
+}
+
+void ArkUINode::onTouchIntercept(const ArkUI_UIInputEvent* event) {
+  if (m_arkUINodeDelegate != nullptr) {
+    m_arkUINodeDelegate->onArkUINodeTouchIntercept(event);
+  }
 }
 
 void ArkUINode::onNodeEvent(
