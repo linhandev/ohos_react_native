@@ -73,7 +73,7 @@ protected async onWindowStageSetup(windowStage: window.WindowStage): void
 protected abstract getPagePath(): string
 ```
 
-获取入口页面路径，该路径在 module.json5 中定义。扩展类必须实现该方法。
+获取入口页面路径，该路径是 `main_pages.json` 中定义的路径。扩展类必须实现该方法。
 
 #### defaultBackPressHandler
 
@@ -225,11 +225,11 @@ RNApp({
     createRNPackages,
     // 是否启用C++原生文本测算接口
     enableNDKTextMeasuring: true,
-    // 是否启动后台线程
+    // 是否启动后台线程，建议关闭后台线程
     enableBackgroundExecutor: false,
     // 是否使用CAPI架构，默认为true
     enableCAPIArchitecture: true,
-    // ArkTs自定义组件的名称
+    // ArkTS自定义组件的名称
     arkTsComponentNames,
   },
   // 传递初始属性给 React Native 应用
@@ -394,12 +394,12 @@ const styles = StyleSheet.create({
 | ------------------------ | ------- | ---- | ------------------------------------------ |
 | createRNPackages         | void    | 是   | 外部功能包管理（向框架提供额外的功能特性）。 |
 | enableDebugger           | boolean | 否   | 是否启动Hermes debugger模式。                       |
-| enableBackgroundExecutor | boolean | 否   | 是否启动后台线程。     |
+| enableBackgroundExecutor | boolean | 否   | 是否启动后台线程，建议关闭后台线程。     |
 | enableNDKTextMeasuring   | boolean | 否   | 是否启用C++原生文本测算接口。                    |
 | enableImageLoader        | boolean | 否   | 是否启动图片缓存。                           |
 | enableCAPIArchitecture   | boolean | 否   | 是否使用CAPI架构，默认开启。                 |
 | assetsDest               | string  | 否   | 指定资源文件路径。                           |
-| arkTsComponentNames      | Array<string>  | 是   | ArkTs自定义组件的名称。                           |
+| arkTsComponentNames      | Array<string>  | 是   | ArkTS自定义组件的名称。                           |
 | backPressHandler         | () => void  | 否   | 当RN JS端不处理侧滑返回事件时的自定义处理逻辑。   |
 | httpClient               | [HttpClient](https://developer.huawei.com/consumer/cn/doc/system-References/network-httpclient-0000001073658008)  | 否  | 指定Http客户端处理类。    |
 | fontResourceByFontFamily | Record<string, Resource>  | 否   | 注册自定义字体。 |

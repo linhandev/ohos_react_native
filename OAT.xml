@@ -18,6 +18,8 @@
                 <filteritem type="filename" name="README.md"/>
                 <filteritem type="filename" name="README_zh.md"/>
                 <filteritem type="filename" name="LICENSE"/>
+                <filteritem type="filename" name="LICENSE-MIT"/>
+                <filteritem type="filepath" name="react-native-harmony/Libraries/.*"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
