@@ -1,5 +1,17 @@
 # 编译类FAQ
 
+## RN偶现崩溃，报"Fault thread info，Name:RNOH_BACKGROUND"错误
+-错误提示  
+```
+Process name:xxxxxxxxxx
+Process life time:1584s
+Reason:Signal:SIGSEGV(SEGV_MAPERR)@xxxxxxxxxxxx
+Fault thread info:
+Tid:xxxx, Name:RNOH_BACKGROUND
+```
+-解决  
+创建`RNInstance`时将`enableBackgroundExecutor`设置成false。
+
 ## 编译时报错，找不到TextLayoutManager 
 - 错误提示
 编译 CPP 的时候报错，在报错信息中搜索 `error` ，发现是 `TextLayoutManager.cpp` 文件找不到了。截图如下:
