@@ -73,7 +73,7 @@ protected async onWindowStageSetup(windowStage: window.WindowStage): void
 protected abstract getPagePath(): string
 ```
 
-获取入口页面路径，该路径在 module.json5 中定义。扩展类必须实现该方法。
+获取入口页面路径，该路径是 `main_pages.json` 中定义的路径。扩展类必须实现该方法。
 
 #### defaultBackPressHandler
 
@@ -225,7 +225,7 @@ RNApp({
     createRNPackages,
     // 是否启用C++原生文本测算接口
     enableNDKTextMeasuring: true,
-    // 是否启动后台线程
+    // 是否启动后台线程，建议关闭后台线程
     enableBackgroundExecutor: false,
     // 是否使用CAPI架构，默认为true
     enableCAPIArchitecture: true,
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
 | ------------------------ | ------- | ---- | ------------------------------------------ |
 | createRNPackages         | void    | 是   | 外部功能包管理（向框架提供额外的功能特性）。 |
 | enableDebugger           | boolean | 否   | 是否启动Hermes debugger模式。                       |
-| enableBackgroundExecutor | boolean | 否   | 是否启动后台线程。     |
+| enableBackgroundExecutor | boolean | 否   | 是否启动后台线程，建议关闭后台线程。     |
 | enableNDKTextMeasuring   | boolean | 否   | 是否启用C++原生文本测算接口。                    |
 | enableImageLoader        | boolean | 否   | 是否启动图片缓存。                           |
 | enableCAPIArchitecture   | boolean | 否   | 是否使用CAPI架构，默认开启。                 |
