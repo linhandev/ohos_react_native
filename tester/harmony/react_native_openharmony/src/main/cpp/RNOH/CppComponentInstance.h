@@ -74,6 +74,10 @@ class CppComponentInstance : public ComponentInstance,
   const std::string& getAccessibilityLabel() const override {
     return m_accessibilityLabel;
   }
+  
+  bool getAccessibilityGroup() const override {
+    return m_accessibilityGroup;
+  }
 
   /**
    * TODO: change to private — those methods are intended to be called
@@ -334,6 +338,7 @@ class CppComponentInstance : public ComponentInstance,
 
     if (props->accessible != old->accessible) {
       localRoot.setAccessibilityGroup(props->accessible);
+      m_accessibilityGroup = props->accessible;
     }
 
     if (props->importantForAccessibility != old->importantForAccessibility) {
@@ -590,6 +595,7 @@ class CppComponentInstance : public ComponentInstance,
  private:
   std::vector<std::string> m_accessibilityLabelledBy{};
   std::string m_accessibilityLabel;
+  bool m_accessibilityGroup;
 };
 
 inline facebook::react::Rect transformRectAroundPoint(
