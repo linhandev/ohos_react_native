@@ -186,6 +186,16 @@ void TextComponentInstance::onPropsChanged(
   VLOG(3) << "[text-debug] setProps end";
 }
 
+void TextComponentInstance::onFinalizeUpdates() {
+  auto parent = m_parent.lock();
+  if (m_props->importantForAccessibility ==
+          facebook::react::ImportantForAccessibility::Auto &&
+      parent && !parent->getAccessibilityGroup()) {
+    m_textNode.setAccessibilityMode(
+        ArkUI_AccessibilityMode::ARKUI_ACCESSIBILITY_MODE_ENABLED);
+  }
+}
+
 void TextComponentInstance::onStateChanged(
     SharedConcreteState const& textState) {
   CppComponentInstance::onStateChanged(textState);
