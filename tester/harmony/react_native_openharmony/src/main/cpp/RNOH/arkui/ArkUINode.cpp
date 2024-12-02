@@ -78,12 +78,19 @@ static constexpr std::array NODE_EVENT_TYPES{
     NODE_ON_ACCESSIBILITY_ACTIONS,
 };
 
+static std::unordered_map<ArkUI_NodeHandle, ArkUINode*> nodeByHandle;
+
 static void receiveEvent(ArkUI_NodeEvent* event) {
 #ifdef C_API_ARCH
   try {
     auto eventType = OH_ArkUI_NodeEvent_GetEventType(event);
-    auto target =
-        static_cast<ArkUINode*>(OH_ArkUI_NodeEvent_GetUserData(event));
+    auto node = OH_ArkUI_NodeEvent_GetNodeHandle(event);
+    auto it = nodeByHandle.find(node);
+    if (it == nodeByHandle.end()) {
+      DLOG(WARNING) << "Node with handle: " << node << " not found";
+      return;
+    }
+    auto target = it->second;
 
     if (eventType == ArkUI_NodeEventType::NODE_TOUCH_EVENT) {
       // Node Touch events are handled in UIInputEventHandler instead
@@ -729,10 +736,23 @@ ArkUI_IntOffset ArkUINode::getLayoutPosition() {
 void ArkUINode::registerNodeEvent(ArkUI_NodeEventType eventType) {
   maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
       m_nodeHandle, eventType, eventType, this));
+  auto [_it, inserted] =
+      nodeByHandle.emplace(m_nodeHandle, this);
+  if (!inserted) {
+    DLOG(WARNING) << "Node with handle: " << m_nodeHandle
+                  << " was already registered";
+  }
 }
 
 void ArkUINode::unregisterNodeEvent(ArkUI_NodeEventType eventType) {
+  auto it = nodeByHandle.find(m_nodeHandle);
+  if (it == nodeByHandle.end()) {
+    DLOG(WARNING) << "Node with handle: " << m_nodeHandle
+                  << " not found";
+    return;
+  }
   NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
+  nodeByHandle.erase(it);
 }
 
 const ArkUI_AttributeItem& ArkUINode::getAttribute(
