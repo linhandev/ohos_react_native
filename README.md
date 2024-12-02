@@ -1,7 +1,34 @@
-# OpenHarmony Documentation
+# React Native for OpenHarmony (RNOH)
 
 Welcome to the React Native for OpenHarmony documentation.
 
+## 启动
+
+### 前提条件
+
+#### 安装了HarmonyOS NEXT的模拟器或真机
+该项目需要HarmonyOS NEXT上进行测试。
+
+#### 华为开发者账号
+运行应用程序时，需要用到华为开发者账号进行签名。
+
+#### DevEco Studio
+从[官网](https://developer.huawei.com/consumer/cn/deveco-studio/)下载并安装最新版本 DevEco Studio。
+
+### 启动项目
+
+1. 打开终端（命令行工具）并导航到react-native-harmony-cli目录，然后执行 `npm i && npm pack`。
+1. 在终端中导航到react-native-harmony-sample-package目录，然后执行 `npm i && npm pack`。
+1. 导航到tester目录，然后执行 `npm run i` （不是 npm i）。
+1. 在tester目录中运行 `npm start` 以启动Metro服务器。
+1. 在DevEco Studio中打开 `tester/harmony` 项目并等待后台同步完成。
+1. 连接设备。
+1. 点击 File > Project Structure > Signing Configs，登录并完成签名。
+1. 选择 `entry`（右上角）。
+1. 点击【Run 'entry'】按钮（右上角）运行项目。
+
+## Usage
+
 - [React Native](https://reactnative.dev/)
-- [Chinese Documentation](./docs/zh-cn/README.md)
-- [English Documentation](./docs/en/README.md)
+- [Chinese Documentation](./zh-cn/README.md)
+- [English Documentation](./en/README.md)
