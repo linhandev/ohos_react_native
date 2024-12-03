@@ -14,7 +14,7 @@
     "test": "jest"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "react-native": "0.75.4"
   },
