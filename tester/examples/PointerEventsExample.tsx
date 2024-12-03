@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -182,8 +182,9 @@ export function PointerEventsExample() {
     return (
       <ActivityIndicator
         animating
-        style={{alignSelf: 'center', pointerEvents: pointerEventsNone}}
+        style={{alignSelf: 'center'}}
         size={150}
+        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -231,7 +232,8 @@ export function PointerEventsExample() {
       <>
         <ScrollView
           ref={ref}
-          style={[styles.scrollView, {pointerEvents: pointerEventsNone}]}>
+          style={styles.scrollView}
+          pointerEvents={pointerEventsNone}>
           <ScrollViewItem height={100} color="white" />
           <ScrollViewItem height={100} color="black" />
           <ScrollViewItem height={100} color="white" />
@@ -259,11 +261,11 @@ export function PointerEventsExample() {
   const ImageBareExample = () => {
     return (
       <Image
-        // @ts-ignore
-        style={{pointerEvents: pointerEventsNone}}
         source={{uri: REACT_NATIVE_LOGO_URL}}
         height={100}
         resizeMode="contain"
+        // @ts-ignore
+        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -280,9 +282,9 @@ export function PointerEventsExample() {
   const SwitchBareExample = () => {
     return (
       <Switch
-        style={{pointerEvents: pointerEventsNone}}
         value={value}
         onChange={event => setValue(event.nativeEvent.value)}
+        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -301,9 +303,10 @@ export function PointerEventsExample() {
   const TextInputBareExample = () => {
     return (
       <TextInput
-        style={[styles.input, {pointerEvents: pointerEventsNone}]}
+        style={styles.input}
         onChangeText={onChangeText}
         value={text}
+        pointerEvents={pointerEventsNone}
       />
     );
   };
@@ -333,13 +336,6 @@ export function PointerEventsExample() {
       title: 'box-none multi-layer nesting',
     },
   ];
-
-  const [horizontal, setHorizontal] = useState(false);
-
-  useEffect(() => {
-    setHorizontal(true);
-  }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.container80}>
@@ -349,7 +345,7 @@ export function PointerEventsExample() {
         </Text>
         <View>
           <FlatList
-            horizontal={horizontal}
+            horizontal
             data={PointerEventsExamples}
             renderItem={item => (
               <Item

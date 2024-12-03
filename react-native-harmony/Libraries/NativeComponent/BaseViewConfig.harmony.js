@@ -8,19 +8,28 @@
  * @flow strict-local
  */
 
-// RNOH - added missing .harmony file
+// RNOH patch: fix imports and require()s
 
 import type {PartialViewConfigWithoutName} from 'react-native/Libraries/NativeComponent/PlatformBaseViewConfig';
 
 import ReactNativeStyleAttributes from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
-import {DynamicallyInjectedByGestureHandler} from 'react-native/Libraries/NativeComponent/ViewConfigIgnore';
+import {
+  ConditionallyIgnoredEventHandlers,
+  DynamicallyInjectedByGestureHandler,
+} from './ViewConfigIgnore';
 
 const bubblingEventTypes = {
-  // Bubbling events from UIManagerModuleConstants.java
+  // Generic Events
+  topPress: {
+    phasedRegistrationNames: {
+      bubbled: 'onPress',
+      captured: 'onPressCapture',
+    },
+  },
   topChange: {
     phasedRegistrationNames: {
-      captured: 'onChangeCapture',
       bubbled: 'onChange',
+      captured: 'onChangeCapture',
     },
   },
   topFocus: {
@@ -35,38 +44,58 @@ const bubblingEventTypes = {
       captured: 'onBlurCapture',
     },
   },
-  topSelect: {
+  topSubmitEditing: {
     phasedRegistrationNames: {
-      captured: 'onSelectCapture',
-      bubbled: 'onSelect',
+      bubbled: 'onSubmitEditing',
+      captured: 'onSubmitEditingCapture',
     },
   },
-  topTouchEnd: {
+  topEndEditing: {
     phasedRegistrationNames: {
-      captured: 'onTouchEndCapture',
-      bubbled: 'onTouchEnd',
+      bubbled: 'onEndEditing',
+      captured: 'onEndEditingCapture',
     },
   },
-  topTouchCancel: {
+  topKeyPress: {
     phasedRegistrationNames: {
-      captured: 'onTouchCancelCapture',
-      bubbled: 'onTouchCancel',
+      bubbled: 'onKeyPress',
+      captured: 'onKeyPressCapture',
     },
   },
+
+  // Touch Events
   topTouchStart: {
     phasedRegistrationNames: {
-      captured: 'onTouchStartCapture',
       bubbled: 'onTouchStart',
+      captured: 'onTouchStartCapture',
     },
   },
   topTouchMove: {
     phasedRegistrationNames: {
-      captured: 'onTouchMoveCapture',
       bubbled: 'onTouchMove',
+      captured: 'onTouchMoveCapture',
+    },
+  },
+  topTouchCancel: {
+    phasedRegistrationNames: {
+      bubbled: 'onTouchCancel',
+      captured: 'onTouchCancelCapture',
+    },
+  },
+  topTouchEnd: {
+    phasedRegistrationNames: {
+      bubbled: 'onTouchEnd',
+      captured: 'onTouchEndCapture',
     },
   },
 
   // Experimental/Work in Progress Pointer Events (not yet ready for use)
+  topClick: {
+    phasedRegistrationNames: {
+      captured: 'onClickCapture',
+      bubbled: 'onClick',
+    },
+  },
   topPointerCancel: {
     phasedRegistrationNames: {
       captured: 'onPointerCancelCapture',
@@ -77,6 +106,18 @@ const bubblingEventTypes = {
     phasedRegistrationNames: {
       captured: 'onPointerDownCapture',
       bubbled: 'onPointerDown',
+    },
+  },
+  topPointerMove: {
+    phasedRegistrationNames: {
+      captured: 'onPointerMoveCapture',
+      bubbled: 'onPointerMove',
+    },
+  },
+  topPointerUp: {
+    phasedRegistrationNames: {
+      captured: 'onPointerUpCapture',
+      bubbled: 'onPointerUp',
     },
   },
   topPointerEnter: {
@@ -93,16 +134,10 @@ const bubblingEventTypes = {
       skipBubbling: true,
     },
   },
-  topPointerMove: {
+  topPointerOver: {
     phasedRegistrationNames: {
-      captured: 'onPointerMoveCapture',
-      bubbled: 'onPointerMove',
-    },
-  },
-  topPointerUp: {
-    phasedRegistrationNames: {
-      captured: 'onPointerUpCapture',
-      bubbled: 'onPointerUp',
+      captured: 'onPointerOverCapture',
+      bubbled: 'onPointerOver',
     },
   },
   topPointerOut: {
@@ -111,10 +146,16 @@ const bubblingEventTypes = {
       bubbled: 'onPointerOut',
     },
   },
-  topPointerOver: {
+  topGotPointerCapture: {
     phasedRegistrationNames: {
-      captured: 'onPointerOverCapture',
-      bubbled: 'onPointerOver',
+      captured: 'onGotPointerCaptureCapture',
+      bubbled: 'onGotPointerCapture',
+    },
+  },
+  topLostPointerCapture: {
+    phasedRegistrationNames: {
+      captured: 'onLostPointerCaptureCapture',
+      bubbled: 'onLostPointerCapture',
     },
   },
 };
@@ -123,107 +164,128 @@ const directEventTypes = {
   topAccessibilityAction: {
     registrationName: 'onAccessibilityAction',
   },
+  topAccessibilityTap: {
+    registrationName: 'onAccessibilityTap',
+  },
+  topMagicTap: {
+    registrationName: 'onMagicTap',
+  },
+  topAccessibilityEscape: {
+    registrationName: 'onAccessibilityEscape',
+  },
+  topLayout: {
+    registrationName: 'onLayout',
+  },
   onGestureHandlerEvent: DynamicallyInjectedByGestureHandler({
     registrationName: 'onGestureHandlerEvent',
   }),
   onGestureHandlerStateChange: DynamicallyInjectedByGestureHandler({
     registrationName: 'onGestureHandlerStateChange',
   }),
-
-  // Direct events from UIManagerModuleConstants.java
-  topContentSizeChange: {
-    registrationName: 'onContentSizeChange',
-  },
-  topScrollBeginDrag: {
-    registrationName: 'onScrollBeginDrag',
-  },
-  topMessage: {
-    registrationName: 'onMessage',
-  },
-  topSelectionChange: {
-    registrationName: 'onSelectionChange',
-  },
-  topLoadingFinish: {
-    registrationName: 'onLoadingFinish',
-  },
-  topMomentumScrollEnd: {
-    registrationName: 'onMomentumScrollEnd',
-  },
-  topClick: {
-    registrationName: 'onClick',
-  },
-  topLoadingStart: {
-    registrationName: 'onLoadingStart',
-  },
-  topLoadingError: {
-    registrationName: 'onLoadingError',
-  },
-  topMomentumScrollBegin: {
-    registrationName: 'onMomentumScrollBegin',
-  },
-  topScrollEndDrag: {
-    registrationName: 'onScrollEndDrag',
-  },
-  topScroll: {
-    registrationName: 'onScroll',
-  },
-  topLayout: {
-    registrationName: 'onLayout',
-  },
 };
 
 const validAttributesForNonEventProps = {
-  // @ReactProps from BaseViewManager
-  backgroundColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
-  transform: true,
-  opacity: true,
-  elevation: true,
-  shadowColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
-  zIndex: true,
-  renderToHardwareTextureAndroid: true,
-  testID: true,
-  nativeID: true,
-  accessibilityLabelledBy: true,
+  // View Props
+  accessible: true,
+  accessibilityActions: true,
   accessibilityLabel: true,
   accessibilityHint: true,
-  accessibilityRole: true,
-  accessibilityCollection: true,
-  accessibilityCollectionItem: true,
-  accessibilityState: true,
-  accessibilityActions: true,
+  accessibilityLanguage: true,
   accessibilityValue: true,
-  importantForAccessibility: true,
-  rotation: true,
-  scaleX: true,
-  scaleY: true,
-  translateX: true,
-  translateY: true,
-  accessibilityLiveRegion: true,
-
-  // @ReactProps from LayoutShadowNode
-  width: true,
-  minWidth: true,
+  accessibilityViewIsModal: true,
+  accessibilityElementsHidden: true,
+  accessibilityIgnoresInvertColors: true,
+  testID: true,
+  backgroundColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  backfaceVisibility: true,
+  opacity: true,
+  shadowColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  shadowOffset: {diff: require('react-native/Libraries/Utilities/differ/sizesDiffer')},
+  shadowOpacity: true,
+  shadowRadius: true,
+  needsOffscreenAlphaCompositing: true,
+  overflow: true,
+  shouldRasterizeIOS: true,
+  transform: {diff: require('react-native/Libraries/Utilities/differ/matricesDiffer')},
+  transformOrigin: true,
+  accessibilityRole: true,
+  accessibilityState: true,
+  nativeID: true,
+  pointerEvents: true,
+  removeClippedSubviews: true,
+  role: true,
+  borderRadius: true,
+  borderColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderCurve: true,
+  borderWidth: true,
+  borderStyle: true,
+  hitSlop: {diff: require('react-native/Libraries/Utilities/differ/insetsDiffer')},
   collapsable: true,
-  maxWidth: true,
+  collapsableChildren: true,
+  experimental_filter: {
+    process: require('react-native/Libraries/StyleSheet/processFilter').default,
+  },
+
+  borderTopWidth: true,
+  borderTopColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderRightWidth: true,
+  borderRightColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderBottomWidth: true,
+  borderBottomColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderLeftWidth: true,
+  borderLeftColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderStartWidth: true,
+  borderStartColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+  borderEndWidth: true,
+  borderEndColor: {process: require('react-native/Libraries/StyleSheet/processColor').default},
+
+  borderTopLeftRadius: true,
+  borderTopRightRadius: true,
+  borderTopStartRadius: true,
+  borderTopEndRadius: true,
+  borderBottomLeftRadius: true,
+  borderBottomRightRadius: true,
+  borderBottomStartRadius: true,
+  borderBottomEndRadius: true,
+  borderEndEndRadius: true,
+  borderEndStartRadius: true,
+  borderStartEndRadius: true,
+  borderStartStartRadius: true,
+  display: true,
+  zIndex: true,
+
+  // ShadowView properties
+  top: true,
+  right: true,
+  start: true,
+  end: true,
+  bottom: true,
+  left: true,
+
+  inset: true,
+  insetBlock: true,
+  insetBlockEnd: true,
+  insetBlockStart: true,
+  insetInline: true,
+  insetInlineEnd: true,
+  insetInlineStart: true,
+
+  width: true,
   height: true,
+
+  minWidth: true,
+  maxWidth: true,
   minHeight: true,
   maxHeight: true,
-  flex: true,
-  flexGrow: true,
-  rowGap: true,
-  columnGap: true,
-  gap: true,
-  flexShrink: true,
-  flexBasis: true,
-  aspectRatio: true,
-  flexDirection: true,
-  flexWrap: true,
-  alignSelf: true,
-  alignItems: true,
-  alignContent: true,
-  justifyContent: true,
-  overflow: true,
-  display: true,
+
+  // Also declared as ViewProps
+  // borderTopWidth: true,
+  // borderRightWidth: true,
+  // borderBottomWidth: true,
+  // borderLeftWidth: true,
+  // borderStartWidth: true,
+  // borderEndWidth: true,
+  // borderWidth: true,
 
   margin: true,
   marginBlock: true,
@@ -257,29 +319,42 @@ const validAttributesForNonEventProps = {
   paddingTop: true,
   paddingVertical: true,
 
-  borderWidth: true,
-  borderStartWidth: true,
-  borderEndWidth: true,
-  borderTopWidth: true,
-  borderBottomWidth: true,
-  borderLeftWidth: true,
-  borderRightWidth: true,
-
-  start: true,
-  end: true,
-  left: true,
-  right: true,
-  top: true,
-  bottom: true,
-
+  flex: true,
+  flexGrow: true,
+  rowGap: true,
+  columnGap: true,
+  gap: true,
+  flexShrink: true,
+  flexBasis: true,
+  flexDirection: true,
+  flexWrap: true,
+  justifyContent: true,
+  alignItems: true,
+  alignSelf: true,
+  alignContent: true,
   position: true,
+  aspectRatio: true,
+
+  // Also declared as ViewProps
+  // overflow: true,
+  // display: true,
+
+  direction: true,
 
   style: ReactNativeStyleAttributes,
+
+  experimental_layoutConformance: true,
 };
 
 // Props for bubbling and direct events
-const validAttributesForEventProps = {
+const validAttributesForEventProps = ConditionallyIgnoredEventHandlers({
   onLayout: true,
+  onMagicTap: true,
+
+  // Accessibility
+  onAccessibilityAction: true,
+  onAccessibilityEscape: true,
+  onAccessibilityTap: true,
 
   // PanResponder handlers
   onMoveShouldSetResponder: true,
@@ -303,35 +378,31 @@ const validAttributesForEventProps = {
   onTouchCancel: true,
 
   // Pointer events
+  onClick: true,
+  onClickCapture: true,
+  onPointerUp: true,
+  onPointerDown: true,
+  onPointerCancel: true,
   onPointerEnter: true,
-  onPointerEnterCapture: true,
-  onPointerLeave: true,
-  onPointerLeaveCapture: true,
   onPointerMove: true,
-  onPointerMoveCapture: true,
-  onPointerOut: true,
-  onPointerOutCapture: true,
+  onPointerLeave: true,
   onPointerOver: true,
-  onPointerOverCapture: true,
-};
+  onPointerOut: true,
+  onGotPointerCapture: true,
+  onLostPointerCapture: true,
+});
 
 /**
- * On Android, Props are derived from a ViewManager and its ShadowNode.
- *
- * Where did we find these base platform props from?
- * - Nearly all component ViewManagers descend from BaseViewManager,
- * - and BaseViewManagers' ShadowNodes descend from LayoutShadowNode.
- * - Also, all components inherit ViewConfigs from UIManagerModuleConstants.java.
- *
- * So, these ViewConfigs are generated from LayoutShadowNode and BaseViewManager.
+ * On iOS, view managers define all of a component's props.
+ * All view managers extend RCTViewManager, and RCTViewManager declares these props.
  */
-const PlatformBaseViewConfigAndroid: PartialViewConfigWithoutName = {
-  directEventTypes,
+const PlatformBaseViewConfigIos: PartialViewConfigWithoutName = {
   bubblingEventTypes,
+  directEventTypes,
   validAttributes: {
     ...validAttributesForNonEventProps,
     ...validAttributesForEventProps,
   },
 };
 
-export default PlatformBaseViewConfigAndroid;
+export default PlatformBaseViewConfigIos;
