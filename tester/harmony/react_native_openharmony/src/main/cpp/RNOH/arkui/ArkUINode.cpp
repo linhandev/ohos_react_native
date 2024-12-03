@@ -118,6 +118,7 @@ ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {
   RNOH_ASSERT(nodeHandle != nullptr);
   maybeThrow(NativeNodeApi::getInstance()->addNodeEventReceiver(
       m_nodeHandle, receiveEvent));
+  nodeByHandle.emplace(m_nodeHandle, this);
   for (auto eventType : NODE_EVENT_TYPES) {
     this->registerNodeEvent(eventType);
   }
@@ -129,6 +130,11 @@ ArkUINode::~ArkUINode() noexcept {
   }
   if (m_arkUINodeDelegate != nullptr) {
     m_arkUINodeDelegate->onArkUINodeDestroy(this);
+  }
+  auto it = nodeByHandle.find(m_nodeHandle);
+  if (it != nodeByHandle.end()) {
+    nodeByHandle.erase(it);
+    return;
   }
   NativeNodeApi::getInstance()->removeNodeEventReceiver(
       m_nodeHandle, receiveEvent);
@@ -736,23 +742,10 @@ ArkUI_IntOffset ArkUINode::getLayoutPosition() {
 void ArkUINode::registerNodeEvent(ArkUI_NodeEventType eventType) {
   maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
       m_nodeHandle, eventType, eventType, this));
-  auto [_it, inserted] =
-      nodeByHandle.emplace(m_nodeHandle, this);
-  if (!inserted) {
-    DLOG(WARNING) << "Node with handle: " << m_nodeHandle
-                  << " was already registered";
-  }
 }
 
 void ArkUINode::unregisterNodeEvent(ArkUI_NodeEventType eventType) {
-  auto it = nodeByHandle.find(m_nodeHandle);
-  if (it == nodeByHandle.end()) {
-    DLOG(WARNING) << "Node with handle: " << m_nodeHandle
-                  << " not found";
-    return;
-  }
   NativeNodeApi::getInstance()->unregisterNodeEvent(m_nodeHandle, eventType);
-  nodeByHandle.erase(it);
 }
 
 const ArkUI_AttributeItem& ArkUINode::getAttribute(
