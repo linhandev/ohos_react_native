@@ -182,6 +182,24 @@ const BaseImage = (props: ImagePropsType, forwardedRef) => {
   return (
     <ImageAnalyticsTagContext.Consumer>
       {analyticTag => {
+        if (props.accessibilityLabelledBy == undefined &&
+          props.accessibilityActions == undefined && 
+          props.accessbilityState == undefined && 
+          props.accessibilityRole == undefined && 
+          props.accessible == undefined && 
+          props.accessibilityLabel == undefined) {
+            return (
+              <ImageViewNativeComponent
+                {...restProps}
+                ref={forwardedRef}
+                style={style}
+                resizeMode={resizeMode}
+                tintColor={tintColor}
+                source={sources}
+                internal_analyticTag={analyticTag}
+              />
+            );
+        } 
         return (
           <ImageViewNativeComponent
             accessibilityState={_accessibilityState}
