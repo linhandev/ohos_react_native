@@ -134,7 +134,6 @@ ArkUINode::~ArkUINode() noexcept {
   auto it = NODE_BY_HANDLE.find(m_nodeHandle);
   if (it != NODE_BY_HANDLE.end()) {
     NODE_BY_HANDLE.erase(it);
-    return;
   }
   NativeNodeApi::getInstance()->removeNodeEventReceiver(
       m_nodeHandle, receiveEvent);
