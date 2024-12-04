@@ -78,6 +78,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setAutoFocus(bool const &autoFocus);
 
+  void setSelectAll(bool selectAll);
+
   bool getTextFocusStatus();
 
   std::string getTextContent() override;
