@@ -1,15 +1,9 @@
 // @ts-check
-const { execSync } = require('child_process');
+const { exec: exec_ } = require('child_process');
 const fs = require('node:fs');
 const readline = require('readline');
-const https = require('node:https');
 
 const RNOH_REPO_TOKEN = process.env.RNOH_REPO_TOKEN ?? '';
-
-if (!RNOH_REPO_TOKEN) {
-  console.log('RNOH_REPO_TOKEN not found');
-  process.exit(1);
-}
 
 const GITLAB_URL = 'https://gl.swmansion.com';
 const HAR_FILE_OUTPUT_PATH =
@@ -20,106 +14,119 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-function runDeployment() {
-  if (!process.cwd().endsWith('react-native-harmony')) {
-    console.log(
-      'This script should be executed from react-native-harmony directory'
-    );
+/**
+ * @param {boolean} condition
+ * @param {string} msg
+ */
+function assert(condition, msg) {
+  if (!condition) {
+    console.error(msg);
     process.exit(1);
   }
+}
 
-  if (!isRepositoryClean()) {
-    console.log(
-      'Repository should be clean, on main branch and up to date with upstream.'
-    );
-    process.exit(1);
-  }
+/**
+ * @param {string} command
+ * @returns {Promise<string>}
+ */
+async function exec(command) {
+  return new Promise((resolve, reject) => {
+    const child = exec_(command);
+
+    let output = '';
+    child.stdout?.on('data', (data) => {
+      process.stdout.write(data);
+      output += data;
+    });
+
+    child.stderr?.on('data', (data) => {
+      process.stderr.write(data);
+      output += data;
+    });
+
+    child.on('error', (error) => {
+      reject(error);
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve(output);
+      } else {
+        reject(new Error(`Command failed with code ${code}`));
+      }
+    });
+  });
+}
+async function runDeployment() {
+  assert(!!RNOH_REPO_TOKEN, 'RNOH_REPO_TOKEN not found');
+  assert(
+    process.cwd().endsWith('react-native-harmony'),
+    'This script should be executed from react-native-harmony directory'
+  );
+  assert(
+    await isRepositoryClean(),
+    'Repository should be clean, on main branch and up to date with upstream.'
+  );
 
   let version = '';
-
   const currentVersion = JSON.parse(
     fs.readFileSync('./package.json').toString()
   )['version'];
   rl.question(
     `Current version: ${currentVersion}. Enter new version: `,
-    (newVersion) => {
+    async (newVersion) => {
       version = newVersion;
 
-      execSync(`npm run update_version  -- --new-version ${version}`, {
-        stdio: 'inherit',
-      });
+      await exec(`npm run update:version  -- --new-version ${version}`);
+      await exec(`npm run build:har`);
+      fs.rmSync('./harmony', { recursive: true, force: true });
+      fs.mkdirSync('./harmony');
+      fs.renameSync(
+        `../${HAR_FILE_OUTPUT_PATH}`,
+        './harmony/react_native_openharmony.har'
+      );
+
+      console.log('Refreshing rnoh-hvigor-plugin.tgz...');
+      await exec(
+        'cd ../react-native-harmony-hvigor-plugin && npm run deploy && cd ../react-native-harmony'
+      );
+
+      const changelogForCurrentVersion = await exec(`npm run -s gen:changelog`);
+
+      updateChangelog(version, changelogForCurrentVersion);
+
+      await exec(`npm publish --dry-run`);
 
       rl.question(
-        `Please generate ${HAR_FILE_OUTPUT_PATH} file. Open DevEco Studio, select any file in 'react_native_openharmony' module, and run Build > Make Module 'react_native_openharmony'.\nOnce you finish type 'done': `,
-        (answer) => {
-          if (answer !== 'done') {
-            console.log('Deployment aborted');
-            process.exit(1);
-          }
-          console.log(
-            `Copying ${`../${HAR_FILE_OUTPUT_PATH}`} to ./harmony dir`
-          );
-          if (!fs.existsSync(`../${HAR_FILE_OUTPUT_PATH}`)) {
-            console.log(`Couldn't find ${HAR_FILE_OUTPUT_PATH}.`);
-            process.exit(1);
-          }
-          fs.rmSync('./harmony', { recursive: true, force: true });
-          fs.mkdirSync('./harmony');
-          fs.renameSync(
-            `../${HAR_FILE_OUTPUT_PATH}`,
-            './harmony/react_native_openharmony.har'
-          );
+        'Are changes good to be published and pushed to the upstream? (yes/no): ',
+        async (answer) => {
+          if (answer.toLowerCase() === 'yes') {
+            await exec(`npm publish`);
+            console.log('NPM Package was published successfully.');
+            await exec(
+              `git checkout -b release-react-native-harmony-${version}`
+            );
+            await exec('git add -A');
+            await exec(
+              `git commit -m "release: react-native-harmony@${version}"`
+            );
+            await exec(`git push -u origin HEAD --no-verify`);
 
-          console.log('Refreshing rnoh-hvigor-plugin.tgz...');
-          execSync(
-            'cd ../react-native-harmony-hvigor-plugin && npm run deploy && cd ../react-native-harmony'
-          );
-
-          const changelogForCurrentVersion = execSync(
-            `npm run -s gen:changelog`
-          ).toString();
-
-          updateChangelog(version, changelogForCurrentVersion);
-
-          execSync(`npm publish --dry-run`, { stdio: 'inherit' });
-
-          rl.question(
-            'Are changes good to be published and pushed to the upstream? (yes/no): ',
-            async (answer) => {
-              if (answer.toLowerCase() === 'yes') {
-                execSync(`npm publish`, { stdio: 'inherit' });
-                console.log('NPM Package was published successfully.');
-                execSync(
-                  `git checkout -b release-react-native-harmony-${version}`
-                );
-                execSync('git add -A');
-                execSync(
-                  `git commit -m "release: react-native-harmony@${version}"`,
-                  {
-                    stdio: 'inherit',
-                  }
-                );
-                execSync(`git push -u origin HEAD --no-verify`, {
-                  stdio: 'inherit',
-                });
-
-                execSync(`git tag v${version}`);
-                execSync(`git push -u origin v${version} --no-verify`, {
-                  stdio: 'inherit',
-                });
-                const mergeRequestId = await createMergeRequest(
-                  `release-react-native-harmony-${version}`,
-                  `release: react-native-harmony@${version}`
-                );
-                console.log(`Please merge the following Merge Request:\n
+            await exec(`git tag v${version}`);
+            await exec(`git push -u origin v${version} --no-verify`);
+            const mergeRequestId = await createMergeRequest(
+              `release-react-native-harmony-${version}`,
+              `release: react-native-harmony@${version}`
+            );
+            console.log(`Please merge the following Merge Request:\n
                 https://gl.swmansion.com/rnoh/react-native-harmony/-/merge_requests/${mergeRequestId}`);
-                rl.close();
-              } else {
-                console.log('Deployment aborted.');
-                rl.close();
-              }
-            }
-          );
+            rl.close();
+            process.exit(0);
+          } else {
+            console.log('Deployment aborted.');
+            rl.close();
+            process.exit(1);
+          }
         }
       );
     }
@@ -127,17 +134,13 @@ function runDeployment() {
 }
 
 /**
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
-function isRepositoryClean() {
-  const status = execSync('git status --porcelain', { encoding: 'utf-8' });
-  const branch = execSync('git branch --show-current', {
-    encoding: 'utf-8',
-  }).trim();
+async function isRepositoryClean() {
+  const status = await exec('git status --porcelain');
+  const branch = (await exec('git branch --show-current')).trim();
   const isUpdated =
-    execSync('git rev-list HEAD...origin/main --count', {
-      encoding: 'utf-8',
-    }).trim() === '0';
+    (await exec('git rev-list HEAD...origin/main --count')).trim() === '0';
   return !status && branch === 'main' && isUpdated;
 }
 

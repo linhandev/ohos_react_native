@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../react-native-harmony && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.0.25.tgz && cd ../react-native-harmony",
-    "prepublishOnly": "npm run verify",
-    "hermes:build": "sh ./scripts/build-hermes.sh",
-    "update_version": "node ./scripts/update-version.js",
+    "prepublishOnly": "npm run _verify",
+    "build:hermes": "sh ./scripts/build-hermes.sh",
+    "build:har": "node ./scripts/build-har.js",
+    "update:version": "node ./scripts/update-version.js",
     "gen:changelog": "node ./scripts/generate-changelog.js",
     "deploy": "node ./scripts/deploy.js",
-    "verify": "npm run check_if_plugin_included && react-native verify-package-harmony --package-path . --skip-checks 'oh_package_name_is_derived_from_npm_package_name;harmony_directory_contains_only_one_har_file'",
+    "_verify": "npm run check_if_plugin_included && react-native verify-package-harmony --package-path . --skip-checks 'oh_package_name_is_derived_from_npm_package_name;harmony_directory_contains_only_one_har_file' && npm run _verify:ecosystem",
+    "_verify:ecosystem": "npm pack && cd ../tester-ecosystem && npm run install:react_native_harmony && npm install && npm run build",
     "check_if_plugin_included": "test $(ls ./harmony/*.tgz 2>/dev/null | wc -l) -eq 1",
     "test": "jest"
   },

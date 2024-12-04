@@ -22,6 +22,8 @@ const JSON5 = require('json5');
   console.log('Updated react-native-harmony/package.json');
   updatePackageScript('../tester', version);
   console.log('Updated tester/package.json');
+  updatePackageScript('../tester-ecosystem', version);
+  console.log('Updated tester-ecosystem/package.json');
   updatePackageScript('../react-native-harmony-sample-package', version);
   console.log('Updated react-native-harmony-sample-package/package.json');
   updateOHPackageVersion(
