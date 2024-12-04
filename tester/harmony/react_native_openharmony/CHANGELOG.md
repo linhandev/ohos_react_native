@@ -1,6 +1,13 @@
 # Changelog
 
-## v0.72.43
+## v0.72.44
+- 版本升到0.72.44,([4182eff0c](https://gitee.com/openharmony-sig/ohos_react_native/commit/4182eff0c6dfe958414c2ac8ff13d0b93be55b01))
+- fix: selectTextOnFocus cannot select all after manually typing,([afefa6c7d](https://gitee.com/openharmony-sig/ohos_react_native/commit/afefa6c7d07eeb18c908641e369d6bf8b24da9ac))
+- remove return,([6f902b000](https://gitee.com/openharmony-sig/ohos_react_native/commit/6f902b000f7fe7f33a1914cbaee2603b83f6f9bc))
+- Standardized,([28f5ff379](https://gitee.com/openharmony-sig/ohos_react_native/commit/28f5ff379791e467f27d26519ff5577d5293c89e))
+- fix: Move the add and delete operations of nodeByHandle to the constructor and destructor,([af815e9ac](https://gitee.com/openharmony-sig/ohos_react_native/commit/af815e9acb3481729e84f9755c2b677de9fe467a))
+- fix: save and get ArkUINode from nodeByHandle instead of userData,([1e6f74dd5](https://gitee.com/openharmony-sig/ohos_react_native/commit/1e6f74dd57f1e89a085b57a1becf3ef55e498dba))
+- CHANGELOG,([ceb76a60d](https://gitee.com/openharmony-sig/ohos_react_native/commit/ceb76a60d0f51f8bdb03558a3ca9de2d37a363d1))
 - formatting,([b38e8df49](https://gitee.com/openharmony-sig/ohos_react_native/commit/b38e8df4996f0f1cc544f91407d691ebe52fa7e3))
 - formatting,([4bafff0d5](https://gitee.com/openharmony-sig/ohos_react_native/commit/4bafff0d59fb1bedabe3401774e6a7346cf5c646))
 - formatting change,([5c7ff090a](https://gitee.com/openharmony-sig/ohos_react_native/commit/5c7ff090aaafc86ddc196bc9c02a02b6ca52abe1))
