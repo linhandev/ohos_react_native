@@ -419,9 +419,9 @@
 
 - 现象
 
-  + 滚动条滚动缓慢、闪烁问题。
-  + 两个scrollView联动滚动的时候会有卡顿、延迟。
-  + RN中动画卡顿。
+  - 滚动条滚动缓慢、闪烁问题。
+  - 两个scrollView联动滚动的时候会有卡顿、延迟。
+  - RN中动画卡顿。
 
 - 原因
 
@@ -523,11 +523,11 @@
     }
   ```
   5. 切换成release模式构建 entry旁边左边有个按钮，product，build Mode选择release。
-  6. 编译，选中新建的模块（rnoh）-> Build -> Make Module xxx，等待编译完成，编译好后的⽂件位于build/default/outputs/default, ⼤⼩约35M。
+  6. 编译，选中新建的模块（rnoh）-> Build -> Make Module xxx，等待编译完成，编译好后的⽂件位于`build/default/outputs/default`, ⼤⼩约35M。
 
 三、使⽤release包
 
-使用⽤release版本的har包需要使⽤release版本的CMakeLists.txt⽂件，该文件位于：ReactNative for OpenHarmony开发使⽤指导/Zips/MyApplicationReplace/entry/src/main/cpp/CMakeLists - release.txt将该⽂件内容复制粘贴到⾃⼰鸿蒙⼯程的CMakeLists.txt中，并做对应的调整。  
+使用⽤release版本的har包需要使⽤release版本的CMakeLists.txt⽂件，该文件位于：`ReactNative for OpenHarmony开发使⽤指导/Zips/MyApplicationReplace/entry/src/main/cpp/CMakeLists - release.txt`将该⽂件内容复制粘贴到⾃⼰鸿蒙⼯程的CMakeLists.txt中，并做对应的调整。  
 
 ### Keyboard下的监听事件未响应的问题
 
