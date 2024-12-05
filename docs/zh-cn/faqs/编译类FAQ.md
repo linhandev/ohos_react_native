@@ -228,3 +228,25 @@ This is allowed only when policy CMP0079 is set to NEW.
 ```CMAKE
 target_link_libraries(xxx PUBLIC ${folly_compile_options})
 ```
+
+## Release版本编译报找不到<hermes/hermes.h>头文件
+
+- 现象
+
+    ![release编译报头文件缺失](./figures/faq-release编译报头文件缺失.png)
+
+- 原因
+
+    这类错误一般是在使用RN三方库时引入。`hermes/hermes.h` 是裁剪过的路径，编译器根据配置的头文件目录无法找到该文件，因此会编译报错。
+
+- 解决
+
+    在Release版本的RNOH中，头文件已全部抽取出来并放到了 `src/main/include` 文件夹下，如果遇到上述错误，可到 `include` 文件夹下找到对应的文件，并将其路径配置在 `CMakeLists.txt` 的 **include_directories** 里面。例如，对于上述问题，修复方案是：
+    ```diff
+    # 添加头文件目录
+    include_directories(${NATIVERENDER_ROOT_PATH}
+                        ${RNOH_CPP_DIR}
+                        ...
+    +                   ${RNOH_CPP_DIR}/third-party/hermes/API
+                        )
+    ```
