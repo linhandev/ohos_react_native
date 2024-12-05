@@ -45,6 +45,8 @@
    }
    ```
 
+   > 如果要继承并重写 RNAbility 内的方法，需要调用`super()`方法，确保 RNAbility 的逻辑是正确的。
+
 2. 在入口文件 `Index.ets` 中，使用 RNApp。
 
    ```typescript
