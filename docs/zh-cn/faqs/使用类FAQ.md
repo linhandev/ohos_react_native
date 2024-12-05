@@ -527,7 +527,7 @@
 
 三、使⽤release包
 
-使用⽤release版本的har包需要使⽤release版本的CMakeLists.txt⽂件，该文件位于：`ReactNative for OpenHarmony开发使⽤指导/Zips/MyApplicationReplace/entry/src/main/cpp/CMakeLists - release.txt`将该⽂件内容复制粘贴到⾃⼰鸿蒙⼯程的CMakeLists.txt中，并做对应的调整。  
+使⽤release版本的har包需要使⽤release版本的[CMakeLists.txt⽂件](../../Zips/MyApplicationReplace/entry/src/main/cpp/CMakeLists%20-%20release.txt)，将该⽂件内容复制粘贴到⾃⼰鸿蒙⼯程的CMakeLists.txt中，并做对应的调整。  
 
 ### Keyboard下的监听事件未响应的问题
 
