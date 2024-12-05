@@ -304,6 +304,13 @@ void TextAreaNode::setInputFilter(const std::string &inputFilter) {
       m_nodeHandle, NODE_TEXT_AREA_INPUT_FILTER, &item));
 }
 
+void TextAreaNode::setSelectAll(bool selectAll) {
+  ArkUI_NumberValue value = {.i32 = int32_t(selectAll)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECT_ALL, &item));
+}
+
 void TextAreaNode::setAutoFocus(bool const &autoFocus){
     m_autofocus = autoFocus;
 }

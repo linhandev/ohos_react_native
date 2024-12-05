@@ -379,6 +379,13 @@ std::string TextInputNode::getTextContent() {
   return item->string;
 }
 
+void TextInputNode::setSelectAll(bool selectAll) {
+  ArkUI_NumberValue value = {.i32 = int32_t(selectAll)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECT_ALL, &item));
+}
+
 void TextInputNode::setAutoFocus(bool const &autoFocus){
     m_autofocus = autoFocus;
 }

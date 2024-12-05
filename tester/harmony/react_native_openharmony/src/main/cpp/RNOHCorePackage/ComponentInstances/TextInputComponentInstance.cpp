@@ -73,11 +73,6 @@ void TextInputComponentInstance::onFocus() {
     m_textAreaNode.setTextContent("");
     m_textInputNode.setTextContent("");
   }
-  if (m_props->traits.selectTextOnFocus) {
-    std::string content = getTextContentFromState(m_state);
-    m_textInputNode.setTextSelection(0, content.size());
-    m_textAreaNode.setTextSelection(0, content.size());
-  }
   if (m_props->traits.clearButtonMode ==
       facebook::react::TextInputAccessoryVisibilityMode::WhileEditing) {
     m_textInputNode.setCancelButtonMode(m_props->traits.clearButtonMode);
@@ -415,6 +410,10 @@ void TextInputComponentInstance::onPropsChanged(
   if (!m_props || props->traits.editable != m_props->traits.editable) {
     m_textAreaNode.setEnabled(props->traits.editable);
   m_textInputNode.setEnabled(props->traits.editable);
+  }
+  if (!m_props || props->traits.selectTextOnFocus != m_props->traits.selectTextOnFocus) {
+    m_textInputNode.setSelectAll(props->traits.selectTextOnFocus);
+    m_textAreaNode.setSelectAll(props->traits.selectTextOnFocus);
   }
 }
 

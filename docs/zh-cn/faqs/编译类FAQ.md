@@ -1,5 +1,17 @@
 # 编译类FAQ
 
+## RN偶现崩溃，报"Fault thread info，Name:RNOH_BACKGROUND"错误
+-错误提示  
+```
+Process name:xxxxxxxxxx
+Process life time:1584s
+Reason:Signal:SIGSEGV(SEGV_MAPERR)@xxxxxxxxxxxx
+Fault thread info:
+Tid:xxxx, Name:RNOH_BACKGROUND
+```
+-解决  
+创建`RNInstance`时将`enableBackgroundExecutor`设置成false。
+
 ## 编译时报错，找不到TextLayoutManager 
 - 错误提示
 编译 CPP 的时候报错，在报错信息中搜索 `error` ，发现是 `TextLayoutManager.cpp` 文件找不到了。截图如下:
@@ -178,7 +190,7 @@
 
   在引入RN三方库，或自定义TurboModule/组件的场景下，点击 `flie ---> sync and refresh project` 后报错:
 
-  ![常见开发场景-引入三方库报错](./faqs/figures/常见开发场景-引入三方库报错.png)
+  ![常见开发场景-引入三方库报错](../figures/常见开发场景-引入三方库报错.png)
 
 - 原因
 
@@ -197,3 +209,44 @@
   }
   ```
 
+## release模式，缺失folly编译报错
+- 现象  
+缺失folly，release模式编译报错。
+
+```bash
+CMake Error at CMakeLists.txt:168 (target_link_libraries):
+Attempt to add link library "-DFOLLY_NO_CONFIG=1" to target
+"xxx" which is not built in this directory.
+This is allowed only when policy CMP0079 is set to NEW.
+
+-- Configuring incomplete, errors occurred!
+```
+
+- 解决  
+
+将folly添加到编译构建，在`CMakeLists.txt`中导入缺失的folly。  
+```CMAKE
+target_link_libraries(xxx PUBLIC ${folly_compile_options})
+```
+
+## Release版本编译报找不到<hermes/hermes.h>头文件
+
+- 现象
+
+    ![release编译报头文件缺失](./figures/faq-release编译报头文件缺失.png)
+
+- 原因
+
+    这类错误一般是在使用RN三方库时引入。`hermes/hermes.h` 是裁剪过的路径，编译器根据配置的头文件目录无法找到该文件，因此会编译报错。
+
+- 解决
+
+    在Release版本的RNOH中，头文件已全部抽取出来并放到了 `src/main/include` 文件夹下，如果遇到上述错误，可到 `include` 文件夹下找到对应的文件，并将其路径配置在 `CMakeLists.txt` 的 **include_directories** 里面。例如，对于上述问题，修复方案是：
+    ```diff
+    # 添加头文件目录
+    include_directories(${NATIVERENDER_ROOT_PATH}
+                        ${RNOH_CPP_DIR}
+                        ...
+    +                   ${RNOH_CPP_DIR}/third-party/hermes/API
+                        )
+    ```
