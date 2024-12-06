@@ -29,6 +29,5 @@ Welcome to the React Native for OpenHarmony documentation.
 
 ## Usage
 
-- [React Native](https://reactnative.dev/)
-- [Chinese Documentation](./zh-cn/README.md)
-- [English Documentation](./en/README.md)
+- React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
+- RNOH的使用问题可查阅[中文文档](./docs/zh-cn/README.md)或[英文文档](./docs/en/README.md)。
