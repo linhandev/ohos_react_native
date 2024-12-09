@@ -16,7 +16,7 @@ HUAWEI ID is needed to sign the app when running on a physical device.
 
 ### DevEco Studio
 
-1. Download the latest DevEco Studio from [File Storage repo](https://gl.swmansion.com/rnoh/file-storage).
+1. Download the latest (5.0.5.300) DevEco Studio from [File Storage repo](https://gl.swmansion.com/rnoh/file-storage).
 1. Unpack all .partX.rar archives.
 1. Install DevEco Studio.
 1. Test if the installation was successful by opening and closing DevEco Studio.

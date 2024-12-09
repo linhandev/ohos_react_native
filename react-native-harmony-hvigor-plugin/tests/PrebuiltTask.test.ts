@@ -38,7 +38,7 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
   });
 
   const executedCommands = fakeCliExecutor.getCommands();
-  expect(executedCommands[0]).toBe('hdc rport tcp:8081 tcp:8081');
+  expect(executedCommands[0]).toContain('hdc rport tcp:8081 tcp:8081');
   expect(executedCommands[1]).toBe(
     pathUtils.join('node_modules', '.bin', 'react-native') +
       ' codegen-harmony --project-root-path ../ --cpp-output-path ./entry/src/main/cpp/generated --rnoh-module-path _'

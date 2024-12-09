@@ -146,6 +146,13 @@ export class PrebuiltTask {
         'rnohModulePath must be specified if codegen is not null'
       );
     }
+    const DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
+    if (!DEVECO_SDK_HOME) {
+      throw new ValidationError(
+        'metro',
+        'DEVECO_SDK_HOME must be specified if metro configuration is not null.'
+      );
+    }
     return {
       nodeModulesPath,
       codegenArgs:
@@ -234,8 +241,19 @@ class MetroPortForwardSubtask implements Subtask {
       this.logger.warn('[metro] skipped port forwarding');
       return;
     }
+    const DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
+    if (!DEVECO_SDK_HOME) {
+      this.logger.error('DEVECO_SDK_HOME is undefined');
+      return;
+    }
     const result = this.cliExecutor.run(
-      `hdc rport tcp:${this.input.port} tcp:${this.input.port}`
+      `${pathUtils.join(
+        DEVECO_SDK_HOME,
+        'default',
+        'openharmony',
+        'toolchains',
+        'hdc'
+      )} rport tcp:${this.input.port} tcp:${this.input.port}`
     );
     this.logger.info(`[metro] ${result}`);
   }
