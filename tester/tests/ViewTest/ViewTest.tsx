@@ -7,7 +7,8 @@ import {
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React, {useRef, useState} from 'react';
-import {Button, TestCase} from '../components';
+import {Button, TestCase} from '../../components';
+import {ViewAccessibilityTest} from './ViewAccessibilityTest';
 
 export function ViewTest() {
   return (
@@ -721,6 +722,7 @@ export function ViewTest() {
           expect(state.responderRejectedCount).to.be.greaterThan(0);
         }}
       />
+      <ViewAccessibilityTest />
       <TestCase.Manual
         modal
         itShould='call the "escape" gesture handler'
@@ -765,75 +767,7 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Example
         modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuemax accessibility prop">
-        <View
-          accessible={true}
-          aria-valuemax={1000}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemax: 100</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuemin accessibility prop">
-        <View
-          accessible={true}
-          aria-valuemin={10}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: 10</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuenow accessibility prop">
-        <View
-          accessible={true}
-          aria-valuenow={55}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: 55</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/600
-        itShould="render a view with aria-valuetext accessibility prop">
-        <View
-          accessible={true}
-          aria-valuetext={'Test Text'}
-          style={[styles.accessibilityLayout, {backgroundColor: 'green'}]}>
-          <Text>aria-valuemin: Test Text</Text>
-        </View>
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        skip={{android: false, harmony: {arkTS: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/599
-        itShould="render a view with aria-selected accessibility prop">
-        <ViewAccessibilityAriaSelected />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say 'This view has a red background and no text' when clicking on the View component with accessibilityLabel prop">
-        <View
-          accessible={true}
-          accessibilityLabel="This view has a red background and no text"
-          style={[styles.accessibilityLayout, {backgroundColor: 'red'}]}
-        />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display 'This view has a red background and no text' when clicking on the View component with aria-label prop">
-        <View
-          accessible={true}
-          aria-label="This view has a red background and no text"
-          style={[styles.accessibilityLayout, {backgroundColor: 'red'}]}
-        />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display 'busy' after clicking on the backgroud">
+        itShould="make the screen reader say/display 'busy' after clicking on the background">
         <View
           accessible={true}
           aria-busy={true}
@@ -844,15 +778,6 @@ export function ViewTest() {
         modal
         itShould="make the screen reader say/display: 'checked, mixed' when both button are 'checked', 'mixed' when one of the button is 'checked' and 'unchecked' when none of the button is 'checked'">
         <ViewAccessibilityAriaChecked />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="make the screen reader say/display: 'disabled'">
-        <View
-          accessible={true}
-          aria-disabled={true}
-          style={styles.accessibilityLayout}
-        />
       </TestCase.Example>
       <TestCase.Example
         modal
@@ -979,46 +904,6 @@ function PointerEventsView(props: {
         </View>
       </View>
       <Button label="reset" onPress={props.reset} />
-    </View>
-  );
-}
-
-function SelectedView({
-  itemId,
-  selectedId,
-  setSelectedId,
-}: {
-  itemId: number;
-  selectedId: number;
-  setSelectedId: React.Dispatch<React.SetStateAction<number>>;
-}) {
-  return (
-    <View
-      aria-selected={selectedId === itemId}
-      accessibilityState={{selected: selectedId === itemId}}
-      style={[styles.accessibilityLayout, {borderBottomWidth: 2}]}>
-      <Text
-        style={{width: '100%', height: '100%'}}
-        onPress={() => setSelectedId(itemId)}>
-        aria-selected {String(selectedId === itemId)}
-      </Text>
-    </View>
-  );
-}
-
-function ViewAccessibilityAriaSelected() {
-  const [selectedId, setSelectedId] = useState<number>(1);
-
-  return (
-    <View accessible={true} style={styles.accessibilityContainer}>
-      {Array.from({length: 5}, (_, index) => index + 1).map(id => (
-        <SelectedView
-          key={id}
-          itemId={id}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-        />
-      ))}
     </View>
   );
 }

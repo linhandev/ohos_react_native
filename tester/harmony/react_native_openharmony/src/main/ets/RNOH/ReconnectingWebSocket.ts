@@ -1,0 +1,75 @@
+import webSocket from '@ohos.net.webSocket';
+import { RNOHError } from './ts';
+
+type OnMessageCallback = (message: string | ArrayBuffer) => void;
+type OnDisconnectedCallback = (err: unknown) => void;
+
+const RECONNECT_DELAY_MS: number = 2000;
+
+interface ReconnectingWebSocketOptions {
+  onMessage: OnMessageCallback,
+  onDisconnected?: OnDisconnectedCallback,
+}
+
+export class ReconnectingWebSocket {
+  private ws: webSocket.WebSocket | undefined
+  private closed: boolean = false
+  private onMessage?: OnMessageCallback
+  private onDisconnected?: OnDisconnectedCallback
+
+  constructor(
+    private url: string,
+    options: ReconnectingWebSocketOptions) {
+    this.onMessage = options.onMessage;
+    this.onDisconnected = options.onDisconnected;
+    this.connect();
+  }
+
+  public sendMessage(message: string | ArrayBuffer) {
+    if (!this.ws) {
+      throw new RNOHError({ whatHappened: "WebSocket is disconnected", howCanItBeFixed: [] });
+    }
+    this.ws.send(message);
+  }
+
+  public close() {
+    this.closed = true;
+    this.onMessage = undefined;
+    this.ws?.close({
+      code: 1000,
+      reason: "End of session",
+    }, this.onDisconnected);
+    this.ws = undefined;
+  }
+
+  private connect() {
+    const ws = webSocket.createWebSocket();
+    ws.connect(this.url, (err, connected) => {
+      this.ws = ws;
+    });
+    ws.on("error", (err) => {
+      this.onClosed(err)
+    });
+    ws.on("message", (_err, data) => this.onMessage?.(data));
+  }
+
+  private reconnect() {
+    if (this.closed) {
+      throw new RNOHError({ whatHappened: "Can't reconnect a closed ReconnectingWebSocket", howCanItBeFixed: [] });
+    }
+
+    setTimeout(() => {
+      if (!this.closed) {
+        this.connect()
+      }
+    }, RECONNECT_DELAY_MS);
+  }
+
+  private onClosed(err: unknown) {
+    this.ws = undefined;
+    if (!this.closed) {
+      this.onDisconnected?.(err);
+      this.reconnect();
+    }
+  }
+}
