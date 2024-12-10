@@ -36,6 +36,7 @@ class ArkUINodeDelegate {
   virtual void onArkUINodeAccessibilityAction(
       ArkUINode* node,
       const std::string& actionName){};
+  virtual void onArkUINodeTouchIntercept(const ArkUI_UIInputEvent* event){};
 };
 
 class ArkUINode {
@@ -140,6 +141,7 @@ class ArkUINode {
   virtual void onNodeEvent(
       ArkUI_NodeEventType eventType,
       std::string_view eventString);
+  virtual void onTouchIntercept(const ArkUI_UIInputEvent* event);
 
   virtual ~ArkUINode() noexcept;
 
