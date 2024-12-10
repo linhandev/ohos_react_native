@@ -1,4 +1,13 @@
-import type { AlertOptions } from "./AlertManager";
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @format
+ * @flow
+ */
+import type { AlertOptions } from './AlertManager';
 
 export type Buttons = Array<{
   text?: string,
@@ -23,14 +32,14 @@ class Alert {
     buttons?: Buttons,
     options?: Options
   ): void {
-    const AlertManager = require("./AlertManager").default;
+    const AlertManager = require('./AlertManager').default;
     if (!AlertManager) {
       return;
     }
 
     const alertOptions: AlertOptions = {
-      title: title || "",
-      message: message || "",
+      title: title || '',
+      message: message || '',
       cancelable: false,
     };
 
@@ -41,15 +50,15 @@ class Alert {
     }
 
     // At most two buttons. Ignore rest.
-    const validButtons: Buttons = (buttons ?? [{text: "OK"}]).slice(0, 2)
+    const validButtons: Buttons = (buttons ?? [{ text: 'OK' }]).slice(0, 2);
     const secondaryButton = validButtons.pop();
     const primaryButton = validButtons.pop();
 
     if (primaryButton) {
-      alertOptions.primaryButton = primaryButton.text || "";
+      alertOptions.primaryButton = primaryButton.text || '';
     }
     if (secondaryButton) {
-      alertOptions.secondaryButton = secondaryButton.text || "";
+      alertOptions.secondaryButton = secondaryButton.text || '';
     }
 
     const onAction = (action, buttonKey) => {
