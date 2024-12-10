@@ -1,5 +1,5 @@
+cmake_minimum_required(VERSION 3.11)
 project(rnapp)
-cmake_minimum_required(VERSION 3.5)
 set(RNOH_APP_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(NODE_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../node_modules")
 set(RNOH_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../oh_modules/@rnoh/react-native-openharmony/src/main/cpp")

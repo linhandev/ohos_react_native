@@ -1,1 +1,0 @@
-https://github.com/google/double-conversion/tree/v1.1.6
