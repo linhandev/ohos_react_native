@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "author": "",
-  "license": "(MIT AND Boost-1.0 AND BSD-3-Clause AND Apache-2.0)",
+  "license": "MIT",
   "peerDependencies": {
     "react-native": "0.75.4"
   },
@@ -45,7 +45,10 @@
     "./types/**/*",
     "./*.js",
     "./*.json",
-    "./harmony/*"
+    "./harmony/*",
+    "./LICENSE",
+    "./LICENSE-Meta",
+    "./NOTICE.md"
   ],
   "dependencies": {
     "@rnoh/react-native-harmony-cli": "^0.75.3",

@@ -8,21 +8,19 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 
 ## 1. Third Party Code
 
-### RN patches
-- Code located in `react-native-harmony/Libraries` contains patched code copied from https://github.com/facebook/react-native, which is under the MIT license. The license can be found at `react-native-harmony/Libraries/LICENSE`.
-
-### Dependencies
-
 1. **Precompiled Hermes**
-   - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/**/libhermes.so`
+   - **Path**: `src/main/cpp/third-party/prebuilt/**/libhermes.so`
    - **License**: MIT License
-   - **License Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/LICENSE`
+   - **License Path**: `src/main/cpp/third-party/prebuilt/LICENSE`
 2. **ReactCommon**
-   - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/ReactCommon`
-   - **Path to Patches**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core`
+   - **Path**: `src/main/cpp/third-party/rn/ReactCommon`
+   - **Path to Patches**: `src/main/cpp/patches/react_native_core`
    - **License**: MIT License
-   - **License Path 1**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/LICENSE`
-   - **License Path 2**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core/LICENSE`
+   - **License Path 1**: `src/main/cpp/third-party/rn/LICENSE`
+   - **License Path 2**: `src/main/cpp/patches/react_native_core/LICENSE`
+   - **Note**: Files may include a comment that points to a LICENSE file
+     located in the root of this repository.
+     That comment is incorrect in context of this project.
 
 ## 2. Notices
 Software: react-native v0.75.4
