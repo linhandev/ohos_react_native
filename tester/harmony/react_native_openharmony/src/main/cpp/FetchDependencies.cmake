@@ -51,4 +51,19 @@ FetchContent_Declare(
   SOURCE_SUBDIR "__none__" # ignore Hermes's CMakeLists.txt
 )
 
-FetchContent_MakeAvailable(Fmt DoubleConversion Glog Boost LibEvent Hermes)
+# FOLLY
+FetchContent_Declare(
+  Folly
+  GIT_REPOSITORY https://github.com/facebook/folly.git
+  GIT_TAG 234d39a36a43106747d10cc19efada72fd810dd3 # v2024.01.01.00
+  SOURCE_SUBDIR "__none__" # ignore folly's CMakeLists.txt
+)
+
+FetchContent_MakeAvailable(
+  Fmt
+  DoubleConversion
+  Glog
+  Boost
+  LibEvent
+  Hermes
+  Folly)

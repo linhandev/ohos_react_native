@@ -13,10 +13,10 @@ set(patches_dir "${RNOH_CPP_DIR}/patches")
 include_directories(${NATIVERENDER_ROOT_PATH} ${NATIVERENDER_ROOT_PATH}/include)
 
 # FOLLY
-set(folly_include_dir "${third_party_dir}/folly")
-set(folly_src_dir "${third_party_dir}/folly/folly")
-add_library(folly_target)
-target_include_directories(folly_target PUBLIC "${folly_include_dir}")
+set(folly_include_dir "${folly_SOURCE_DIR}")
+set(folly_src_dir "${folly_SOURCE_DIR}/folly")
+add_library(folly)
+target_include_directories(folly PUBLIC "${folly_include_dir}")
 set(folly_FLAGS
     -DFOLLY_NO_CONFIG=1
     -DFOLLY_MOBILE=1
@@ -27,9 +27,9 @@ set(folly_FLAGS
     -Wno-shorten-64-to-32
     -Wno-documentation
     -faligned-new)
-target_compile_options(folly_target PUBLIC ${folly_FLAGS})
+target_compile_options(folly PUBLIC ${folly_FLAGS})
 target_sources(
-  folly_target
+  folly
   PRIVATE "${folly_src_dir}/SharedMutex.cpp"
           "${folly_src_dir}/concurrency/CacheLocality.cpp"
           "${folly_src_dir}/detail/Futex.cpp"
@@ -46,11 +46,9 @@ target_sources(
           "${folly_src_dir}/memory/detail/MallocImpl.cpp"
           "${folly_src_dir}/json.cpp"
           "${folly_src_dir}/Unicode.cpp"
-          "${folly_src_dir}/lang/Assume.cpp"
           "${folly_src_dir}/ScopeGuard.cpp")
-target_link_libraries(
-  folly_target PUBLIC Boost::context Boost::algorithm Boost::intrusive fmt glog
-                      double-conversion)
+target_link_libraries(folly PUBLIC Boost::context Boost::algorithm
+                                   Boost::intrusive fmt glog double-conversion)
 
 # HERMES
 add_library(hermes-engine::libhermes SHARED IMPORTED)
@@ -71,7 +69,7 @@ include_directories(${REACT_COMMON_PATCH_DIR})
 
 # dummy targets added to avoid modyfing CMakeLists located in ReactCommon
 add_library(boost INTERFACE)
-add_library(folly_runtime ALIAS folly_target)
+add_library(folly_runtime ALIAS folly)
 add_library(log INTERFACE)
 add_library(glog_init INTERFACE)
 add_library(android INTERFACE)
@@ -312,7 +310,7 @@ target_link_libraries(
          Boost::context
          Boost::stacktrace_addr2line
          Boost::locale
-         folly_target
+         folly
          bridgeless
          bridgelesshermes
          bridgelessnativeviewconfig

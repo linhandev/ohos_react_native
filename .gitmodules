@@ -1,3 +1,0 @@
-[submodule "native/rnoh/src/main/cpp/folly"]
-	path = tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly
-	url = https://github.com/facebook/folly

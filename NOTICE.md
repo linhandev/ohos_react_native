@@ -17,15 +17,11 @@ each subject to its own licensing terms.
 
 ### Dependencies
 
-1. **folly**
-   - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly` (submodule)
-   - **License**: Apache License Version 2.0
-   - **License Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly/LICENSE`
-2. **Precompiled Hermes**
+1. **Precompiled Hermes**
    - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/**/libhermes.so`
    - **License**: MIT License
    - **License Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/LICENSE`
-3. **ReactCommon**
+2. **ReactCommon**
    - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/ReactCommon`
    - **Path to Patches**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core`
    - **License**: MIT License
@@ -45,4 +41,3 @@ each subject to its own licensing terms.
   regardless of whether the location of the third-party code has changed.
 
 End of Notice
-
