@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * Used only in C-API based Architecture.
  */
 #pragma once
@@ -74,7 +81,7 @@ class CppComponentInstance : public ComponentInstance,
   const std::string& getAccessibilityLabel() const override {
     return m_accessibilityLabel;
   }
-  
+
   bool getAccessibilityGroup() const override {
     return m_accessibilityGroup;
   }

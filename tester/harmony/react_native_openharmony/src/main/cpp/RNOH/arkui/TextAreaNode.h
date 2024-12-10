@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #pragma once
 
 #include "ArkUINode.h"
@@ -26,9 +33,10 @@ class TextAreaNodeDelegate {
  * @api
  */
 class TextAreaNode : public TextInputNodeBase {
-  private:
-    bool m_setTextContent{false};
-    std::string m_textContent;
+ private:
+  bool m_setTextContent{false};
+  std::string m_textContent;
+
  protected:
   TextAreaNodeDelegate* m_textAreaNodeDelegate;
 

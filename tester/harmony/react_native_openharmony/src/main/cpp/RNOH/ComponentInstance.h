@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
  * @architecture: C-API
  */
 #pragma once
@@ -126,8 +133,7 @@ class ComponentInstance
   void removeChild(ComponentInstance::Shared childComponentInstance);
 
   virtual facebook::react::Props::Shared getProps() const = 0;
-  
-    
+
   virtual bool getAccessibilityGroup() const = 0;
 
   /**

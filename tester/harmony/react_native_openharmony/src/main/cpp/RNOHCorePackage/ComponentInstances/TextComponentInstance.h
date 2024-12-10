@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #pragma once
 
 #include <react/renderer/components/text/ParagraphShadowNode.h>
@@ -34,7 +41,7 @@ class TextComponentInstance
   void onStateChanged(SharedConcreteState const& textState) override;
   const std::string& getAccessibilityLabel() const override;
   void onFinalizeUpdates() override;
-  
+
  private:
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);
   void updateFragmentTouchTargets(
