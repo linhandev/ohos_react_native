@@ -30,7 +30,6 @@ class UIInputEventHandler {
   UIInputEventHandler(ArkUINode& node);
   virtual ~UIInputEventHandler() noexcept;
   virtual void onTouchEvent(ArkUI_UIInputEvent* event) = 0;
-  virtual void onTouchIntercept(ArkUI_UIInputEvent* /*event*/){};
 
  private:
   ArkUINode& m_node;

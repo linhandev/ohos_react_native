@@ -526,20 +526,16 @@ class CppComponentInstance : public ComponentInstance,
   }
 
   void onArkUINodeTouchIntercept(const ArkUI_UIInputEvent* event) override {
-    auto props =
-        std::static_pointer_cast<const facebook::react::ViewProps>(m_props);
-    if (props &&
-        props->pointerEvents == facebook::react::PointerEventsMode::BoxNone) {
+    auto mode = HitTestMode::HTM_NONE;
+    if (this->canHandleTouch()) {
+      mode = HitTestMode::HTM_DEFAULT;
+    } else if (this->canChildrenHandleTouch()) {
       auto x = OH_ArkUI_PointerEvent_GetX(event);
       auto y = OH_ArkUI_PointerEvent_GetY(event);
-      OH_ArkUI_PointerEvent_SetInterceptHitTestMode(
-          event,
-          this->canSubtreeHandleTouch({x, y}) ? HitTestMode::HTM_DEFAULT
-                                              : HitTestMode::HTM_NONE);
-      return;
+      if (this->canSubtreeHandleTouch({x, y})) {
+        mode = HitTestMode::HTM_DEFAULT;
+      }
     }
-    HitTestMode mode = this->canHandleTouch() ? HitTestMode::HTM_DEFAULT
-                                              : HitTestMode::HTM_NONE;
     OH_ArkUI_PointerEvent_SetInterceptHitTestMode(event, mode);
   }
 
