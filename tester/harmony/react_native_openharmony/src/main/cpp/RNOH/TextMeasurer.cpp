@@ -11,7 +11,7 @@
 #include <memory>
 #include "RNOH/ArkUITypography.h"
 #include "RNOH/StyledStringWrapper.h"
-#include "RNOHCorePackage/ComponentInstances/TextConversions.h"
+#include "RNOH/TextConversions.h"
 
 namespace rnoh {
 

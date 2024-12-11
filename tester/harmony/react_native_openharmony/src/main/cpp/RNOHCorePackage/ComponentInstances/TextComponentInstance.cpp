@@ -12,8 +12,8 @@
 #include <react/renderer/core/ConcreteState.h>
 #include <memory>
 #include <sstream>
+#include "RNOH/TextConversions.h"
 #include "RNOH/TextMeasurer.h"
-#include "TextConversions.h"
 #include "react/renderer/attributedstring/primitives.h"
 
 namespace rnoh {

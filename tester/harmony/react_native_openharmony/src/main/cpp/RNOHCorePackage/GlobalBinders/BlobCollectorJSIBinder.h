@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "RNOH/BlobCollector.h"
 #include "RNOH/GlobalJSIBinder.h"
 #include "RNOH/TurboModuleProvider.h"
+#include "RNOHCorePackage/TurboModules/BlobTurboModule/BlobCollector.h"
 
 namespace rnoh {
 class BlobCollectorJSIBinder : public GlobalJSIBinder {

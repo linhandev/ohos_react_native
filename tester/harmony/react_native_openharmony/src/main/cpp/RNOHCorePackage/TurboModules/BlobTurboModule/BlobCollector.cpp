@@ -1,16 +1,7 @@
-/**
- * Copyright (c) 2024 Huawei Technologies Co., Ltd.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-#include "RNOH/BlobCollector.h"
-#include <jsi/jsi.h>
-#include "ArkTSTurboModule.h"
 #include "BlobCollector.h"
-#include "RNOH/TurboModule.h"
-#include "RNOHCorePackage/TurboModules/BlobTurboModule.h"
+
+#include <jsi/jsi.h>
+#include "BlobTurboModule.h"
 
 namespace rnoh {
 

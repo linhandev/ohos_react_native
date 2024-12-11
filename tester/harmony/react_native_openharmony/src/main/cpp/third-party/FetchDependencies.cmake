@@ -1,10 +1,13 @@
 include(FetchContent)
 
+message("Fetching third-party dependencies, this may take a while...")
+
 # FMT
 FetchContent_Declare(
   Fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
   GIT_TAG a33701196adfad74917046096bf5a2aa0ab0bb50 # 9.1.0
+  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # DOUBLE CONVERSION
@@ -12,6 +15,7 @@ FetchContent_Declare(
   DoubleConversion
   GIT_REPOSITORY https://github.com/google/double-conversion.git
   GIT_TAG 4f7a25d8ced8c7cf6eee6fd09d6788eaa23c9afe # v3.3.0
+  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # GLOG
@@ -19,6 +23,7 @@ FetchContent_Declare(
   Glog
   GIT_REPOSITORY https://github.com/google/glog.git
   GIT_TAG a6a166db069520dbbd653c97c2e5b12e08a8bb26 # v0.3.5
+  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # BOOST
@@ -27,6 +32,7 @@ FetchContent_Declare(
   Boost
   GIT_REPOSITORY https://github.com/boostorg/boost.git
   GIT_TAG f313171e2516e8e2a8d0b2478bafb40e3e90f279
+  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # LIBEVENT
@@ -40,6 +46,7 @@ FetchContent_Declare(
   LibEvent
   GIT_REPOSITORY https://github.com/libevent/libevent.git
   GIT_TAG 5df3037d10556bfcb675bc73e516978b75fc7bc7 # release-2.1.12-stable
+  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # HERMES
@@ -48,6 +55,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/facebook/hermes.git
   GIT_TAG
     4b3bf912cc0f705b51b71ce1a5b8bd79b93a451b # hermes-2024-08-15-RNv0.75.1-4b3bf912cc0f705b51b71ce1a5b8bd79b93a451b
+  GIT_SHALLOW TRUE
   SOURCE_SUBDIR "__none__" # ignore Hermes's CMakeLists.txt
 )
 
@@ -56,6 +64,7 @@ FetchContent_Declare(
   Folly
   GIT_REPOSITORY https://github.com/facebook/folly.git
   GIT_TAG 234d39a36a43106747d10cc19efada72fd810dd3 # v2024.01.01.00
+  GIT_SHALLOW TRUE
   SOURCE_SUBDIR "__none__" # ignore folly's CMakeLists.txt
 )
 
@@ -67,3 +76,5 @@ FetchContent_MakeAvailable(
   LibEvent
   Hermes
   Folly)
+
+message("Fetching third-party dependencies completed.")
