@@ -21,6 +21,7 @@
 1. 在终端中导航到react-native-harmony-sample-package目录，然后执行 `npm i && npm pack`。
 1. 导航到tester目录，然后执行 `npm run i` （不是 npm i）。
 1. 在tester目录中运行 `npm start` 以启动Metro服务器。
+1. 设置`RNOH_C_API_ARCH`环境变量的值为`1`，具体参考[配置CAPI版本环境变量](docs/zh-cn/环境搭建.md#set_capi_path)。
 1. 在DevEco Studio中打开 `tester/harmony` 项目并等待后台同步完成。
 1. 连接设备。
 1. 点击 File > Project Structure > Signing Configs，登录并完成签名。
