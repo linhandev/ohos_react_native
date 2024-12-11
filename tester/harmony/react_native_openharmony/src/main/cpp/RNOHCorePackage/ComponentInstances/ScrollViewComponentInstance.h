@@ -19,7 +19,6 @@ class ScrollViewComponentInstance
   };
   ScrollNode m_scrollNode;
   StackNode m_contentContainerNode;
-  StackNode m_scrollContainerNode;
   bool m_horizontal = false;
   facebook::react::Size m_contentSize;
   facebook::react::Size m_containerSize;
@@ -86,7 +85,7 @@ class ScrollViewComponentInstance
  public:
   ScrollViewComponentInstance(Context context);
 
-  StackNode& getLocalRootArkUINode() override;
+  ScrollNode& getLocalRootArkUINode() override;
 
   void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
