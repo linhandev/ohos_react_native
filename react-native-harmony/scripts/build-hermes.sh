@@ -1,56 +1,54 @@
 #!/bin/bash
 
-if [ -z "$OHOS_SDK" ]; then
-  echo "Environment variable OHOS_SDK is not defined"
+if [ -z "$DEVECO_SDK_HOME" ]; then
+  echo "Environment variable DEVECO_SDK_HOME is not defined"
   exit 1
 fi
 
-SCRIPT_DIR=$(dirname "$0")
-THIRD_PARTY_DIR=$SCRIPT_DIR/../../tester/harmony/react_native_openharmony/src/main/cpp/third-party
-HERMES_SRC_DIR=$THIRD_PARTY_DIR/hermes
+HERMES_REPO_URL="https://github.com/facebook/hermes.git"
 
-while true; do
-  read -p "Did you checkout $HERMES_SRC_DIR to correct revision? (y/n): " answer
-  if [[ $answer == "y" ]]; then
-    break
-  elif [[ $answer == "n" ]]; then
-    echo "1. Find proper revision https://github.com/facebook/hermes/tags"
-    echo "2. Navigate to $HERMES_SRC_DIR"
-    echo "3. git checkout NEW_REVISION"
+# NOTE: these variables should be kept in sync with the React Native version RNOH is based off of
+REACT_NATIVE_VERSION="0.75.4"
+HERMES_TAG="hermes-2024-08-15-RNv0.75.1-4b3bf912cc0f705b51b71ce1a5b8bd79b93a451b"
+
+SCRIPT_PATH=$(realpath "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+THIRD_PARTY_DIR="$SCRIPT_DIR/../../tester/harmony/react_native_openharmony/src/main/cpp/third-party"
+OUTPUT_DIR="$SCRIPT_DIR/out"
+HERMES_SRC_DIR="$OUTPUT_DIR/hermes"
+
+if [ ! -d "$HERMES_SRC_DIR" ]; then
+  # clone hermes repository
+  echo "Cloning hermes"
+  git clone -b "$HERMES_TAG" --depth 1 "$HERMES_REPO_URL" "$HERMES_SRC_DIR"
+  if [[ $? -ne 0 ]]; then
     exit 1
-
-  else
-    echo "Invalid response. Please enter 'y' or 'n'."
   fi
-done
 
-while true; do
-  read -p "Did you comment out lines 675 and 688 in $HERMES_SRC_DIR/CMakeLists.txt (y/n): " answer
-  if [[ $answer == "y" ]]; then
-    break
-  elif [[ $answer == "n" ]]; then
-    echo "Comment out lines: 675 (find_package(fbjni REQUIRED CONFIG)) and 688 (add_subdirectory(android/intltest/java/com/facebook/hermes/test))"
+  # apply patch
+  echo
+  echo "Applying CMakeLists.txt patch to hermes"
+  (cd "$HERMES_SRC_DIR" && git apply "$SCRIPT_DIR/hermes_cmakelists.patch")
+  if [[ $? -ne 0 ]]; then
+    echo "FAILED to apply patch."
+    echo "Fix the CMakeLists.txt file yourself and generate a new patch for this version of hermes before running the build script again."
+    echo "See the 'git apply' output for details"
     exit 1
-  else
-    echo "Invalid response. Please enter 'y' or 'n'."
   fi
-done
-
-read -p "Provide React Native version (eg. 0.0.0): " REACT_NATIVE_VERSION
+  echo
+fi
 
 ARCHITECTURES=("arm64-v8a" "armeabi-v7a" "x86_64")
-OHOS_SDK_NATIVE_DIR=$OHOS_SDK/native
-OUTPUT_DIR="$PWD/out"
+OHOS_SDK_NATIVE_DIR=$DEVECO_SDK_HOME/default/openharmony/native
 BUILD_HERMESC_DIR=$OUTPUT_DIR/hermesc
-JSI_DIR=$(realpath "$$THIRD_PARTY_DIR/rn/ReactCommon/jsi")
-
+JSI_DIR=$(realpath "$THIRD_PARTY_DIR/rn/ReactCommon/jsi")
 
 # hermes compiler
 $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
   -S$HERMES_SRC_DIR \
   -B$BUILD_HERMESC_DIR \
   -DJSI_DIR=$JSI_DIR
-  
+
 $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
   --build $BUILD_HERMESC_DIR \
   --target hermesc -j 4
@@ -58,8 +56,8 @@ $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
 for ARCHITECTURE in "${ARCHITECTURES[@]}"; do
   echo "Building Hermes@$ARCHITECTURE"
 
-  BUILD_TARGET_DIRECTORY=$OUTPUT_DIR/${ARCHITECTURE}-output
-  BUILD_LIBRARY_DIRECTORY=$OUTPUT_DIR/${ARCHITECTURE}-lib
+  BUILD_TARGET_DIRECTORY="$OUTPUT_DIR/${ARCHITECTURE}-output"
+  BUILD_LIBRARY_DIRECTORY="$OUTPUT_DIR/${ARCHITECTURE}-lib"
 
   # hermes engine
   $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/cmake \
@@ -88,7 +86,7 @@ for ARCHITECTURE in "${ARCHITECTURES[@]}"; do
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
     -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
-    -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-Wl,--strip-debug" \
+    -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="-Wl,--strip-debug"
 
   $OHOS_SDK_NATIVE_DIR/build-tools/cmake/bin/ninja \
     -C \
