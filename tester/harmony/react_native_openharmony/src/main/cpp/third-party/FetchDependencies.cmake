@@ -32,7 +32,6 @@ FetchContent_Declare(
   Boost
   GIT_REPOSITORY https://github.com/boostorg/boost.git
   GIT_TAG f313171e2516e8e2a8d0b2478bafb40e3e90f279
-  GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
 # LIBEVENT
