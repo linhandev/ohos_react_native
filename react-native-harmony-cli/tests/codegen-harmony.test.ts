@@ -213,7 +213,7 @@ describe('module', () => {
       }),
     });
 
-    new ReactNativeFixture(tmpDir).codegenHarmony({
+    const result = new ReactNativeFixture(tmpDir).codegenHarmony({
       cppOutputPath: './harmony/entry/src/main/cpp/generated',
       projectRootPath: '.',
     });
