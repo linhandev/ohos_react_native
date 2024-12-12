@@ -388,8 +388,7 @@ ArkUINode& ArkUINode::setShadow(
 
 /**
  * @deprecated The matching of pointerEvents and hitTestBehavior has been
- * moved to CppComponentInstance::onArkUINodeTouchIntercept (latestRNOHVersion:
- * 0.75.2)
+ * moved to CppComponentInstance::onArkUINodeTouchIntercept
  */
 ArkUINode& ArkUINode::setHitTestMode(
     facebook::react::PointerEventsMode const& pointerEvents) {
