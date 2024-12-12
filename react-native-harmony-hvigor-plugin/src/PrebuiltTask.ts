@@ -137,6 +137,7 @@ export class PrebuiltTask {
     const nodeModulesPath =
       options.nodeModulesPath ??
       pathUtils.join(process.cwd(), '../node_modules');
+    console.log("zicion: nodeModulesPath is: ", nodeModulesPath);
     if (!this.fs.existsSync(nodeModulesPath)) {
       throw new ValidationError('nodeModulesPath', "path doesn't exist");
     }
@@ -146,7 +147,6 @@ export class PrebuiltTask {
         'rnohModulePath must be specified if codegen is not null'
       );
     }
-    console.log("zicion: nodeModulesPath is: ", nodeModulesPath);
     return {
       nodeModulesPath,
       codegenArgs:
