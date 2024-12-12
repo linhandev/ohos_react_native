@@ -8,8 +8,7 @@
   description: "example description",
   repository: {},
   version: "1.0.0",
-  dependencies: {},
-  overrides: {
-    "@rnoh/react-native-openharmony": "./react_native_openharmony",
+  dependencies: {
+    "@rnoh/react-native-openharmony/": "./react_native_openharmony",
   },
 }
