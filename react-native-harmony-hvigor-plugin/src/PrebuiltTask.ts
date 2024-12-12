@@ -146,6 +146,7 @@ export class PrebuiltTask {
         'rnohModulePath must be specified if codegen is not null'
       );
     }
+    console.log("zicion: nodeModulesPath is: ", nodeModulesPath);
     return {
       nodeModulesPath,
       codegenArgs:
