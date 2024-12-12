@@ -198,7 +198,6 @@ class CppComponentInstance : public ComponentInstance,
     auto children = getTouchTargetChildren();
     for (auto const& child : children) {
       if (child == nullptr) {
-        RNOH_ASSERT(child != nullptr);
         continue;
       }
 
