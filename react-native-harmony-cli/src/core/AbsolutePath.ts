@@ -7,11 +7,16 @@ export class AbsolutePath implements ValueObject {
   }
 
   private value: string = '';
+
   constructor(path: string) {
     this.value = pathUtils.resolve(path);
   }
 
   getValue(): string {
+    return this.value;
+  }
+
+  toString(): string {
     return this.value;
   }
 
@@ -45,6 +50,10 @@ class RelativePath implements ValueObject {
   constructor(private value: string) {}
 
   getValue() {
+    return this.value;
+  }
+
+  toString() {
     return this.value;
   }
 }

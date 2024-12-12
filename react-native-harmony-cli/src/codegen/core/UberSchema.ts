@@ -9,6 +9,7 @@ import {
   PackageJSON,
   ProjectDependenciesManager,
   CodegenConfig,
+  FS
 } from '../../core';
 // @ts-expect-error
 import extractUberSchemaFromSpecFilePaths_ from '@react-native/codegen/lib/cli/combine/combine-js-to-schema.js';
@@ -58,6 +59,7 @@ export class UberSchema implements ValueObject {
   }
 
   static async fromProject(
+    fs: FS,
     projectRootPath: AbsolutePath,
     onShouldAcceptCodegenConfig?: (
       codegenVersion: number,
@@ -67,6 +69,7 @@ export class UberSchema implements ValueObject {
     const onShouldAcceptCodegenConfig_ =
       onShouldAcceptCodegenConfig ?? ((x: number) => true);
     const packageJSON = PackageJSON.fromProjectRootPath(
+      fs,
       projectRootPath,
       projectRootPath
     );
@@ -82,7 +85,7 @@ export class UberSchema implements ValueObject {
         acceptedCodegenConfigs.push(codegenConfig);
       }
     }
-    await new ProjectDependenciesManager(projectRootPath).forEachAsync(
+    await new ProjectDependenciesManager(fs, projectRootPath).forEachAsync(
       (dependency) => {
         const codegenConfigs = dependency.getCodegenConfigs();
         for (const codegenConfig of codegenConfigs) {
