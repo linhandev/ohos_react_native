@@ -12,7 +12,6 @@ namespace rnoh {
 
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
-  getLocalRootArkUINode().insertChild(m_scrollNode, 0);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?
   m_scrollNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
@@ -20,8 +19,8 @@ ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
   m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
 }
 
-StackNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
-  return m_scrollContainerNode;
+ScrollNode& ScrollViewComponentInstance::getLocalRootArkUINode() {
+  return m_scrollNode;
 }
 
 void ScrollViewComponentInstance::onChildInserted(
