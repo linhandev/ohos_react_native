@@ -5,3 +5,4 @@ export * from './create-metro-host-constants';
 export * from './codegen-harmony';
 export * from './verify-package-harmony';
 export * from './codegen-lib-harmony';
+export * from './link-harmony';

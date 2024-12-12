@@ -7,6 +7,7 @@ import {
   commandCodegenHarmony,
   commandVerifyPackageHarmony,
   commandCodegenLibHarmony,
+  commandLinkHarmony,
 } from './commands';
 
 export const config = {
@@ -18,5 +19,6 @@ export const config = {
     commandCodegenHarmony,
     commandVerifyPackageHarmony,
     commandCodegenLibHarmony,
+    commandLinkHarmony,
   ],
 } satisfies Partial<Config>;

@@ -2,6 +2,7 @@ import tmp from 'tmp';
 import { ProjectDependenciesManager } from '../src/core/ProjectDependenciesManager';
 import { createFileStructure } from './fsUtils';
 import { AbsolutePath } from '../src/core';
+import { RealFS } from '../src/io';
 
 let tmpDir: string = '';
 
@@ -24,6 +25,7 @@ it('should not recognize a dependency if package.json is not defined', async () 
     },
   });
   const projectDependenciesManager = new ProjectDependenciesManager(
+    new RealFS(),
     new AbsolutePath(tmpDir)
   );
 

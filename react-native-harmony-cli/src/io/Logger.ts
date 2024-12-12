@@ -13,6 +13,10 @@ export class Logger {
       console.info(prepareMsg(chalk));
     }
   }
+  
+  warn(prepareMsg: (styles: typeof chalk) => string) {
+    console.warn(prepareMsg(chalk));
+  }
 
   debug(prepareMsg: (styles: typeof chalk) => string) {
     console.debug(prepareMsg(chalk));
