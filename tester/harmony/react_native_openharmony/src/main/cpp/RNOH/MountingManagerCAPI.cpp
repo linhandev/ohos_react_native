@@ -41,7 +41,9 @@ std::optional<facebook::react::SurfaceId> findSurfaceIdForComponentInstance(
   return std::nullopt;
 }
 
-void MountingManagerCAPI::willMount(MutationList const& mutations) {}
+void MountingManagerCAPI::willMount(MutationList const& mutations) {
+  // Check the comment in SchedulerDelegate::schedulerDidFinishTransaction before editing here
+}
 
 void MountingManagerCAPI::doMount(MutationList const& mutations) {
   m_arkTsMountingManager->doMount(mutations);
