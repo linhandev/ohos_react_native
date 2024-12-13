@@ -394,7 +394,7 @@ class CppComponentInstance : public ComponentInstance,
             props->transform, m_layoutMetrics.pointScaleFactor);
           markBoundingBoxAsDirty();
         }
-      } else if (props->transform != old->transform ||
+      } else if (props->transform != m_transform ||
          abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
              0.001f) {
         m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
