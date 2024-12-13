@@ -96,16 +96,17 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
   }
 }
 
-const DEFAULT_ADDRESS = 'localhost:8081'
 export class MetroJSBundleProvider extends JSBundleProvider {
   static fromServerIp(ip: string, port: number = 8081, appKeys: string[] = []): MetroJSBundleProvider {
     return new MetroJSBundleProvider(`http://${ip}:${port}/index.bundle?platform=harmony&dev=true&minify=false`, appKeys)
   }
 
   private UIAbilityContext: common.UIAbilityContext
+  private bundleUrl: string
 
-  constructor(private bundleUrl: string = `http://${DEFAULT_ADDRESS}/index.bundle?platform=harmony&dev=true&minify=false`, private appKeys: string[] = []) {
+  constructor(private defaultBundleUrl: string = `http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false`, private appKeys: string[] = []) {
     super()
+    this.bundleUrl = this.defaultBundleUrl
     this.setUIAbilityContext()
   }
 
@@ -121,8 +122,8 @@ export class MetroJSBundleProvider extends JSBundleProvider {
 
   setBundleUrl() {
     const dataPreferences: preferences.Preferences = preferences.getPreferencesSync(this.UIAbilityContext, { name: 'devSettings' });
-    const address: preferences.ValueType = dataPreferences.getSync('devHostAndPortAddress', DEFAULT_ADDRESS);
-    this.bundleUrl = `http://${address.toString() || DEFAULT_ADDRESS}/index.bundle?platform=harmony&dev=true&minify=false`
+    const address: preferences.ValueType = dataPreferences.getSync('devHostAndPortAddress', '');
+    this.bundleUrl = address.toString() ? `http://${address.toString()}/index.bundle?platform=harmony&dev=true&minify=false` : this.defaultBundleUrl;
   }
 
   getURL(): string {
