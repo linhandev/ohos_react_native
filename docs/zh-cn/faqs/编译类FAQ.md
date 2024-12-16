@@ -253,29 +253,22 @@ target_link_libraries(xxx PUBLIC ${folly_compile_options})
 
     ### OpenHarmony设备运行跑RN工程，加载librawfile.so失败
 - 原因
-librawfile.z.so目录放在system/lib64下面，在ohos上加了沙箱管控没有挂载这个目录，只挂载了system/lib64/ndk。
+`librawfile.z.so`目录放在`system/lib64`下面，在ohos上加了沙箱管控没有挂载这个目录，只挂载了`system/lib64/ndk`。
 - 解决  
-    1.挂载磁盘
-    ```shell
-    hdc target mount
-    ```
-    2.修改沙箱文件
-    在system/ets/sandbox/appdata-sandbox.json中搜索/system/lib关键字，在关键位置加上/system/lib64。
-    ```javascript
-    {
-        "src-path":"/system/lib64",
-        "sandbox-path":"/system/lib64",
-        "sandbox-flags":[
-            "bind",
-            "rec"
-        ],
-        "check-action-status":"false"
-    }
-    ```
-    3.创建工程:flutter create --platforms ohos <projectName>  
-    4.编译运行
-      1.编译release包:flutter build hap -no-tree-shake-icons  
-      2.使用deveco工具打开ohos工程，找到文件oh_modules\.ohpm\@ohos+flutter_ohos\src\main\ets\view\FlutterView.ets,注释代码154行后，安装运行到设备中。  
-      ```javascript
-        //this.mainWindow?on('windowStatusChange.this.windowStatusChangeCallback');
-      ```
+    1. 挂载磁盘
+        ```shell
+        hdc target mount
+        ```
+    2. 修改沙箱文件
+        在`system/ets/sandbox/appdata-sandbox.json`中搜索`/system/lib`关键字，在关键位置加上`/system/lib64`。
+        ```json
+        {
+            "src-path":"/system/lib64",
+            "sandbox-path":"/system/lib64",
+            "sandbox-flags":[
+                "bind",
+                "rec"
+            ],
+            "check-action-status":"false"
+        }
+        ```
