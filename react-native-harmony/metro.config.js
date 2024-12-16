@@ -38,7 +38,7 @@ function createHarmonyMetroConfig(options) {
       }),
     },
     resolver: {
-      blockList: [/third-party(\\\\|\\|\/)hermes/],
+      blockList: [/\.cxx/],
       resolveRequest: (ctx, moduleName, platform) => {
         if (platform === 'harmony') {
           if (shouldPrintInfoAboutRNRedirection) {
