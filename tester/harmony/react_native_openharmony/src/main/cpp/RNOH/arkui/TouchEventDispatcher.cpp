@@ -272,7 +272,7 @@ void TouchEventDispatcher::dispatchTouchEvent(
   if (changedTouches.empty()) {
     return;
   }
-  
+
   if (action == UI_TOUCH_EVENT_ACTION_MOVE) {
     touches = changedTouches;
   } else {

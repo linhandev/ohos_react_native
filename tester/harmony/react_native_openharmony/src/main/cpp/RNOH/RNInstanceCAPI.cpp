@@ -270,10 +270,6 @@ std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
   return componentInstance->getLocalRootArkUINode().getId();
 }
 
-NativeResourceManager const* RNInstanceCAPI::getNativeResourceManager() const {
-  RNOH_ASSERT(m_nativeResourceManager != nullptr);
-  return m_nativeResourceManager.get();
-}
 
 std::shared_ptr<TurboModuleProvider>
 RNInstanceCAPI::createTurboModuleProvider() {

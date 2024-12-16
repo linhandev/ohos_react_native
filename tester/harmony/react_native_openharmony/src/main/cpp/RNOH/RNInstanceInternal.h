@@ -10,16 +10,23 @@
 #include <react/renderer/runtimescheduler/RuntimeScheduler.h>
 #include <react/runtime/ReactInstance.h>
 #include <string_view>
-#include "FontRegistry.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/ArkTSMessageHandler.h"
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
+#include "RNOH/FontRegistry.h"
+#include "RNOH/GlobalJSIBinder.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/SchedulerDelegate.h"
+#include "RNOH/TurboModuleFactory.h"
+#include "RNOH/TurboModuleProvider.h"
+#include "RNOH/UITicker.h"
 
 namespace rnoh {
+
+using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
+
 class RNInstanceInternal
     : public RNInstance,
       public std::enable_shared_from_this<RNInstance>,
@@ -55,6 +62,7 @@ class RNInstanceInternal
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       ComponentInstancePreallocationRequestQueue::Shared
           componentInstancePreallocationRequestQueue,
+      SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared fontRegistry);
@@ -69,11 +77,19 @@ class RNInstanceInternal
 
   std::string getBundlePath() const override;
 
+  NativeResourceManager const* getNativeResourceManager() const override;
+
   TaskExecutor::Shared getTaskExecutor();
   void start();
-  void loadScript(
+  void loadScriptFromBuffer(
       std::vector<uint8_t> bundle,
       std::string const sourceURL,
+      std::function<void(const std::string)> onFinish);
+  void loadScriptFromFile(
+      std::string const fileURL,
+      std::function<void(const std::string)> onFinish);
+  void loadScriptFromRawFile(
+      std::string const rawFileURL,
       std::function<void(const std::string)> onFinish);
   virtual void createSurface(
       facebook::react::Tag surfaceId,
@@ -153,6 +169,10 @@ class RNInstanceInternal
       std::shared_ptr<TurboModuleProvider> turboModuleProvider);
   virtual std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() = 0;
   void onUITick(UITicker::Timestamp recentVSyncTimestamp);
+  void loadScript(
+      std::unique_ptr<facebook::react::JSBigString const>,
+      std::string const sourceURL,
+      std::function<void(const std::string)> onFinish);
 
   void onAnimationStarted() override; // react::LayoutAnimationStatusDelegate
   void onAllAnimationsComplete()
@@ -192,6 +212,7 @@ class RNInstanceInternal
   std::mutex m_unsubscribeUITickListenerMtx;
   std::function<void()> m_unsubscribeUITickListener = nullptr;
   std::shared_ptr<MessageQueueThread> m_jsQueue = nullptr;
+  SharedNativeResourceManager m_nativeResourceManager;
   bool m_shouldEnableDebugger;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;

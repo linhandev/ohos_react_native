@@ -20,10 +20,20 @@ export interface HotReloadConfig {
   scheme?: string,
 }
 
+export interface FileJSBundle {
+  filePath: string,
+}
+
+export interface RawFileJSBundle {
+  rawFilePath: string,
+}
+
+export type JsBundle = ArrayBuffer | FileJSBundle | RawFileJSBundle;
+
 export abstract class JSBundleProvider {
   abstract getURL(): string
 
-  abstract getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer>
+  abstract getBundle(onProgress?: (progress: number) => void): Promise<JsBundle>
 
   abstract getAppKeys(): string[]
 
@@ -40,7 +50,8 @@ export abstract class JSBundleProvider {
 export class JSBundleProviderError extends RNOHError {
 }
 
-export class MetroJSBundleProviderError extends JSBundleProviderError {}
+export class MetroJSBundleProviderError extends JSBundleProviderError {
+}
 
 export class FileJSBundleProvider extends JSBundleProvider {
   constructor(private path: string, private appKeys: string[] = []) {
@@ -55,16 +66,19 @@ export class FileJSBundleProvider extends JSBundleProvider {
     return this.appKeys
   }
 
-  async getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer> {
+  async getBundle(onProgress?: (progress: number) => void): Promise<FileJSBundle> {
     try {
-      const file = await fs.open(this.path, fs.OpenMode.READ_ONLY);
-      const { size } = await fs.stat(file.fd);
-      const buffer = new ArrayBuffer(size);
-      await fs.read(file.fd, buffer, { length: size });
-      return buffer;
+      const status = await fs.access(this.path, fs.OpenMode.READ_ONLY);
+      if (status) {
+        return {
+          filePath: this.path
+        }
+      } else {
+        throw new Error("The file can't be accessed.");
+      }
     } catch (err) {
       throw new JSBundleProviderError({
-        whatHappened: `Couldn't load JSBundle from ${this.path}`,
+        whatHappened: `Couldn't access JSBundle in ${this.path}`,
         extraData: err,
         howCanItBeFixed: [`Check if a bundle exists at "${this.path}" on your device.`]
       })
@@ -73,7 +87,8 @@ export class FileJSBundleProvider extends JSBundleProvider {
 }
 
 export class ResourceJSBundleProvider extends JSBundleProvider {
-  constructor(private resourceManager: resmgr.ResourceManager, private path: string = "bundle.harmony.js", private appKeys: string[] = []) {
+  constructor(private resourceManager: resmgr.ResourceManager, private path: string = "bundle.harmony.js",
+    private appKeys: string[] = []) {
     super()
   }
 
@@ -87,14 +102,21 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
 
   async getBundle(onProgress?: (progress: number) => void) {
     try {
-      const bundleFileContent = await this.resourceManager.getRawFileContent(this.path);
-      const bundle = bundleFileContent.buffer;
-      return bundle;
+      // We check for the file descriptor here because there isn't a dedicated way to check if a rawfile exists
+      // apart from opening it or getting its descriptor
+      const fd = this.resourceManager.getRawFdSync(this.path)
+      if (fd) {
+        return {
+          rawFilePath: this.path,
+        };
+      } else {
+        throw new Error("The rawfile descriptor can't be opened.");
+      }
     } catch (err) {
       throw new JSBundleProviderError({
-        whatHappened: `Couldn't load JSBundle from ${this.path}`,
+        whatHappened: `Couldn't access JSBundle in ${this.path}`,
         extraData: err,
-        howCanItBeFixed: [`Check if a bundle exists at "<YOUR_ENTRY_MODULE>/src/main/resources/rawfile/${this.path}". (You can create a JS bundle with "react-native bundle-harmony" command.`]
+        howCanItBeFixed: [`Check if a bundle exists at "${this.path}" on your device.`]
       })
     }
   }
@@ -103,10 +125,12 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
 
 export class MetroJSBundleProvider extends JSBundleProvider {
   static fromServerIp(ip: string, port: number = 8081, appKeys: string[] = []): MetroJSBundleProvider {
-    return new MetroJSBundleProvider(`http://${ip}:${port}/index.bundle?platform=harmony&dev=true&minify=false`, appKeys)
+    return new MetroJSBundleProvider(`http://${ip}:${port}/index.bundle?platform=harmony&dev=true&minify=false`,
+      appKeys)
   }
 
-  constructor(private bundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false", private appKeys: string[] = []) {
+  constructor(private bundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false",
+    private appKeys: string[] = []) {
     super()
   }
 
@@ -135,7 +159,8 @@ export class MetroJSBundleProvider extends JSBundleProvider {
 
   async getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer> {
     try {
-      const response = await fetchDataFromUrl(this.bundleUrl, { headers: { 'Content-Type': 'text/javascript' } }, onProgress);
+      const response =
+        await fetchDataFromUrl(this.bundleUrl, { headers: { 'Content-Type': 'text/javascript' } }, onProgress);
       /**
        * When the responseCode is 500, instead of building a bundle, Metro will report an error which should be thrown and displayed on the phone.
        */

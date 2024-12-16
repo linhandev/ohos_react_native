@@ -170,6 +170,8 @@ class ArkJS {
   napi_value getObjectProperty(napi_value object, std::string const& key);
 
   napi_value getObjectProperty(napi_value object, napi_value key);
+  bool hasProperty(napi_value object, std::string const& key);
+  bool hasProperty(napi_value object, napi_value key);
 
   bool getBoolean(napi_value value);
 
@@ -182,6 +184,8 @@ class ArkJS {
   uint32_t getArrayLength(napi_value array);
 
   std::vector<uint8_t> getArrayBuffer(napi_value array);
+
+  bool isArrayBuffer(napi_value value);
 
   std::vector<std::pair<napi_value, napi_value>> getObjectProperties(
       napi_value object);

@@ -24,8 +24,6 @@ using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
 
-using SharedNativeResourceManager = std::shared_ptr<NativeResourceManager>;
-
 class RNInstanceCAPI final : public RNInstanceInternal {
  public:
   RNInstanceCAPI(
@@ -69,13 +67,13 @@ class RNInstanceCAPI final : public RNInstanceInternal {
             std::move(mountingManager),
             std::move(arkTSMessageHandlers),
             std::move(componentInstancePreallocationRequestQueue),
+            std::move(nativeResourceManager),
             shouldEnableDebugger,
             std::move(arkTSBridge),
             std::move(FontRegistry)),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
-        m_nativeResourceManager(std::move(nativeResourceManager)),
         m_componentJSIBinderByName(std::move(componentJSIBinderByName)),
         m_markerListener(std::move(markerListener)) {}
 
@@ -145,7 +143,6 @@ class RNInstanceCAPI final : public RNInstanceInternal {
   std::optional<std::string> getNativeNodeIdByTag(
       facebook::react::Tag tag) const;
 
-  NativeResourceManager const* getNativeResourceManager() const override;
 
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
@@ -159,7 +156,6 @@ class RNInstanceCAPI final : public RNInstanceInternal {
       m_surfaceById;
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
-  SharedNativeResourceManager m_nativeResourceManager;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
   ComponentJSIBinderByString m_componentJSIBinderByName;
   RNOHMarker::RNOHMarkerListener::Unique m_markerListener;

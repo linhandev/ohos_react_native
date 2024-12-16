@@ -24,6 +24,7 @@ import {
   WorkerTurboModuleContext
 } from './TurboModule';
 import { NodeContent } from '@ohos.arkui.node';
+import { JsBundle } from './JSBundleProvider';
 
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -159,7 +160,7 @@ export class NapiBridge {
       payload));
   }
 
-  loadScript(instanceId: number, bundle: ArrayBuffer, sourceURL: string): Promise<void> {
+  loadScript(instanceId: number, bundle: JsBundle, sourceURL: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const result = this.libRNOHApp?.loadScript(instanceId, bundle, sourceURL, (errorMsg: string) => {
         errorMsg ? reject(new Error(errorMsg)) : resolve()

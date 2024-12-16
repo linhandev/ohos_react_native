@@ -16,7 +16,9 @@
 #include <react/renderer/scheduler/Scheduler.h>
 #include <react/runtime/hermes/HermesInstance.h>
 #include <memory>
+#include <string_view>
 #include "HarmonyTimerRegistry.h"
+#include "JSBigStringHelpers.h"
 #include "RNOH/AsynchronousEventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/RNOHMarker.h"
@@ -201,17 +203,60 @@ void RNInstanceInternal::onUITick(
   }
 }
 
-void RNInstanceInternal::loadScript(
+void RNInstanceInternal::loadScriptFromBuffer(
     std::vector<uint8_t> bundle,
+    std::string const sourceURL,
+    std::function<void(const std::string)> onFinish) {
+  this->loadScript(
+      JSBigStringHelpers::fromBuffer(std::move(bundle)), sourceURL, onFinish);
+}
+
+void RNInstanceInternal::loadScriptFromFile(
+    std::string const fileUrl,
+    std::function<void(const std::string)> onFinish) {
+  auto jsBundle = JSBigStringHelpers::fromFilePath(fileUrl);
+  if (jsBundle) {
+    DLOG(INFO) << "Loaded bundle from file";
+  }
+  this->loadScript(std::move(jsBundle), fileUrl, onFinish);
+}
+
+void RNInstanceInternal::loadScriptFromRawFile(
+    std::string const rawFileUrl,
+    std::function<void(const std::string)> onFinish) {
+  // Magic value used to indicate hermes bytecode
+  const uint64_t hermesMagic = 0x1F1903C103BC1FC6;
+
+  auto jsBundle = JSBigStringHelpers::fromRawFilePath(
+      rawFileUrl, m_nativeResourceManager.get());
+  uint64_t extractedMagic{};
+  if (jsBundle->size() >= sizeof(uint64_t)) {
+    memcpy(&extractedMagic, jsBundle->c_str(), sizeof(uint64_t));
+  }
+  if (jsBundle) {
+    DLOG(INFO) << "Loaded bundle from rawfile resource";
+  }
+  if (extractedMagic == hermesMagic) {
+    this->loadScript(std::move(jsBundle), rawFileUrl, onFinish);
+  } else {
+    // NOTE: JS needs to be null terminated to be handled correctly by hermes.
+    // Buffers read from a rawfile aren't null terminated, so we pass the buffer
+    // as a string.
+    std::string s(jsBundle->c_str(), jsBundle->c_str() + jsBundle->size());
+    this->loadScript(
+        std::make_unique<facebook::react::JSBigStdString>(std::move(s)),
+        rawFileUrl,
+        onFinish);
+  }
+}
+
+void RNInstanceInternal::loadScript(
+    std::unique_ptr<react::JSBigString const> jsBundle,
     std::string const sourceURL,
     std::function<void(const std::string)> onFinish) {
   if (m_bundlePath.empty()) {
     m_bundlePath = sourceURL;
   }
-
-  std::unique_ptr<react::JSBigBufferString> jsBundle;
-  jsBundle = std::make_unique<react::JSBigBufferString>(bundle.size());
-  memcpy(jsBundle->data(), bundle.data(), bundle.size());
 
   try {
     m_reactInstance->loadScript(std::move(jsBundle), sourceURL);
@@ -325,6 +370,12 @@ std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
 
+NativeResourceManager const* RNInstanceInternal::getNativeResourceManager()
+    const {
+  RNOH_ASSERT(m_nativeResourceManager != nullptr);
+  return m_nativeResourceManager.get();
+}
+
 RNInstanceInternal::RNInstanceInternal(
     int id,
     std::shared_ptr<facebook::react::ContextContainer> contextContainer,
@@ -342,6 +393,7 @@ RNInstanceInternal::RNInstanceInternal(
     std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
     ComponentInstancePreallocationRequestQueue::Shared
         componentInstancePreallocationRequestQueue,
+    SharedNativeResourceManager nativeResourceManager,
     bool shouldEnableDebugger,
     ArkTSBridge::Shared arkTSBridge,
     FontRegistry::Shared fontRegistry)
@@ -357,6 +409,7 @@ RNInstanceInternal::RNInstanceInternal(
       m_eventEmitRequestHandlers(std::move(eventEmitRequestHandlers)),
       m_globalJSIBinders(std::move(globalJSIBinders)),
       m_uiTicker(std::move(uiTicker)),
+      m_nativeResourceManager(std::move(nativeResourceManager)),
       m_shouldEnableDebugger(shouldEnableDebugger),
       m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
       m_arkTSChannel(std::move(arkTSChannel)),

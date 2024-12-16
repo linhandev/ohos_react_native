@@ -327,21 +327,35 @@ static napi_value loadScript(napi_env env, napi_callback_info info) {
     }
     auto onFinishRef = arkJS.createNapiRef(args[3]);
 
-    rnInstance->loadScript(
-        arkJS.getArrayBuffer(args[1]),
-        arkJS.getString(args[2]),
-        [taskExecutor = rnInstance->getTaskExecutor(),
-         env,
-         onFinishRef =
-             std::move(onFinishRef)](const std::string& errorMsg) mutable {
-          taskExecutor->runTask(
-              TaskThread::MAIN,
-              [env, onFinishRef = std::move(onFinishRef), errorMsg]() {
-                ArkJS arkJS(env);
-                auto listener = arkJS.getReferenceValue(onFinishRef);
-                arkJS.call<1>(listener, {arkJS.createString(errorMsg)});
-              });
-        });
+    auto callback = [env, onFinishRef = std::move(onFinishRef), rnInstance](
+                        const std::string& errorMsg) mutable {
+      auto taskExecutor = rnInstance->getTaskExecutor();
+      taskExecutor->runTask(
+          TaskThread::MAIN,
+          [env, onFinishRef = std::move(onFinishRef), errorMsg]() {
+            ArkJS arkJS(env);
+            auto listener = arkJS.getReferenceValue(onFinishRef);
+            arkJS.call<1>(listener, {arkJS.createString(errorMsg)});
+          });
+    };
+
+    if (arkJS.isArrayBuffer(args[1])) {
+      std::vector<uint8_t> bundleContents = arkJS.getArrayBuffer(args[1]);
+      rnInstance->loadScriptFromBuffer(
+          std::move(bundleContents), arkJS.getString(args[2]), callback);
+    } else {
+      if (arkJS.hasProperty(args[1], "filePath")) {
+        auto filePathNapiValue = arkJS.getObjectProperty(args[1], "filePath");
+        std::string filePath = arkJS.getString(filePathNapiValue);
+        rnInstance->loadScriptFromFile(filePath, callback);
+      } else if (arkJS.hasProperty(args[1], "rawFilePath")) {
+        auto rawFilePathNapiValue =
+            arkJS.getObjectProperty(args[1], "rawFilePath");
+        std::string rawFilePath = arkJS.getString(rawFilePathNapiValue);
+        rnInstance->loadScriptFromRawFile(rawFilePath, callback);
+      }
+    }
+
     return arkJS.getNull();
   });
 }
