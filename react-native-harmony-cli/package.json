@@ -3,7 +3,7 @@
   "version": "0.75.3",
   "description": "",
   "scripts": {
-    "build": "tsc --outDir dist -p tsconfig.build.json",
+    "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js",
     "prepack": "npm run build",
     "verify": "tsc --noEmit && npm run test",
     "test": "npm run build && jest",
