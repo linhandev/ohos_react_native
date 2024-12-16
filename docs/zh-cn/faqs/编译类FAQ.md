@@ -251,7 +251,7 @@ target_link_libraries(xxx PUBLIC ${folly_compile_options})
                         )
     ```
 
-    ### OpenHarmony设备运行跑RN工程，加载librawfile.so失败
+## OpenHarmony设备运行跑RN工程，加载librawfile.so失败
 - 原因
 `librawfile.z.so`目录放在`system/lib64`下面，在ohos上加了沙箱管控没有挂载这个目录，只挂载了`system/lib64/ndk`。
 - 解决  
