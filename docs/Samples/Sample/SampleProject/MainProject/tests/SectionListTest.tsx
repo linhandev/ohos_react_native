@@ -206,7 +206,7 @@ export const SectionListTest = () => {
       </TestCase>
       <TestCase itShould="[SKIP] display overscroll effect">
         <Modal>
-          {/* On Android this settings enables stretching the ScrollView content. On Harmony `bounces` prop can be used instead. */}
+          {/* On Android this settings enables stretching the ScrollView content. On OpenHarmony `bounces` prop can be used instead. */}
           <SectionList {...commonProps} overScrollMode="always" />
         </Modal>
       </TestCase>
