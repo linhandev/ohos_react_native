@@ -20,6 +20,7 @@ interface ReconnectingWebSocketOptions {
 
 export class ReconnectingWebSocket {
   private ws: webSocket.WebSocket | undefined
+  private silenceErrors: boolean = false
   private closed: boolean = false
   private onMessage?: OnMessageCallback
   private onDisconnected?: OnDisconnectedCallback
@@ -45,18 +46,24 @@ export class ReconnectingWebSocket {
     this.ws?.close({
       code: 1000,
       reason: "End of session",
-    }, this.onDisconnected);
+    }, (err) => this.onClosed(err));
     this.ws = undefined;
   }
 
   private connect() {
     const ws = webSocket.createWebSocket();
     ws.connect(this.url, (err, connected) => {
+    });
+    ws.on('open', () => {
       this.ws = ws;
-    });
+      this.silenceErrors = false;
+    })
     ws.on("error", (err) => {
-      this.onClosed(err)
+      this.onError(err)
     });
+    ws.on('close', (err) => {
+      this.onClosed(err)
+    })
     ws.on("message", (_err, data) => this.onMessage?.(data));
   }
 
@@ -70,6 +77,17 @@ export class ReconnectingWebSocket {
         this.connect()
       }
     }, RECONNECT_DELAY_MS);
+  }
+
+  private onError(err: unknown) {
+    this.ws = undefined;
+    if (!this.closed) {
+      if (!this.silenceErrors) {
+        this.onDisconnected?.(err);
+        this.silenceErrors = true;
+      }
+      this.reconnect();
+    }
   }
 
   private onClosed(err: unknown) {
