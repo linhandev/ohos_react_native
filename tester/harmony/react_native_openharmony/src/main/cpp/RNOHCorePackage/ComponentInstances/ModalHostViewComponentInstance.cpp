@@ -192,8 +192,10 @@ void ModalHostViewComponentInstance::onMessageReceived(
     ArkTSMessage const& message) {
   if (message.name == "WINDOW_SIZE_CHANGE") {
     auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics();
-    updateDisplaySize(displayMetrics, m_state);
-    resetModalPosition(displayMetrics, m_state);
+    if (m_state) {
+        updateDisplaySize(displayMetrics, m_state);
+        resetModalPosition(displayMetrics, m_state);
+    }
   }
 }
 
