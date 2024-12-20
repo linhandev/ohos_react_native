@@ -39,7 +39,7 @@ type RNOHCoreContextDependencies = {
   isDebugModeEnabled: boolean;
   defaultBackPressHandler: () => void;
   devToolsController: DevToolsController;
-  devMenu: InternalDevMenu;
+  devMenu: DevMenu;
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
   launchUri?: string;
   erasedWorkerTaskRunner: unknown;
@@ -166,7 +166,6 @@ export class RNOHCoreContext {
  */
 export class InternalRNOHCoreContext extends RNOHCoreContext {
   onDestroy() {
-    this._rnohCoreContextDeps.devMenu.onDestroy()
   }
 }
 

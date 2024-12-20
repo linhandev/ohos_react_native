@@ -25,7 +25,16 @@ enum DialogButtonDirection {
 /**
  * @api
  */
-export class DevMenu {
+export interface DevMenu {
+  addMenuItem(title: string): void
+
+  show(): void
+}
+
+/**
+ * @internal
+ */
+export class InternalDevMenu implements DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
   private logger: RNOHLogger
@@ -125,13 +134,19 @@ export class DevMenu {
     this.devMenuDialogVisible = false;
     this.shakeDetector?.resetDetector();
   }
+
+  onDestroy() {
+    this.shakeDetector?.onDestroy()
+  }
 }
 
 /**
  * @internal
  */
-export class InternalDevMenu extends DevMenu {
-  onDestroy() {
-    this.shakeDetector?.onDestroy()
+export class NoopDevMenu implements DevMenu {
+  addMenuItem(title: string): void {
+  }
+
+  show(): void {
   }
 }

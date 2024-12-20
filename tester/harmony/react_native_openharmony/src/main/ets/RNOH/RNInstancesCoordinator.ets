@@ -14,7 +14,7 @@ import { RNOHContext, RNOHCoreContext, InternalRNOHCoreContext } from "./RNOHCon
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
 import { DevToolsController } from "./DevToolsController"
-import { InternalDevMenu } from "./DevMenu"
+import { DevMenu, InternalDevMenu, NoopDevMenu } from "./DevMenu"
 import { JSPackagerClientConfig } from "./JSPackagerClient"
 import { RNOHError, RNOHErrorEventEmitter } from "./RNOHError"
 import AbilityConfiguration from '@ohos.app.ability.Configuration';
@@ -104,6 +104,7 @@ export class RNInstancesCoordinator {
     }
     RNInstancesCoordinator.isInitialized = true
     dependencies.logger.info(RNOH_BANNER)
+    const onDestroyCallbacks: Function[] = []
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
     const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale ?? 1, dependencies.logger);
@@ -123,7 +124,18 @@ export class RNInstancesCoordinator {
           getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
           getMetadata,
         });
-    const devMenu = new InternalDevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
+
+    let devMenu: DevMenu = new NoopDevMenu()
+    // NOTE: only initialize DevMenu in debug mode
+    if (envInfo.isDebugModeEnabled) {
+      const internalDevMenu =
+        new InternalDevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
+      onDestroyCallbacks.push(() => {
+        internalDevMenu.onDestroy()
+      })
+      devMenu = internalDevMenu;
+    }
+
     const jsPackagerClient = new JSPackagerClient(
       dependencies.logger,
       devToolsController,
@@ -132,8 +144,7 @@ export class RNInstancesCoordinator {
     const jsPackagerClientConfig =
       options?.onGetPackagerClientConfig?.(envInfo.isDebugModeEnabled ? "DEBUG" : "RELEASE")
     if (jsPackagerClientConfig) {
-      jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig)
-      getFontSizeScale: () => displayMetricsManager.getFontSizeScale()
+      jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig);
     }
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
@@ -147,7 +158,8 @@ export class RNInstancesCoordinator {
       dependencies.defaultBackPressHandler,
       globalRNOHErrorEventEmitter,
       dependencies.rnohWorkerScriptUrl,
-      options);
+      options,
+      onDestroyCallbacks);
   }
 
   private rawLogger: RNOHLogger;
@@ -159,7 +171,7 @@ export class RNInstancesCoordinator {
   private isDebugModeEnabled: boolean
   private uiAbilityContext: common.UIAbilityContext
   private devToolsController: DevToolsController
-  private devMenu: InternalDevMenu
+  private devMenu: DevMenu
   private jsPackagerClient: JSPackagerClient
   private options: RNInstancesCoordinatorOptions | undefined
   private appState: AppState = "FOREGROUND"
@@ -167,6 +179,7 @@ export class RNInstancesCoordinator {
   private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter
   private envId: number;
   private workerTaskRunner: WorkerTaskRunner
+  private onDestroyCallbacks: Function[]
 
   private constructor(napiBridge: NapiBridge,
     logger: RNOHLogger,
@@ -175,12 +188,13 @@ export class RNInstancesCoordinator {
     envId: number,
     uiAbilityContext: common.UIAbilityContext,
     devToolsController: DevToolsController,
-    devMenu: InternalDevMenu,
+    devMenu: DevMenu,
     jsPackagerClient: JSPackagerClient,
     defaultBackPressHandler: () => void,
     globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
     rnohWorkerScriptUrl?: string | undefined,
-    options?: RNInstancesCoordinatorOptions) {
+    options?: RNInstancesCoordinatorOptions,
+    onDestoryCallbacks?: Function[]) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
@@ -234,6 +248,7 @@ export class RNInstancesCoordinator {
       rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter,
       erasedWorkerTaskRunner: this.workerTaskRunner
     });
+    this.onDestroyCallbacks = onDestoryCallbacks ?? []
   }
 
   public onDestroy() {
@@ -244,6 +259,9 @@ export class RNInstancesCoordinator {
     })
     this.workerTaskRunner.onDestroy()
     this.rnohCoreContext.onDestroy()
+    this.onDestroyCallbacks.forEach(cb => {
+      cb()
+    });
     stopTracing()
   }
 
