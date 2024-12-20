@@ -30,8 +30,7 @@ FetchContent_Declare(
 set(BOOST_ENABLE_CMAKE On)
 FetchContent_Declare(
   Boost
-  GIT_REPOSITORY https://github.com/boostorg/boost.git
-  GIT_TAG f313171e2516e8e2a8d0b2478bafb40e3e90f279
+  URL https://github.com/boostorg/boost/releases/download/boost-1.82.0/boost-1.82.0.tar.xz
   OVERRIDE_FIND_PACKAGE)
 
 # LIBEVENT
