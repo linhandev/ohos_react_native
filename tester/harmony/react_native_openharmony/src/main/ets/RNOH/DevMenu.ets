@@ -6,7 +6,7 @@ import { RNOHError } from "./RNOHError";
 import type common from '@ohos.app.ability.common';
 import { ComponentContent, PromptAction } from '@kit.ArkUI';
 import SettingsPageDialog, { SettingsPageParams } from './SettingsPageDialog'
-import { InternalDevMenu as InternalDevMenuInterface } from './types'
+import {  DevMenu as DevMenuInterface } from './types'
 
 interface AlertDialogButtonOptions {
   value: string,
@@ -177,8 +177,16 @@ export class DevMenu {
 /**
  * @internal
  */
-export class InternalDevMenu extends DevMenu implements InternalDevMenuInterface {
+export class InternalDevMenu extends DevMenu implements DevMenuInterface {
   onDestroy() {
     this.shakeDetector?.onDestroy()
+  }
+}
+
+export class NoopDevMenu implements DevMenuInterface {
+  addMenuItem(title: string): void {
+  }
+
+  show(): void {
   }
 }
