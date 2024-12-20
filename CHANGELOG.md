@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.0.0.813
+- fix: disable DevMenu in release mode,([4e0fde3c](https://gitee.com/openharmony-sig/ohos_react_native/commit/4e0fde3c1ab6f6311640c6d0f4f15728c9b74a30))
+
 ## 5.0.0.812
 - 删除注释的代码,([7b9fc79c](https://gitee.com/openharmony-sig/ohos_react_native/commit/7b9fc79c221cae10bb44fb5260a7ccd5cc5a266c))
 - changelog,([59490d0f](https://gitee.com/openharmony-sig/ohos_react_native/commit/59490d0fb8bebac1e9bf4aed792333a5d85b3272))
