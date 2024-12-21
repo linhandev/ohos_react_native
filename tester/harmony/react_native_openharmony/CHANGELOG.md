@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.72.48
+- fix: disable DevMenu in release mode,([4e0fde3c](https://gitee.com/openharmony-sig/ohos_react_native/commit/4e0fde3c1ab6f6311640c6d0f4f15728c9b74a30))
+
 ## v0.72.46
 - Trick: skip empty task submission,([a238743e](https://gitee.com/openharmony-sig/ohos_react_native/commit/a238743e27f46acda5b303fc289c47e68188e8b8))
 - fix: reconnecting websocket floods logs with errors when trying to reconnect,([e708b330](https://gitee.com/openharmony-sig/ohos_react_native/commit/e708b3302b4dcb545e1a208f135da994a96b138d))
