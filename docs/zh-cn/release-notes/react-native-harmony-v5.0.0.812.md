@@ -28,10 +28,10 @@ RNOH 5.0.0.803及以上版本，支持Metro局域网内远程调试。
     },
 ]
 ```
-想详细了解如何开启远程调试，可以参考[调试调测](../调试调测.md)。
-
-### 补充说明摇一摇的已知缺陷
+#### 已知缺陷
 release模式下可以通过摇一摇的方式打开DevMenu的弹窗进行远程调试。
+
+想详细了解如何开启远程调试，可以参考[调试调测](../调试调测.md)。
 
 ### ContentSlot接入
 根据[HarmonyOS关于XComponentType](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/ts-appendix-enums-V5#xcomponenttype10%E6%9E%9A%E4%B8%BE%E8%AF%B4%E6%98%8E)的介绍，先前在RNOH中使用的用于Native UI节点的占位容器XComponent的NODE类型不再演进，推荐使用[ContentSlot](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/arkts-rendering-control-contentslot-V5)占位组件管理Native API创建的组件，ContentSlot在内存和性能方面都优于NODE类型的XComponent。因此，RNOH将使用ContentSlot作为占位组件。
