@@ -76,3 +76,13 @@
         **参数说明详见**[文档](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/ide-hvigor-build-profile-V5)。
  
         手动解决：需要将 **RN** 源码目录 `oh_modules/@rnoh/react-native-openharmony/src/main/cpp/third-party/prebuilt` 下的内容整体拷贝到 `oh_modules/@rnoh/react-native-openharmony/libs` 目录下。
+
+### RN上0.72版本上的特定样式集上设置值崩溃问题
+- 原因  
+RN源社区在0.72版本上存在已知缺陷：在特定样式集上设置值时存在崩溃问题，该问题在源社区0.74及以上版本修复。
+- 错误截图
+![0.72版本上的特定样式集上设置值崩溃问题](./figures/0.72版本上的特定样式集上设置值崩溃问题.jpg)
+- 解决  
+使用0.72的社区版本在遇到崩溃时参考社区解决方案：  
+[社区issue](https://github.com/facebook/react-native/issues/42599)  
+[社区解决代码](https://github.com/facebook/react-native/commit/51fd4188005cc3318fecc85b8090453c480af6e8)
