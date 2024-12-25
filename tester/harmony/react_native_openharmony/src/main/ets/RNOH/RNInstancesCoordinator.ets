@@ -209,7 +209,7 @@ export class RNInstancesCoordinator {
     globalRNOHErrorEventEmitter: RNOHErrorEventEmitter,
     rnohWorkerScriptUrl?: string | undefined,
     options?: RNInstancesCoordinatorOptions,
-    onDestoryCallbacks?: Function[]) {
+    onDestroyCallbacks?: Function[]) {
     this.envId = envId;
     this.logger = logger.clone("RNInstancesCoordinator")
     this.rawLogger = logger
@@ -261,7 +261,7 @@ export class RNInstancesCoordinator {
       devMenu: this.devMenu,
       rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter
     });
-    this.onDestroyCallbacks = onDestoryCallbacks ?? []
+    this.onDestroyCallbacks = onDestroyCallbacks ?? []
   }
 
   public onDestroy() {
