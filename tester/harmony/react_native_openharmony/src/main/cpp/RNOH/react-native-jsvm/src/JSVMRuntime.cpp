@@ -1020,6 +1020,7 @@ std::vector<uint8_t> JSVMRuntime::GetCodeCacheL1(const std::string &sourceURL) {
 void JSVMRuntime::UpdateCodeCacheL1(const std::string &sourceURL, const std::vector<uint8_t>& buffer) {
   DLOG(INFO) << "Update L1 CACHE: " << sourceURL << "; size = " << buffer.size();
 
+  std::filesystem::create_directories(std::filesystem::path{sourceURL}.parent_path());
   if (auto *file = std::fopen(sourceURL.c_str(), "wb")) {
     std::fwrite(buffer.data(), 1, buffer.size(), file);
     std::fclose(file);
