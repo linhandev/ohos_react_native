@@ -9,12 +9,12 @@
 #include "RNOH/generated/BaseReactNativeHarmonySamplePackagePackage.h"
 
 namespace rnoh {
-class ReactNativeHarmonySamplePackagePackage
+class SamplePackage
     : public BaseReactNativeHarmonySamplePackagePackage {
   using Super = BaseReactNativeHarmonySamplePackagePackage;
 
  public:
-  ReactNativeHarmonySamplePackagePackage(Package::Context ctx)
+  SamplePackage(Package::Context ctx)
       : BaseReactNativeHarmonySamplePackagePackage(ctx) {}
 
   std::vector<facebook::react::ComponentDescriptorProvider>
