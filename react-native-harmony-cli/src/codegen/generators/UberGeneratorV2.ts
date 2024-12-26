@@ -23,7 +23,8 @@ export class UberGeneratorV2 implements CodeGenerator<LibraryData[]> {
 
   constructor(
     private cppOutputPath: AbsolutePath,
-    private etsOutputPath: AbsolutePath,
+    private etsOutputPath: AbsolutePath | undefined,
+    private rnohModulePath: AbsolutePath | undefined,
     private codegenNoticeLines: string[]
   ) {}
 
@@ -85,15 +86,16 @@ export class UberGeneratorV2 implements CodeGenerator<LibraryData[]> {
         .getSpecSchemaByFilenameMap()
         .entries()) {
         if (specSchema.type === 'NativeModule') {
+          const etsOutputPath = this.etsOutputPath || this.rnohModulePath;
           const nativeModuleCodeGenerator = new NativeModuleCodeGenerator(
             libraryCppOutput.copyWithNewSegment(
               'RNOH',
               'generated',
               'turbo_modules'
             ),
-            this.etsOutputPath.copyWithNewSegment('turboModules'),
+            etsOutputPath!.copyWithNewSegment('turboModules'),
             this.codegenNoticeLines,
-            '../../ts'
+            this.etsOutputPath ? '@rnoh/react-native-openharmony/ts' : '../../ts'
           );
           nativeModuleCodeGenerator
             .generate(specSchema)
