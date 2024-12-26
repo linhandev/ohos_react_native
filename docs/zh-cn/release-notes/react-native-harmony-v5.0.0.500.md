@@ -15,7 +15,7 @@
 
 DevEco Studio 更新到5.0.3.700及以后版本，运行过程中可能会存在找不到libhermes.so的现象，请参考[FAQ：找不到libhermes.so](../FAQ.md#找不到libhermesso)解决。
 
-## 非适应性变更
+## 需要开发者修改适配
 
 ### 自定义字体配置变更
 
