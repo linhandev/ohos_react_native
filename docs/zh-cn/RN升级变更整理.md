@@ -73,7 +73,7 @@
     ![v0.62.0-TouchableWithoutFeedback](./figures/RN-alter-export.png)
     ![v0.62.0-React.ElementConfig](./figures/RN-alter-TouchableWithoutFeedback.png)
 
-9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的。因此，我没有使它们与 TurboModule 兼容，而是删除它们。
+9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的，因此React Native将它们删除了。
 
 ### v0.63.0
 
@@ -122,7 +122,7 @@
 
 4. `AccessibilityInfo.removeEventListener` 标注废弃，但当前版本未删除该方法。
 
-5. 已从 animated 组件引用中删除 `getNode()`，在 0.62 中，`createAnimatedComponent` 被改为使用 `forwardRef`，而不是要求调用者使用 `ref.getNode()`。为了保持向后兼容性，`ref.getnode()` 被 monkey-patched 到返回的 `ref` 上。
+5. 已从 animated 组件引用中删除 `getNode()`，在 0.62 中，`createAnimatedComponent` 被改为使用 `forwardRef`，而不是要求调用者使用 `ref.getNode()`。为了保持向后适应性，`ref.getnode()` 被 monkey-patched 到返回的 `ref` 上。
 
     ![v0.65.0-animated](./figures/RN-alter-getNode().png)
 
