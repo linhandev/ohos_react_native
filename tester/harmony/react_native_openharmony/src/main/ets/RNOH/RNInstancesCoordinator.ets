@@ -131,7 +131,8 @@ export class RNInstancesCoordinator {
         });
 
     let devMenu: DevMenu = new NoopDevMenu()
-    // NOTE: only initialize DevMenu in debug mode
+    // NOTE: ONLY INITIALIZE DEVMENU IN DEBUG MODE
+    // You can initialize the DevMenu in release mode by changing 'envInfo.isDebugModeEnabled' to 'true' or commenting out the following condition check.
     if (envInfo.isDebugModeEnabled) {
       const internalDevMenu =
         new InternalDevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
