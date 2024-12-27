@@ -13,11 +13,11 @@
 | HarmonyOS SDK          | HarmonyOS SDK 5.0.0.61(SP1)                         |
 | 手机ROM                | ALN-AL00 205.0.0.61(SP1C00E63R4P9) <br> ALN-AL80 205.0.0.61(SP1C00E63R4P9)  <br> BRA-AL00 205.0.0.61(SP1C00E63R4P9)|
 
-## 非兼容性变更
+## 需要开发者修改适配
 
-### 自定义字体配置变更
+### 自定义字体适配
 
-升级到RNOH 5.0.0.500及以上版本，自定义字体的设置接口发生变更：
+升级到RNOH 5.0.0.500及以上版本，自定义字体的设置接口需要开发者适配：
 
 #### 变更影响
 
@@ -75,7 +75,7 @@ RNApp({
 之前的版本中，fontFamily属性优先生效。当没有设置fontFamily属性或设为undefined时，使用主题字体。
 升级到RNOH 5.0.0.500及以上版本，主题字体优先生效，覆盖fontFamily属性。
 
-### halfLeading居中特性变更
+### halfLeading居中特性改变
 
 升级到RNOH 5.0.0.500及以上版本，halfLeading居中特性发生变更：
 
