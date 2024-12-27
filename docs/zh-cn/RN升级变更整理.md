@@ -73,7 +73,7 @@
     ![v0.62.0-TouchableWithoutFeedback](./figures/RN-alter-export.png)
     ![v0.62.0-React.ElementConfig](./figures/RN-alter-TouchableWithoutFeedback.png)
 
-9. 删除`Sample` 和`CrashyCrash`，这些NativeModules不是必需的。因此，我没有使它们与TurboModule兼容，而是删除它们。
+9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的，因此React Native将它们删除了。
 
 ### v0.63.0
 
