@@ -25,46 +25,46 @@ struct Index {
   private logger!: RNOHLogger
 
   aboutToAppear() {
-    this.logger = this.rnohCoreContext!.logger.clone("Index")
+    this.logger = this.rnohCoreContext!.logger.clone("Index");
     const stopTracing = this.logger.clone("aboutToAppear").startTracing();
 
-    this.shouldShow = true
+    this.shouldShow = true;
     stopTracing();
   }
 
   onBackPress(): boolean | undefined {
-    // NOTE: this is required since `Ability`'s `onBackPressed` function always
-    // terminates or puts the app in the background, but we want Ark to ignore it completely
-    // when handled by RN
-    this.rnohCoreContext!.dispatchBackPress()
-    return true
+    // NOTE: this is required since `Ability`'s `onBackPressed` function always。
+    // terminates or puts the app in the background, but we want Ark to ignore it completely。
+    // when handled by RN。
+    this.rnohCoreContext!.dispatchBackPress()；
+    return true；
   }
 
   build() {
     Column() {
       if (this.rnohCoreContext && this.shouldShow) {
         if (this.rnohCoreContext?.isDebugModeEnabled) {
-          RNOHErrorDialog({ ctx: this.rnohCoreContext })
+          RNOHErrorDialog({ ctx: this.rnohCoreContext })；
         }
         RNApp({
           rnInstanceConfig: {
             createRNPackages,
-            enableNDKTextMeasuring: true, // 该项必须为true，用于开启NDK文本测算
+            enableNDKTextMeasuring: true, // 该项必须为true，用于开启NDK文本测算。
             enableBackgroundExecutor: false,
-            enableCAPIArchitecture: true, // 该项必须为true，用于开启CAPI
+            enableCAPIArchitecture: true, // 该项必须为true，用于开启CAPI。
             arkTsComponentNames: []
           },
           appKey: "AwesomeProject",
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {
-            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
+            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")；
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([
               new MetroJSBundleProvider(),
-              // NOTE: to load the bundle from file, place it in
-              // `/data/app/el2/100/base/com.rnoh.tester/files/bundle.harmony.js`
-              // on your device. The path mismatch is due to app sandboxing on OpenHarmony
+              // NOTE: to load the bundle from file, place it in。
+              // `/data/app/el2/100/base/com.rnoh.tester/files/bundle.harmony.js`。
+              // on your device. The path mismatch is due to app sandboxing on OpenHarmony。
               new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
               new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
               new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
