@@ -29,16 +29,16 @@ Tid:xxxx, Name:RNOH_BACKGROUND
 2. Codegen 生成的文件未能放到正确的位置。
 - 解决:  
 方案1：
-    Codegen 会根据接口声明自动生成 cpp 和 ets 代码，生成代码的位置可通过 `--cpp-output-path`、 `--rnoh-module-path` 两个参数调整，这两个参数具体的值可通过对比 **RN** 工程与 OpenHarmony 工程的相对路径得出。  
+    Codegen 会根据接口声明自动生成 cpp 和 ets 代码，生成代码的位置可通过 `--cpp-output-path`、 `--rnoh-module-path` 两个参数调整，这两个参数具体的值可通过对比 **RN** 工程与 HarmonyOS 工程的相对路径得出。  
 方案2：
-    先任意指定一下 `--cpp-output-path` 、 `--rnoh-module-path` 两个参数的值，然后将生成的 generated 文件夹分别复制到 OpenHarmony 工程中（如： ets 复制到 `entry/oh_modules/react_native_openharmony` 中， cpp 复制到 `entry/src/main/cpp` 中）
+    先任意指定一下 `--cpp-output-path` 、 `--rnoh-module-path` 两个参数的值，然后将生成的 generated 文件夹分别复制到 HarmonyOS 工程中（如： ets 复制到 `entry/oh_modules/react_native_openharmony` 中， cpp 复制到 `entry/src/main/cpp` 中）
 
 ## 打包时或启动Metro时报错，找不到DrawerLayoutAndroid
 - 错误截图  
 当打包或者运行 Metro 服务的时候，报 `None of these files exist` ，报错截图如下：
 ![faq-DrawerLayoutAndroid](./figures/faq-DrawerLayoutAndroid.png)
 - 原因  
-该问题是没有配置 OpenHarmony 打包参数导致的，请参考[如何配置OpenHarmony打包参数](常见开发场景.md#如何配置OpenHarmony打包参数)，配置完成后重新打包。
+该问题是没有配置 HarmonyOS 打包参数导致的，请参考[如何配置HarmonyOS打包参数](常见开发场景.md#如何配置harmonyos打包参数)，配置完成后重新打包。
 
 ## 找不到HiTrace编译选项
 - 错误截图  
@@ -83,7 +83,7 @@ Tid:xxxx, Name:RNOH_BACKGROUND
  
 2. native 工程 `\entry\build\default\outputs\default\entry-default-signed.hap` 包中查找，没有发现 libhermes.so。
  
-3. DevEco Studio 变更说明上有一个[需要开发者修改适配](https://developer.huawei.com/consumer/cn/doc/harmonyos-releases-V5/ide-changelogs-db5-V5)，举例说明该变更：如果存在2个 har 包，且 har 包 A 的 so 依赖了 har 包 B 的 so。在之前的版本中，har 包 A 在打包过程中会将 har 包 B 的 so 打包到 har 包 A 里，变更后，har 包 A 打包时将不会携带 har 包 B 的 so。
+3. DevEco Studio 上有一个特性，[需要开发者修改适配](https://developer.huawei.com/consumer/cn/doc/harmonyos-releases-V5/ide-changelogs-db5-V5)，举例说明该特性：如果存在2个 har 包，且 har 包 A 的 so 依赖了 har 包 B 的 so。在之前的版本中，har 包 A 在打包过程中会将 har 包 B 的 so 打包到 har 包 A 里，在当前版本中，har 包 A 打包时将不会携带 har 包 B 的 so。
  
 该问题的解决方法：
  
