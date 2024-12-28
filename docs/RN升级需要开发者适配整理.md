@@ -1,4 +1,4 @@
-# RN升级变更整理
+# RN升级需要开发者适配整理
 
 ## 重点变更
 
@@ -68,12 +68,12 @@
 
     ![v0.62.0-删除IncrementalPresenter](./figures/RN-alter-IncrementalPresenter.png)
 
-8. `TouchableWithoutFeedback` 不在作为 `export props`，使用 `React.ElementConfig` 代替。
+8. `TouchableWithoutFeedback`不在作为`export props`，使用`React.ElementConfig`代替。
 
     ![v0.62.0-TouchableWithoutFeedback](./figures/RN-alter-export.png)
     ![v0.62.0-React.ElementConfig](./figures/RN-alter-TouchableWithoutFeedback.png)
 
-9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的，因此React Native将它们删除了。
+9. 删除`Sample` 和`CrashyCrash`，这些NativeModules不是必需的。因此，我没有使它们与TurboModule兼容，而是删除它们。
 
 ### v0.63.0
 
