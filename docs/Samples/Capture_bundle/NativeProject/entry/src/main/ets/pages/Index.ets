@@ -54,7 +54,6 @@ struct Index {
             enableCAPIArchitecture: true, // 该项必须为true，用于开启CAPI
             arkTsComponentNames: []
           },
-          initialProps: { "foo": "bar" } as Record<string, string>,
           appKey: "AwesomeProject",
           wrappedCustomRNComponentBuilder: wrappedCustomRNComponentBuilder,
           onSetUp: (rnInstance) => {
