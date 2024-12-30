@@ -20,6 +20,7 @@
                 <filteritem type="filename" name="LICENSE"/>
                 <filteritem type="filename" name="LICENSE-MIT"/>
                 <filteritem type="filepath" name="react-native-harmony/Libraries/.*"/>
+                <filteritem type="filepath" name="tester/benchmarks/stresstest/.*"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
