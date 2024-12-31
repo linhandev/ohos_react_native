@@ -36,10 +36,15 @@ export class DisplayMetricsManager {
   private displayMetrics: DisplayMetrics = defaultDisplayMetrics;
   private fontSizeScale: number
   private logger: RNOHLogger
+  private mainWindow: window.Window
 
   constructor(fontSizeScale: number, logger: RNOHLogger) {
     this.fontSizeScale = fontSizeScale;
     this.logger = logger.clone("DisplayMetricsManager");
+  }
+
+  public setMainWindow(mainWindow: window.Window) {
+    this.mainWindow = mainWindow;
   }
 
   public getFoldStatus():display.FoldStatus{
@@ -62,7 +67,11 @@ export class DisplayMetricsManager {
 
   public updateDisplayMetrics( fontSizeScale: number ) {
     try {
-      const displayInstance = display.getDefaultDisplaySync();
+      const windowDisplayId = this.mainWindow.getWindowProperties().displayId;
+      if (windowDisplayId == undefined) {
+        throw new Error("windowDisplayId is undefined!");
+      }
+      const displayInstance = display.getDisplayByIdSync(windowDisplayId);
       this.fontSizeScale = fontSizeScale;
       this.displayMetrics = {
         screenPhysicalPixels: {

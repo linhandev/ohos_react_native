@@ -265,6 +265,10 @@ export class RNInstancesCoordinator {
     this.onDestroyCallbacks = onDestroyCallbacks ?? []
   }
 
+  public setMainWindow(mainWindow: window.Window) {
+    this.displayMetricsManager.setMainWindow(mainWindow);
+  }
+
   public onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
     this.jsPackagerClient.onDestroy()

@@ -137,6 +137,7 @@ export abstract class RNAbility extends UIAbility {
     try {
       await this.onPrepareRNInstance(AppStorage.get<RNOHCoreContext>('RNOHCoreContext')!)
       const mainWindow = await windowStage.getMainWindow();
+      this.rnInstancesCoordinator?.setMainWindow(mainWindow);
       const onWindowSizeChange = (windowSize: window.Size) => {
         this.rnInstancesCoordinator?.onWindowSizeChange(windowSize)
       }
