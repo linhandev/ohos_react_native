@@ -6,14 +6,14 @@
  */
 
 import {
-  RNPackage,
+  RNOHPackage,
   DescriptorWrapperFactoryByDescriptorType,
   DescriptorWrapperFactoryByDescriptorTypeCtx,
   UITurboModuleFactory,
   UITurboModuleContext,
   WorkerTurboModuleFactory,
   WorkerTurboModuleContext,
-} from '@rnoh/react-native-openharmony/ts';
+} from '@rnoh/react-native-openharmony';
 import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
 import { SampleWorkerTurboModule } from './SampleWorkerTurboModule';
@@ -48,7 +48,7 @@ class SampleWorkerTurboModulesFactory extends WorkerTurboModuleFactory {
   }
 }
 
-export class SamplePackage extends RNPackage {
+export default class SamplePackage extends RNOHPackage {
   createUITurboModuleFactory(ctx: UITurboModuleContext) {
     return new SampleTurboModulesFactory(ctx);
   }
