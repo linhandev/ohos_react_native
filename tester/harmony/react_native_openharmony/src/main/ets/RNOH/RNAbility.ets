@@ -94,7 +94,6 @@ export abstract class RNAbility extends UIAbility {
   onCreate(want: Want) {
     this.logger = this.createLogger().clone("RNAbility")
     this.rnInstancesCoordinator = RNInstancesCoordinator.create({
-      fontSizeScale: this.context.config.fontSizeScale,
       logger: this.createLogger(),
       uiAbilityContext: this.context,
       defaultBackPressHandler: () => {
