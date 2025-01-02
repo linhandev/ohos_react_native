@@ -24,7 +24,7 @@ TextMeasurement ParagraphLayoutManager::measure(
           ((std::abs(layoutConstraints.maximumSize.width - availableWidth_) <= 0.10f) ||
            (std::abs(layoutConstraints.maximumSize.width -
                cachedTextMeasurement_.size.width) <= 0.10f)) &&
-            textLayoutManager_->getScale() == cachedScale_) {
+                textLayoutManager_->getScale() == cachedScale_) {
         /* Yoga has requested measurement for this size before. Let's use cached
          * value. `TextLayoutManager` might not have cached this because it could be
          * using different width to generate cache key. This happens because Yoga

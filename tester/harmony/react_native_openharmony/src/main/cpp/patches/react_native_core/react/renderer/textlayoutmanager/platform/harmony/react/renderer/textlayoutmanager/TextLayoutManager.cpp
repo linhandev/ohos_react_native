@@ -37,8 +37,10 @@ float  TextLayoutManager::getDPI() const{
     }
 }
 
-float  TextLayoutManager::getScale() const{
-    if( m_textLayoutManagerDelegate != nullptr){
+float  TextLayoutManager::getScale() const
+{
+    if (m_textLayoutManagerDelegate != nullptr)
+    {
         return m_textLayoutManagerDelegate->getScale();
     }
 }

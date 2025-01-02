@@ -70,7 +70,7 @@ class ParagraphLayoutManager {
    */
   Float mutable availableWidth_{};
   TextMeasurement mutable cachedTextMeasurement_{};
-  Float mutable cachedScale_{};
+    Float mutable cachedScale_{};
 
   size_t mutable hash_{};
   bool mutable isCacheChanged = true;

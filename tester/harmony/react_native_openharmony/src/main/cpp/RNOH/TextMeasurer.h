@@ -52,7 +52,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
     
   float getDPI(){ return m_DPI; };
 
-  float getScale(){ return m_scale; };
+    float getScale(){ return m_scale; };
 
     void registerFont(
     std::weak_ptr<NativeResourceManager> weakResourceManager,
