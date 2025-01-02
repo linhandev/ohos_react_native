@@ -32,6 +32,12 @@ export const MiscPropsTest = () => {
         }}
       />
       <TestCase.Logical
+        itShould="be possible to call global.performance.now() without crash"
+        fn={({expect}) => {
+          expect(global.performance.now()).is.not.undefined;
+        }}
+      />
+      <TestCase.Logical
         skip={{android: true, harmony: {arkTs: false, cAPI: false}}}
         itShould="represent a color as a number"
         fn={({expect}) => {

@@ -21,7 +21,11 @@ function info(msg) {
 }
 
 /**
- * @param options {{reactNativeHarmonyPackageName: string} | undefined}
+ * @param options {
+    { 
+      reactNativeHarmonyPackageName?: string,
+    } | undefined
+ }
  * @returns {import("metro-config").InputConfigT}
  */
 function createHarmonyMetroConfig(options) {
@@ -52,6 +56,17 @@ function createHarmonyMetroConfig(options) {
           if (moduleName === 'react-native') {
             return ctx.resolveRequest(ctx, reactNativeHarmonyName, platform);
           } else if (moduleName.startsWith('react-native/')) {
+            return ctx.resolveRequest(
+              ctx,
+              moduleName.replace(
+                'react-native/',
+                '@react-native-oh/react-native-core/'
+              ),
+              'ios'
+            );
+          } else if (
+            moduleName.startsWith('@react-native-oh/react-native-core/')
+          ) {
             return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
             isInternalReactNativeRelativeImport(ctx.originModulePath)
@@ -62,7 +77,7 @@ function createHarmonyMetroConfig(options) {
                 moduleName
               );
               const [_, modulePathRelativeToReactNative] = moduleAbsPath.split(
-                `${pathUtils.sep}node_modules${pathUtils.sep}react-native${pathUtils.sep}`
+                `${pathUtils.sep}node_modules${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
               );
               try {
                 return ctx.resolveRequest(
@@ -73,9 +88,11 @@ function createHarmonyMetroConfig(options) {
               } catch (err) {}
             }
             return ctx.resolveRequest(ctx, moduleName, 'ios');
-          } else if(isHarmonyPackageInternalImport(ctx.originModulePath, moduleName)) {
+          } else if (
+            isHarmonyPackageInternalImport(ctx.originModulePath, moduleName)
+          ) {
             /**
-             * Replace internal imports in `react-native-foo` with equivalent files from `react-native-harmony-foo` 
+             * Replace internal imports in `react-native-foo` with equivalent files from `react-native-harmony-foo`
              * if a package has internal import redirection enabled in its package.json configuration e.g.
              *
              * react-native-harmony-foo/package.json:
@@ -84,30 +101,41 @@ function createHarmonyMetroConfig(options) {
              *     "redirectInternalImports": true,
              *  }
              */
-            const alias = getPackageNameFromOriginModulePath(ctx.originModulePath);
+            const alias = getPackageNameFromOriginModulePath(
+              ctx.originModulePath
+            );
             if (alias) {
-              const harmonyPackage = getHarmonyPackageByAliasMap(".");
+              const harmonyPackage = getHarmonyPackageByAliasMap('.');
               const harmonyPackageName = harmonyPackage[alias]?.name;
-              const redirectInternalImports = harmonyPackage[alias]?.redirectInternalImports;
-              if (harmonyPackageName && !isRequestFromHarmonyPackage(ctx.originModulePath, harmonyPackageName) && redirectInternalImports) {
+              const redirectInternalImports =
+                harmonyPackage[alias]?.redirectInternalImports;
+              if (
+                harmonyPackageName &&
+                !isRequestFromHarmonyPackage(
+                  ctx.originModulePath,
+                  harmonyPackageName
+                ) &&
+                redirectInternalImports
+              ) {
                 const moduleAbsPath = pathUtils.resolve(
                   pathUtils.dirname(ctx.originModulePath),
-                  moduleName,
+                  moduleName
                 );
                 const slashes = new RegExp('/', 'g');
-                const [_, modulePathRelativeToOriginalPackage] = moduleAbsPath.split(
-                  `${pathUtils.sep}node_modules${pathUtils.sep}${alias.replace(slashes, pathUtils.sep)}${pathUtils.sep}`,
-                );
-                const backslashes = new RegExp('\\\\', 'g');
-                const newModuleName = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(backslashes, "/")}`;
-                try {
-                  return ctx.resolveRequest(
-                    ctx,
-                    newModuleName,
-                    'harmony',
+                const [_, modulePathRelativeToOriginalPackage] =
+                  moduleAbsPath.split(
+                    `${pathUtils.sep}node_modules${
+                      pathUtils.sep
+                    }${alias.replace(slashes, pathUtils.sep)}${pathUtils.sep}`
                   );
-                } catch (err) {
-                }
+                const backslashes = new RegExp('\\\\', 'g');
+                const newModuleName = `${harmonyPackageName}/${modulePathRelativeToOriginalPackage.replace(
+                  backslashes,
+                  '/'
+                )}`;
+                try {
+                  return ctx.resolveRequest(ctx, newModuleName, 'harmony');
+                } catch (err) {}
               }
             }
           } else {
@@ -119,7 +147,7 @@ function createHarmonyMetroConfig(options) {
              *     "alias": "react-native-foo"
              *  }
              */
-            const harmonyPackageByAlias = getHarmonyPackageByAliasMap(".");
+            const harmonyPackageByAlias = getHarmonyPackageByAliasMap('.');
             const alias = getPackageName(moduleName);
             if (alias) {
               const harmonyPackageName = harmonyPackageByAlias[alias]?.name;
@@ -176,14 +204,14 @@ function getPackageName(moduleName) {
  * @returns {string}
  */
 function getPackageNameFromOriginModulePath(originModulePath) {
-  const nodeModulesPosition = originModulePath.search("node_modules");
-  const pathRelativeToNodeModules = originModulePath.substring(nodeModulesPosition);
+  const nodeModulesPosition = originModulePath.search('node_modules');
+  const pathRelativeToNodeModules =
+    originModulePath.substring(nodeModulesPosition);
   const pathSegments = pathRelativeToNodeModules.split(pathUtils.sep);
   const module = pathSegments[1];
   if (module.startsWith('@')) {
     return `${pathSegments[1]}/${pathSegments[2]}`;
-  }
-  else {
+  } else {
     return pathSegments[1];
   }
 }
@@ -194,18 +222,23 @@ function getPackageNameFromOriginModulePath(originModulePath) {
  * @returns {boolean}
  */
 function isHarmonyPackageInternalImport(originModulePath, moduleName) {
-  if (moduleName.startsWith(".")) {
+  if (moduleName.startsWith('.')) {
     const alias = getPackageNameFromOriginModulePath(originModulePath);
     const slashes = new RegExp('/', 'g');
-    if (alias && originModulePath.includes(`${pathUtils.sep}node_modules${pathUtils.sep}${alias.replace(slashes, pathUtils.sep)}${pathUtils.sep}`)) {
-      const harmonyPackage = getHarmonyPackageByAliasMap(".");
+    if (
+      alias &&
+      originModulePath.includes(
+        `${pathUtils.sep}node_modules${pathUtils.sep}${alias.replace(
+          slashes,
+          pathUtils.sep
+        )}${pathUtils.sep}`
+      )
+    ) {
+      const harmonyPackage = getHarmonyPackageByAliasMap('.');
       const harmonyPackageName = harmonyPackage[alias]?.name;
       if (
         harmonyPackageName &&
-        !isRequestFromHarmonyPackage(
-          originModulePath,
-          harmonyPackageName,
-        )
+        !isRequestFromHarmonyPackage(originModulePath, harmonyPackageName)
       ) {
         return true;
       }
@@ -220,7 +253,7 @@ function isHarmonyPackageInternalImport(originModulePath, moduleName) {
  */
 function isInternalReactNativeRelativeImport(originModulePath) {
   return originModulePath.includes(
-    `${pathUtils.sep}node_modules${pathUtils.sep}react-native${pathUtils.sep}`
+    `${pathUtils.sep}node_modules${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
   );
 }
 
@@ -254,10 +287,10 @@ function getHarmonyPackageByAliasMap(projectRootPath) {
     return cachedHarmonyPackageByAliasMap;
   }
   cachedHarmonyPackageByAliasMap = findHarmonyNodeModulePaths(
-    findHarmonyNodeModuleSearchPaths(projectRootPath),
+    findHarmonyNodeModuleSearchPaths(projectRootPath)
   ).reduce((acc, harmonyNodeModulePath) => {
     const harmonyNodeModulePathSegments = harmonyNodeModulePath.split(
-      pathUtils.sep,
+      pathUtils.sep
     );
     let harmonyNodeModuleName =
       harmonyNodeModulePathSegments[harmonyNodeModulePathSegments.length - 1];
@@ -271,34 +304,35 @@ function getHarmonyPackageByAliasMap(projectRootPath) {
     const packageJSONPath = `${harmonyNodeModulePath}${pathUtils.sep}package.json`;
     const packageJSON = readHarmonyModulePackageJSON(packageJSONPath);
     const alias = packageJSON.harmony?.alias;
-    const redirectInternalImports = packageJSON?.harmony?.redirectInternalImports ?? false;
+    const redirectInternalImports =
+      packageJSON?.harmony?.redirectInternalImports ?? false;
     if (alias) {
-      acc[alias] ={
+      acc[alias] = {
         name: harmonyNodeModuleName,
-        redirectInternalImports: redirectInternalImports
-      }
+        redirectInternalImports: redirectInternalImports,
+      };
     }
     return acc;
   }, initialAcc);
   const harmonyPackagesCount = Object.keys(
-    cachedHarmonyPackageByAliasMap,
+    cachedHarmonyPackageByAliasMap
   ).length;
   if (harmonyPackagesCount > 0) {
     const prettyHarmonyPackagesCount = colors.bold(
       harmonyPackagesCount > 0
         ? colors.green(harmonyPackagesCount.toString())
-        : harmonyPackagesCount.toString(),
+        : harmonyPackagesCount.toString()
     );
     info(
-      `Redirected imports to ${prettyHarmonyPackagesCount} harmony-specific third-party package(s):`,
+      `Redirected imports to ${prettyHarmonyPackagesCount} harmony-specific third-party package(s):`
     );
     if (harmonyPackagesCount > 0) {
       Object.entries(cachedHarmonyPackageByAliasMap).forEach(
-        ([original, {name: alias}]) => {
+        ([original, { name: alias }]) => {
           info(
-            `• ${colors.bold(colors.gray(original))} → ${colors.bold(alias)}`,
+            `• ${colors.bold(colors.gray(original))} → ${colors.bold(alias)}`
           );
-        },
+        }
       );
     }
   } else {

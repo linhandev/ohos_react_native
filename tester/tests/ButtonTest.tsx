@@ -6,6 +6,23 @@ import {TestCase} from '../components';
 export const ButtonTest = () => {
   return (
     <TestSuite name="Button">
+      <TestCase.Example itShould="render a button with a default style matching default platform style (blue bg, rounded corners, white label)">
+        <View
+          style={{
+            margin: 8,
+          }}>
+          <Button title="noop" />
+        </View>
+      </TestCase.Example>
+      <TestCase.Example itShould="render a disabled button with a default style matching default platform style (blue bg, rounded corners, white label)">
+        <View
+          style={{
+            margin: 8,
+          }}>
+          {/* NOTE: platform button applies opacity after flattening button background and text */}
+          <Button title="noop" disabled />
+        </View>
+      </TestCase.Example>
       <TestCase.Example itShould="render a button with a title ">
         <ButtonView />
       </TestCase.Example>

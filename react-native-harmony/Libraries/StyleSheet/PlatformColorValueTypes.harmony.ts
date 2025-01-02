@@ -4,7 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { NativePlatformColor } from "./NativePlatformColor";
+
+import { NativePlatformColor } from './NativePlatformColor';
 
 export const PlatformColor = (...colors: string[]) => {
   const color = NativePlatformColor.getSystemColor(colors);

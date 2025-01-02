@@ -4,16 +4,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 import {
   getAssetDestRelativePath,
   Asset,
-} from "@rnoh/react-native-harmony-cli/src/assetResolver";
-import { getBasePath } from "@react-native/assets-registry/path-support";
-import { Dimensions, Platform } from "react-native";
+} from '@rnoh/react-native-harmony-cli/src/assetResolver';
+// @ts-ignore
+import { getBasePath } from '@react-native/assets-registry/path-support';
+import { Dimensions, Platform } from 'react-native';
 
 function pickScale(scales: Array<number>, deviceScale?: number): number {
   if (deviceScale == null) {
-    deviceScale = Dimensions.get("window").scale;
+    deviceScale = Dimensions.get('window').scale;
   }
   // Packager guarantees that `scales` array is sorted
   for (let i = 0; i < scales.length; i++) {
@@ -30,9 +32,9 @@ function pickScale(scales: Array<number>, deviceScale?: number): number {
 
 function getScaledAssetPath(asset: Asset): string {
   const scale = pickScale(asset.scales);
-  const scaleSuffix = scale === 1 ? "" : "@" + scale + "x";
+  const scaleSuffix = scale === 1 ? '' : '@' + scale + 'x';
   const assetDir = getBasePath(asset);
-  return assetDir + "/" + asset.name + scaleSuffix + "." + asset.type;
+  return assetDir + '/' + asset.name + scaleSuffix + '.' + asset.type;
 }
 
 type ResolvedAssetSource = {
@@ -74,15 +76,15 @@ class AssetSourceResolver {
    */
   assetServerURL(): ResolvedAssetSource {
     if (!this.serverUrl) {
-      throw new Error("need server to load from");
+      throw new Error('need server to load from');
     }
 
     return this.fromSource(
       this.serverUrl +
         getScaledAssetPath(this.asset) +
-        "?platform=" +
+        '?platform=' +
         Platform.OS +
-        "&hash=" +
+        '&hash=' +
         this.asset.hash
     );
   }

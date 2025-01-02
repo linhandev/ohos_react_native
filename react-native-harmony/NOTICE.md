@@ -7,8 +7,6 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 
 
 ## 1. Third Party Code
-### RN patches
-- Code located in `./Libraries` contains patched code copied from https://github.com/facebook/react-native, which is under the MIT license. The license can be found at `react-native-harmony/Libraries/LICENSE`.
 
 ### harmony/react_native_openharmony.har external code
 1. **Precompiled Hermes**

@@ -4,11 +4,12 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { TurboModule, TurboModuleRegistry } from "react-native";
+
+import { TurboModule, TurboModuleRegistry } from 'react-native';
 
 interface Spec extends TurboModule {
-  getSystemColor: () => string | null;
+  getSystemColor: (colorKeys: string[]) => string | null;
 }
 
 export const NativePlatformColor =
-  TurboModuleRegistry.getEnforcing<Spec>("PlatformColor");
+  TurboModuleRegistry.getEnforcing<Spec>('PlatformColor');

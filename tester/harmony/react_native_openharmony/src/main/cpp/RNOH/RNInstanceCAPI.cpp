@@ -270,7 +270,6 @@ std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
   return componentInstance->getLocalRootArkUINode().getId();
 }
 
-
 std::shared_ptr<TurboModuleProvider>
 RNInstanceCAPI::createTurboModuleProvider() {
   DLOG(INFO) << "RNInstanceCAPI::createTurboModuleProvider";
