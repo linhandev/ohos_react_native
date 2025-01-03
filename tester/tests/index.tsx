@@ -64,3 +64,6 @@ export * from './UseWindowDimensionsTest';
 export * from './VibrationTest';
 export * from './ViewTest';
 export * from './VirtualizedListTest';
+// partner tests
+export * from './ActionSheetIOSTest';
+export * from './PermissionAndroidTest';

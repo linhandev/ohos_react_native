@@ -216,4 +216,11 @@ module.exports = {
       .dispatchCommand;
   },
   // END: react-native-harmony specific exports
+  // partners: react-native-harmony specific exports
+  get ActionSheetIOS() {
+    return require('./Libraries/partner/ActionSheetIOS/ActionSheetIOS');
+  },
+  get PermissionsAndroid() {
+    return require('react-native/Libraries/PermissionsAndroid/PermissionsAndroid');
+  }
 };
