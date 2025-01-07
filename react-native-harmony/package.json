@@ -55,7 +55,6 @@
     "./metro.config.d.ts"
   ],
   "dependencies": {
-    "@rnoh/react-native-core": "file:../../react-native-core/packages/react-native/package.tgz",
     "@rnoh/react-native-harmony-cli": "^0.75.3",
     "colors": "^1.4.0",
     "fs-extra": "^11.1.1",
