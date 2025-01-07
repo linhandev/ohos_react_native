@@ -583,14 +583,6 @@ ArkUINode& ArkUINode::setBackgroundColor(
 ArkUINode& ArkUINode::setTransform(
     facebook::react::Transform const& transform,
     facebook::react::Float pointScaleFactor) {
-  ArkUI_NumberValue transformCenterValue[] = {0, 0, 0, 0.5f, 0.5f};
-
-  ArkUI_AttributeItem transformCenterItem = {
-      transformCenterValue,
-      sizeof(transformCenterValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TRANSFORM_CENTER, &transformCenterItem));
-
   // NOTE: ArkUI translation is in `px` units, while React Native uses `vp`
   // units, so we need to correct for the scale factor here
   auto matrix = transform.matrix;

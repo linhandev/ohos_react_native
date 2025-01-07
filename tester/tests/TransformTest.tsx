@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {TestCase} from '../components';
 
@@ -117,7 +117,7 @@ export function TransformTest() {
           </View>
           <View
             style={[
-              styles.box,
+              styles.boxWithoutMargin,
               {
                 transform: [{translateX: -20}],
               },
@@ -127,7 +127,7 @@ export function TransformTest() {
 
           <View
             style={[
-              styles.box,
+              styles.boxWithoutMargin,
               {
                 transform: [{translateY: 20}],
               },
@@ -136,6 +136,110 @@ export function TransformTest() {
           </View>
         </View>
       </TestCase.Example>
+      <TestSuite name="Transform Origin">
+        <TestCase.Example itShould="Show rotated boxes with different transform origins">
+          <View style={styles.wrapper}>
+            <View style={styles.stackContainer}>
+              <View style={[styles.box, {backgroundColor: 'lightgray'}]}>
+                <Text style={styles.text}>Original Object</Text>
+              </View>
+              <View
+                style={[
+                  styles.rotatedStackableBox,
+                  {
+                    backgroundColor: 'lightblue',
+                    transformOrigin: 'top left',
+                  },
+                ]}>
+                <Text style={styles.text}>Rotate by 45 deg from top left</Text>
+              </View>
+            </View>
+            <View style={styles.stackContainer}>
+              <View style={[styles.box, {backgroundColor: 'lightgray'}]}>
+                <Text style={styles.text}>Original Object</Text>
+              </View>
+              <View
+                style={[
+                  styles.rotatedStackableBox,
+                  {
+                    backgroundColor: 'lightgreen',
+                    transformOrigin: 'top right',
+                  },
+                ]}>
+                <Text style={styles.text}>Rotate by 45 deg from top right</Text>
+              </View>
+            </View>
+            <View style={styles.stackContainer}>
+              <View style={[styles.box, {backgroundColor: 'lightgray'}]}>
+                <Text style={styles.text}>Original Object</Text>
+              </View>
+              <View
+                style={[
+                  styles.rotatedStackableBox,
+                  {
+                    backgroundColor: 'lightcoral',
+                    transformOrigin: 'bottom left',
+                  },
+                ]}>
+                <Text style={styles.text}>
+                  Rotate by 45 deg from bottom left
+                </Text>
+              </View>
+            </View>
+            <View style={styles.stackContainer}>
+              <View style={[styles.box, {backgroundColor: 'lightgray'}]}>
+                <Text style={styles.text}>Original Object</Text>
+              </View>
+              <View
+                style={[
+                  styles.rotatedStackableBox,
+                  {
+                    backgroundColor: 'lightpink',
+                    transformOrigin: 'bottom right',
+                  },
+                ]}>
+                <Text style={styles.text}>
+                  Rotate by 45 deg from bottom right
+                </Text>
+              </View>
+            </View>
+          </View>
+        </TestCase.Example>
+        <TestCase.Example itShould="The rotated object should change opacity when touched. The original object should not respond to touch events">
+          <View style={styles.wrapper}>
+            <View
+              style={[
+                styles.stackContainer,
+                {width: 200, height: 150, marginLeft: 50},
+              ]}>
+              <View
+                style={[
+                  styles.box,
+                  {backgroundColor: 'lightgray', width: 80, height: 80},
+                ]}>
+                <Text style={[styles.text, {fontSize: 12}]}>
+                  Original Object
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={[
+                  styles.rotatedStackableBox,
+                  {
+                    width: 80,
+                    height: 80,
+                    backgroundColor: 'lightpink',
+                    transformOrigin: 'top left',
+                    transform: [{rotate: '60deg'}],
+                  },
+                ]}>
+                <Text style={[styles.text, {fontSize: 12}]}>
+                  Rotate by 60 deg from top left
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
     </TestSuite>
   );
 }
@@ -143,7 +247,32 @@ const styles = StyleSheet.create({
   box: {
     height: 40,
     width: 40,
-    borderRadius: 5,
+    marginHorizontal: 25,
+    marginVertical: 25,
+    backgroundColor: '#61dafb',
+    justifyContent: 'center',
+  },
+  rotatedStackableBox: {
+    height: 40,
+    width: 40,
+    marginHorizontal: 25,
+    position: 'absolute',
+    transform: [{rotate: '45deg'}],
+    marginVertical: 25,
+    justifyContent: 'center',
+  },
+  scaledStackableBox: {
+    height: 40,
+    width: 40,
+    position: 'absolute',
+    transform: [{scale: 2}],
+    backgroundColor: '#61dafb',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  boxWithoutMargin: {
+    height: 40,
+    width: 40,
     marginHorizontal: 25,
     marginVertical: 25,
     backgroundColor: '#61dafb',
@@ -153,6 +282,18 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  stackContainer: {
+    position: 'relative',
+    width: 100,
+    height: 100,
+  },
+  bigStackContainer: {
+    position: 'relative',
+    width: 100,
+    height: 100,
+    marginHorizontal: 25,
+    marginVertical: 25,
   },
   text: {
     fontSize: 6,
