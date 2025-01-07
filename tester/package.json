@@ -41,11 +41,11 @@
     "test": "jest ./jests && cd ../react-native-harmony && npm test && cd ../tester",
     "hiprofiler": "./scripts/run-hiprofiler-cmd.sh",
     "measure-performance": "./scripts/performance_measurement/measure-performance.sh",
-    "dev:react-native-core": "npm uninstall react-native-core && cd ../../react-native-core/packages/react-native && yarn pack && cd ../../../react-native-harmony/react-native-harmony && npm uninstall react-native-core && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz -D && cd ../tester && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz && npm i && npm start"
+    "dev:react-native-core": "npm uninstall react-native-core && cd ../../react-native-core/packages/react-native && yarn pack && cd ../../../react-native-harmony/react-native-harmony && npm uninstall react-native-core && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz -D && cd ../tester && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz && npm i"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.0+rn.0.75.4",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.1+rn.0.75.4",
     "chai": "4.3.7",
     "d3-scale-chromatic": "^3.0.0",
     "react": "18.3.1",

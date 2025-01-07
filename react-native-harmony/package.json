@@ -25,7 +25,7 @@
   "devDependencies": {
     "@react-native-community/cli": "^11.2.0",
     "@react-native-community/cli-types": "^11.2.0",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.0+rn.0.75.4",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.1+rn.0.75.4",
     "@react-native/metro-config": "0.75.4",
     "@react-native/typescript-config": "0.75.4",
     "@types/fs-extra": "^11.0.1",

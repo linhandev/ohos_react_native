@@ -10,10 +10,10 @@
 #include <string>
 #include "hitrace/trace.h"
 
-struct HiTraceSystraceSection {
+struct CustomSystraceSection {
  public:
   template <typename... ConvertsToStringPiece>
-  explicit HiTraceSystraceSection(
+  explicit CustomSystraceSection(
       const char* name,
       ConvertsToStringPiece&&... args) {
     std::ostringstream oss;
@@ -22,7 +22,7 @@ struct HiTraceSystraceSection {
     OH_HiTrace_StartTrace(oss.str().c_str());
   }
 
-  ~HiTraceSystraceSection() {
+  ~CustomSystraceSection() {
     OH_HiTrace_FinishTrace();
   }
 };
