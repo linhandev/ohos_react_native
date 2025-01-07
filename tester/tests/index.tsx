@@ -65,5 +65,6 @@ export * from './VibrationTest';
 export * from './ViewTest';
 export * from './VirtualizedListTest';
 // partner tests
-export * from './ActionSheetIOSTest';
-export * from './PermissionAndroidTest';
+export * from './partner/ActionSheetIOSTest';
+export * from './partner/PermissionAndroidTest';
+export * from './partner/EventEmitterListeners';

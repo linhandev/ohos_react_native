@@ -222,5 +222,8 @@ module.exports = {
   },
   get PermissionsAndroid() {
     return require('react-native/Libraries/PermissionsAndroid/PermissionsAndroid');
-  }
+  },
+  get DeviceEventEmitter() {
+    return require('./Libraries/partner/DeviceEventEmitter/RCTDeviceEventEmitter').default;
+  },
 };
