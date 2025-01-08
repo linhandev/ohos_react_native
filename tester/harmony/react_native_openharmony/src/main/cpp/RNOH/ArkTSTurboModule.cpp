@@ -13,8 +13,8 @@
 #include <exception>
 
 #include "ArkTSTurboModule.h"
-#include "RNOH/JsiConversions.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
+#include "react/bridging/CallbackWrapper.h"
 
 using namespace rnoh;
 using namespace facebook;
@@ -252,24 +252,27 @@ IntermediaryCallback createIntermediaryCallback(
     std::weak_ptr<react::CallbackWrapper> weakCallback,
     std::shared_ptr<react::CallInvoker> const& jsInvoker) {
   auto weakInvoker = std::weak_ptr(jsInvoker);
+  auto callbackWrapper = weakCallback.lock();
+  RNOH_ASSERT(callbackWrapper != nullptr);
+
+  // NOTE: we keep the callback alive for exactly as long as the returned
+  // function object by capturing it via shared_ptr, so we can safely remove it
+  // from the LongLivedObjectCollection
+  callbackWrapper->allowRelease();
+
   return std::function(
-      [weakCallback, weakInvoker](std::vector<folly::dynamic> cbArgs) -> void {
+      [callbackWrapper,
+       weakInvoker](std::vector<folly::dynamic> cbArgs) -> void {
         auto jsInvoker = weakInvoker.lock();
         if (!jsInvoker) {
           return;
         }
         jsInvoker->invokeAsync(
-            [weakCallback, callbackArgs = std::move(cbArgs)]() {
-              auto callbackWrapper = weakCallback.lock();
-              if (!callbackWrapper) {
-                return;
-              }
-
+            [callbackWrapper, callbackArgs = std::move(cbArgs)]() {
               const auto jsArgs = convertDynamicsToJSIValues(
                   callbackWrapper->runtime(), callbackArgs);
               callbackWrapper->callback().call(
                   callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
-              callbackWrapper->allowRelease();
             });
       });
 }

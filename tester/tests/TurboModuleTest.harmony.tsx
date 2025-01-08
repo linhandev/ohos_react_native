@@ -13,6 +13,12 @@ import {
 import {Button, TestCase} from '../components';
 import {ScrollView, Platform, DeviceEventEmitter} from 'react-native';
 
+async function sleep(durationMs: number): Promise<void> {
+  return new Promise<void>(resolve => {
+    setTimeout(resolve, durationMs);
+  });
+}
+
 export function TurboModuleTest() {
   return (
     <TestSuite name="TurboModule">
@@ -27,6 +33,23 @@ export function TurboModuleTest() {
           itShould="return [1, 2, 3] when calling getArray"
           fn={({expect}) => {
             expect(SampleTurboModule.getArray([1, 2, 3])).to.eql([1, 2, 3]);
+          }}
+        />
+        <TestCase.Logical
+          itShould="call the passed callback twice"
+          fn={async ({expect}) => {
+            let sum = 0;
+            let timesCalled = 0;
+
+            SampleTurboModule.getValueWithCallback((value: string) => {
+              sum += parseInt(value, 10);
+              timesCalled++;
+            });
+
+            await sleep(4000);
+
+            expect(sum).to.equal(5);
+            expect(timesCalled).to.equal(2);
           }}
         />
         <CommonTurboModuleTestCases sampleTurboModule={SampleTurboModule} />

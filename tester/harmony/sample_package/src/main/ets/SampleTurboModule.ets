@@ -101,8 +101,11 @@ export class SampleTurboModule extends EtsUITurboModule implements TM.GeneratedS
   getValueWithCallback(onComplete: (value: string) => void): void {
     console.log(`RNOH SampleTurboModule::getValueWithCallback`);
     setTimeout(() => {
-      onComplete?.('value from callback!');
+      onComplete?.('2');
     }, 1000);
+    setTimeout(() => {
+      onComplete?.('3');
+    }, 2000);
   }
 
   getValueWithPromise(error: boolean): Promise<string> {
