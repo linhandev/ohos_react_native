@@ -13,7 +13,7 @@
     "test": "jest"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "react-native": "0.72.5"
   },
@@ -52,5 +52,10 @@
   },
   "harmony": {
     "autolinking": null
+  },
+  "homepage": "https://gitee.com/openharmony-sig/ohos_react_native",
+  "repository": {
+    "type": "gitee",
+    "url": "https://gitee.com/openharmony-sig/ohos_react_native"
   }
 }
