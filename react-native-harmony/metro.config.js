@@ -9,7 +9,10 @@
 const pathUtils = require('path');
 const fs = require('fs');
 const colors = require('colors/safe');
-
+const partenrFile = [
+  'ScrollResponder'
+]
+const endsWithAny = (str, suffixes) => suffixes.some(suffix => str.endsWith(suffix));
 let shouldPrintInfoAboutRNRedirection = true;
 
 /**
@@ -52,6 +55,9 @@ function createHarmonyMetroConfig(options) {
           if (moduleName === 'react-native') {
             return ctx.resolveRequest(ctx, reactNativeHarmonyName, platform);
           } else if (moduleName.startsWith('react-native/')) {
+            if(endsWithAny(moduleName, partenrFile)){
+              return ctx.resolveRequest(ctx, reactNativeHarmonyName, platform);
+            }
             return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
             isInternalReactNativeRelativeImport(ctx.originModulePath)
