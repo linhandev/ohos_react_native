@@ -69,3 +69,4 @@ export * from './partner/ActionSheetIOSTest';
 export * from './partner/PermissionAndroidTest';
 export * from './partner/EventEmitterListeners';
 export * from './partner/TouchableOpacityWithOpacity';
+export * from './partner/setLayoutAnimationEnabledExperimental';

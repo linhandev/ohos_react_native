@@ -205,6 +205,10 @@ const UIManager = {
       );
     }
   },
+
+  setLayoutAnimationEnabledExperimental(enabled: boolean) {
+    return enabled;
+  }
 };
 
 module.exports = UIManager;
