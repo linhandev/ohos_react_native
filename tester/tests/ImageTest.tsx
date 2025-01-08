@@ -69,6 +69,9 @@ export const ImageTest = () => {
           <Image source={LOCAL_IMAGE_ASSET_ID} alt="EXAMPLE IMAGE" />
         </View>
       </TestCase.Example>
+      <TestCase.Example itShould="display an image nested inside Text">
+        <TextNestedImageTest />
+      </TestCase.Example>
       <TestCase.Logical
         skip={{android: false, harmony: {arkTs: false, cAPI: 'NOT SUPPORTED'}}}
         itShould="retrieve remote image size"
@@ -870,6 +873,21 @@ function ImageSuffixesTest() {
   return (
     <View>
       <Image source={require('../assets/fig-without-poppy.jpeg')} />
+    </View>
+  );
+}
+
+function TextNestedImageTest() {
+  return (
+    <View>
+      <Text>
+        This is an image{' '}
+        <Image
+          source={{uri: REMOTE_IMAGE_URL}}
+          style={{height: 25, width: 25}}
+        />{' '}
+        nested in text.
+      </Text>
     </View>
   );
 }
