@@ -226,4 +226,7 @@ module.exports = {
   get DeviceEventEmitter() {
     return require('./Libraries/partner/DeviceEventEmitter/RCTDeviceEventEmitter').default;
   },
+  get TouchableOpacity() {
+    return require('./Libraries/partner/Touchable/TouchableOpacity');
+  },
 };
