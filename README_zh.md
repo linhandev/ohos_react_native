@@ -35,10 +35,10 @@
 
 ## 版本说明
 当前发布的最新正式版本：
-- [RNOH v5.0.0.813（2025-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
+- [RNOH v5.0.0.813（2024-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
 
 历史发布的正式版本：
-- [RNOH v5.0.0.812（2025-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
+- [RNOH v5.0.0.812（2024-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
 - [RNOH v5.0.0.715（2024-10-25）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
 - [RNOH v5.0.0.601（2024-09-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
 - [RNOH v5.0.0.500（2024-08-27）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
