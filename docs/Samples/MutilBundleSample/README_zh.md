@@ -14,8 +14,8 @@ MutilBundleSample
 
 
 # 环境搭建
-1. 在 `FlightRN` 中运行 **npm i @react-native-oh/react-native-harmony@x.x.x** 安装依赖，运行 **npm run dev:all** 生成机票的jsBundle；
-2. 在 `HotelRN` 中运行 **npm i @react-native-oh/react-native-harmony@x.x.x** 安装依赖，运行 **npm run dev:all** 生成酒店的jsBundle；
+1. 在 `FlightRN` 中运行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖，运行 **npm run dev:all** 生成机票的jsBundle；
+2. 在 `HotelRN` 中运行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖，运行 **npm run dev:all** 生成酒店的jsBundle；
 3. 在 `entry` 目录下执行 **ohpm i @rnoh/react-native-openharmony@x.x.x** 安装依赖；
 4. 检查 `FrameNodeSampleApp`、`entry` 目录下是否生成 `oh-modules` 文件夹；
 5. 用 DevEco Studio 打开 NativeProject，执行 **Sync and Refresh Project**；
