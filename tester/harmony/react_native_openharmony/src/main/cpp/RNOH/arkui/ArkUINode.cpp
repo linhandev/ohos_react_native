@@ -12,6 +12,7 @@
 #include "NativeNodeApi.h"
 #include "RNOH/Assert.h"
 #include "conversions.h"
+#include "react/renderer/graphics/Transform.h"
 
 namespace rnoh {
 
@@ -583,12 +584,22 @@ ArkUINode& ArkUINode::setBackgroundColor(
 ArkUINode& ArkUINode::setTransform(
     facebook::react::Transform const& transform,
     facebook::react::Float pointScaleFactor) {
+  if (pointScaleFactor == 0.0) {
+    // NOTE: while pointScaleFactor shouldn't logically be zero, we probably
+    // don't want to assert it in case some exotic use case requires it
+    return *this;
+  }
+
   // NOTE: ArkUI translation is in `px` units, while React Native uses `vp`
   // units, so we need to correct for the scale factor here
-  auto matrix = transform.matrix;
-  matrix[12] *= pointScaleFactor;
-  matrix[13] *= pointScaleFactor;
-  matrix[14] *= pointScaleFactor;
+  // We do so by first scaling the view down (to vp), applying the transform,
+  // and then scaling the transformed view back up (to px)
+  auto preScale = facebook::react::Transform::Scale(
+      1 / pointScaleFactor, 1 / pointScaleFactor, 1 / pointScaleFactor);
+  auto postScale = facebook::react::Transform::Scale(
+      pointScaleFactor, pointScaleFactor, pointScaleFactor);
+
+  auto matrix = (postScale * transform * preScale).matrix;
 
   std::array<ArkUI_NumberValue, 16> transformValue;
   for (int i = 0; i < 16; i++) {
