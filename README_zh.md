@@ -32,3 +32,16 @@
 
 - React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
 - RNOH的使用问题可查阅[中文文档](./docs/zh-cn/README.md)或[英文文档](./docs/en/README.md)。
+
+## 版本说明
+当前已发布以下正式版本，请从[发行版](https://gitee.com/openharmony-sig/ohos_react_native/releases)中获取对应版本。
+- [RNOH v5.0.0.500（2024-08-27）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
+- [RNOH v5.0.0.601（2024-09-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
+- [RNOH v5.0.0.715（2024-10-25）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
+- [RNOH v5.0.0.812（2025-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
+- [RNOH v5.0.0.813（2025-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
+
+## 分支说明
+1. master分支：主干演进分支。
+2. 0.72.5-ohos-5.0-release分支：配套OpenHarmony 5.0的release分支。
+3. dev分支：开发分支。
