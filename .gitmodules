@@ -13,3 +13,4 @@
 [submodule "native/rnoh/src/main/cpp/third-party/libevent-sub"]
 	path = tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent
 	url = https://github.com/libevent/libevent
+	
