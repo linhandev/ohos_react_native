@@ -6,12 +6,16 @@
 cmake_minimum_required(VERSION 3.4.1)
 cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different
                               # directories than targets
+project(rnoh)
+set(RNOH_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")
 set(third_party_dir "${RNOH_CPP_DIR}/third-party")
 set(patches_dir "${RNOH_CPP_DIR}/patches")
 option(USE_HERMES "Enabled or Disable the Hermes JS Engine" ON)
 
+set(WITH_HITRACE_SYSTRACE 1)
+add_compile_definitions(WITH_HITRACE_SYSTRACE)
 add_compile_options("-Wno-error=unused-command-line-argument")
 
 include_directories(${NATIVERENDER_ROOT_PATH}
@@ -50,12 +54,12 @@ target_sources(double_conversion_target PRIVATE
 # GLOG
 set(glog_include_dir "${third_party_dir}/glog/src")
 set(glog_src_dir "${third_party_dir}/glog/src")
-add_library(glog_target)
-target_include_directories(glog_target PUBLIC
+add_library(glog SHARED)
+target_include_directories(glog PUBLIC
     "${glog_include_dir}"
     "${glog_include_dir}/base"
 )
-target_sources(glog_target PRIVATE
+target_sources(glog PRIVATE
     "${glog_src_dir}/demangle.cc"
     "${glog_src_dir}/logging.cc"
     "${glog_src_dir}/raw_logging.cc"
@@ -64,7 +68,7 @@ target_sources(glog_target PRIVATE
     "${glog_src_dir}/utilities.cc"
     "${glog_src_dir}/vlog_is_on.cc"
 )
-target_compile_options(glog_target PRIVATE
+target_compile_options(glog PRIVATE
     -Wno-shorten-64-to-32
     -Wno-header-hygiene
     -Wno-deprecated-declarations
@@ -128,8 +132,8 @@ target_sources(libevent PRIVATE
 # FOLLY
 set(folly_include_dir "${third_party_dir}/folly")
 set(folly_src_dir "${third_party_dir}/folly/folly")
-add_library(folly_target)
-target_include_directories(folly_target PUBLIC
+add_library(folly_runtime SHARED)
+target_include_directories(folly_runtime PUBLIC
     "${folly_include_dir}"
     "${boost_include_dirs}"
     "${double_conversion_include_dir}"
@@ -147,8 +151,8 @@ set(folly_compile_options
     -Wno-documentation
     -faligned-new
 )
-target_compile_options(folly_target PUBLIC ${folly_compile_options})
-target_sources(folly_target PRIVATE
+target_compile_options(folly_runtime PUBLIC ${folly_compile_options})
+target_sources(folly_runtime PRIVATE
     "${folly_src_dir}/SharedMutex.cpp"
     "${folly_src_dir}/concurrency/CacheLocality.cpp"
     "${folly_src_dir}/detail/Futex.cpp"
@@ -168,9 +172,9 @@ target_sources(folly_target PRIVATE
     "${folly_src_dir}/lang/Assume.cpp"
     "${folly_src_dir}/ScopeGuard.cpp"
 )
-target_link_libraries(folly_target PUBLIC
+target_link_libraries(folly_runtime PUBLIC
     fmt_target
-    glog_target
+    glog
     double_conversion_target
 )
 
@@ -288,8 +292,6 @@ target_link_libraries(folly_futures libevent)
 # -------- REACT COMMON --------
 set(REACT_COMMON_DIR "${RNOH_CPP_DIR}/third-party/rn/ReactCommon")
 set(REACT_COMMON_PATCH_DIR "${patches_dir}/react_native_core")
-add_library(folly_runtime ALIAS folly_target)
-add_library(glog ALIAS glog_target)
 
 include_directories(${REACT_COMMON_PATCH_DIR})
 
@@ -307,8 +309,19 @@ function(add_react_common_subdir relative_path)
   add_subdirectory(${REACT_COMMON_DIR}/${relative_path})
 endfunction()
 
-add_react_common_subdir(yoga)
-add_library(yoga ALIAS yogacore)
+set(yoga_compile_options
+    -fexceptions
+    -frtti
+    -O3
+    -Wall
+    -Wpedantic
+    -Wno-gnu-zero-variadic-macro-arguments)
+file(GLOB_RECURSE yogacore_SRC CONFIGURE_DEPENDS ${REACT_COMMON_DIR}/yoga/yoga/*.cpp)
+add_library(yoga SHARED ${yogacore_SRC})
+target_compile_options(yoga PUBLIC ${yoga_compile_options})
+target_include_directories(yoga PUBLIC ${REACT_COMMON_DIR}/yoga)
+target_link_libraries(yoga android log)
+
 add_react_common_subdir(runtimeexecutor)
 add_react_common_subdir(reactperflogger)
 add_react_common_subdir(logger)
