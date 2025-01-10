@@ -10,7 +10,9 @@ const pathUtils = require('path');
 const fs = require('fs');
 const colors = require('colors/safe');
 const partenrFile = [
-  'ScrollResponder'
+  'ScrollResponder',
+  'DeprecatedStyleSheetPropType',
+  'DeprecatedViewPropTypes'
 ]
 const endsWithAny = (str, suffixes) => suffixes.some(suffix => str.endsWith(suffix));
 let shouldPrintInfoAboutRNRedirection = true;

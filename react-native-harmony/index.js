@@ -229,4 +229,7 @@ module.exports = {
   get TouchableOpacity() {
     return require('./Libraries/partner/Touchable/TouchableOpacity');
   },
+  get ViewPropTypes() {
+    return require('./Libraries/partner/deprecated-react-native-prop-types/index');
+  },
 };
