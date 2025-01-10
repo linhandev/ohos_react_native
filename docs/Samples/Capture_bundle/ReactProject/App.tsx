@@ -36,7 +36,7 @@ const App:React.FC = () => {
   const handleFrozenError = () =>{
     try{
       const error = Object.freeze(new Error('Some erro happened'));
-      throw error,
+      throw error;
     }catch(e){
       console.error('Caught an error:',e);
 
