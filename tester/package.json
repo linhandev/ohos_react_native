@@ -10,7 +10,7 @@
     "recreate_hvigor_plugin": "cd ../react-native-harmony-hvigor-plugin && npm i && npm run deploy && cd ../tester",
     "reinstall:react_native_harmony": "npm uninstall react-native-harmony && npm run pack_react_native_harmony && npm run install:react_native_harmony",
     "reinstall:react_native_harmony_sample_package": "npm uninstall react-native-harmony-sample-package && npm run pack_react_native_harmony_sample_package && npm run install:react_native_harmony_sample_package",
-    "install:react_native_harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.75.2.tgz",
+    "install:react_native_harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.75.3.tgz",
     "install:react_native_harmony_sample_package": "npm i ../react-native-harmony-sample-package/react-native-harmony-sample-package-1.0.0.tgz",
     "pack_react_native_harmony": "cd ../react-native-harmony && npm i && npm pack && cd ../tester",
     "pack_react_native_harmony_sample_package": "cd ../react-native-harmony-sample-package && npm i && npm run codegen-lib && npm pack && cd ../tester",
@@ -51,7 +51,7 @@
     "react": "18.3.1",
     "react-native": "0.75.4",
     "react-native-flipper-performance-plugin": "^0.4.0",
-    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.75.2.tgz",
+    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.75.3.tgz",
     "react-native-harmony-sample-package": "file:../react-native-harmony-sample-package/react-native-harmony-sample-package-1.0.0.tgz"
   },
   "devDependencies": {

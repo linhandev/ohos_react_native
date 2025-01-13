@@ -1,5 +1,37 @@
 # Changelog
 
+## v0.75.3
+- [breaking] removed ReactCommon directory — app developers are expected to specify `RNOH_REACT_COMMON_DIR` in their entry CMakeLists file ( `set(RNOH_REACT_COMMON_DIR "${NODE_MODULES}/@react-native-oh/react-native-core/ReactCommon")`) ([c79e9e23e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c79e9e23e4755d3f0f2822e89818620c1d0a072e))
+- [breaking] added a new peer dependency `react-native-core` ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- deprecated `ArkUINode::setHitTestMode` (hitTestBehavior is now set by listening to NODE_ON_TOUCH_INTERCEPT) ([d12fcff142](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d12fcff142e35f32fa40dce16d5f22d46572adcd))
+- added support for calling callbacks passed from JS to TMs multiple times ([afc45f1e00](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/afc45f1e005560c408c23794006eee1b36eb343c))
+- added init-harmony command ([0f5d44ef79](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0f5d44ef79197f827d3f3f886fb6a602c8ba74a2))
+- added `NODE_BY_HANDLE` to save `ArkUINode` by `ArkUI_NodeHandle`. ([ef75f23b47](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef75f23b474b3eece32d16873ac5919e99098dcc))
+- added `ArkUINodeDelegate::onArkUINodeTouchIntercept` ([d12fcff142](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d12fcff142e35f32fa40dce16d5f22d46572adcd))
+- fixed incorrect transforms in more complex scenarios ([02c240af3e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/02c240af3ee592adbbbd4800989ff5b32c62ad6b))
+- fixed Button default style ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- fixed repeating vibrations ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- fixed application flooding logs with errors when trying to reconnect to Metro ([ab1b77a82a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ab1b77a82aca1bed3d0892c99bd42288a5485508))
+- fixed native props not being passed to core components ([efa2de0c7d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/efa2de0c7d6850c77d568482e31aa850fd03977b))
+- fixed KeyboardAvoidingView for `null` children ([5241ffbb8a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5241ffbb8a81b2c3ab8fd7c903f6bec51e0dee2d))
+- changed hvigor-plugin to use `DEVECO_SDK_HOME` environment variable instead of expecting `hdc` to be in the path when configuring phone for Metro ([8c9d571a85](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8c9d571a850d4d178f65cbe4a571d0b30e82830e))
+- changed scripts used by git hooks in the tester to find clang-format in $DEVECO_SDK_HOME ([14b3841203](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/14b38412039e1702f33456e7250e998a1536b1cf))
+- removed code that sets a default transformOrigin from ArkUInode ([25c1b104ce](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/25c1b104ceb22a693ad22c34b7cd02022bae55a0))
+- removed `folly` source submodule from the project repository ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- removed `libfmt`, `double-conversion`, `libboost`, `glog`, `hermes` and `libevent` source submodules/directories from the project repository ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- removed deprecated ArkTS software elements: `Descriptor::isDynamicBinder` property, `DescriptorRegistry::getDescriptorByTagMap`, and `BorderMetrics` type (ArkTS) ([b7ac8577fc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b7ac8577fce08527db84220d0eebe60ac08a07f4))
+- bumped @rnoh/react-native-harmony-cli to 0.75.4 ([4f955982c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4f955982c2231958246075bfeafeef044405a7fb))
+- disables DevMenu when building in release mode ([1401530450](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/14015304504f4d065426c355a18f134a84f57fe9))
+- optimized bundle loading for files and rawfiles by using `mmap` instead of reading the bundle contents to a buffer ([a65956cc23](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a65956cc23e73d1659cbe1573011887ce8fb3fb2))
+- get `ArkUINode` from `NODE_BY_HANDLE` instead of userData. ([ef75f23b47](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef75f23b474b3eece32d16873ac5919e99098dcc))
+- download `folly` dependency during CMake config ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- sync `folly` version to that used by RN Android 0.75.4 ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- download `libfmt`, `double-conversion`, `libboost`, `glog`, `hermes` (source) and `libevent` dependencies during CMake config ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- sync `libfmt`, `double-conversion`, `glog` and `libevent` versions to those used by Android 0.75.4 ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- set `ARKUI_ACCESSIBILITY_MODE_ENABLED` if text isn't in component with `AccessibilityGroup` set to true ([45932c80a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/45932c80a6a443f023b3acd93e7ce0c061506494))
+- optimized rendering pipeline (10-15ms/1500 views) ([437ddc250d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/437ddc250d614e83d615e6fd182b15a0b5f6216a))
+
+
 ## v0.75.2
 - [breaking] disable autolinking of libraries by default; enable only for libraries that explicitly support autolinking (CLI: link-harmony) ([cdb02f5b9b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cdb02f5b9b414c4a1d32327f8f0d8848bd98cc52))
 - [breaking] renamed HarmonyReactMarker to RNOHMarker ([eabcfa775b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eabcfa775b0c8693cb2294bec66745f8cc6f5c00))
