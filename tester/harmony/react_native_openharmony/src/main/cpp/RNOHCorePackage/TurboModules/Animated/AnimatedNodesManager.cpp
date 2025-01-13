@@ -213,7 +213,7 @@ void AnimatedNodesManager::startAnimatingNode(
     facebook::react::Tag animationId,
     facebook::react::Tag nodeTag,
     folly::dynamic const& config,
-    std::function<void(bool)>&& endCallback) {
+    EndCallback&& endCallback) {
   auto type = config["type"].asString();
   auto& node = getValueNodeByTag(nodeTag);
 
@@ -267,8 +267,10 @@ PropUpdatesList AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
   auto propUpdatesList = updateNodes();
 
   for (auto animationId : finishedAnimations) {
-    m_animationById.at(animationId)->endCallback_(true);
-    m_animationById.at(animationId)->endCallback_ = nullptr;
+    auto const& animation = m_animationById.at(animationId);
+    animation->endCallback_(
+        true, animation->getAnimatedValue().getValueAsDouble());
+    animation->endCallback_ = nullptr;
     m_animationById.erase(animationId);
   }
 

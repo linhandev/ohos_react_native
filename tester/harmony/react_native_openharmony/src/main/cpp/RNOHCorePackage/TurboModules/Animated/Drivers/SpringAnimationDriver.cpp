@@ -6,6 +6,7 @@
  */
 
 #include "SpringAnimationDriver.h"
+#include "RNOHCorePackage/TurboModules/Animated/AnimatedNodesManager.h"
 
 namespace rnoh {
 

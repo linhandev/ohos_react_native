@@ -116,8 +116,60 @@ export function AnimatedValueTestCore({
             <FlattenOffsetView />
           </TestCase.Example>
         </TestSuite>
+        <TestCase.Example itShould="maintain translation after toggling display to 'none' and back">
+          <ToggleDisplayExample />
+        </TestCase.Example>
       </TestSuite>
     </>
+  );
+}
+
+const ToggleDisplayExampleInner = React.memo(function () {
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+  const animation = React.useRef(
+    Animated.timing(animatedValue, {
+      toValue: 200,
+      duration: 1000,
+      useNativeDriver: true,
+    }),
+  ).current;
+  return (
+    <View>
+      <Animated.View
+        style={{
+          height: 20,
+          width: 20,
+          margin: 10,
+          backgroundColor: 'red',
+          transform: [
+            {
+              translateX: animatedValue,
+            },
+          ],
+        }}
+      />
+      <Button
+        label="start"
+        onPress={() => {
+          animation.reset();
+          animation.start();
+        }}
+      />
+      <Button label="stop" onPress={() => animation.stop()} />
+    </View>
+  );
+});
+
+function ToggleDisplayExample() {
+  const [visible, setVisible] = React.useState(true);
+
+  return (
+    <View style={{width: '100%'}}>
+      <View style={{width: '100%', display: visible ? 'flex' : 'none'}}>
+        <ToggleDisplayExampleInner />
+      </View>{' '}
+      <Button label="toggle display" onPress={() => setVisible(v => !v)} />
+    </View>
   );
 }
 

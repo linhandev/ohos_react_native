@@ -16,7 +16,6 @@
 
 #include "AnimatedNodesManager.h"
 #include "RNOH/EventEmitRequestHandler.h"
-#include "RNOH/NativeVsyncHandle.h"
 #include "RNOH/VSyncListener.h"
 
 namespace rnoh {
@@ -27,6 +26,8 @@ class NativeAnimatedTurboModule
       public std::enable_shared_from_this<NativeAnimatedTurboModule> {
  public:
   using Context = rnoh::ArkTSTurboModule::Context;
+
+  using EndCallback = AnimatedNodesManager::EndCallback;
 
   NativeAnimatedTurboModule(
       const ArkTSTurboModule::Context ctx,
@@ -65,7 +66,7 @@ class NativeAnimatedTurboModule
       facebook::react::Tag animationId,
       facebook::react::Tag nodeTag,
       folly::dynamic const& config,
-      std::function<void(bool)>&& endCallback);
+      EndCallback&& endCallback);
 
   void stopAnimation(facebook::react::Tag animationId);
 
@@ -111,7 +112,8 @@ class NativeAnimatedTurboModule
   void emitAnimationEndedEvent(
       facebook::jsi::Runtime& rt,
       facebook::react::Tag animationId,
-      bool completed);
+      bool completed,
+      double value);
 
   // EventEmitRequestHandler
   void handleEvent(EventEmitRequestHandler::Context const& ctx) override;

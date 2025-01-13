@@ -28,6 +28,8 @@ class EventAnimationDriver;
 
 class AnimatedNodesManager {
  public:
+  using EndCallback = AnimationDriver::AnimationEndCallback;
+
   AnimatedNodesManager(std::function<void()>&& scheduleUpdateFn);
 
   void createNode(facebook::react::Tag tag, folly::dynamic const& config);
@@ -72,7 +74,7 @@ class AnimatedNodesManager {
       facebook::react::Tag animationId,
       facebook::react::Tag nodeTag,
       folly::dynamic const& config,
-      std::function<void(bool)>&& endCallback);
+      EndCallback&& endCallback);
   void stopAnimation(facebook::react::Tag animationId);
 
   PropUpdatesList runUpdates(uint64_t frameTimeNanos);

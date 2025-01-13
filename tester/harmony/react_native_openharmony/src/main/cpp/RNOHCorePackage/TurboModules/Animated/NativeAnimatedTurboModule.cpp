@@ -9,6 +9,7 @@
 
 #include <jsi/jsi/JSIDynamic.h>
 #include <chrono>
+#include "AnimatedNodesManager.h"
 #include "RNOH/RNInstance.h"
 
 using namespace facebook;
@@ -123,8 +124,8 @@ jsi::Value startAnimatingNode(
       animationId,
       args[1].getNumber(),
       config,
-      [self, &rt, animationId](bool finished) {
-        self->emitAnimationEndedEvent(rt, animationId, finished);
+      [self, &rt, animationId](bool finished, double value) {
+        self->emitAnimationEndedEvent(rt, animationId, finished, value);
       });
   return facebook::jsi::Value::undefined();
 }
@@ -351,7 +352,7 @@ void NativeAnimatedTurboModule::startAnimatingNode(
     react::Tag animationId,
     react::Tag nodeTag,
     folly::dynamic const& config,
-    std::function<void(bool)>&& endCallback) {
+    EndCallback&& endCallback) {
   auto lock = acquireLock();
   m_animatedNodesManager.startAnimatingNode(
       animationId, nodeTag, config, std::move(endCallback));
@@ -490,15 +491,17 @@ void NativeAnimatedTurboModule::setNativeProps(
 void NativeAnimatedTurboModule::emitAnimationEndedEvent(
     facebook::jsi::Runtime& rt,
     facebook::react::Tag animationId,
-    bool finished) {
+    bool finished,
+    double value) {
   emitDeviceEvent(
       rt,
       "onNativeAnimatedModuleAnimationFinished",
-      [animationId, finished](
+      [animationId, finished, value](
           facebook::jsi::Runtime& rt, std::vector<jsi::Value>& args) {
         jsi::Object param(rt);
         param.setProperty(rt, "animationId", animationId);
         param.setProperty(rt, "finished", finished);
+        param.setProperty(rt, "value", value);
         args.emplace_back(std::move(param));
       });
 }
