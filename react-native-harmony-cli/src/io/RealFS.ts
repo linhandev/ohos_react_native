@@ -14,6 +14,12 @@ class RealFSDirent extends Dirent {
   get name(): string {
     return this.nodeFSDirent.name;
   }
+
+  get path(): AbsolutePath {
+    return new AbsolutePath(this.nodeFSDirent.path).copyWithNewSegment(
+      this.nodeFSDirent.name
+    );
+  }
 }
 
 export class RealFS extends FS {
@@ -51,5 +57,9 @@ export class RealFS extends FS {
         recursive: options?.recursive,
       })
       .map((rawDirent) => new RealFSDirent(rawDirent));
+  }
+
+  renameSync(oldPath: AbsolutePath, newPath: AbsolutePath) {
+    fs.renameSync(oldPath.toString(), newPath.toString());
   }
 }

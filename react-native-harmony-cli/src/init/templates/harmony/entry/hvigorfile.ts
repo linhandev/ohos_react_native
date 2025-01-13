@@ -6,7 +6,7 @@ export default {
   plugins: [
     createRNOHHvigorPlugin({
       codegen: {
-        rnohModulePath: './react_native_openharmony',
+        rnohModulePath: './oh_modules/@rnoh/react-native-openharmony',
       },
     }),
   ],

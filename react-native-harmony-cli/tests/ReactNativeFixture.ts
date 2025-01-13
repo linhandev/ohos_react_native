@@ -16,6 +16,20 @@ export class ReactNativeFixture {
     return execaCommandSync(`react-native --help`).stdout;
   }
 
+  initHarmony(args: {
+    projectRootPath: string;
+    bundleName: string;
+    appName?: string;
+    rnohNpmPackageName?: string;
+  }): {
+    stdout: string;
+    stderr: string;
+  } {
+    return execaCommandSync(
+      `react-native init-harmony ${this.createCliArgs(args)}`
+    );
+  }
+
   packHarmony(args: {
     harmonyDirPath: string;
     ohModulePath: string;

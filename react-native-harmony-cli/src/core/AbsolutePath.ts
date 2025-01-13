@@ -32,6 +32,10 @@ export class AbsolutePath implements ValueObject {
     return null;
   }
 
+  getBasename(): string {
+    return pathUtils.basename(this.value);
+  }
+
   getDirectoryPath(): AbsolutePath {
     const dirPath = pathUtils.extname(this.value)
       ? pathUtils.dirname(this.value)

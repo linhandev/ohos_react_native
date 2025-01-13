@@ -1,7 +1,10 @@
+import mustache from 'mustache';
+
+const TEMPLATE = `
 {
   "modelVersion": "5.0.0",
   "dependencies": {
-    // "@rnoh/hvigor-plugin": "../../node_modules/<RNOH>/harmony/rnoh-hvigor-plugin-X.X.X.tgz",
+    "@rnoh/hvigor-plugin": "../../node_modules/{{{rnohNpmPackageName}}}/harmony/{{{rnohHvigorPluginFilename}}}", // <PROJECT_ROOT>/node_modules/<RNOH>/harmony/rnoh-hvigor-plugin-X.X.X.tgz
   },
   "execution": {
     // "analyze": "default",                    /* Define the build analyze mode. Value: [ "default" | "verbose" | false ]. Default: "default" */
@@ -18,5 +21,20 @@
   },
   "nodeOptions": {
     // "maxOldSpaceSize": 4096                  /* Enable nodeOptions maxOldSpaceSize compilation. Unit M. Used for the daemon process */
+  }
+}
+`;
+
+export class HvigorConfigJson5Template {
+  constructor(
+    private rnohNpmPackageName: string,
+    private rnohHvigorPluginFilename: string
+  ) {}
+
+  build(): string {
+    return mustache.render(TEMPLATE.trimStart(), {
+      rnohNpmPackageName: this.rnohNpmPackageName,
+      rnohHvigorPluginFilename: this.rnohHvigorPluginFilename,
+    });
   }
 }

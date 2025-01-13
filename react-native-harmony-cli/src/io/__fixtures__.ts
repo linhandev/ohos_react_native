@@ -38,6 +38,12 @@ class MemFSDirent extends Dirent {
   get name(): string {
     return this.rawDirent.name.toString();
   }
+
+  get path(): AbsolutePath {
+    return new AbsolutePath(this.rawDirent.path).copyWithNewSegment(
+      this.rawDirent.name.toString()
+    );
+  }
 }
 export class MemFS extends FS {
   private fs: IFs;

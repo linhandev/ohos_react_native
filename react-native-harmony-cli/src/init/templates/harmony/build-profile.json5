@@ -1,6 +1,3 @@
-import mustache from 'mustache';
-
-const TEMPLATE = `
 {
   app: {
     products: [
@@ -33,13 +30,4 @@ const TEMPLATE = `
       ],
     },
   ],
-}
-`;
-
-export class BuildProfileTemplate {
-  constructor() {}
-
-  build(): string {
-    return mustache.render(TEMPLATE.trimStart(), {});
-  }
 }

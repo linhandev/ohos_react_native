@@ -5,6 +5,5 @@
   "description": "example description",
   "version": "1.0.0",
   "dependencies": {
-    "rnoh": "file:../../node_modules/@rnoh/react-native-harmony/harmony/react_native_openharmony.har",
   }
 }

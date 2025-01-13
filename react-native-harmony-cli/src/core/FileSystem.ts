@@ -5,6 +5,8 @@ export abstract class Dirent {
   abstract isDirectory(): boolean;
 
   abstract get name(): string;
+
+  abstract get path(): AbsolutePath;
 }
 
 export abstract class FS {

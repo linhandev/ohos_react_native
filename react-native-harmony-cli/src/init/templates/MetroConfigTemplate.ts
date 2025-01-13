@@ -4,7 +4,7 @@ const TEMPLATE = `
 const {mergeConfig, getDefaultConfig} = require('@react-native/metro-config');
 const {
   createHarmonyMetroConfig,
-} = require('@rnoh/react-native-harmony/metro.config');
+} = require('{{{reactNativeHarmonyPackageName}}}/metro.config');
 
 /**
  * @type {import("metro-config").MetroConfig}
@@ -23,7 +23,7 @@ const config = {
 module.exports = mergeConfig(
   getDefaultConfig(__dirname),
   createHarmonyMetroConfig({
-    reactNativeHarmonyPackageName: '@rnoh/react-native-harmony',
+    reactNativeHarmonyPackageName: '{{{reactNativeHarmonyPackageName}}}',
   }),
   config,
 );
@@ -31,9 +31,11 @@ module.exports = mergeConfig(
 `;
 
 export class MetroConfigTemplate {
-  constructor() {}
+  constructor(private reactNativeHarmonyPackageName: string) {}
 
   build(): string {
-    return mustache.render(TEMPLATE.trimStart(), {});
+    return mustache.render(TEMPLATE.trimStart(), {
+      reactNativeHarmonyPackageName: this.reactNativeHarmonyPackageName,
+    });
   }
 }

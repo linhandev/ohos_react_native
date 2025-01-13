@@ -6,7 +6,7 @@ import {
   MetroJSBundleProvider,
   RNApp,
   RNOHErrorDialog,
-  TraceJSBundleProviderDecorator,
+  ResourceJSBundleProvider,
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
 import { getRNOHPackages } from '../PackageProvider';
@@ -30,11 +30,15 @@ struct Index {
             fontResourceByFontFamily: {},
           },
           appKey: "{{name}}",
-          jsBundleProvider: new TraceJSBundleProviderDecorator(
+          jsBundleProvider: this.rnohCoreContext?.isDebugModeEnabled ?
             new AnyJSBundleProvider([
               new MetroJSBundleProvider(),
-            ]),
-            this.rnohCoreContext.logger),
+              new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
+            ]) :
+            /**
+             * NOTE: The HBC format is recommended for Hermes in a production environment. HBC provides better performance and loading times.
+             */
+            new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
         })
       }
     }
