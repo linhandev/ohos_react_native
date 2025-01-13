@@ -26,7 +26,8 @@ export class ReactNativeFixture {
     stderr: string;
   } {
     return execaCommandSync(
-      `react-native init-harmony ${this.createCliArgs(args)}`
+      `react-native init-harmony ${this.createCliArgs(args)}`,
+      { env: { FORCE_COLOR: '0' } }
     );
   }
 
