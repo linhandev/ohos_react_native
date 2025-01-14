@@ -104,7 +104,9 @@ async function findRecursivelyDeprecatedItemsInDirectory(
           !dirent.name.startsWith('.') &&
           dirent.name !== 'node_modules' &&
           dirent.name !== 'third-party' &&
-          dirent.name !== 'cache'
+          dirent.name !== 'cache' &&
+          dirent.name !== 'ios' &&
+          dirent.name !== 'android'
         ) {
           yield* walk(filePath);
         }
