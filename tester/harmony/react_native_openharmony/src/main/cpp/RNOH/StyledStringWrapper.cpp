@@ -6,6 +6,11 @@
  */
 
 #include "StyledStringWrapper.h"
+#include <native_drawing/drawing_point.h>
+#include <native_drawing/drawing_text_typography.h>
+#include <native_drawing/drawing_types.h>
+#include "react/renderer/graphics/Color.h"
+#include "react/renderer/graphics/Size.h"
 
 namespace rnoh {
 
@@ -179,9 +184,25 @@ void StyledStringWrapper::addTextFragment(
   }
 
   // shadow
-  std::
-      unique_ptr<OH_Drawing_TextShadow, decltype(&OH_Drawing_DestroyTextShadow)>
-          shadow(OH_Drawing_CreateTextShadow(), OH_Drawing_DestroyTextShadow);
+  if (facebook::react::isColorMeaningful(
+          fragment.textAttributes.textShadowColor)) {
+    std::unique_ptr<
+        OH_Drawing_TextShadow,
+        decltype(&OH_Drawing_DestroyTextShadow)>
+        shadow(OH_Drawing_CreateTextShadow(), OH_Drawing_DestroyTextShadow);
+    auto color = *fragment.textAttributes.textShadowColor;
+    auto radius = fragment.textAttributes.textShadowRadius;
+    auto offset = fragment.textAttributes.textShadowOffset.value_or(
+        facebook::react::Size{0., 0.});
+    std::unique_ptr<OH_Drawing_Point, decltype(&OH_Drawing_PointDestroy)>
+        offsetPoint(
+            OH_Drawing_PointCreate(
+                offset.width * m_scale, offset.height * m_scale),
+            OH_Drawing_PointDestroy);
+
+    OH_Drawing_SetTextShadow(shadow.get(), color, offsetPoint.get(), radius);
+    OH_Drawing_TextStyleAddShadow(textStyle.get(), shadow.get());
+  }
 
   // new NDK for setting letterSpacing
   if (!isnan(fragment.textAttributes.letterSpacing)) {

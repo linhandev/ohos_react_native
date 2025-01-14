@@ -1,28 +1,29 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TextStyle, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {SAMPLE_PARAGRAPH_TEXT} from './fixtures';
 import {TestCase} from '../../components';
+
+function LoremIpsum({style}: {style?: Partial<TextStyle>}) {
+  return (
+    <Text
+      style={{
+        padding: 5,
+        ...style,
+      }}>
+      Lorem ipsum dolor sit amet
+    </Text>
+  );
+}
 
 export function TextStyleTest() {
   return (
     <TestSuite name="TextStyle">
       <TestCase.Example itShould="show text with the Pacifico Regular font on the blue background">
         <View style={{backgroundColor: 'cyan', alignSelf: 'flex-start'}}>
-          <Text
-            style={{
-              fontFamily: 'Pacifico-Regular',
-              padding: 5,
-            }}>
-            Lorem ipsum dolor sit amet
-          </Text>
+          <LoremIpsum style={{fontFamily: 'Pacifico-Regular'}} />
         </View>
         <View style={{backgroundColor: 'pink', alignSelf: 'flex-start'}}>
-          <Text
-            style={{
-              padding: 5,
-            }}>
-            Lorem ipsum dolor sit amet
-          </Text>
+          <LoremIpsum />
         </View>
       </TestCase.Example>
       <TestCase.Example
@@ -31,40 +32,73 @@ export function TextStyleTest() {
         // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/860
       >
         <View style={{height: 30, width: '100%'}}>
-          <Text
+          <LoremIpsum
             style={{
               ...styles.blackText,
               fontFamily: 'sans-serif',
-              padding: 5,
-            }}>
-            Lorem ipsum dolor sit amet
-          </Text>
+            }}
+          />
         </View>
       </TestCase.Example>
       <TestCase.Example itShould="show text with the 'serif' font">
         <View style={{height: 30, width: '100%'}}>
-          <Text
+          <LoremIpsum
             style={{
               ...styles.blackText,
               fontFamily: 'serif',
-              padding: 5,
-            }}>
-            Lorem ipsum dolor sit amet
-          </Text>
+            }}
+          />
         </View>
       </TestCase.Example>
       <TestCase.Example itShould="show text with the 'monospace' font">
         <View style={{height: 30, width: '100%'}}>
-          <Text
+          <LoremIpsum
             style={{
               ...styles.blackText,
               fontFamily: 'monospace',
-              padding: 5,
-            }}>
-            Lorem ipsum dolor sit amet
-          </Text>
+            }}
+          />
         </View>
       </TestCase.Example>
+      <TestSuite name="Text Shadow">
+        <TestCase.Example itShould="show text with a blue shadow">
+          <View style={{alignSelf: 'flex-start'}}>
+            <LoremIpsum
+              style={{
+                textShadowColor: 'blue',
+                textShadowRadius: 5,
+              }}
+            />
+          </View>
+        </TestCase.Example>
+        <TestCase.Example itShould="show text with a red shadow offset by (2, 2)">
+          <View style={{alignSelf: 'flex-start'}}>
+            <LoremIpsum
+              style={{
+                textShadowColor: 'red',
+                textShadowOffset: {width: 2, height: 2},
+                textShadowRadius: 2,
+              }}
+            />
+          </View>
+        </TestCase.Example>
+        <TestCase.Example itShould="show a nested text fragment with red shadow">
+          <View style={{alignSelf: 'flex-start'}}>
+            <Text>
+              Some longer text{' '}
+              <Text
+                style={{
+                  textShadowColor: 'red',
+                  textShadowOffset: {width: 2, height: 2},
+                  textShadowRadius: 2,
+                }}>
+                containing a frament
+              </Text>{' '}
+              with shadow
+            </Text>
+          </View>
+        </TestCase.Example>
+      </TestSuite>
       <TestCase.Example itShould="show text with different horizontal alignments">
         <Text style={{textAlign: 'left'}}>Left:</Text>
         <Text style={{fontSize: 8}}>{SAMPLE_PARAGRAPH_TEXT}</Text>
