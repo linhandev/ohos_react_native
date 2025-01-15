@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { StyleSheet } from '@react-native-oh/react-native-core/Libraries/StyleSheet/StyleSheet';
+import StyleSheet from '@react-native-oh/react-native-core/Libraries/StyleSheet/StyleSheet';
 import {
   BaseScrollViewDelegate,
   RenderScrollViewWithRefreshControlArgs,
@@ -28,10 +28,10 @@ export default class ScrollViewDelegate extends BaseScrollViewDelegate {
     const { outer, inner } = splitLayoutProps(flattenStyle(props.style));
     return React.cloneElement(
       refreshControl,
-      { style: StyleSheet.compose(baseStyle, outer) },
+      { style: (StyleSheet as any).compose(baseStyle, outer) },
       <NativeDirectionalScrollView
         {...props}
-        style={StyleSheet.compose(baseStyle, inner)}
+        style={(StyleSheet as any).compose(baseStyle, inner)}
         ref={scrollViewRef}
       >
         {contentContainer}

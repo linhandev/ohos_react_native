@@ -1,4 +1,4 @@
-import type { InputConfigT } from 'metro-config';
+import type { InputConfigT } from '@react-native/metro-config';
 
 interface HarmonyMetroConfigOptions {
   reactNativeHarmonyPackageName?: string;
