@@ -17,7 +17,7 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@react-native-oh/react-native-core": "*",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.1+rn.0.75.4",
     "react-native": "0.75.4"
   },
   "types": "types",
