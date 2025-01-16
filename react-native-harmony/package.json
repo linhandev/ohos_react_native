@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony",
-  "version": "0.75.4",
+  "version": "0.76.0",
   "description": "",
   "scripts": {
     "prepublishOnly": "npm run _verify",

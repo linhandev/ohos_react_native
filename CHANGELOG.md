@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.76.0
+ - updated react-native-core to 0.76 (react-native 0.76.5)
+
 ## v0.75.4
 - added support for `Text` components' `textShadow` style properties ([78590dbae2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/78590dbae2a1125d40d5787343610089a7b71176))
 - fixed incorrect values for Animated properties when `display` property of its parent changes to 'none' ([d3ec8b44dc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d3ec8b44dccde49e35b48fb08d9593a9f78ed682))
