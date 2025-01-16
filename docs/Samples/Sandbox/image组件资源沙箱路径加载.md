@@ -1,10 +1,10 @@
 ## 1 打包场景
 ### 1.1 打包路径
-假设为打包路径为根路径：/
-rn代码路径：/aaa/bbb/c.tsx
-图片1所在路径：/aaa/bbb/d.png rn使用写法：require('./d.png')
-图片2所在路径：/eee/f.png rn使用写法：require('../../eee/f.png')
-图片3所在路径：/aaa/ggg/h.png rn使用写法：require('../ggg/h.png')
+假设为打包路径为根路径：/  
+rn代码路径：/aaa/bbb/c.tsx  
+图片1所在路径：/aaa/bbb/d.png rn使用写法：require('./d.png')  
+图片2所在路径：/eee/f.png rn使用写法：require('../../eee/f.png')  
+图片3所在路径：/aaa/ggg/h.png rn使用写法：require('../ggg/h.png')  
 
 ### 1.2 图片路径前缀
 图片1生成的路径前缀：/aaa/bbb/
