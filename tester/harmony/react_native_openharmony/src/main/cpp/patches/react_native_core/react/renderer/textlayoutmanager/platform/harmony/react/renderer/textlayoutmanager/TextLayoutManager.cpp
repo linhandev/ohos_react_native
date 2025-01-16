@@ -44,9 +44,9 @@ TextMeasurement TextLayoutManager::measureCachedSpannableById(
 }
 
 LinesMeasurements TextLayoutManager::measureLines(
-    AttributedString attributedString,
-    ParagraphAttributes paragraphAttributes,
-    Size size) const {
+    const AttributedStringBox& attributedStringBox,
+    const ParagraphAttributes& paragraphAttributes,
+    const Size& size) const {
   return {};
 };
 
@@ -56,6 +56,13 @@ std::shared_ptr<void> TextLayoutManager::getHostTextStorage(
     LayoutConstraints layoutConstraints) const {
   return m_textLayoutManagerDelegate->getHostTextStorage(
       attributedString, paragraphAttributes, layoutConstraints);
+}
+
+Float TextLayoutManager::baseline(
+    const AttributedStringBox& /*attributedStringBox*/,
+    const ParagraphAttributes& /*paragraphAttributes*/,
+    const Size& /*size*/) const {
+  return 0;
 }
 
 } // namespace react

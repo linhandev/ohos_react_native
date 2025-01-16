@@ -104,4 +104,12 @@ export class AppearanceTurboModule extends AnyThreadTurboModule {
       this.ctx.uiAbilityContext.getApplicationContext().setColorMode(colorMode)
     }
   };
+
+  public addListener(eventName: string) {
+    // NOOP
+  }
+
+  public removeListeners(count: number) {
+    // NOOP
+  }
 }

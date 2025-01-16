@@ -43,8 +43,7 @@ class TextLayoutManagerDelegate {
 class TextLayoutManager {
  public:
   TextLayoutManager(const ContextContainer::Shared& contextContainer)
-      : m_measureCache(
-            kSimpleThreadSafeCacheSizeCap) {
+      : m_measureCache(kSimpleThreadSafeCacheSizeCap) {
     m_textLayoutManagerDelegate =
         contextContainer->at<std::shared_ptr<TextLayoutManagerDelegate>>(
             "textLayoutManagerDelegate");
@@ -74,15 +73,15 @@ class TextLayoutManager {
       int64_t cacheId,
       const ParagraphAttributes& paragraphAttributes,
       LayoutConstraints layoutConstraints) const;
-  
+
   /*
    * Measures lines of `attributedString` using native text rendering
    * infrastructure.
    */
   virtual LinesMeasurements measureLines(
-      AttributedString attributedString,
-      ParagraphAttributes paragraphAttributes,
-      Size size) const;
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
+      const Size& size) const;
 
   /*
    * Returns an opaque pointer to platform-specific TextLayoutManager.
@@ -90,10 +89,20 @@ class TextLayoutManager {
    */
   void* getNativeTextLayoutManager() const;
 
+  /*
+   * Calculates baseline of `attributedString` using native text rendering
+   * infrastructure.
+   */
+  virtual Float baseline(
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
+      const Size& size) const;
+
   /**
    * RNOH patch
-   * This method was preserved to make the RN update to RN@0.75.4 easier. The method was available in RN@0.72.5,
-   * but that's no longer the case in RN@0.75.4. RNOH should consider finding an alternative approach.
+   * This method was preserved to make the RN update to RN@0.75.4 easier. The
+   * method was available in RN@0.72.5, but that's no longer the case in
+   * RN@0.75.4. RNOH should consider finding an alternative approach.
    */
   std::shared_ptr<void> getHostTextStorage(
       AttributedString attributedString,

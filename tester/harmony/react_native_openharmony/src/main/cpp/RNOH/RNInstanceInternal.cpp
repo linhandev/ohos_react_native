@@ -115,7 +115,7 @@ void RNInstanceInternal::initialize() {
   };
 
   auto jsRuntime = facebook::react::HermesInstance::createJSRuntime(
-      std::move(reactConfig), nullptr, m_jsQueue);
+      std::move(reactConfig), nullptr, m_jsQueue, false);
 
   auto timerRegistry = std::make_unique<HarmonyTimerRegistry>(m_taskExecutor);
   auto rawTimerRegistry = timerRegistry.get();

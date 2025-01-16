@@ -136,6 +136,24 @@ export function ViewTest() {
           />
         </View>
       </TestCase.Example>
+      <TestCase.Example
+        skip={{android: false, harmony: "Elliptical corners aren't supported"}}
+        itShould="render a rectangle with corners rounded elliptically ">
+        <View style={styles.squaresContainer}>
+          <View
+            style={[
+              styles.square,
+              {
+                borderTopStartRadius: '25%',
+                borderTopEndRadius: '50%',
+                borderBottomEndRadius: '75%',
+                borderBottomStartRadius: '100%',
+                width: 300,
+              },
+            ]}
+          />
+        </View>
+      </TestCase.Example>
       <TestCase.Example itShould="render square with borders with different widths">
         <View style={{width: '100%', height: 100, backgroundColor: 'gray'}}>
           <View

@@ -12,6 +12,7 @@ import {
   Nullable,
   NativeModuleTypeAnnotation,
   UnionTypeAnnotationMemberType,
+  UnsafeAnyTypeAnnotation,
 } from '@react-native/codegen/lib/CodegenSchema';
 
 type StringEnumTypeAnnotation = {
@@ -43,7 +44,8 @@ export type TypeAnnotation =
   | ArrayTypeAnnotation
   | NativeModuleTypeAnnotation
   | Nullable<NativeModuleTypeAnnotation>
-  | ObjectTypeAnnotation<TypeAnnotation>;
+  | ObjectTypeAnnotation<TypeAnnotation>
+  | UnsafeAnyTypeAnnotation;
 
 export class TypeAnnotationToTS {
   constructor(private aliasPrefix: string = '') {}

@@ -18,7 +18,7 @@ import splitLayoutProps from '@react-native-oh/react-native-core/Libraries/Style
 
 export default class ScrollViewDelegate extends BaseScrollViewDelegate {
   override renderScrollViewWithRefreshControl({
-    NativeDirectionalScrollView,
+    NativeScrollView,
     contentContainer,
     props,
     refreshControl,
@@ -29,13 +29,13 @@ export default class ScrollViewDelegate extends BaseScrollViewDelegate {
     return React.cloneElement(
       refreshControl,
       { style: (StyleSheet as any).compose(baseStyle, outer) },
-      <NativeDirectionalScrollView
+      <NativeScrollView
         {...props}
         style={(StyleSheet as any).compose(baseStyle, inner)}
         ref={scrollViewRef}
       >
         {contentContainer}
-      </NativeDirectionalScrollView>
+      </NativeScrollView>
     );
   }
 }

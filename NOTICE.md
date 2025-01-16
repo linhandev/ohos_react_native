@@ -22,7 +22,7 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
    - **License Path 2**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core/LICENSE`
 
 ## 2. Notices
-Software: react-native v0.75.4
+Software: react-native v0.76.5
 
 Copyright notice:
 Copyright (c) Meta Platforms, Inc. and affiliates.

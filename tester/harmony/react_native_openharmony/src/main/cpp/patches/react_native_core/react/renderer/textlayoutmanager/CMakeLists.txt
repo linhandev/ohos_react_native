@@ -12,7 +12,6 @@ add_compile_options(
         -std=c++20
         -Wall
         -Wpedantic
-        -Wno-gnu-zero-variadic-macro-arguments
         -DLOG_TAG=\"Fabric\")
 
 file(GLOB react_render_textlayourmanager_SRC CONFIGURE_DEPENDS
@@ -20,7 +19,7 @@ file(GLOB react_render_textlayourmanager_SRC CONFIGURE_DEPENDS
         platform/harmony/react/renderer/textlayoutmanager/*.cpp) # RNOH patch
 
 add_library(react_render_textlayoutmanager
-        SHARED
+        OBJECT
         ${REACT_COMMON_DIR}/react/renderer/textlayoutmanager/TextMeasureCache.cpp # RNOH patch
         ${react_render_textlayourmanager_SRC})
 

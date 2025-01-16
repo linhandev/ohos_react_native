@@ -20,7 +20,9 @@ target_link_libraries(
          glog
          uv
          folly
-         react_common
+         reactnative
+         bridgelesshermes
+         hermes_inspector_modern
          )
 
 target_compile_options(rnoh_core PUBLIC ${folly_FLAGS})

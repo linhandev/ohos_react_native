@@ -17,6 +17,9 @@ AppearanceTurboModule::AppearanceTurboModule(
   methodMap_ = {
       ARK_METHOD_METADATA(getColorScheme, 0),
       ARK_METHOD_METADATA(setColorScheme, 1),
+      // noop
+      ARK_METHOD_METADATA(addListener, 1),
+      ARK_METHOD_METADATA(removeListeners, 1),
   };
 }
 

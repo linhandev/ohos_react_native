@@ -23,7 +23,7 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
      That comment is incorrect in context of this project.
 
 ## 2. Notices
-Software: react-native v0.75.4
+Software: react-native v0.76.5
 
 Copyright notice:
 Copyright (c) Meta Platforms, Inc. and affiliates.

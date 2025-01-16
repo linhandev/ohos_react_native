@@ -17,16 +17,16 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.1+rn.0.75.4",
-    "react-native": "0.75.4"
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.76.0+rn.0.76.5",
+    "react-native": "0.76.5"
   },
   "types": "types",
   "devDependencies": {
     "@react-native-community/cli": "^11.2.0",
     "@react-native-community/cli-types": "^11.2.0",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.75.1+rn.0.75.4",
-    "@react-native/metro-config": "0.75.4",
-    "@react-native/typescript-config": "0.75.4",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.76.0+rn.0.76.5",
+    "@react-native/metro-config": "0.76.5",
+    "@react-native/typescript-config": "0.76.5",
     "@types/fs-extra": "^11.0.1",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
@@ -54,13 +54,12 @@
     "./metro.config.d.ts"
   ],
   "dependencies": {
-    "@rnoh/react-native-harmony-cli": "^0.75.4",
+    "@rnoh/react-native-harmony-cli": "^0.76.0",
     "colors": "^1.4.0",
     "fs-extra": "^11.1.1",
     "invariant": "^2.2.4",
     "metro-runtime": "0.80.12",
-    "metro-source-map": "0.80.12",
-    "@react-native-oh/react-native-core": "*"
+    "metro-source-map": "0.80.12"
   },
   "harmony": {
     "autolinking": null

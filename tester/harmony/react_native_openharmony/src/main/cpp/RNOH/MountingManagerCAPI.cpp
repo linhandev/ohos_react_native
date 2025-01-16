@@ -24,8 +24,6 @@ std::string_view getMutationNameFromType(
       return "INSERT";
     case facebook::react::ShadowViewMutation::Remove:
       return "REMOVE";
-    case facebook::react::ShadowViewMutation::RemoveDeleteTree:
-      return "REMOVE_DELETE_TREE";
     default:
       return "UNKNOWN";
   }
@@ -230,10 +228,6 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       }
       break;
     }
-    case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
-      RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
-      break;
-    }
   }
 }
 
@@ -268,10 +262,6 @@ void MountingManagerCAPI::finalizeMutationUpdates(
             mutation.newChildShadowView.tag);
         break;
       }
-      case facebook::react::ShadowViewMutation::RemoveDeleteTree: {
-        RNOH_ASSERT_MSG(false, "RemoveDeleteTree mutations are not supported");
-        break;
-      }
     }
     if (componentInstance != nullptr) {
       componentInstancesToFinalize.insert(componentInstance);
@@ -304,9 +294,6 @@ auto MountingManagerCAPI::getArkTSMutations(MutationList const& mutations)
       case facebook::react::ShadowViewMutation::Remove:
         isArkTSMutation = !isCAPIComponent(mutation.parentShadowView) ||
             !isCAPIComponent(mutation.oldChildShadowView);
-        break;
-      case facebook::react::ShadowViewMutation::RemoveDeleteTree:
-        isArkTSMutation = false;
         break;
     }
     if (isArkTSMutation) {

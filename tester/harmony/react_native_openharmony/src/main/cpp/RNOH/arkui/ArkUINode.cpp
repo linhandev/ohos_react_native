@@ -299,11 +299,27 @@ ArkUINode& ArkUINode::setBorderColor(
 
 ArkUINode& ArkUINode::setBorderRadius(
     facebook::react::BorderRadii const& borderRadius) {
+  /* React Native introduced partial support for elliptical radii in version
+   * 0.76. https://github.com/facebook/react-native/pull/46009.
+   *
+   * The difference between OH and Android can be observed when a radius
+   * uses a "%" unit on a non-square view.*/
   ArkUI_NumberValue borderRadiusValue[] = {
-      static_cast<float>(borderRadius.topLeft),
-      static_cast<float>(borderRadius.topRight),
-      static_cast<float>(borderRadius.bottomLeft),
-      static_cast<float>(borderRadius.bottomRight)};
+      static_cast<float>(
+          (borderRadius.topLeft.horizontal + borderRadius.topLeft.vertical) /
+          2),
+      static_cast<float>(
+          (borderRadius.topRight.horizontal + borderRadius.topRight.vertical) /
+          2),
+      static_cast<float>(
+          (borderRadius.bottomLeft.horizontal +
+           borderRadius.bottomLeft.vertical) /
+          2),
+      static_cast<float>(
+          (borderRadius.bottomRight.horizontal +
+           borderRadius.bottomRight.vertical) /
+          2),
+  };
 
   ArkUI_AttributeItem borderRadiusItem = {
       borderRadiusValue, sizeof(borderRadiusValue) / sizeof(ArkUI_NumberValue)};

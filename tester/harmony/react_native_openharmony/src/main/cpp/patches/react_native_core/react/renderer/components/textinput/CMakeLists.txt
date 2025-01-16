@@ -16,7 +16,7 @@ add_compile_options(
         -DLOG_TAG=\"Fabric\")
 
 file(GLOB rrc_textinput_SRC CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-add_library(rrc_textinput SHARED ${rrc_textinput_SRC})
+add_library(rrc_textinput OBJECT ${rrc_textinput_SRC})
 
 target_include_directories(rrc_textinput
         PUBLIC

@@ -47,9 +47,6 @@ void MountingManagerArkTS::doMount(MutationList const& mutations) {
         shadowViewRegistry->setShadowView(newChild.tag, newChild);
         break;
       }
-      case react::ShadowViewMutation::RemoveDeleteTree: {
-        break;
-      }
     }
   }
 }
