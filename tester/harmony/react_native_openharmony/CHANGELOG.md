@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.72.52
+- add enum UI_INPUT_EVENT_SOURCE_TYPE_KEY,([c5625dbe0](https://gitee.com/openharmony-sig/ohos_react_native/commit/c5625dbe04cbca9ab3dda1ac1e7ceeae1a3d1d15))
+- fix: Fix the mouse click onPress responding twice on PC.,([6b628dfb4](https://gitee.com/openharmony-sig/ohos_react_native/commit/6b628dfb4c0966c0bcac4774ef453f091a7578d8))
 - fix large scrollEventThrottle ScrollView missing items on ends,([16c6ef3aa](https://gitee.com/openharmony-sig/ohos_react_native/commit/16c6ef3aab69502a506e4fd089a6e2491bcbebbc))
 -版本升到0.72.52,([5355c1015](https://gitee.com/openharmony-sig/ohos_react_native/commit/5355c1015c1b4412557ab6b9a186f60d914101d7))
 - fix text info null pointer cppcrash,([e8e869565](https://gitee.com/openharmony-sig/ohos_react_native/commit/e8e869565fd8d6bde9f42081e44adf919002a9df))
