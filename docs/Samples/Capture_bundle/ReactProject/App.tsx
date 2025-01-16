@@ -24,7 +24,7 @@ const App:React.FC = () => {
 
   const handleStandardError = () =>{
     try{
-      const error = new Error('Some error happened')；
+      const error = new Error('Some error happened');
       throw error;
     }catch(e){
       console.error('Caught an error:',e);
