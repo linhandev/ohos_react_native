@@ -8,7 +8,7 @@
     "start": "react-native start",
     "build": "node ./scripts/build.js",
     "reinstall:react_native_harmony": "npm uninstall react-native-harmony && npm run pack_react_native_harmony && npm run install:react_native_harmony",
-    "install:react_native_harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.75.3.tgz",
+    "install:react_native_harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.75.4.tgz",
     "pack_react_native_harmony": "cd ../react-native-harmony && npm i && npm run build:har && npm pack && cd ../tester-ecosystem",
     "harmony": "react-native run-harmony"
   },
@@ -21,7 +21,7 @@
     "react": "18.3.1",
     "react-native": "0.75.4",
     "react-native-flipper-performance-plugin": "^0.4.0",
-    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.75.3.tgz"
+    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.75.4.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.75.4
+- added support for `Text` components' `textShadow` style properties ([78590dbae2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/78590dbae2a1125d40d5787343610089a7b71176))
+- fixed incorrect values for Animated properties when `display` property of its parent changes to 'none' ([d3ec8b44dc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d3ec8b44dccde49e35b48fb08d9593a9f78ed682))
+- rnoh NPM package requires a specific version of react-native-core ([1af343dca2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1af343dca2185755f3ac91e58e3a0b622d43503f))
+
+
 ## v0.75.3
 - [breaking] removed ReactCommon directory — app developers are expected to specify `RNOH_REACT_COMMON_DIR` in their entry CMakeLists file ( `set(RNOH_REACT_COMMON_DIR "${NODE_MODULES}/@react-native-oh/react-native-core/ReactCommon")`) ([c79e9e23e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c79e9e23e4755d3f0f2822e89818620c1d0a072e))
 - [breaking] added a new peer dependency `react-native-core` ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
