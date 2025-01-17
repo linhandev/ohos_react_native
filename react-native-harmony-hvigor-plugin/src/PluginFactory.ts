@@ -1,49 +1,34 @@
-import { HvigorPlugin } from '@ohos/hvigor';
-import {
-  CliExecutor,
-  Logger,
-  PrebuiltTask,
-  RNOHHvigorPluginOptions,
-} from './PrebuiltTask';
-import fs from 'node:fs';
-import { execSync } from 'node:child_process';
+import { HvigorNode, HvigorPlugin } from "@ohos/hvigor";
+import { PrebuildTask } from "./PrebuildTask";
+import fs from "node:fs";
+import { Logger } from "./Logger";
+import { BuildTask } from "./BuildTask";
+import { CommandExecutor } from "./CommandExecutor";
+import { RNOHModulePluginOptions, RNOHProjectPluginOptions } from "./types";
 
-class CliExecutorImpl extends CliExecutor {
-  run(
-    command: string,
-    args?: Record<string, string | number | boolean>
-  ): string {
-    let commandWithArgs = command;
-    if (args) {
-      commandWithArgs += ' ' + this.stringifyCliArgs(args);
-    }
-    return execSync(commandWithArgs, { encoding: 'utf-8' });
-  }
-}
-
-class LoggerImpl implements Logger {
-  info(message: string): void {
-    console.info(message);
-  }
-
-  warn(message: string): void {
-    console.warn(message);
-  }
-
-  error(message: string): void {
-    console.error(message);
-  }
-}
-
-export function createRNOHHvigorPlugin(
-  options: RNOHHvigorPluginOptions
+export function createRNOHModulePlugin(
+  options: RNOHModulePluginOptions
 ): HvigorPlugin {
   return {
-    pluginId: 'rnoh',
+    pluginId: "rnohModulePlugin",
     apply: () => {
-      const cliExecutor = new CliExecutorImpl();
-      const logger = new LoggerImpl();
-      const task = new PrebuiltTask(cliExecutor, logger, fs);
+      const commandExecutor = new CommandExecutor();
+      const logger = new Logger();
+      const task = new PrebuildTask(commandExecutor, logger, fs);
+      task.run(options);
+    },
+  };
+}
+
+export function createRNOHProjectPlugin(
+  options?: RNOHProjectPluginOptions
+): HvigorPlugin {
+  return {
+    pluginId: "rnohProjectPlugin",
+    apply: (currentNode: HvigorNode) => {
+      const commandExecutor = new CommandExecutor();
+      const logger = new Logger();
+      const task = new BuildTask(commandExecutor, logger, fs, currentNode);
       task.run(options);
     },
   };

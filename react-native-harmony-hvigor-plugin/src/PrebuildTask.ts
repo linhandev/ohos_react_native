@@ -1,37 +1,15 @@
 import pathUtils from 'node:path';
-import type { IFs } from 'memfs';
-
-/**
- * @api
- */
-export type CodegenConfig = {
-  rnohModulePath: string;
-  cppOutputPath?: string;
-  projectRootPath?: string;
-  debug?: boolean;
-  noSafetyCheck?: boolean;
-};
+import { Logger } from './Logger';
+import {
+  CodegenConfig,
+  FS,
+  RNOHModulePluginError,
+  RNOHModulePluginOptions,
+  Subtask,
+} from './types';
+import { CommandExecutor } from './CommandExecutor';
 
 type ConfigArgs = CodegenConfig;
-
-/**
- * @api
- */
-export type MetroConfig = {
-  port?: number;
-};
-
-/**
- * @api
- */
-export type AutolinkingConfig = {
-  ohPackagePath?: string;
-  etsRNOHPackagesFactoryPath?: string;
-  cppRNOHPackagesFactoryPath?: string;
-  cmakeAutolinkPath?: string;
-  excludeNpmPackages?: string[];
-  includeNpmPackages?: string[];
-};
 
 type AutolinkingArgs = {
   harmonyProjectPath: string;
@@ -44,88 +22,25 @@ type AutolinkingArgs = {
   includeNpmPackages: string | undefined;
 };
 
-/**
- * @api
- */
-export type RNOHHvigorPluginOptions = {
-  nodeModulesPath?: string;
-  metro?: MetroConfig | null;
-  codegen: CodegenConfig | null;
-  autolinking?: AutolinkingConfig | null;
-};
-
-/**
- * @api
- */
-export class RNOHHvigorPluginError extends Error {}
-
-export class ValidationError extends RNOHHvigorPluginError {
-  constructor(optionName: keyof RNOHHvigorPluginOptions, msg: string) {
+export class ValidationError extends RNOHModulePluginError {
+  constructor(optionName: keyof RNOHModulePluginOptions, msg: string) {
     super(`ValidationError: ${optionName} — ${msg}`);
   }
 }
 
-export abstract class CliExecutor {
-  abstract run(
-    command: string,
-    args?: Record<string, string | number | boolean | undefined>
-  ): string;
-
-  protected stringifyCliArgs(
-    args: Record<string, string | number | boolean | undefined>
-  ): string {
-    return Object.entries(args)
-      .filter(([_, value]) => {
-        if (typeof value === 'boolean') {
-          return value;
-        }
-        return value !== undefined && value !== null;
-      })
-      .map(([key, value]) => {
-        if (value === undefined) return '';
-
-        const formattedKey = toKebabCase(key);
-
-        if (typeof value === 'boolean') {
-          return `--${formattedKey}`;
-        }
-
-        return `--${formattedKey} ${value}`;
-      })
-      .join(' ');
-  }
-}
-
-function toKebabCase(str: string): string {
-  return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
-}
-
-export interface Logger {
-  info(message: string): void;
-
-  warn(message: string): void;
-
-  error(message: string): void;
-}
-
-export type FS = Pick<IFs, 'existsSync'>;
-
-export class PrebuiltTask {
+export class PrebuildTask {
   constructor(
-    private cliExecutor: CliExecutor,
+    private commandExecutor: CommandExecutor,
     private logger: Logger,
     private fs: FS
   ) {}
 
-  run(options: RNOHHvigorPluginOptions) {
+  run(options: RNOHModulePluginOptions) {
     try {
       const input = this.prepareInput(options);
       this.runSubtasks(input);
     } catch (err) {
-      if (err instanceof RNOHHvigorPluginError) {
+      if (err instanceof RNOHModulePluginError) {
         this.logger.error(err.message);
         throw err;
       }
@@ -133,7 +48,7 @@ export class PrebuiltTask {
     }
   }
 
-  private prepareInput(options: RNOHHvigorPluginOptions) {
+  private prepareInput(options: RNOHModulePluginOptions) {
     const nodeModulesPath =
       options.nodeModulesPath ??
       pathUtils.join(process.cwd(), '../node_modules');
@@ -207,15 +122,19 @@ export class PrebuiltTask {
   }) {
     (
       [
-        new MetroPortForwardSubtask(this.cliExecutor, this.logger, input.metro),
+        new MetroPortForwardSubtask(
+          this.commandExecutor,
+          this.logger,
+          input.metro
+        ),
         new CodegenSubtask(
-          this.cliExecutor,
+          this.commandExecutor,
           this.logger,
           input.nodeModulesPath,
           input.codegenArgs
         ),
         new AutolinkingSubtask(
-          this.cliExecutor,
+          this.commandExecutor,
           this.logger,
           input.autolinkingArgs
         ),
@@ -224,14 +143,10 @@ export class PrebuiltTask {
   }
 }
 
-interface Subtask {
-  run(): void;
-}
-
 type MetroPortForwardSubtaskInput = { port: any } | null;
 class MetroPortForwardSubtask implements Subtask {
   constructor(
-    private cliExecutor: CliExecutor,
+    private commandExecutor: CommandExecutor,
     private logger: Logger,
     private input: MetroPortForwardSubtaskInput
   ) {}
@@ -246,7 +161,7 @@ class MetroPortForwardSubtask implements Subtask {
       this.logger.error('DEVECO_SDK_HOME is undefined');
       return;
     }
-    const result = this.cliExecutor.run(
+    const result = this.commandExecutor.run(
       `${pathUtils.join(
         DEVECO_SDK_HOME,
         'default',
@@ -263,7 +178,7 @@ type CodegenSubtaskInput = ConfigArgs | null;
 
 class CodegenSubtask implements Subtask {
   constructor(
-    private cliExecutor: CliExecutor,
+    private commandExecutor: CommandExecutor,
     private logger: Logger,
     private nodeModulesPath: string,
     private input: CodegenSubtaskInput
@@ -274,7 +189,7 @@ class CodegenSubtask implements Subtask {
       this.logger.warn('[codegen] skipped');
       return;
     }
-    const result = this.cliExecutor.run(
+    const result = this.commandExecutor.run(
       pathUtils.join(this.nodeModulesPath, '.bin', 'react-native') +
         ' codegen-harmony',
       this.input
@@ -286,7 +201,7 @@ class CodegenSubtask implements Subtask {
 type AutolinkingSubtaskInput = AutolinkingArgs | null;
 class AutolinkingSubtask {
   constructor(
-    private cliExecutor: CliExecutor,
+    private commandExecutor: CommandExecutor,
     private logger: Logger,
     private input: AutolinkingSubtaskInput
   ) {}
@@ -296,7 +211,7 @@ class AutolinkingSubtask {
       this.logger.warn(`[autolink] skipped`);
       return;
     }
-    const result = this.cliExecutor.run(
+    const result = this.commandExecutor.run(
       pathUtils.join(this.input.nodeModulesPath, '.bin', 'react-native') +
         ' link-harmony',
       this.input

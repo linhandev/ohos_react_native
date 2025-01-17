@@ -1,27 +1,27 @@
-import { PrebuiltTask, ValidationError } from '../src/PrebuiltTask';
+import { PrebuildTask, ValidationError } from '../src/PrebuildTask';
 import { memfs, NestedDirectoryJSON } from 'memfs';
 import pathUtils from 'node:path';
-import { FakeCliExecutor, FakeLogger } from './__fixtures__';
+import { StubCommandExecutor, FakeLogger } from './__fixtures__';
 
-function createPreBuiltTask(options: {
+function createPreBuildTask(options: {
   onCodegenRun?: (command: string) => string;
   fsSetup?: NestedDirectoryJSON;
 }) {
-  const fakeCliExecutor = new FakeCliExecutor(
+  const fakeCliExecutor = new StubCommandExecutor(
     options.onCodegenRun ?? (() => '')
   );
   const fakeLogger = new FakeLogger();
 
-  const preBuiltTask = new PrebuiltTask(
+  const preBuildTask = new PrebuildTask(
     fakeCliExecutor,
     fakeLogger,
     memfs(options.fsSetup, './').fs
   );
-  return { preBuiltTask, fakeCliExecutor, fakeLogger };
+  return { preBuildTask, fakeCliExecutor, fakeLogger };
 }
 
 it('should handle port forwarding, call codegen-harmony, and log progress', () => {
-  const { preBuiltTask, fakeCliExecutor, fakeLogger } = createPreBuiltTask({
+  const { preBuildTask, fakeCliExecutor, fakeLogger } = createPreBuildTask({
     onCodegenRun: () => '__GENERATED_FILE__',
     fsSetup: {
       node_modules: {
@@ -32,7 +32,7 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
     },
   });
 
-  preBuiltTask.run({
+  preBuildTask.run({
     nodeModulesPath: './node_modules',
     codegen: { rnohModulePath: '_' },
   });
@@ -52,10 +52,10 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
 });
 
 it("should fail if node_modules dir doesn't exist", () => {
-  const { preBuiltTask } = createPreBuiltTask({});
+  const { preBuildTask } = createPreBuildTask({});
 
   expect(() => {
-    preBuiltTask.run({
+    preBuildTask.run({
       nodeModulesPath: './NOT_EXISTING_DIR',
       codegen: { rnohModulePath: '_' },
     });
@@ -63,7 +63,7 @@ it("should fail if node_modules dir doesn't exist", () => {
 });
 
 it('should allow skipping codegen process', () => {
-  const { preBuiltTask, fakeCliExecutor, fakeLogger } = createPreBuiltTask({
+  const { preBuildTask, fakeCliExecutor, fakeLogger } = createPreBuildTask({
     fsSetup: {
       node_modules: {
         '.bin': {
@@ -73,7 +73,7 @@ it('should allow skipping codegen process', () => {
     },
   });
 
-  preBuiltTask.run({
+  preBuildTask.run({
     nodeModulesPath: './node_modules',
     codegen: null,
   });
@@ -89,7 +89,7 @@ it('should allow skipping codegen process', () => {
 });
 
 it('should allow skipping Metro setup', () => {
-  const { preBuiltTask, fakeCliExecutor, fakeLogger } = createPreBuiltTask({
+  const { preBuildTask, fakeCliExecutor, fakeLogger } = createPreBuildTask({
     fsSetup: {
       node_modules: {
         '.bin': {
@@ -99,7 +99,7 @@ it('should allow skipping Metro setup', () => {
     },
   });
 
-  preBuiltTask.run({
+  preBuildTask.run({
     nodeModulesPath: './node_modules',
     metro: null,
     codegen: null,
@@ -114,7 +114,7 @@ it('should allow skipping Metro setup', () => {
 });
 
 it('should call autolinking', () => {
-  const { preBuiltTask, fakeCliExecutor } = createPreBuiltTask({
+  const { preBuildTask, fakeCliExecutor } = createPreBuildTask({
     fsSetup: {
       node_modules: {
         '.bin': {
@@ -124,7 +124,7 @@ it('should call autolinking', () => {
     },
   });
 
-  preBuiltTask.run({
+  preBuildTask.run({
     nodeModulesPath: './node_modules',
     codegen: null,
     metro: null,
@@ -138,7 +138,7 @@ it('should call autolinking', () => {
 });
 
 it('should skip autolinking', () => {
-  const { preBuiltTask, fakeCliExecutor } = createPreBuiltTask({
+  const { preBuildTask, fakeCliExecutor } = createPreBuildTask({
     fsSetup: {
       node_modules: {
         '.bin': {
@@ -148,7 +148,7 @@ it('should skip autolinking', () => {
     },
   });
 
-  preBuiltTask.run({
+  preBuildTask.run({
     nodeModulesPath: './node_modules',
     codegen: null,
     metro: null,

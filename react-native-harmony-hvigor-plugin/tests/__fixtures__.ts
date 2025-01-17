@@ -1,6 +1,7 @@
-import { CliExecutor, Logger } from '../src/PrebuiltTask';
+import { CommandExecutor } from "../src/CommandExecutor";
+import { Logger } from "../src/Logger";
 
-export class FakeCliExecutor extends CliExecutor {
+export class StubCommandExecutor extends CommandExecutor {
   private commands: string[] = [];
 
   constructor(private onRun: (command: string) => string) {
