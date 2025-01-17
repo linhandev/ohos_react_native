@@ -39,8 +39,6 @@
 | --- | --- | --- | ---|
 | ![HomePage](./firures_en/environment-setup-homepage.png)| ![Goods](./firures_en/environment-setup-goods.png)| ![Test](./firures_en/environment-setup-test.png)| ![Detail](./firures_en/environment-setup-detail.png)|
 
-| ![HomePage](./figures/environment-setup-homepage.png)| ![Goods](./figures/environment-setup-goods.png)| ![Test](./figures/environment-setup-test.png)| ![Detail](./figures/environment-setup-detail.png)|
-
 ### React Native Project Structure
 
 ​ The React Native service code of an empty project is stored in the `SampleProject/MainProject/src/bundles` directory, including the `HomePage`, `Goods`, `Detail`, `basic`, and `test` directories.
