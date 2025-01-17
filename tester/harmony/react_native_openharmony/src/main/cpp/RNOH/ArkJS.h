@@ -19,6 +19,7 @@
 #include <array>
 #include <functional>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
 #include "RNOH/RNOHError.h"
@@ -65,6 +66,8 @@ class ArkJS {
   napi_value createDouble(double value);
 
   napi_value createString(std::string const& str);
+  napi_value createString(std::string_view str);
+  napi_value createString(char const* str, size_t length);
 
   napi_ref createReference(napi_value value);
 

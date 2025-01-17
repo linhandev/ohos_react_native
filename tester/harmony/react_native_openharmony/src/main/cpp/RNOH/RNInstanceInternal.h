@@ -22,6 +22,7 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOH/UITicker.h"
+#include "jsinspector-modern/HostTarget.h"
 
 namespace rnoh {
 
@@ -222,5 +223,10 @@ class RNInstanceInternal
       nullptr;
   FontRegistry::Shared m_fontRegistry;
   std::string m_bundlePath;
+  std::unique_ptr<facebook::react::jsinspector_modern::HostTargetDelegate>
+      m_inspectorHostDelegate;
+  std::shared_ptr<facebook::react::jsinspector_modern::HostTarget>
+      m_inspectorHostTarget;
+  std::optional<size_t> m_inspectorPageId;
 };
 } // namespace rnoh

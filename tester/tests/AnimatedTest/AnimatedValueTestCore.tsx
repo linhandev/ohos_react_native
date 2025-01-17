@@ -167,7 +167,7 @@ function ToggleDisplayExample() {
     <View style={{width: '100%'}}>
       <View style={{width: '100%', display: visible ? 'flex' : 'none'}}>
         <ToggleDisplayExampleInner />
-      </View>{' '}
+      </View>
       <Button label="toggle display" onPress={() => setVisible(v => !v)} />
     </View>
   );

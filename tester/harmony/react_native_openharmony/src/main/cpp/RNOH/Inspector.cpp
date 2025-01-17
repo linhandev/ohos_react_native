@@ -8,152 +8,201 @@
 #include "Inspector.h"
 
 #include <glog/logging.h>
+#include <jsinspector-modern/InspectorPackagerConnection.h>
+#include <chrono>
 #include <memory>
 #include <vector>
 #include "ArkJS.h"
 #include "TaskExecutor/NapiTaskRunner.h"
+#include "jsinspector-modern/WebSocketInterfaces.h"
 
 namespace rnoh {
 
 static std::unique_ptr<NapiTaskRunner> mainThreadTaskRunner = nullptr;
 
-// Constructor must always be called on the main thread
-RemoteConnection::RemoteConnection(napi_env env, napi_value connection)
-    : m_env(env), m_connectionRef(ArkJS(env).createNapiRef(connection)) {}
+namespace jsinspector_modern = facebook::react::jsinspector_modern;
 
-RemoteConnection::~RemoteConnection() {
-  mainThreadTaskRunner->runAsyncTask([ref = std::move(m_connectionRef)] {});
-}
+// wraps the ArkTSWebsocket received from ArkTS and
+// implements the CPP interface
+class ArkTSWebsocket : public jsinspector_modern::IWebSocket {
+ public:
+  ArkTSWebsocket(const ArkTSWebsocket&) = delete;
+  ArkTSWebsocket(ArkTSWebsocket&&) = default;
+  ArkTSWebsocket& operator=(const ArkTSWebsocket&) = delete;
+  ArkTSWebsocket& operator=(ArkTSWebsocket&&) = default;
 
-void RemoteConnection::onMessage(std::string message) {
-  mainThreadTaskRunner->runAsyncTask([env = this->m_env,
-                                      ref = this->m_connectionRef,
-                                      message = std::move(message)] {
-    ArkJS arkJS(env);
-    arkJS.getObject(ref).call<1>("onMessage", {arkJS.createString(message)});
-  });
-}
+  ArkTSWebsocket(napi_env env, NapiRef ref) : m_env(env), m_thisRef(ref) {}
 
-void RemoteConnection::onDisconnect() {
-  mainThreadTaskRunner->runAsyncTask(
-      [env = this->m_env, ref = this->m_connectionRef] {
-        ArkJS arkJS(env);
-        arkJS.getObject(ref).call<0>("onDisconnect", {});
-      });
-}
+  void send(std::string_view message) override {
+    RNOH_ASSERT(
+        mainThreadTaskRunner && mainThreadTaskRunner->isOnCurrentThread());
+    ArkJS arkJS(m_env);
+    auto websocketObject = arkJS.getObject(m_thisRef);
+    auto sendImpl = websocketObject.getProperty("send");
+    std::vector<napi_value> args{arkJS.createString(message)};
+    arkJS.call(sendImpl, args, arkJS.getReferenceValue(m_thisRef));
+  }
 
-static napi_value wrapLocalConnection(
-    napi_env env,
-    std::unique_ptr<facebook::react::jsinspector_modern::ILocalConnection>
-        localConnection) {
-  ArkJS arkJS(env);
-  auto connectionRawPtr = localConnection.release();
+ private:
+  napi_env m_env;
+  NapiRef m_thisRef;
+};
 
-  try {
-    auto sendMessage = arkJS.createFunction(
-        "sendMessage",
-        [](auto env, auto cbInfo) {
-          ArkJS arkJS(env);
-          facebook::react::jsinspector_modern::ILocalConnection* connection;
-          size_t argc = 1;
-          napi_value args[1];
-          napi_get_cb_info(
-              env, cbInfo, &argc, args, nullptr, (void**)&connection);
-          if (argc < 1) {
-            LOG(ERROR) << "sendMessage requires 1 argument";
-            return arkJS.getUndefined();
-          }
-          auto message = arkJS.getString(args[0]);
-          connection->sendMessage(message);
-          return arkJS.getUndefined();
-        },
-        connectionRawPtr);
+// wraps the InspectorPackagerConnectionDelegate received from ArkTS and
+// implements the CPP interface
+class ArkTSConnectionDelegate
+    : public jsinspector_modern::InspectorPackagerConnectionDelegate {
+ public:
+  ArkTSConnectionDelegate(const ArkTSConnectionDelegate&) = delete;
+  ArkTSConnectionDelegate(ArkTSConnectionDelegate&&) = delete;
+  ArkTSConnectionDelegate& operator=(const ArkTSConnectionDelegate&) = delete;
+  ArkTSConnectionDelegate& operator=(ArkTSConnectionDelegate&&) = delete;
 
-    auto disconnect = arkJS.createFunction(
-        "disconnect",
-        [](auto env, auto cbInfo) {
-          facebook::react::jsinspector_modern::ILocalConnection* connection;
-          napi_get_cb_info(
-              env, cbInfo, 0, nullptr, nullptr, (void**)&connection);
-          connection->disconnect();
-          delete connection;
-          return ArkJS(env).getUndefined();
-        },
-        connectionRawPtr);
+  ArkTSConnectionDelegate(napi_env env, NapiRef ref)
+      : m_env(env), m_thisRef(ref) {}
 
+  napi_value wrapWebSocketDelegate(
+      std::weak_ptr<jsinspector_modern::IWebSocketDelegate> weakDelegate) {
+    ArkJS arkJS(m_env);
     return arkJS.createObjectBuilder()
-        .addProperty("sendMessage", sendMessage)
-        .addProperty("disconnect", disconnect)
+        .addProperty(
+            "didFailWithError",
+            arkJS.createCallback(
+                [env = m_env, weakDelegate](std::vector<folly::dynamic> args) {
+                  RNOH_ASSERT(args.size() == 2);
+                  auto delegate = weakDelegate.lock();
+                  if (!delegate) {
+                    return ArkJS(env).getUndefined();
+                  }
+                  auto posixCode = args[0].isNull()
+                      ? std::optional<int>{std::nullopt}
+                      : args[0].getInt();
+                  auto error = args[1].getString();
+
+                  delegate->didFailWithError(posixCode, std::move(error));
+                  return ArkJS(env).getUndefined();
+                }))
+        .addProperty(
+            "didReceiveMessage",
+            arkJS.createCallback(
+                [env = m_env, weakDelegate](std::vector<folly::dynamic> args) {
+                  RNOH_ASSERT(args.size() == 1);
+                  auto delegate = weakDelegate.lock();
+                  if (!delegate) {
+                    return ArkJS(env).getUndefined();
+                  }
+                  auto error = args[0].getString();
+
+                  delegate->didReceiveMessage(error);
+                  return ArkJS(env).getUndefined();
+                }))
+        .addProperty(
+            "didClose",
+            arkJS.createCallback(
+                [env = m_env, weakDelegate](std::vector<folly::dynamic>) {
+                  auto delegate = weakDelegate.lock();
+                  if (!delegate) {
+                    return ArkJS(env).getUndefined();
+                  }
+
+                  delegate->didClose();
+                  return ArkJS(env).getUndefined();
+                }))
         .build();
-  } catch (std::exception& e) {
-    LOG(ERROR) << "Failed to wrap local connection: " << e.what();
-    delete connectionRawPtr;
-    return arkJS.getUndefined();
   }
-}
 
-static napi_value connect(napi_env env, napi_callback_info info) {
+  std::unique_ptr<jsinspector_modern::IWebSocket> connectWebSocket(
+      std::string const& url,
+      std::weak_ptr<jsinspector_modern::IWebSocketDelegate> weakDelegate)
+      override {
+    RNOH_ASSERT(
+        mainThreadTaskRunner && mainThreadTaskRunner->isOnCurrentThread());
+    ArkJS arkJS(m_env);
+
+    auto wrappedDelegate = wrapWebSocketDelegate(weakDelegate);
+    auto delegateObject = arkJS.getObject(m_thisRef);
+
+    // call "connectWebSocket" on the ArkTS object
+    auto connectWebSocketImpl = delegateObject.getProperty("connectWebSocket");
+    std::vector<napi_value> args{arkJS.createString(url), wrappedDelegate};
+    auto result = arkJS.call(
+        connectWebSocketImpl, args, arkJS.getReferenceValue(m_thisRef));
+    auto websocketRef = arkJS.createNapiRef(result);
+
+    return std::unique_ptr<jsinspector_modern::IWebSocket>(
+        new ArkTSWebsocket(m_env, std::move(websocketRef)));
+  }
+
+  void scheduleCallback(
+      std::function<void(void)> callback,
+      std::chrono::milliseconds delayMs) override {
+    RNOH_ASSERT(mainThreadTaskRunner != nullptr);
+    mainThreadTaskRunner->runAsyncTask(
+        [callback = std::move(callback), delayMs]() mutable {
+          mainThreadTaskRunner->runDelayedTask(
+              std::move(callback), delayMs.count());
+        });
+  }
+
+ private:
+  napi_env m_env;
+  NapiRef m_thisRef;
+};
+
+static napi_value wrapInspectorPackagerConnection(
+    napi_env env,
+    std::shared_ptr<jsinspector_modern::InspectorPackagerConnection>
+        packagerConnection) {
   ArkJS arkJS(env);
-
-  size_t argc = 2;
-  napi_value args[2];
-  napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
-  if (argc < 2) {
-    LOG(ERROR) << "connect requires 2 arguments";
-    return arkJS.getUndefined();
-  }
-  auto pageId = static_cast<int>(arkJS.getDouble(args[0]));
-  auto remoteConnection = std::make_unique<RemoteConnection>(env, args[1]);
-  auto localConnection =
-      ::facebook::react::jsinspector_modern::getInspectorInstance().connect(
-          pageId, std::move(remoteConnection));
-  return wrapLocalConnection(env, std::move(localConnection));
+  return arkJS.createObjectBuilder()
+      .addProperty(
+          "isConnected", arkJS.createCallback([env, packagerConnection](auto) {
+            return ArkJS(env).createBoolean(packagerConnection->isConnected());
+          }))
+      .addProperty(
+          "connect", arkJS.createCallback([env, packagerConnection](auto) {
+            packagerConnection->connect();
+            return ArkJS(env).getUndefined();
+          }))
+      .addProperty(
+          "closeQuietly", arkJS.createCallback([env, packagerConnection](auto) {
+            packagerConnection->closeQuietly();
+            return ArkJS(env).getUndefined();
+          }))
+      .addProperty(
+          "sendEventToAllConnections",
+          arkJS.createCallback(
+              [env, packagerConnection](std::vector<folly::dynamic> args) {
+                RNOH_ASSERT(args.size() == 1);
+                auto event = args[0].getString();
+                packagerConnection->sendEventToAllConnections(std::move(event));
+                return ArkJS(env).getUndefined();
+              }))
+      .build();
 }
 
-static napi_value getPages(napi_env env, napi_callback_info info) {
-  ArkJS arkJS(env);
-  auto pages =
-      ::facebook::react::jsinspector_modern::getInspectorInstance().getPages();
-  std::vector<napi_value> pageObjects(pages.size());
-  for (size_t i = 0; i < pages.size(); i++) {
-    auto page = pages[i];
-    auto pageObject = arkJS.createObjectBuilder()
-                          .addProperty("id", arkJS.createDouble(page.id))
-                          .addProperty("title", arkJS.createString(page.title))
-                          .addProperty("vm", arkJS.createString(page.vm))
-                          .build();
-    pageObjects[i] = pageObject;
-  }
-  return arkJS.createArray(pageObjects);
-}
-
-napi_value getInspectorWrapper(napi_env env, napi_callback_info info) {
+napi_value getInspectorPackagerConnection(
+    napi_env env,
+    napi_callback_info info) {
   if (mainThreadTaskRunner == nullptr) {
     mainThreadTaskRunner =
         std::make_unique<NapiTaskRunner>("RNOH_MAIN_INSPECTOR", env);
   }
 
   ArkJS arkJS(env);
-  napi_property_descriptor desc[] = {
-      {"getPages",
-       nullptr,
-       getPages,
-       nullptr,
-       nullptr,
-       nullptr,
-       napi_default,
-       nullptr},
-      {"connect",
-       nullptr,
-       connect,
-       nullptr,
-       nullptr,
-       nullptr,
-       napi_default,
-       nullptr}};
-  auto obj = arkJS.createObjectBuilder().build();
-  napi_define_properties(env, obj, sizeof(desc) / sizeof(desc[0]), desc);
-  return obj;
+  auto args = arkJS.getCallbackArgs(info);
+  RNOH_ASSERT(args.size() == 3);
+  auto url = arkJS.getString(args[0]);
+  auto app = arkJS.getString(args[1]);
+  auto delegateRef = arkJS.createNapiRef(args[2]);
+  auto delegate =
+      std::make_unique<ArkTSConnectionDelegate>(env, std::move(delegateRef));
+
+  auto packagerConnection =
+      std::make_shared<jsinspector_modern::InspectorPackagerConnection>(
+          url, app, std::move(delegate));
+
+  return wrapInspectorPackagerConnection(env, packagerConnection);
 }
 
 } // namespace rnoh

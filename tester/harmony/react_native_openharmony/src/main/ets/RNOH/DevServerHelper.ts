@@ -7,9 +7,10 @@
 
 import url from '@ohos.url'
 import http from '@ohos.net.http';
-import { InspectorPackagerConnection } from './InspectorPackagerConnection';
+import { getInspectorPackagerConnection } from './InspectorPackagerConnection';
 import { RNOHLogger } from './RNOHLogger';
-import { InspectorInstance } from './types';
+import { InspectorPackagerConnection,  } from './types';
+import { NapiBridge } from './NapiBridge';
 
 function getServerHost(bundleUrlString: string): string {
   const bundleUrl = url.URL.parseURL(bundleUrlString);
@@ -35,12 +36,12 @@ export class DevServerHelper {
   static DEBUGGER_MSG_DISABLE = "{ \"id\":1,\"method\":\"Debugger.disable\" }";
   static connectionByInspectorUrl = new Map<string, InspectorPackagerConnection>();
 
-  public static connectToDevServer(bundleUrl: string, logger: RNOHLogger, inspectorInstance: InspectorInstance) {
+  public static connectToDevServer(bundleUrl: string, appName: string, logger: RNOHLogger, napiBridge: NapiBridge) {
     const inspectorUrl = getInspectorDeviceUrl(bundleUrl);
     let connection = DevServerHelper.connectionByInspectorUrl.get(inspectorUrl);
 
     if (!connection || !connection.isConnected()) {
-      connection = new InspectorPackagerConnection(inspectorUrl, logger, inspectorInstance);
+      connection = getInspectorPackagerConnection(napiBridge, inspectorUrl, appName, logger);
       DevServerHelper.connectionByInspectorUrl.set(inspectorUrl, connection);
       connection.connect();
     }
@@ -66,8 +67,7 @@ export class DevServerHelper {
       });
   }
 
-  public static disableDebugger()
-  {
+  public static disableDebugger() {
     DevServerHelper.connectionByInspectorUrl.forEach(connection => {
       connection.sendEventToAllConnections(DevServerHelper.DEBUGGER_MSG_DISABLE);
     })

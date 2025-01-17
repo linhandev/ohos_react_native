@@ -56,27 +56,28 @@ export type PhysicalPixels = {
   densityDpi: number,
 }
 
-export type InspectorPageId = number
+// interfaces defined in "jsinspector-modern/WebSocketInterfaces.h"
+export interface InspectorWebsocketDelegate {
+  didFailWithError(posixCode: number | null, error: string): void
 
-export interface InspectorPage {
-  id: InspectorPageId,
-  title: string,
-  vm: string
+  didReceiveMessage(message: string): void
+
+  didClose(): void
 }
 
-// RemoteConnection allows the VM to send debugger messages to the debugger.
-export interface InspectorRemoteConnection {
-  onMessage(message: string)
-  onDisconnect()
+export interface InspectorWebsocket {
+  send(message: string): void
 }
 
-// LocalConnection allows the debugger to send debugger messages to the VM.
-export interface InspectorLocalConnection {
-  sendMessage(payload: unknown)
-  disconnect()
+// interfaces defined in "jsinspector-modern/InspectorPackagerConnection.h"
+export interface InspectorPackagerConnection {
+  isConnected(): boolean,
+  connect(): void,
+  closeQuietly(): void,
+  sendEventToAllConnections(event: string): void,
 }
 
-export interface InspectorInstance {
-  getPages(): InspectorPage[]
-  connect(pageId: InspectorPageId, remote: InspectorRemoteConnection): InspectorLocalConnection
+export interface InspectorPackagerConnectionDelegate {
+  connectWebSocket(url: string, websocketDelegate: InspectorWebsocketDelegate): InspectorWebsocket
+  // void scheduleCallback implemented in CPP
 }

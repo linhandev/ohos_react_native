@@ -8,6 +8,8 @@
 #include "RNInstanceInternal.h"
 
 #include <cxxreact/JSBundleType.h>
+#include <jsinspector-modern/HostTarget.h>
+#include <jsinspector-modern/InspectorFlags.h>
 #include <jsireact/JSIExecutor.h>
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
@@ -30,6 +32,40 @@
 namespace rnoh {
 
 using namespace facebook;
+
+class JSInspectorHostTargetDelegate
+    : public react::jsinspector_modern::HostTargetDelegate {
+ public:
+  JSInspectorHostTargetDelegate() = default;
+  JSInspectorHostTargetDelegate(const JSInspectorHostTargetDelegate&) = delete;
+  JSInspectorHostTargetDelegate(JSInspectorHostTargetDelegate&&) = delete;
+  JSInspectorHostTargetDelegate& operator=(
+      const JSInspectorHostTargetDelegate&) = delete;
+  JSInspectorHostTargetDelegate& operator=(JSInspectorHostTargetDelegate&&) =
+      delete;
+  ~JSInspectorHostTargetDelegate() noexcept override {}
+
+  jsinspector_modern::HostTargetMetadata getMetadata() override {
+    // TODO: fill out the remaining metadata fields
+    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
+    return {.integrationName = "HarmonyOS Bridgeless"};
+  }
+
+  void onReload(const PageReloadRequest& request) override {
+    (void)request;
+    // TODO: implement reloading on request
+    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
+    DLOG(INFO) << "onReload request";
+  }
+
+  void onSetPausedInDebuggerMessage(
+      const OverlaySetPausedInDebuggerMessageRequest& request) override {
+    // TODO: implement "paused in debugger" dialog
+    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
+    DLOG(INFO) << "onSetPausedInDebuggerMessage request with message: "
+               << request.message.value_or("<no message>");
+  }
+};
 
 TaskExecutor::Shared RNInstanceInternal::getTaskExecutor() {
   return m_taskExecutor;
@@ -102,7 +138,7 @@ void RNInstanceInternal::start() {
 void RNInstanceInternal::initialize() {
   DLOG(INFO) << "RNInstanceInternal::initialize";
   auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
-  m_contextContainer->insert("ReactNativeConfig", std::move(reactConfig));
+  m_contextContainer->insert("ReactNativeConfig", reactConfig);
 
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
@@ -117,13 +153,41 @@ void RNInstanceInternal::initialize() {
   auto jsRuntime = facebook::react::HermesInstance::createJSRuntime(
       std::move(reactConfig), nullptr, m_jsQueue, false);
 
+  // start the inspector
+  auto& inspectorFlags = jsinspector_modern::InspectorFlags::getInstance();
+  if (inspectorFlags.getFuseboxEnabled() && !m_inspectorPageId.has_value()) {
+    m_inspectorHostTarget = react::jsinspector_modern::HostTarget::create(
+        *m_inspectorHostDelegate, [taskExecutor = m_taskExecutor](auto fn) {
+          taskExecutor->runTask(TaskThread::MAIN, std::move(fn));
+        });
+    m_inspectorPageId =
+        react::jsinspector_modern::getInspectorInstance().addPage(
+            "React Native Bridgeless (Experimental)",
+            "",
+            [weakSelf = weak_from_this()](auto remote)
+                -> std::unique_ptr<
+                    react::jsinspector_modern::ILocalConnection> {
+              auto self = std::dynamic_pointer_cast<RNInstanceInternal>(
+                  weakSelf.lock());
+              if (!self) {
+                return nullptr;
+              }
+              return self->m_inspectorHostTarget->connect(std::move(remote));
+            },
+            {.nativePageReloads = true, .prefersFuseboxFrontend = true});
+  }
+
   auto timerRegistry = std::make_unique<HarmonyTimerRegistry>(m_taskExecutor);
   auto rawTimerRegistry = timerRegistry.get();
   auto timerManager =
       std::make_shared<facebook::react::TimerManager>(std::move(timerRegistry));
   rawTimerRegistry->setTimerManager(timerManager);
   m_reactInstance = std::make_shared<facebook::react::ReactInstance>(
-      std::move(jsRuntime), m_jsQueue, timerManager, onJSError);
+      std::move(jsRuntime),
+      m_jsQueue,
+      timerManager,
+      onJSError,
+      m_inspectorHostTarget.get());
   m_reactInstance->initializeRuntime(
       {},
       // runtime installer, which is run when the runtime
@@ -415,7 +479,9 @@ RNInstanceInternal::RNInstanceInternal(
       m_arkTSChannel(std::move(arkTSChannel)),
       m_arkTSBridge(std::move(arkTSBridge)),
       m_componentInstancePreallocationRequestQueue(
-          std::move(componentInstancePreallocationRequestQueue)) {
+          std::move(componentInstancePreallocationRequestQueue)),
+      m_inspectorHostDelegate(
+          std::make_unique<JSInspectorHostTargetDelegate>()) {
   m_fontRegistry = std::move(fontRegistry);
 }
 

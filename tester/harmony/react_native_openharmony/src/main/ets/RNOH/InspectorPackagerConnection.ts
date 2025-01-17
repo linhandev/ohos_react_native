@@ -8,47 +8,35 @@
 import webSocket from '@ohos.net.webSocket';
 import { RNOHLogger } from './RNOHLogger';
 import { BusinessError } from '@ohos.base';
-import { InspectorPage, InspectorInstance, InspectorLocalConnection, InspectorRemoteConnection } from './types';
+import {
+  NapiBridge } from './NapiBridge';
+import {
+  InspectorPackagerConnection,
+  InspectorWebsocket,
+  InspectorWebsocketDelegate,
+  InspectorPackagerConnectionDelegate
+} from './types';
 
-class RemoteConnectionImpl implements InspectorRemoteConnection {
-  constructor(private packagerConnection: InspectorPackagerConnection, private pageId: number) {
-  }
-
-  onMessage(message: string) {
-    this.packagerConnection.sendWrappedEvent(this.pageId, message);
-  }
-
-  onDisconnect() {
-    this.packagerConnection.removeConnection(this.pageId);
-    this.packagerConnection.sendEvent("disconnect", { pageId: this.pageId });
-  }
+export function getInspectorPackagerConnection(napiBridge: NapiBridge, url: string, app: string, logger: RNOHLogger): InspectorPackagerConnection {
+  return napiBridge.getInspectorPackagerConnection(url, app, new ArkTSConnectionDelegate(logger));
 }
 
-const RECONNECT_DELAY_MS = 2000;
+// Implementations
+class ArkTSWebsocket implements InspectorWebsocket {
+  private socket: webSocket.WebSocket
+  private logger: RNOHLogger
+  private messageBuffer: string[] = []
+  private isOpen: boolean = false
 
-// This is a port of the Android impl, at
-// ReactAndroid/src/main/java/com/facebook/react/devsupport/InspectorPackagerConnection.java
-export class InspectorPackagerConnection {
-  private localConnectionByPageId: Map<number, InspectorLocalConnection> = new Map();
-  private socket: webSocket.WebSocket;
-  private isClosed: boolean = false;
-  private logger: RNOHLogger;
-
-  constructor(private url: string, logger: RNOHLogger, private inspectorInstance: InspectorInstance) {
-    if (url.startsWith("http")) {
-      url = url.replace("http", "ws");
+  constructor(private url: string, private websocketDelegate: InspectorWebsocketDelegate, logger: RNOHLogger) {
+    this.logger = logger.clone("InspectorWebsocket");
+    if (this.url.startsWith('http')) {
+      this.url = this.url.replace(/^http/, 'ws');
     }
-    this.url = url;
-    this.logger = logger.clone("InspectorPackagerConnection");
+    this.connect();
   }
 
-  // WebSocket lifecycle:
   public connect() {
-    if (this.isClosed) {
-      this.logger.error("Illegal state: Can't reconnect after having previously been closed.");
-      return;
-    }
-
     const socket = webSocket.createWebSocket();
     socket.on("open", (_err) => this.onOpen());
     socket.on("message", (_err, message) => this.onMessage(message))
@@ -63,41 +51,14 @@ export class InspectorPackagerConnection {
     this.socket = socket;
   }
 
-  private reconnect() {
-    if (this.isClosed) {
-      this.logger.error("Illegal state: Can't reconnect after having previously been closed.");
-      return;
-    }
-
-    setTimeout(() => {
-      if (!this.isClosed) {
-        this.connect();
-      }
-    }, RECONNECT_DELAY_MS)
-  }
-
-  public closeAllConnections() {
-    this.localConnectionByPageId.forEach((connection) => connection.disconnect());
-    this.localConnectionByPageId.clear();
-  }
-
-  public closeQuietly() {
-    this.isClosed = true;
-    this.disposeWebSocket();
-  }
-
-  private abort() {
-    this.closeAllConnections();
-    this.disposeWebSocket();
-  }
-
-  private disposeWebSocket() {
-    this.socket?.close({ code: 1000, reason: "End of session" });
-    this.socket = undefined;
-  }
-
   // WebSocket handlers:
   private onOpen() {
+    this.isOpen = true;
+    const bufferedMessages = this.messageBuffer;
+    this.messageBuffer = [];
+    for (const message of bufferedMessages) {
+      this.send(message)
+    }
   }
 
   private onMessage(message: string | ArrayBuffer) {
@@ -106,137 +67,40 @@ export class InspectorPackagerConnection {
       return;
     }
 
-    let parsed: Record<string, unknown>
-    try {
-      parsed = JSON.parse(message);
-    } catch {
-      this.logger.warn(`Unrecognized inspector message, string was not valid JSON: ${message}`);
-      return;
-    }
-
-    const { event, payload } = parsed;
-    switch (event) {
-      case "getPages": {
-        this.sendEvent("getPages", this.getPages());
-        break;
-      }
-      case "wrappedEvent": {
-        this.handleWrappedEvent(payload as any);
-        break;
-      }
-      case "connect": {
-        this.handleConnect(payload as any);
-        break;
-      }
-      case "disconnect": {
-        this.handleDisconnect(payload as any);
-        break;
-      }
-      default: {
-        this.logger.error(`Unknown event: ${event}`);
-      }
-    }
+    this.websocketDelegate.didReceiveMessage(message);
   }
 
   private onClose(_closeResult: webSocket.CloseResult) {
     this.socket = undefined;
-    this.closeAllConnections();
-    if (!this.isClosed) {
-      this.reconnect();
-    }
+    this.websocketDelegate.didClose();
   }
 
-  private onError(_err: BusinessError) {
-    if (this.socket) {
-      this.abort();
-    }
-    if (!this.isClosed) {
-      this.reconnect();
-    }
+  private onError(err: BusinessError) {
+    this.websocketDelegate.didFailWithError(null, err.message ?? "<unknown error>")
   }
 
-  // Packager connection handlers:
-  private handleConnect(payload: Record<string, unknown>) {
-    let { pageId } = payload;
-    if (typeof pageId === 'string') {
-      pageId = Number(pageId)
-    }
-    if (typeof pageId !== 'number' || Number.isNaN(pageId)) {
-      this.logger.error("Invalid 'connect' payload: 'pageId' is missing");
+  // InspectorWebsocket implementation:
+  send(message: string): void {
+    if (!this.isOpen) {
+      this.messageBuffer.push(message);
       return;
     }
-
-    let existingConnection: InspectorLocalConnection;
-    if (existingConnection = this.localConnectionByPageId.get(pageId)) {
-      this.localConnectionByPageId.delete(pageId);
-      existingConnection.disconnect();
-      this.logger.warn("Already connected: " + pageId);
-    }
-
-    const remoteConnection = new RemoteConnectionImpl(this, pageId);
-    const localConnection = this.inspectorInstance.connect(pageId, remoteConnection);
-    this.localConnectionByPageId.set(pageId, localConnection);
-  }
-
-  private handleDisconnect(payload: Record<string, unknown>) {
-    let { pageId } = payload;
-    if (typeof pageId === 'string') {
-      pageId = Number(pageId)
-    }
-    if (typeof pageId !== 'number' || Number.isNaN(pageId)) {
-      this.logger.error("Invalid 'connect' payload: 'pageId' is missing");
-      return;
-    }
-
-    const inspectorConnection = this.localConnectionByPageId.get(pageId);
-    if (inspectorConnection) {
-      this.removeConnection(pageId);
-      inspectorConnection.disconnect();
-    }
-  }
-
-  private handleWrappedEvent(payload: Record<string, unknown>) {
-    let { pageId, wrappedEvent } = payload;
-    if (typeof pageId === 'string') {
-      pageId = Number(pageId)
-    }
-    if (typeof pageId !== 'number' || Number.isNaN(pageId)) {
-      this.logger.error("Invalid 'connect' payload: 'pageId' is missing");
-      return;
-    }
-
-    const inspectorConnection = this.localConnectionByPageId.get(pageId);
-    if (!inspectorConnection) {
-      this.logger.warn(`Not connected to page: ${pageId}, failed trying to handle event: ${wrappedEvent}`)
-      return;
-    }
-    inspectorConnection.sendMessage(wrappedEvent);
-  }
-
-  // Sending methods:
-  public sendEventToAllConnections(event: string) {
-    this.localConnectionByPageId.forEach(connection => connection.sendMessage(event));
-  }
-
-  public sendWrappedEvent(pageId: number, wrappedEvent: string) {
-    this.sendEvent("wrappedEvent", { pageId, wrappedEvent });
-  }
-
-  public sendEvent(event: string, payload: Object) {
-    const message = JSON.stringify({ event, payload });
-    this.socket?.send(message);
-  }
-
-  // Business logic:
-  public isConnected() {
-    return this.socket !== undefined;
-  }
-
-  private getPages(): InspectorPage[] {
-    return this.inspectorInstance.getPages();
-  }
-
-  public removeConnection(pageId: number) {
-    this.localConnectionByPageId.delete(pageId);
+    this.socket.send(message, (err) => {
+      if (err) {
+        this.onError(err);
+      }
+    });
   }
 }
+
+class ArkTSConnectionDelegate implements InspectorPackagerConnectionDelegate {
+  private logger: RNOHLogger
+  constructor( logger: RNOHLogger) {
+    this.logger = logger.clone("InspectorPackagerConnectionDelegate");
+  }
+
+  connectWebSocket(url: string, websocketDelegate: InspectorWebsocketDelegate): InspectorWebsocket {
+    return new ArkTSWebsocket(url, websocketDelegate, this.logger);
+  }
+}
+

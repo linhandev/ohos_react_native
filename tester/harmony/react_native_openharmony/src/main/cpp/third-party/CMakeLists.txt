@@ -40,8 +40,9 @@ target_link_libraries(folly PUBLIC Boost::context Boost::algorithm
 
 # HERMES
 add_library(hermes-engine::libhermes SHARED IMPORTED)
-add_compile_options( # TODO: check if building in debug mode
-                    -DHERMES_ENABLE_DEBUGGER)
+target_compile_definitions(hermes-engine::libhermes INTERFACE
+ # TODO: check if building in debug mode
+                    HERMES_ENABLE_DEBUGGER)
 set_property(
   TARGET hermes-engine::libhermes
   PROPERTY IMPORTED_LOCATION

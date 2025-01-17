@@ -822,9 +822,10 @@ export class RNInstanceImpl implements RNInstance {
       const isRemoteBundle = bundleURL.startsWith('http');
       if (this.shouldEnableDebugger && isRemoteBundle) {
         DevServerHelper.connectToDevServer(
-          bundleURL,
+          jsBundleProvider.getURL(),
+          this.getName(),
           this.logger,
-          this.napiBridge.getInspectorWrapper(),
+          this.napiBridge,
         );
       }
       this.bundleExecutionStatusByBundleURL.set(bundleURL, 'DONE');

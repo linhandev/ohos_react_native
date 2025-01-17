@@ -87,14 +87,6 @@ napi_value ArkJS::createDouble(double value) {
   return result;
 }
 
-napi_value ArkJS::createString(std::string const& str) {
-  napi_value result;
-  auto status =
-      napi_create_string_utf8(m_env, str.c_str(), str.length(), &result);
-  this->maybeThrowFromStatus(status, "Failed to create string");
-  return result;
-}
-
 napi_value ArkJS::getUndefined() {
   napi_value result;
   napi_get_undefined(m_env, &result);
@@ -512,7 +504,7 @@ RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
 RNOHNapiObjectBuilder& RNOHNapiObjectBuilder::addProperty(
     const char* name,
     char const* value) {
-  addProperty(name, m_arkJS.createString(value));
+  addProperty(name, m_arkJS.createString(std::string_view(value)));
   return *this;
 }
 
@@ -681,5 +673,20 @@ bool ArkJS::isArrayBuffer(napi_value value) {
   maybeThrowFromStatus(
       napi_is_arraybuffer(m_env, value, &result),
       "Failed to check if value is an ArrayBuffer");
+  return result;
+}
+
+napi_value ArkJS::createString(std::string const& str) {
+  return createString(str.c_str(), str.length());
+}
+
+napi_value ArkJS::createString(std::string_view str) {
+  return createString(str.data(), str.length());
+}
+
+napi_value ArkJS::createString(char const* str, size_t length) {
+  napi_value result;
+  auto status = napi_create_string_utf8(m_env, str, length, &result);
+  this->maybeThrowFromStatus(status, "Failed to create string");
   return result;
 }

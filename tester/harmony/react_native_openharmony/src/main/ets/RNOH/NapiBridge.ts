@@ -12,16 +12,14 @@ import type { Mutation } from "./Mutation";
 import type { Tag } from "./DescriptorBase";
 import type { DisplayMode } from './CppBridgeUtils'
 import { RNOHLogger } from "./RNOHLogger"
-import type { InspectorInstance, DisplayMetrics } from './types'
+import type { DisplayMetrics, InspectorPackagerConnection, InspectorPackagerConnectionDelegate } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
 import {
   AnyThreadTurboModule,
   UITurboModule,
-  UITurboModuleContext,
   WorkerTurboModule,
-  WorkerTurboModuleContext
 } from './TurboModule';
 import { NodeContent } from '@ohos.arkui.node';
 import { JsBundle } from './JSBundleProvider';
@@ -331,8 +329,9 @@ export class NapiBridge {
     return this.unwrapResult(result)
   }
 
-  getInspectorWrapper(): InspectorInstance {
-    return this.libRNOHApp?.getInspectorWrapper();
+  getInspectorPackagerConnection(url: string, app: string,
+    delegate: InspectorPackagerConnectionDelegate): InspectorPackagerConnection {
+    return this.libRNOHApp!.getInspectorPackagerConnection(url, app, delegate);
   }
 
   postMessageToCpp(name: string, payload: any) {
