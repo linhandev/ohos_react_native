@@ -20,9 +20,9 @@ import {
 import { createRNPackages } from '../RNPackagesFactory';
 
 @Builder
-export function buildCustomRNComponent(ctx: ComponentBuilderContext) {}
+export function buildCustomRNComponent(ctx: ComponentBuilderContext) {};
 
-const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)
+const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent);
 
 @Entry
 @Component
@@ -34,7 +34,6 @@ struct Index {
   aboutToAppear() {
     this.logger = this.rnohCoreContext!.logger.clone("Index");
     const stopTracing = this.logger.clone("aboutToAppear").startTracing();
-
     this.shouldShow = true;
     stopTracing();
   }
