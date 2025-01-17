@@ -77,7 +77,7 @@ async function runDeployment() {
     async (newVersion) => {
       version = newVersion;
 
-      await exec(`npm run update:version  -- --new-version ${version}`);
+      await exec(`npm run _update:version  -- --new-version ${version}`);
       await exec(`npm run build:har`);
       fs.rmSync('./harmony', { recursive: true, force: true });
       fs.mkdirSync('./harmony');

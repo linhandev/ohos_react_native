@@ -5,7 +5,7 @@ const execAsync = promisify(exec);
 
 async function findChangedCppFiles() {
   try {
-    const {stdout} = await execAsync('npm run --silent find_changed_files:cpp');
+    const {stdout} = await execAsync('npm run --silent find-changed-files:cpp');
     const files = stdout
       .trim()
       .split('\n')

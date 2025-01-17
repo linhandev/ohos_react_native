@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "i": "npm run pack_react_native_harmony && npm run install:react_native_harmony && npm install",
-    "postinstall": "node ./scripts/create-build-profile",
-    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester-ecosystem && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz",
-    "start": "react-native start",
+    "i": "npm run _pack:react-native-harmony && npm run install:react_native_harmony && npm install",
     "build": "node ./scripts/build.js",
-    "reinstall:react_native_harmony": "npm uninstall react-native-harmony && npm run pack_react_native_harmony && npm run install:react_native_harmony",
-    "install:react_native_harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.76.0.tgz",
-    "pack_react_native_harmony": "cd ../react-native-harmony && npm i && npm run build:har && npm pack && cd ../tester-ecosystem",
+    "start": "react-native start",
+    "postinstall": "node ./scripts/create-build-profile && npm run _reinstall:react-native-harmony",
+    "_reinstall:react-native-harmony": "npm uninstall react-native-harmony && npm run _pack:react-native-harmony && npm run install:react-native-harmony",
+    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester-ecosystem && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz",
+    "install:react-native-harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.76.0.tgz",
+    "_pack:react-native-harmony": "cd ../react-native-harmony && npm i && npm run build:har && npm pack && cd ../tester-ecosystem",
     "harmony": "react-native run-harmony"
   },
   "dependencies": {
