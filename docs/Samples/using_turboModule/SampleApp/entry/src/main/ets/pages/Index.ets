@@ -61,12 +61,20 @@ export struct MultiSurface {
       wrapBuilder(buildRNComponentForTag),
       new Map()
     );
-    // await this.instance.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, 'bundle/basic/basic.harmony.bundle'));
-    await this.instance.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath)).then(() => {
+    // await this.instance.runJSBundle(
+    //   new ResourceJSBundleProvider(
+    //     getContext().resourceManager,
+    //     'bundle/basic/basic.harmony.bundle'
+    //   )
+    // );
+    await this.instance.runJSBundle(
+      new ResourceJSBundleProvider(
+        getContext().resourceManager,
+        this.bundlePath
+    )).then(() => {
       this.isBundleReady = true;
       console.log('instance 加载完成' + this.bundlePath);
     })
-
   }
 
   @Builder
