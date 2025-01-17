@@ -1,10 +1,10 @@
 ## 1 Packing
 ### 1.1 Packing Path
-Assume that the packing path is the root path: /
-RN code path: /aaa/bbb/c.tsx
-Path of image 1: /aaa/bbb/d.png; RN format: require('./d.png')
-Path of image 2: /eee/f.png; RN format: require('../../eee/f.png')
-Path of image 3: /aaa/ggg/h.png; RN format: require('../ggg/h.png')
+Assume that the packing path is the root path: /  
+RN code path: /aaa/bbb/c.tsx  
+Path of image 1: /aaa/bbb/d.png; RN format: require('./d.png')  
+Path of image 2: /eee/f.png; RN format: require('../../eee/f.png')  
+Path of image 3: /aaa/ggg/h.png; RN format: require('../ggg/h.png')  
 
 ### 1.2 Image Path Prefix
 Path prefix of image 1: /aaa/bbb/
