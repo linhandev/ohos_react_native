@@ -247,7 +247,7 @@ This section describes how to create an OpenHarmony project, load the dependency
 
 ![Environment setup - Version](./figures/environment-setup-version.png)
 
-​ Connect to a real device and click `File > Project Structure`. In the dialog box that is displayed, click `Signing Configs`, select `Support HarmonyOS` and `Automatically generate signature`, and click `Sign In` to log in to the HUAWEI ID and sign.
+​ Connect to a real device and click `File > Project Structure`. In the dialog box that is displayed, click `Signing Configs`, select `Support OpenHarmony` and `Automatically generate signature`, and click `Sign In` to log in to the HUAWEI ID and sign.
 
 ![Environment setup - Signing](./figures/environment-setup-signing.png)
 

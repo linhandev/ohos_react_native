@@ -2,7 +2,7 @@
 
 ## Running Guide
 
-​This demo contains a HarmonyOS project directory `SampleApp` and a ReactNative project directory `SampleProject`. You need to use `SampleProject` to generate a bundle and load the bundle to `SampleApp` to run the HarmonyOS project.
+​This demo contains a OpenHarmony project directory `SampleApp` and a ReactNative project directory `SampleProject`. You need to use `SampleProject` to generate a bundle and load the bundle to `SampleApp` to run the OpenHarmony project.
 
 **Configure an environment variable:**
 
@@ -20,7 +20,7 @@
   npm run start
   ```
 
-**Configure a HarmonyOS project:**
+**Configure a OpenHarmony project:**
 
 1. Specify the version of `react-native-openharmony` in `entry/oh-package.json5`.
 2. Open `SampleApp` in DevEco Studio and run **Sync and Refresh Project**.
@@ -28,12 +28,12 @@
 
 ## Project Introduction
 
-​ On the React Native side, an empty project consists of **HomePage**, **Goods**, **test**, and **Detail** modules. On HarmonyOS, the bundles of the four service modules are loaded to create the corresponding RNSurfaces, which are then embedded into the ArkUI page components to build the HarmonyOS page.
+​ On the React Native side, an empty project consists of **HomePage**, **Goods**, **test**, and **Detail** modules. On OpenHarmony, the bundles of the four service modules are loaded to create the corresponding RNSurfaces, which are then embedded into the ArkUI page components to build the OpenHarmony page.
 
 - HomePage: The third-party library react-native-pager-view is used to implement the split-view layout of tabs.
 - Goods: The scrollbar component on the top is customized by ArkUI and imported and rendered on the RN side. The bottom provides the examples of using multiple TuboModule methods.
 - Test: Multiple common code example pages are provided.
-- Detail: The **ArkUI** and **RN** components are used for hybrid rendering. In the **RN** component, the data transferred from the HarmonyOS side is used for style and content rendering.
+- Detail: The **ArkUI** and **RN** components are used for hybrid rendering. In the **RN** component, the data transferred from the OpenHarmony side is used for style and content rendering.
   
 | HomePage| Goods| Test| Detail|
 | --- | --- | --- | ---|
@@ -52,9 +52,9 @@
   
   ![image](./figures/environment-setup-bundle-command.png)
 
-### HarmonyOS Project Structure
+### OpenHarmony Project Structure
 
-​ The `Tabs` component is used to build the basic page framework of the HarmonyOS project, and is created in the `MultiHome` component, containing three `TabContent`s: `HomePage`, `Goods`, and `Test`.
+​ The `Tabs` component is used to build the basic page framework of the OpenHarmony project, and is created in the `MultiHome` component, containing three `TabContent`s: `HomePage`, `Goods`, and `Test`.
 
 ![image](./figures/environment-setup-tabs.png)
 
@@ -72,11 +72,11 @@
 
 ![image](./figures/environment-setup-SampleTurboModule.png)
 
-​ In `GoodsMainPage.tsx`, use `SampleTurboModule` to call the method defined in the protocol for HarmonyOS communication.
+​ In `GoodsMainPage.tsx`, use `SampleTurboModule` to call the method defined in the protocol for OpenHarmony communication.
 
 ![image](./figures/environment-setup-communication-definition.png)
 
-​ Implement the API defined on the React Native side in the HarmonyOS `SampleTurboModule.ts`, and use `emitter` to send the message of redirecting to the Detail page.
+​ Implement the API defined on the React Native side in the OpenHarmony `SampleTurboModule.ts`, and use `emitter` to send the message of redirecting to the Detail page.
 
 ![image](./figures/environment-setup-emit-redirection.png)
 
@@ -102,7 +102,7 @@
 
 ​ You can use a third-party library in either of the following ways:
 
-- Method 1: Use the third-party library of the ArkTS version in the C API version. Currently, RN supports only the third-party libraries of the ArkTS version of leaf nodes. Third-party libraries of container nodes are not supported. Specifically, add the third-party library component mapping, for example, `FastImage`, to the `buildCustomComponent` method on the HarmonyOS side. Note that you need to add a `Stack` component externally and set `position = (0,0)` for the mapping.
+- Method 1: Use the third-party library of the ArkTS version in the C API version. Currently, RN supports only the third-party libraries of the ArkTS version of leaf nodes. Third-party libraries of container nodes are not supported. Specifically, add the third-party library component mapping, for example, `FastImage`, to the `buildCustomComponent` method on the OpenHarmony side. Note that you need to add a `Stack` component externally and set `position = (0,0)` for the mapping.
   
   ![image](./figures/environment-setup-stack-component.png)
 - Method 2: Directly use the third-party library of the CPP version. In this method, no other operation is required.
