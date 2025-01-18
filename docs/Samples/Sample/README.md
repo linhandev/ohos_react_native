@@ -37,7 +37,7 @@
   
 | HomePage| Goods| Test| Detail|
 | --- | --- | --- | ---|
-| ![HomePage](./firures_en/environment-setup-homepage.png)| ![Goods](./firures_en/environment-setup-goods.png)| ![Test](./firures_en/environment-setup-test.png)| ![Detail](./firures_en/environment-setup-detail.png)|
+| ![HomePage](./figures_en/environment-setup-homepage.png)| ![Goods](./figures_en/environment-setup-goods.png)| ![Test](./figures_en/environment-setup-test.png)| ![Detail](./figures_en/environment-setup-detail.png)|
 
 ### React Native Project Structure
 
@@ -50,35 +50,35 @@
   
   Under the `SampleProject/MainProject` directory, the `config.js` file is created to configure the bundles of all modules. For example, the configuration file of the **Goods** module is `goods.config.js`. The `package.json` file in the same directory implements the bundle commands of all modules, which are encapsulated in `dev:all`.
   
-  ![image](./figures/environment-setup-bundle-command.png)
+  ![image](./figures_en/environment-setup-BundlePackingCommands.png)
 
 ### OpenHarmony Project Structure
 
 ​ The `Tabs` component is used to build the basic page framework of the OpenHarmony project, and is created in the `MultiHome` component, containing three `TabContent`s: `HomePage`, `Goods`, and `Test`.
 
-![image](./figures/environment-setup-tabs.png)
+  ![image](./figures_en/environment-setup-Tabs.png)
 
 ​ The `HomePage` and `Goods` components contain a `BaseRN` component (Metro uses the `MetroBaseRN` component), which is a basic component that encapsulates the `RNSurface` component and is used to load the specified React Native module view.
 
-![image](./figures/environment-setup-RNSurface.png)
+  ![image](./figures_en/environment-setup-RNSurface.png)
 
 ### Using TurboModule
 
 ​ Create a `RNInstance`, transfer the `createRNPackages` implemented in `RNPackagesFactory`, and create the corresponding `SampleTurboModulePackage`.
 
-![image](./figures/environment-setup-createRNPackages.png)
+  ![image](./figures_en/environment-setup-CreateRNPackages.png)
 
 ​ Define the API to be implemented by `SampleTurboModule` in `basic/SampleTurboModule.tsx` on the React Native side and export the `SampleTurboModule` instance.
 
-![image](./figures/environment-setup-SampleTurboModule.png)
+  ![image](./figures_en/environment-setup-SampleTurboModule.png)
 
 ​ In `GoodsMainPage.tsx`, use `SampleTurboModule` to call the method defined in the protocol for OpenHarmony communication.
 
-![image](./figures/environment-setup-communication-definition.png)
+  ![image](./figures_en/environment-setup-CommunicationDefinition.png)
 
 ​ Implement the API defined on the React Native side in the OpenHarmony `SampleTurboModule.ts`, and use `emitter` to send the message of redirecting to the Detail page.
 
-![image](./figures/environment-setup-emit-redirection.png)
+  ![image](./figures_en/environment-setup-EmitJumping.png)
 
 ### Using a Custom Component
 
@@ -86,15 +86,15 @@
 
 ​ Add the mapping of the custom component to the `src/main/cpp/SampleTurboModulePackage.cpp` method.
 
-![image](./figures/environment-setup-component-mapping.png)
+  ![image](./figures_en/environment-setup-ComponentMapping.png)
 
 ​ Define the `JSI` API of `ButtonView` in `basic/ButtonView.tsx` on the React Native side.
 
-![image](./figures/environment-setup-jsi-api.png)
+  ![image](./figures_en/environment-setup-JsiInterface.png)
 
 ​ Use custom components in `GoodsMainPage.tsx`.
 
-![image](./figures/environment-setup-calling-custom-components.png)
+  ![image](./figures_en/environment-setup-InvokeCustomComponent.png)
 
 ### Using a Third-Party Library
 
@@ -104,18 +104,18 @@
 
 - Method 1: Use the third-party library of the ArkTS version in the C API version. Currently, RN supports only the third-party libraries of the ArkTS version of leaf nodes. Third-party libraries of container nodes are not supported. Specifically, add the third-party library component mapping, for example, `FastImage`, to the `buildCustomComponent` method on the OpenHarmony side. Note that you need to add a `Stack` component externally and set `position = (0,0)` for the mapping.
   
-  ![image](./figures/environment-setup-stack-component.png)
+  ![image](./figures_en/environment-setup-StackComponent.png)
 - Method 2: Directly use the third-party library of the CPP version. In this method, no other operation is required.
   
   Use the `PagerView` component of the third-party library in the `SamplePackage/MainProject/src/bundles/HomePage/HomePage.tsx` file on the React Native side.
   
-  ![image](./figures/environment-setup-PagerView-component.png)
+  ![image](./figures_en/environment-setup-PagerViewComponent.png)
 
 ### Metro
 
 ​ In this project, Metro is used to load bundles. To use Metro, please refer to [Running Guide](#running-guide). You can modify the code on the React Native side and save it to refresh the application UI content in real time. For details, see [Metro](../../en/debugging.md#metro-hot-reloading).
 
-![image](./figures/environment-setup-runStart.png)
+  ![image](./figures_en/environment-setup-RunStart.png)
 
 ### Reload and LogBox
 
