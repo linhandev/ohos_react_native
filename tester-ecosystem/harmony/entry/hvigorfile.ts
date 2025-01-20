@@ -1,10 +1,10 @@
 import { hapTasks } from '@ohos/hvigor-ohos-plugin';
-import { createRNOHHvigorPlugin } from "@rnoh/hvigor-plugin"
+import { createRNOHModulePlugin } from "@rnoh/hvigor-plugin"
 
 export default {
   system: hapTasks,
   plugins: [
-    createRNOHHvigorPlugin({
+    createRNOHModulePlugin({
       codegen: {
         rnohModulePath: "./oh_modules/@rnoh/react-native-openharmony",
       }

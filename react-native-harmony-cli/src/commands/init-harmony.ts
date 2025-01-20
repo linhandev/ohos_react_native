@@ -39,6 +39,11 @@ export const commandInitHarmony: Command = {
       description: 'Name of the react-native-harmony package.',
       default: '@react-native-oh/react-native-harmony',
     },
+    {
+      name: '--rnoh-cli-npm-package-name [string]',
+      description: 'Name of the react-native-harmony-cli package.',
+      default: '@react-native-oh/react-native-harmony-cli',
+    },
   ],
   func: async (_argv, _config, rawArgs: any) => {
     const fs = new RealFS();
@@ -69,17 +74,39 @@ export const commandInitHarmony: Command = {
         throw new DescriptiveError({
           whatHappened: `${rnohNpmPackagePath
             .relativeTo(projectRootPath)
-            .toString()} does not exist. This command requires that 'react-native-harmony' NPM package be already installed in order to link the 'rnoh-hvigor-plugin' correctly.`,
+            .toString()} does not exist. This command requires that 'react-native-harmony' NPM package is already installed.`,
           whatCanUserDo: [
             'Install react-native-harmony and try again.',
             'Provide --rnoh-npm-package-name if the default value is incorrect.',
           ],
         });
       }
+      const rnohCliNpmPackageName: string = rawArgs.rnohCliNpmPackageName;
+      const rnohCliNpmPackagePath = projectRootPath.copyWithNewSegment(
+        'node_modules',
+        rnohCliNpmPackageName
+      );
+      if (!fs.existsSync(rnohCliNpmPackagePath)) {
+        throw new DescriptiveError({
+          whatHappened: `${rnohCliNpmPackagePath
+            .relativeTo(projectRootPath)
+            .toString()} does not exist. This command requires that 'react-native-cli-harmony' NPM package is already installed.`,
+          whatCanUserDo: [
+            'Install react-native-harmony-cli and try again.',
+            'Provide --rnoh-cli-npm-package-name if the default value is incorrect.',
+          ],
+        });
+      }
       const rnohHvigorPluginPath = findRNOHHvigorPluginPath(
         fs,
-        rnohNpmPackagePath.copyWithNewSegment('harmony')
+        rnohCliNpmPackagePath.copyWithNewSegment('harmony')
       );
+      if (rnohHvigorPluginPath === null) {
+        throw new DescriptiveError({
+          whatHappened: `Couldn't find RNOH hvigor plugin in ${rnohHvigorPluginPath}. This CLI package seems to be incompatible with RNOH.`,
+          whatCanUserDo: ['Try using different RNOH or CLI version.'],
+        });
+      }
       const packageJSON = PackageJSON.fromProjectRootPath(
         fs,
         projectRootPath,
@@ -116,7 +143,7 @@ export const commandInitHarmony: Command = {
         [
           harmonyDirPath.copyWithNewSegment('hvigor', 'hvigor-config.json5'),
           new HvigorConfigJson5Template(
-            rnohNpmPackageName,
+            rnohCliNpmPackageName,
             rnohHvigorPluginPath!.getBasename()
           ).build(),
         ],

@@ -3,6 +3,7 @@ bundle.harmony.js
 package-lock.json
 *.hbc
 lintCppResult.txt
+__SampleProject__
 
 # ---
 

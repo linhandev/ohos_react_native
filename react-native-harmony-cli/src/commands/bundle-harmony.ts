@@ -8,6 +8,8 @@ import pathUtils from 'path';
 import { getAssetDestRelativePath } from '../assetResolver';
 import { ConfigT as MetroConfig } from 'metro-config';
 import { execSync } from 'child_process';
+import { Logger } from '../io';
+import { DescriptiveError } from '../core';
 
 const HERMESC_BIN_DIR = {
   darwin: 'osx-bin',
@@ -15,7 +17,7 @@ const HERMESC_BIN_DIR = {
   win32: 'win64-bin',
 };
 const HERMESC_PATH_PREFIX = './node_modules/react-native/sdks/hermesc/';
-const ARK_RESOURCE_PATH = './harmony/entry/src/main/resources/rawfile';
+const HARMONY_RESOURCE_PATH = './harmony/entry/src/main/resources/rawfile';
 const ASSETS_DEFAULT_DEST_PATH =
   './harmony/entry/src/main/resources/rawfile/assets';
 const TMP_BUNDLE_PATH = '/tmp/bundle.harmony.js';
@@ -48,9 +50,7 @@ export const commandBundleHarmony: Command = {
     },
     {
       name: '--bundle-output <path>',
-      description:
-        'File name where to store the resulting bundle, ex. /tmp/groups.bundle',
-      default: ARK_RESOURCE_PATH + '/bundle.harmony.js',
+      description: `File name where to store the resulting bundle (default: "${HARMONY_RESOURCE_PATH}/hermes_bundle.hbc" if generating HBC bundle, otherwise "${HARMONY_RESOURCE_PATH}/bundle.harmony.js").`,
     },
     {
       name: '--assets-dest <path>',
@@ -69,39 +69,62 @@ export const commandBundleHarmony: Command = {
       parse: (val: string) => val !== 'false',
     },
     {
-      name: '--hbc-bundle [boolean]',
-      description:
-        'Generates the bundle in HBC format. True by default when --dev is set to false.',
-    },
-    {
       name: '--hermesc-options <string...>',
       description:
-        'Additional options to pass to hermesc when generating HBC bundle. Example: --hermesc-options O g reuse-prop-cache.',
+        'Used only when generating a HBC bundle. Additional options to pass to hermesc when generating HBC bundle. Example: --hermesc-options O g reuse-prop-cache.',
       parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
   ],
   func: async (argv, config, args: any) => {
-    const buildOptions: BuildOptions = {
-      entry: args.entryFile,
-      platform: 'harmony',
-      minify: args.minify !== undefined ? args.minify : !args.dev,
-      dev: args.dev,
-      sourceMap: args.sourcemapOutput,
-      sourceMapUrl: args.sourcemapOutput,
-    };
-    const metroConfig = await loadMetroConfig(args.config);
-    const bundle = await createBundle(metroConfig, buildOptions);
-    await saveBundle(
-      bundle,
-      args.bundleOutput,
-      args.sourcemapOutput,
-      args.hbcBundle !== undefined
-        ? stringToBoolean(args.hbcBundle)
-        : !args.dev,
-      args.hermescOptions
-    );
-    const assets = await retrieveAssetsData(metroConfig, buildOptions);
-    copyAssets(assets, args.assetsDest);
+    // input
+    const logger = new Logger();
+    try {
+      const bundleOutput: string =
+        args.bundleOutput ??
+        (!args.dev
+          ? `${HARMONY_RESOURCE_PATH}/hermes_bundle.hbc`
+          : `${HARMONY_RESOURCE_PATH}/bundle.harmony.js`);
+      const shouldGenerateHbcBundle = bundleOutput
+        .toLowerCase()
+        .endsWith('hbc');
+      await fse.ensureDir(pathUtils.dirname(bundleOutput));
+      const assetsDest: Path = args.assetsDest;
+      await fse.ensureDir(assetsDest);
+      const buildOptions: BuildOptions = {
+        entry: args.entryFile,
+        platform: 'harmony',
+        minify: args.minify !== undefined ? args.minify : !args.dev,
+        dev: args.dev,
+        sourceMap: args.sourcemapOutput,
+        sourceMapUrl: args.sourcemapOutput,
+      };
+      const metroConfig = await loadMetroConfig(args.config);
+
+      // processing
+      const bundle = await createBundle(metroConfig, buildOptions);
+      const assets = await retrieveAssetsData(metroConfig, buildOptions);
+
+      // output
+      if (shouldGenerateHbcBundle) {
+        await saveHbcBundle(
+          logger,
+          bundle.code,
+          bundleOutput,
+          args.hermescOptions
+        );
+      } else {
+        await saveJSBundle(logger, bundle, bundleOutput);
+      }
+      maybeSaveSourceMap(logger, bundle, args.sourcemapOutput);
+      await copyAssets(logger, assets, assetsDest);
+    } catch (err) {
+      if (err instanceof DescriptiveError) {
+        logger.descriptiveError(err);
+        return;
+      } else {
+        throw err;
+      }
+    }
   },
 };
 
@@ -122,7 +145,8 @@ async function createBundle(
   return (await Metro.runBuild(metroConfig, buildOptions)) as unknown as Bundle;
 }
 
-async function saveHBCBundle(
+async function saveHbcBundle(
+  logger: Logger,
   bundleCode: string,
   bundleOutput: Path,
   hermescOptions: string[] | undefined
@@ -153,28 +177,26 @@ async function saveHBCBundle(
     }
   );
   fs.unlinkSync(TMP_BUNDLE_PATH);
-  console.log(`[CREATED] ${hbcFilePath}`);
+  logger.info((s) => `Created ${hbcFilePath}`);
 }
 
-async function saveBundle(
+async function saveJSBundle(
+  logger: Logger,
   bundle: Bundle,
-  bundleOutput: Path,
-  sourceMapOutput: Path | undefined,
-  hbcBundle: boolean,
-  hermescOptions: string[] | undefined
+  bundleOutput: Path
 ) {
-  await fse.ensureDir(pathUtils.dirname(bundleOutput));
+  fs.writeFileSync(bundleOutput, bundle.code);
+  logger.info((s) => `Created ${bundleOutput}`);
+}
 
-  if (hbcBundle) {
-    await saveHBCBundle(bundle.code, bundleOutput, hermescOptions);
-  } else {
-    fs.writeFileSync(bundleOutput, bundle.code);
-    console.log(`[CREATED] ${bundleOutput}`);
-  }
-
+function maybeSaveSourceMap(
+  logger: Logger,
+  bundle: Bundle,
+  sourceMapOutput: Path | undefined
+) {
   if (sourceMapOutput) {
     fs.writeFileSync(sourceMapOutput, bundle.map);
-    console.log(`[CREATED] ${sourceMapOutput}`);
+    logger.info((s) => `Created ${sourceMapOutput}`);
   }
 }
 
@@ -196,14 +218,14 @@ async function retrieveAssetsData(
 }
 
 async function copyAssets(
+  logger: Logger,
   assetsData: readonly AssetData[],
   assetsDest: Path
 ): Promise<void> {
   if (assetsDest == null) {
-    console.warn('Assets destination folder is not set, skipping...');
+    logger.warn((s) => 'Assets destination folder is not set, skipping...');
     return;
   }
-  await fse.ensureDir(assetsDest);
   const fileDestBySrc: Record<Path, Path> = {};
   for (const asset of assetsData) {
     const idx = getHighestQualityFileIdx(asset);
@@ -212,7 +234,7 @@ async function copyAssets(
       getAssetDestRelativePath(asset)
     );
   }
-  return copyFiles(fileDestBySrc);
+  return copyFiles(logger, fileDestBySrc);
 }
 
 function getHighestQualityFileIdx(assetData: AssetData): number {
@@ -228,13 +250,13 @@ function getHighestQualityFileIdx(assetData: AssetData): number {
   return result;
 }
 
-function copyFiles(fileDestBySrc: Record<Path, Path>) {
+function copyFiles(logger: Logger, fileDestBySrc: Record<Path, Path>) {
   const fileSources = Object.keys(fileDestBySrc);
   if (fileSources.length === 0) {
     return Promise.resolve();
   }
 
-  console.info(`Copying ${fileSources.length} asset files`);
+  const assetFilesCount = fileSources.length;
   return new Promise<void>((resolve, reject) => {
     const copyNext = (error?: Error) => {
       if (error) {
@@ -242,7 +264,12 @@ function copyFiles(fileDestBySrc: Record<Path, Path>) {
         return;
       }
       if (fileSources.length === 0) {
-        console.info('Done copying assets');
+        logger.info(
+          () =>
+            `Copied ${assetFilesCount} ${
+              assetFilesCount === 1 ? 'asset' : 'assets'
+            }`
+        );
         resolve();
       } else {
         // fileSources.length === 0 is checked in previous branch, so this is string

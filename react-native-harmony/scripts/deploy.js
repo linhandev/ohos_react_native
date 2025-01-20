@@ -86,11 +86,6 @@ async function runDeployment() {
         './harmony/react_native_openharmony.har'
       );
 
-      console.log('Refreshing rnoh-hvigor-plugin.tgz...');
-      await exec(
-        'cd ../react-native-harmony-hvigor-plugin && npm run deploy && cd ../react-native-harmony'
-      );
-
       const changelogForCurrentVersion = await exec(`npm run -s gen:changelog`);
 
       updateChangelog(version, changelogForCurrentVersion);

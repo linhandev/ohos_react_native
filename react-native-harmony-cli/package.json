@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js",
-    "prepack": "npm run build",
+    "prepack": "npm run build && npm run _recreate-hvigor-plugin",
+    "_recreate-hvigor-plugin": "cd ../react-native-harmony-hvigor-plugin && npm i && npm run deploy && cd ../react-native-harmony-cli",
     "verify": "tsc --noEmit && npm run test",
     "test": "npm run build && jest",
     "test:codegen": "jest ./src/codegen/.* && npm run build && jest tests/codegen.*",
@@ -15,7 +16,8 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "metro": "*"
+    "metro": "^0.81.0",
+    "@rnoh/react-native-harmony": "^0.76.0"
   },
   "main": "dist/index.js",
   "devDependencies": {

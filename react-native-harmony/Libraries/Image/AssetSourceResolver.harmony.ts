@@ -5,13 +5,29 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {
-  getAssetDestRelativePath,
-  Asset,
-} from '@rnoh/react-native-harmony-cli/src/assetResolver';
+import type { AssetData } from 'metro';
 // @ts-ignore
 import { getBasePath } from '@react-native/assets-registry/path-support';
 import { Dimensions, Platform } from 'react-native';
+
+export type Asset = AssetData;
+
+/**
+ * Keep this method in sync with the one use in @rnoh/react-native-harmony-cli/src/AssetResolver.
+ */
+export function getAssetDestRelativePath(asset: Asset): string {
+  const fileName = getResourceIdentifier(asset);
+  return `${fileName}.${asset.type}`;
+}
+
+function getResourceIdentifier(asset: Asset): string {
+  const folderPath = getBasePath(asset);
+  return `${folderPath}/${asset.name}`
+    .toLowerCase()
+    .replace(/\//g, '_')
+    .replace(/([^a-z0-9_])/g, '')
+    .replace(/^assets_/, '');
+}
 
 function pickScale(scales: Array<number>, deviceScale?: number): number {
   if (deviceScale == null) {

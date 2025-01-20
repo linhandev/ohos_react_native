@@ -21,6 +21,7 @@ export class ReactNativeFixture {
     bundleName: string;
     appName?: string;
     rnohNpmPackageName?: string;
+    rnohCliNpmPackageName?: string;
   }): {
     stdout: string;
     stderr: string;

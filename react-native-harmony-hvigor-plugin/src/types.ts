@@ -1,4 +1,4 @@
-import { IFs } from "memfs";
+import { IFs } from 'memfs';
 
 /**
  * @api
@@ -12,7 +12,6 @@ export type BundlerConfig = {
   assetsDest?: string;
   sourcemapOutput?: string;
   minify?: boolean;
-  hbcBundle?: boolean;
   hermescOptions?: string;
 };
 
@@ -74,7 +73,7 @@ export type RNOHModulePluginOptions = {
  */
 export class RNOHModulePluginError extends Error {}
 
-export type FS = Pick<IFs, "existsSync">;
+export type FS = Pick<IFs, 'existsSync'>;
 
 export interface ILogger {
   info(message: string): void;

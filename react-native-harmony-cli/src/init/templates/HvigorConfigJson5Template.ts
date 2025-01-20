@@ -4,7 +4,7 @@ const TEMPLATE = `
 {
   "modelVersion": "5.0.0",
   "dependencies": {
-    "@rnoh/hvigor-plugin": "../../node_modules/{{{rnohNpmPackageName}}}/harmony/{{{rnohHvigorPluginFilename}}}", // <PROJECT_ROOT>/node_modules/<RNOH>/harmony/rnoh-hvigor-plugin-X.X.X.tgz
+    "@rnoh/hvigor-plugin": "../../node_modules/{{{rnohCliNpmPackageName}}}/harmony/{{{rnohHvigorPluginFilename}}}", // <PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz
   },
   "execution": {
     // "analyze": "default",                    /* Define the build analyze mode. Value: [ "default" | "verbose" | false ]. Default: "default" */
@@ -27,13 +27,13 @@ const TEMPLATE = `
 
 export class HvigorConfigJson5Template {
   constructor(
-    private rnohNpmPackageName: string,
+    private rnohCliNpmPackageName: string,
     private rnohHvigorPluginFilename: string
   ) {}
 
   build(): string {
     return mustache.render(TEMPLATE.trimStart(), {
-      rnohNpmPackageName: this.rnohNpmPackageName,
+      rnohCliNpmPackageName: this.rnohCliNpmPackageName,
       rnohHvigorPluginFilename: this.rnohHvigorPluginFilename,
     });
   }

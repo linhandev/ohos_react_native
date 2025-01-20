@@ -32,7 +32,8 @@ it('should add harmony boilerplate to existing project', async () => {
     }`,
     node_modules: {
       '@react-native-oh': {
-        'react-native-harmony': {
+        'react-native-harmony': {},
+        'react-native-harmony-cli': {
           harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
         },
       },
@@ -117,7 +118,8 @@ it('should fail if harmony dir exists', () => {
     harmony: {},
     node_modules: {
       '@react-native-oh': {
-        'react-native-harmony': {
+        'react-native-harmony': {},
+        'react-native-harmony-cli': {
           harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
         },
       },
@@ -139,7 +141,8 @@ it('should let the user know metro.config.js has been modified', () => {
     'package.json': '{ "name": "foobar" }',
     node_modules: {
       '@react-native-oh': {
-        'react-native-harmony': {
+        'react-native-harmony': {},
+        'react-native-harmony-cli': {
           harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
         },
       },
@@ -159,7 +162,8 @@ it('should let the user know a new directory is created', () => {
     'package.json': '{ "name": "foobar" }',
     node_modules: {
       '@react-native-oh': {
-        'react-native-harmony': {
+        'react-native-harmony': {},
+        'react-native-harmony-cli': {
           harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
         },
       },
@@ -180,7 +184,8 @@ it("should print metro.config.js to the console instead of overwriting this file
     'package.json': '{ "name": "foobar" }',
     node_modules: {
       '@react-native-oh': {
-        'react-native-harmony': {
+        'react-native-harmony': {},
+        'react-native-harmony-cli': {
           harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
         },
       },
@@ -203,7 +208,8 @@ describe('app bundle name', () => {
       'package.json': '{ "name": "foobar" }',
       node_modules: {
         '@react-native-oh': {
-          'react-native-harmony': {
+          'react-native-harmony': {},
+          'react-native-harmony-cli': {
             harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
           },
         },
@@ -228,7 +234,8 @@ describe('app bundle name', () => {
       'package.json': '{ "name": "foobar" }',
       node_modules: {
         '@react-native-oh': {
-          'react-native-harmony': {
+          'react-native-harmony': {},
+          'react-native-harmony-cli': {
             harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
           },
         },
@@ -253,7 +260,8 @@ describe('custom RNOH package name', () => {
       'package.json': '{ "name": "foobar" }',
       node_modules: {
         '@rnoh': {
-          'blazingly-fast-react-native-harmony': {
+          'blazingly-fast-react-native-harmony': {},
+          'react-native-harmony-cli': {
             harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
           },
         },
@@ -264,17 +272,47 @@ describe('custom RNOH package name', () => {
       projectRootPath: '.',
       bundleName: 'com.org.project',
       rnohNpmPackageName: '@rnoh/blazingly-fast-react-native-harmony',
+      rnohCliNpmPackageName: '@rnoh/react-native-harmony-cli',
     }).stderr;
 
     [
       tmpDir.copyWithNewSegment('metro.config.js'),
       tmpDir.copyWithNewSegment('harmony', 'oh-package.json5'),
-      tmpDir.copyWithNewSegment('harmony', 'hvigor', 'hvigor-config.json5'),
     ].forEach((path) => {
       expect(fs.readTextSync(path)).toContain(
         '@rnoh/blazingly-fast-react-native-harmony'
       );
     });
+  });
+
+  it('should import hvigor plugin from CLI package', () => {
+    const fs = new RealFS();
+    createFileStructure(tmpDir.toString(), {
+      '.git': {},
+      'metro.config.js': '...',
+      'package.json': '{ "name": "foobar" }',
+      node_modules: {
+        '@rnoh': {
+          'blazingly-fast-react-native-harmony': {},
+          'blazingly-fast-react-native-harmony-cli': {
+            harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
+          },
+        },
+      },
+    });
+
+    new ReactNativeFixture(tmpDir).initHarmony({
+      projectRootPath: '.',
+      bundleName: 'com.org.project',
+      rnohNpmPackageName: '@rnoh/blazingly-fast-react-native-harmony',
+      rnohCliNpmPackageName: '@rnoh/blazingly-fast-react-native-harmony-cli',
+    }).stderr;
+
+    expect(
+      fs.readTextSync(
+        tmpDir.copyWithNewSegment('harmony', 'hvigor', 'hvigor-config.json5')
+      )
+    ).toContain('@rnoh/blazingly-fast-react-native-harmony-cli');
   });
 });
 
@@ -287,7 +325,9 @@ describe('follow up instructions', () => {
       'package.json': '{ "name": "foobar" }',
       node_modules: {
         '@rnoh': {
-          'blazingly-fast-react-native-harmony': {
+          'blazingly-fast-react-native-harmony': {},
+
+          'react-native-harmony-cli': {
             harmony: { 'rnoh-hvigor-plugin-0.0.0.tgz': '...' },
           },
         },
@@ -298,6 +338,7 @@ describe('follow up instructions', () => {
       projectRootPath: '.',
       bundleName: 'com.org.project',
       rnohNpmPackageName: '@rnoh/blazingly-fast-react-native-harmony',
+      rnohCliNpmPackageName: '@rnoh/react-native-harmony-cli',
     }).stdout;
 
     expect(stdout).toContain('Run on a physical device');
