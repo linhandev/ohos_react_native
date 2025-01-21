@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE-MIT file in the root directory of this source tree.
+ */
+ 
 #ifndef JSVM_RUMTIME_COMMON_H
 #define JSVM_RUMTIME_COMMON_H
 #include <glog/logging.h>
