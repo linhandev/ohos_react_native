@@ -20,7 +20,7 @@
     "_install:cli": "npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz",
     "_pack:react-native-harmony": "cd ../react-native-harmony && npm i && npm pack && cd ../tester",
     "_pack:sample-package": "cd ../react-native-harmony-sample-package && npm i && npm run codegen-lib && npm pack && cd ../tester",
-    "_pack:cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester",
+    "_pack:cli": "cd ../react-native-harmony-cli && npm i && npm pack && cd ../tester",
     "install:local-core": "npm uninstall react-native-core && cd ../../react-native-core/packages/react-native && yarn pack && cd ../../../react-native-harmony/react-native-harmony && npm uninstall react-native-core && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz -D && cd ../tester && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz && npm i",
     "bundle:dev": "react-native bundle-harmony --dev --minify=false",
     "bundle:prod": "react-native bundle-harmony --dev=false --minify=true",
