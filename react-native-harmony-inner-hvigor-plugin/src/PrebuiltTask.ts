@@ -1,0 +1,244 @@
+/**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE-MIT file in the root directory of this source tree.
+ */
+
+import fs from 'node:fs';
+import fse from 'fs-extra';
+import { OhosHarContext } from '@ohos/hvigor-ohos-plugin';
+import { RNOHOther, BuildProfile, BuildOptionSetOfABC, BuildOptionSetOfRelease } from './Template';
+
+// RNOH module path
+const RNOH_PATH = 'react_native_openharmony';
+// main path of RNOH
+const MAIN_PATH = `${RNOH_PATH}/src/main`;
+// build mode: release
+const RELEASE_BUILD_MODE = 'release';
+// product name: abc
+const ABC_PRODUCT_NAME = 'abc';
+// build-profile.json5 content type
+const BUILD_PROFILE_TYPE = {
+  DEFAULT: 0,
+  ABC: 1,
+  RELEASE: 2,
+};
+
+/**
+ * Logger interface.
+ * @interface Logger
+ * @method info Log an informational message.
+ * @method warn Log a warning message.
+ * @method error Log an error message.
+ */
+export interface Logger {
+  info(message: string): void;
+
+  warn(message: string): void;
+
+  error(message: string): void;
+}
+
+interface Subtask {
+  run(): void;
+}
+
+/**
+ * Adjust the build-profile.json5 file of RNOH according to the
+ * mode(eg: ABC, Release, or default).
+ */
+class OverwriteBuildProfileSubtask implements Subtask {
+  constructor(
+    private context: OhosHarContext,
+    private logger: Logger,
+    private type: number,
+  ) {}
+  
+  run(): void {
+    const buildProfileOpt = Object.assign({}, BuildProfile);
+    if (this.type === BUILD_PROFILE_TYPE.ABC) {
+      // @ts-ignore
+      buildProfileOpt.buildOptionSet = BuildOptionSetOfABC;
+    } else if (this.type === BUILD_PROFILE_TYPE.RELEASE) {
+      // @ts-ignore
+      buildProfileOpt.buildOptionSet = BuildOptionSetOfRelease;
+    }
+    // @ts-ignore
+    this.context.setBuildProfileOpt(buildProfileOpt);
+    this.logger.info(`[OverwriteBuildProfile]\nbuild-profile.json5 has been successfully overwritten.`);
+  }
+}
+
+/**
+ * Adjust the CMakeLists.txt of RNOH based on whether it is in release mode.
+ */
+class OverwriteMakefileSubtask implements Subtask {
+  constructor(
+    private mainPath: string,
+    private logger: Logger,
+    private isRealseMode: boolean,
+  ) {}
+
+  run(): void {
+    fs.readFile(`${this.mainPath}/cpp/CMakeLists.txt`, 'utf8', (err, data) => {
+      if (err) {
+        this.logger.error(`[OverwriteMakefile]\n${JSON.stringify(err)}`);
+        return;
+      }
+      if (this.isRealseMode && /rnoh_semi/gm.test(data)) {
+        this.logger.info(`[OverwriteMakefile]\nThe CMakeLists.txt has been converted to release mode.`);
+        return;
+      }
+      if (!this.isRealseMode && !/rnoh_semi/gm.test(data)) {
+        this.logger.info(`[OverwriteMakefile]\nThe CMakeLists.txt has been converted to default mode.`)
+        return;
+      }
+
+      let replaceData = ''
+      if (this.isRealseMode) {
+        replaceData = data
+          .replace(/\bset\b/, `project(rnoh_semi)\nset(RNOH_CPP_DIR "\${CMAKE_CURRENT_SOURCE_DIR}")\nset`)
+          .replace(/\badd_compile_options\b/, `set(WITH_HITRACE_SYSTRACE 1)\nadd_compile_definitions(WITH_HITRACE_SYSTRACE)\nadd_compile_options`)
+          .replace(/\brnoh\b/g, 'rnoh_semi')
+          .replace(/if\(\"\$ENV\{RNOH_C_API_ARCH\}\" STREQUAL \"1\"\)([\s\S]*?)endif\(\)/, '$1');
+      } else {
+        replaceData = data
+          .replace(`project(rnoh_semi)\nset(RNOH_CPP_DIR "\${CMAKE_CURRENT_SOURCE_DIR}")\n`, '')
+          .replace(`set(WITH_HITRACE_SYSTRACE 1)\nadd_compile_definitions(WITH_HITRACE_SYSTRACE)\n`, '')
+          .replace(/\brnoh_semi\b/g, 'rnoh');
+      }
+      fs.writeFile(`${this.mainPath}/cpp/CMakeLists.txt`, replaceData, 'utf8', err => {
+        if (err) {
+          this.logger.error(`[OverwriteMakefile]\n${JSON.stringify(err)}`);
+          return;
+        }
+        this.logger.info(`[OverwriteMakefile]\nSuccessfully converted CMakeLists.txt to ${this.isRealseMode ? 'release' : 'default'} mode.`);
+      });
+    });
+  }
+}
+
+const filterFileByExt = (dir: string, exts: string[] = [], target: string, logger: Logger) => {
+  const files = fs.readdirSync(dir);
+  files.forEach(filename => {
+    const stat = fs.lstatSync(`${dir}/${filename}`);
+    if (`${dir}/${filename}` === target) {
+      // Skip the target folder
+    } else if (stat.isDirectory()) {
+      filterFileByExt(`${dir}/${filename}`, exts, `${target}/${filename}`, logger);
+    } else {
+      for (let j = 0; j < exts.length; j++) {
+        let ext = exts[j];
+        if (filename.split('.').pop()?.toLowerCase() === ext.trim().toLowerCase()) {
+          try {
+            fse.copySync(`${dir}/${filename}`, `${target}/${filename}`);
+          } catch (err) {
+            logger.error(`${JSON.stringify(err)}`);
+          }
+          break;
+        }
+      }
+    }
+  });
+}
+
+/**
+ * Extract all header files from the RNOH source code.
+ */
+class ExtractHeadFileSubtask implements Subtask {
+  constructor(
+    private mainPath: string,
+    private logger: Logger,
+  ) {}
+
+  run(): void {
+    this.logger.info('[ExtractHeadFile]');
+    filterFileByExt(`${this.mainPath}/cpp`, ['h', 'hpp', 'ipp'], `${this.mainPath}/cpp/include`, this.logger);
+  }
+}
+
+class CopyOtherFileSubtask implements Subtask {
+  constructor(
+    private mainPath: string,
+    private logger: Logger,
+  ) {}
+
+  run(): void {
+    const sourceList = [
+      'third-party/folly/CMake/folly-config.h.cmake',
+      'third-party/folly/folly/lang/SafeAssert.cpp',
+      'RNOHAppNapiBridge.cpp',
+    ];
+    sourceList.forEach(filePath => {
+      try {
+        fse.copySync(`${this.mainPath}/cpp/${filePath}`, `${this.mainPath}/cpp/include/${filePath}`);
+      } catch (err) {
+        this.logger.error(`[CopyOtherFile]\n${JSON.stringify(err)}`);
+      }
+    });
+
+    fse.writeFile(`${this.mainPath}/cpp/include/RNOHOther.cpp`, RNOHOther).catch((err) => {
+      this.logger.error(`[CopyOtherFile]\n${JSON.stringify(err)}`);
+    });
+  }
+}
+
+/**
+ * Delete a Specified Folder.
+ */
+class CleanSubtask implements Subtask {
+  constructor(
+    private folder: string,
+    private logger: Logger,
+  ) {}
+
+  run(): void {
+    try {
+      fse.removeSync(this.folder);
+      this.logger.info(`[Clean]\nFolder(${this.folder}) deleted successfully`);
+    } catch (err) {
+      this.logger.error(`[Clean]\nError while deleting folder(${this.folder}):\n${JSON.stringify(err)}`);
+    }
+  }
+}
+
+export type RealsePrebuildOptions = {
+  productName: string;
+  buildMode: string;
+  isPipeline: boolean;
+};
+
+export class RealsePrebuildTask {
+  constructor(
+    private logger: Logger,
+    private context: OhosHarContext,
+    private options: RealsePrebuildOptions
+  ) {}
+  
+  run(): void {
+    const { productName, buildMode, isPipeline } = this.options;
+    const type = (buildMode === RELEASE_BUILD_MODE && productName === ABC_PRODUCT_NAME) ? BUILD_PROFILE_TYPE.ABC :
+                 (buildMode === RELEASE_BUILD_MODE && isPipeline) ? BUILD_PROFILE_TYPE.RELEASE : BUILD_PROFILE_TYPE.DEFAULT;
+    const isRelease = buildMode === RELEASE_BUILD_MODE && (productName === ABC_PRODUCT_NAME || isPipeline);
+    
+    let subtasks: Subtask[] = [
+      new OverwriteBuildProfileSubtask(this.context, this.logger, type),
+      new OverwriteMakefileSubtask(MAIN_PATH, this.logger, isRelease)
+    ];
+    if (isRelease) {
+      subtasks = subtasks.concat([
+        new ExtractHeadFileSubtask(MAIN_PATH, this.logger),
+        new CopyOtherFileSubtask(MAIN_PATH, this.logger)
+      ]);
+    } else {
+      subtasks.push(new CleanSubtask(`${MAIN_PATH}/cpp/include`, this.logger));
+    }
+    
+    if (isPipeline) {
+      subtasks.push(new CleanSubtask(`${RNOH_PATH}/generated`, this.logger));
+    }
+    
+    subtasks.forEach((subtask) => subtask.run());
+  }
+}
