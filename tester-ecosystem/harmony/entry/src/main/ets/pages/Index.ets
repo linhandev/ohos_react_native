@@ -37,9 +37,7 @@ struct Index {
           rnInstanceConfig: {
             name: "app_name",
             createRNPackages: getRNOHPackages,
-            enablePartialSyncOfDescriptorRegistryInCAPI: true,
           },
-          initialProps: { "foo": "bar" },
           appKey: "app_name",
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new MetroJSBundleProvider(),

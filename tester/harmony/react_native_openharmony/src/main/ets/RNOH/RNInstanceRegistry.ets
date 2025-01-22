@@ -98,7 +98,7 @@ export class RNInstanceRegistry {
       this.createUITurboModuleContext,
       workerThread,
       options.enableDebugger ?? false,
-      options?.enablePartialSyncOfDescriptorRegistryInCAPI ?? false,
+      options?.disablePartialSyncOfDescriptorRegistryInCAPI ?? false,
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
       fontPathByFontFamily,

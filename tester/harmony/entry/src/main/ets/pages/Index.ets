@@ -63,12 +63,11 @@ struct Index {
           rnInstanceConfig: {
             name: "app_name",
             createRNPackages: getRNOHPackages,
-            enablePartialSyncOfDescriptorRegistryInCAPI: true,
             fontResourceByFontFamily: {
               // NOTE: you can provide fonts in `RNInstanceConfig` ahead of time, when creating the RN application
               "StintUltraCondensed-Regular": $rawfile('fonts/StintUltraCondensed-Regular.ttf'),
             },
-            enableDebugger: this.rnohCoreContext.isDebugModeEnabled,
+            enableDebugger: this.rnohCoreContext?.isDebugModeEnabled,
           },
           initialProps: { "foo": "bar" },
           appKey: "app_name",

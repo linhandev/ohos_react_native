@@ -26,8 +26,8 @@ struct Index {
           rnInstanceConfig: {
             name: "{{name}}",
             createRNPackages: getRNOHPackages,
-            enablePartialSyncOfDescriptorRegistryInCAPI: true,
             fontResourceByFontFamily: {},
+            enableDebugger: this.rnohCoreContext?.isDebugModeEnabled,
           },
           appKey: "{{name}}",
           jsBundleProvider: this.rnohCoreContext?.isDebugModeEnabled ?

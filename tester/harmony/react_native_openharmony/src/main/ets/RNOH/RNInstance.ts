@@ -330,6 +330,9 @@ export interface RNInstance {
   registerFont(fontFamily: string, fontResource: Resource | string);
 }
 
+/**
+ * @api: RN_APP_DEVELOPER
+ */
 export type RNInstanceOptions = {
   /**
    * Used to identify RNInstance on RNOHWorker thread.
@@ -340,28 +343,26 @@ export type RNInstanceOptions = {
    */
   createRNPackages: (ctx: RNPackageContext) => RNPackage[];
   /**
+   * @default: false
    * Enables the Hermes debugger. Should be disabled in production environments to avoid performance degradation.
    */
   enableDebugger?: boolean;
   /**
-   * Manages image loading and caching. When enabled, RNOH takes responsibility; when disabled, it delegates to ArkUI's Image component.
-   * Each approach presents issues under different scenarios.
-   * @deprecated this flag was only used in the old ArkTS architecture. It's not used in the C-API architecture. (latestRNOHVersion: 0.72.39)
-   */
-  enableImageLoader?: boolean;
-  /**
-   * @deprecated ArkTS architecture has been removed, and C-API architecture is always enabled (latestRNOHVersion: 0.72.39)
-   */
-  enableCAPIArchitecture?: boolean;
-
-  /**
+   * @default: false
    * @architecture: C-API
    * When enabled, RNOH will send mutations that affect only Descriptors of custom components implemented on the ArkUI side.
    * If disabled, RNOH will send all mutations to DescriptorRegistry, even if a component is a CppComponentInstance.
    * Enabling this feature flag may improve performance, but it may break some libraries built on top of the ArkTS architecture
    * and that operate on the tree of descriptors.
    */
-  enablePartialSyncOfDescriptorRegistryInCAPI?: boolean;
+  disablePartialSyncOfDescriptorRegistryInCAPI?: boolean;
+  /**
+   * @default: false
+   * Disables advanced React 18 features, such as Automatic Batching.
+   * Setting this to `true` will revert to the behavior of React 17,
+   * where state updates are processed synchronously and separately.
+   */
+  disableConcurrentRoot?: boolean;
   /**
    * Specifies the path for RN to locate assets. Necessary in production environments where assets are not hosted by the Metro server.
    * Required if using a custom `--assets-dest` with `react-native bundle-harmony`.
@@ -375,12 +376,6 @@ export type RNInstanceOptions = {
    * If not provided, the defaultHttpClient created by `RNAbility::onCreateDefaultHttpClient` will be used.
    */
   httpClient?: HttpClient;
-  /**
-   * Disables advanced React 18 features, such as Automatic Batching.
-   * Setting this to `true` will revert to the behavior of React 17,
-   * where state updates are processed synchronously and separately.
-   */
-  disableConcurrentRoot?: boolean;
   /**
    * Specifies custom fonts used by RN application.
    * NOTE: Due to ArkUI limitations, fonts from the application sandbox can only be used by the <Text> component.
@@ -443,7 +438,7 @@ export class RNInstanceImpl implements RNInstance {
     ) => UITurboModuleContext,
     private workerThread: WorkerThread | undefined,
     private shouldEnableDebugger: boolean,
-    private shouldUsePartialSyncOfDescriptorRegistryInCAPI: boolean,
+    private shouldDisablePartialSyncOfDescriptorRegistryInCAPI: boolean,
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private fontPathByFontFamily: Record<string, string>,
@@ -537,7 +532,7 @@ export class RNInstanceImpl implements RNInstance {
       this.logger,
     );
     const cppFeatureFlags: CppFeatureFlag[] = [];
-    if (this.shouldUsePartialSyncOfDescriptorRegistryInCAPI) {
+    if (!this.shouldDisablePartialSyncOfDescriptorRegistryInCAPI) {
       cppFeatureFlags.push('PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY');
     }
     if (this.workerThread != undefined) {
