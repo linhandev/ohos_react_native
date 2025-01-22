@@ -20,8 +20,6 @@
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
-#include "hermes/executor/HermesExecutorFactory.h"
-#include "JSVMExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
 #include <react/renderer/debug/SystraceSection.h>
 
@@ -46,27 +44,23 @@ void RNInstanceArkTS::start() {
       });
 }
 
+void RNInstanceArkTS::setJavaScriptExecutorFactory(
+      std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) {
+  DLOG(INFO) << "RNInstanceArkTS::setJavaScriptExecutorFactory";
+  m_jsExecutorFactory = jsExecutorFactory;
+}
+
 void RNInstanceArkTS::initialize() {
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   std::vector<std::unique_ptr<react::NativeModule>> modules;
   auto instanceCallback = std::make_unique<react::InstanceCallback>();
-auto jsExecutorFactory = std::make_shared<rnjsvm::JSVMExecutorFactory>(
-        // runtime installer, which is run when the runtime
-        // is first initialized and provides access to the runtime
-        // before the JS code is executed
-        [](facebook::jsi::Runtime& rt) {
-        // install `console.log` (etc.) implementation
-        react::bindNativeLogger(rt, nativeLogger);
-        // install tracing functions
-        rnoh::setupTracing(rt);
-        });
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
   this->instance->initializeBridge(
       std::move(instanceCallback),
-      std::move(jsExecutorFactory),
+      std::move(m_jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
 }
