@@ -7,7 +7,7 @@ To run trace on an tester application do the following
 - open the app
 - run `npm run hiprofiler` to start tracing in the tester directory - the trace log will be saved in `hiprofiler_data.htrace` in the tester
 - launch `./main_darwin` from the unpacked SmartPerf directory
-- open https://localhost:9000/application/ in your web browser to launch SmartPerf tool - ignore warnings about the page being not secure
+- open https://localhost:9000/application/ in your web browser to launch SmartPerf tool - ignore warnings about the page being not secure <!-- markdown-link-check-disable-line -->
 - open the trace file using the tool
 - the trace decomposition should now be visible in the browser
 
