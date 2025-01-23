@@ -282,6 +282,9 @@ export class RNInstancesCoordinator {
 
   public onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
+    if (this.timerId) {
+      clearTimeout(this.timerId)
+    }
     this.jsPackagerClient.onDestroy()
     this.rnInstanceRegistry.forEach(instance => {
       instance.onDestroy()
@@ -334,7 +337,7 @@ export class RNInstancesCoordinator {
       })
       this.lastChangeTime = currentTime;
     } else {
-      if(this.timerId){
+      if (this.timerId) {
         clearTimeout(this.timerId)
       }
       this.timerId = setTimeout(() =>{
