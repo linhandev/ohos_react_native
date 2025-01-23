@@ -158,6 +158,9 @@ export struct RNSurface {
 
   aboutToDisappear() {
     const surfaceHandle = this.surfaceHandle;
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+    }
     (async () => {
       const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
       this.cleanUpCallbacks.forEach(cb => cb())
@@ -202,6 +205,9 @@ export struct RNSurface {
 
   override onMeasureSize(selfLayoutInfo: GeometryInfo, children: Array<Measurable>,
     constraint: ConstraintSizeOptions): SizeResult {
+    if (this.surfaceHandle.isDestroyed()) {
+      return {width: 0, height: 0};
+    }
     const currentTime = Date.now(); 
     if (currentTime - this.lastChangeTime > this.delayTime) {
       this.currentMeasuredSize =
@@ -213,7 +219,7 @@ export struct RNSurface {
       })
       this.lastChangeTime = currentTime;
     } else {
-      if(this.timerId){
+      if (this.timerId) {
         clearTimeout(this.timerId)
       }
       this.timerId = setTimeout(() =>{
