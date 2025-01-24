@@ -26,7 +26,10 @@ export interface HotReloadConfig {
 export abstract class JSBundleProvider {
   abstract getURL(): string
 
-  abstract getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer>
+  abstract getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ):Promise<ArrayBuffer>
 
   abstract getAppKeys(): string[]
 
@@ -58,7 +61,10 @@ export class FileJSBundleProvider extends JSBundleProvider {
     return this.appKeys
   }
 
-  async getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer> {
+  async getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ): Promise<ArrayBuffer> {
     try {
       const file = await fs.open(this.path, fs.OpenMode.READ_ONLY);
       const { size } = await fs.stat(file.fd);
@@ -88,7 +94,10 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
     return this.appKeys
   }
 
-  async getBundle(onProgress?: (progress: number) => void) {
+  async getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ): Promise<ArrayBuffer> {
     try {
       const bundleFileContent = await this.resourceManager.getRawFileContent(this.path);
       const bundle = bundleFileContent.buffer;
@@ -152,7 +161,10 @@ export class MetroJSBundleProvider extends JSBundleProvider {
     }
   }
 
-  async getBundle(onProgress?: (progress: number) => void): Promise<ArrayBuffer> {
+  async getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ): Promise<ArrayBuffer> {
     try {
       const response = await fetchDataFromUrl(this.bundleUrl, { headers: { 'Content-Type': 'text/javascript' } }, onProgress);
       /**
@@ -215,7 +227,7 @@ export class MetroJSBundleProvider extends JSBundleProvider {
 
 export class AnyJSBundleProvider extends JSBundleProvider {
   private pickedJSBundleProvider: JSBundleProvider | undefined = undefined
-
+  private currentProvider?: JSBundleProvider;
   constructor(private jsBundleProviders: JSBundleProvider[]) {
     super()
     if (jsBundleProviders.length === 0) {
@@ -230,7 +242,9 @@ export class AnyJSBundleProvider extends JSBundleProvider {
     const jsBundleProvider = this.pickedJSBundleProvider ?? this.jsBundleProviders[0]
     return jsBundleProvider?.getURL() ?? "?"
   }
-
+  getCurrentProviderURL(): string | undefined {
+    return this.currentProvider?.getURL();
+  }
   getHumanFriendlyURL(): string {
     const jsBundleProvider = this.pickedJSBundleProvider ?? this.jsBundleProviders[0]
     return jsBundleProvider?.getHumanFriendlyURL() ?? "?"
@@ -243,9 +257,14 @@ export class AnyJSBundleProvider extends JSBundleProvider {
     return this.pickedJSBundleProvider.getAppKeys()
   }
 
-  async getBundle(onProgress?: (progress: number) => void) {
+  async getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ): Promise<ArrayBuffer> {
     const errors: JSBundleProviderError[] = []
     for (const jsBundleProvider of this.jsBundleProviders) {
+      this.currentProvider = jsBundleProvider;
+      onProviderSwitch?.(jsBundleProvider);
       try {
         const bundle = await jsBundleProvider.getBundle(onProgress)
         this.pickedJSBundleProvider = jsBundleProvider;
@@ -288,9 +307,12 @@ export class TraceJSBundleProviderDecorator extends JSBundleProvider {
     return this.jsBundleProvider.getURL()
   }
 
-  async getBundle(onProgress?: (progress: number) => void) {
+  async getBundle(
+    onProgress?: (progress: number) => void, 
+    onProviderSwitch?: (currentProvider: JSBundleProvider) => void
+  ): Promise<ArrayBuffer> {
     const stopTracing = this.logger.clone('getBundle').startTracing()
-    const result = await this.jsBundleProvider.getBundle(onProgress)
+    const result = await this.jsBundleProvider.getBundle(onProgress, onProviderSwitch)
     stopTracing()
     return result
   }
