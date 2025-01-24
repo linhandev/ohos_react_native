@@ -328,6 +328,18 @@ export class RNInstancesCoordinator {
     })
   }
 
+  public onWindowRectChange(data: window.RectChangeOptions) {
+    if (data.reason === window.RectChangeReason.DRAG_START) {
+      this.rnInstanceRegistry.forEach((rnInstance) => {
+        rnInstance.onWindowReactChange(true)
+      })
+    } else if(data.reason === window.RectChangeReason.DRAG_END) {
+      this.rnInstanceRegistry.forEach((rnInstance) => {
+        rnInstance.onWindowReactChange(false)
+      })
+    }
+  }
+
   public onWindowSizeChange(windowSize: window.Size) {
     const currentTime = Date.now(); 
     if (currentTime - this.lastChangeTime > this.delayTime) {
