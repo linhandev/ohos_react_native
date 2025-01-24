@@ -40,7 +40,7 @@ using JSError = facebook::jsi::JSError;
   {                                                             \
     char str[200] = {0};                                        \
     OH_JSVM_GetValueStringUtf8(env, result, str, 200, nullptr); \
-    LOG(INFO) << "call status: " << (uint32_t)status << str;    \
+    LOG(INFO) << "call status: " << (uint32_t)(status) << str;  \
   }
 
 #define CALL_JSVM(env, thecall)                                  \
@@ -49,13 +49,12 @@ using JSError = facebook::jsi::JSError;
     if (unlikely(JSVM_STATUS != JSVM_OK)) {                      \
       JSVM_Value ERROR_RESULT_JSVM;                              \
       OH_JSVM_GetAndClearLastException(env, &ERROR_RESULT_JSVM); \
-      /*GET_AND_LOG_STRING(JSVM_STATUS, ERROR_RESULT_JSVM);*/    \
     }                                                            \
   }
 
 #define CALL_JSVM_AND_THROW(thecall)    \
   {                                     \
-    if (unlikely(thecall != JSVM_OK)) { \
+    if (unlikely((thecall) != JSVM_OK)) { \
       DLOG(INFO) << "call failed";      \
       ThrowError();                     \
     }                                   \

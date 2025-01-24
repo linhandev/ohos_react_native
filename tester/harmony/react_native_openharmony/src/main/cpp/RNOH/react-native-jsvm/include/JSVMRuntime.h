@@ -44,8 +44,6 @@ class JSVMRuntime : public Runtime {
 
   bool isInspectable();
 
-  //   virtual Instrumentation& instrumentation();
-
  protected:
   Runtime::PointerValue* cloneSymbol(const Runtime::PointerValue* pv);
   Runtime::PointerValue* cloneBigInt(const Runtime::PointerValue* pv);
@@ -167,6 +165,10 @@ class JSVMRuntime : public Runtime {
   JSVM_Ref hostObjectClass;
 
  private:
+    enum {
+        RADIX_MIN = 2,
+        RADIX_MAX = 36
+    };
   friend class JSVMPointerValue;
   friend class JSVMConverter;
 };
@@ -218,6 +220,11 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
   }
 
  private:
+    enum {
+        WEAK_REF_COUNT = 0,
+        STRONG_REF_COUNT = 1,
+        DUPLICATE_REF_COUNT = 2
+    };
     void UnRef() {
         uint32_t refcount = 0;
         if(isWeak){
@@ -225,7 +232,7 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
             return;
         }
         OH_JSVM_ReferenceRef(env, reference, &refcount);
-        if (refcount == 2 || refcount == 0) {
+        if (refcount == DUPLICATE_REF_COUNT || refcount == WEAK_REF_COUNT) {
           OH_JSVM_DeleteReference(env, reference);
         }else {
           OH_JSVM_ReferenceUnref(env, reference, &refcount);

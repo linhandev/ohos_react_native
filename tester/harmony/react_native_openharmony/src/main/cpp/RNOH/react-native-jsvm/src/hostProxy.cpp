@@ -9,6 +9,7 @@
 #include <glog/logging.h>
 #include "JSVMConverter.h"
 #include "JSVMRuntime.h"
+#include "RNOH/Assert.h"
 
 namespace rnjsvm {
 
@@ -158,7 +159,7 @@ JSVM_Value HostFunctionProxy::FunctionCallback(
 
   // Get args size info and this pointer
   OH_JSVM_GetCbInfo(env, info, &argc, nullptr, &thisArg, &data);
-  assert(data && "can not acquire function");
+  RNOH_ASSERT(data && "can not acquire function");
 
   // Get and construct jsi arguments
   constexpr uint32_t PREALLOC_SIZE = 8;

@@ -13,6 +13,7 @@
 #include "JSVMUtil.h"
 #include <filesystem>
 #include <fstream>
+#include "RNOH/Assert.h"
 
 #define DFX()                  \
     do {                       \
@@ -325,7 +326,7 @@ bool JSVMRuntime::bigintIsUint64(const BigInt &value)
     uint64_t resultValue = 0;
     JSVM_Status status = 
         OH_JSVM_GetValueBigintUint64(env, jsvm_value, &resultValue, &lossless);
-    assert(status == JSVM_OK && "GetValueBigintUint64 faild.");
+    RNOH_ASSERT(status == JSVM_OK && "GetValueBigintUint64 faild.");
     
     return lossless;
 }
@@ -342,7 +343,7 @@ uint64_t JSVMRuntime::truncate(const BigInt &value)
     uint64_t resultValue = 0;
     JSVM_Status status = 
         OH_JSVM_GetValueBigintUint64(env, jsvm_value, &resultValue, &lossless);
-    assert(status == JSVM_OK && "GetValueBigintUint64 faild.");
+    RNOH_ASSERT(status == JSVM_OK && "GetValueBigintUint64 faild.");
     
     return resultValue;
 }
@@ -350,7 +351,7 @@ uint64_t JSVMRuntime::truncate(const BigInt &value)
 String JSVMRuntime::bigintToString(const BigInt &value, int radix)
 {
     DFX();
-    if (radix < 2 || radix > 36) {
+    if (radix < RADIX_MIN || radix > RADIX_MAX) {
         throw JSError(*this, "radix is not in the [2, 36] range.");
     }
     JSVMUtil::HandleScopeWrapper scope(env);
@@ -489,7 +490,7 @@ std::shared_ptr<HostObject> JSVMRuntime::getHostObject(const Object& object) {
         JSVMConverter::PointerValueToJSVM(env, object);
   
   HostProxy *hostProxy = HostProxy::GetHostProxyFromJSVM(env, jsObject);
-  assert(hostProxy && hostProxy->IsHostObject());
+  RNOH_ASSERT(hostProxy && hostProxy->IsHostObject());
 
   return static_cast<HostObjectProxy *>(hostProxy)->GetHostObject();
 }
@@ -500,7 +501,7 @@ HostFunctionType& JSVMRuntime::getHostFunction(const Function& func) {
   JSVM_Value jsFunc = JSVMConverter::PointerValueToJSVM(env, func);
 
   HostProxy* hostProxy = HostProxy::GetHostProxyFromJSVM(env, jsFunc);
-  assert(hostProxy && hostProxy->IsHostFunction());
+  RNOH_ASSERT(hostProxy && hostProxy->IsHostFunction());
 
   return static_cast<HostFunctionProxy*>(hostProxy)->GetHostFunction();
 }
@@ -518,7 +519,7 @@ std::shared_ptr<NativeState> JSVMRuntime::getNativeState(const Object& obj) {
   JSVMUtil::HandleScopeWrapper scope(env);
   const JSVM_Value jsObject = JSVMConverter::PointerValueToJSVM(env, obj);
   HostProxy* hostProxy = HostProxy::GetHostProxyFromJSVM(env, jsObject);
-  assert(hostProxy && !hostProxy->HasNativeState());
+  RNOH_ASSERT(hostProxy && !hostProxy->HasNativeState());
 
   return static_cast<ObjectNativeState*>(hostProxy)->GetNativeState();
 }
@@ -555,7 +556,7 @@ Value JSVMRuntime::getProperty(const Object &object, const PropNameID &name)
     JSVM_Value propResult = nullptr;
     JSVM_Status status = 
         OH_JSVM_GetProperty(env, jsvm_object, jsvm_name, &propResult);
-    assert(status == JSVM_OK && "OH_JSVM_GetProperty faild.");
+    RNOH_ASSERT(status == JSVM_OK && "OH_JSVM_GetProperty faild.");
 
     // If not get property, return undefined
     return JSVMConverter::JSVMToJsi(env, propResult);
@@ -654,7 +655,7 @@ bool JSVMRuntime::isArray(const Object &value) const
     bool result = false;
     JSVM_Status status = 
         OH_JSVM_IsArray(env, jsvm_value, &result);
-    assert(status == JSVM_OK && "OH_JSVM_IsArray faild.");
+    RNOH_ASSERT(status == JSVM_OK && "OH_JSVM_IsArray faild.");
 
     return result;
 }
@@ -670,7 +671,7 @@ bool JSVMRuntime::isArrayBuffer(const Object &value) const
     bool result = false;
     JSVM_Status status = 
         OH_JSVM_IsArraybuffer(env, jsvm_value, &result);
-    assert(status == JSVM_OK && "OH_JSVM_IsArraybuffer faild.");
+    RNOH_ASSERT(status == JSVM_OK && "OH_JSVM_IsArraybuffer faild.");
 
     return result;
 }
@@ -686,7 +687,7 @@ bool JSVMRuntime::isFunction(const Object &value) const
     bool result = false;
     JSVM_Status status = 
         OH_JSVM_IsFunction(env, jsvm_value, &result);
-    assert(status == JSVM_OK && "OH_JSVM_IsFunction faild.");
+    RNOH_ASSERT(status == JSVM_OK && "OH_JSVM_IsFunction faild.");
 
     return result;
 }
