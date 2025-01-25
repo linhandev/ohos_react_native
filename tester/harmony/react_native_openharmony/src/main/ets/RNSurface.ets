@@ -119,7 +119,7 @@ export struct RNSurface {
   * Note: You may need to change this delay along with RNInstancesCoordinator's 
   * onWindowSizeChange delay, as both have an effect on window changes. 
   */
-  private readonly delayTime: number = 500;
+  private readonly delayTime: number = 100;
 
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
