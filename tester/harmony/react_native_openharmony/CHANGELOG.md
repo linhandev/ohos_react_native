@@ -1,4 +1,5 @@
 # Changelog
+## v0.72.54
 
 ## v0.72.53
 - fix:change delay time,([f19bda388](https://gitee.com/openharmony-sig/ohos_react_native/commit/f19bda388633c9e3290737c1500df1b2387b8cdc))
