@@ -5,7 +5,6 @@ Please note we provide an open source software notice for the third party open s
 Warranty Disclaimer
 THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE APPLICABLE LICENSES FOR MORE DETAILS.
 
-
 ## 1. Third Party Code
 
 ### Dependencies
@@ -21,7 +20,10 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
    - **License Path 1**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/LICENSE`
    - **License Path 2**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core/LICENSE`
 
+The tester's app icon uses react-native's logo, which is [part of the react-native repository](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/NewAppScreen/components/logo.png), licensed under the MIT license.
+
 ## 2. Notices
+
 Software: react-native v0.76.5
 
 Copyright notice:

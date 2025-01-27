@@ -10,14 +10,20 @@ const RCTNetworking =
   require('react-native/Libraries/Network/RCTNetworking').default;
 
 const FILE_URI = '/data/storage/el2/base/files/testFile.txt';
-const SVG_TEXT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23174 23 20.46348">
-  <title>React Logo</title>
-  <circle cx="0" cy="0" r="2.05" fill="#61dafb"/>
-  <g stroke="#61dafb" stroke-width="1" fill="none">
-    <ellipse rx="11" ry="4.2"/>
-    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
-    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
-  </g>
+const SVG_TEXT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">
+  <defs
+     id="defs6" />
+  <rect
+     width="14"
+     height="14"
+     x="0"
+     y="0"
+     id="canvas"
+     style="fill:none;stroke:none;visibility:hidden" />
+  <path
+     d="M 2,1 3,2 8,2 8,4 3.28125,4 C 2.929782,3.6968959 2.495731,3.5 2,3.5 c -1.098647,0 -2,0.9013528 -2,2 0,1.0986471 0.901353,2 2,2 0.427066,0 0.798288,-0.143336 1.125,-0.375 L 5,9 c 0,1 1,2 2,2 l 5,0 c 1,0 2,-1 2,-2 C 13.95458,6.5666111 12,4 9,4 L 9,2 13,2 14,1 2,1 z m 0,3.5 c 0.558207,0 1,0.441793 1,1 0,0.558207 -0.441793,1 -1,1 -0.558207,0 -1,-0.441793 -1,-1 0,-0.558207 0.441793,-1 1,-1 z M 9,5 c 2,0 4,2 4,4 L 10,9 C 9.472666,9 9,8.508475 9,8 L 9,5 z m -3,7 c -0.525424,0 -0.491525,1 0,1 l 7,0 c 0.59322,0 0.559322,-1 0,-1 l -7,0 z"
+     id="heliport"
+     style="fill:#000000;fill-opacity:1;stroke:none" />
 </svg>
 `;
 
@@ -83,7 +89,7 @@ export const NetworkingTest = () => {
         <TestCase.Logical
           itShould="fetch local assets correctly (test needs to be run without metro)"
           fn={async ({expect}) => {
-            const uri = require('../assets/react-icon.svg');
+            const uri = require('../assets/heliport-14.svg');
             const source = resolveAssetSource(uri);
             const response = await fetch(source.uri);
             const result = await response.text();

@@ -113,7 +113,7 @@ export function IndexPage() {
             <Image
               style={{width: 32, height: 32}}
               resizeMode="contain"
-              source={require('../assets/react-native-logo.png')}
+              source={require('react-native/Libraries/NewAppScreen/components/logo.png')}
             />
             <Text
               style={{
