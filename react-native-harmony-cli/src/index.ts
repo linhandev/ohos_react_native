@@ -7,6 +7,7 @@ import {
   commandLinkHarmony,
   commandRunHarmony,
   commandInitHarmony,
+  commandCleanHarmony,
 } from './commands';
 
 export const config = {
@@ -18,5 +19,6 @@ export const config = {
     commandLinkHarmony,
     commandRunHarmony,
     commandInitHarmony,
+    commandCleanHarmony
   ] as Command[],
 } satisfies Partial<Config>;

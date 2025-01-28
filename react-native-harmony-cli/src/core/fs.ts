@@ -29,3 +29,16 @@ export function maybeRemoveFilesInDirectory(path: AbsolutePath): void {
     }
   });
 }
+
+export function maybeReadFile(path: AbsolutePath): string | null {
+  if (!fs.existsSync(path.getValue())) {
+    return null;
+  }
+  if (!fs.lstatSync(path.getValue()).isFile()) {
+    throw new DescriptiveError({
+      whatHappened: "Tried to read a path that doesn't point to a file",
+      whatCanUserDo: [`Verify path: ${path.getValue()}`],
+    });
+  }
+  return fs.readFileSync(path.getValue(), 'utf-8');
+}
