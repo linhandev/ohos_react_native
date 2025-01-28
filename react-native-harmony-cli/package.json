@@ -22,6 +22,7 @@
   "main": "dist/index.js",
   "devDependencies": {
     "@react-native-community/cli-types": "^11.3.0",
+    "@react-native-community/cli": "^15.0.0",
     "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.1",

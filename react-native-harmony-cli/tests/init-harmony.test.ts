@@ -54,7 +54,7 @@ it('should add harmony boilerplate to existing project', async () => {
   const filesCountInHarmonyDir = fs
     .readDirentsSync(tmpDir.copyWithNewSegment('harmony'), { recursive: true })
     .flatMap((dirent) => !dirent.isDirectory()).length;
-  expect(filesCountInHarmonyDir).toEqual(54);
+  expect(filesCountInHarmonyDir).toEqual(57);
   expect(allFilesInProject).toEqual(
     expect.arrayContaining([
       'metro.config.js',
@@ -88,7 +88,7 @@ it('should add harmony boilerplate to existing project', async () => {
       'harmony/entry/src/ohosTest/ets/test/List.test.ets',
       'harmony/entry/src/main/resources/base/element/color.json',
       'harmony/entry/src/main/resources/base/element/string.json',
-      'harmony/entry/src/main/resources/base/media/icon.png',
+      'harmony/entry/src/main/resources/base/media/startIcon.png',
       'harmony/entry/src/main/resources/base/profile/main_pages.json',
     ])
   );
