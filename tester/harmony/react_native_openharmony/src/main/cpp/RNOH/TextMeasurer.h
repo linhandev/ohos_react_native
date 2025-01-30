@@ -42,26 +42,15 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
   };
 
   facebook::react::TextMeasurement measure(
-      facebook::react::AttributedString attributedString,
-      facebook::react::ParagraphAttributes paragraphAttributes,
-      facebook::react::LayoutConstraints layoutConstraints,
-      std::shared_ptr<void> hostTextStorage) override;
-
-  std::shared_ptr<void> getHostTextStorage(
-      facebook::react::AttributedString attributedString,
-      facebook::react::ParagraphAttributes paragraphAttributes,
-      facebook::react::LayoutConstraints layoutConstraints) const override;
+      const facebook::react::AttributedStringBox& attributedStringBox,
+      const facebook::react::ParagraphAttributes& paragraphAttributes,
+      const facebook::react::TextLayoutContext& layoutContext,
+      facebook::react::LayoutConstraints layoutConstraints) override;
 
   TextStorage createTextStorage(
       facebook::react::AttributedString attributedString,
       facebook::react::ParagraphAttributes paragraphAttributes,
       facebook::react::LayoutConstraints layoutConstraints) const;
-
-  bool maybeUpdateTextStorage(
-      facebook::react::AttributedString attributedString,
-      facebook::react::ParagraphAttributes paragraphAttributes,
-      facebook::react::LayoutConstraints layoutConstraints,
-      std::shared_ptr<TextStorage> const& hostTextStorage) const;
 
   void
   setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfLeading);

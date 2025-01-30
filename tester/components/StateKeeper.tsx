@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState} from 'react';
 
 export function StateKeeper<T>(props: {
@@ -5,7 +6,7 @@ export function StateKeeper<T>(props: {
   renderContent: (
     value: T | undefined,
     setValue: React.Dispatch<React.SetStateAction<T>>,
-  ) => void;
+  ) => any;
 }) {
   const [value, setValue] = useState<T>(props.initialValue);
 

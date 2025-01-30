@@ -222,7 +222,7 @@ module.exports = {
   },
   get dispatchCommand() {
     return require('@react-native-oh/react-native-core/Libraries/Renderer/shims/ReactNative')
-      .dispatchCommand;
+      .default.dispatchCommand;
   },
   // END: react-native-harmony specific exports
 };

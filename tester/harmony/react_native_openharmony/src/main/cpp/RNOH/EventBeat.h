@@ -5,41 +5,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+#pragma once
+
 #include <ReactCommon/RuntimeExecutor.h>
-#include <cxxreact/SystraceSection.h>
 #include <react/renderer/core/EventBeat.h>
-#include "RNOH/TaskExecutor/TaskExecutor.h"
+#include "RNOH/UITicker.h"
 
 namespace rnoh {
 
-class EventBeat : public facebook::react::EventBeat {
+class EventBeat final : public facebook::react::EventBeat {
  public:
   EventBeat(
-      facebook::react::RuntimeExecutor runtimeExecutor,
-      SharedOwnerBox ownerBox)
-      : m_runtimeExecutor(runtimeExecutor),
-        facebook::react::EventBeat(ownerBox) {}
+      std::shared_ptr<facebook::react::EventBeat::OwnerBox> ownerBox,
+      facebook::react::RuntimeScheduler& runtimeScheduler,
+      UITicker::Shared uiTicker);
 
-  void induce() const override {
-    facebook::react::SystraceSection s("#RNOH::EventBeat::induce");
-    if (!this->isRequested_) {
-      return;
-    }
+  ~EventBeat();
 
-    this->m_runtimeExecutor(
-        [this](facebook::jsi::Runtime& runtime) { beat(runtime); });
-  }
-
-  void request() const override {
-    facebook::react::SystraceSection s("#RNOH::EventBeat::request");
-    facebook::react::EventBeat::request();
-    induce();
-  }
-
-  ~EventBeat() override = default;
+  void request() const override;
 
  private:
-  facebook::react::RuntimeExecutor m_runtimeExecutor;
+  mutable std::function<void()> m_unsubscribeUITickerListener = nullptr;
+  mutable std::mutex m_unsubscribeUITickerListenerMtx;
+  mutable std::atomic<bool> m_isBeatScheduled{false};
+  UITicker::Shared m_uiTicker;
 };
 
 } // namespace rnoh

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <folly/Function.h>
 #include <glog/logging.h>
 #include <chrono>
 #include <functional>
@@ -20,6 +21,8 @@ namespace rnoh {
  * @internal
  */
 class UITicker {
+  using Task = folly::Function<void()>;
+
  public:
   using Timestamp = std::chrono::
       time_point<std::chrono::steady_clock, std::chrono::nanoseconds>;
@@ -48,7 +51,17 @@ class UITicker {
     };
   }
 
+  void runTask(Task&& task) {
+    auto lock = std::lock_guard(m_taskMtx);
+    m_tasks.push_back(std::move(task));
+    if (m_tasks.size() == 0) {
+      requestNextTick();
+    }
+  }
+
  private:
+  std::mutex m_taskMtx;
+  std::vector<Task> m_tasks;
   std::unordered_map<int, std::function<void(Timestamp)>> m_listenerById;
   std::mutex listenersMutex;
   NativeVsyncHandle m_vsyncHandle;
@@ -59,11 +72,31 @@ class UITicker {
   }
 
   void tick(Timestamp timestamp) {
-    std::lock_guard lock(listenersMutex);
-    if (m_listenerById.empty()) {
-      return;
+    {
+      auto lock = std::lock_guard(m_taskMtx);
+      for (auto& task : m_tasks) {
+        task();
+      }
+      m_tasks.clear();
     }
-    for (const auto& idAndListener : m_listenerById) {
+
+    decltype(m_listenerById) listenerById;
+    {
+      std::lock_guard lock(listenersMutex);
+      if (m_listenerById.empty()) {
+        return;
+      }
+      /**
+       * TODO: Eliminate copy by value
+       * https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1478
+       *
+       * This change was introduced in the RN 0.77 update. As of this comment,
+       * rnoh::EventBeat unsubscribes UITicker in a listener, causing a deadlock
+       * if listenersMutex is locked during listener execution.
+       */
+      listenerById = m_listenerById;
+    }
+    for (const auto& idAndListener : listenerById) {
       idAndListener.second(timestamp);
     }
     this->requestNextTick();

@@ -73,27 +73,17 @@ OH_Drawing_EllipsisModal mapEllipsizeMode(
   }
 }
 
-TextMeasurement TextMeasurer::measure(
-    AttributedString attributedString,
-    ParagraphAttributes paragraphAttributes,
-    LayoutConstraints layoutConstraints,
-    std::shared_ptr<void> hostTextStorage) {
+facebook::react::TextMeasurement TextMeasurer::measure(
+    const facebook::react::AttributedStringBox& attributedStringBox,
+    const facebook::react::ParagraphAttributes& paragraphAttributes,
+    const facebook::react::TextLayoutContext& layoutContext,
+    facebook::react::LayoutConstraints layoutConstraints) {
   facebook::react::SystraceSection s("#RNOH::TextMeasurer::measure");
-
-  auto textStorage = std::static_pointer_cast<TextStorage>(hostTextStorage);
-  if (!textStorage) {
-    textStorage = std::make_shared<TextStorage>(createTextStorage(
-        std::move(attributedString),
-        std::move(paragraphAttributes),
-        std::move(layoutConstraints)));
-  } else {
-    maybeUpdateTextStorage(
-        std::move(attributedString),
-        std::move(paragraphAttributes),
-        std::move(layoutConstraints),
-        textStorage);
-  }
-  return textStorage->arkUITypography.getMeasurement();
+  return createTextStorage(
+             std::move(attributedStringBox.getValue()),
+             std::move(paragraphAttributes),
+             std::move(layoutConstraints))
+      .arkUITypography.getMeasurement();
 }
 
 TextMeasurer::TextStorage TextMeasurer::createTextStorage(
@@ -117,7 +107,6 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
       styledString.m_fragmentLengths,
       layoutConstraints.maximumSize.width * m_scale,
       m_scale);
-
   return TextStorage{
       styledString,
       std::move(typography),
@@ -277,36 +266,6 @@ void TextMeasurer::setTextMeasureParams(
   m_fontScale = fontScale;
   m_scale = scale;
   m_halfLeading = halfLeading;
-}
-
-std::shared_ptr<void> TextMeasurer::getHostTextStorage(
-    facebook::react::AttributedString attributedString,
-    facebook::react::ParagraphAttributes paragraphAttributes,
-    facebook::react::LayoutConstraints layoutConstraints) const {
-  return std::make_shared<TextStorage>(createTextStorage(
-      std::move(attributedString),
-      std::move(paragraphAttributes),
-      std::move(layoutConstraints)));
-}
-
-bool TextMeasurer::maybeUpdateTextStorage(
-    facebook::react::AttributedString attributedString,
-    facebook::react::ParagraphAttributes paragraphAttributes,
-    facebook::react::LayoutConstraints layoutConstraints,
-    std::shared_ptr<TextStorage> const& textStorage) const {
-  if (std::tie(
-          textStorage->attributedString,
-          textStorage->paragraphAttributes,
-          textStorage->layoutConstraints) !=
-      std::tie(attributedString, paragraphAttributes, layoutConstraints)) {
-    // update text storage if any input changed
-    *textStorage = createTextStorage(
-        std::move(attributedString),
-        std::move(paragraphAttributes),
-        std::move(layoutConstraints));
-    return true;
-  }
-  return false;
 }
 
 } // namespace rnoh

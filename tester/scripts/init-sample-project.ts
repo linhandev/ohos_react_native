@@ -31,17 +31,17 @@ async function exec(command: string) {
 
 exec(
   [
-    'npx --yes @react-native-community/cli@latest init __SampleProject__ --version 0.76.5 --skip-install',
+    'npx --yes @react-native-community/cli@latest init __SampleProject__ --version 0.77.0 --skip-install',
     'cd __SampleProject__',
     'npm i',
     'echo \'@rnoh:registry=https://gl.swmansion.com/api/v4/projects/458/packages/npm/\n//gl.swmansion.com/api/v4/projects/458/packages/npm/:_authToken="${RNOH_NPM_TOKEN}"\' > .npmrc',
     'npm i',
     'npm i @react-native-oh/react-native-core@npm:@rnoh/react-native-core',
-    'npm i ../../react-native-harmony/rnoh-react-native-harmony-0.76.0.tgz',
+    'npm i ../../react-native-harmony/rnoh-react-native-harmony-0.77.0.tgz',
     'cd ../../react-native-harmony-cli',
     'npm pack',
     'cd ../tester/__SampleProject__',
-    'npm i ../../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz',
+    'npm i ../../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.77.0.tgz',
     './node_modules/.bin/react-native init-harmony --bundle-name com.rnoh.sample_project --rnoh-npm-package-name @rnoh/react-native-harmony --rnoh-cli-npm-package-name @rnoh/react-native-harmony-cli',
   ].join(' && '),
 );

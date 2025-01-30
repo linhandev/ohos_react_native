@@ -25,6 +25,10 @@ TextComponentInstance::TextComponentInstance(Context context)
   m_textNode.setTextOverflow(ARKUI_TEXT_OVERFLOW_ELLIPSIS);
 }
 
+TextComponentInstance::~TextComponentInstance() {
+  this->disposeTextStorage();
+}
+
 void TextComponentInstance::onChildInserted(
     ComponentInstance::Shared const& /*childComponentInstance*/,
     std::size_t /*index*/) {
@@ -159,34 +163,26 @@ void TextComponentInstance::onStateChanged(
   auto const& fragments = stateData.attributedString.getFragments();
   if (fragments.empty()) {
     m_textNode.resetTextContentWithStyledString();
-    m_textStorage.reset();
+    this->disposeTextStorage();
     return;
   }
   auto const& paragraphLayoutManager = stateData.layoutManager.lock();
   facebook::react::LayoutConstraints layoutConstraints = {
       m_layoutMetrics.frame.size, m_layoutMetrics.frame.size};
-  auto textStorage = std::static_pointer_cast<TextMeasurer::TextStorage>(
-      paragraphLayoutManager->getHostTextStorage(
-          stateData.attributedString,
-          stateData.paragraphAttributes,
-          layoutConstraints));
+
   auto textMeasurer = static_cast<const TextMeasurer*>(
       paragraphLayoutManager->getNativeTextLayoutManager());
   RNOH_ASSERT(textMeasurer);
 
-  if (!textStorage) {
-    m_textStorage = textMeasurer->createTextStorage(
-        stateData.attributedString,
-        stateData.paragraphAttributes,
-        layoutConstraints);
-  } else {
-    textMeasurer->maybeUpdateTextStorage(
-        stateData.attributedString,
-        stateData.paragraphAttributes,
-        textStorage->layoutConstraints,
-        textStorage);
-    m_textStorage = *textStorage;
-  }
+  this->disposeTextStorage();
+  /**
+   * TODO: reuse measurer's TextStorage
+   * https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1482
+   */
+  m_textStorage = textMeasurer->createTextStorage(
+      stateData.attributedString,
+      stateData.paragraphAttributes,
+      layoutConstraints);
 
   RNOH_ASSERT(m_textStorage.has_value());
   m_textNode.setTextContentWithStyledString(
@@ -387,5 +383,35 @@ void TextComponentInstance::updateFragmentTouchTargets(
     textFragmentCount++;
   }
   m_fragmentTouchTargetByTag = std::move(touchTargetByTag);
+}
+
+void TextComponentInstance::disposeTextStorage() {
+  m_deps->taskExecutor->runDelayedTask(
+      TaskThread::MAIN,
+      [textStorage = std::move(m_textStorage)]() {
+        /**
+         * ApplyIndent crash
+         *
+         * After updating RN to 0.77, the tester application started crashing on
+         * certain pages. The crash occurs on the platform side in
+         * MultipleParagraphLayoutAlgorithm::ApplyIndent. It can be reproduced
+         * by navigating to the AppRegistry page in the RNOH tester app (the All
+         * Tests page doesn't crash). The
+         * MultipleParagraphLayoutAlgorithm::ApplyIndent method is called on the
+         * VSync thread. Commenting out OH_Drawing_DestroyTypography in
+         * ArkUITypography eliminated this problem, however, it introduced a
+         * massive memory leak.
+         *
+         * My hypothesis is that some internal platform objects are kept
+         * indirectly by textStorage and need to be alive when
+         * MultipleParagraphLayoutAlgorithm::ApplyIndent is called.
+         *
+         * TextMeasurer in RN v0.72.5 supported hostTextStorage, but this
+         * concept was removed in RN v0.75. For some reason, no crashes were
+         * observed in RNOH v0.75 or v0.76...
+         */
+      },
+      1000);
+  m_textStorage = std::nullopt;
 }
 } // namespace rnoh

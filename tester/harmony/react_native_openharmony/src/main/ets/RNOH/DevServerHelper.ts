@@ -9,7 +9,7 @@ import url from '@ohos.url'
 import http from '@ohos.net.http';
 import { getInspectorPackagerConnection } from './InspectorPackagerConnection';
 import { RNOHLogger } from './RNOHLogger';
-import { InspectorPackagerConnection,  } from './types';
+import { InspectorPackagerConnection, } from './types';
 import { NapiBridge } from './NapiBridge';
 
 function getServerHost(bundleUrlString: string): string {
@@ -22,6 +22,7 @@ function getServerHost(bundleUrlString: string): string {
 // returns the inspector url for current device and application
 function getInspectorDeviceUrl(bundleUrl: string) {
   // TODO: get real deviceName and appName instead of hardcoded values
+  // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1476
   const deviceName = "HarmonyDevice";
   const appName = "com.rnoh.tester";
   return `http://${getServerHost(bundleUrl)}/inspector/device?name=${deviceName}&app=${appName}`;
@@ -36,7 +37,9 @@ export class DevServerHelper {
   static DEBUGGER_MSG_DISABLE = "{ \"id\":1,\"method\":\"Debugger.disable\" }";
   static connectionByInspectorUrl = new Map<string, InspectorPackagerConnection>();
 
-  public static connectToDevServer(bundleUrl: string, appName: string, logger: RNOHLogger, napiBridge: NapiBridge) {
+  public static connectToDevServer(bundleUrl: string, appName: string, logger: RNOHLogger,
+    napiBridge: NapiBridge) {
+    const _logger = logger.clone(`DevServerHelper::connectToDevServer (appName=${appName})`);
     const inspectorUrl = getInspectorDeviceUrl(bundleUrl);
     let connection = DevServerHelper.connectionByInspectorUrl.get(inspectorUrl);
 
@@ -44,9 +47,13 @@ export class DevServerHelper {
       connection = getInspectorPackagerConnection(napiBridge, inspectorUrl, appName, logger);
       DevServerHelper.connectionByInspectorUrl.set(inspectorUrl, connection);
       connection.connect();
+      _logger.debug("CONNECTED")
     }
 
-    return connection;
+    return () => {
+      connection.closeQuietly()
+      _logger.debug("CLOSE")
+    };
   }
 
   public static openUrl(url: string, bundleUrl: string, onErrorCallback: () => void) {

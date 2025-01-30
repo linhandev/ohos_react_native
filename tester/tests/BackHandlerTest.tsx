@@ -1,7 +1,8 @@
 import {BackHandler, Text, TouchableOpacity, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {useCallback, useState} from 'react';
-import {Button, TestCase} from '../components';
+import {Button, StateKeeper, TestCase} from '../components';
+import React from 'react';
 
 export const BackHandlerTest = () => {
   const [counter, setCounter] = useState(0);
@@ -28,29 +29,37 @@ export const BackHandlerTest = () => {
         </TouchableOpacity>
       </TestCase.Example>
       <TestCase.Example itShould="allow to add, remove eventListener and display number of system back presses/gestures accordingly">
-        <Text style={{width: '100%'}}>
-          Back pressed {counter} time{counter === 1 ? '' : 's'}
-        </Text>
-        <View style={{flexDirection: 'row'}}>
-          <Button
-            label={'Add event listener'}
-            onPress={() => {
-              BackHandler.addEventListener(
-                'hardwareBackPress',
-                handleBackPress,
-              );
-            }}
-          />
-          <Button
-            label={'Remove event listener'}
-            onPress={() => {
-              BackHandler.removeEventListener(
-                'hardwareBackPress',
-                handleBackPress,
-              );
-            }}
-          />
-        </View>
+        <StateKeeper<ReturnType<BackHandler['addEventListener']> | undefined>
+          initialValue={undefined}
+          renderContent={(sub, setSub) => {
+            return (
+              <React.Fragment>
+                <Text style={{width: '100%'}}>
+                  Back pressed {counter} time{counter === 1 ? '' : 's'}
+                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Button
+                    label={'Add event listener'}
+                    onPress={() => {
+                      setSub(
+                        BackHandler.addEventListener(
+                          'hardwareBackPress',
+                          handleBackPress,
+                        ),
+                      );
+                    }}
+                  />
+                  <Button
+                    label={'Remove event listener'}
+                    onPress={() => {
+                      sub?.remove();
+                    }}
+                  />
+                </View>
+              </React.Fragment>
+            );
+          }}
+        />
       </TestCase.Example>
     </TestSuite>
   );

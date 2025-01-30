@@ -135,11 +135,9 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
     this->getLocalRootArkUINode().setResizeMode(props->resizeMode);
   }
 
-  if (m_props->defaultSources != props->defaultSources) {
-    if (!(props->defaultSources.empty())) {
-      this->getLocalRootArkUINode().setAlt(
-          this->resolveSourceWithAssetPrefix(props->defaultSources[0].uri));
-    }
+  if (m_props->defaultSource != props->defaultSource) {
+    this->getLocalRootArkUINode().setAlt(
+        this->resolveSourceWithAssetPrefix(props->defaultSource.uri));
   }
 
   if (m_rawProps.loadingIndicatorSource != rawProps.loadingIndicatorSource) {

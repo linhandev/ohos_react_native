@@ -29,6 +29,8 @@ std::string getThreadSymbol() {
     return "____█";
   } else if (threadName == "WorkerThread") {
     return "___█_";
+  } else if (threadName.starts_with("EventRunner")) {
+    return "_____█ (" + threadName + ")";
   } else {
     return "█____";
   }

@@ -198,9 +198,12 @@ napi_value getInspectorPackagerConnection(
   auto delegate =
       std::make_unique<ArkTSConnectionDelegate>(env, std::move(delegateRef));
 
+  // TODO: use actual device name
+  // (https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1476)
+  auto deviceName = "HarmonyDevice";
   auto packagerConnection =
       std::make_shared<jsinspector_modern::InspectorPackagerConnection>(
-          url, app, std::move(delegate));
+          url, deviceName, app, std::move(delegate));
 
   return wrapInspectorPackagerConnection(env, packagerConnection);
 }

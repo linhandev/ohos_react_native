@@ -423,6 +423,8 @@ export class RNInstanceImpl implements RNInstance {
   private uiCtx: UIContext;
   private defaultProps: Record<string, any>;
   private packages: RNPackage[] = [];
+  private maybeDisconnectDebugger?: (() => void) | undefined = undefined;
+
 
   constructor(
     private envId: number,
@@ -493,6 +495,7 @@ export class RNInstanceImpl implements RNInstance {
     }
     this.napiBridge.onDestroyRNInstance(this.id);
     this.turboModuleProvider.onDestroy();
+    this.maybeDisconnectDebugger?.();
     stopTracing();
   }
 
@@ -816,7 +819,7 @@ export class RNInstanceImpl implements RNInstance {
       }
       const isRemoteBundle = bundleURL.startsWith('http');
       if (this.shouldEnableDebugger && isRemoteBundle) {
-        DevServerHelper.connectToDevServer(
+        this.maybeDisconnectDebugger = DevServerHelper.connectToDevServer(
           jsBundleProvider.getURL(),
           this.getName(),
           this.logger,

@@ -20,13 +20,14 @@ class SampleViewProps : public ViewProps {
       const RawProps& rawProps)
       : ViewProps(context, sourceProps, rawProps),
         textColor(
-            CoreFeatures::enablePropIteratorSetter ? sourceProps.textColor
-                                                   : convertRawProp(
-                                                         context,
-                                                         rawProps,
-                                                         "textColor",
-                                                         sourceProps.textColor,
-                                                         {})) {}
+            ReactNativeFeatureFlags::enableCppPropsIteratorSetter
+                ? sourceProps.textColor
+                : convertRawProp(
+                      context,
+                      rawProps,
+                      "textColor",
+                      sourceProps.textColor,
+                      {})) {}
 
   SharedColor textColor{};
 };

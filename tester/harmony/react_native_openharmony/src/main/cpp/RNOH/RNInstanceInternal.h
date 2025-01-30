@@ -32,6 +32,12 @@ class RNInstanceInternal
     : public RNInstance,
       public std::enable_shared_from_this<RNInstance>,
       public facebook::react::LayoutAnimationStatusDelegate {
+  /**
+   * facebook::react::ReactNativeFeatureFlags can be initialized only once and
+   * those flags are shared between RNInstances.
+   */
+  static bool s_hasInitializedFeatureFlags;
+
  public:
   class RNInstanceRNOHMarkerListener : public RNOHMarker::RNOHMarkerListener {
    public:
@@ -68,7 +74,7 @@ class RNInstanceInternal
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared fontRegistry);
 
-  virtual ~RNInstanceInternal() noexcept = default;
+  virtual ~RNInstanceInternal() noexcept;
 
   facebook::react::ContextContainer const& getContextContainer() const override;
   TurboModule::Shared getTurboModule(const std::string& name) override;

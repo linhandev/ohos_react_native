@@ -27,14 +27,10 @@ using SharedTextLayoutManager = std::shared_ptr<const TextLayoutManager>;
 class TextLayoutManagerDelegate {
  public:
   virtual TextMeasurement measure(
-      AttributedString attributedString,
-      ParagraphAttributes paragraphAttributes,
-      LayoutConstraints layoutConstraints,
-      std::shared_ptr<void> hostTextStorage) = 0;
-  virtual std::shared_ptr<void> getHostTextStorage(
-      AttributedString attributedString,
-      ParagraphAttributes paragraphAttributes,
-      LayoutConstraints layoutConstraints) const = 0;
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
+      const TextLayoutContext& layoutContext,
+      LayoutConstraints layoutConstraints) = 0;
 };
 
 /*
@@ -57,13 +53,6 @@ class TextLayoutManager {
       const ParagraphAttributes& paragraphAttributes,
       const TextLayoutContext& layoutContext,
       LayoutConstraints layoutConstraints) const;
-
-  // RNOH patch
-  TextMeasurement measure(
-      const AttributedStringBox& attributedStringBox,
-      const ParagraphAttributes& paragraphAttributes,
-      LayoutConstraints layoutConstraints,
-      std::shared_ptr<void> hostTextStorage) const;
 
   /**
    * Measures an AttributedString on the platform, as identified by some
@@ -97,17 +86,6 @@ class TextLayoutManager {
       const AttributedStringBox& attributedStringBox,
       const ParagraphAttributes& paragraphAttributes,
       const Size& size) const;
-
-  /**
-   * RNOH patch
-   * This method was preserved to make the RN update to RN@0.75.4 easier. The
-   * method was available in RN@0.72.5, but that's no longer the case in
-   * RN@0.75.4. RNOH should consider finding an alternative approach.
-   */
-  std::shared_ptr<void> getHostTextStorage(
-      AttributedString attributedString,
-      ParagraphAttributes paragraphAttributes,
-      LayoutConstraints layoutConstraints) const;
 
  private:
   std::shared_ptr<TextLayoutManagerDelegate> m_textLayoutManagerDelegate;

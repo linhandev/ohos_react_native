@@ -23,8 +23,7 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 The tester's app icon uses react-native's logo, which is [part of the react-native repository](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/NewAppScreen/components/logo.png), licensed under the MIT license.
 
 ## 2. Notices
-
-Software: react-native v0.76.5
+Software: react-native v0.77.0
 
 Copyright notice:
 Copyright (c) Meta Platforms, Inc. and affiliates.

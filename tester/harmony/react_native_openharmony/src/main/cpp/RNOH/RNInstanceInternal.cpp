@@ -21,16 +21,16 @@
 #include <string_view>
 #include "HarmonyTimerRegistry.h"
 #include "JSBigStringHelpers.h"
-#include "RNOH/AsynchronousEventBeat.h"
+#include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/RNOHMarker.h"
+#include "RNOH/RNFeatureFlags.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "TextMeasurer.h"
 
 namespace rnoh {
-
 using namespace facebook;
 
 class JSInspectorHostTargetDelegate
@@ -135,8 +135,16 @@ void RNInstanceInternal::start() {
   textMeasurer->setTextMeasureParams(fontScale, scale, halfLeading);
 }
 
+bool RNInstanceInternal::s_hasInitializedFeatureFlags = false;
+
 void RNInstanceInternal::initialize() {
   DLOG(INFO) << "RNInstanceInternal::initialize";
+  if (!RNInstanceInternal::s_hasInitializedFeatureFlags) {
+    facebook::react::ReactNativeFeatureFlags::override(
+        std::make_unique<RNFeatureFlags>());
+    RNInstanceInternal::s_hasInitializedFeatureFlags = true;
+  }
+
   auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
   m_contextContainer->insert("ReactNativeConfig", reactConfig);
 
@@ -144,11 +152,20 @@ void RNInstanceInternal::initialize() {
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_BRIDGE_LOADING_START);
-
-  auto onJSError = [this](const JsErrorHandler::ParsedError& error) {
-    // TODO: implement `ArkTSBridge::handleError(ParsedError)` and call it here
-    LOG(ERROR) << "Error raised when executing JS: " << error.message;
-  };
+  auto onJSError =
+      [this](jsi::Runtime& runtime, const JsErrorHandler::ParsedError& error) {
+        // TODO: implement `ArkTSBridge::handleError(ParsedError)` and call it
+        // here
+        std::ostringstream msg;
+        msg << error.message;
+        for (auto stackFrame : error.stack) {
+          msg << "\n"
+              << stackFrame.file.value_or("UNKNOWN_FILE") << " "
+              << stackFrame.lineNumber.value_or(-1) << " ("
+              << stackFrame.methodName << ")";
+        }
+        LOG(ERROR) << "Error raised when executing JS: " << msg.str();
+      };
 
   auto jsRuntime = facebook::react::HermesInstance::createJSRuntime(
       std::move(reactConfig), nullptr, m_jsQueue, false);
@@ -204,10 +221,11 @@ void RNInstanceInternal::initializeScheduler(
   DLOG(INFO) << "RNInstanceInternal::initializeScheduler";
   auto runtimeExecutor = m_reactInstance->getBufferedRuntimeExecutor();
 
-  react::EventBeat::Factory asyncEventBeatFactory =
-      [runtimeExecutor, uiTicker = m_uiTicker](auto ownerBox) {
-        return std::make_unique<AsynchronousEventBeat>(
-            ownerBox, runtimeExecutor, uiTicker);
+  react::EventBeat::Factory eventBeatFactory =
+      [runtimeExecutor, uiTicker = m_uiTicker, reactInstance = m_reactInstance](
+          auto ownerBox) {
+        return std::make_unique<EventBeat>(
+            ownerBox, *reactInstance->getRuntimeScheduler(), uiTicker);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =
@@ -221,7 +239,7 @@ void RNInstanceInternal::initializeScheduler(
       .contextContainer = m_contextContainer,
       .componentRegistryFactory = componentRegistryFactory,
       .runtimeExecutor = runtimeExecutor,
-      .asynchronousEventBeatFactory = asyncEventBeatFactory};
+      .eventBeatFactory = eventBeatFactory};
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       runtimeExecutor, m_contextContainer, this);
@@ -484,5 +502,13 @@ RNInstanceInternal::RNInstanceInternal(
           std::make_unique<JSInspectorHostTargetDelegate>()) {
   m_fontRegistry = std::move(fontRegistry);
 }
+
+RNInstanceInternal::~RNInstanceInternal() noexcept {
+  if (m_inspectorPageId.has_value()) {
+    react::jsinspector_modern::getInspectorInstance().removePage(
+        m_inspectorPageId.value());
+    m_inspectorPageId.reset();
+  }
+};
 
 } // namespace rnoh

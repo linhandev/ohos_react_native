@@ -15,25 +15,15 @@ void* TextLayoutManager::getNativeTextLayoutManager() const {
 }
 
 TextMeasurement TextLayoutManager::measure(
-      const AttributedStringBox& attributedStringBox,
-      const ParagraphAttributes& paragraphAttributes,
-      const TextLayoutContext& layoutContext,
-      LayoutConstraints layoutConstraints) const {
-  return measure(
-      attributedStringBox, paragraphAttributes, layoutConstraints, nullptr);
-}
-
-TextMeasurement TextLayoutManager::measure(
     const AttributedStringBox& attributedStringBox,
     const ParagraphAttributes& paragraphAttributes,
-    LayoutConstraints layoutConstraints,
-    std::shared_ptr<void> hostTextStorage) const {
-  auto& attributedString = attributedStringBox.getValue();
+    const TextLayoutContext& layoutContext,
+    LayoutConstraints layoutConstraints) const {
   return m_textLayoutManagerDelegate->measure(
-      attributedString,
+      attributedStringBox,
       paragraphAttributes,
-      layoutConstraints,
-      std::move(hostTextStorage));
+      layoutContext,
+      std::move(layoutConstraints));
 }
 
 TextMeasurement TextLayoutManager::measureCachedSpannableById(
@@ -49,14 +39,6 @@ LinesMeasurements TextLayoutManager::measureLines(
     const Size& size) const {
   return {};
 };
-
-std::shared_ptr<void> TextLayoutManager::getHostTextStorage(
-    AttributedString attributedString,
-    ParagraphAttributes paragraphAttributes,
-    LayoutConstraints layoutConstraints) const {
-  return m_textLayoutManagerDelegate->getHostTextStorage(
-      attributedString, paragraphAttributes, layoutConstraints);
-}
 
 Float TextLayoutManager::baseline(
     const AttributedStringBox& /*attributedStringBox*/,

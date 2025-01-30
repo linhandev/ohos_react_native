@@ -21,8 +21,10 @@
 #include "RNOH/DisplayMetricsManager.h"
 #include "RNOH/ImageSourceResolver.h"
 #include "RNOH/RNInstance.h"
+#include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
+#include "TaskExecutor/TaskExecutor.h"
 
 namespace rnoh {
 
@@ -71,6 +73,7 @@ class ComponentInstance
     DisplayMetricsManager::Shared displayMetricsManager;
     ImageSourceResolver::Shared imageSourceResolver;
     Registry::Weak componentInstanceRegistry;
+    TaskExecutor::Shared taskExecutor;
   };
 
   struct Context {

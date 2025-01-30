@@ -16,7 +16,7 @@ SchedulerDelegate::~SchedulerDelegate() {
 }
 
 void SchedulerDelegate::schedulerDidFinishTransaction(
-    const MountingCoordinator::Shared& /*mountingCoordinator*/) {
+    const std::shared_ptr<const MountingCoordinator>& /*mountingCoordinator*/) {
   // no-op, we will flush the transaction from schedulerShouldRenderTransactions
 }
 
@@ -101,7 +101,7 @@ void SchedulerDelegate::schedulerDidSetIsJSResponder(
 }
 
 static void performTransaction(
-    MountingCoordinator::Shared const& mountingCoordinator,
+    const std::shared_ptr<const MountingCoordinator>& mountingCoordinator,
     MountingManager::Shared const& mountingManager,
     std::weak_ptr<facebook::react::Scheduler> const& weakScheduler) {
   facebook::react::SystraceSection s(
@@ -128,7 +128,7 @@ static void performTransaction(
 }
 
 void SchedulerDelegate::schedulerShouldRenderTransactions(
-    const MountingCoordinator::Shared& mountingCoordinator) {
+    const std::shared_ptr<const MountingCoordinator>& mountingCoordinator) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions");
   performOnMainThread([transactionState = m_transactionState,

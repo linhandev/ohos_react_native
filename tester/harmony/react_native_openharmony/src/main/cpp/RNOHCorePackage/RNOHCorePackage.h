@@ -54,9 +54,11 @@
 #include "RNOHCorePackage/TurboModules/ImageLoaderTurboModule.h"
 #include "RNOHCorePackage/TurboModules/LinkingManagerTurboModule.h"
 #include "RNOHCorePackage/TurboModules/LogBoxTurboModule.h"
+#include "RNOHCorePackage/TurboModules/MicrotasksTurboModule.h"
 #include "RNOHCorePackage/TurboModules/NetworkingTurboModule.h"
 #include "RNOHCorePackage/TurboModules/PlatformColorTurboModule.h"
 #include "RNOHCorePackage/TurboModules/PlatformConstantsTurboModule.h"
+#include "RNOHCorePackage/TurboModules/ReactNativeFeatureFlagsTurboModule.h"
 #include "RNOHCorePackage/TurboModules/SafeAreaTurboModule.h"
 #include "RNOHCorePackage/TurboModules/ShareTurboModule.h"
 #include "RNOHCorePackage/TurboModules/SourceCodeTurboModule.h"
@@ -127,6 +129,10 @@ class RNOHCoreTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
       return std::make_shared<ToastAndroidTurboModule>(ctx, name);
     } else if (name == "ShareModule") {
       return std::make_shared<ShareTurboModule>(ctx, name);
+    } else if (name == "NativeReactNativeFeatureFlagsCxx") {
+      return std::make_shared<ReactNativeFeatureFlagsTurboModule>(ctx, name);
+    } else if (name == "NativeMicrotasksCxx") {
+      return std::make_shared<MicrotasksTurboModule>(ctx, name);
     }
     return nullptr;
   };

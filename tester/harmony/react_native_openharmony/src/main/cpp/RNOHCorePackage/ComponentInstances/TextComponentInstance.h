@@ -28,6 +28,7 @@ class TextComponentInstance
 
  public:
   TextComponentInstance(Context context);
+  ~TextComponentInstance();
   TextNode& getLocalRootArkUINode() override;
   std::vector<TouchTarget::Shared> getTouchTargetChildren() override;
 
@@ -46,5 +47,6 @@ class TextComponentInstance
   void setTextAttributes(const facebook::react::TextAttributes& textAttributes);
   void updateFragmentTouchTargets(
       facebook::react::ParagraphState const& newState);
+  void disposeTextStorage();
 };
 } // namespace rnoh

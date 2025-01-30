@@ -214,6 +214,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   componentInstanceDependencies->arkTsMessageHub = arkTSMessageHub;
   componentInstanceDependencies->arkTSMessageHub = arkTSMessageHub;
   componentInstanceDependencies->displayMetricsManager = arkTSBridge;
+  componentInstanceDependencies->taskExecutor = taskExecutor;
   auto customComponentArkUINodeFactory =
       std::make_shared<CustomComponentArkUINodeHandleFactory>(
           env, frameNodeFactoryRef);

@@ -42,10 +42,12 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
   ~SchedulerDelegate() override;
 
   void schedulerShouldRenderTransactions(
-      const MountingCoordinator::Shared& mountingCoordinator) override;
+      const std::shared_ptr<const MountingCoordinator>& mountingCoordinator)
+      override;
 
   void schedulerDidFinishTransaction(
-      const MountingCoordinator::Shared& mountingCoordinator) override;
+      const std::shared_ptr<const MountingCoordinator>& mountingCoordinator)
+      override;
 
   void schedulerDidRequestPreliminaryViewAllocation(
       const ShadowNode& shadowView) override;

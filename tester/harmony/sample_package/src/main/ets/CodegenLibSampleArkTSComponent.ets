@@ -20,7 +20,7 @@ export struct CodegenLibSampleArkTSComponent {
     ))
     setTimeout(() => {
       this.eventEmitter!.emit("mount", {
-        text: this.ctx.descriptorRegistry.findDescriptorWrapperByTag<GENERATED.DescriptorWrapper>(this.tag)!.props.text
+        text: this.ctx.descriptorRegistry.findDescriptorWrapperByTag<GENERATED.DescriptorWrapper>(this.tag)?.props?.text ?? "???"
       });
     }, 1000)
 

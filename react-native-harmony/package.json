@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony",
-  "version": "0.76.1",
+  "version": "0.77.0",
   "description": "",
   "scripts": {
     "deploy": "node ./scripts/deploy.js",
@@ -16,15 +16,15 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.76.0+rn.0.76.5",
-    "react-native": "0.76.5"
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.0-rn.0.77.0",
+    "react-native": "0.77.0"
   },
   "types": "types",
   "devDependencies": {
     "@react-native-community/cli-types": "^11.2.0",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.76.0+rn.0.76.5",
-    "@react-native/metro-config": "0.76.5",
-    "@react-native/typescript-config": "0.76.5",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.0-rn.0.77.0",
+    "@react-native/metro-config": "0.77.0",
+    "@react-native/typescript-config": "0.77.0",
     "@types/fs-extra": "^11.0.1",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
