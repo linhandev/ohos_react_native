@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "i": "npm run _install:react-native-harmony && npm run _pack:react-native-harmony && npm run _install:cli && npm run _pack:cli && npm run _install:sample-package && npm run _pack:sample-package && npm install && npm run install:hooks",
+    "i": "npm run _pack:cli && npm run _pack:react-native-harmony && npm run _pack:sample-package && npm run _install:react-native-harmony && npm run _install:cli && npm run _install:sample-package && npm install && npm run install:hooks",
     "start": "react-native start",
     "android": "react-native run-android",
     "harmony": "react-native run-harmony",
