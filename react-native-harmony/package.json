@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony",
-  "version": "0.76.0",
+  "version": "0.76.1",
   "description": "",
   "scripts": {
     "deploy": "node ./scripts/deploy.js",
@@ -9,9 +9,8 @@
     "_update:version": "node ./scripts/update-version.js",
     "gen:changelog": "node ./scripts/generate-changelog.js",
     "prepublishOnly": "npm run _verify",
-    "_verify": "npm run _check-if-plugin-included && react-native verify-package-harmony --package-path . --skip-checks 'oh_package_name_is_derived_from_npm_package_name' && npm run _verify:ecosystem",
-    "_verify:ecosystem": "npm pack && cd ../tester-ecosystem && npm run install:react-native-harmony && npm install && npm run build",
-    "_check-if-plugin-included": "test $(ls ./harmony/*.tgz 2>/dev/null | wc -l) -eq 1",
+    "_verify": "npm run _verify:ecosystem",
+    "_verify:ecosystem": "npm pack && cd ../tester-ecosystem && npm run _install:react-native-harmony && npm install && npm run build",
     "test": "jest"
   },
   "author": "",

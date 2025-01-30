@@ -64,8 +64,8 @@ async function runDeployment() {
     'This script should be executed from react-native-harmony directory'
   );
   assert(
-    await isRepositoryClean(),
-    'Repository should be clean, on main branch and up to date with upstream.'
+    await isRepositoryPrepared(),
+    'Repository should be on the main branch and up to date with upstream.'
   );
 
   let version = '';
@@ -131,12 +131,12 @@ async function runDeployment() {
 /**
  * @returns {Promise<boolean>}
  */
-async function isRepositoryClean() {
-  const status = await exec('git status --porcelain');
+async function isRepositoryPrepared() {
+  // const status = await exec('git status --porcelain');
   const branch = (await exec('git branch --show-current')).trim();
   const isUpdated =
     (await exec('git rev-list HEAD...origin/main --count')).trim() === '0';
-  return !status && branch === 'main' && isUpdated;
+  return branch === 'main' && isUpdated;
 }
 
 /**

@@ -15,9 +15,9 @@
     "_reinstall:react-native-harmony": "npm uninstall react-native-harmony && npm run _pack:react-native-harmony && npm run _install:react-native-harmony",
     "_reinstall:sample-package": "npm uninstall react-native-harmony-sample-package && npm run _pack:sample-package && npm run _install:sample-package",
     "_reinstall:cli": "npm uninstall react-native-harmony-cli && npm run _pack:cli && npm run _install:cli",
-    "_install:react-native-harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.76.0.tgz",
+    "_install:react-native-harmony": "npm i react-native-harmony@file:../react-native-harmony/rnoh-react-native-harmony-0.76.1.tgz",
     "_install:sample-package": "npm i ../react-native-harmony-sample-package/react-native-harmony-sample-package-1.0.0.tgz",
-    "_install:cli": "npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz",
+    "_install:cli": "npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.1.tgz",
     "_pack:react-native-harmony": "cd ../react-native-harmony && npm i && npm pack && cd ../tester",
     "_pack:sample-package": "cd ../react-native-harmony-sample-package && npm i && npm run codegen-lib && npm pack && cd ../tester",
     "_pack:cli": "cd ../react-native-harmony-cli && npm i && npm pack && cd ../tester",
@@ -51,13 +51,13 @@
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
     "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.76.0+rn.0.76.5",
-    "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.0.tgz",
+    "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.76.1.tgz",
     "chai": "4.3.7",
     "d3-scale-chromatic": "^3.0.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-flipper-performance-plugin": "^0.4.0",
-    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.76.0.tgz",
+    "react-native-harmony": "file:../react-native-harmony/rnoh-react-native-harmony-0.76.1.tgz",
     "react-native-harmony-sample-package": "file:../react-native-harmony-sample-package/react-native-harmony-sample-package-1.0.0.tgz"
   },
   "devDependencies": {

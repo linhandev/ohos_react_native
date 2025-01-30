@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.76.1
+- [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI` in favor of `disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode (Hvigor Plugin) ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
+## v0.76.1
+ - [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI in favor of disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
+## v0.76.1
+ - [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI in favor of disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
 ## v0.76.0
  - updated react-native-core to 0.76 (react-native 0.76.5)
 
