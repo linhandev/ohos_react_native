@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.77.0
+- [breaking] RN 0.77 changed `CoreFeatures::enablePropIteratorSetter` to `ReactNativeFeatureFlags::enableCppPropsIteratorSetter` ([765b370e46](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/765b370e46cda2e1397347d9bc038c4c91b8437a))
+- updated react-native-core (and react-native) to 0.77.0 ([765b370e46](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/765b370e46cda2e1397347d9bc038c4c91b8437a))
+
+
 ## v0.76.1
 - [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI` in favor of `disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
 - [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
