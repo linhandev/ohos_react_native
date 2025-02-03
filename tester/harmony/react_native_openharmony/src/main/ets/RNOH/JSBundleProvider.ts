@@ -213,7 +213,7 @@ export class MetroJSBundleProvider extends JSBundleProvider {
     const err: { message: string, stack: string } = JSON.parse(textDecoder.decodeWithStream(new Uint8Array(result)));
     throw new MetroJSBundleProviderError({
       whatHappened: ansiToText(err.message),
-      customStack: err.stack.replace(err.message, ""),
+      customStack: err.stack?.replace(err.message, ""),
       howCanItBeFixed: []
     })
   }
