@@ -15,6 +15,7 @@
     },
   },
   "exclude": [
-    "harmony"
+    "harmony",
+    "scripts/**/tmp"
   ]
 }

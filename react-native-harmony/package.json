@@ -9,9 +9,10 @@
     "_update:version": "node ./scripts/update-version.js",
     "gen:changelog": "node ./scripts/generate-changelog.js",
     "prepublishOnly": "npm run _verify",
-    "_verify": "npm run _verify:ecosystem",
+    "_verify": "npm run typecheck && npm run _verify:ecosystem",
     "_verify:ecosystem": "npm pack && cd ../tester-ecosystem && npm run _install:react-native-harmony && npm install && npm run build",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "author": "",
   "license": "MIT",

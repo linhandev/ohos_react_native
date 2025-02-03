@@ -3,12 +3,18 @@
     "@react-native/typescript-config/tsconfig.json",
   ],
   "exclude": [
-    "./harmony/cpp"
+    "node_modules"
+  ],
+  "include": [
+    "metro.config.js",
+    "react-native.config.js",
+    "index.js",
   ],
   "compilerOptions": {
+    "allowJs": true,
     "types": [
       "node", // Removes an error when exporting with module.exports.
       "jest"
-    ]
+    ],
   }
 }
