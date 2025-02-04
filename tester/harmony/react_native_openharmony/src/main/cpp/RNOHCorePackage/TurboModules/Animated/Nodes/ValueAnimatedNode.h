@@ -86,12 +86,12 @@ class ValueAnimatedNode : public AnimatedNode {
       // Special case for diffClamp
       return 0;
     }
-    if (!m_value.isDouble()) {
-      LOG(ERROR) << "Unexpected value type: " << m_value.typeName();
-      RNOH_ASSERT(false);
-      return 0;
+    if (m_value.isNumber()) {
+      return m_value.asDouble();
     }
-    return m_value.getDouble();
+    LOG(ERROR) << "Unexpected value type: " << m_value.typeName();
+    RNOH_ASSERT(false);
+    return 0;
   }
 
  protected:
