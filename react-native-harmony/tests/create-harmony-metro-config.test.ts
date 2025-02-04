@@ -1,7 +1,6 @@
 import * as tmp from 'tmp';
 import { copyMetroConfig, createFileStructure } from './fsUtils';
 import * as pathUtils from 'path';
-import * as colors from 'colors/safe';
 
 let tmpDir = '';
 let removeTmpDir = () => {};
@@ -12,12 +11,40 @@ beforeEach(async () => {
   const dir = tmp.dirSync();
   tmpDir = dir.name;
   removeTmpDir = dir.removeCallback;
-
-  metroConfigPath = copyMetroConfig(tmpDir, 'metro.config.js', 'node_modules');
   process.chdir(originalCwd);
 });
 
 afterEach(removeTmpDir);
+
+function resolveRequest({
+  originModulePath,
+  moduleName,
+  platform,
+  rnProjectRootPath,
+  nodeModulesPaths,
+}: {
+  originModulePath: string;
+  moduleName: string;
+  platform: string;
+  nodeModulesPaths?: string[];
+  rnProjectRootPath?: string;
+}) {
+  const rnProjectRootPath_ = rnProjectRootPath ?? tmpDir;
+  metroConfigPath = copyMetroConfig(rnProjectRootPath_, 'metro.config.js');
+  process.chdir(rnProjectRootPath_);
+  const { createHarmonyMetroConfig } = require(metroConfigPath);
+  const resolutionContext = {
+    resolveRequest: (context: any, moduleName: string, platform: string) => {
+      return { moduleName: moduleName, platform: platform };
+    },
+    originModulePath,
+    nodeModulesPaths,
+  };
+  const resolveRequest_ = createHarmonyMetroConfig({
+    reactNativeHarmonyPackageName: 'react-native-harmony',
+  })?.resolver?.resolveRequest;
+  return resolveRequest_(resolutionContext, moduleName, platform);
+}
 
 it('should redirect internal imports in harmony packages', async () => {
   createFileStructure(tmpDir, {
@@ -33,14 +60,7 @@ it('should redirect internal imports in harmony packages', async () => {
     },
   });
 
-  process.chdir(tmpDir);
-
-  const { createHarmonyMetroConfig } = require(metroConfigPath);
-
-  const resolutionContext = {
-    resolveRequest: (context: any, moduleName: string, platform: string) => {
-      return { moduleName: moduleName, platform: platform };
-    },
+  const resolution = resolveRequest({
     originModulePath: pathUtils.join(
       tmpDir,
       'node_modules',
@@ -48,17 +68,12 @@ it('should redirect internal imports in harmony packages', async () => {
       'src',
       'foo.ts'
     ),
-  };
-  const moduleName = './bar.ts';
-  const platform = 'harmony';
-  const resolveRequest = createHarmonyMetroConfig({
-    reactNativeHarmonyPackageName: 'react-native-harmony',
-  })?.resolver?.resolveRequest;
-
-  const resolution = resolveRequest(resolutionContext, moduleName, platform);
+    moduleName: './bar.ts',
+    platform: 'harmony',
+  });
 
   expect(resolution.moduleName).toEqual(
-    pathUtils.posix.join('react-native-harmony-foo', 'src', moduleName)
+    pathUtils.posix.join('react-native-harmony-foo', 'src', 'bar.ts')
   );
 });
 
@@ -78,14 +93,7 @@ it('should redirect internal imports in scoped harmony packages', async () => {
     },
   });
 
-  process.chdir(tmpDir);
-
-  const { createHarmonyMetroConfig } = require(metroConfigPath);
-
-  const resolutionContext = {
-    resolveRequest: (context: any, moduleName: any, platform: any) => {
-      return { moduleName: moduleName, platform: platform };
-    },
+  const resolution = resolveRequest({
     originModulePath: pathUtils.join(
       tmpDir,
       'node_modules',
@@ -93,17 +101,12 @@ it('should redirect internal imports in scoped harmony packages', async () => {
       'src',
       'foo.ts'
     ),
-  };
-  const moduleName = './bar.ts';
-  const platform = 'harmony';
-  const resolveRequest = createHarmonyMetroConfig({
-    reactNativeHarmonyPackageName: 'react-native-harmony',
-  })?.resolver?.resolveRequest;
-
-  const resolution = resolveRequest(resolutionContext, moduleName, platform);
+    moduleName: './bar.ts',
+    platform: 'harmony',
+  });
 
   expect(resolution.moduleName).toEqual(
-    pathUtils.posix.join('@rnoh/react-native-foo', 'src', moduleName)
+    pathUtils.posix.join('@rnoh/react-native-foo', 'src', 'bar.ts')
   );
 });
 
@@ -123,14 +126,7 @@ it('should redirect internal imports if alias is scoped', async () => {
     },
   });
 
-  process.chdir(tmpDir);
-
-  const { createHarmonyMetroConfig } = require(metroConfigPath);
-
-  const resolutionContext = {
-    resolveRequest: (context: any, moduleName: any, platform: any) => {
-      return { moduleName: moduleName, platform: platform };
-    },
+  const resolution = resolveRequest({
     originModulePath: pathUtils.join(
       tmpDir,
       'node_modules',
@@ -139,17 +135,12 @@ it('should redirect internal imports if alias is scoped', async () => {
       'src',
       'foo.ts'
     ),
-  };
-  const moduleName = './bar.ts';
-  const platform = 'harmony';
-  const resolveRequest = createHarmonyMetroConfig({
-    reactNativeHarmonyPackageName: 'react-native-harmony',
-  })?.resolver?.resolveRequest;
-
-  const resolution = resolveRequest(resolutionContext, moduleName, platform);
+    moduleName: './bar.ts',
+    platform: 'harmony',
+  });
 
   expect(resolution.moduleName).toEqual(
-    pathUtils.posix.join('@rnoh', 'react-native-harmony-foo', 'src', moduleName)
+    pathUtils.posix.join('@rnoh', 'react-native-harmony-foo', 'src', 'bar.ts')
   );
 });
 
@@ -166,14 +157,7 @@ it('should not redirect internal imports when flag not set', async () => {
     },
   });
 
-  process.chdir(tmpDir);
-
-  const { createHarmonyMetroConfig } = require(metroConfigPath);
-
-  const resolutionContext = {
-    resolveRequest: (context: any, moduleName: any, platform: any) => {
-      return { moduleName: moduleName, platform: platform };
-    },
+  const resolution = resolveRequest({
     originModulePath: pathUtils.join(
       tmpDir,
       'node_modules',
@@ -181,14 +165,79 @@ it('should not redirect internal imports when flag not set', async () => {
       'src',
       'foo.ts'
     ),
-  };
-  const moduleName = './bar.ts';
-  const platform = 'harmony';
-  const resolveRequest = createHarmonyMetroConfig({
-    reactNativeHarmonyPackageName: 'react-native-harmony',
-  })?.resolver?.resolveRequest;
+    moduleName: './bar.ts',
+    platform: 'harmony',
+  });
 
-  const resolution = resolveRequest(resolutionContext, moduleName, platform);
+  expect(resolution.moduleName).toEqual('./bar.ts');
+});
 
-  expect(resolution.moduleName).toEqual(moduleName);
+describe('yarn monorepo', () => {
+  it('should redirect import when project imports library', async () => {
+    createFileStructure(tmpDir, {
+      packages: {
+        'my-project': {},
+      },
+      node_modules: {
+        'react-native-harmony-foo': {
+          'package.json': `{
+            "name": "react-native-harmony-foo",
+            "harmony": {
+              "alias": "react-native-foo"
+            }}`,
+        },
+      },
+    });
+
+    const resolution = resolveRequest({
+      originModulePath: pathUtils.join(
+        tmpDir,
+        'packages',
+        'my-project',
+        'index.ts'
+      ),
+      moduleName: 'react-native-foo',
+      platform: 'harmony',
+      rnProjectRootPath: pathUtils.join(tmpDir, 'packages', 'my-project'),
+      nodeModulesPaths: ['../../node_modules'],
+    });
+
+    expect(resolution.moduleName).toEqual('react-native-harmony-foo');
+  });
+
+  it('should redirect import when harmony library overrides internals of another library', async () => {
+    createFileStructure(tmpDir, {
+      packages: {
+        'my-project': {},
+      },
+      node_modules: {
+        'react-native-harmony-foo': {
+          'package.json': `{
+            "name": "react-native-harmony-foo",
+            "harmony": {
+              "alias": "react-native-foo",
+              "redirectInternalImports": true
+            }}`,
+        },
+      },
+    });
+
+    const resolution = resolveRequest({
+      originModulePath: pathUtils.join(
+        tmpDir,
+        'node_modules',
+        'react-native-foo',
+        'src',
+        'foo.ts'
+      ),
+      moduleName: './bar.ts',
+      platform: 'harmony',
+      rnProjectRootPath: pathUtils.join(tmpDir, 'packages', 'my-project'),
+      nodeModulesPaths: ['../../node_modules'],
+    });
+
+    expect(resolution.moduleName).toEqual(
+      pathUtils.posix.join('react-native-harmony-foo', 'src', 'bar.ts')
+    );
+  });
 });

@@ -44,6 +44,10 @@ function createHarmonyMetroConfig(options) {
     resolver: {
       blockList: [/\.cxx/],
       resolveRequest: (ctx, moduleName, platform) => {
+        const nodeModulesPaths = [
+          'node_modules',
+          ...(ctx.nodeModulesPaths ?? []),
+        ];
         if (platform === 'harmony') {
           if (shouldPrintInfoAboutRNRedirection) {
             info(
@@ -89,7 +93,11 @@ function createHarmonyMetroConfig(options) {
             }
             return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
-            isHarmonyPackageInternalImport(ctx.originModulePath, moduleName)
+            isHarmonyPackageInternalImport(
+              nodeModulesPaths,
+              ctx.originModulePath,
+              moduleName
+            )
           ) {
             /**
              * Replace internal imports in `react-native-foo` with equivalent files from `react-native-harmony-foo`
@@ -104,11 +112,16 @@ function createHarmonyMetroConfig(options) {
             const alias = getPackageNameFromOriginModulePath(
               ctx.originModulePath
             );
+
             if (alias) {
-              const harmonyPackage = getHarmonyPackageByAliasMap('.');
+              const harmonyPackage =
+                getHarmonyPackageByAliasMap(nodeModulesPaths);
+
               const harmonyPackageName = harmonyPackage[alias]?.name;
+
               const redirectInternalImports =
                 harmonyPackage[alias]?.redirectInternalImports;
+
               if (
                 harmonyPackageName &&
                 !isRequestFromHarmonyPackage(
@@ -121,6 +134,7 @@ function createHarmonyMetroConfig(options) {
                   pathUtils.dirname(ctx.originModulePath),
                   moduleName
                 );
+
                 const slashes = new RegExp('/', 'g');
                 const [_, modulePathRelativeToOriginalPackage] =
                   moduleAbsPath.split(
@@ -136,6 +150,7 @@ function createHarmonyMetroConfig(options) {
                 try {
                   return ctx.resolveRequest(ctx, newModuleName, 'harmony');
                 } catch (err) {}
+              } else {
               }
             }
           } else {
@@ -147,7 +162,8 @@ function createHarmonyMetroConfig(options) {
              *     "alias": "react-native-foo"
              *  }
              */
-            const harmonyPackageByAlias = getHarmonyPackageByAliasMap('.');
+            const harmonyPackageByAlias =
+              getHarmonyPackageByAliasMap(nodeModulesPaths);
             const alias = getPackageName(moduleName);
             if (alias) {
               const harmonyPackageName = harmonyPackageByAlias[alias]?.name;
@@ -217,11 +233,16 @@ function getPackageNameFromOriginModulePath(originModulePath) {
 }
 
 /**
+ * @param nodeModulesPaths {readonly string[]}
  * @param originModulePath {string}
  * @param moduleName {string}
  * @returns {boolean}
  */
-function isHarmonyPackageInternalImport(originModulePath, moduleName) {
+function isHarmonyPackageInternalImport(
+  nodeModulesPaths,
+  originModulePath,
+  moduleName
+) {
   if (moduleName.startsWith('.')) {
     const alias = getPackageNameFromOriginModulePath(originModulePath);
     const slashes = new RegExp('/', 'g');
@@ -234,7 +255,7 @@ function isHarmonyPackageInternalImport(originModulePath, moduleName) {
         )}${pathUtils.sep}`
       )
     ) {
-      const harmonyPackage = getHarmonyPackageByAliasMap('.');
+      const harmonyPackage = getHarmonyPackageByAliasMap(nodeModulesPaths);
       const harmonyPackageName = harmonyPackage[alias]?.name;
       if (
         harmonyPackageName &&
@@ -244,6 +265,7 @@ function isHarmonyPackageInternalImport(originModulePath, moduleName) {
       }
     }
   }
+
   return false;
 }
 
@@ -265,6 +287,7 @@ function isInternalReactNativeRelativeImport(originModulePath) {
 function isRequestFromHarmonyPackage(originModulePath, harmonyPackageName) {
   const slashes = new RegExp('/', 'g');
   const packagePath = harmonyPackageName.replace(slashes, pathUtils.sep);
+
   return originModulePath.includes(
     `${pathUtils.sep}node_modules${pathUtils.sep}${packagePath}${pathUtils.sep}`
   );
@@ -276,9 +299,9 @@ function isRequestFromHarmonyPackage(originModulePath, harmonyPackageName) {
 let cachedHarmonyPackageByAliasMap = undefined;
 
 /**
- * @param projectRootPath {string}
+ * @param nodeModulesPaths {readonly string[]}
  */
-function getHarmonyPackageByAliasMap(projectRootPath) {
+function getHarmonyPackageByAliasMap(nodeModulesPaths) {
   /**
    * @type {Record<string, {name: string, redirectInternalImports: boolean}>}
    */
@@ -287,7 +310,7 @@ function getHarmonyPackageByAliasMap(projectRootPath) {
     return cachedHarmonyPackageByAliasMap;
   }
   cachedHarmonyPackageByAliasMap = findHarmonyNodeModulePaths(
-    findHarmonyNodeModuleSearchPaths(projectRootPath)
+    findHarmonyNodeModuleSearchPaths(nodeModulesPaths)
   ).reduce((acc, harmonyNodeModulePath) => {
     const harmonyNodeModulePathSegments = harmonyNodeModulePath.split(
       pathUtils.sep
@@ -343,16 +366,23 @@ function getHarmonyPackageByAliasMap(projectRootPath) {
 }
 
 /**
- * @param projectRootPath {string}
+ * @param nodeModulesPaths {readonly string[]}
  * @returns {string[]}
  */
-function findHarmonyNodeModuleSearchPaths(projectRootPath) {
-  const nodeModulesPath = `${projectRootPath}${pathUtils.sep}node_modules`;
-  const searchPaths = fs
-    .readdirSync(nodeModulesPath)
-    .filter((dirName) => dirName.startsWith('@'))
-    .map((dirName) => `${nodeModulesPath}${pathUtils.sep}${dirName}`);
-  searchPaths.push(nodeModulesPath);
+function findHarmonyNodeModuleSearchPaths(nodeModulesPaths) {
+  /**
+   * @type string[]
+   */
+  let searchPaths = [];
+  for (const nodeModulesPath of nodeModulesPaths) {
+    if (fs.existsSync(nodeModulesPath)) {
+      searchPaths = fs
+        .readdirSync(nodeModulesPath)
+        .filter((dirName) => dirName.startsWith('@'))
+        .map((dirName) => `${nodeModulesPath}${pathUtils.sep}${dirName}`);
+      searchPaths.push(nodeModulesPath);
+    }
+  }
   return searchPaths;
 }
 
