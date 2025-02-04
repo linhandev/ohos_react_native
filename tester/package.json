@@ -19,7 +19,7 @@
     "_pack:react-native-harmony": "cd ../react-native-harmony && npm i && npm pack && cd ../tester",
     "_pack:sample-package": "cd ../react-native-harmony-sample-package && npm i && npm run codegen-lib && npm pack && cd ../tester",
     "_pack:cli": "cd ../react-native-harmony-cli && npm i && npm pack && cd ../tester",
-    "install:local-core": "npm uninstall react-native-core && cd ../../react-native-core/packages/react-native && yarn pack && cd ../../../react-native-harmony/react-native-harmony && npm uninstall react-native-core && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz -D && cd ../tester && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz && npm i",
+    "install:local-core": "npm uninstall @react-native-oh/react-native-core && cd ../../react-native-core/packages/react-native && yarn pack --filename package.tgz && cd ../../../react-native-harmony/react-native-harmony && npm uninstall @react-native-oh/react-native-core && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz -D && cd ../tester && npm i @react-native-oh/react-native-core@file:../../react-native-core/packages/react-native/package.tgz && npm i",
     "bundle:dev": "react-native bundle-harmony --dev --minify=false",
     "bundle:prod": "react-native bundle-harmony --dev=false --minify=true",
     "format": "npm run format:js && npm run format:cpp",
