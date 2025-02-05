@@ -28,7 +28,7 @@ endfunction()
 add_compile_definitions(
     REACT_NATIVE__RENDER__GRAPHICS__FLOAT=double
     RAW_PROPS_ENABLED
-    FORMS_STACKING_CONTEXT)
+    UNSET_FORMS_STACKING_CONTEXT)
 
 add_react_common_subdir(yoga)
 add_library(yoga ALIAS yogacore)
@@ -82,7 +82,7 @@ add_react_common_subdir(react/renderer/components/image)
 add_react_common_subdir(react/renderer/components/legacyviewmanagerinterop)
 add_react_common_subdir(react/renderer/componentregistry/native)
 add_react_common_subdir(react/renderer/components/text)
-target_compile_definitions(rrc_text PUBLIC FORMS_STACKING_CONTEXT)
+target_compile_definitions(rrc_text PUBLIC UNSET_FORMS_STACKING_CONTEXT)
 # add_react_common_subdir(react/renderer/components/unimplementedview)
 add_subdirectory(${REACT_COMMON_PATCH_DIR}/react/renderer/components/rncore "react_components_harmony")
 add_react_common_subdir(react/renderer/components/modal)
@@ -278,5 +278,5 @@ target_include_directories(reactnative PUBLIC "${hermes_include_dirs}")
 target_compile_definitions(reactnative PUBLIC
     RAW_PROPS_ENABLED
     REACT_NATIVE__RENDER__GRAPHICS__FLOAT=double
-    FORMS_STACKING_CONTEXT
+    UNSET_FORMS_STACKING_CONTEXT
 )
