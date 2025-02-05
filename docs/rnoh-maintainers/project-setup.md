@@ -15,7 +15,7 @@ HUAWEI ID is needed to sign the app when running on a physical device.
 1. Install DevEco Studio.
 1. Test if the installation was successful by opening and closing DevEco Studio.
 
-NOTE: The SDK version expected by this project can be found in: `tester/harmony/build-profile.template.json5::app::products[0]::compatibleSdkVersion`.
+NOTE: The SDK version expected by this project can be found in: `packages/tester/harmony/build-profile.template.json5::app::products[0]::compatibleSdkVersion`.
 
 ### NPM Setup
 
@@ -64,7 +64,7 @@ You can find more details about GitLab access tokens in the [GitLab documentatio
 1. Navigate to the tester directory.
 1. Run `npm run i` (not `npm i`).
 1. Run `npm start` in the tester directory to start the Metro server.
-1. Open `tester/harmony` project in DevEco Studio and wait for background jobs to finish.
+1. Open `packages/tester/harmony` project in DevEco Studio and wait for background jobs to finish.
 1. Connect the device.
 1. Go to File > Project Structure > Signing Configs and Sign In to generate signature, and then press OK.
 1. Select 'entry' run configuration (top right corner).

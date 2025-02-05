@@ -10,15 +10,15 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 ### Dependencies
 
 1. **Precompiled Hermes**
-   - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/**/libhermes.so`
+   - **Path**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/**/libhermes.so`
    - **License**: MIT License
-   - **License Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/LICENSE`
+   - **License Path**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/prebuilt/LICENSE`
 2. **ReactCommon**
-   - **Path**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/ReactCommon`
-   - **Path to Patches**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core`
+   - **Path**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/ReactCommon`
+   - **Path to Patches**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core`
    - **License**: MIT License
-   - **License Path 1**: `tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/LICENSE`
-   - **License Path 2**: `tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core/LICENSE`
+   - **License Path 1**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/LICENSE`
+   - **License Path 2**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/patches/react_native_core/LICENSE`
 
 The tester's app icon uses react-native's logo, which is [part of the react-native repository](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/NewAppScreen/components/logo.png), licensed under the MIT license.
 
