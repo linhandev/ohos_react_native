@@ -63,10 +63,13 @@ jsi::Value getValue(
     const facebook::jsi::Value* args,
     size_t count) {
   auto self = static_cast<NativeAnimatedTurboModule*>(&turboModule);
-  auto value = self->getValue(args[0].getNumber());
+  auto tag = args[0].getNumber();
+  auto value = self->getValue(tag);
   if (count > 1) {
     args[1].getObject(rt).getFunction(rt).call(rt, value);
+    return facebook::jsi::Value::undefined();
   }
+  self->emitAnimationGetValueEvent(rt, tag, value);
   return facebook::jsi::Value::undefined();
 }
 
@@ -117,16 +120,39 @@ jsi::Value startAnimatingNode(
     size_t count) {
   auto self = static_cast<NativeAnimatedTurboModule*>(&turboModule);
   auto animationId = args[0].getNumber();
+  auto tag = args[1].getNumber();
   auto config = jsi::dynamicFromValue(rt, args[2]);
-  // always send emit event instead of using callback from args[3] as it causes
-  // problem with destruction of the RNInstance
+  // If the endCallback argument is not provided, Animated runs in
+  // single-operation mode, relying on RCTDeviceEventEmitter to handle events.
+  if (count < 4) {
+    self->startAnimatingNode(
+        animationId,
+        tag,
+        config,
+        [self, &rt, animationId](bool finished, double value) {
+          self->emitAnimationEndedEvent(rt, animationId, finished, value);
+        });
+    return facebook::jsi::Value::undefined();
+  }
+  auto endCallbackWrapped = self->createCallbackWrapper(
+      std::move(args[3].getObject(rt).getFunction(rt)), rt);
   self->startAnimatingNode(
       animationId,
-      args[1].getNumber(),
+      tag,
       config,
-      [self, &rt, animationId](bool finished, double value) {
-        self->emitAnimationEndedEvent(rt, animationId, finished, value);
-      });
+      self->wrapEndCallbackWithJSInvoker(
+          [&rt, endCallbackWrapped = std::move(endCallbackWrapped)](
+              bool finished, double value) {
+            auto endCallback = endCallbackWrapped.lock();
+            if (endCallback == nullptr) {
+              return;
+            }
+            auto result = jsi::Object(rt);
+            result.setProperty(rt, "finished", jsi::Value(finished));
+            result.setProperty(rt, "value", value);
+            endCallback->callback().call(rt, {std::move(result)});
+            endCallback->allowRelease();
+          }));
   return facebook::jsi::Value::undefined();
 }
 
@@ -244,6 +270,143 @@ jsi::Value removeAnimatedEventFromView(
   return facebook::jsi::Value::undefined();
 }
 
+jsi::Value queueAndExecuteBatchedOperations(
+    facebook::jsi::Runtime& rt,
+    react::TurboModule& turboModule,
+    const facebook::jsi::Value* args,
+    size_t count) {
+  if (count < 1) {
+    return facebook::jsi::Value::undefined();
+  }
+  auto self = static_cast<NativeAnimatedTurboModule*>(&turboModule);
+  auto opsAndArgs = args[0].getObject(rt).getArray(rt);
+
+  for (size_t i = 0; i < opsAndArgs.size(rt);) {
+    auto command =
+        static_cast<NativeAnimatedTurboModule::BatchExecutionOpCodes>(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+    switch (command) {
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_CREATE_ANIMATED_NODE:
+        self->createAnimatedNode(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            jsi::dynamicFromValue(rt, opsAndArgs.getValueAtIndex(rt, i++)));
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_UPDATE_ANIMATED_NODE_CONFIG:
+        self->updateAnimatedNodeConfig(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++));
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::OP_CODE_GET_VALUE:
+        self->getValue(opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_START_LISTENING_TO_ANIMATED_NODE_VALUE: {
+        self->startListeningToAnimatedNodeValue(
+            rt, opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+      } break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_STOP_LISTENING_TO_ANIMATED_NODE_VALUE:
+        self->stopListeningToAnimatedNodeValue(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_CONNECT_ANIMATED_NODES:
+        self->connectAnimatedNodes(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_DISCONNECT_ANIMATED_NODES:
+        self->disconnectAnimatedNodes(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_START_ANIMATING_NODE: {
+        auto animationId = opsAndArgs.getValueAtIndex(rt, i++).asNumber();
+        self->startAnimatingNode(
+            animationId,
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            jsi::dynamicFromValue(rt, opsAndArgs.getValueAtIndex(rt, i++)),
+            [self, &rt, animationId](bool finished, double value) {
+              self->emitAnimationEndedEvent(rt, animationId, finished, value);
+            });
+        break;
+      }
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_STOP_ANIMATION:
+        self->stopAnimation(opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_SET_ANIMATED_NODE_VALUE:
+        self->setAnimatedNodeValue(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_SET_ANIMATED_NODE_OFFSET:
+        self->setAnimatedNodeOffset(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_FLATTEN_ANIMATED_NODE_OFFSET:
+        self->flattenAnimatedNodeOffset(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_EXTRACT_ANIMATED_NODE_OFFSET:
+        self->extractAnimatedNodeOffset(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_CONNECT_ANIMATED_NODE_TO_VIEW:
+        self->connectAnimatedNodeToView(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_DISCONNECT_ANIMATED_NODE_FROM_VIEW: {
+        self->disconnectAnimatedNodeFromView(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+      } break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_RESTORE_DEFAULT_VALUES:
+        self->restoreDefaultValues(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_DROP_ANIMATED_NODE:
+        self->dropAnimatedNode(opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_ADD_ANIMATED_EVENT_TO_VIEW:
+        self->addAnimatedEventToView(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asString(rt).utf8(rt),
+            jsi::dynamicFromValue(rt, opsAndArgs.getValueAtIndex(rt, i++)));
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_REMOVE_ANIMATED_EVENT_FROM_VIEW:
+        self->removeAnimatedEventFromView(
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
+            opsAndArgs.getValueAtIndex(rt, i++).asString(rt).utf8(rt),
+            opsAndArgs.getValueAtIndex(rt, i++).asNumber());
+        break;
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_ADD_LISTENER:
+      case NativeAnimatedTurboModule::BatchExecutionOpCodes::
+          OP_CODE_REMOVE_LISTENERS:
+        i++;
+        break;
+    }
+  }
+  return facebook::jsi::Value::undefined();
+}
+
 NativeAnimatedTurboModule::NativeAnimatedTurboModule(
     const ArkTSTurboModule::Context ctx,
     const std::string name)
@@ -279,7 +442,9 @@ NativeAnimatedTurboModule::NativeAnimatedTurboModule(
       {"startListeningToAnimatedNodeValue",
        {1, rnoh::startListeningToAnimatedNodeValue}},
       {"stopListeningToAnimatedNodeValue",
-       {1, rnoh::stopListeningToAnimatedNodeValue}}};
+       {1, rnoh::stopListeningToAnimatedNodeValue}},
+      {"queueAndExecuteBatchedOperations",
+       {1, rnoh::queueAndExecuteBatchedOperations}}};
 }
 
 NativeAnimatedTurboModule::~NativeAnimatedTurboModule() {
@@ -506,6 +671,21 @@ void NativeAnimatedTurboModule::emitAnimationEndedEvent(
       });
 }
 
+void NativeAnimatedTurboModule::emitAnimationGetValueEvent(
+    facebook::jsi::Runtime& rt,
+    facebook::react::Tag tag,
+    double value) {
+  emitDeviceEvent(
+      rt,
+      "onNativeAnimatedModuleGetValue",
+      [tag, value](facebook::jsi::Runtime& rt, std::vector<jsi::Value>& args) {
+        jsi::Object param(rt);
+        param.setProperty(rt, "tag", tag);
+        param.setProperty(rt, "value", value);
+        args.emplace_back(std::move(param));
+      });
+}
+
 void NativeAnimatedTurboModule::handleEvent(
     EventEmitRequestHandler::Context const& ctx) {
   ArkJS arkJS(ctx.env);
@@ -533,5 +713,25 @@ void NativeAnimatedTurboModule::handleComponentEvent(
   auto propUpdates =
       m_animatedNodesManager.handleEvent(tag, eventName, payload);
   setNativeProps(propUpdates);
+}
+
+std::weak_ptr<facebook::react::CallbackWrapper>
+NativeAnimatedTurboModule::createCallbackWrapper(
+    facebook::jsi::Function&& callback,
+    facebook::jsi::Runtime& runtime) {
+  return react::CallbackWrapper::createWeak(
+      std::move(callback), runtime, this->jsInvoker_);
+}
+
+NativeAnimatedTurboModule::EndCallback
+NativeAnimatedTurboModule::wrapEndCallbackWithJSInvoker(
+    EndCallback&& endCallback) {
+  return [jsInvoker = this->jsInvoker_, endCallback = std::move(endCallback)](
+             bool finished, double value) mutable {
+    jsInvoker->invokeAsync(
+        [finished, value, endCallback = std::move(endCallback)] {
+          endCallback(finished, value);
+        });
+  };
 }
 } // namespace rnoh

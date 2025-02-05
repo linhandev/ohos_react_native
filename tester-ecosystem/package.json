@@ -18,7 +18,7 @@
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
     "@react-native-oh-tpl/async-storage": "^1.21.0-0.2.2",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.0-rn.0.77.0",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
     "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.77.0.tgz",
     "@rnoh/react-native-harmony-gesture-handler": "^2.20.1",
     "chai": "4.3.7",

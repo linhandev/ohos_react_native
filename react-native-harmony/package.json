@@ -17,13 +17,13 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.0-rn.0.77.0",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
     "react-native": "0.77.0"
   },
   "types": "types",
   "devDependencies": {
     "@react-native-community/cli-types": "^11.2.0",
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.0-rn.0.77.0",
+    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
     "@react-native/metro-config": "0.77.0",
     "@react-native/typescript-config": "0.77.0",
     "@types/fs-extra": "^11.0.1",

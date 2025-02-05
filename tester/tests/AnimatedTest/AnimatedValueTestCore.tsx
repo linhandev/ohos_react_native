@@ -48,6 +48,17 @@ export function AnimatedValueTestCore({
             <TrackingValue />
           </TestCase.Example>
         </TestSuite>
+
+        <TestSuite name="stopAnimation">
+          <TestCase.Manual
+            itShould="return the correct value in the callback"
+            initialState={0}
+            arrange={({setState}) => <GetValueTest setState={setState} />}
+            assert={({expect, state}) => {
+              expect(state).to.be.greaterThan(0);
+            }}
+          />
+        </TestSuite>
       </TestSuite>
 
       <TestSuite name="Animated.ValueXY">
@@ -775,5 +786,48 @@ const TrackingValue = () => {
       </View>
       <Text style={{height: 20}}>Press me to start animation</Text>
     </Pressable>
+  );
+};
+
+const GetValueTest = ({
+  setState,
+}: {
+  setState: React.Dispatch<React.SetStateAction<number>>;
+}) => {
+  const animationValue = useRef(
+    new Animated.Value(0, {useNativeDriver: true}),
+  ).current;
+
+  const startTest = () => {
+    Animated.timing(animationValue, {
+      toValue: 200,
+      duration: 2000,
+      useNativeDriver: true,
+    }).start();
+
+    setTimeout(() => {
+      animationValue.stopAnimation(currentValue => {
+        setState(currentValue);
+      });
+    }, 1000);
+  };
+
+  return (
+    <View style={{width: '100%', height: 100}}>
+      <Animated.View
+        style={{
+          height: 20,
+          width: 20,
+          margin: 10,
+          backgroundColor: 'red',
+          transform: [
+            {
+              translateX: animationValue,
+            },
+          ],
+        }}
+      />
+      <Button label="start" onPress={startTest} />
+    </View>
   );
 };
