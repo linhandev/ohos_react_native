@@ -85,7 +85,6 @@ facebook::react::TextMeasurement TextMeasurer::measure(
              std::move(layoutConstraints))
       .arkUITypography.getMeasurement();
 }
-
 TextMeasurer::TextStorage TextMeasurer::createTextStorage(
     facebook::react::AttributedString attributedString,
     facebook::react::ParagraphAttributes paragraphAttributes,
@@ -105,7 +104,7 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
       styledString.get(),
       styledString.m_attachmentCount,
       styledString.m_fragmentLengths,
-      layoutConstraints.maximumSize.width * m_scale,
+      layoutConstraints,
       m_scale);
   return TextStorage{
       styledString,
@@ -198,7 +197,7 @@ auto TextMeasurer::findFitFontSize(
       finalStyledString.get(),
       finalStyledString.m_attachmentCount,
       finalStyledString.m_fragmentLengths,
-      layoutConstraints.maximumSize.width * m_scale,
+      layoutConstraints,
       m_scale);
 
   if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
@@ -238,7 +237,7 @@ auto TextMeasurer::findFitFontSize(
         styledString.get(),
         styledString.m_attachmentCount,
         styledString.m_fragmentLengths,
-        layoutConstraints.maximumSize.width * m_scale,
+        layoutConstraints,
         m_scale);
     if (typography.getHeight() <= layoutConstraints.maximumSize.height &&
         (paragraphAttributes.maximumNumberOfLines == 0 ||

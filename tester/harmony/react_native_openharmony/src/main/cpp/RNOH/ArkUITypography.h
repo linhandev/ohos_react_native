@@ -106,12 +106,11 @@ class ArkUITypography final {
   }
 
   facebook::react::TextMeasurement getMeasurement() const {
-    return {
-        {
-            .width = getLongestLineWidth(),
-            .height = getHeight(),
-        },
-        getAttachments()};
+    facebook::react::Size clampedSize = m_layoutConstraints.clamp({
+        .width = getLongestLineWidth(),
+        .height = getHeight(),
+    });
+    return {clampedSize, getAttachments()};
   }
 
  private:
@@ -119,23 +118,27 @@ class ArkUITypography final {
       ArkUI_StyledString* styledString,
       size_t attachmentCount,
       std::vector<size_t> fragmentLengths,
-      facebook::react::Float maxWidth,
+      facebook::react::LayoutConstraints layoutConstraints,
       float scale)
       : m_typography(
             OH_ArkUI_StyledString_CreateTypography(styledString),
             OH_Drawing_DestroyTypography),
         m_attachmentCount(attachmentCount),
         m_fragmentLengths(std::move(fragmentLengths)),
+        m_layoutConstraints(std::move(layoutConstraints)),
         m_scale(scale) {
-    if (isnan(maxWidth) || maxWidth <= 0) {
-      maxWidth = std::numeric_limits<decltype(maxWidth)>::max();
+    facebook::react::Float scaledWidth =
+        m_layoutConstraints.maximumSize.width * m_scale;
+    if (isnan(scaledWidth) || scaledWidth <= 0) {
+      scaledWidth = std::numeric_limits<decltype(scaledWidth)>::max();
     }
-    OH_Drawing_TypographyLayout(m_typography.get(), maxWidth);
+    OH_Drawing_TypographyLayout(m_typography.get(), scaledWidth);
   }
 
   std::shared_ptr<OH_Drawing_Typography> m_typography;
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
+  facebook::react::LayoutConstraints m_layoutConstraints;
 
   float m_scale = 1.0;
 
