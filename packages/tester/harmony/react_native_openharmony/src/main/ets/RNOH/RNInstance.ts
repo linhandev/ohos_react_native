@@ -183,6 +183,11 @@ export interface RNInstance {
   ): BundleExecutionStatus | undefined;
 
   /**
+   * Returns a SurfaceHandle that can be used to stop rendering when the RNSurface is not visible.
+   */
+  getSurfaceHandleByAppKey(appKey: string): SurfaceHandle | undefined
+
+  /**
    * Enables feature flag. It may be removed in the future because usually feature flags need to be provided when creating
    * RNInstance.
    */
@@ -411,7 +416,7 @@ export class RNInstanceImpl implements RNInstance {
   public backPressHandler: () => void | undefined;
   private componentNameByDescriptorType = new Map<string, string>();
   private logger: RNOHLogger;
-  private surfaceHandles: Set<SurfaceHandle> = new Set();
+  private surfaceHandleByAppKey: Map<string, SurfaceHandle> = new Map();
   private responderLockDispatcher: ResponderLockDispatcher;
   private isFeatureFlagEnabledByName = new Map<FeatureFlagName, boolean>();
   private initialBundleUrl: string | undefined = undefined;
@@ -483,7 +488,7 @@ export class RNInstanceImpl implements RNInstance {
   public async onDestroy() {
     const stopTracing = this.logger.clone('onDestroy').startTracing();
     this.unregisterWorkerMessageListener();
-    for (const surfaceHandle of this.surfaceHandles) {
+    for (const surfaceHandle of this.surfaceHandleByAppKey.values()) {
       if (surfaceHandle.isRunning()) {
         this.logger.warn(
           'Destroying instance with running surface with tag: ' +
@@ -507,6 +512,10 @@ export class RNInstanceImpl implements RNInstance {
     return this.name;
   }
 
+  getSurfaceHandleByAppKey(appKey: string): SurfaceHandle | undefined {
+    return this.surfaceHandleByAppKey.get(appKey);
+  }
+
   enableFeatureFlag(featureFlagName: FeatureFlagName): void {
     this.isFeatureFlagEnabledByName.set(featureFlagName, true);
   }
@@ -518,6 +527,7 @@ export class RNInstanceImpl implements RNInstance {
   getPackages() {
     return this.packages;
   }
+
 
   public async initialize(packages: RNPackage[]) {
     const stopTracing = this.logger.clone('initialize').startTracing();
@@ -879,15 +889,15 @@ export class RNInstanceImpl implements RNInstance {
       appKey,
       this.defaultProps,
       this.napiBridge,
-      handle => this.surfaceHandles.delete(handle),
+      handle => this.surfaceHandleByAppKey.delete(appKey),
     );
-    this.surfaceHandles.add(result);
+    this.surfaceHandleByAppKey.set(appKey, result);
     stopTracing();
     return result;
   }
 
   public updateRTL(isRTL: boolean): void {
-    this.surfaceHandles.forEach(SurfaceHandle => {
+    this.surfaceHandleByAppKey.forEach(SurfaceHandle => {
       SurfaceHandle.updateRTL(isRTL);
     });
   }
