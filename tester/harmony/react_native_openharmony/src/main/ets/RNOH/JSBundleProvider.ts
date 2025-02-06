@@ -23,6 +23,16 @@ export interface HotReloadConfig {
   scheme?: string,
 }
 
+export interface FileJSBundle {
+    filePath: string,
+}
+
+export interface RawFileJSBundle {
+    rawFilePath: string,
+}
+
+export type JsBundle = ArrayBuffer|FileJSBundle|RawFileJSBundle;
+
 export abstract class JSBundleProvider {
   abstract getURL(): string
 
@@ -65,19 +75,23 @@ export class FileJSBundleProvider extends JSBundleProvider {
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
   ): Promise<ArrayBuffer> {
-    try {
-      const file = await fs.open(this.path, fs.OpenMode.READ_ONLY);
-      const { size } = await fs.stat(file.fd);
-      const buffer = new ArrayBuffer(size);
-      await fs.read(file.fd, buffer, { length: size });
-      return buffer;
-    } catch (err) {
-      throw new JSBundleProviderError({
-        whatHappened: `Couldn't load JSBundle from ${this.path}`,
-        extraData: err,
-        howCanItBeFixed: [`Check if a bundle exists at "${this.path}" on your device.`]
-      })
-    }
+      try {
+          const status = await fs.access(this.path, fs.OpenMode.READ_ONLY);
+          if (status) {
+              return {
+                  filePath: this.path
+              }
+          } else {
+              throw new Error("The file can't be accessed.");
+          }
+      } catch (err) {
+          throw new JSBundleProviderError({
+              whatHappened : `Couldn't access JSBundle in ${this.path}`,
+              extraData : err,
+              howCanItBeFixed : [ `Check if a bundle exists at "${
+                  this.path}" on your device.` ]
+          })
+      }
   }
 }
 
@@ -99,15 +113,25 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
   ): Promise<ArrayBuffer> {
     try {
-      const bundleFileContent = await this.resourceManager.getRawFileContent(this.path);
-      const bundle = bundleFileContent.buffer;
-      return bundle;
+        // We check for the file descriptor here because there isn't a dedicated
+        // way to check if a rawfile exists apart from opening it or getting its
+        // descriptor
+        const fd = this.resourceManager.getRawFdSync(this.path)
+        if (fd) {
+            return {
+                rawFilePath : this.path,
+            };
+        }
+        else {
+            throw new Error("The rawfile descriptor can't be opened.");
+        }
     } catch (err) {
-      throw new JSBundleProviderError({
-        whatHappened: `Couldn't load JSBundle from ${this.path}`,
-        extraData: err,
-        howCanItBeFixed: [`Check if a bundle exists at "<YOUR_ENTRY_MODULE>/src/main/resources/rawfile/${this.path}". (You can create a JS bundle with "react-native bundle-harmony" command.`]
-      })
+        throw new JSBundleProviderError({
+            whatHappened : `Couldn't access JSBundle in ${this.path}`,
+            extraData : err,
+            howCanItBeFixed :
+                [ `Check if a bundle exists at "${this.path}" on your device.` ]
+        })
     }
   }
 }
