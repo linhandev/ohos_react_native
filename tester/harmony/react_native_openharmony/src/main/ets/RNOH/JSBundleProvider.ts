@@ -39,7 +39,7 @@ export abstract class JSBundleProvider {
   abstract getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ):Promise<ArrayBuffer>
+  ):Promise<JsBundle>
 
   abstract getAppKeys(): string[]
 
@@ -74,7 +74,7 @@ export class FileJSBundleProvider extends JSBundleProvider {
   async getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ): Promise<ArrayBuffer> {
+  ): Promise<FileJSBundle> {
       try {
           const status = await fs.access(this.path, fs.OpenMode.READ_ONLY);
           if (status) {
@@ -111,7 +111,7 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
   async getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ): Promise<ArrayBuffer> {
+  ): Promise<RawFileJSBundle> {
     try {
         // We check for the file descriptor here because there isn't a dedicated
         // way to check if a rawfile exists apart from opening it or getting its
@@ -284,7 +284,7 @@ export class AnyJSBundleProvider extends JSBundleProvider {
   async getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ): Promise<ArrayBuffer> {
+  ): Promise<JsBundle> {
     const errors: JSBundleProviderError[] = []
     for (const jsBundleProvider of this.jsBundleProviders) {
       this.currentProvider = jsBundleProvider;
@@ -334,7 +334,7 @@ export class TraceJSBundleProviderDecorator extends JSBundleProvider {
   async getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ): Promise<ArrayBuffer> {
+  ): Promise<JsBundle> {
     const stopTracing = this.logger.clone('getBundle').startTracing()
     const result = await this.jsBundleProvider.getBundle(onProgress, onProviderSwitch)
     stopTracing()

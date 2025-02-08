@@ -5,7 +5,7 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 #pragma once
-#include <memory>
+#include <algorithm>
 #include <string_view>
 
 #include "RNOH/JSBigStringHelpers.h"
@@ -52,7 +52,10 @@ void RNInstanceInternal::loadScriptFromRawFile(std::string const rawFileUrl,
         rawFileUrl, m_nativeResourceManager.get());
     uint64_t extractedMagic{};
     if (jsBundle->size() >= sizeof(uint64_t)) {
-        memcpy(&extractedMagic, jsBundle->c_str(), sizeof(uint64_t));
+        const char* source = jsBundle->c_str();
+        std::copy(source,
+            source + sizeof(uint64_t),
+            reinterpret_cast<uint8_t *>(&extractedMagic));
     }
     if (jsBundle) {
         DLOG(INFO) << "Loaded bundle from rawfile resource";
