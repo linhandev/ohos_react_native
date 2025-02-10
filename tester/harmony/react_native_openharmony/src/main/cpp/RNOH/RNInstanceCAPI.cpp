@@ -87,8 +87,7 @@ void RNInstanceCAPI::start() {
     float scale = displayMetrics.scale;
     m_densityDpi = displayMetrics.densityDpi;
 
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
-    textMeasurer->setTextMeasureParams(fontScale, scale, m_densityDpi, halfLeading);
+    textMeasurer->setTextMeasureParams(fontScale, scale, m_densityDpi);
 }
 
 void RNInstanceCAPI::setJavaScriptExecutorFactory(
@@ -544,11 +543,10 @@ void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
     screenPhysicalPixels["fontScale"].isDouble()){
     float scale = screenPhysicalPixels["scale"].asDouble();
     float fontScale = screenPhysicalPixels["fontScale"].asDouble();
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
     auto textMeasurer = m_contextContainer->
        at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
     if (textMeasurer) {
-      textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi, halfLeading);
+        textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi);
     }
   }
 }
