@@ -34,6 +34,10 @@ import { EventEmitter } from './EventEmitter';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
+  /**
+   * @deprecated
+   */
+  fontSizeScale?: number,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl?: string,
@@ -110,7 +114,7 @@ export class RNInstancesCoordinator {
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
     const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
-    displayMetricsManager.setFontSizeScale(dependencies.uiAbilityContext.config.fontSizeScale ?? 1)
+    displayMetricsManager.setFontSizeScale(dependencies.fontSizeScale ?? dependencies.uiAbilityContext.config.fontSizeScale ?? 1)
     const globalRNOHErrorEventEmitter: RNOHErrorEventEmitter = new EventEmitter();
     globalRNOHErrorEventEmitter.subscribe("NEW_ERROR", (err) => {
       dependencies.logger.error(err);
@@ -278,6 +282,9 @@ export class RNInstancesCoordinator {
 
   public onDestroy() {
     const stopTracing = this.logger.clone("onDestroy").startTracing()
+    if (this.timerId) {
+      clearTimeout(this.timerId)
+    }
     this.jsPackagerClient.onDestroy()
     this.rnInstanceRegistry.forEach(instance => {
       instance.onDestroy()
@@ -321,6 +328,18 @@ export class RNInstancesCoordinator {
     })
   }
 
+  public onWindowRectChange(data: window.RectChangeOptions) {
+    if (data.reason === window.RectChangeReason.DRAG_START) {
+      this.rnInstanceRegistry.forEach((rnInstance) => {
+        rnInstance.onWindowReactChange(true)
+      })
+    } else if(data.reason === window.RectChangeReason.DRAG_END) {
+      this.rnInstanceRegistry.forEach((rnInstance) => {
+        rnInstance.onWindowReactChange(false)
+      })
+    }
+  }
+
   public onWindowSizeChange(windowSize: window.Size) {
     const currentTime = Date.now(); 
     if (currentTime - this.lastChangeTime > this.delayTime) {
@@ -330,7 +349,7 @@ export class RNInstancesCoordinator {
       })
       this.lastChangeTime = currentTime;
     } else {
-      if(this.timerId){
+      if (this.timerId) {
         clearTimeout(this.timerId)
       }
       this.timerId = setTimeout(() =>{

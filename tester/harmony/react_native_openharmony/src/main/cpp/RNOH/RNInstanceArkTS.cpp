@@ -11,18 +11,19 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "NativeLogger.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/RNOHError.h"
+#include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
 using namespace rnoh;
@@ -45,28 +46,23 @@ void RNInstanceArkTS::start() {
       });
 }
 
+void RNInstanceArkTS::setJavaScriptExecutorFactory(
+      std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) {
+  DLOG(INFO) << "RNInstanceArkTS::setJavaScriptExecutorFactory";
+  m_jsExecutorFactory = jsExecutorFactory;
+}
+
 void RNInstanceArkTS::initialize() {
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   std::vector<std::unique_ptr<react::NativeModule>> modules;
   auto instanceCallback = std::make_unique<react::InstanceCallback>();
-  auto jsExecutorFactory = std::make_shared<react::HermesExecutorFactory>(
-      // runtime installer, which is run when the runtime
-      // is first initialized and provides access to the runtime
-      // before the JS code is executed
-      [](facebook::jsi::Runtime& rt) {
-        // install `console.log` (etc.) implementation
-        react::bindNativeLogger(rt, nativeLogger);
-        // install tracing functions
-        rnoh::setupTracing(rt);
-      });
-  jsExecutorFactory->setEnableDebugger(m_shouldEnableDebugger);
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
   this->instance->initializeBridge(
       std::move(instanceCallback),
-      std::move(jsExecutorFactory),
+      std::move(m_jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
 }
@@ -128,43 +124,6 @@ RNInstanceArkTS::createTurboModuleProvider() {
       std::move(m_jsQueue));
   turboModuleProvider->installJSBindings(this->instance->getRuntimeExecutor());
   return turboModuleProvider;
-}
-
-void RNInstanceArkTS::loadScript(
-    std::vector<uint8_t>&& bundle,
-    std::string const sourceURL,
-    std::function<void(const std::string)>&& onFinish) {
-  this->taskExecutor->runTask(
-      TaskThread::JS,
-      [this,
-       bundle = std::move(bundle),
-       sourceURL,
-       onFinish = std::move(onFinish)]() mutable {
-        std::unique_ptr<react::JSBigBufferString> jsBundle;
-        jsBundle = std::make_unique<react::JSBigBufferString>(bundle.size());
-        memcpy(jsBundle->data(), bundle.data(), bundle.size());
-
-        react::BundleHeader header;
-        memcpy(&header, bundle.data(), sizeof(react::BundleHeader));
-        react::ScriptTag scriptTag = react::parseTypeFromHeader(header);
-        // NOTE: Hermes bytecode bundles are treated as String bundles,
-        // and don't throw an error here.
-        if (scriptTag != react::ScriptTag::String) {
-          throw new std::runtime_error("RAM bundles are not yet supported");
-        }
-        try {
-          this->instance->loadScriptFromString(
-              std::move(jsBundle), sourceURL, true);
-          onFinish("");
-        } catch (std::exception const& e) {
-          try {
-            std::rethrow_if_nested(e);
-            onFinish(e.what());
-          } catch (const std::exception& nested) {
-            onFinish(e.what() + std::string("\n") + nested.what());
-          }
-        }
-      });
 }
 
 void rnoh::RNInstanceArkTS::createSurface(
@@ -455,15 +414,6 @@ void RNInstanceArkTS::synchronouslyUpdateViewOnUIThread(
   DLOG(WARNING)
       << "RNInstance::synchronouslyUpdateViewOnUIThread is not supported in ArkTS architecture";
 };
-
-void RNInstanceArkTS::setBundlePath(std::string const& path)
-{
-  m_bundlePath = path;
-}
-
-std::string RNInstanceArkTS::getBundlePath() {
-  return m_bundlePath;
-}
 
 TurboModule::Shared RNInstanceArkTS::getTurboModule(const std::string& name) {
   auto turboModule = m_turboModuleProvider->getTurboModule(name);

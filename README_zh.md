@@ -16,6 +16,7 @@
 从[官网](https://developer.huawei.com/consumer/cn/deveco-studio/)下载并安装最新版本 DevEco Studio。
 
 ### 启动项目
+> 如果是编译源码，在拉取工程后需要在工程的根目录执行`git submodule update --init`命令，拉取三方库依赖。 
 
 1. 打开终端（命令行工具）并导航到react-native-harmony-cli目录，然后执行 `npm i && npm pack`。
 1. 在终端中导航到react-native-harmony-sample-package目录，然后执行 `npm i && npm pack`。
@@ -48,3 +49,5 @@
 - master分支：主分支，请勿从此分支拉取源码用于商用版本，不保证质量。
 - dev分支/partner-dev分支：开发分支，请勿从此分支拉取源码，不保证质量。
 - 其余分支(若存在):项目内部运行过程分支，请勿从相关分支拉取源码，不保证质量。
+
+**说明：** 0.72.5-ohos-5.0-release分支在2025/01/23进行了开源整改，整改后的CommitID与整改前不一致，请开发者重新拉取仓库最新代码。

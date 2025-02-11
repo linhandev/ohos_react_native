@@ -11,6 +11,7 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/componentregistry/ComponentDescriptorProvider.h>
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+#include <react/renderer/debug/SystraceSection.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "ArkTSBridge.h"
 #include "NativeLogger.h"
@@ -19,18 +20,20 @@
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/MountingManagerCAPI.h"
+#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "RNOH/Performance/NativeTracing.h"
+#include "RNOH/RNInstance.h"
+#include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
 #include "RNOH/TextMeasurer.h"
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TaskExecutor/TaskExecutor.h"
-#include <react/renderer/debug/SystraceSection.h>
+#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
 namespace rnoh {
@@ -84,8 +87,13 @@ void RNInstanceCAPI::start() {
     float scale = displayMetrics.scale;
     m_densityDpi = displayMetrics.densityDpi;
 
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
-    textMeasurer->setTextMeasureParams(fontScale, scale, m_densityDpi, halfLeading);
+    textMeasurer->setTextMeasureParams(fontScale, scale, m_densityDpi);
+}
+
+void RNInstanceCAPI::setJavaScriptExecutorFactory(
+    std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) {
+  DLOG(INFO) << "RNInstanceCAPI::setJavaScriptExecutorFactory";
+  m_jsExecutorFactory = jsExecutorFactory;
 }
 
 void RNInstanceCAPI::initialize() {
@@ -94,17 +102,6 @@ void RNInstanceCAPI::initialize() {
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   std::vector<std::unique_ptr<react::NativeModule>> modules;
   auto instanceCallback = std::make_unique<react::InstanceCallback>();
-  auto jsExecutorFactory = std::make_shared<react::HermesExecutorFactory>(
-      // runtime installer, which is run when the runtime
-      // is first initialized and provides access to the runtime
-      // before the JS code is executed
-      [](facebook::jsi::Runtime& rt) {
-        // install `console.log` (etc.) implementation
-        react::bindNativeLogger(rt, nativeLogger);
-        // install tracing functions
-        rnoh::setupTracing(rt);
-      });
-  jsExecutorFactory->setEnableDebugger(m_shouldEnableDebugger);
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
@@ -112,7 +109,7 @@ void RNInstanceCAPI::initialize() {
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
   this->instance->initializeBridge(
       std::move(instanceCallback),
-      std::move(jsExecutorFactory),
+      std::move(m_jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
       HarmonyReactMarker::logMarker(
@@ -193,44 +190,6 @@ std::optional<Surface::Weak> RNInstanceCAPI::getSurfaceByRootTag(
   }
   return it->second;
 };
-
-void RNInstanceCAPI::loadScript(
-    std::vector<uint8_t>&& bundle,
-    std::string const sourceURL,
-    std::function<void(const std::string)>&& onFinish) {
-  DLOG(INFO) << "RNInstanceCAPI::loadScript";
-  this->taskExecutor->runTask(
-      TaskThread::JS,
-      [this,
-       bundle = std::move(bundle),
-       sourceURL,
-       onFinish = std::move(onFinish)]() mutable {
-        std::unique_ptr<react::JSBigBufferString> jsBundle;
-        jsBundle = std::make_unique<react::JSBigBufferString>(bundle.size());
-        memcpy(jsBundle->data(), bundle.data(), bundle.size());
-
-        react::BundleHeader header;
-        memcpy(&header, bundle.data(), sizeof(react::BundleHeader));
-        react::ScriptTag scriptTag = react::parseTypeFromHeader(header);
-        // NOTE: Hermes bytecode bundles are treated as String bundles,
-        // and don't throw an error here.
-        if (scriptTag != react::ScriptTag::String) {
-          throw new std::runtime_error("RAM bundles are not yet supported");
-        }
-        try {
-          this->instance->loadScriptFromString(
-              std::move(jsBundle), sourceURL, true);
-          onFinish("");
-        } catch (std::exception const& e) {
-          try {
-            std::rethrow_if_nested(e);
-            onFinish(e.what());
-          } catch (const std::exception& nested) {
-            onFinish(e.what() + std::string("\n") + nested.what());
-          }
-        }
-      });
-}
 
 void rnoh::RNInstanceCAPI::emitComponentEvent(
     napi_env env,
@@ -584,11 +543,10 @@ void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
     screenPhysicalPixels["fontScale"].isDouble()){
     float scale = screenPhysicalPixels["scale"].asDouble();
     float fontScale = screenPhysicalPixels["fontScale"].asDouble();
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
     auto textMeasurer = m_contextContainer->
        at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
     if (textMeasurer) {
-      textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi, halfLeading);
+        textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi);
     }
   }
 }
@@ -626,24 +584,10 @@ void RNInstanceCAPI::postMessageToArkTS(
   m_arkTSChannel->postMessage(name, payload);
 }
 
-NativeResourceManager const* rnoh::RNInstanceCAPI::getNativeResourceManager()
-    const {
-  RNOH_ASSERT(m_nativeResourceManager != nullptr);
-  return m_nativeResourceManager.get();
-}
-
-void RNInstanceCAPI::setBundlePath(std::string const& path)
-{
-  m_bundlePath = path;
-}
-
-std::string RNInstanceCAPI::getBundlePath() {
-  return m_bundlePath;
-}
 void RNInstanceCAPI::registerFont(
     std::string const& fontFamily,
     std::string const& fontFilePath) {
   m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate")
     ->registerFont(m_nativeResourceManager, fontFamily, fontFilePath);
 }
-}
+} // namespace rnoh
