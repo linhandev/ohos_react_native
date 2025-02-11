@@ -381,7 +381,6 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/MessageQueueThread.cpp"
     "${RNOH_CPP_DIR}/RNOH/MutationsToNapiConverter.cpp"
     "${RNOH_CPP_DIR}/RNOH/LogSink.cpp"
-    "${RNOH_CPP_DIR}/RNOH/NativeLogger.cpp"
     "${RNOH_CPP_DIR}/RNOH/ArkJS.cpp"
     "${RNOH_CPP_DIR}/RNOH/ArkTSBridge.cpp"
     "${RNOH_CPP_DIR}/RNOH/Inspector.cpp"
@@ -481,11 +480,8 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/SwitchComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/PullToRefreshViewComponentInstance.cpp"
     "${RNOH_CPP_DIR}/RNOHCorePackage/ComponentInstances/CustomNodeComponentInstance.cpp"
-    "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/HarmonyReactMarker.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/OHReactMarkerListener.cpp"
-    "${RNOH_CPP_DIR}/RNOH/executor/hermesExecutor.cpp"
-    "${RNOH_CPP_DIR}/RNOH/executor/jsvmExecutor.cpp"
 )
 target_include_directories(rnoh PUBLIC
     "${RNOH_CPP_DIR}"
@@ -512,8 +508,6 @@ target_link_libraries(rnoh PUBLIC
     Boost::context
     reactnative
     react_render_scheduler
-    jsvm_executor_common
-    hermes_executor_common
     rrc_image
     rrc_text
     rrc_textinput
@@ -525,10 +519,11 @@ target_link_libraries(rnoh PUBLIC
     react_render_animations
 )
 
+message("USE_HERMES is set to: ${USE_HERMES}")
 if(USE_HERMES)
-    target_compile_definitions(rnoh PUBLIC USE_HERMES=1)
+    add_hermes_executor(ON)
 else()
-    target_compile_definitions(rnoh PUBLIC USE_HERMES=0)
+    add_jsvm_executor(ON)
 endif()
 
 target_compile_options(rnoh PUBLIC
