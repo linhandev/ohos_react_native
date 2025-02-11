@@ -5,10 +5,10 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import fs from 'node:fs';
-import fse from 'fs-extra';
 import { OhosHarContext } from '@ohos/hvigor-ohos-plugin';
-import { RNOHOther, BuildProfile, BuildOptionSetOfABC, BuildOptionSetOfRelease } from './Template';
+import fse from 'fs-extra';
+import fs from 'node:fs';
+import { BuildOptionSetOfABC, BuildOptionSetOfRelease, BuildProfile, RNOHOther } from './Template';
 
 // RNOH module path
 const RNOH_PATH = 'react_native_openharmony';
@@ -206,7 +206,6 @@ class CleanSubtask implements Subtask {
 export type RealsePrebuildOptions = {
   productName: string;
   buildMode: string;
-  isPipeline: boolean;
 };
 
 export class RealsePrebuildTask {
@@ -217,14 +216,16 @@ export class RealsePrebuildTask {
   ) {}
   
   run(): void {
-    const { productName, buildMode, isPipeline } = this.options;
-    const type = (buildMode === RELEASE_BUILD_MODE && productName === ABC_PRODUCT_NAME) ? BUILD_PROFILE_TYPE.ABC :
-                 (buildMode === RELEASE_BUILD_MODE && isPipeline) ? BUILD_PROFILE_TYPE.RELEASE : BUILD_PROFILE_TYPE.DEFAULT;
-    const isRelease = buildMode === RELEASE_BUILD_MODE && (productName === ABC_PRODUCT_NAME || isPipeline);
+    const { productName, buildMode } = this.options;
+    const type = buildMode === RELEASE_BUILD_MODE ?
+                 (productName === ABC_PRODUCT_NAME ? BUILD_PROFILE_TYPE.ABC : BUILD_PROFILE_TYPE.RELEASE) :
+                 BUILD_PROFILE_TYPE.DEFAULT;
+    const isRelease = type !== BUILD_PROFILE_TYPE.DEFAULT;
     
     let subtasks: Subtask[] = [
       new OverwriteBuildProfileSubtask(this.context, this.logger, type),
-      new OverwriteMakefileSubtask(MAIN_PATH, this.logger, isRelease)
+      new OverwriteMakefileSubtask(MAIN_PATH, this.logger, isRelease),
+      new CleanSubtask(`${RNOH_PATH}/generated`, this.logger)
     ];
     if (isRelease) {
       subtasks = subtasks.concat([
@@ -233,10 +234,6 @@ export class RealsePrebuildTask {
       ]);
     } else {
       subtasks.push(new CleanSubtask(`${MAIN_PATH}/cpp/include`, this.logger));
-    }
-    
-    if (isPipeline) {
-      subtasks.push(new CleanSubtask(`${RNOH_PATH}/generated`, this.logger));
     }
     
     subtasks.forEach((subtask) => subtask.run());

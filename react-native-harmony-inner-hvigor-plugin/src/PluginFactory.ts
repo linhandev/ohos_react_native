@@ -6,7 +6,7 @@
  */
 
 import { hvigor, HvigorNode, HvigorPlugin } from '@ohos/hvigor';
-import { OhosPluginId, OhosAppContext, OhosHarContext } from '@ohos/hvigor-ohos-plugin';
+import { OhosAppContext, OhosHarContext, OhosPluginId } from '@ohos/hvigor-ohos-plugin';
 import {
   Logger,
   RealsePrebuildTask,
@@ -35,6 +35,10 @@ export function createInnerHarHvigorPlugin(): HvigorPlugin {
   return {
     pluginId: 'rnoh_inner_har',
     apply: (currentNode: HvigorNode) => {
+      const isPipeline = hvigor.getParameter().getExtParam('pipeline') === '1';
+      if (!isPipeline) {
+        return;
+      }
       const logger = new LoggerImpl();
       const appContext = currentNode.getParentNode()?.getContext(OhosPluginId.OHOS_APP_PLUGIN) as OhosAppContext;
       if (!appContext) {
@@ -44,9 +48,8 @@ export function createInnerHarHvigorPlugin(): HvigorPlugin {
       
       const buildMode = appContext.getBuildMode();
       const productName = appContext.getCurrentProduct().getProductName();
-      const isPipeline = hvigor.getParameter().getExtParam('pipeline') === '1';
       const harContext = currentNode.getContext(OhosPluginId.OHOS_HAR_PLUGIN) as OhosHarContext;
-      const task = new RealsePrebuildTask(logger, harContext, { buildMode, productName, isPipeline });
+      const task = new RealsePrebuildTask(logger, harContext, { buildMode, productName });
       task.run();
     }
   };
