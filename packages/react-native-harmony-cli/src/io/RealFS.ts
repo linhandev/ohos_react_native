@@ -11,6 +11,10 @@ class RealFSDirent extends Dirent {
     return this.nodeFSDirent.isDirectory();
   }
 
+  isSymbolicLink(): boolean {
+    return this.nodeFSDirent.isSymbolicLink();
+  }
+
   get name(): string {
     return this.nodeFSDirent.name;
   }

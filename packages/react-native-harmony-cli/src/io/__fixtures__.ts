@@ -35,6 +35,10 @@ class MemFSDirent extends Dirent {
     return this.rawDirent.isDirectory();
   }
 
+  isSymbolicLink(): boolean {
+    return false;
+  }
+
   get name(): string {
     return this.rawDirent.name.toString();
   }

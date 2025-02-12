@@ -3,14 +3,16 @@
   "version": "0.77.0",
   "description": "",
   "scripts": {
-    "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js",
+    "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js && pnpm run --filter @rnoh/hvigor-plugin build",
     "prepack": "npm run build && npm run _recreate-hvigor-plugin",
     "_recreate-hvigor-plugin": "cd ../react-native-harmony-hvigor-plugin && npm i && npm run deploy && cd ../react-native-harmony-cli",
     "verify": "tsc --noEmit && npm run test",
     "test": "npm run build && jest",
     "test:codegen": "jest ./src/codegen/.* && npm run build && jest tests/codegen.*",
     "rn": "npm run build && react-native",
-    "prepublishOnly": "npm run verify"
+    "dev": "tsc --outDir dist -p tsconfig.build.json --watch",
+    "prepublishOnly": "npm run build",
+    "deploy": "npm run verify && npm publish"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +22,8 @@
   },
   "main": "dist/index.js",
   "devDependencies": {
-    "@react-native-community/cli-types": "^11.3.0",
     "@react-native-community/cli": "^15.0.0",
+    "@react-native-community/cli-types": "^11.3.0",
     "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.1",
@@ -38,9 +40,6 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "tar": "^6.1.15",
-    "tmp": "^0.2.1",
-    "memfs": "^4.12.0",
     "@react-native-community/cli-tools": "^13.6.5",
     "@react-native/codegen": "0.77.0",
     "@tsconfig/recommended": "^1.0.2",
@@ -48,6 +47,9 @@
     "chalk": "^4",
     "fs-extra": "^11.1.1",
     "json5": "^2.2.3",
-    "mustache": "^4.2.0"
+    "memfs": "^4.12.0",
+    "mustache": "^4.2.0",
+    "tar": "^6.1.15",
+    "tmp": "^0.2.1"
   }
 }

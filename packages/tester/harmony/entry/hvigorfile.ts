@@ -5,8 +5,13 @@ export default {
   system: hapTasks,
   plugins: [
     createRNOHModulePlugin({
+      nodeModulesPath: "../../../node_modules",
       codegen: {
+        projectRootPath: "../../../",
         rnohModulePath: "./react_native_openharmony",
+      },
+      autolinking: {
+        excludeNpmPackages: ["@rnoh/react-native-harmony-gesture-handler"],
       }
     }),
   ],

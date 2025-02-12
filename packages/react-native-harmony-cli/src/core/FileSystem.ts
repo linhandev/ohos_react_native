@@ -7,6 +7,8 @@ export abstract class Dirent {
   abstract get name(): string;
 
   abstract get path(): AbsolutePath;
+
+  abstract isSymbolicLink(): boolean;
 }
 
 export abstract class FS {

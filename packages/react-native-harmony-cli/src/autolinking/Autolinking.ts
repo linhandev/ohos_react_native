@@ -117,7 +117,10 @@ endfunction()
 `.trimStart();
 
 export class Autolinking {
-  constructor(private fs: FS, private logger: Logger) {}
+  constructor(
+    private fs: FS,
+    private logger: Logger
+  ) {}
 
   async prepareInput(config: AutolinkingConfig): Promise<AutolinkingInput> {
     if (
@@ -237,7 +240,12 @@ export class Autolinking {
     > = {};
     Object.entries<DependencySpecifier>(ohPackage.dependencies).forEach(
       ([name, dependencySpecifier]) => {
-        if (!dependencySpecifier.includes('file:')) {
+        if (
+          !(
+            dependencySpecifier.includes('file:') &&
+            dependencySpecifier.includes('node_modules')
+          )
+        ) {
           unmanagedNativeDependencySpecifierByName[name] = dependencySpecifier;
         } else {
           const harFilePathRelativeToHarmony = dependencySpecifier.replace(

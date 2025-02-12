@@ -1,16 +1,16 @@
-import { HvigorNode, HvigorPlugin } from "@ohos/hvigor";
-import { PrebuildTask } from "./PrebuildTask";
-import fs from "node:fs";
-import { Logger } from "./Logger";
-import { BuildTask } from "./BuildTask";
-import { CommandExecutor } from "./CommandExecutor";
-import { RNOHModulePluginOptions, RNOHProjectPluginOptions } from "./types";
+import { HvigorNode, HvigorPlugin } from '@ohos-rnoh/hvigor';
+import { PrebuildTask } from './PrebuildTask';
+import fs from 'node:fs';
+import { Logger } from './Logger';
+import { BuildTask } from './BuildTask';
+import { CommandExecutor } from './CommandExecutor';
+import { RNOHModulePluginOptions, RNOHProjectPluginOptions } from './types';
 
 export function createRNOHModulePlugin(
   options: RNOHModulePluginOptions
 ): HvigorPlugin {
   return {
-    pluginId: "rnohModulePlugin",
+    pluginId: 'rnohModulePlugin',
     apply: () => {
       const commandExecutor = new CommandExecutor();
       const logger = new Logger();
@@ -24,7 +24,7 @@ export function createRNOHProjectPlugin(
   options?: RNOHProjectPluginOptions
 ): HvigorPlugin {
   return {
-    pluginId: "rnohProjectPlugin",
+    pluginId: 'rnohProjectPlugin',
     apply: (currentNode: HvigorNode) => {
       const commandExecutor = new CommandExecutor();
       const logger = new Logger();

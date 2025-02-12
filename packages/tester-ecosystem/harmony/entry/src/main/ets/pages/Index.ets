@@ -40,7 +40,7 @@ struct Index {
           },
           appKey: "app_name",
           jsBundleProvider: new TraceJSBundleProviderDecorator(
-            new MetroJSBundleProvider(),
+            MetroJSBundleProvider.fromServerIp("localhost", 8084),
             this.rnohCoreContext.logger),
         })
       }

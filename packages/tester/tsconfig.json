@@ -4,13 +4,13 @@
     "jsx": "react-native",
     "paths": {
       "react-native": [
-        "./node_modules/react-native-harmony"
+        "../react-native-harmony"
       ],
       "react-native-sample-package": [
-        "./node_modules/react-native-harmony-sample-package"
+        "../react-native-harmony-sample-package"
       ],
       "react-native-sample-package/*": [
-        "./node_modules/react-native-harmony-sample-package/*"
+        "../react-native-harmony-sample-package/*"
       ],
     },
   },

@@ -1,22 +1,29 @@
-import { Logger } from "./Logger";
-import { HvigorNode, hvigor } from "@ohos/hvigor";
+import { Logger } from './Logger';
+/**
+ * @ohos/* packages are installed under alias because they affect harmony projects.
+ * In the current monorepo setup those packages are hoisted to the root node_modules and
+ * it seems hvigor in tester/tester-ecosystem tries to use those packages, but it fails on some errors.
+ * The alternative (and better) approach would be configuring pnpm to not hoist those packages,
+ * but I couldn't make that happen.
+ */
+import { HvigorNode, hvigor } from '@ohos-rnoh/hvigor';
 import {
   OhosAppContext,
   OhosHapContext,
   OhosPluginId,
   Target,
-} from "@ohos/hvigor-ohos-plugin";
-import pathUtils from "node:path";
+} from '@ohos-rnoh/hvigor-ohos-plugin';
+import pathUtils from 'node:path';
 import {
   FS,
   Subtask,
   BundlerConfig,
   RNOHProjectPluginError,
   RNOHProjectPluginOptions,
-} from "./types";
-import { CommandExecutor } from "./CommandExecutor";
+} from './types';
+import { CommandExecutor } from './CommandExecutor';
 
-type ResolvedBundlerConfig = Omit<BundlerConfig, "dev" | "hermescOptions"> & {
+type ResolvedBundlerConfig = Omit<BundlerConfig, 'dev' | 'hermescOptions'> & {
   dev: string;
   hermescOptions: string;
 };
@@ -51,15 +58,15 @@ export class BuildTask {
   private prepareInput(options?: RNOHProjectPluginOptions) {
     const nodeModulesPath =
       options?.nodeModulesPath ??
-      pathUtils.join(process.cwd(), "../node_modules");
+      pathUtils.join(process.cwd(), '../node_modules');
     if (!this.fs.existsSync(nodeModulesPath)) {
-      throw new ValidationError("nodeModulesPath", "path doesn't exist");
+      throw new ValidationError('nodeModulesPath', "path doesn't exist");
     }
     const bundlerArgs = {
       ...options?.bundler,
       enabled: options?.bundler?.enabled ?? true,
-      dev: options?.bundler?.dev?.toString() ?? "false",
-      hermescOptions: options?.bundler?.hermescOptions ?? "O",
+      dev: options?.bundler?.dev?.toString() ?? 'false',
+      hermescOptions: options?.bundler?.hermescOptions ?? 'O',
     };
     return {
       nodeModulesPath,
@@ -114,7 +121,7 @@ class BundlerSubtask implements Subtask {
               if (
                 !this.input.nodeModulesPath ||
                 !bundlerOptions.enabled ||
-                buildMode !== "release"
+                buildMode !== 'release'
               ) {
                 this.logger.warn(`[bundler] skipped`);
                 return;
@@ -122,12 +129,12 @@ class BundlerSubtask implements Subtask {
               delete bundlerOptions.enabled;
               try {
                 this.commandExecutor.run(
-                  "node_modules/.bin/react-native bundle-harmony",
+                  'node_modules/.bin/react-native bundle-harmony',
                   bundlerOptions,
                   {
-                    encoding: "utf-8",
-                    stdio: "ignore",
-                    cwd: pathUtils.join(this.input.nodeModulesPath, ".."),
+                    encoding: 'utf-8',
+                    stdio: 'ignore',
+                    cwd: pathUtils.join(this.input.nodeModulesPath, '..'),
                   }
                 );
                 this.logger.info(`[bundler] done generating bundle`);
@@ -136,7 +143,7 @@ class BundlerSubtask implements Subtask {
               }
             },
             dependencies: [`${targetName}@PackageHap`],
-            postDependencies: ["assembleHap"],
+            postDependencies: ['assembleHap'],
           });
         });
       });

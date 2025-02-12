@@ -6,10 +6,11 @@ import { RunBuildOptions as BuildOptions } from 'metro';
 import MetroServer from 'metro/src/Server';
 import pathUtils from 'path';
 import { getAssetDestRelativePath } from '../assetResolver';
-import { ConfigT as MetroConfig } from 'metro-config';
 import { execSync } from 'child_process';
 import { Logger } from '../io';
 import { DescriptiveError } from '../core';
+
+type MetroConfig = Awaited<ReturnType<typeof Metro.loadConfig>>;
 
 const HERMESC_BIN_DIR = {
   darwin: 'osx-bin',
@@ -69,6 +70,12 @@ export const commandBundleHarmony: Command = {
       parse: (val: string) => val !== 'false',
     },
     {
+      name: '--hermesc-dir <path>',
+      description:
+        'Path to hermesc directory. hermesc is used only when generating a HBC bundle.',
+      default: HERMESC_PATH_PREFIX,
+    },
+    {
       name: '--hermesc-options <string...>',
       description:
         'Used only when generating a HBC bundle. Additional options to pass to hermesc when generating HBC bundle. Example: --hermesc-options O g reuse-prop-cache.',
@@ -76,7 +83,6 @@ export const commandBundleHarmony: Command = {
     },
   ],
   func: async (argv, config, args: any) => {
-    // input
     const logger = new Logger();
     try {
       const bundleOutput: string =
@@ -100,16 +106,15 @@ export const commandBundleHarmony: Command = {
       };
       const metroConfig = await loadMetroConfig(args.config);
 
-      // processing
       const bundle = await createBundle(metroConfig, buildOptions);
       const assets = await retrieveAssetsData(metroConfig, buildOptions);
 
-      // output
       if (shouldGenerateHbcBundle) {
         await saveHbcBundle(
           logger,
           bundle.code,
           bundleOutput,
+          args.hermescDir,
           args.hermescOptions
         );
       } else {
@@ -149,6 +154,7 @@ async function saveHbcBundle(
   logger: Logger,
   bundleCode: string,
   bundleOutput: Path,
+  hermescPath: string,
   hermescOptions: string[] | undefined
 ) {
   if (
@@ -158,12 +164,20 @@ async function saveHbcBundle(
   ) {
     throw new Error(`Unsupported platform ${process.platform} (⊙︿⊙)`);
   }
-  const resolvedHermescPath = pathUtils.join(
-    HERMESC_PATH_PREFIX,
+  const resolvedHermescPath = pathUtils.resolve(
+    hermescPath,
     HERMESC_BIN_DIR[process.platform as OSType],
     'hermesc'
   );
-  await fse.ensureFile(resolvedHermescPath);
+
+  if (!fs.existsSync(resolvedHermescPath)) {
+    throw new DescriptiveError({
+      whatHappened: `Couldn't find hermesc at ${resolvedHermescPath}`,
+      whatCanUserDo: [
+        'Find hermesc dir and provide it by using --hermesc-dir argument. hermesc dir should be in react-native package.',
+      ],
+    });
+  }
   await fse.writeFile(TMP_BUNDLE_PATH, bundleCode);
   const hbcFilePath = bundleOutput.endsWith('.hbc')
     ? bundleOutput
@@ -285,7 +299,7 @@ function copyFiles(logger: Logger, fileDestBySrc: Record<Path, Path>) {
 function copyFile(
   src: string,
   dest: string,
-  onFinished: (error: Error) => void
+  onFinished: (error?: Error) => void
 ): void {
   const destDir = pathUtils.dirname(dest);
   fs.mkdir(destDir, { recursive: true }, (err?) => {

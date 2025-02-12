@@ -1,6 +1,7 @@
 import * as tmp from 'tmp';
 import { copyMetroConfig, createFileStructure } from './fsUtils';
 import * as pathUtils from 'path';
+import fs from 'node:fs';
 
 let tmpDir = '';
 let removeTmpDir = () => {};
@@ -172,7 +173,7 @@ it('should not redirect internal imports when flag not set', async () => {
   expect(resolution.moduleName).toEqual('./bar.ts');
 });
 
-describe('yarn monorepo', () => {
+describe('monorepos', () => {
   it('should redirect import when project imports library', async () => {
     createFileStructure(tmpDir, {
       packages: {

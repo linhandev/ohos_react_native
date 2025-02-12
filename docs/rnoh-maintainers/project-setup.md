@@ -55,15 +55,19 @@ In order to download NPM dependencies from the SWM git repository, you will have
 
 You can find more details about GitLab access tokens in the [GitLab documentation](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
 
+### Install PNPM
+
+Follow [official instructions](https://pnpm.io/installation) or run `npm install -g pnpm@latest-10`
+
 ## Running the `tester` App for the First Time on a Physical Device
 
 1. Set DEVECO_SDK_HOME environment variable (macOS: `/Applications/DevEco-Studio.app/Contents/sdk`)
 1. On the [project repository](https://gl.swmansion.com/rnoh/react-native-harmony) page press the "Code" button and copy the URL labelled "Clone with HTTPS".
 1. Navigate to the directory where you want to store project files in your terminal.
 1. Run the `git clone` command to clone the repository (replace the `<url>` with the copied url of this remote repository).
-1. Navigate to the tester directory.
-1. Run `npm run i` (not `npm i`).
-1. Run `npm start` in the tester directory to start the Metro server.
+1. Navigate to the project directory.
+1. Run `pnpm i`.
+1. Run `pnpm dev`.
 1. Open `packages/tester/harmony` project in DevEco Studio and wait for background jobs to finish.
 1. Connect the device.
 1. Go to File > Project Structure > Signing Configs and Sign In to generate signature, and then press OK.

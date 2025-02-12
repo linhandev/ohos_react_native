@@ -21,11 +21,7 @@ function info(msg) {
 }
 
 /**
- * @param options {
-    { 
-      reactNativeHarmonyPackageName?: string,
-    } | undefined
- }
+ * @param options {import("./metro.config").HarmonyMetroConfigOptions}
  * @returns {import("metro-config").InputConfigT}
  */
 function createHarmonyMetroConfig(options) {
@@ -45,9 +41,10 @@ function createHarmonyMetroConfig(options) {
       blockList: [/\.cxx/],
       resolveRequest: (ctx, moduleName, platform) => {
         const nodeModulesPaths = [
-          'node_modules',
+          pathUtils.resolve('node_modules'),
           ...(ctx.nodeModulesPaths ?? []),
         ];
+
         if (platform === 'harmony') {
           if (shouldPrintInfoAboutRNRedirection) {
             info(
@@ -80,9 +77,28 @@ function createHarmonyMetroConfig(options) {
                 pathUtils.dirname(ctx.originModulePath),
                 moduleName
               );
-              const [_, modulePathRelativeToReactNative] = moduleAbsPath.split(
-                `${pathUtils.sep}node_modules${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
-              );
+
+              /**
+               * @type string | undefined
+               */
+              let modulePathRelativeToReactNative;
+              {
+                const originPackagePathAndRelativeModulePath =
+                  moduleAbsPath.split(
+                    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
+                  );
+                if (originPackagePathAndRelativeModulePath.length > 1) {
+                  modulePathRelativeToReactNative =
+                    originPackagePathAndRelativeModulePath[1];
+                }
+              }
+
+              if (modulePathRelativeToReactNative === undefined) {
+                throw new Error(
+                  'modulePathRelativeToReactNative is undefined. This should never happen. ' +
+                    moduleAbsPath
+                );
+              }
               try {
                 return ctx.resolveRequest(
                   ctx,
@@ -275,7 +291,7 @@ function isHarmonyPackageInternalImport(
  */
 function isInternalReactNativeRelativeImport(originModulePath) {
   return originModulePath.includes(
-    `${pathUtils.sep}node_modules${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
+    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
   );
 }
 
@@ -324,11 +340,11 @@ function getHarmonyPackageByAliasMap(nodeModulesPaths) {
         harmonyNodeModuleName = `${harmonyNodeModuleParentDirName}/${harmonyNodeModuleName}`;
       }
     }
-    const packageJSONPath = `${harmonyNodeModulePath}${pathUtils.sep}package.json`;
-    const packageJSON = readHarmonyModulePackageJSON(packageJSONPath);
-    const alias = packageJSON.harmony?.alias;
+    const packageJsonPath = `${harmonyNodeModulePath}${pathUtils.sep}package.json`;
+    const packageJson = readHarmonyModulePackageJSON(packageJsonPath);
+    const alias = packageJson.harmony?.alias;
     const redirectInternalImports =
-      packageJSON?.harmony?.redirectInternalImports ?? false;
+      packageJson?.harmony?.redirectInternalImports ?? false;
     if (alias) {
       acc[alias] = {
         name: harmonyNodeModuleName,
@@ -376,10 +392,11 @@ function findHarmonyNodeModuleSearchPaths(nodeModulesPaths) {
   let searchPaths = [];
   for (const nodeModulesPath of nodeModulesPaths) {
     if (fs.existsSync(nodeModulesPath)) {
-      searchPaths = fs
-        .readdirSync(nodeModulesPath)
+      fs.readdirSync(nodeModulesPath)
         .filter((dirName) => dirName.startsWith('@'))
-        .map((dirName) => `${nodeModulesPath}${pathUtils.sep}${dirName}`);
+        .forEach((dirName) =>
+          searchPaths.push(`${nodeModulesPath}${pathUtils.sep}${dirName}`)
+        );
       searchPaths.push(nodeModulesPath);
     }
   }
@@ -394,8 +411,19 @@ function findHarmonyNodeModulePaths(searchPaths) {
   return searchPaths
     .map((searchPath) => {
       return fs
-        .readdirSync(searchPath)
-        .map((dirName) => `${searchPath}${pathUtils.sep}${dirName}`)
+        .readdirSync(searchPath, { withFileTypes: true })
+        .map((dirent) => {
+          const direntPath = dirent.parentPath + pathUtils.sep + dirent.name;
+
+          if (dirent.isSymbolicLink()) {
+            return pathUtils.resolve(fs.readlinkSync(direntPath));
+          } else {
+            return direntPath;
+          }
+        })
+        .map((potentialHarmonyNodeModulePath) => {
+          return potentialHarmonyNodeModulePath;
+        })
         .filter(hasPackageJSON);
     })
     .flat();
@@ -406,6 +434,9 @@ function findHarmonyNodeModulePaths(searchPaths) {
  * @returns {boolean}
  */
 function hasPackageJSON(nodeModulePath) {
+  if (!fs.existsSync(nodeModulePath)) {
+    return false;
+  }
   if (!fs.lstatSync(nodeModulePath).isDirectory()) return false;
   const nodeModuleContentNames = fs.readdirSync(nodeModulePath);
   return nodeModuleContentNames.includes('package.json');

@@ -3,21 +3,16 @@
   "version": "0.77.1",
   "description": "",
   "scripts": {
-    "deploy": "node ./scripts/deploy.js",
+    "build": "node ./scripts/build-har.js",
     "build:hermes": "sh ./scripts/build-hermes.sh",
-    "build:har": "node ./scripts/build-har.js",
-    "_update:version": "node ./scripts/update-version.js",
-    "gen:changelog": "node ./scripts/generate-changelog.js",
-    "prepublishOnly": "npm run _verify",
-    "_verify": "npm run typecheck && npm run _verify:ecosystem",
-    "_verify:ecosystem": "npm pack && cd ../tester-ecosystem && npm run _install:react-native-harmony && npm install && npm run build",
+    "verify": "npm run typecheck && npm run test",
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
+    "@react-native-oh/react-native-core": "*",
     "react-native": "0.77.0"
   },
   "types": "types",

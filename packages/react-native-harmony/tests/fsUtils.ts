@@ -9,6 +9,8 @@ export function copyMetroConfig(rootPath: string, filePath: string) {
   const testParentDir = pathUtils.dirname(__dirname);
   const absoluteColorsPath = pathUtils.join(
     testParentDir,
+    '..',
+    '..',
     'node_modules',
     'colors',
     'safe'

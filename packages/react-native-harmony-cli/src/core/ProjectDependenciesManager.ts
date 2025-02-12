@@ -63,7 +63,7 @@ export class ProjectDependenciesManager {
       return;
     }
     for (let dirent of this.fs.readDirentsSync(directoryPath)) {
-      if (dirent.isDirectory()) {
+      if (dirent.isDirectory() || dirent.isSymbolicLink()) {
         if (dirent.name.startsWith('.')) {
           continue;
         } else if (dirent.name.startsWith('@')) {

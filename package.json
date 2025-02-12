@@ -1,0 +1,32 @@
+{
+  "private": true,
+  "name": "react-native-harmony-workspace",
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.3.0",
+  "scripts": {
+    "preinstall": "ts-node ./scripts/check-pnpm-version.ts",
+    "postinstall": "pnpm run _setup:husky",
+    "_setup:husky": "ts-node ./scripts/setup-husky.ts",
+    "dev": "pnpm run --parallel dev",
+    "harmony:tester": "pnpm run --filter ./packages/tester harmony",
+    "clean": "npx del-cli \"**/node_modules\"",
+    "deploy": "echo \"not implemented\"",
+    "test:ecosystem": "pnpm run --filter ./packages/tester-ecosystem test",
+    "verify": "concurrently --kill-others-on-fail -n 'verify-packages,verify-docs' -c 'green,blue' \"pnpm run _verify:packages\" \"pnpm run _verify:docs\"",
+    "gen:changelog": "ts-node ./scripts/generate-changelog.js",
+    "_verify:docs": "npx markdown-link-check ./README.md && find ./docs -name '*.md' -print0 | xargs -0 -n1 npx markdown-link-check",
+    "_verify:packages": "pnpm run --recursive --parallel verify"
+  },
+  "pnpm": {
+    "requiredScripts": [
+      "verify"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "markdown-link-check": "^3.13.6",
+    "husky": "^8.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "5.0.4"
+  }
+}

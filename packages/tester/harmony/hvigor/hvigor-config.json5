@@ -1,7 +1,7 @@
 {
   modelVersion: '5.0.0',
   dependencies: {
-    '@rnoh/hvigor-plugin': '../../../react-native-harmony-cli/harmony/rnoh-hvigor-plugin-0.77.0.tgz', // <PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz
+    '@rnoh/hvigor-plugin': '../../../../node_modules/@rnoh/react-native-harmony-cli/harmony/rnoh-hvigor-plugin-0.77.0.tgz', // <PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz
   },
   execution: {
     // "analyze": "default",                    /* Define the build analyze mode. Value: [ "default" | "verbose" | false ]. Default: "default" */
