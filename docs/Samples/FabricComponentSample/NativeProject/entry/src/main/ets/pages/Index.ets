@@ -18,7 +18,7 @@ import {
   RNOHCoreContext
 } from '@rnoh/react-native-openharmony';
 import { createRNPackages } from '../RNPackagesFactory';
-import { SelectBox } from "../rnc/SelectBox"
+import { SelectBox } from "../RNComponent/SelectBox"
 
 const arkTsComponentNames: Array<string> = [SelectBox.NAME];
 @Builder
