@@ -36,15 +36,10 @@ function(add_hermes_executor link)
     )
 
     # hermesExecutor
-    set(HERMES_EXECUTOR_SRC
-        "${RNOH_CPP_DIR}/RNOH/Executor/hermesExecutor.cpp"
+    add_library(hermes_executor SHARED
+        "${RNOH_CPP_DIR}/RNOH/executor/hermesExecutor.cpp"
         "${RNOH_CPP_DIR}/RNOH/NativeLogger.cpp"
         "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
-    )
-
-    add_library(hermes_executor
-        SHARED
-        ${HERMES_EXECUTOR_SRC}
     )
 
     target_link_libraries(hermes_executor PUBLIC
@@ -66,15 +61,10 @@ function(add_jsvm_executor link)
     add_subdirectory("${RNOH_CPP_DIR}/RNOH/react-native-jsvm" ./jsvm)
 
     # jsvmExecutor
-    set(JSVM_EXECUTOR_SRC
-        "${RNOH_CPP_DIR}/RNOH/Executor/jsvmExecutor.cpp"
+    add_library(jsvm_executor SHARED
+        "${RNOH_CPP_DIR}/RNOH/executor/jsvmExecutor.cpp"
         "${RNOH_CPP_DIR}/RNOH/NativeLogger.cpp"
         "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
-    )
-
-    add_library(jsvm_executor
-        SHARED
-        ${JSVM_EXECUTOR_SRC}
     )
 
     target_link_libraries(jsvm_executor PUBLIC
