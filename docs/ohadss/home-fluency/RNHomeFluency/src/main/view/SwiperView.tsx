@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState, useMemo, useRef  } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { View, Image, Text, StyleSheet, Animated } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { Item, NetworkUtil } from '../utils/NetWorkUtil';
@@ -72,7 +72,7 @@ const SwiperView: React.FC = React.memo(() => {
     <View style={styles.viewContainer}>
       <Animated.View
         style={{
-          height:scrollX.interpolate({
+          height: scrollX.interpolate({
             inputRange: [
               0,
               300
@@ -83,25 +83,25 @@ const SwiperView: React.FC = React.memo(() => {
         }}
       >
         <Swiper
-            showsPagination={true}
-            paginationStyle={styles.paginationStyle}
-            loop={false}
-            autoplay={false}
-            dotStyle={styles.dot}
-            onScroll={Animated.event([
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: scrollX
-                  }
+          showsPagination={true}
+          paginationStyle={styles.paginationStyle}
+          loop={false}
+          autoplay={false}
+          dotStyle={styles.dot}
+          onScroll={Animated.event([
+            {
+              nativeEvent: {
+                contentOffset: {
+                  x: scrollX
                 }
               }
-            ])}
-            activeDotStyle={styles.activeDot}
-            pagingEnabled={true}>
-            {showData.map((item, index) => (
-              <BookmarkBar barKey={index} data={item} />
-            ))}
+            }
+          ])}
+          activeDotStyle={styles.activeDot}
+          pagingEnabled={true}>
+          {showData.map((item, index) => (
+            <BookmarkBar barKey={index} data={item} />
+          ))}
         </Swiper>
       </Animated.View>
     </View>

@@ -82,7 +82,7 @@ class VideoCell extends Component<VideoCellProps> {
     } = this.props;
     return (
       <View style={styles.itemContainer}>
-        <View style={{width: width, height: height}}>
+        <View style={{ width: width, height: height }}>
           <Image
             source={{ uri: thumbURL }}
             resizeMode="cover"

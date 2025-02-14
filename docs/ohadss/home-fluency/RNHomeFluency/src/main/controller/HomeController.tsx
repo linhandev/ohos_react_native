@@ -38,7 +38,6 @@ import { CardData, NetworkUtil } from '../utils/NetWorkUtil';
 import CustomToast from '../view/Toast';
 import getNumberOfLines from '../utils/GetNumberOfLine';
 import { DeviceState, getDeviceRange, } from '../utils/DeviceRangeUtil';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const window = Dimensions.get('window');
 const PAGE_SIZE = 20;
@@ -216,8 +215,8 @@ class WaterfallFlowScreen extends Component<
   render() {
     const { data, refreshing, deviceRange, showNetErrorToast } = this.state;
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'column', flex: 1, paddingBottom: 38 }}>
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'column', flex: 1 }}>
           <SearchBar />
           <MasonryFlashList
             ref={(ref) => (this.listRef = ref)}
@@ -253,7 +252,7 @@ class WaterfallFlowScreen extends Component<
           />
         </View>
         <CustomToast message={'无法连接网络，请检查网络设置'} visible={showNetErrorToast} />
-      </SafeAreaView>
+      </View>
     );
   }
 

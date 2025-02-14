@@ -27,7 +27,7 @@ import {
 } from '@rnoh/react-native-openharmony';
 import { createRNPackages } from '../RNPackagesFactory';
 import { RNCVideo, RNC_VIDEO_TYPE } from '@react-native-oh-tpl/react-native-video';
-import { RNGestureHandlerButton, RNGestureHandlerModule, RNGestureHandlerRootView } from 'rnoh-gesture-handler';
+import { RNGestureHandlerModule } from '@react-native-oh-tpl/react-native-gesture-handler';
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -35,20 +35,6 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
     RNCVideo({
       ctx: ctx.rnComponentContext,
       tag: ctx.tag
-    })
-  }
-  if (ctx.componentName == RNGestureHandlerRootView.NAME) {
-    RNGestureHandlerRootView({
-      ctx: ctx.rnComponentContext,
-      tag: ctx.tag,
-      buildCustomComponent: buildCustomRNComponent
-    })
-  }
-  if (ctx.componentName == RNGestureHandlerButton.NAME) {
-    RNGestureHandlerButton({
-      ctx: ctx.rnComponentContext,
-      tag: ctx.tag,
-      buildCustomComponent: buildCustomRNComponent
     })
   }
 }
@@ -81,10 +67,6 @@ struct Index {
           RNOHErrorDialog({ ctx: this.rnohCoreContext })
         }
         RNApp({
-          onSetUp: (rnInstance) => {
-            rnInstance.bindComponentNameToDescriptorType(RNGestureHandlerRootView.NAME, 'RootView')
-            rnInstance.getTurboModule<RNGestureHandlerModule>(RNGestureHandlerModule.NAME).install()
-          },
           rnInstanceConfig: {
             createRNPackages,
             enableNDKTextMeasuring: true,

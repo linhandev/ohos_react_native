@@ -15,7 +15,7 @@
 
 import { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony/ts';
 import { RNCVideoPackage } from '@react-native-oh-tpl/react-native-video/ts';
-import { GestureHandlerPackage } from 'rnoh-gesture-handler/ts';
+import { GestureHandlerPackage } from '@react-native-oh-tpl/react-native-gesture-handler/ts';
 import { SafeAreaViewPackage } from '@react-native-oh-tpl/react-native-safe-area-context/ts';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
