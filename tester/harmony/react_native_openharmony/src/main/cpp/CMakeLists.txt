@@ -12,10 +12,12 @@ set(RNOH_CPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")
 set(third_party_dir "${RNOH_CPP_DIR}/third-party")
 set(patches_dir "${RNOH_CPP_DIR}/patches")
-option(USE_HERMES "Enabled or Disable the Hermes JS Engine" ON)
+option(USE_HERMES "enables the Hermes JS Engine" ON)
 
-set(WITH_HITRACE_SYSTRACE 1)
-add_compile_definitions(WITH_HITRACE_SYSTRACE)
+option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation" ON)
+if(WITH_HITRACE_SYSTRACE)
+    add_compile_definitions(WITH_HITRACE_SYSTRACE)
+endif()
 add_compile_options("-Wno-error=unused-command-line-argument")
 
 include_directories(${NATIVERENDER_ROOT_PATH}

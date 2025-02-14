@@ -8,7 +8,7 @@
 import { OhosHarContext } from '@ohos/hvigor-ohos-plugin';
 import fse from 'fs-extra';
 import fs from 'node:fs';
-import { BuildOptionSetOfABC, BuildOptionSetOfRelease, BuildProfile, RNOHOther } from './Template';
+import { BuildOptionSetOfABC, BuildOptionSetOfRelease, BuildProfile, CMakeContent } from './Template';
 
 // RNOH module path
 const RNOH_PATH = 'react_native_openharmony';
@@ -86,11 +86,11 @@ class OverwriteMakefileSubtask implements Subtask {
         this.logger.error(`[OverwriteMakefile]\n${JSON.stringify(err)}`);
         return;
       }
-      if (this.isRealseMode && /rnoh_semi/gm.test(data)) {
+      if (this.isRealseMode && !/if\(USE_HERMES\)/gm.test(data)) {
         this.logger.info(`[OverwriteMakefile]\nThe CMakeLists.txt has been converted to release mode.`);
         return;
       }
-      if (!this.isRealseMode && !/rnoh_semi/gm.test(data)) {
+      if (!this.isRealseMode && /if\(USE_HERMES\)/gm.test(data)) {
         this.logger.info(`[OverwriteMakefile]\nThe CMakeLists.txt has been converted to default mode.`)
         return;
       }
@@ -98,15 +98,11 @@ class OverwriteMakefileSubtask implements Subtask {
       let replaceData = ''
       if (this.isRealseMode) {
         replaceData = data
-          .replace(/\bset\b/, `project(rnoh_semi)\nset(RNOH_CPP_DIR "\${CMAKE_CURRENT_SOURCE_DIR}")\nset`)
-          .replace(/\badd_compile_options\b/, `set(WITH_HITRACE_SYSTRACE 1)\nadd_compile_definitions(WITH_HITRACE_SYSTRACE)\nadd_compile_options`)
-          .replace(/\brnoh\b/g, 'rnoh_semi')
+          .replace(/if\(USE_HERMES\)([\s\S]*?)endif\(\)/, 'add_hermes_executor(OFF)\nadd_jsvm_executor(OFF)')
           .replace(/if\(\"\$ENV\{RNOH_C_API_ARCH\}\" STREQUAL \"1\"\)([\s\S]*?)endif\(\)/, '$1');
       } else {
         replaceData = data
-          .replace(`project(rnoh_semi)\nset(RNOH_CPP_DIR "\${CMAKE_CURRENT_SOURCE_DIR}")\n`, '')
-          .replace(`set(WITH_HITRACE_SYSTRACE 1)\nadd_compile_definitions(WITH_HITRACE_SYSTRACE)\n`, '')
-          .replace(/\brnoh_semi\b/g, 'rnoh');
+          .replace(/add_hermes_executor\(OFF\)\s*add_jsvm_executor\(OFF\)/, 'if(USE_HERMES)\n    add_hermes_executor(ON)\nelse()\n    add_jsvm_executor(ON)\nendif()');
       }
       fs.writeFile(`${this.mainPath}/cpp/CMakeLists.txt`, replaceData, 'utf8', err => {
         if (err) {
@@ -166,8 +162,6 @@ class CopyOtherFileSubtask implements Subtask {
 
   run(): void {
     const sourceList = [
-      'third-party/folly/CMake/folly-config.h.cmake',
-      'third-party/folly/folly/lang/SafeAssert.cpp',
       'RNOHAppNapiBridge.cpp',
     ];
     sourceList.forEach(filePath => {
@@ -178,7 +172,7 @@ class CopyOtherFileSubtask implements Subtask {
       }
     });
 
-    fse.writeFile(`${this.mainPath}/cpp/include/RNOHOther.cpp`, RNOHOther).catch((err) => {
+    fse.writeFile(`${this.mainPath}/cpp/include/react-native-harmony.cmake`, CMakeContent).catch((err) => {
       this.logger.error(`[CopyOtherFile]\n${JSON.stringify(err)}`);
     });
   }
