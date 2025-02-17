@@ -1,12 +1,13 @@
-import {TestCase, TestSuite} from '@rnoh/testerino';
+import {TestSuite} from '@rnoh/testerino';
 import {Platform, ScrollView, View} from 'react-native';
 import {getScrollViewContent} from './fixtures';
 import {Button} from '../../components';
+import {TestCase} from '../../components/TestCase';
 
 export function PointerEventsTest() {
   return (
     <TestSuite name="pointer events">
-      <TestCase
+      <TestCase.Manual
         itShould="call inner and outer view when pressing inner"
         initialState={{inner: false, outer: false, outerContainer: false}}
         arrange={({setState, reset}) => {
@@ -26,7 +27,7 @@ export function PointerEventsTest() {
           });
         }}
       />
-      <TestCase
+      <TestCase.Manual
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
@@ -51,7 +52,7 @@ export function PointerEventsTest() {
           });
         }}
       />
-      <TestCase
+      <TestCase.Manual
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
@@ -73,7 +74,7 @@ export function PointerEventsTest() {
           expect(state.outer).to.be.true;
         }}
       />
-      <TestCase
+      <TestCase.Manual
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
