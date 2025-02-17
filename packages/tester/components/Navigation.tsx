@@ -129,15 +129,11 @@ export function IndexPage() {
                 : ''}
             </Text>
           </View>
-          <Text
-            style={{
-              color: '#EEE',
-              fontSize: 12,
-              fontWeight: 'bold',
-              padding: 16,
-              paddingTop: 0,
-            }}>
-            {JSON.stringify(env, null, 2)}
+          <Text style={styles.envStatusText}>
+            {`Internet connected: ${env.isConnectedToInternet}`}
+          </Text>
+          <Text style={styles.envStatusText}>
+            {`Driver initialized: ${!!env.driver}`}
           </Text>
         </>
       }
@@ -175,5 +171,12 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     color: 'white',
     backgroundColor: 'black',
+  },
+  envStatusText: {
+    color: '#EEE',
+    fontSize: 12,
+    fontWeight: 'bold',
+    padding: 16,
+    paddingTop: 0,
   },
 });

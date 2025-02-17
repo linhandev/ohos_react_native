@@ -6,11 +6,16 @@ import {
   findNodeHandle,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import React, {useRef, useState} from 'react';
+import React, {createRef, useRef, useState} from 'react';
 import {Button, TestCase} from '../../components';
 import {ViewAccessibilityTest} from './ViewAccessibilityTest';
+import {useEnvironment} from '../../contexts';
 
 export function ViewTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   return (
     <TestSuite name="View">
       <TestCase.Example
@@ -444,134 +449,234 @@ export function ViewTest() {
         />
       </TestSuite>
       <TestSuite name="pointerEvents">
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="call inner and outer view when pressing inner"
-          initialState={{inner: false, outer: false, outerContainer: false}}
-          arrange={({setState, reset}) => {
+          initialState={{
+            innerRef: createRef<View>(),
+            outerRef: createRef<View>(),
+            inner: false,
+            outer: false,
+            outerContainer: false,
+          }}
+          arrange={({setState, reset, state, done}) => {
             return (
               <PointerEventsView
                 pointerEventsOuter="auto"
                 setState={setState}
                 reset={reset}
+                innerRef={state.innerRef}
+                done={done}
               />
             );
           }}
+          act={async ({state}) => {
+            await driver?.click({ref: state.innerRef});
+          }}
           assert={({expect, state}) => {
-            expect(state).to.be.deep.eq({
-              inner: true,
-              outer: true,
-              outerContainer: true,
-            });
+            expect(state.inner).to.be.true;
+            expect(state.outer).to.be.true;
+            expect(state.outerContainer).to.be.true;
           }}
         />
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="call only outer when pressing inner view"
-          initialState={{inner: false, outer: false, outerContainer: true}}
-          arrange={({setState, reset}) => {
+          initialState={{
+            inner: false,
+            outer: false,
+            outerContainer: true,
+            innerRef: createRef<View>(),
+            outerRef: createRef<View>(),
+          }}
+          arrange={({setState, reset, state, done}) => {
             return (
               <PointerEventsView
                 pointerEventsOuter="box-only"
                 setState={setState}
                 reset={reset}
+                innerRef={state.innerRef}
+                done={done}
               />
             );
           }}
+          act={async ({state}) => {
+            await driver?.click({ref: state.innerRef});
+          }}
           assert={({expect, state}) => {
-            expect(state).to.be.deep.eq({
-              inner: false,
-              outer: true,
-              outerContainer: true,
-            });
+            expect(state.inner).to.be.false;
+            expect(state.outer).to.be.true;
+            expect(state.outerContainer).to.be.true;
           }}
         />
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="call inner and outer only when pressing inner view"
-          initialState={{inner: false, outer: false, outerContainer: false}}
-          arrange={({setState, reset}) => {
+          initialState={{
+            inner: false,
+            outer: false,
+            outerContainer: false,
+            innerRef: createRef<View>(),
+            outerRef: createRef<View>(),
+          }}
+          arrange={({setState, reset, state, done}) => {
             return (
               <PointerEventsView
                 disableOuterContainerTouch
                 pointerEventsOuter="box-none"
                 setState={setState}
                 reset={reset}
+                innerRef={state.innerRef}
+                done={done}
               />
             );
+          }}
+          act={async ({state}) => {
+            await driver?.click({ref: state.innerRef});
           }}
           assert={({expect, state}) => {
             expect(state.inner).to.be.true;
             expect(state.outer).to.be.true;
           }}
         />
-        <TestCase.Manual
-          itShould="not call inner or outer when pressing inner or outer views"
-          initialState={{inner: false, outer: false, outerContainer: false}}
-          arrange={({setState, reset}) => {
+        <TestCase.Automated
+          itShould="not call inner or outer when pressing inner view"
+          initialState={{
+            inner: false,
+            outer: false,
+            outerContainer: false,
+            innerRef: createRef<View>(),
+            outerRef: createRef<View>(),
+          }}
+          arrange={({setState, reset, state, done}) => {
             return (
               <PointerEventsView
                 pointerEventsOuter="none"
                 setState={setState}
                 reset={reset}
+                innerRef={state.innerRef}
+                done={done}
               />
             );
           }}
+          act={async ({state}) => {
+            await driver?.click({ref: state.innerRef});
+          }}
           assert={({expect, state}) => {
-            expect(state).to.be.deep.eq({
-              inner: false,
-              outer: false,
-              outerContainer: true,
-            });
+            expect(state.inner).to.be.false;
+            expect(state.outer).to.be.false;
+            expect(state.outerContainer).to.be.true;
+          }}
+        />
+        <TestCase.Automated
+          itShould="not call inner or outer when pressing outer views"
+          initialState={{
+            inner: false,
+            outer: false,
+            outerContainer: false,
+            innerRef: createRef<View>(),
+            outerRef: createRef<View>(),
+          }}
+          arrange={({setState, reset, state, done}) => {
+            return (
+              <PointerEventsView
+                pointerEventsOuter="none"
+                setState={setState}
+                reset={reset}
+                outerRef={state.outerRef}
+                done={done}
+              />
+            );
+          }}
+          act={async ({state}) => {
+            await driver?.click({ref: state.outerRef});
+          }}
+          assert={({expect, state}) => {
+            expect(state.inner).to.be.false;
+            expect(state.outer).to.be.false;
+            expect(state.outerContainer).to.be.true;
           }}
         />
       </TestSuite>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass on touching blue background"
-        initialState={false}
-        arrange={({setState}) => (
-          <View style={{backgroundColor: 'blue', alignSelf: 'center'}}>
+        initialState={{
+          blueTouched: false,
+          outerRef: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => (
+          <View
+            ref={state.outerRef}
+            style={{
+              backgroundColor: 'blue',
+              alignSelf: 'center',
+            }}>
             <View
               hitSlop={{top: 48, left: 48, bottom: 48, right: 48}}
               style={{
                 width: 48,
                 height: 48,
                 backgroundColor: 'green',
-                margin: 48,
+                marginTop: 48,
+                marginRight: 8,
+                marginBottom: 48,
+                marginLeft: 88,
               }}
               onTouchEnd={() => {
-                setState(true);
+                setState(prevState => ({
+                  ...prevState,
+                  blueTouched: true,
+                }));
+                done();
               }}>
               <View
                 style={{width: 48, height: 48, backgroundColor: 'red'}}
                 onTouchEnd={e => {
                   e.stopPropagation();
+                  done();
                 }}
               />
             </View>
           </View>
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.outerRef});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.blueTouched).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass on touching transparent view"
-        initialState={false}
-        arrange={({setState, reset}) => (
+        initialState={{
+          touched: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, reset, state, done}) => (
           <>
             <View
+              ref={state.ref}
               style={{
                 backgroundColor: 'transparent',
                 width: '100%',
                 height: 100,
               }}
-              onTouchEnd={() => setState(true)}
+              onTouchEnd={() => {
+                setState(prevState => ({
+                  ...prevState,
+                  touched: true,
+                }));
+                done();
+              }}
             />
             <Button label="reset" onPress={reset} />
           </>
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.touched).to.be.true;
         }}
       />
+
       <TestCase.Manual
         itShould="blue view should not allow clicks with non-touch input device"
         modal
@@ -736,14 +841,15 @@ export function ViewTest() {
           <Text>Alert</Text>
         </View>
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass on blue rect touch (onResponderReject)"
         initialState={{
           responderRejectedCount: 0,
           responderGrantedCount: 0,
           childResponderGrantedCount: 0,
+          ref: createRef<View>(),
         }}
-        arrange={({setState}) => {
+        arrange={({setState, state, done}) => {
           return (
             <View
               onMoveShouldSetResponder={() => true}
@@ -752,18 +858,21 @@ export function ViewTest() {
                   ...prev,
                   responderRejectedCount: prev.responderRejectedCount + 1,
                 }));
+                done();
               }}
               onResponderGrant={() => {
                 setState(prev => ({
                   ...prev,
                   responderGrantedCount: prev.responderGrantedCount + 1,
                 }));
+                done();
               }}
               style={{
                 backgroundColor: 'green',
                 padding: 20,
               }}>
               <View
+                ref={state.ref}
                 style={{backgroundColor: 'blue', width: 64, height: 64}}
                 onResponderTerminationRequest={() => false}
                 onStartShouldSetResponder={() => true}
@@ -773,10 +882,14 @@ export function ViewTest() {
                     childResponderGrantedCount:
                       prev.childResponderGrantedCount + 1,
                   }));
+                  done();
                 }}
               />
             </View>
           );
+        }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
         }}
         assert={({expect, state}) => {
           expect(state.responderRejectedCount).to.be.greaterThan(0);
@@ -884,8 +997,13 @@ function PointerEventsView(props: {
   disableOuterContainerTouch?: boolean;
   pointerEventsOuter?: 'box-none' | 'none' | 'box-only' | 'auto';
   pointerEventsInner?: 'box-none' | 'none' | 'box-only' | 'auto';
+  outerRef?: React.RefObject<View>;
+  innerRef?: React.RefObject<View>;
+  done: () => void;
   setState: React.Dispatch<
     React.SetStateAction<{
+      innerRef: React.RefObject<View>;
+      outerRef: React.RefObject<View>;
       inner: boolean;
       outer: boolean;
       outerContainer: boolean;
@@ -902,23 +1020,34 @@ function PointerEventsView(props: {
             ? undefined
             : () => {
                 props.setState(prev => ({...prev, outerContainer: true}));
+                props.done();
               }
         }>
         <View
-          style={{height: 100, width: 100, backgroundColor: 'red'}}
+          ref={props.outerRef}
+          style={{
+            height: 100,
+            width: 100,
+            backgroundColor: 'red',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+          }}
           pointerEvents={props.pointerEventsOuter}
           onTouchEnd={() => {
             props.setState(prev => ({...prev, outer: true}));
+            props.done();
           }}>
           <View
+            ref={props.innerRef}
             style={{
               height: 40,
               width: 40,
               backgroundColor: 'blue',
-              margin: 30,
+              marginRight: 5,
             }}
             onTouchEnd={() => {
               props.setState(prev => ({...prev, inner: true}));
+              props.done();
             }}
             pointerEvents={props.pointerEventsInner}
           />

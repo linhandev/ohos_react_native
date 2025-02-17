@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View} from 'react-native';
+import {Driver} from '@rnoh/react-native-harmony-test-kit';
 
 export const AppParamsContext = React.createContext(undefined);
 
-const EnvCtx = React.createContext({isConnectedToInternet: false});
+export type EnvCtxType = {
+  isConnectedToInternet: boolean;
+  driver?: Driver;
+};
+
+const EnvCtx = React.createContext<EnvCtxType>({isConnectedToInternet: false});
 
 async function checkIsInternetAvailable() {
   try {
@@ -20,12 +26,16 @@ export const Environment = ({children}: {children: any}) => {
   const [internetAvailability, setInternetAvailability] = useState<
     'CHECKING' | 'AVAILABLE' | 'NOT_AVAILABLE'
   >('CHECKING');
+  const [driver, setDriver] = useState<Driver>();
 
   useEffect(() => {
     (async () => {
       setInternetAvailability(
         (await checkIsInternetAvailable()) ? 'AVAILABLE' : 'NOT_AVAILABLE',
       );
+
+      const driver_ = await Driver.create();
+      setDriver(driver_);
     })();
   }, []);
 
@@ -44,7 +54,10 @@ export const Environment = ({children}: {children: any}) => {
 
   return (
     <EnvCtx.Provider
-      value={{isConnectedToInternet: internetAvailability === 'AVAILABLE'}}>
+      value={{
+        isConnectedToInternet: internetAvailability === 'AVAILABLE',
+        driver: driver,
+      }}>
       {children}
     </EnvCtx.Provider>
   );
