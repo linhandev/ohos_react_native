@@ -65,7 +65,12 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
             [otherMutation, this](MountingManager::Shared 
         const& mountingManager) {
               mountingManager->didMount(otherMutation);
+            });
+        performOnMainThread(
+            [mutationVecs, this](MountingManager::Shared 
+        const& mountingManager) {
               mountingManager->clearPreallocatedViews();
+              mountingManager->finalizeMutationUpdates(mutationVecs);
             });
         logTransactionTelemetryMarkers(transaction);
       });
