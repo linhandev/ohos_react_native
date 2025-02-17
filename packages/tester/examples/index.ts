@@ -1,4 +1,5 @@
 export * from './AnimatedRenderExample';
+export * from './SequentialTester';
 export * from './AnimationsExample';
 export * from './CheckerboardExample';
 export * from './ChessboardExample';

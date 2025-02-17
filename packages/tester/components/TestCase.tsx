@@ -1,5 +1,6 @@
 import {LogicalTestCase, TestCase as _TestCase} from '@rnoh/testerino';
 import {SmartManualTestCaseProps} from '@rnoh/testerino/src/react-native/ManualTestCase';
+import {SmartAutomatedTestCaseProps} from '@rnoh/testerino/src/react-native/AutomatedTestCase';
 import React from 'react';
 import {Platform} from 'react-native';
 
@@ -7,6 +8,7 @@ export const TestCase = {
   Example: Example,
   Manual: Manual,
   Logical: Logical,
+  Automated: Automated,
 };
 
 type TesterTag = 'dev';
@@ -121,6 +123,39 @@ export function Logical({
       skip={prepareSkipProp(skip)}
       tags={tags}
       fn={fn}
+    />
+  );
+}
+
+export function Automated<TState = undefined>({
+  itShould,
+  skip,
+  tags,
+  modal,
+  initialState,
+  arrange,
+  act,
+  assert,
+}: {
+  itShould: string;
+  skip?: TesterSkipProp;
+  tags?: TesterTag[];
+  modal?: boolean;
+  initialState: TState;
+  arrange: SmartAutomatedTestCaseProps<TState>['arrange'];
+  act: SmartAutomatedTestCaseProps<TState>['act'];
+  assert: SmartAutomatedTestCaseProps<TState>['assert'];
+}) {
+  return (
+    <_TestCase
+      itShould={itShould}
+      modal={modal}
+      tags={tags}
+      skip={prepareSkipProp(skip)}
+      initialState={initialState}
+      arrange={arrange}
+      act={act}
+      assert={assert}
     />
   );
 }

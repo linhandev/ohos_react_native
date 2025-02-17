@@ -3,7 +3,7 @@ import * as React from 'react';
 import {ScrollView, StyleSheet, View, Systrace} from 'react-native';
 import * as tests from '../tests';
 
-export function TesterExample({filter}: {filter: Filter}) {
+export function TesterExample({filter}: {filter?: Filter}) {
   const scrollRef = React.useRef<ScrollView>(null);
 
   React.useEffect(() => {

@@ -14,7 +14,8 @@ import * as testSuiteByName from './tests';
 import {Tester} from '@rnoh/testerino';
 import {Environment} from './contexts';
 
-const {TesterExample, ...remainingExampleByName} = exampleByName;
+const {TesterExample, SequentialTester, ...remainingExampleByName} =
+  exampleByName;
 
 function App() {
   return (
@@ -25,14 +26,31 @@ function App() {
           <NavigationContainer>
             <PortalProvider>
               <View id="__harmony::ready" />
+              <Page name="SEQUENTIAL TESTER">
+                <SequentialTester
+                  filter={({testCaseType}) => {
+                    return testCaseType === 'automated';
+                  }}
+                />
+              </Page>
               <Page name="_DEV TESTS">
-                <TesterExample filter={{tags: ['dev']}} />
+                <TesterExample
+                  filter={({tags}) => {
+                    return tags.includes('dev');
+                  }}
+                />
               </Page>
               <Page name="ALL TESTS">
-                <TesterExample filter={{}} />
+                <TesterExample />
               </Page>
-              <Page name="AUTOMATED & MANUAL TESTS">
-                <TesterExample filter={{types: ['automated', 'manual']}} />
+              <Page name="CONCURRENT TESTER">
+                <TesterExample
+                  filter={({testCaseType}) => {
+                    return (
+                      testCaseType === 'automated' || testCaseType === 'manual'
+                    );
+                  }}
+                />
               </Page>
               {Object.keys(testSuiteByName).map(testSuiteName => {
                 const TestSuite =
