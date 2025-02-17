@@ -413,7 +413,8 @@ function findHarmonyNodeModulePaths(searchPaths) {
       return fs
         .readdirSync(searchPath, { withFileTypes: true })
         .map((dirent) => {
-          const direntPath = dirent.parentPath + pathUtils.sep + dirent.name;
+          const direntPath =
+            (dirent.parentPath ?? dirent.path) + pathUtils.sep + dirent.name;
 
           if (dirent.isSymbolicLink()) {
             return pathUtils.resolve(fs.readlinkSync(direntPath));
