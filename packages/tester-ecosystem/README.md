@@ -25,7 +25,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/masked-view                             |        |
 | @react-native-oh-tpl/picker                                  |        |
 | @react-native-oh-tpl/segmented-control                       |        |
-| @react-native-oh-tpl/elements                                |        |
+| @react-native-oh-tpl/elements                                | ✅      |
 | @react-native-oh-tpl/flash-list                              |        |
 | @react-native-oh-tpl/lottie-react-native                     |        |
 | @react-native-oh-tpl/react-native-autoheight-webview         |        |
