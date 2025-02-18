@@ -21,6 +21,7 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/blur/src/main/cpp" ./bl
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/clipboard/src/main/cpp" ./clipboard)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/cookies/src/main/cpp" ./rn_cookies)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/datetimepicker/src/main/cpp" ./datetimepicker)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-exception-handler/src/main/cpp" ./exception-handler)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/checkbox/src/main/cpp" ./checkbox)
 # RNOH_END: manual_package_linking_1
 
@@ -40,5 +41,6 @@ target_link_libraries(rnoh_app PUBLIC rnoh_blur)
 target_link_libraries(rnoh_app PUBLIC rnoh_clipboard)
 target_link_libraries(rnoh_app PUBLIC rnoh_cookies)
 target_link_libraries(rnoh_app PUBLIC rnoh_datetime_picker)
+target_link_libraries(rnoh_app PUBLIC rnoh_exception_handler)
 target_link_libraries(rnoh_app PUBLIC rnoh_checkbox)
 # RNOH_END: manual_package_linking_2

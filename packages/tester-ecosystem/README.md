@@ -31,7 +31,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-autoheight-webview         |        |
 | @react-native-oh-tpl/react-native-blob-util                  |        |
 | @react-native-oh-tpl/react-native-drag-sort                  |        |
-| @react-native-oh-tpl/react-native-exception-handler          |        |
+| @react-native-oh-tpl/react-native-exception-handler          | ✅      |
 | @react-native-oh-tpl/react-native-fast-image                 |        |
 | @react-native-oh-tpl/react-native-fit-Image                  |        |
 | @react-native-oh-tpl/react-native-fs                         |        |
