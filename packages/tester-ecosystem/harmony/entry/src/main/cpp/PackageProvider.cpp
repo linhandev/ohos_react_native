@@ -10,6 +10,7 @@
 #include "DateTimePickerPackage.h"
 #include "ExceptionHandlerPackage.h"
 #include "FlashListPackage.h"
+#include "GeoLocationPackage.h"
 
 using namespace rnoh;
 
@@ -25,6 +26,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<DateTimePickerPackage>(ctx));
   packages.push_back(std::make_shared<ExceptionHandlerPackage>(ctx));
   packages.push_back(std::make_shared<FlashListPackage>(ctx));
+  packages.push_back(std::make_shared<GeoLocationPackage>(ctx));
   // manual linking: END
   return packages;
 }

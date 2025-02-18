@@ -14,7 +14,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/blurReleases                            | ✅      |
 | @react-native-oh-tpl/react-native-checkbox                   | ✅      |
 | @react-native-oh-tpl/datetimepicker                          | ✅      |
-| @react-native-oh-tpl/geolocation                             |        |
+| @react-native-oh-tpl/geolocation                             | ✅      |
 | @react-native-oh-tpl/netinfo                                 |        |
 | @react-native-oh-tpl/progress-bar-android                    |        |
 | @react-native-oh-tpl/progress-view                           |        |
