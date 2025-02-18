@@ -38,7 +38,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-gesture-handler            |        |
 | @react-native-oh-tpl/react-native-image-editor               |        |
 | @react-native-oh-tpl/react-native-image-picker               | ✅      |
-| react-native-image-viewer                                    |        |
+| react-native-image-viewer                                    | ✅      |
 | @react-native-oh-tpl/react-native-image-viewing              |        |
 | @react-native-oh-tpl/react-native-image-pan-zoom             |        |
 | @react-native-oh-tpl/react-native-intersection-observer      |        |
@@ -148,7 +148,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-iphone-screen-helper       |        |
 | @react-native-oh-tpl/react-native-randombytes                |        |
 | @react-native-oh-tpl/react-native-view-overflow              |        |
-| @react-native-oh-tpl/react-native-image-zoom-viewer          |        |
+| @react-native-oh-tpl/react-native-image-zoom-viewer          | ✅      |
 | @react-native-oh-tpl/audio-toolkit                           |        |
 | @react-native-oh-tpl/react-native-svg-charts                 |        |
 | @react-native-oh-tpl/react-native-file-viewer                |        |
