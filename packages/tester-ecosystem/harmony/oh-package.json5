@@ -11,6 +11,7 @@
   dependencies: {
     "@rnoh/react-native-openharmony": "file:../../react-native-harmony/harmony/react_native_openharmony.har",
     "@react-native-oh-tpl/async-storage": "file:../../../node_modules/@react-native-oh-tpl/async-storage/harmony/async_storage.har",
+    "@react-native-oh-tpl/blur": "file:../../../node_modules/@react-native-oh-tpl/blur/harmony/blur.har",
     "@rnoh/react-native-openharmony-gesture-handler": "file:../../../node_modules/@rnoh/react-native-harmony-gesture-handler/harmony/gesture_handler.har",
   },
   overrides: {
