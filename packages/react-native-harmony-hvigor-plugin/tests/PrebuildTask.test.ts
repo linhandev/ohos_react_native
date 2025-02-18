@@ -3,6 +3,16 @@ import { memfs, NestedDirectoryJSON } from 'memfs';
 import pathUtils from 'node:path';
 import { StubCommandExecutor, FakeLogger } from './__fixtures__';
 
+const ORIGINAL_DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
+
+beforeEach(() => {
+  process.env.DEVECO_SDK_HOME = '/Applications/DevEco-Studio.app/Contents/sdk';
+});
+
+afterEach(() => {
+  process.env.DEVECO_SDK_HOME = ORIGINAL_DEVECO_SDK_HOME;
+});
+
 function createPreBuildTask(options: {
   onCodegenRun?: (command: string) => string;
   fsSetup?: NestedDirectoryJSON;
@@ -31,6 +41,7 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
       },
     },
   });
+  process.env.DEVECO_SDK_HOME = '/Applications/DevEco-Studio.app/Cont ents/sdk';
 
   preBuildTask.run({
     nodeModulesPath: './node_modules',
@@ -38,7 +49,9 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
   });
 
   const executedCommands = fakeCliExecutor.getCommands();
-  expect(executedCommands[0]).toContain('hdc rport tcp:8081 tcp:8081');
+  expect(executedCommands[0]).toContain(
+    '"/Applications/DevEco-Studio.app/Cont ents/sdk/default/openharmony/toolchains/hdc" rport tcp:8081 tcp:8081'
+  );
   expect(executedCommands[1]).toBe(
     pathUtils.join('node_modules', '.bin', 'react-native') +
       ' codegen-harmony --project-root-path ../ --cpp-output-path ./entry/src/main/cpp/generated --rnoh-module-path _'

@@ -12,10 +12,10 @@ export class FakeCliExecutor extends CliExecutor {
     super();
   }
 
-  run(command: string, options: CliOptions = {}): Promise<string> {
+  run(command: string, options: CliOptions): Promise<string> {
     let commandWithArgs = command;
     if (options.args) {
-      commandWithArgs += ' ' + this.stringifyCliArgs(options.args);
+      commandWithArgs += options.args.join(' ');
     }
     this.commands.push(commandWithArgs);
     return this.onRun(commandWithArgs);

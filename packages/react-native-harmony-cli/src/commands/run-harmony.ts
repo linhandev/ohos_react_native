@@ -114,20 +114,24 @@ export const commandRunHarmony: Command = {
 
       await runJob('[1/2] building app', async () => {
         await cli.run(
-          `${devEcoStudioToolsPath
+          devEcoStudioToolsPath
             .copyWithNewSegment('node', 'bin', 'node')
-            .toString()} ${devEcoStudioToolsPath
-            .copyWithNewSegment('hvigor', 'bin', 'hvigorw.js')
-            .toString()} -p module=${moduleName}@default -p product=${productName} -p buildMode=${buildMode} -p requiredDeviceType=phone assembleHap`,
+            .toString(),
           {
-            argsFormat: 'GNU',
-            args: {
-              mode: 'module',
-              analyze: 'normal',
-              parallel: true,
-              incremental: true,
-              daemon: true,
-            },
+            args: [
+              devEcoStudioToolsPath
+                .copyWithNewSegment('hvigor', 'bin', 'hvigorw.js')
+                .toString(),
+              `-p`,
+              `module=${moduleName}@default`,
+              `-p`,
+              `product=${productName}`,
+              `-p`,
+              `buildMode=${buildMode}`,
+              `-p`,
+              `requiredDeviceType=phone`,
+              `assembleHap`,
+            ],
             cwd: harmonyProjectPath,
             onArgsStringified: (commandWithArgs) => {
               logger.debug((s) => s.bold(s.gray(commandWithArgs)));
@@ -145,8 +149,9 @@ export const commandRunHarmony: Command = {
         const tmpDirName = generateRandomString();
         const ohosTmpDirPath = `data/local/tmp/${tmpDirName}`;
 
-        const exec = async (command: string) => {
+        const exec = async (command: string, args: string[]) => {
           const result = await cli.run(command, {
+            args: args,
             onArgsStringified: (commandWithArgs) =>
               logger.debug((s) => s.bold(s.gray(commandWithArgs))),
           });
@@ -164,11 +169,13 @@ export const commandRunHarmony: Command = {
         const hdcPathStr = sdkToolchainsPath
           .copyWithNewSegment('hdc')
           .toString();
-        await exec(`${hdcPathStr} shell aa force-stop ${bundleName}`);
+        await exec(hdcPathStr, ['shell', 'aa', 'force-stop', bundleName]);
         try {
-          await exec(`${hdcPathStr} shell mkdir ${ohosTmpDirPath}`);
-          await exec(
-            `${hdcPathStr} file send ${harmonyProjectPath
+          await exec(hdcPathStr, ['shell', 'mkdir', ohosTmpDirPath]);
+          await exec(hdcPathStr, [
+            'file',
+            'send',
+            harmonyProjectPath
               .copyWithNewSegment(
                 moduleName,
                 'build',
@@ -177,11 +184,16 @@ export const commandRunHarmony: Command = {
                 'default',
                 `${moduleName}-default-signed.hap`
               )
-              .toString()} "${ohosTmpDirPath}"`
-          );
-          const installationResult = await exec(
-            `${hdcPathStr} shell bm install -p ${ohosTmpDirPath}`
-          );
+              .toString(),
+            ohosTmpDirPath,
+          ]);
+          const installationResult = await exec(hdcPathStr, [
+            'shell',
+            'bm',
+            'install',
+            '-p',
+            ohosTmpDirPath,
+          ]);
           if (installationResult.includes('failed to install')) {
             throw new DescriptiveError({
               whatHappened: 'Installation failed.',
@@ -191,11 +203,17 @@ export const commandRunHarmony: Command = {
             });
           }
         } finally {
-          await exec(`${hdcPathStr} shell rm -rf ${ohosTmpDirPath}`);
+          await exec(hdcPathStr, ['shell', 'rm', '-rf', ohosTmpDirPath]);
         }
-        await exec(
-          `${hdcPathStr} shell aa start -a ${abilityName} -b ${bundleName}`
-        );
+        await exec(hdcPathStr, [
+          'shell',
+          'aa',
+          'start',
+          '-a',
+          abilityName,
+          '-b',
+          bundleName,
+        ]);
       });
     } catch (err) {
       if (err instanceof DescriptiveError) {

@@ -35,8 +35,8 @@ const hvigorwPath = pathUtils.join(
   'hvigorw.js',
 );
 
-const buildCommand = `${nodePath} ${hvigorwPath} --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --daemon`;
-const installCommand = `${ohpmPath} install`;
+const buildCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --daemon`;
+const installCommand = `"${ohpmPath}" install`;
 
 try {
   execSync(installCommand, {stdio: 'inherit', cwd: './harmony'});

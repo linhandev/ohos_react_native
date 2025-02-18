@@ -162,13 +162,13 @@ class MetroPortForwardSubtask implements Subtask {
       return;
     }
     const result = this.commandExecutor.run(
-      `${pathUtils.join(
+      `"${pathUtils.join(
         DEVECO_SDK_HOME,
         'default',
         'openharmony',
         'toolchains',
         'hdc'
-      )} rport tcp:${this.input.port} tcp:${this.input.port}`
+      )}" rport tcp:${this.input.port} tcp:${this.input.port}`
     );
     this.logger.info(`[metro] ${result}`);
   }
