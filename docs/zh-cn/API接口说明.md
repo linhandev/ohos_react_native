@@ -194,7 +194,7 @@ onBackground(): void
 | ------------------------------- | ------------------------------- | ---- | ------------------------------------------------------------ |
 | rnInstanceConfig                | RNInstanceConfig                | 是   | 用于创建`RNInstance`的`RNInstance`或`RNInstanceOptions`。如果提供了[RNInstanceOptions](#rninstanceoptions)，则此组件负责创建和管理`RNInstance`。 |
 | appKey                          | string                          | 是   | 开发者在JS侧使用`AppRegistry.registerComponent`注册的名称。   |
-| jsBundleProvider                | JSBundleProvider                | 否   | 在`RNInstance`中运行JS Bundle。Bundle被加载后创建Surface(跟容器)。 |
+| jsBundleProvider                | JSBundleProvider                | 否   | 在`RNInstance`中运行JS Bundle。Bundle被加载后创建Surface(根容器)。 |
 | initialProps                    | Record<string, string>          | 否   | React Native应用的初始化原生参数。                           |
 | wrappedCustomRNComponentBuilder | WrappedCustomRNComponentBuilder | 是   | 构建自定义Fabric组件构造器。                                   |
 | onSetUp                         | void                            | 否   | 在`RNInstance`创建完成且Surface可见前，调用此回调函数。        |

@@ -153,7 +153,7 @@ module.exports = {
 };
 ```
 
-​ 每个 optoins 内都有很多配置选项，而对于拆包打包来说，最重要的是 `serializer` 选项内的`createModuleIdFactory` 与 `processModuleFilter`。
+​ 每个 options 内都有很多配置选项，而对于拆包打包来说，最重要的是 `serializer` 选项内的`createModuleIdFactory` 与 `processModuleFilter`。
 
 ![image](./figures/RN-JS-serializer.png)
 
