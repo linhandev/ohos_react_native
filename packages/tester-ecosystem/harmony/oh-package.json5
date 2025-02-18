@@ -15,6 +15,7 @@
     "@react-native-oh-tpl/clipboard": "file:../../../node_modules/@react-native-oh-tpl/clipboard/harmony/clipboard.har",
     "@react-native-oh-tpl/cookies": "file:../../../node_modules/@react-native-oh-tpl/cookies/harmony/rn_cookies.har",
     "@react-native-oh-tpl/datetimepicker": "file:../../../node_modules/@react-native-oh-tpl/datetimepicker/harmony/datetimepicker.har",
+    "@react-native-oh-tpl/flash-list": "file:../../../node_modules/@react-native-oh-tpl/flash-list/harmony/flash_list.har",
     "@react-native-oh-tpl/react-native-exception-handler": "file:../../../node_modules/@react-native-oh-tpl/react-native-exception-handler/harmony/exception_handler.har",
     "@react-native-ohos/checkbox": "file:../../../node_modules/@react-native-ohos/checkbox/harmony/checkbox.har",
     "@rnoh/react-native-openharmony-gesture-handler": "file:../../../node_modules/@rnoh/react-native-harmony-gesture-handler/harmony/gesture_handler.har",
