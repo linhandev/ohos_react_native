@@ -23,6 +23,7 @@
     "@react-native-oh-tpl/react-native-exception-handler": "^2.10.10-0.1.7",
     "@react-native-oh-tpl/react-native-image-picker": "^7.0.3-0.1.6",
     "@react-native-oh-tpl/react-native-image-zoom-viewer": "^3.0.1-0.0.1",
+    "@react-native-oh-tpl/react-native-keyboard-aware-scroll-view": "^0.9.5-0.0.4",
     "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
     "@react-native-ohos/checkbox": "^0.5.17-rc.1",
     "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli",
