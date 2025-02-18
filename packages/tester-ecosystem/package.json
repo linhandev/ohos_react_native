@@ -26,6 +26,7 @@
     "@react-native-oh-tpl/react-native-keyboard-aware-scroll-view": "^0.9.5-0.0.4",
     "@react-native-oh/react-native-core": "npm:@rnoh/react-native-core@0.77.2-rn.0.77.0",
     "@react-native-ohos/checkbox": "^0.5.17-rc.1",
+    "@react-native-ohos/react-native-linear-gradient": "^3.0.1-rc.1",
     "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@rnoh/react-native-harmony-gesture-handler": "^2.20.1",
     "chai": "4.3.7",

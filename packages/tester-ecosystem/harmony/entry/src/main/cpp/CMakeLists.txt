@@ -26,6 +26,7 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/geolocation/src/main/cp
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-exception-handler/src/main/cpp" ./exception-handler)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-image-picker/src/main/cpp" ./image_picker)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/checkbox/src/main/cpp" ./checkbox)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-linear-gradient/src/main/cpp" ./linear-gradient)
 # RNOH_END: manual_package_linking_1
 
 file(GLOB GENERATED_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp") # this line is needed by codegen v1
@@ -49,4 +50,5 @@ target_link_libraries(rnoh_app PUBLIC rnoh_geolocation)
 target_link_libraries(rnoh_app PUBLIC rnoh_exception_handler)
 target_link_libraries(rnoh_app PUBLIC rnoh_image_picker)
 target_link_libraries(rnoh_app PUBLIC rnoh_checkbox)
+target_link_libraries(rnoh_app PUBLIC rnoh_linear_gradient)
 # RNOH_END: manual_package_linking_2

@@ -43,7 +43,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-image-pan-zoom             |        |
 | @react-native-oh-tpl/react-native-intersection-observer      |        |
 | @react-native-oh-tpl/react-native-keyboard-aware-scroll-view | ✅      |
-| @react-native-oh-tpl/react-native-linear-gradient            |        |
+| @react-native-oh-tpl/react-native-linear-gradient            | ✅      |
 | @react-native-oh-tpl/react-native-maps                       |        |
 | @react-native-oh-tpl/react-native-markdown-display           |        |
 | @react-native-oh-tpl/react-native-marquee                    |        |
