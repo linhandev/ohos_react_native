@@ -4,6 +4,7 @@
 #include "generated/RNOHGeneratedPackage.h"
 #include "AsyncStoragePackage.h"
 #include "BlurPackage.h"
+#include "CheckboxPackage.h"
 
 using namespace rnoh;
 
@@ -13,6 +14,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   // manual linking: BEGIN
   packages.push_back(std::make_shared<AsyncStoragePackage>(ctx));
   packages.push_back(std::make_shared<BlurPackage>(ctx));
+  packages.push_back(std::make_shared<CheckboxPackage>(ctx));
   // manual linking: END
   return packages;
 }
