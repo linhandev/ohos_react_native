@@ -15,6 +15,7 @@
 #include "LottieAnimationViewPackage.h"
 #include "MaskedPackage.h"
 #include "RNImagePickerPackage.h"
+#include "RNCNetInfoPackage.h"
 
 using namespace rnoh;
 
@@ -35,6 +36,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<LottieAnimationViewPackage>(ctx));
   packages.push_back(std::make_shared<MaskedPackage>(ctx));
   packages.push_back(std::make_shared<RNImagePickerPackage>(ctx));
+  packages.push_back(std::make_shared<RNCNetInfoPackage>(ctx));
   // manual linking: END
   return packages;
 }
