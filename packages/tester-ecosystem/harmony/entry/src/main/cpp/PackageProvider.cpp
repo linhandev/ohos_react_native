@@ -13,6 +13,7 @@
 #include "GeoLocationPackage.h"
 #include "LinearGradientPackage.h"
 #include "LottieAnimationViewPackage.h"
+#include "MaskedPackage.h"
 #include "RNImagePickerPackage.h"
 
 using namespace rnoh;
@@ -32,6 +33,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<GeoLocationPackage>(ctx));
   packages.push_back(std::make_shared<LinearGradientPackage>(ctx));
   packages.push_back(std::make_shared<LottieAnimationViewPackage>(ctx));
+  packages.push_back(std::make_shared<MaskedPackage>(ctx));
   packages.push_back(std::make_shared<RNImagePickerPackage>(ctx));
   // manual linking: END
   return packages;
