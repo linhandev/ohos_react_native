@@ -37,7 +37,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-fs                         |        |
 | @react-native-oh-tpl/react-native-gesture-handler            |        |
 | @react-native-oh-tpl/react-native-image-editor               |        |
-| @react-native-oh-tpl/react-native-image-picker               |        |
+| @react-native-oh-tpl/react-native-image-picker               | ✅      |
 | react-native-image-viewer                                    |        |
 | @react-native-oh-tpl/react-native-image-viewing              |        |
 | @react-native-oh-tpl/react-native-image-pan-zoom             |        |
