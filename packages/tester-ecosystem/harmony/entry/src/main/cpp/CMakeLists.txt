@@ -18,6 +18,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/autolinking.cmake")
 # RNOH_BEGIN: manual_package_linking_1
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/async-storage/src/main/cpp" ./rnoh-async-storage)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/blur/src/main/cpp" ./blur)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/clipboard/src/main/cpp" ./clipboard)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/checkbox/src/main/cpp" ./checkbox)
 # RNOH_END: manual_package_linking_1
 
@@ -34,5 +35,6 @@ autolink_libraries(rnoh_app)
 # RNOH_BEGIN: manual_package_linking_2
 target_link_libraries(rnoh_app PUBLIC rnoh_async_storage)
 target_link_libraries(rnoh_app PUBLIC rnoh_blur)
+target_link_libraries(rnoh_app PUBLIC rnoh_clipboard)
 target_link_libraries(rnoh_app PUBLIC rnoh_checkbox)
 # RNOH_END: manual_package_linking_2
