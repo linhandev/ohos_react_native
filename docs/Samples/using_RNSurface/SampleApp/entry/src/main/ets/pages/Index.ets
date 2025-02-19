@@ -15,7 +15,11 @@ import {
   buildRNComponentForTag,
   RNPackageContext,
   RNPackage,
-  ComponentBuilderContext
+  ComponentBuilderContext,
+  TraceJSBundleProviderDecorator,
+  AnyJSBundleProvider,
+  FileJSBundleProvider,
+  MetroJSBundleProvider
 } from '@rnoh/react-native-openharmony';
 
 @Builder
