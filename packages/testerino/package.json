@@ -1,0 +1,22 @@
+{
+  "name": "@rnoh/testerino",
+  "version": "0.0.12",
+  "scripts": {
+    "verify": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "@types/chai": "^4.3.5",
+    "chai": "^4.3.7"
+  },
+  "main": "index.tsx",
+  "devDependencies": {
+    "@tsconfig/react-native": "^3.0.2",
+    "@types/chai": "^4.3.5",
+    "@types/jest": "^29.5.1",
+    "@types/react": "^18.2.6"
+  }
+}
