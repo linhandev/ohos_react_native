@@ -26,13 +26,6 @@ function App() {
           <NavigationContainer>
             <PortalProvider>
               <View id="__harmony::ready" />
-              <Page name="_DEV TESTS">
-                <TesterExample
-                  filter={({tags}) => {
-                    return tags.includes('dev');
-                  }}
-                />
-              </Page>
               <Page name="CONCURRENT TESTER">
                 <TesterExample
                   filter={({tags}) => {
@@ -40,10 +33,24 @@ function App() {
                   }}
                 />
               </Page>
+              <Page name="CONCURRENT TESTER (DEV)">
+                <TesterExample
+                  filter={({tags}) => {
+                    return !tags.includes('sequential') && tags.includes('dev');
+                  }}
+                />
+              </Page>
               <Page name="SEQUENTIAL TESTER">
                 <SequentialTester
                   filter={({tags}) => {
                     return tags.includes('sequential');
+                  }}
+                />
+              </Page>
+              <Page name="SEQUENTIAL TESTER (DEV)">
+                <SequentialTester
+                  filter={({tags}) => {
+                    return tags.includes('sequential') && tags.includes('dev');
                   }}
                 />
               </Page>

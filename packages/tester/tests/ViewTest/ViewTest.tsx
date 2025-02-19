@@ -850,7 +850,8 @@ export function ViewTest() {
       </TestCase.Example>
       <TestCase.Automated
         tags={['sequential']}
-        itShould="pass on blue rect touch (onResponderReject)"
+        itShould="pass when pointer starts moving over blue rect (onResponderReject)"
+        skip="Not implemented properly"
         initialState={{
           responderRejectedCount: 0,
           responderGrantedCount: 0,
@@ -890,14 +891,18 @@ export function ViewTest() {
                     childResponderGrantedCount:
                       prev.childResponderGrantedCount + 1,
                   }));
-                  done();
                 }}
               />
             </View>
           );
         }}
-        act={async ({state}) => {
-          await driver?.click({ref: state.ref});
+        act={async () => {
+          // TODO: Fix this test. It was improperly adapted. Driver needs to support move command.
+          // https://gl.swmansion.com/rnoh/react-native-harmony-test-kit/-/issues/3
+          // driver?.move({
+          //   from: {ref: state.ref, offset: {fromTopLeft: {x: 8, y: 8}}},
+          //   to: {ref: state.ref, offset: {fromTopRight: {x: 8, y: 8}}},
+          // });
         }}
         assert={({expect, state}) => {
           expect(state.responderRejectedCount).to.be.greaterThan(0);
