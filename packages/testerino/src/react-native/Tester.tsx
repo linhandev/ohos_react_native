@@ -1,8 +1,8 @@
-import { FC, useCallback, useEffect, useState, Children } from 'react';
-import { TestCaseResultType, TestCaseState } from '../core';
-import { Filter, TestingContext } from './TestingContext';
-import { PALETTE } from './palette';
-import { ScrollView, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import {FC, useCallback, useEffect, useState, Children} from 'react';
+import {TestCaseResultType} from '../core';
+import {Filter, TestingContext} from './TestingContext';
+import {PALETTE} from './palette';
+import {ScrollView, StyleSheet, Text, View, ViewStyle} from 'react-native';
 
 const defaultTestingSummary: Record<TestCaseResultType | 'total', number> = {
   total: 0,
@@ -18,8 +18,8 @@ export const Tester: FC<{
   style?: ViewStyle;
   children: any;
   filter?: Filter;
-  sequential?: boolean | { pauseOnFailure: boolean };
-}> = ({ children, filter, style, sequential = false }) => {
+  sequential?: boolean | {pauseOnFailure: boolean};
+}> = ({children, filter, style, sequential = false}) => {
   const [testCaseResultTypeByTestCaseId, setTestCaseResultTypeByTestCaseId] =
     useState<Record<string, TestCaseResultType | 'unknown'>>({});
   const [testingSummary, setTestingSummary] = useState({
@@ -30,7 +30,7 @@ export const Tester: FC<{
   const childArray = Children.toArray(children);
 
   const registerTestCase = useCallback((testCaseId: string) => {
-    setTestCaseResultTypeByTestCaseId((prev) => {
+    setTestCaseResultTypeByTestCaseId(prev => {
       if (testCaseId in prev) {
         console.warn(`Test ${testCaseId} already exists`);
       }
@@ -43,18 +43,18 @@ export const Tester: FC<{
 
   const reportTestCaseResult = useCallback(
     (testCaseId: string, result: TestCaseResultType) => {
-      setTestCaseResultTypeByTestCaseId((prev) => ({
+      setTestCaseResultTypeByTestCaseId(prev => ({
         ...prev,
         [testCaseId]: result,
       }));
     },
-    []
+    [],
   );
 
   useEffect(() => {
-    const newTestingSummary = { ...defaultTestingSummary };
+    const newTestingSummary = {...defaultTestingSummary};
     for (const [_testCaseId, testCaseResult] of Object.entries(
-      testCaseResultTypeByTestCaseId
+      testCaseResultTypeByTestCaseId,
     )) {
       if (testCaseResult !== 'unknown') {
         newTestingSummary[testCaseResult]++;
@@ -80,23 +80,21 @@ export const Tester: FC<{
         onTestSuiteComplete: changeRenderedTestsIfSequential,
         isSequential: sequential,
         filter: filter ?? (() => true),
-      }}
-    >
+      }}>
       <View style={StyleSheet.compose(styles.testerContainer, style)}>
         <ScrollView
           horizontal
           style={styles.summaryContainer}
-          contentContainerStyle={{ alignItems: 'center', width: '100%' }}
-        >
+          contentContainerStyle={{alignItems: 'center', width: '100%'}}>
           {!sequential && (
             <>
               <SummaryItem
-                name='TOTAL'
+                name="TOTAL"
                 color={'white'}
                 value={testingSummary.total}
               />
               <SummaryItem
-                name='RUNNING'
+                name="RUNNING"
                 color={PALETTE.red}
                 value={
                   testingSummary.total -
@@ -111,32 +109,32 @@ export const Tester: FC<{
             </>
           )}
           <SummaryItem
-            name='PASS'
+            name="PASS"
             color={PALETTE.green}
             value={testingSummary.pass}
           />
           <SummaryItem
-            name='WAITING'
+            name="WAITING"
             color={PALETTE.blue}
             value={testingSummary.waitingForTester}
           />
           <SummaryItem
-            name='SKIPPED'
+            name="SKIPPED"
             color={PALETTE.yellow}
             value={testingSummary.skipped}
           />
           <SummaryItem
-            name='FAIL'
+            name="FAIL"
             color={PALETTE.red}
             value={testingSummary.fail}
           />
           <SummaryItem
-            name='BROKEN'
+            name="BROKEN"
             color={PALETTE.red}
             value={testingSummary.broken}
           />
           <SummaryItem
-            name='EXAMPLES'
+            name="EXAMPLES"
             color={PALETTE.gray}
             value={testingSummary.example}
           />
@@ -158,17 +156,16 @@ const SummaryItem: FC<{
   color: string;
   value: number;
   onPress?: () => {};
-}> = ({ name, color, value, onPress }) => {
+}> = ({name, color, value, onPress}) => {
   return (
     <View style={styles.summaryItemContainer} onTouchEnd={() => onPress?.()}>
       <Text
         testID={'TESTERINO_' + name + '_VALUE'}
         style={[
           styles.summaryItemValue,
-          { color: value > 0 ? color : PALETTE.gray },
+          {color: value > 0 ? color : PALETTE.gray},
         ]}
-        numberOfLines={1}
-      >
+        numberOfLines={1}>
         {value}
       </Text>
       <Text style={styles.summaryItemName}>{name}</Text>
@@ -178,7 +175,7 @@ const SummaryItem: FC<{
 
 const SummaryPage: FC<{
   testCases: Record<string, TestCaseResultType | 'unknown'>;
-}> = ({ testCases }) => {
+}> = ({testCases}) => {
   return (
     <ScrollView>
       {Object.entries(testCases).map(([name, result]) => (
@@ -191,12 +188,12 @@ const SummaryPage: FC<{
 const SingleTestSummary: FC<{
   name: string;
   status: TestCaseResultType | 'unknown';
-}> = ({ name, status }) => {
+}> = ({name, status}) => {
   const labelInfo = STATUS_LABEL_DATA_BY_TEST_RESULT[status];
   return (
     <View style={styles.testCaseHeaderContainer}>
       <Text style={styles.testCaseHeader}>{name}</Text>
-      <Text style={[styles.testCaseStatus, { color: labelInfo.color }]}>
+      <Text style={[styles.testCaseStatus, {color: labelInfo.color}]}>
         {status}
       </Text>
     </View>
@@ -205,15 +202,15 @@ const SingleTestSummary: FC<{
 
 const STATUS_LABEL_DATA_BY_TEST_RESULT: Record<
   TestCaseResultType | 'unknown',
-  { label: string; color: string }
+  {label: string; color: string}
 > = {
-  broken: { label: 'BROKEN', color: PALETTE.red },
-  fail: { label: 'FAIL', color: PALETTE.red },
-  pass: { label: 'PASS', color: PALETTE.green },
-  skipped: { label: 'SKIPPED', color: PALETTE.yellow },
-  waitingForTester: { label: 'WAITING', color: PALETTE.blue },
-  unknown: { label: 'UNKNOWN', color: PALETTE.gray },
-  example: { label: 'EXAMPLE', color: PALETTE.blue },
+  broken: {label: 'BROKEN', color: PALETTE.red},
+  fail: {label: 'FAIL', color: PALETTE.red},
+  pass: {label: 'PASS', color: PALETTE.green},
+  skipped: {label: 'SKIPPED', color: PALETTE.yellow},
+  waitingForTester: {label: 'WAITING', color: PALETTE.blue},
+  unknown: {label: 'UNKNOWN', color: PALETTE.gray},
+  example: {label: 'EXAMPLE', color: PALETTE.blue},
 };
 
 const styles = StyleSheet.create({

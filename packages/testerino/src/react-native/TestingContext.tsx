@@ -1,8 +1,11 @@
-import { createContext } from 'react';
-import { TestCaseResultType } from '../core';
+import {createContext} from 'react';
+import {TestCaseResultType} from '../core';
 
 export type TestCaseType = 'automated' | 'manual' | 'example' | 'logical';
-export type Filter = (testCaseCtx: {testCaseType: TestCaseType; tags: string[]}) => boolean; 
+export type Filter = (testCaseCtx: {
+  testCaseType: TestCaseType;
+  tags: string[];
+}) => boolean;
 
 export const TestingContext = createContext<
   | undefined
@@ -10,7 +13,7 @@ export const TestingContext = createContext<
       registerTestCase: (testCaseId: string) => void;
       reportTestCaseResult: (
         testCaseId: string,
-        result: TestCaseResultType
+        result: TestCaseResultType,
       ) => void;
       onTestSuiteComplete: () => void;
       isSequential: boolean | {pauseOnFailure: boolean};
@@ -19,9 +22,9 @@ export const TestingContext = createContext<
 >(undefined);
 
 export const TestSuiteContext = createContext<
-  undefined | { testSuiteName: string; testSuiteId: string; depth: number } 
+  undefined | {testSuiteName: string; testSuiteId: string; depth: number}
 >(undefined);
 
 export const TestCaseContext = createContext<
-  undefined | { reportTestCaseResult: (result: TestCaseResultType) => void }
+  undefined | {reportTestCaseResult: (result: TestCaseResultType) => void}
 >(undefined);

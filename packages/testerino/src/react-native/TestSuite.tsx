@@ -1,42 +1,57 @@
-import { FC, useContext, Children, useState, ReactElement, useEffect, isValidElement} from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { TestCaseType, TestSuiteContext } from './TestingContext';
-import { TestingContext, Filter } from './TestingContext';
-import { TestCaseResultType } from '../core';
+import {
+  FC,
+  useContext,
+  Children,
+  useState,
+  useEffect,
+  isValidElement,
+} from 'react';
+import {StyleSheet, Text, View, Button} from 'react-native';
+import {TestCaseType, TestSuiteContext} from './TestingContext';
+import {TestingContext} from './TestingContext';
+import {TestCaseResultType} from '../core';
 
-function getTestCaseType(props: any) : TestCaseType | null {
+function getTestCaseType(props: any): TestCaseType | null {
   if ('fn' in props) {
-    return 'logical'
+    return 'logical';
   }
 
   if ('act' in props) {
-    return 'automated'
+    return 'automated';
   }
 
   if ('arrange' in props) {
-    return 'manual'
+    return 'manual';
   }
 
   if ('itShould' in props) {
-    return 'example'
+    return 'example';
   }
 
   return null;
 }
 
-function shouldChangeCurrentChild(result: TestCaseResultType, child: any): boolean {
-  if (!getTestCaseType(child.props)) { 
+function shouldChangeCurrentChild(
+  result: TestCaseResultType,
+  child: any,
+): boolean {
+  if (!getTestCaseType(child.props)) {
     return false;
   }
 
-  if (result !== 'skipped' && result !== 'pass' && result !== 'fail' && result !== 'broken') {
+  if (
+    result !== 'skipped' &&
+    result !== 'pass' &&
+    result !== 'fail' &&
+    result !== 'broken'
+  ) {
     return false;
   }
 
   return true;
-} 
+}
 
-export const TestSuite: FC<{ name: string; children: any }> = ({
+export const TestSuite: FC<{name: string; children: any}> = ({
   name,
   children,
 }) => {
@@ -47,7 +62,9 @@ export const TestSuite: FC<{ name: string; children: any }> = ({
   const parentTestSuiteId = testSuiteContext?.testSuiteId;
   const depth = testSuiteContext?.depth ?? 0;
   const [showNextTestButton, setShowNextTestButton] = useState(false);
-  const pauseOnFailure = typeof testingContext?.isSequential === "object" && testingContext.isSequential.pauseOnFailure;
+  const pauseOnFailure =
+    typeof testingContext?.isSequential === 'object' &&
+    testingContext.isSequential.pauseOnFailure;
   const filteredChildren = childArray.filter((child, _) => {
     if (!isValidElement(child)) {
       return false;
@@ -62,10 +79,13 @@ export const TestSuite: FC<{ name: string; children: any }> = ({
       return false;
     }
 
-    const shouldIgnore = !testingContext.filter({testCaseType, tags: child.props.tags ?? []})    
+    const shouldIgnore = !testingContext.filter({
+      testCaseType,
+      tags: child.props.tags ?? [],
+    });
     return !shouldIgnore;
   });
-  const currentChild = filteredChildren[currentChildIndex]; 
+  const currentChild = filteredChildren[currentChildIndex];
 
   const changeRenderedTestsIfSequential = () => {
     if (!testingContext.isSequential) {
@@ -74,26 +94,28 @@ export const TestSuite: FC<{ name: string; children: any }> = ({
 
     if (currentChildIndex === filteredChildren.length - 1) {
       testingContext?.onTestSuiteComplete();
-    }
-    else {
+    } else {
       setShowNextTestButton(false);
       setCurrentChildIndex(currentChildIndex + 1);
     }
-  }
+  };
 
   const shouldPause = (result: TestCaseResultType) => {
     return pauseOnFailure && result !== 'skipped' && result !== 'pass';
-  }
+  };
 
   useEffect(() => {
     if (testingContext.isSequential && filteredChildren.length === 0) {
       testingContext.onTestSuiteComplete();
     }
-    
-    if (isValidElement(currentChild) && getTestCaseType(currentChild.props) == 'example') {
+
+    if (
+      isValidElement(currentChild) &&
+      getTestCaseType(currentChild.props) === 'example'
+    ) {
       setShowNextTestButton(true);
     }
-  }, [currentChildIndex])
+  }, [currentChildIndex]);
 
   return (
     <TestSuiteContext.Provider
@@ -103,8 +125,7 @@ export const TestSuite: FC<{ name: string; children: any }> = ({
           parentTestSuiteId ? `${parentTestSuiteId}::` : ''
         }${name}`,
         depth: depth + 1,
-      }}
-    >
+      }}>
       <View style={styles.testSuiteContainer}>
         <Text
           style={[
@@ -112,32 +133,36 @@ export const TestSuite: FC<{ name: string; children: any }> = ({
             {
               fontSize: depth > 0 ? 12 : 16,
             },
-          ]}
-        >
+          ]}>
           {name}
         </Text>
-        <TestingContext.Provider 
-          value={{...testingContext, reportTestCaseResult: (testCaseId, result) => {
-            const shouldChange = shouldChangeCurrentChild(result, currentChild);
-            if (shouldChange && shouldPause(result)) {
-              setShowNextTestButton(true);
-            }
-            else if (shouldChange) {
+        <TestingContext.Provider
+          value={{
+            ...testingContext,
+            reportTestCaseResult: (testCaseId, result) => {
+              const shouldChange = shouldChangeCurrentChild(
+                result,
+                currentChild,
+              );
+              if (shouldChange && shouldPause(result)) {
+                setShowNextTestButton(true);
+              } else if (shouldChange) {
+                changeRenderedTestsIfSequential();
+              }
+              testingContext?.reportTestCaseResult(testCaseId, result);
+            },
+            onTestSuiteComplete: () => {
               changeRenderedTestsIfSequential();
-            }
-            testingContext?.reportTestCaseResult(testCaseId, result);
-          },
-          onTestSuiteComplete: () => {
-            changeRenderedTestsIfSequential();
-          }  
-        }}      
-      >
-        {testingContext?.isSequential
-          ? currentChild : filteredChildren} 
+            },
+          }}>
+          {testingContext?.isSequential ? currentChild : filteredChildren}
 
-        {showNextTestButton && (
-          <Button title="Next Test" onPress={changeRenderedTestsIfSequential} />
-        )}
+          {showNextTestButton && (
+            <Button
+              title="Next Test"
+              onPress={changeRenderedTestsIfSequential}
+            />
+          )}
         </TestingContext.Provider>
       </View>
     </TestSuiteContext.Provider>

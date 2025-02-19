@@ -2,7 +2,10 @@
   "name": "@rnoh/testerino",
   "version": "0.0.12",
   "scripts": {
-    "verify": "tsc --noEmit"
+    "verify": "pnpm typecheck && pnpm lint:js",
+    "typecheck": "tsc --noEmit",
+    "lint:js": "eslint ./src --max-warnings 0",
+    "lint:js:fix": "pnpm lint:js --fix"
   },
   "peerDependencies": {
     "react": "*",

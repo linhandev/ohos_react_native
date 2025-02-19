@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
-import { TestCaseState } from '../core';
-import { TestCaseContext } from './TestingContext';
-import { AssertionError, expect as expect_ } from 'chai';
-import { TestCaseStateTemplate } from './TestCaseStateTemplate';
-import { PALETTE } from './palette';
-import { StyleSheet, Text, View } from 'react-native';
+import {useContext, useEffect, useState} from 'react';
+import {TestCaseState} from '../core';
+import {TestCaseContext} from './TestingContext';
+import {AssertionError, expect as expect_} from 'chai';
+import {TestCaseStateTemplate} from './TestCaseStateTemplate';
+import {PALETTE} from './palette';
+import {StyleSheet, Text, View} from 'react-native';
 
 export type SmartManualTestCaseProps<TState> = {
   initialState: TState;
@@ -38,9 +38,9 @@ export function ManualTestCase<TState>({
           status: 'skipped',
           message: typeof skip === 'string' ? skip : undefined,
         }
-      : { status: 'waitingForTester' }
+      : {status: 'waitingForTester'},
   );
-  const { reportTestCaseResult } = useContext(TestCaseContext)!;
+  const {reportTestCaseResult} = useContext(TestCaseContext)!;
 
   useEffect(() => {
     if (isInitialRun) {
@@ -50,19 +50,19 @@ export function ManualTestCase<TState>({
     }
     (async () => {
       try {
-        setResult({ status: 'running' });
-        await assert({ expect: expect_, state: value });
-        setResult({ status: 'pass' });
+        setResult({status: 'running'});
+        await assert({expect: expect_, state: value});
+        setResult({status: 'pass'});
         reportTestCaseResult('pass');
       } catch (err) {
         if (err instanceof AssertionError) {
-          setResult({ status: 'fail', message: err.message });
+          setResult({status: 'fail', message: err.message});
           reportTestCaseResult('fail');
         } else if (err instanceof Error) {
-          setResult({ status: 'broken', message: err.message });
+          setResult({status: 'broken', message: err.message});
           reportTestCaseResult('broken');
         } else {
-          setResult({ status: 'broken', message: '' });
+          setResult({status: 'broken', message: ''});
           reportTestCaseResult('broken');
         }
       }
@@ -81,7 +81,7 @@ export function ManualTestCase<TState>({
               message: typeof skip === 'string' ? skip : undefined,
             });
           } else {
-            setResult({ status: 'waitingForTester' });
+            setResult({status: 'waitingForTester'});
           }
           setIsInitialRun(true);
           setValue(initialState);
@@ -96,15 +96,15 @@ export function ManualTestCase<TState>({
       result.status !== 'broken' &&
       result.status !== 'fail' &&
       result.status !== 'skipped'
-    )
+    ) {
       return null;
+    }
     return (
       <Text
         style={[
           styles.textDetails,
-          { color: result.status === 'skipped' ? PALETTE.yellow : PALETTE.red },
-        ]}
-      >
+          {color: result.status === 'skipped' ? PALETTE.yellow : PALETTE.red},
+        ]}>
         {result.message}
       </Text>
     );
@@ -116,7 +116,7 @@ export function ManualTestCase<TState>({
       renderStatusLabel={() => {
         const labelInfo = STATUS_LABEL_DATA_BY_TEST_CASE_STATUS[result.status];
         return (
-          <Text style={[styles.testCaseStatus, { color: labelInfo.color }]}>
+          <Text style={[styles.testCaseStatus, {color: labelInfo.color}]}>
             {labelInfo.label}
           </Text>
         );
@@ -147,14 +147,14 @@ export function ManualTestCase<TState>({
 
 const STATUS_LABEL_DATA_BY_TEST_CASE_STATUS: Record<
   TestCaseState['status'],
-  { label: string; color: string }
+  {label: string; color: string}
 > = {
-  broken: { label: 'BROKEN', color: PALETTE.red },
-  fail: { label: 'FAIL', color: PALETTE.red },
-  pass: { label: 'PASS', color: PALETTE.green },
-  skipped: { label: 'SKIPPED', color: PALETTE.yellow },
-  running: { label: 'RUNNING', color: PALETTE.gray },
-  waitingForTester: { label: 'MANUAL', color: PALETTE.blue },
+  broken: {label: 'BROKEN', color: PALETTE.red},
+  fail: {label: 'FAIL', color: PALETTE.red},
+  pass: {label: 'PASS', color: PALETTE.green},
+  skipped: {label: 'SKIPPED', color: PALETTE.yellow},
+  running: {label: 'RUNNING', color: PALETTE.gray},
+  waitingForTester: {label: 'MANUAL', color: PALETTE.blue},
 };
 
 const styles = StyleSheet.create({

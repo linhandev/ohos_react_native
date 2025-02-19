@@ -1,13 +1,13 @@
-import { FC, useState } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { PALETTE } from './palette';
+import {FC, useState} from 'react';
+import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {PALETTE} from './palette';
 
 export const TestCaseStateTemplate: FC<{
   name: string;
   renderStatusLabel: () => any;
   renderDetails?: () => any;
   renderModal?: () => any;
-}> = ({ name, renderModal, renderDetails, renderStatusLabel }) => {
+}> = ({name, renderModal, renderDetails, renderStatusLabel}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const renderName = (customStyles: any) => (
@@ -17,8 +17,7 @@ export const TestCaseStateTemplate: FC<{
         {
           ...customStyles,
         },
-      ]}
-    >
+      ]}>
       {name}
     </Text>
   );
@@ -26,14 +25,13 @@ export const TestCaseStateTemplate: FC<{
   return (
     <View style={styles.testCaseContainer}>
       <View style={styles.testCaseHeaderContainer}>
-        {!!renderModal ? (
+        {renderModal ? (
           <TouchableOpacity
-            style={{ flex: 1 }}
+            style={{flex: 1}}
             onPress={() => {
               setIsModalVisible(true);
-            }}
-          >
-            {renderName({ color: PALETTE.purple, fontWeight: 'bold' })}
+            }}>
+            {renderName({color: PALETTE.purple, fontWeight: 'bold'})}
           </TouchableOpacity>
         ) : (
           renderName({})
@@ -49,19 +47,16 @@ export const TestCaseStateTemplate: FC<{
               backgroundColor: '#222',
               padding: 16,
               justifyContent: 'center',
-            }}
-          >
+            }}>
             <TouchableOpacity
               onPress={() => {
                 setIsModalVisible(false);
-              }}
-            >
+              }}>
               <Text
                 style={{
                   fontWeight: 'bold',
                   color: PALETTE.purple,
-                }}
-              >
+                }}>
                 Close
               </Text>
             </TouchableOpacity>

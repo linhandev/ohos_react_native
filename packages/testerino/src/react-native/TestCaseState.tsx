@@ -1,18 +1,18 @@
-import { FC } from 'react';
+import {FC} from 'react';
 import {
   BrokenTestCaseState,
   FailTestCaseState,
   SkippedTestCaseState,
   TestCaseState,
 } from '../core';
-import { TestCaseStateTemplate } from './TestCaseStateTemplate';
-import { StyleSheet, Text } from 'react-native';
-import { PALETTE } from './palette';
+import {TestCaseStateTemplate} from './TestCaseStateTemplate';
+import {StyleSheet, Text} from 'react-native';
+import {PALETTE} from './palette';
 
 export const TestCaseStateComponent: FC<{
   name: string;
   result: TestCaseState;
-}> = ({ name, result }) => {
+}> = ({name, result}) => {
   if (result.status === 'broken') {
     return <BrokenTestCaseStateComponent name={name} result={result} />;
   } else if (result.status === 'pass') {
@@ -27,7 +27,7 @@ export const TestCaseStateComponent: FC<{
     return (
       <BrokenTestCaseStateComponent
         name={name}
-        result={{ status: 'broken', message: 'Unknown status' }}
+        result={{status: 'broken', message: 'Unknown status'}}
       />
     );
   }
@@ -35,12 +35,12 @@ export const TestCaseStateComponent: FC<{
 
 const PassTestCaseStateComponent: FC<{
   name: string;
-}> = ({ name }) => {
+}> = ({name}) => {
   return (
     <TestCaseStateTemplate
       name={name}
       renderStatusLabel={() => (
-        <Text style={[styles.testCaseStatus, { color: PALETTE.green }]}>
+        <Text style={[styles.testCaseStatus, {color: PALETTE.green}]}>
           {'PASS'}
         </Text>
       )}
@@ -51,17 +51,17 @@ const PassTestCaseStateComponent: FC<{
 const FailTestCaseStateComponent: FC<{
   name: string;
   result: FailTestCaseState;
-}> = ({ name, result }) => {
+}> = ({name, result}) => {
   return (
     <TestCaseStateTemplate
       name={name}
       renderStatusLabel={() => (
-        <Text style={[styles.testCaseStatus, { color: PALETTE.red }]}>
+        <Text style={[styles.testCaseStatus, {color: PALETTE.red}]}>
           {'FAIL'}
         </Text>
       )}
       renderDetails={() => (
-        <Text style={[styles.textDetails, { color: PALETTE.red }]}>
+        <Text style={[styles.textDetails, {color: PALETTE.red}]}>
           {result.message}
         </Text>
       )}
@@ -72,17 +72,17 @@ const FailTestCaseStateComponent: FC<{
 const BrokenTestCaseStateComponent: FC<{
   name: string;
   result: BrokenTestCaseState;
-}> = ({ name, result }) => {
+}> = ({name, result}) => {
   return (
     <TestCaseStateTemplate
       name={name}
       renderStatusLabel={() => (
-        <Text style={[styles.testCaseStatus, { color: PALETTE.red }]}>
+        <Text style={[styles.testCaseStatus, {color: PALETTE.red}]}>
           {'BROKEN'}
         </Text>
       )}
       renderDetails={() => (
-        <Text style={[styles.textDetails, { color: PALETTE.red }]}>
+        <Text style={[styles.textDetails, {color: PALETTE.red}]}>
           {result.message}
         </Text>
       )}
@@ -92,7 +92,7 @@ const BrokenTestCaseStateComponent: FC<{
 
 const RunningTestCaseStateComponent: FC<{
   name: string;
-}> = ({ name }) => {
+}> = ({name}) => {
   return (
     <TestCaseStateTemplate
       name={name}
@@ -106,12 +106,12 @@ const RunningTestCaseStateComponent: FC<{
 const SkippedTestCaseStateComponent: FC<{
   name: string;
   result: SkippedTestCaseState;
-}> = ({ name, result }) => {
+}> = ({name, result}) => {
   return (
     <TestCaseStateTemplate
       name={name}
       renderStatusLabel={() => (
-        <Text style={[styles.testCaseStatus, { color: PALETTE.yellow }]}>
+        <Text style={[styles.testCaseStatus, {color: PALETTE.yellow}]}>
           {'SKIPPED'}
         </Text>
       )}
@@ -119,7 +119,7 @@ const SkippedTestCaseStateComponent: FC<{
         !result.message
           ? undefined
           : () => (
-              <Text style={[styles.textDetails, { color: PALETTE.yellow }]}>
+              <Text style={[styles.textDetails, {color: PALETTE.yellow}]}>
                 {result.message}
               </Text>
             )

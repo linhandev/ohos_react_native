@@ -1,8 +1,8 @@
-import { FC, useContext, useEffect } from 'react';
-import { TestCaseContext } from './TestingContext';
-import { StyleSheet, Text, View } from 'react-native';
-import { PALETTE } from './palette';
-import { TestCaseStateTemplate } from './TestCaseStateTemplate';
+import {FC, useContext, useEffect} from 'react';
+import {TestCaseContext} from './TestingContext';
+import {StyleSheet, Text, View} from 'react-native';
+import {PALETTE} from './palette';
+import {TestCaseStateTemplate} from './TestCaseStateTemplate';
 
 export type ExampleTestCaseProps = {
   itShould: string;
@@ -17,7 +17,7 @@ export const ExampleTestCase: FC<ExampleTestCaseProps> = ({
   skip,
   modal,
 }) => {
-  const { reportTestCaseResult } = useContext(TestCaseContext)!;
+  const {reportTestCaseResult} = useContext(TestCaseContext)!;
 
   useEffect(() => {
     reportTestCaseResult(skip ? 'skipped' : 'example');
@@ -28,7 +28,7 @@ export const ExampleTestCase: FC<ExampleTestCaseProps> = ({
       <>
         <View style={styles.exampleTestContainer}>{children}</View>
         {typeof skip === 'string' && (
-          <Text style={[styles.textDetails, { color: PALETTE.yellow }]}>
+          <Text style={[styles.textDetails, {color: PALETTE.yellow}]}>
             {skip}
           </Text>
         )}
@@ -43,9 +43,8 @@ export const ExampleTestCase: FC<ExampleTestCaseProps> = ({
         <Text
           style={[
             styles.testCaseStatus,
-            { color: skip ? PALETTE.yellow : PALETTE.gray },
-          ]}
-        >
+            {color: skip ? PALETTE.yellow : PALETTE.gray},
+          ]}>
           {skip ? 'SKIPPED' : 'EXAMPLE'}
         </Text>
       )}
