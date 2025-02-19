@@ -35,6 +35,8 @@
 using namespace facebook;
 namespace rnoh {
 
+RNInstance::~RNInstance() {};
+
 rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
   DLOG(INFO) << "~RNInstanceCAPI::start";
   if (unsubscribeUITickListener != nullptr) {
