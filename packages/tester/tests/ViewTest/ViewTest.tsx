@@ -450,6 +450,7 @@ export function ViewTest() {
       </TestSuite>
       <TestSuite name="pointerEvents">
         <TestCase.Automated
+          tags={['sequential']}
           itShould="call inner and outer view when pressing inner"
           initialState={{
             innerRef: createRef<View>(),
@@ -479,6 +480,7 @@ export function ViewTest() {
           }}
         />
         <TestCase.Automated
+          tags={['sequential']}
           itShould="call only outer when pressing inner view"
           initialState={{
             inner: false,
@@ -508,6 +510,7 @@ export function ViewTest() {
           }}
         />
         <TestCase.Automated
+          tags={['sequential']}
           itShould="call inner and outer only when pressing inner view"
           initialState={{
             inner: false,
@@ -537,6 +540,7 @@ export function ViewTest() {
           }}
         />
         <TestCase.Automated
+          tags={['sequential']}
           itShould="not call inner or outer when pressing inner view"
           initialState={{
             inner: false,
@@ -566,6 +570,7 @@ export function ViewTest() {
           }}
         />
         <TestCase.Automated
+          tags={['sequential']}
           itShould="not call inner or outer when pressing outer views"
           initialState={{
             inner: false,
@@ -596,6 +601,7 @@ export function ViewTest() {
         />
       </TestSuite>
       <TestCase.Automated
+        tags={['sequential']}
         itShould="pass on touching blue background"
         initialState={{
           blueTouched: false,
@@ -644,6 +650,7 @@ export function ViewTest() {
         }}
       />
       <TestCase.Automated
+        tags={['sequential']}
         itShould="pass on touching transparent view"
         initialState={{
           touched: false,
@@ -842,6 +849,7 @@ export function ViewTest() {
         </View>
       </TestCase.Example>
       <TestCase.Automated
+        tags={['sequential']}
         itShould="pass on blue rect touch (onResponderReject)"
         initialState={{
           responderRejectedCount: 0,

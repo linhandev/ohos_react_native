@@ -13,6 +13,8 @@ export const TestCase = {
 
 type TesterTag = 'dev';
 
+type SupportedTags = TesterTag | 'sequential';
+
 type TesterHarmonySkipProp =
   | boolean
   | string
@@ -63,7 +65,7 @@ export function Example({
   children: any;
   modal?: boolean;
   skip?: TesterSkipProp;
-  tags?: TesterTag[];
+  tags?: SupportedTags[];
 }) {
   return (
     <_TestCase
@@ -87,7 +89,7 @@ export function Manual<TState = undefined>({
 }: {
   itShould: string;
   skip?: TesterSkipProp;
-  tags?: TesterTag[];
+  tags?: SupportedTags[];
   modal?: boolean;
   initialState: TState;
   arrange: SmartManualTestCaseProps<TState>['arrange'];
@@ -114,7 +116,7 @@ export function Logical({
 }: {
   itShould: string;
   skip?: TesterSkipProp;
-  tags?: TesterTag[];
+  tags?: SupportedTags[];
   fn: React.ComponentProps<typeof LogicalTestCase>['fn'];
 }) {
   return (
@@ -139,7 +141,7 @@ export function Automated<TState = undefined>({
 }: {
   itShould: string;
   skip?: TesterSkipProp;
-  tags?: TesterTag[];
+  tags?: SupportedTags[];
   modal?: boolean;
   initialState: TState;
   arrange: SmartAutomatedTestCaseProps<TState>['arrange'];

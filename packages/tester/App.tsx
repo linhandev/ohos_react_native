@@ -26,13 +26,6 @@ function App() {
           <NavigationContainer>
             <PortalProvider>
               <View id="__harmony::ready" />
-              <Page name="SEQUENTIAL TESTER">
-                <SequentialTester
-                  filter={({testCaseType}) => {
-                    return testCaseType === 'automated';
-                  }}
-                />
-              </Page>
               <Page name="_DEV TESTS">
                 <TesterExample
                   filter={({tags}) => {
@@ -40,15 +33,17 @@ function App() {
                   }}
                 />
               </Page>
-              <Page name="ALL TESTS">
-                <TesterExample />
-              </Page>
               <Page name="CONCURRENT TESTER">
                 <TesterExample
-                  filter={({testCaseType}) => {
-                    return (
-                      testCaseType === 'automated' || testCaseType === 'manual'
-                    );
+                  filter={({tags}) => {
+                    return !tags.includes('sequential');
+                  }}
+                />
+              </Page>
+              <Page name="SEQUENTIAL TESTER">
+                <SequentialTester
+                  filter={({tags}) => {
+                    return tags.includes('sequential');
                   }}
                 />
               </Page>
