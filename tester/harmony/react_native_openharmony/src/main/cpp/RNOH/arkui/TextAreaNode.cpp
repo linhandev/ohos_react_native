@@ -178,7 +178,7 @@ void TextAreaNode::setFont(
     bool allowFontScaling = true;
     if (textAttributes.allowFontScaling.has_value()) {
         allowFontScaling = textAttributes.allowFontScaling.value();
-     }
+    }
     if (!allowFontScaling) {
         maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
             m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
