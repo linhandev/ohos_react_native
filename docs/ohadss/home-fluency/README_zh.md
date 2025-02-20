@@ -5,7 +5,7 @@
 
 # 工程目录
 ```
-home-fluency
+home_fluency
 ├── RNHomeFluency 前端工程
 └── HomeFluency 原生工程
 ```
