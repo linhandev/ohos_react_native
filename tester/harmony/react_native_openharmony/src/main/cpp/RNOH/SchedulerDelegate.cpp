@@ -62,13 +62,9 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
             }
         }
         performOnMainThread(
-            [otherMutation, this](MountingManager::Shared 
-        const& mountingManager) {
+            [otherMutation, mutationVecs, this](
+                MountingManager::Shared const& mountingManager) {
               mountingManager->didMount(otherMutation);
-            });
-        performOnMainThread(
-            [mutationVecs, this](MountingManager::Shared 
-        const& mountingManager) {
               mountingManager->clearPreallocatedViews();
               mountingManager->finalizeMutationUpdates(mutationVecs);
             });
