@@ -42,7 +42,7 @@
 #include "RNOHCorePackage/TurboModules/Animated/NativeAnimatedTurboModule.h"
 #include "RNOHCorePackage/TurboModules/AppStateTurboModule.h"
 #include "RNOHCorePackage/TurboModules/AppearanceTurboModule.h"
-#include "RNOHCorePackage/TurboModules/BlobTurboModule/BlobTurboModule.h"
+#include "RNOHCorePackage/TurboModules/BlobTurboModule.h"
 #include "RNOHCorePackage/TurboModules/DevLoadingViewTurboModule.h"
 #include "RNOHCorePackage/TurboModules/DevMenuTurboModule.h"
 #include "RNOHCorePackage/TurboModules/DevSettingsTurboModule.h"

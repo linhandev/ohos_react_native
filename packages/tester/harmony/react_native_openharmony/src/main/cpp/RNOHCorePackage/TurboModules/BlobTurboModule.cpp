@@ -1,6 +1,4 @@
-#include "BlobTurboModule.h"
-
-#include "BlobCollector.h"
+#include "RNOHCorePackage/TurboModules/BlobTurboModule.h"
 
 namespace rnoh {
 using namespace facebook;
