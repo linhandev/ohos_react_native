@@ -71,7 +71,6 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
                  << " failed: " << e.what();
     }
   }
-  this->finalizeMutationUpdates(mutations);
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
