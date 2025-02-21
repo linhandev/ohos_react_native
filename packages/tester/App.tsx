@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useLayoutEffect} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -13,11 +13,16 @@ import {PortalHost, PortalProvider} from '@gorhom/portal';
 import * as testSuiteByName from './tests';
 import {Tester} from '@rnoh/testerino';
 import {Environment} from './contexts';
+import {LogBox} from 'react-native';
 
 const {TesterExample, SequentialTester, ...remainingExampleByName} =
   exampleByName;
 
 function App() {
+  useLayoutEffect(() => {
+    LogBox.ignoreLogs(['Maximum update depth exceeded']);
+  }, []);
+
   return (
     <Environment>
       <View style={{backgroundColor: 'black'}}>

@@ -7,35 +7,16 @@ import {
   isValidElement,
 } from 'react';
 import {StyleSheet, Text, View, Button} from 'react-native';
-import {TestCaseType, TestSuiteContext} from './TestingContext';
+import {TestSuiteContext} from './TestingContext';
 import {TestingContext} from './TestingContext';
 import {TestCaseResultType} from '../core';
-
-function getTestCaseType(props: any): TestCaseType | null {
-  if ('fn' in props) {
-    return 'logical';
-  }
-
-  if ('act' in props) {
-    return 'automated';
-  }
-
-  if ('arrange' in props) {
-    return 'manual';
-  }
-
-  if ('itShould' in props) {
-    return 'example';
-  }
-
-  return null;
-}
+import {getTestCaseTypeFromProps} from './TestCase';
 
 function shouldChangeCurrentChild(
   result: TestCaseResultType,
   child: any,
 ): boolean {
-  if (!getTestCaseType(child.props)) {
+  if (!getTestCaseTypeFromProps(child.props)) {
     return false;
   }
 
@@ -65,25 +46,21 @@ export const TestSuite: FC<{name: string; children: any}> = ({
   const pauseOnFailure =
     typeof testingContext?.isSequential === 'object' &&
     testingContext.isSequential.pauseOnFailure;
+
   const filteredChildren = childArray.filter((child, _) => {
     if (!isValidElement(child)) {
       return false;
     }
+    const testCaseType = getTestCaseTypeFromProps(child.props);
 
-    if (child.type === TestSuite) {
+    if (testCaseType === null) {
       return true;
     }
-
-    const testCaseType = getTestCaseType(child.props);
-    if (!testCaseType) {
-      return false;
-    }
-
-    const shouldIgnore = !testingContext.filter({
+    const shouldRender = testingContext.filter({
       testCaseType,
       tags: child.props.tags ?? [],
     });
-    return !shouldIgnore;
+    return shouldRender;
   });
   const currentChild = filteredChildren[currentChildIndex];
 
@@ -91,7 +68,6 @@ export const TestSuite: FC<{name: string; children: any}> = ({
     if (!testingContext.isSequential) {
       return;
     }
-
     if (currentChildIndex === filteredChildren.length - 1) {
       testingContext?.onTestSuiteComplete();
     } else {
@@ -111,11 +87,15 @@ export const TestSuite: FC<{name: string; children: any}> = ({
 
     if (
       isValidElement(currentChild) &&
-      getTestCaseType(currentChild.props) === 'example'
+      getTestCaseTypeFromProps(currentChild.props) === 'example'
     ) {
       setShowNextTestButton(true);
     }
   }, [currentChildIndex]);
+
+  if (!testingContext) {
+    return null;
+  }
 
   return (
     <TestSuiteContext.Provider
@@ -125,6 +105,9 @@ export const TestSuite: FC<{name: string; children: any}> = ({
           parentTestSuiteId ? `${parentTestSuiteId}::` : ''
         }${name}`,
         depth: depth + 1,
+        onTestCaseIgnored: () => {
+          changeRenderedTestsIfSequential();
+        },
       }}>
       <View style={styles.testSuiteContainer}>
         <Text
@@ -155,14 +138,18 @@ export const TestSuite: FC<{name: string; children: any}> = ({
               changeRenderedTestsIfSequential();
             },
           }}>
-          {testingContext?.isSequential ? currentChild : filteredChildren}
-
-          {showNextTestButton && (
-            <Button
-              title="Next Test"
-              onPress={changeRenderedTestsIfSequential}
-            />
+          {testingContext.isSequential && (
+            <>
+              {currentChild}
+              {showNextTestButton && (
+                <Button
+                  title="Next Test"
+                  onPress={changeRenderedTestsIfSequential}
+                />
+              )}
+            </>
           )}
+          {!testingContext.isSequential && filteredChildren}
         </TestingContext.Provider>
       </View>
     </TestSuiteContext.Provider>

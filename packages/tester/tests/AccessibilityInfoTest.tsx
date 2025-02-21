@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import {Button, Ref, TestCase} from '../components';
-import {PALETTE} from '../components/palette';
 
 export function AccessibilityInfoTest() {
   const [skipMsgIfReaderDisabled, setSkipMsgIfReaderDisabled] = useState<
@@ -41,18 +40,6 @@ export function AccessibilityInfoTest() {
 
   return (
     <TestSuite name="AccessibilityInfo">
-      <Text
-        style={{
-          color: 'black',
-          padding: 8,
-          borderRadius: 8,
-          fontSize: 12,
-          backgroundColor: PALETTE.YELLOW_LIGHT,
-        }}>
-        {
-          'To enable screen reader on: HarmonyOS 1) go to Settings > Accessibility features > Accessibility shortcut 2) Assign ScreenReader in "Select feature" option 3) Hold volume up and down for 3 sec.'
-        }
-      </Text>
       <TestSuite name="addEventListener">
         <TestSuite name="accessibilityServiceChanged">
           <TestCase.Example itShould="display red background if Accessibility Service is changed">

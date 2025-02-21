@@ -22,7 +22,13 @@ export const TestingContext = createContext<
 >(undefined);
 
 export const TestSuiteContext = createContext<
-  undefined | {testSuiteName: string; testSuiteId: string; depth: number}
+  | undefined
+  | {
+      testSuiteName: string;
+      testSuiteId: string;
+      depth: number;
+      onTestCaseIgnored: (testCaseId: string) => void;
+    }
 >(undefined);
 
 export const TestCaseContext = createContext<

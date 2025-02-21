@@ -108,16 +108,25 @@ export const Tester: FC<{
               />
             </>
           )}
+          {sequential && (
+            <SummaryItem
+              name="FINISHED"
+              color={'white'}
+              value={testingSummary.total}
+            />
+          )}
           <SummaryItem
             name="PASS"
             color={PALETTE.green}
             value={testingSummary.pass}
           />
-          <SummaryItem
-            name="WAITING"
-            color={PALETTE.blue}
-            value={testingSummary.waitingForTester}
-          />
+          {!sequential && (
+            <SummaryItem
+              name="WAITING"
+              color={PALETTE.blue}
+              value={testingSummary.waitingForTester}
+            />
+          )}
           <SummaryItem
             name="SKIPPED"
             color={PALETTE.yellow}
