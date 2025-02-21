@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "postinstall": "node ./scripts/create-build-profile",
-    "dev": "hdc rport tcp:8083 tcp:8083 && concurrently \"react-native start\" \"npx hdc-server\"",
+    "dev": "concurrently -n 'metro,hdc-server' -c 'yellow,cyan' \"pnpm metro\" \"pnpm hdc-server\"",
+    "metro": "react-native start",
+    "hdc-server": "hdc rport tcp:8083 tcp:8083 && npx hdc-server",
     "android": "react-native run-android",
     "harmony": "react-native run-harmony",
     "clean": "react-native clean-harmony",

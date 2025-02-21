@@ -38,21 +38,21 @@ function App() {
                   }}
                 />
               </Page>
-              <Page name="CONCURRENT TESTER (DEV)">
+              <Page name="CONCURRENT TESTER: DEV">
                 <TesterExample
                   filter={({tags}) => {
                     return !tags.includes('sequential') && tags.includes('dev');
                   }}
                 />
               </Page>
-              <Page name="SEQUENTIAL TESTER">
+              <Page name={'SEQUENTIAL TESTER [driver required]'}>
                 <SequentialTester
                   filter={({tags}) => {
                     return tags.includes('sequential');
                   }}
                 />
               </Page>
-              <Page name="SEQUENTIAL TESTER (DEV)">
+              <Page name="SEQUENTIAL TESTER: DEV">
                 <SequentialTester
                   filter={({tags}) => {
                     return tags.includes('sequential') && tags.includes('dev');
