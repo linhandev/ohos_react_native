@@ -1,24 +1,19 @@
 import { execSync } from 'child_process';
-import pathUtils from 'node:path';
-import fs from 'node:fs';
 
 (() => {
   const currentPnpmVersion = execSync('pnpm --version', {
     encoding: 'utf-8',
   }).trim();
-  const packageJson = JSON.parse(
-    fs
-      .readFileSync(pathUtils.resolve(__dirname, '..', 'package.json'))
-      .toString()
-  );
-  const expectedPnpmVersionWithMaybeHash = (
-    packageJson['packageManager'] as string
-  ).split('@')[1];
 
-  if (!expectedPnpmVersionWithMaybeHash.startsWith(currentPnpmVersion)) {
+  const versionSegments = currentPnpmVersion.split('.');
+  if (versionSegments.length != 3) {
     console.log(
-      `This project requires pnpm@${expectedPnpmVersionWithMaybeHash}. Detected pnpm@${currentPnpmVersion}.`
+      `Tried to check pnpm version but the version is invalid: ${currentPnpmVersion}`
     );
+    process.exit(1);
+  }
+  if (parseInt(versionSegments[0]) < 10) {
+    console.log(`This project requires pnpm v10+`);
     process.exit(1);
   }
 })();
