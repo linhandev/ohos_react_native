@@ -1,6 +1,16 @@
 # Introduction
+This example demonstrates a common scenario in app development: a high-performance waterfall flow page, implemented using the RN framework. It leverages techniques like on-demand rendering and component reuse.
 
-This example demonstrates how to implement a [high-performance waterfall flow homepage](https://developer.huawei.com/consumer/cn/forum/topic/0202160237461682658) using React Native.
+## Running Effect Screenshot
+![](./RNHomeFluency/screenshots/home_fluency.gif)
+
+**Operation Flow:**
+1. Pull down to refresh the page and pull up to load more data (network load);
+2. If a live stream card exists in the current waterfall flow, it automatically plays the live stream;
+3. Click on the homepage tab to scroll back to the top.
+
+## Scene Implementation
+For a detailed implementation, please refer to [High-Performance Waterfall Flow Page with RN Framework](https://developer.huawei.com/consumer/cn/forum/topic/0202160237461682658).
 
 # Project Directory
 
