@@ -11,23 +11,23 @@ import Test from './Test';
 
 @Component
 export default struct MultiHome {
-  @Provide('tabBarHeight') barHeight: number = 64
-  @Provide('pagePathsHome') @Watch('onPathsUpdate') pagePathsHome: NavPathStack = new NavPathStack()
-  @Provide('pagePathsGoods') @Watch('onPathsUpdate') pagePathsGoods: NavPathStack = new NavPathStack()
-  @Provide('pagePathsTest') @Watch('onPathsUpdate') pagePathsTest: NavPathStack = new NavPathStack()
-  @State fontColor: string = '#182431'
-  @State selectedFontColor: string = '#1980E6'
-  @State currentIndex: number = 0
-  private controller: TabsController = new TabsController()
+  @Provide('tabBarHeight') barHeight: number = 64;
+  @Provide('pagePathsHome') @Watch('onPathsUpdate') pagePathsHome: NavPathStack = new NavPathStack();
+  @Provide('pagePathsGoods') @Watch('onPathsUpdate') pagePathsGoods: NavPathStack = new NavPathStack();
+  @Provide('pagePathsTest') @Watch('onPathsUpdate') pagePathsTest: NavPathStack = new NavPathStack();
+  @State fontColor: string = '#182431';
+  @State selectedFontColor: string = '#1980E6';
+  @State currentIndex: number = 0;
+  private controller: TabsController = new TabsController();
 
   onPathsUpdate(propName: string) {
     if (propName === 'pagePathsGoods') {
-      const paths: Array<string> = this.pagePathsGoods.getAllPathName()
+      const paths: Array<string> = this.pagePathsGoods.getAllPathName();
       animateTo({ duration: 300 }, () => {
         if (paths.length == 0) {
-          this.barHeight = 64
+          this.barHeight = 64;
         } else {
-          this.barHeight = 0
+          this.barHeight = 0;
         }
       })
     }
@@ -54,24 +54,24 @@ export default struct MultiHome {
     Column() {
       Tabs({ barPosition: BarPosition.End }) {
         TabContent() {
-          HomePage()
+          HomePage();
         }
         .tabBar(this.TabBuilder(0, 'Home Page'))
 
         TabContent() {
-          Goods()
+          Goods();
         }
         .tabBar(this.TabBuilder(1, "Offerings"))
 
         TabContent() {
-          Test()
+          Test();
         }
         .tabBar(this.TabBuilder(2, "Test Case"))
       }
       .barHeight(this.barHeight)
       .scrollable(false)
       .onChange((index: number) => {
-        this.currentIndex = index
+        this.currentIndex = index;
       })
     }
   }

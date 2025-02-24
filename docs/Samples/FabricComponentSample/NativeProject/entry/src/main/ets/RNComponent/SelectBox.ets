@@ -6,9 +6,9 @@
  */
 
 import { RNOHContext, RNViewBase } from '@rnoh/react-native-openharmony';
-import { RNC } from "@rnoh/react-native-openharmony/generated"
+import { RNC } from "@rnoh/react-native-openharmony/generated";
 
-let nextKey = 0
+let nextKey = 0;
 
 @Observed
 class SelectItems {
@@ -27,33 +27,33 @@ class SelectItems {
 
 @Component
 export struct SelectBox {
-  public static readonly NAME = RNC.SelectBox.NAME
-  public ctx!: RNOHContext
-  public tag: number = 0
-  @State descriptorWrapper: RNC.SelectBox.DescriptorWrapper = {} as RNC.SelectBox.DescriptorWrapper
+  public static readonly NAME = RNC.SelectBox.NAME;
+  public ctx!: RNOHContext;
+  public tag: number = 0;
+  @State descriptorWrapper: RNC.SelectBox.DescriptorWrapper = {} as RNC.SelectBox.DescriptorWrapper;
   @State data: SelectItems[] = [];
-  @State mutil: boolean = false
-  private eventEmitter: RNC.SelectBox.EventEmitter | undefined = undefined
-  private cleanUpCallbacks: (() => void)[] = []
+  @State mutil: boolean = false;
+  private eventEmitter: RNC.SelectBox.EventEmitter | undefined = undefined;
+  private cleanUpCallbacks: (() => void)[] = [];
 
   aboutToAppear() {
-    this.eventEmitter = new RNC.SelectBox.EventEmitter(this.ctx.rnInstance, this.tag)
-    this.onDescriptorWrapperChange(this.ctx.descriptorRegistry.findDescriptorWrapperByTag<RNC.SelectBox.DescriptorWrapper>(this.tag)!)
+    this.eventEmitter = new RNC.SelectBox.EventEmitter(this.ctx.rnInstance, this.tag);
+    this.onDescriptorWrapperChange(this.ctx.descriptorRegistry.findDescriptorWrapperByTag<RNC.SelectBox.DescriptorWrapper>(this.tag)!);
     this.cleanUpCallbacks.push(this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag,
       (descriptor) => {
-        this.onDescriptorWrapperChange(new RNC.SelectBox.DescriptorWrapper(descriptor))
+        this.onDescriptorWrapperChange(new RNC.SelectBox.DescriptorWrapper(descriptor));
       }
     ))
     this.cleanUpCallbacks.push(new RNC.SelectBox.CommandReceiver(this.ctx.componentCommandReceiver,
       this.tag).subscribe("emitNativeEvent", (argv) => {
       console.log(`收到 RN 传来的消息 ================ ${JSON.stringify(argv)}`);
-      this.mutil = argv[0] || false
+      this.mutil = argv[0] || false;
     }))
   }
 
   private onDescriptorWrapperChange(descriptorWrapper: RNC.SelectBox.DescriptorWrapper) {
-    this.descriptorWrapper = descriptorWrapper
-    this.data = []
+    this.descriptorWrapper = descriptorWrapper;
+    this.data = [];
     const data = this.descriptorWrapper.props.data;
     const value = this.descriptorWrapper.props.value;
     for (const item of data) {
@@ -64,7 +64,7 @@ export struct SelectBox {
   }
 
   aboutToDisappear() {
-    this.cleanUpCallbacks.forEach(cb => cb())
+    this.cleanUpCallbacks.forEach(cb => cb());
   }
 
   build() {
@@ -76,9 +76,9 @@ export struct SelectBox {
             onSelect: (idx: number) => {
               for (const tmp of this.data) {
                 if (tmp.id === idx) {
-                  tmp.selected = !tmp.selected
+                  tmp.selected = !tmp.selected;
                 } else if (!this.mutil) {
-                  tmp.selected = false
+                  tmp.selected = false;
                 }
               }
             }
@@ -104,8 +104,8 @@ export struct SelectBox {
 
 @Component
 struct SelectItem {
-  @ObjectLink item: SelectItems
-  onSelect?: (id: number) => void
+  @ObjectLink item: SelectItems;
+  onSelect?: (id: number) => void;
 
   build() {
     Row() {

@@ -7,14 +7,14 @@
 
 import { RNInstance } from '@rnoh/react-native-openharmony';
 import { BaseRN, LoadManager } from '../rn';
-import { MetroBaseRN } from '../rn/MetroBaseRN'
+import { MetroBaseRN } from '../rn/MetroBaseRN';
 
 @Component
 export default struct Test {
   private instance: RNInstance = LoadManager.cpInstance;
-  private bundlePath = 'bundle/bp/test.harmony.bundle'
-  private moduleName = 'AppTest'
-  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false
+  private bundlePath = 'bundle/bp/test.harmony.bundle';
+  private moduleName = 'AppTest';
+  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false;
   @Consume('pagePathsTest') pagePathsTest: NavPathStack;
 
   build() {

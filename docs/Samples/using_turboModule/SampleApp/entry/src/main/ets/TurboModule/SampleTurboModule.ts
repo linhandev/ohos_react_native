@@ -8,7 +8,7 @@
 import { TurboModule } from '@rnoh/react-native-openharmony/ts';
 import type { TurboModuleContext } from '@rnoh/react-native-openharmony/ts';
 import emitter from '@ohos.events.emitter';
-import dataPreferences from '@ohos.data.preferences'
+import dataPreferences from '@ohos.data.preferences';
 import { BusinessError } from '@ohos.base';
 import type common from '@ohos.app.ability.common';
 
@@ -83,7 +83,7 @@ export class SampleTurboModule extends TurboModule {
     if (!SampleTurboModule.preferences) {
       return;
     }
-    SampleTurboModule.preferences.putSync(key, value)
+    SampleTurboModule.preferences.putSync(key, value);
     try {
       SampleTurboModule.preferences.flush((err: BusinessError) => {
         if (err) {

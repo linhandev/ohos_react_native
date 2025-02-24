@@ -6,7 +6,7 @@
  */
 
 import { Descriptor, ViewBaseProps } from '@rnoh/react-native-openharmony';
-import { RNOHContext, RNViewBase } from '@rnoh/react-native-openharmony'
+import { RNOHContext, RNViewBase } from '@rnoh/react-native-openharmony';
 
 export interface MarqueeViewProps extends ViewBaseProps {
   src: string
@@ -16,34 +16,34 @@ export type MarqueeViewDescriptor = Descriptor<"MarqueeView", MarqueeViewProps>;
 
 @Component
 export struct MarqueeView {
-  static NAME: string = "MarqueeView"
-  ctx!: RNOHContext
-  tag: number = 0
-  private unregisterDescriptorChangesListener?: () => void = undefined
-  @State private descriptor: MarqueeViewDescriptor = {} as MarqueeViewDescriptor
-  @State start: boolean = false
-  private fromStart: boolean = true
-  private step: number = 15
-  private loop: number = Number.POSITIVE_INFINITY
-  @State src: string = "敬请期待" // 和props里的src绑定
+  static NAME: string = "MarqueeView";
+  ctx!: RNOHContext;
+  tag: number = 0;
+  private unregisterDescriptorChangesListener?: () => void = undefined;
+  @State private descriptor: MarqueeViewDescriptor = {} as MarqueeViewDescriptor;
+  @State start: boolean = false;
+  private fromStart: boolean = true;
+  private step: number = 15;
+  private loop: number = Number.POSITIVE_INFINITY;
+  @State src: string = "敬请期待" // 和props里的src绑定;
 
   aboutToAppear() {
-    this.start = true
-    this.descriptor = this.ctx.descriptorRegistry.getDescriptor<MarqueeViewDescriptor>(this.tag)
+    this.start = true;
+    this.descriptor = this.ctx.descriptorRegistry.getDescriptor<MarqueeViewDescriptor>(this.tag);
 
     this.unregisterDescriptorChangesListener =
       this.ctx.descriptorRegistry.subscribeToDescriptorChanges(this.tag, (newDescriptor) => {
-        this.descriptor = (newDescriptor as MarqueeViewDescriptor)
+        this.descriptor = (newDescriptor as MarqueeViewDescriptor);
       })
 
-    console.log('MarqueeView rawProps = ', JSON.stringify(this.descriptor.rawProps), this.tag)
-    console.log('MarqueeView props = ', JSON.stringify(this.descriptor.props), this.tag)
-    this.src = (this.descriptor.rawProps as MarqueeViewProps).src
+    console.log('MarqueeView rawProps = ', JSON.stringify(this.descriptor.rawProps), this.tag);
+    console.log('MarqueeView props = ', JSON.stringify(this.descriptor.props), this.tag);
+    this.src = (this.descriptor.rawProps as MarqueeViewProps).src;
 
     // 监听rn侧的事件消息
     this.ctx.componentCommandReceiver.registerCommandCallback(this.tag, (commandName) => {
       if (commandName === "toggleMarqueeState") {
-        this.start = !this.start
+        this.start = !this.start;
         console.log("rn marqueeView called toggleMarqueeState!");
 
         this.ctx.rnInstance.emitComponentEvent(
@@ -56,8 +56,8 @@ export struct MarqueeView {
   }
 
   aboutToDisappear() {
-    this.start = false
-    this.unregisterDescriptorChangesListener?.()
+    this.start = false;
+    this.unregisterDescriptorChangesListener?.();
   }
 
   build() {

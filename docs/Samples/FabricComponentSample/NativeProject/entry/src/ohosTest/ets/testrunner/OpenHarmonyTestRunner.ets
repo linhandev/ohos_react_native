@@ -36,8 +36,8 @@ export default class OpenHarmonyTestRunner implements TestRunner {
   async onRun() {
     let tag = 'testTag';
     hilog.info(0x0000, tag, '%{public}s', 'OpenHarmonyTestRunner onRun run');
-    abilityDelegatorArguments = abilityDelegatorRegistry.getArguments()
-    abilityDelegator = abilityDelegatorRegistry.getAbilityDelegator()
+    abilityDelegatorArguments = abilityDelegatorRegistry.getArguments();
+    abilityDelegator = abilityDelegatorRegistry.getAbilityDelegator();
     let moduleName = abilityDelegatorArguments.parameters['-m'];
     let context = abilityDelegator.getAppContext().getApplicationContext().createModuleContext(moduleName);
     let mResourceManager = context.resourceManager;
@@ -49,7 +49,7 @@ export default class OpenHarmonyTestRunner implements TestRunner {
       onAbilityCreate: onAbilityCreateCallback,
       moduleName: moduleName
     };
-    abilityDelegator.addAbilityMonitor(lMonitor, addAbilityMonitorCallback)
+    abilityDelegator.addAbilityMonitor(lMonitor, addAbilityMonitorCallback);
     const want: Want = {
       bundleName: bundleName,
       abilityName: testAbilityName,
@@ -71,7 +71,7 @@ async function checkMock(abilityDelegator: abilityDelegatorRegistry.AbilityDeleg
     let mockStr: string = util.TextDecoder.create("utf-8", { ignoreBOM: true }).decodeWithStream(rawFile);
     let mockMap: Record<string, string> = getMockList(mockStr);
     try {
-      abilityDelegator.setMockList(mockMap)
+      abilityDelegator.setMockList(mockMap);
     } catch (error) {
       let code = (error as BusinessError).code;
       let message = (error as BusinessError).message;

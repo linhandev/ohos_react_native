@@ -38,14 +38,14 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 @Entry
 @Component
 export struct Index {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   private instance: RNInstance | undefined;
-  private bundlePath = 'bundle.harmony.js'
-  private moduleName = 'App'
+  private bundlePath = 'bundle.harmony.js';
+  private moduleName = 'App';
   @State isBundleReady: boolean = false;
 
   async aboutToAppear() {
-    console.log("MultiSurface=====")
+    console.log("MultiSurface=====");
     if (!this.rnohCoreContext) {
       return;
     }

@@ -13,13 +13,13 @@ import {
   RNComponentContext,
   buildRNComponentForTag
 } from "@rnoh/react-native-openharmony";
-import { LoadManager, buildCustomComponent } from './LoadBundle'
+import { LoadManager, buildCustomComponent } from './LoadBundle';
 
 const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 
 @Component
 export struct BaseRN {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   useBundleCache: boolean = true;
   rnInstance!: RNInstance;
   moduleName: string = '';
@@ -30,9 +30,9 @@ export struct BaseRN {
   aboutToAppear() {
     LoadManager.loadBundle(this.rnInstance, this.bundlePath, this.useBundleCache).then(() => {
       this.isBundleReady = true;
-      console.log('加载完成' + this.bundlePath)
+      console.log('加载完成' + this.bundlePath);
     }).catch((err: Error) => {
-      console.log('加载失败' + this.bundlePath + err)
+      console.log('加载失败' + this.bundlePath + err);
     });
   }
 

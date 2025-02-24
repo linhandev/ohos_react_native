@@ -9,8 +9,8 @@ import { BasePrecreateView } from '../rn/';
 
 @Component
 export default struct PrecreateRN {
-  private bundlePath = 'bundle/bp/details.harmony.bundle'
-  private moduleName = 'Details'
+  private bundlePath = 'bundle/bp/details.harmony.bundle';
+  private moduleName = 'Details';
   container: Record<string, string | number> = {
     "backgroundColor": '#E6E6E6',
     "flex": 1,

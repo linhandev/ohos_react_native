@@ -12,13 +12,13 @@ import {
   RNOHContext,
   buildRNComponentForTag
 } from "@rnoh/react-native-openharmony";
-import { LoadManager, buildCustomComponent } from './LoadBundle'
+import { LoadManager, buildCustomComponent } from './LoadBundle';
 
 const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 
 @Component
 export struct MetroBaseRN {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   moduleName: string = '';
   initProps: Record<string, string> = {};
 
