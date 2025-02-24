@@ -21,6 +21,7 @@
 #include <string_view>
 #include "HarmonyTimerRegistry.h"
 #include "JSBigStringHelpers.h"
+#include "JSInspectorHostTargetDelegate.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/Performance/RNOHMarker.h"
@@ -32,40 +33,6 @@
 
 namespace rnoh {
 using namespace facebook;
-
-class JSInspectorHostTargetDelegate
-    : public react::jsinspector_modern::HostTargetDelegate {
- public:
-  JSInspectorHostTargetDelegate() = default;
-  JSInspectorHostTargetDelegate(const JSInspectorHostTargetDelegate&) = delete;
-  JSInspectorHostTargetDelegate(JSInspectorHostTargetDelegate&&) = delete;
-  JSInspectorHostTargetDelegate& operator=(
-      const JSInspectorHostTargetDelegate&) = delete;
-  JSInspectorHostTargetDelegate& operator=(JSInspectorHostTargetDelegate&&) =
-      delete;
-  ~JSInspectorHostTargetDelegate() noexcept override {}
-
-  jsinspector_modern::HostTargetMetadata getMetadata() override {
-    // TODO: fill out the remaining metadata fields
-    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
-    return {.integrationName = "HarmonyOS Bridgeless"};
-  }
-
-  void onReload(const PageReloadRequest& request) override {
-    (void)request;
-    // TODO: implement reloading on request
-    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
-    DLOG(INFO) << "onReload request";
-  }
-
-  void onSetPausedInDebuggerMessage(
-      const OverlaySetPausedInDebuggerMessageRequest& request) override {
-    // TODO: implement "paused in debugger" dialog
-    // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1467
-    DLOG(INFO) << "onSetPausedInDebuggerMessage request with message: "
-               << request.message.value_or("<no message>");
-  }
-};
 
 TaskExecutor::Shared RNInstanceInternal::getTaskExecutor() {
   return m_taskExecutor;
@@ -392,6 +359,12 @@ void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
   facebook::react::SystraceSection s("RNInstanceInternal::handleArkTSMessage");
+  if (m_shouldEnableDebugger && name == "RNOH::RESUME_DEBUGGER" &&
+      m_inspectorHostTarget) {
+    m_inspectorHostTarget->sendCommand(
+        jsinspector_modern::HostCommand::DebuggerResume);
+  }
+
   for (auto const& arkTSMessageHandler : m_arkTSMessageHandlers) {
     arkTSMessageHandler->handleArkTSMessage(
         {.messageName = name,
@@ -499,7 +472,7 @@ RNInstanceInternal::RNInstanceInternal(
       m_componentInstancePreallocationRequestQueue(
           std::move(componentInstancePreallocationRequestQueue)),
       m_inspectorHostDelegate(
-          std::make_unique<JSInspectorHostTargetDelegate>()) {
+          std::make_unique<JSInspectorHostTargetDelegate>(m_arkTSChannel)) {
   m_fontRegistry = std::move(fontRegistry);
 }
 

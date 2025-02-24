@@ -23,6 +23,7 @@ import {
 } from './RNOH';
 import { RNSurface } from './RNSurface';
 import { LogBoxDialog } from "./LogBoxDialog"
+import { RNPauseInDebuggerDialog } from "./RNOH/RNPauseInDebuggerDialog"
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -112,6 +113,7 @@ export struct RNApp {
   private rnInstance!: RNInstance
   @State private shouldShow: boolean = false
   private logBoxDialogController!: CustomDialogController
+  private pauseDebuggerDialogController!: CustomDialogController
   private shouldDestroyRNInstance: boolean = false
   private cleanUpCallbacks: (() => void)[] = []
   private logger!: RNOHLogger
@@ -123,6 +125,11 @@ export struct RNApp {
 
   aboutToDisappear() {
     this.cleanUp()
+  }
+
+  async reloadApp() {
+    await this.cleanUp();
+    this.init();
   }
 
   private async init() {
@@ -162,9 +169,12 @@ export struct RNApp {
             this.logBoxDialogController.close()
           }))
         this.cleanUpCallbacks.push(this.ctx.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
-          await this.cleanUp()
-          this.init()
+          await this.reloadApp();
         }))
+        this.cleanUpCallbacks.push(this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::ON_RELOAD", async () => {
+          await this.reloadApp();
+        }))
+
         await this.onSetUp(this.rnInstance)
         const jsBundleExecutionStatus = this.rnInstance.getBundleExecutionStatus(this.jsBundleProvider?.getURL())
         if (this.jsBundleProvider && jsBundleExecutionStatus === undefined) {
@@ -220,6 +230,9 @@ export struct RNApp {
 
   build() {
     Stack() {
+      if (this.shouldShow && this.rnohCoreContext!.isDebugModeEnabled) {
+        RNPauseInDebuggerDialog({ctx: this.ctx})
+      }
       if (this.shouldShow) {
         RNSurface({
           ctx: this.ctx,
