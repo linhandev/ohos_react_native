@@ -273,7 +273,21 @@ target_include_directories(reactnative
         $<TARGET_PROPERTY:yoga,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
-target_link_libraries(reactnative PUBLIC glog folly libhitrace_ndk.z.so jsi hermes-engine::libhermes)
+set(REACTNATIVE_LIBRARIES glog folly jsi hermes-engine::libhermes)
+
+# add hitrace systrace implementation
+if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
+    list(APPEND REACTNATIVE_LIBRARIES libhitrace_ndk.z.so)
+  if(WITH_HITRACE_SYSTRACE)
+    set(WITH_CUSTOM_SYSTRACE 1)
+    target_compile_definitions(reactnative PUBLIC WITH_CUSTOM_SYSTRACE)
+  endif()
+  if(WITH_HITRACE_REACT_MARKER)
+    target_compile_definitions(reactnative PUBLIC WITH_HITRACE_REACT_MARKER)
+  endif()
+endif()
+
+target_link_libraries(reactnative PUBLIC ${REACTNATIVE_LIBRARIES})
 target_include_directories(reactnative PUBLIC "${hermes_include_dirs}")
 target_compile_definitions(reactnative PUBLIC
     RAW_PROPS_ENABLED
