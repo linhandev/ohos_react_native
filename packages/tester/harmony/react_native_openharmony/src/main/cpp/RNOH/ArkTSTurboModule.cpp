@@ -249,30 +249,27 @@ ArkTSTurboModule::convertJSIValuesToIntermediaryValues(
 }
 
 IntermediaryCallback createIntermediaryCallback(
-    std::weak_ptr<react::CallbackWrapper> weakCallback,
+    std::weak_ptr<react::CallbackWrapper> weakCallbackWrapper,
     std::shared_ptr<react::CallInvoker> const& jsInvoker) {
   auto weakInvoker = std::weak_ptr(jsInvoker);
-  auto callbackWrapper = weakCallback.lock();
-  RNOH_ASSERT(callbackWrapper != nullptr);
-
-  // NOTE: we keep the callback alive for exactly as long as the returned
-  // function object by capturing it via shared_ptr, so we can safely remove it
-  // from the LongLivedObjectCollection
-  callbackWrapper->allowRelease();
-
   return std::function(
-      [callbackWrapper,
+      [weakCallbackWrapper,
        weakInvoker](std::vector<folly::dynamic> cbArgs) -> void {
         auto jsInvoker = weakInvoker.lock();
         if (!jsInvoker) {
           return;
         }
         jsInvoker->invokeAsync(
-            [callbackWrapper, callbackArgs = std::move(cbArgs)]() {
+            [weakCallbackWrapper, callbackArgs = std::move(cbArgs)]() {
+              auto callbackWrapper = weakCallbackWrapper.lock();
+              if (!callbackWrapper) {
+                return;
+              }
               const auto jsArgs = convertDynamicsToJSIValues(
                   callbackWrapper->runtime(), callbackArgs);
               callbackWrapper->callback().call(
                   callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
+              callbackWrapper->allowRelease();
             });
       });
 }
