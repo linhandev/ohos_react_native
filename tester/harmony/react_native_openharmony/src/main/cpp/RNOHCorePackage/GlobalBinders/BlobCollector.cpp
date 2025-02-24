@@ -5,10 +5,11 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-#include "RNOH/BlobCollector.h"
+
+#include "RNOHCorePackage/GlobalBinders/BlobCollector.h"
 #include <jsi/jsi.h>
-#include "ArkTSTurboModule.h"
-#include "BlobCollector.h"
+#include "RNOH/ArkTSTurboModule.h"
+
 #include "RNOH/TurboModule.h"
 #include "RNOHCorePackage/TurboModules/BlobTurboModule.h"
 
@@ -21,13 +22,14 @@ namespace rnoh {
  * called when the Blob is garbage collected.
  */
 BlobCollector::BlobCollector(
-    facebook::react::TurboModule& turboModule,
+    std::weak_ptr<BlobTurboModule> weakBlobTurboModule,
     const std::string& blobId)
-    : turboModule_(turboModule), blobId_(blobId){};
+    : m_weakBlobTurboModule(std::move(weakBlobTurboModule)),
+    m_blobId(std::move(blobId)){};
 
 void BlobCollector::install(
     facebook::jsi::Runtime& rt,
-    facebook::react::TurboModule& turboModule) {
+    std::weak_ptr<BlobTurboModule> weakBlobTurboModule) {
   rt.global().setProperty(
       rt,
       "__blobCollectorProvider",
@@ -35,21 +37,24 @@ void BlobCollector::install(
           rt,
           facebook::jsi::PropNameID::forAscii(rt, "__blobCollectorProvider"),
           1,
-          [&turboModule](
+          [weakBlobTurboModule = std::move(weakBlobTurboModule)](
               facebook::jsi::Runtime& rt,
               const facebook::jsi::Value& thisVal,
               const facebook::jsi::Value* args,
               size_t count) {
             auto blobId = args[0].asString(rt).utf8(rt);
-            auto blobCollector =
-                std::make_shared<BlobCollector>(turboModule, blobId);
+            auto blobCollector = std::make_shared<BlobCollector>(
+                std::move(weakBlobTurboModule), blobId);
             return facebook::jsi::Object::createFromHostObject(
                 rt, blobCollector);
           }));
 }
 
 BlobCollector::~BlobCollector() {
-  static_cast<BlobTurboModule&>(turboModule_).release(blobId_);
+  auto blobTurboModule = m_weakBlobTurboModule.lock();
+  if (blobTurboModule) {
+    blobTurboModule->release(m_blobId);
+  }
 }
 
 } // namespace rnoh

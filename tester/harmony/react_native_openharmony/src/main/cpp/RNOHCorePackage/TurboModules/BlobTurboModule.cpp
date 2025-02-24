@@ -6,7 +6,6 @@
  */
 
 #include "RNOHCorePackage/TurboModules/BlobTurboModule.h"
-#include "RNOH/BlobCollector.h"
 
 namespace rnoh {
 using namespace facebook;
@@ -31,23 +30,27 @@ BlobTurboModule::BlobTurboModule(
  */
 void BlobTurboModule::release(std::string blobId) {
   m_ctx.taskExecutor->runTask(
-      m_ctx.turboModuleThread, [ctx = m_ctx, name = name_, blobId]() {
-        std::string methodName = "release";
-        try {
-          ArkJS arkJS(ctx.env);
-          if (!ctx.arkTSTurboModuleInstanceRef) {
-            return;
+      m_ctx.turboModuleThread, 
+      [env = m_ctx.env,
+        arkTSTurboModuleRef = m_ctx.arkTSTurboModuleInstanceRef,
+        name = name_,
+        blobId]() {
+          std::string methodName = "release";
+          try {
+            ArkJS arkJS(env);
+            if (!arkTSTurboModuleRef) {
+              return;
+            }
+            std::vector<napi_value> napiArgs;
+            napiArgs.push_back(arkJS.createString(blobId));
+            auto napiTurboModuleObject =
+                arkJS.getObject(arkTSTurboModuleRef);
+            napiTurboModuleObject.call(methodName, napiArgs);
+          } catch (const std::exception& e) {
+            LOG(ERROR) << "Exception thrown while calling " << name
+                      << " TurboModule method " << methodName << ": "
+                      << e.what();
           }
-          std::vector<napi_value> napiArgs;
-          napiArgs.push_back(arkJS.createString(blobId));
-          auto napiTurboModuleObject =
-              arkJS.getObject(ctx.arkTSTurboModuleInstanceRef);
-          napiTurboModuleObject.call(methodName, napiArgs);
-        } catch (const std::exception& e) {
-          LOG(ERROR) << "Exception thrown while calling " << name
-                     << " TurboModule method " << methodName << ": "
-                     << e.what();
-        }
       });
 }
 
