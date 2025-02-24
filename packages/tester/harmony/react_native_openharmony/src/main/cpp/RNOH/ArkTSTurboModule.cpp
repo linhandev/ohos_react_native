@@ -252,8 +252,27 @@ IntermediaryCallback createIntermediaryCallback(
     std::weak_ptr<react::CallbackWrapper> weakCallbackWrapper,
     std::shared_ptr<react::CallInvoker> const& jsInvoker) {
   auto weakInvoker = std::weak_ptr(jsInvoker);
+
+  std::shared_ptr<void> maybeAllowReleaseCallbackWrapperOwner(
+      nullptr, [weakCallbackWrapper](void* ptr) {
+        /**
+         * This lambda is called when ArkJS's Garbage Collector deallocates the
+         * ArkJS callback.
+         */
+        auto callbackWrapper = weakCallbackWrapper.lock();
+        if (callbackWrapper == nullptr) {
+          /**
+           * JS runtime is destroyed together with the callback on JS side.
+           */
+          return;
+        }
+        callbackWrapper->allowRelease();
+      });
+
   return std::function(
       [weakCallbackWrapper,
+       maybeAllowReleaseCallbackWrapperOwner =
+           std::move(maybeAllowReleaseCallbackWrapperOwner),
        weakInvoker](std::vector<folly::dynamic> cbArgs) -> void {
         auto jsInvoker = weakInvoker.lock();
         if (!jsInvoker) {
@@ -269,7 +288,6 @@ IntermediaryCallback createIntermediaryCallback(
                   callbackWrapper->runtime(), callbackArgs);
               callbackWrapper->callback().call(
                   callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
-              callbackWrapper->allowRelease();
             });
       });
 }
