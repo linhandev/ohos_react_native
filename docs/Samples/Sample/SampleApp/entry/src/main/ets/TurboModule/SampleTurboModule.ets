@@ -7,18 +7,18 @@
 
 import { TurboModule } from '@rnoh/react-native-openharmony/ts';
 import emitter from '@ohos.events.emitter';
-import { preferences } from '../entryability/EntryAbility'
+import { preferences } from '../entryability/EntryAbility';
 import { BusinessError } from '@ohos.base';
 
 export interface TurboModuleEventData {
-  param: string
+  param: string;
 }
 
 export class SampleTurboModule extends TurboModule {
   pushStringToHarmony(arg: string, id?: number): string {
     if (id) {
-      let data: TurboModuleEventData = { param: arg }
-      emitter.emit({ eventId: id }, { data: data })
+      let data: TurboModuleEventData = { param: arg };
+      emitter.emit({ eventId: id }, { data: data });
     }
     return arg;
   }
@@ -43,7 +43,7 @@ export class SampleTurboModule extends TurboModule {
   }
 
   rnLog(info: string) {
-    console.log("ReactNative.log: " + info)
+    console.log("ReactNative.log: " + info);
   }
 
   getPreferencesData(key: string): string {
@@ -51,10 +51,10 @@ export class SampleTurboModule extends TurboModule {
       return 'null';
     }
     try {
-      let val = preferences.getSync(key, '默认值') as string
-      return val
+      let val = preferences.getSync(key, '默认值') as string;
+      return val;
     } catch (err) {
-      return '未赋值'
+      return '未赋值';
     }
   }
 
@@ -66,13 +66,13 @@ export class SampleTurboModule extends TurboModule {
     try {
       preferences.flush((err: BusinessError) => {
         if (err) {
-          console.error('Failed to flush')
+          console.error('Failed to flush');
           return;
         }
-        console.info('Succeeded in flushing.')
+        console.info('Succeeded in flushing.');
       })
     } catch (err) {
-      console.error('Failed to flush')
+      console.error('Failed to flush');
     }
   }
 }

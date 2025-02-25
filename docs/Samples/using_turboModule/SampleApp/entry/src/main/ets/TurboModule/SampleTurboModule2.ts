@@ -14,7 +14,7 @@ export interface Fruit {
   color?: string
 }
 
-export interface VoidStruct {}
+export interface VoidStruct {};
 
 export interface EnglishNovelModel {
   content: string
@@ -34,7 +34,7 @@ export class SampleTurboModule2 extends TurboModule {
   public static readonly NAME = 'SampleTurboModule2';
 
   getObject(obj: VoidStruct) {
-    this.showToast(JSON.stringify(obj))
+    this.showToast(JSON.stringify(obj));
   }
 
   getRequest(): Promise<ResultModel> {

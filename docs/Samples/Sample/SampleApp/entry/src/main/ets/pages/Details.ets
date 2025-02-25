@@ -7,15 +7,15 @@
 
 import { RNInstance } from '@rnoh/react-native-openharmony';
 import { BaseRN, LoadManager } from '../rn';
-import { MetroBaseRN } from '../rn/MetroBaseRN'
+import { MetroBaseRN } from '../rn/MetroBaseRN';
 
 @Component
 export default struct Details {
-  private instance: RNInstance = LoadManager.bpInstance
-  private bundlePath = 'bundle/bp/details.harmony.bundle'
-  private moduleName = 'Details'
-  @State name: string = ""
-  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false
+  private instance: RNInstance = LoadManager.bpInstance;
+  private bundlePath = 'bundle/bp/details.harmony.bundle';
+  private moduleName = 'Details';
+  @State name: string = "";
+  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false;
   private container: Record<string, string | number> = {
     "backgroundColor": '#E6E6E6',
     "flex": 1,

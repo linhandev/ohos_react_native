@@ -14,7 +14,7 @@ export interface Fruit {
   color?: string
 }
 
-export interface VoidStruct {}
+export interface VoidStruct {};
 
 export interface EnglishNovelModel {
   content: string
@@ -32,12 +32,12 @@ export interface ResultModel {
 
 export class SampleTurboModule2 extends TurboModule {
   getObject(obj: VoidStruct) {
-    this.showToast(JSON.stringify(obj))
+    this.showToast(JSON.stringify(obj));
   }
 
   getRequest(): Promise<ResultModel> {
     return new Promise((resolve, reject) => {
-      let urlStr = 'https://api.oioweb.cn/api/common/OneDayEnglish'
+      let urlStr = 'https://api.oioweb.cn/api/common/OneDayEnglish';
       axios.get<string, AxiosResponse<ResultModel>, null>(urlStr)
         .then((response: AxiosResponse<ResultModel>) => {
           let data: ResultModel = response.data;

@@ -19,17 +19,17 @@ import {
 } from '@rnoh/react-native-openharmony';
 import MultiHome from './MultiHome';
 import { createRNPackages, LoadManager, buildCustomComponent } from '../rn';
-import { ENABLE_CAPI_ARCHITECTURE } from '../rn'
+import { ENABLE_CAPI_ARCHITECTURE } from '../rn';
 import { arkTsComponentNames } from '../rn/LoadBundle';
 
 @Entry()
 @Component
 struct Index {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
-  @State isBundleReady: boolean = false
-  private isMetroAvailable: boolean = false
-  private cleanUpCallbacks: (() => void)[] = []
-  private logBoxDialogController!: CustomDialogController
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
+  @State isBundleReady: boolean = false;
+  private isMetroAvailable: boolean = false;
+  private cleanUpCallbacks: (() => void)[] = [];
+  private logBoxDialogController!: CustomDialogController;
 
   @Builder
   logBoxBuilder(_: ComponentBuilderContext) {
@@ -43,20 +43,20 @@ struct Index {
   }
 
   aboutToDisappear() {
-    LoadManager.resetLoadedData()
-    this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
+    LoadManager.resetLoadedData();
+    this.cleanUpCallbacks.forEach(cleanUp => cleanUp());
   }
 
   subscribeReload() {
     if (!this.rnohCoreContext) {
       return;
     }
-    this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
+    this.cleanUpCallbacks.forEach(cleanUp => cleanUp());
     this.cleanUpCallbacks.push(this.rnohCoreContext!.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
-      this.isBundleReady = false
-      this.isMetroAvailable = false
-      LoadManager.resetLoadedData()
-      this.loadMetroBundle()
+      this.isBundleReady = false;
+      this.isMetroAvailable = false;
+      LoadManager.resetLoadedData();
+      this.loadMetroBundle();
     }))
   }
 
@@ -81,37 +81,37 @@ struct Index {
 
     this.cleanUpCallbacks.push(LoadManager.metroInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("SHOW",
       () => {
-        this.logBoxDialogController.open()
+        this.logBoxDialogController.open();
       }))
     this.cleanUpCallbacks.push(LoadManager.metroInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("HIDE",
       () => {
-        this.logBoxDialogController.close()
+        this.logBoxDialogController.close();
       }))
   }
 
   loadMetroBundle() {
     LoadManager.loadMetroBundle(this.getUIContext()).then((flag: boolean) => {
-      console.log('SampleApp --- metro 服务是否可用 = ', JSON.stringify(flag))
-      AppStorage.setOrCreate('isMetroAvailable', flag)
-      this.isMetroAvailable = flag
+      console.log('SampleApp --- metro 服务是否可用 = ', JSON.stringify(flag));
+      AppStorage.setOrCreate('isMetroAvailable', flag);
+      this.isMetroAvailable = flag;
 
       this.register().then((instanceMap: Map<string, RNInstance>) => {
         this.isBundleReady = true;
-        console.log("registered instance", JSON.stringify(instanceMap))
+        console.log("registered instance", JSON.stringify(instanceMap));
       });
     })
   }
 
   async register(): Promise<Map<string, RNInstance>> {
     if (!this.rnohCoreContext) {
-      return new Map()
+      return new Map();
     }
 
     if (this.isMetroAvailable) {
-      this.isBundleReady = true
-      this.subscribeReload()
-      this.subscribeLogBox()
-      return new Map()
+      this.isBundleReady = true;
+      this.subscribeReload();
+      this.subscribeLogBox();
+      return new Map();
     }
 
     let instanceMap: Map<string, RNInstance> = new Map();
@@ -153,10 +153,10 @@ struct Index {
   build() {
     Stack() {
       if (this.rnohCoreContext?.isDebugModeEnabled && this.isMetroAvailable) {
-        RNOHErrorDialog()
+        RNOHErrorDialog();
       }
       if (this.isBundleReady) {
-        MultiHome()
+        MultiHome();
       }
     }
   }

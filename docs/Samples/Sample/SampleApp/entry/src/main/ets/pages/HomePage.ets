@@ -8,19 +8,19 @@
 import { RNInstance } from '@rnoh/react-native-openharmony';
 import { BaseRN } from '../rn/BaseRN';
 import { LoadManager } from '../rn/LoadBundle';
-import { MetroBaseRN } from '../rn/MetroBaseRN'
+import { MetroBaseRN } from '../rn/MetroBaseRN';
 
 @Component
 export default struct HomePage {
-  private instance: RNInstance = LoadManager.cpInstance
-  private bundlePath = 'bundle/cp/homepage.harmony.bundle'
-  private moduleName = 'HomePage'
-  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false
+  private instance: RNInstance = LoadManager.cpInstance;
+  private bundlePath = 'bundle/cp/homepage.harmony.bundle';
+  private moduleName = 'HomePage';
+  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false;
   @Consume('pagePathsHome') pagePathsHome: NavPathStack;
 
   @Builder
   PageMap(name: string) {
-    Text("Empty View")
+    Text("Empty View");
   }
 
   build() {

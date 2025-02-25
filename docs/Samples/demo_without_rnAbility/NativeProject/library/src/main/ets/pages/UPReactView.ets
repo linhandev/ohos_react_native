@@ -5,9 +5,9 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import { UPRNSDK } from '../UPRNSDK'
-import { createRNPackages } from '../rn/RNPackagesFactory'
-import { RNInfo } from '../model/RNInfo'
+import { UPRNSDK } from '../UPRNSDK';
+import { createRNPackages } from '../rn/RNPackagesFactory';
+import { RNInfo } from '../model/RNInfo';
 import {
   RNInstance,
   ResourceJSBundleProvider,
@@ -29,10 +29,10 @@ export function buildCustomComponent(ctx: ComponentBuilderContext) {
 export struct UPReactView {
   rnInfo!: RNInfo;
   @StorageLink('UPRNSDK') rnSdk: UPRNSDK | undefined = undefined;
-  private rnInstance!: RNInstance
+  private rnInstance!: RNInstance;
   @State isBundleReady: boolean = false;
-  @StorageLink('RNAbility') private rnAbility: RNAbility = {} as RNAbility
-  private rnohCoreContext: RNOHCoreContext | undefined = AppStorage.get('RNOHCoreContext')
+  @StorageLink('RNAbility') private rnAbility: RNAbility = {} as RNAbility;
+  private rnohCoreContext: RNOHCoreContext | undefined = AppStorage.get('RNOHCoreContext');
 
   @Builder
   public buildCustomComponent(ctx: ComponentBuilderContext) {

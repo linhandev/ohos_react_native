@@ -16,7 +16,7 @@ import {
   ComponentBuilderContext,
 } from '@rnoh/react-native-openharmony'
 import fs from '@ohos.file.fs';
-import { createRNPackages } from '../rn/RNPackagesFactory'
+import { createRNPackages } from '../rn/RNPackagesFactory';
 import { arkTsComponentNames } from '../rn/LoadBundle';
 
 @Builder
@@ -27,16 +27,16 @@ function buildCustomComponent(ctx: ComponentBuilderContext) {
 export default struct SandBoxApp {
   @Consume('pagePathsHome') pagePathsHome: NavPathStack;
   @StorageLink('RNAbility') rnAbility: RNAbility | undefined = undefined;
-  @StorageLink('RNOHCoreContext') private rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') private rnohCoreContext: RNOHCoreContext | undefined = undefined;
   // bundlePath 和 assetsPath 都是相对于 rnAbility.context.filesDir目录下的路径
-  bundlePath: string = 'sandbox.harmony.bundle'
-  assetsPath: string = 'assets'
-  @State hasBundle: Boolean = false
-  @State bundleStatus: string = ''
+  bundlePath: string = 'sandbox.harmony.bundle';
+  assetsPath: string = 'assets';
+  @State hasBundle: Boolean = false;
+  @State bundleStatus: string = '';
 
   @Builder
   PageMap(name: string) {
-    Text("Empty View")
+    Text("Empty View");
   }
 
   @Builder
@@ -44,39 +44,39 @@ export default struct SandBoxApp {
   }
 
   aboutToAppear(): void {
-    this.checkBundleUpdated()
+    this.checkBundleUpdated();
   }
 
   async downloadBundle() {
     if (this.rnAbility) {
       // 将bundlejs下载并保存到沙箱
       let uint8Array =
-        await this.rnAbility.context.resourceManager.getRawFileContent('rawfile/bundle/bp/sandbox.harmony.bundle')
-      let rawBuffer = uint8Array.buffer
-      let num = rawBuffer.byteLength
+        await this.rnAbility.context.resourceManager.getRawFileContent('rawfile/bundle/bp/sandbox.harmony.bundle');
+      let rawBuffer = uint8Array.buffer;
+      let num = rawBuffer.byteLength;
       // 获取沙箱路径
-      const sandboxDir = this.rnAbility.context.filesDir
-      const bundlePath = sandboxDir + '/' + this.bundlePath
-      let stream = fs.createStreamSync(bundlePath, 'w')
-      stream.writeSync(rawBuffer)
-      stream.closeSync()
-      this.hasBundle = true
+      const sandboxDir = this.rnAbility.context.filesDir;
+      const bundlePath = sandboxDir + '/' + this.bundlePath;
+      let stream = fs.createStreamSync(bundlePath, 'w');
+      stream.writeSync(rawBuffer);
+      stream.closeSync();
+      this.hasBundle = true;
     }
   }
 
   checkBundleUpdated(): void {
     if (this.rnAbility) {
-      const sandboxDir = this.rnAbility.context.filesDir
-      const bundlePath = sandboxDir + '/' + this.bundlePath
+      const sandboxDir = this.rnAbility.context.filesDir;
+      const bundlePath = sandboxDir + '/' + this.bundlePath;
       try {
-        const stat = fs.statSync(bundlePath)
+        const stat = fs.statSync(bundlePath);
         if (stat.size == 0) {
-          this.downloadBundle()
+          this.downloadBundle();
         } else {
-          this.hasBundle = true
+          this.hasBundle = true;
         }
       } catch (e) {
-        this.downloadBundle()
+        this.downloadBundle();
       }
     }
   }

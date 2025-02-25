@@ -9,7 +9,7 @@ import { RNInstance } from '@rnoh/react-native-openharmony';
 import { BaseRN, LoadManager } from '../rn';
 import { MetroBaseRN } from '../rn/MetroBaseRN'
 import emitter from '@ohos.events.emitter';
-import Details from "./Details"
+import Details from "./Details";
 import PrecreateRN from './PrecreateRN';
 import { MultiSurface } from './MultiSurface';
 import SandBoxApp from './SandboxBundle';
@@ -17,23 +17,23 @@ import SandBoxApp from './SandboxBundle';
 @Component
 export default struct Goods {
   private instance: RNInstance = LoadManager.cpInstance;
-  private bundlePath = 'bundle/cp/goods.harmony.bundle'
-  private moduleName = 'Goods'
-  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false
+  private bundlePath = 'bundle/cp/goods.harmony.bundle';
+  private moduleName = 'Goods';
+  @StorageLink('isMetroAvailable') isMetroAvailable: boolean = false;
   @Consume('pagePathsGoods') pagePathsGoods: NavPathStack;
 
   @Builder
   PageMap(name: string, param: string) {
     if (name === 'Details') {
-      Details({ name: param })
+      Details({ name: param });
     } else if (name === 'PrecreateRN') {
-      PrecreateRN()
+      PrecreateRN();
     } else if (name === 'MultiSurface') {
-      MultiSurface()
+      MultiSurface();
     } else if (name === 'Sandbox') {
-      SandBoxApp()
+      SandBoxApp();
     } else {
-      Text('无效页面')
+      Text('无效页面');
     }
   }
 
@@ -41,19 +41,19 @@ export default struct Goods {
     emitter.on({ eventId: 1 }, (eventData) => {
       if (eventData.data) {
         console.log('[TurboModule] param = ' + eventData.data['param']);
-        const path: string = eventData.data['param']
+        const path: string = eventData.data['param'];
         if (path === "pages/Details") {
-          this.pagePathsGoods.pushPath({ name: "Details", param: "details1" })
+          this.pagePathsGoods.pushPath({ name: "Details", param: "details1" });
         } else if (path === "pages/Details2") {
-          this.pagePathsGoods.pushPath({ name: "Details", param: "detail2" })
+          this.pagePathsGoods.pushPath({ name: "Details", param: "detail2" });
         } else if (path === "pages/DetailsMultiInstance") {
-          this.pagePathsGoods.pushPath({ name: "DetailsMultiInstance", param: "MultiInstance" })
+          this.pagePathsGoods.pushPath({ name: "DetailsMultiInstance", param: "MultiInstance" });
         } else if (path === "pages/PrecreateRN") {
-          this.pagePathsGoods.pushPath({ name: "PrecreateRN" })
+          this.pagePathsGoods.pushPath({ name: "PrecreateRN" });
         } else if (path === "pages/MultiSurface") {
-          this.pagePathsGoods.pushPath({ name: "MultiSurface" })
+          this.pagePathsGoods.pushPath({ name: "MultiSurface" });
         } else if (path === "pages/Sandbox") {
-          this.pagePathsGoods.pushPath({ name: "Sandbox" })
+          this.pagePathsGoods.pushPath({ name: "Sandbox" });
         }
         // this.pagePathsGoods.pushPath({ name: "DetailsMultiInstance", param: "MultiInstance" })
       }

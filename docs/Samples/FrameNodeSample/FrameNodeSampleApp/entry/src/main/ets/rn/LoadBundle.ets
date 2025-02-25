@@ -15,7 +15,7 @@ import {
   ComponentBuilderContext,
   buildRNComponentForTag,
 } from '@rnoh/react-native-openharmony';
-import { createRNPackages } from './RNPackagesFactory'
+import { createRNPackages } from './RNPackagesFactory';
 import { ENABLE_CAPI_ARCHITECTURE } from './config';
 
 export const arkTsComponentNames = [];

@@ -23,16 +23,16 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 @Entry
 @Component
 export struct MultiSurface {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   private instance1: RNInstance | undefined;
   private instance2: RNInstance | undefined;
   private instance3: RNInstance | undefined;
-  private bundlePath1 = 'bundle/cp/homepage.harmony.bundle'
-  private moduleName1 = 'HomePage'
-  private bundlePath2 = 'bundle/cp/goods.harmony.bundle'
-  private moduleName2 = 'Goods'
-  private bundlePath3 = 'bundle/bp/details.harmony.bundle'
-  private moduleName3 = 'Details'
+  private bundlePath1 = 'bundle/cp/homepage.harmony.bundle';
+  private moduleName1 = 'HomePage';
+  private bundlePath2 = 'bundle/cp/goods.harmony.bundle';
+  private moduleName2 = 'Goods';
+  private bundlePath3 = 'bundle/bp/details.harmony.bundle';
+  private moduleName3 = 'Details';
   @State isBundleReady1: boolean = false;
   @State isBundleReady2: boolean = false;
   @State isBundleReady3: boolean = false;
@@ -77,8 +77,8 @@ export struct MultiSurface {
       'bundle/basic/basic.harmony.bundle'));
     await this.instance1.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath1))
       .then(() => {
-        this.isBundleReady1 = true
-        console.log('instance1 加载完成' + this.bundlePath1)
+        this.isBundleReady1 = true;
+        console.log('instance1 加载完成' + this.bundlePath1);
       })
 
     this.instance2 = await this.rnohCoreContext.createAndRegisterRNInstance({
@@ -98,8 +98,8 @@ export struct MultiSurface {
       'bundle/basic/basic.harmony.bundle'));
     await this.instance2.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath2))
       .then(() => {
-        this.isBundleReady2 = true
-        console.log('instance2 加载完成' + this.bundlePath2)
+        this.isBundleReady2 = true;
+        console.log('instance2 加载完成' + this.bundlePath2);
       })
 
     this.instance3 = await this.rnohCoreContext.createAndRegisterRNInstance({
@@ -117,8 +117,8 @@ export struct MultiSurface {
     );
     await this.instance3.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath3))
       .then(() => {
-        this.isBundleReady3 = true
-        console.log('instance3 加载完成' + this.bundlePath3)
+        this.isBundleReady3 = true;
+        console.log('instance3 加载完成' + this.bundlePath3);
       })
   }
 
@@ -155,13 +155,13 @@ export struct MultiSurface {
         // }
         // It's OK
         if (this.isBundleReady1) {
-          this.MultiSurfaceItem(this.moduleName1, this.instance1!)
+          this.MultiSurfaceItem(this.moduleName1, this.instance1!);
         }
         if (this.isBundleReady2) {
-          this.MultiSurfaceItem(this.moduleName2, this.instance2!)
+          this.MultiSurfaceItem(this.moduleName2, this.instance2!);
         }
         if (this.isBundleReady3) {
-          this.MultiSurfaceItem(this.moduleName3, this.instance3!)
+          this.MultiSurfaceItem(this.moduleName3, this.instance3!);
         }
       }
       .width('100%')
