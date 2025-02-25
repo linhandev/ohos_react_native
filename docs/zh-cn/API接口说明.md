@@ -272,6 +272,7 @@ RNApp({
 | ------------- | --------------------------------- | ---- | --------------- |
 | ctx           | [RNOHContext \| RNComponentContext](#rncomponentcontext) | 是   | **RN** 组件上下文。    |
 | surfaceConfig | [SurfaceConfig](#surfaceconfig)                     | 是   | surface配置参数。 |
+| constraints | [Constraints \| undefined](#Constraints)                     | 否   | surface布局约束。 |
 
 ### 具体使用说明
 
@@ -337,6 +338,15 @@ const styles = StyleSheet.create({
  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
 ```
 返回该 `RNSurface` 对应的 `RNInstance` 以及 rootViewTag。
+
+### Constraints
+
+| 参数名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| minWidth | number | 否 | 表示 `RNSurface` 的布局最小宽度。 |
+| minHeight | number | 否 | 表示 `RNSurface` 的布局最小高度。 |
+| maxWidth | number | 否 | 表示 `RNSurface` 的布局最大宽度。 |
+| maxHeight | number | 否 | 表示 `RNSurface` 的布局最大高度。 |
 
 ## RNInstance
 
