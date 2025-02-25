@@ -143,4 +143,14 @@ CustomNode& CustomNode::setAlign(int32_t align) {
       m_nodeHandle, NODE_STACK_ALIGN_CONTENT, &item));
   return *this;
 }
+
+CustomNode& CustomNode::setFocusable(bool focusable) {
+  int32_t focusableValue = focusable;
+  ArkUI_NumberValue preparedFocusable[] = {{.i32 = focusableValue}};
+  ArkUI_AttributeItem focusItem = {
+      preparedFocusable, sizeof(preparedFocusable) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_FOCUSABLE, &focusItem));
+  return *this;
+}
 } // namespace rnoh

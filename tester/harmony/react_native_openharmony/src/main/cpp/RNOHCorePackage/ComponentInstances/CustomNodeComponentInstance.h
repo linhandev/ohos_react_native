@@ -18,6 +18,7 @@ class CustomNodeComponentInstance
   CustomNode m_customNode;
   std::unordered_map<facebook::react::Tag, bool> m_childrenClippedState;
   facebook::react::Point m_previousOffset;
+  bool m_focusable = true;
 
   bool isViewClipped(
       const ComponentInstance::Shared& child,

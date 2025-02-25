@@ -38,6 +38,7 @@ class CustomNode : public ArkUINode {
   void onClick();
   void setCustomNodeDelegate(CustomNodeDelegate* customNodeDelegate);
   CustomNode& setAlign(int32_t align);
+  CustomNode& setFocusable(bool focusable);
   void onMeasure(ArkUI_NodeCustomEventType eventType);
   void onLayout();
  private:
