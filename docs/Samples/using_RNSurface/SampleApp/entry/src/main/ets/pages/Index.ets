@@ -37,14 +37,23 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 
 @Entry
 @Component
-export struct Index {
+struct Index {
   @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   private instance: RNInstance | undefined;
   private bundlePath = 'bundle.harmony.js';
   private moduleName = 'App';
   @State isBundleReady: boolean = false;
 
-  async aboutToAppear() {
+  aboutToAppear() {
+    this.init();
+    this.subscribeReload();
+  }
+
+  aboutToDisappear(){
+    this.cleanUp();
+  }
+
+  private async init() {
     console.log("MultiSurface=====");
     if (!this.rnohCoreContext) {
       return;
@@ -57,6 +66,7 @@ export struct Index {
       enableCAPIArchitecture: true,
       arkTsComponentNames: []
     });
+
     await this.instance.runJSBundle(new TraceJSBundleProviderDecorator(
       new AnyJSBundleProvider([
         new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath),
@@ -64,13 +74,26 @@ export struct Index {
         new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
         new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
         new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
-  ]),this.rnohCoreContext.logger))
-  .then(() => {
-    this.isBundleReady = true;
-    console.log('instance 加载完成' + this.bundlePath);
-  })
-
+      ]), this.rnohCoreContext.logger))
+      .then(() => {
+        this.isBundleReady = true;
+        console.log('instance 加载完成' + this.bundlePath);
+      })
   }
+
+  private async cleanUp() {
+    if (this.isBundleReady) {
+      await this.rnohCoreContext!.destroyAndUnregisterRNInstance(this.instance);
+    }
+  }
+
+  subscribeReload() {
+    this.rnohCoreContext!.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
+      this.cleanUp();
+      this.init();
+    })
+  }
+
 
   build() {
     NavDestination() {
