@@ -17,16 +17,16 @@ export interface Fruit {
 export interface VoidStruct {};
 
 export interface EnglishNovelModel {
-  content: string
-  tts: string
-  note: string
-  dateline: string
+  content: string,
+  tts: string,
+  note: string,
+  dateline: string,
   img: string
 }
 
 export interface ResultModel {
-  code: number
-  result: EnglishNovelModel
+  code: number,
+  result: EnglishNovelModel,
   msg: string
 }
 

@@ -49,7 +49,7 @@ export struct UPReactView {
       });
       await this.rnInstance.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager,
         this.rnInfo.bundlePath)).then(() => {
-        this.isBundleReady = true
+        this.isBundleReady = true;
       })
     }
   }

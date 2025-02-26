@@ -70,7 +70,7 @@ export class LoadManager {
         LoadManager.metroInstance.getBundleExecutionStatus(provider.getURL()) as string;
       LoadManager.shouldResetMetroInstance = false;
       if (jsBundleExecutionStatus === "DONE") {
-        return true
+        return true;
       } else {
         return false;
       }

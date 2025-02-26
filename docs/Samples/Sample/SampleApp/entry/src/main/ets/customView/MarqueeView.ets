@@ -9,7 +9,7 @@ import { Descriptor, ViewBaseProps } from '@rnoh/react-native-openharmony';
 import { RNOHContext, RNViewBase } from '@rnoh/react-native-openharmony';
 
 export interface MarqueeViewProps extends ViewBaseProps {
-  src: string
+  src: string;
 }
 
 export type MarqueeViewDescriptor = Descriptor<"MarqueeView", MarqueeViewProps>;
@@ -25,7 +25,7 @@ export struct MarqueeView {
   private fromStart: boolean = true;
   private step: number = 15;
   private loop: number = Number.POSITIVE_INFINITY;
-  @State src: string = "敬请期待" // 和props里的src绑定;
+  @State src: string = "敬请期待"; // 和props里的src绑定
 
   aboutToAppear() {
     this.start = true;
@@ -75,7 +75,7 @@ export struct MarqueeView {
           .fontWeight(700)
           .margin({ left: 10, right: 10 })
           .onTouch(() => { // 通过emit方式发送消息给rn侧调用rn的方法
-            this.ctx.rnInstance.emitDeviceEvent("clickMarqueeEvent", { params: { age: 18 } })
+            this.ctx.rnInstance.emitDeviceEvent("clickMarqueeEvent", { params: { age: 18 } });
           })
       }
       .height(180)
