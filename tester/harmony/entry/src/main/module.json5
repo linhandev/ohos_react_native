@@ -29,6 +29,10 @@
         "value": "true",
       },
       {
+        "name": "half_leading",
+        "value": "true",
+      },
+      {
         "name": "can_preview_text",
         "value": "true",
       }

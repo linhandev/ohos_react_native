@@ -48,7 +48,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes const& paragraphAttributes,
       facebook::react::LayoutConstraints const& layoutConstraints) override;
   
-    void setTextMeasureParams(float fontScale, float scale, float dpi);
+    void setTextMeasureParams(float m_fontScale, float m_scale, float DPI, bool m_halfleading);
     
     float getDPI(){ return m_DPI; };
 
@@ -84,6 +84,7 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
   float m_scale = 1.0;
   int m_rnInstanceId = 0;
   float m_DPI = 306;
+  bool m_halfleading = false;
   std::mutex m_fontCollectionMtx;
   SharedFontCollection m_fontCollection;
   std::mutex m_fontFileContentByFontFamilyMtx;

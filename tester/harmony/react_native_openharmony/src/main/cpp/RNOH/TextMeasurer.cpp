@@ -62,7 +62,11 @@ TextMeasurement TextMeasurer::measure(
           std::to_string(attributedString.getFragments()[0].parentShadowView.surfaceId);
         TextMeasureRegistry::getTextMeasureRegistry().setTextMeasureInfo(key, measureInfo.value(), cacheKey);
       }
-        return measureInfo.value()->typography.getMeasurement();
+        const auto& typography = measureInfo.value()->typography;
+        auto height = typography.getHeight();
+        auto longestLineWidth = typography.getLongestLineWidth();
+        auto attachments = typography.getAttachments();
+        return {{.width = longestLineWidth + 0.5, .height = height}, attachments};
     }
     if (paragraphAttributes.adjustsFontSizeToFit) {
       int maxFontSize = 0;
@@ -72,7 +76,9 @@ TextMeasurement TextMeasurer::measure(
       std::pair<ArkUITypographyBuilder, ArkUITypography> measureRes = findFitFontSize(maxFontSize, attributedString, paragraphAttributes, layoutConstraints);
       auto typographyBuilder = std::move(measureRes.first);
       auto typography = std::move(measureRes.second);
-        auto measurement = typography.getMeasurement();
+      auto height = typography.getHeight();
+      auto longestLineWidth = typography.getLongestLineWidth();
+      auto attachments = typography.getAttachments();
       if (!attributedString.getFragments().empty()) {
         std::string key = std::to_string(m_rnInstanceId) + "_" + 
           std::to_string(attributedString.getFragments()[0].parentShadowView.tag) + "_" + 
@@ -80,17 +86,20 @@ TextMeasurement TextMeasurer::measure(
         std::shared_ptr<TextMeasureInfo> textMeasureInfo = std::make_shared<TextMeasureInfo>(std::move(typographyBuilder), std::move(typography));
         TextMeasureRegistry::getTextMeasureRegistry().setTextMeasureInfo(key, textMeasureInfo, cacheKey);
       }
-        return measurement;
+      return {{.width = longestLineWidth + 0.5, .height = height}, attachments};
     } else {
       auto typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
       auto typography = typographyBuilder.build();
+      auto height = typography.getHeight();
       auto longestLineWidth = typography.getLongestLineWidth();
       if (longestLineWidth < layoutConstraints.maximumSize.width) {
           layoutConstraints.maximumSize.width = longestLineWidth;
           typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
           typography = typographyBuilder.build();
+          height = typography.getHeight();
+          longestLineWidth = typography.getLongestLineWidth();
       }
-        auto measurement = typography.getMeasurement();
+      auto attachments = typography.getAttachments();
       if (!attributedString.getFragments().empty()) {
         std::string key = std::to_string(m_rnInstanceId) + "_" + 
           std::to_string(attributedString.getFragments()[0].parentShadowView.tag) + "_" + 
@@ -98,7 +107,7 @@ TextMeasurement TextMeasurer::measure(
         std::shared_ptr<TextMeasureInfo> textMeasureInfo = std::make_shared<TextMeasureInfo>(std::move(typographyBuilder), std::move(typography));
         TextMeasureRegistry::getTextMeasureRegistry().setTextMeasureInfo(key, textMeasureInfo, cacheKey);
       }
-        return measurement;
+      return {{.width = longestLineWidth + 0.5, .height = height}, attachments};
     }
   } else {
     TextMeasurement result = {{0, 0}, {}};
@@ -260,10 +269,11 @@ ArkUITypographyBuilder TextMeasurer::measureTypography(
     }
   }
   ArkUITypographyBuilder typographyBuilder(
-      typographyStyle.get(), getFontCollection(), m_scale, getDefaultFontFamilyName(), layoutConstraints);
+      typographyStyle.get(), getFontCollection(), m_scale, m_halfleading, getDefaultFontFamilyName());
   for (auto const& fragment : attributedString.getFragments()) {
     typographyBuilder.addFragment(fragment);
   }
+    typographyBuilder.setMaximumWidth(layoutConstraints.maximumSize.width * m_scale);
     return typographyBuilder;
 }
 
@@ -456,11 +466,11 @@ std::vector<uint8_t> readSandboxFile(std::string const& absoluteFontFilePath) {
   return buffer;
 }
 
-void TextMeasurer::setTextMeasureParams(float fontScale, float scale, float dpi)
-{
+void TextMeasurer::setTextMeasureParams(float fontScale, float scale, float DPI, bool halfleading) {
   m_fontScale = fontScale;
   m_scale = scale;
-  m_DPI = dpi;
+  m_halfleading = halfleading;
+  m_DPI = DPI;
   updateDefaultFont();
 }
 
