@@ -33,6 +33,8 @@
 1. 选择 `entry`（右上角）。
 1. 点击【Run 'entry'】按钮（右上角）运行项目。
 
+**说明：** 该tester项目工程主要用于开发自测试各种用例场景，如果在运行tester中的用例时遇到问题，可提出Issue中提出，我们会及时解决。
+
 ## 使用说明
 
 - React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
