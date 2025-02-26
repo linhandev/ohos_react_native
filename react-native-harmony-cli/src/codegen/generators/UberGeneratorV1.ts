@@ -17,9 +17,6 @@ import { GlueCodeDataV1 } from './AppBuildTimeGlueCodeGenerator';
 import { NativeModuleCodeGenerator } from './NativeModuleCodeGenerator';
 import { ArkTSComponentCodeGeneratorArkTS } from './ArkTSComponentCodeGeneratorArkTS';
 
-// The name of rnoh OHOS module
-const RNOH_OHOS_NAME = '@rnoh/react-native-openharmony';
-
 /**
  * Generates code for libraries built on top of RNOH's ArkTS architecture.
  */
@@ -28,8 +25,7 @@ export class UberGeneratorV1 implements CodeGenerator<UberSchema> {
 
   constructor(
     private cppOutputPath: AbsolutePath,
-    private etsOutputPath: AbsolutePath | undefined,
-    private rnohModulePath: AbsolutePath | undefined,
+    private etsOutputPath: AbsolutePath,
     private codegenNoticeLines: string[]
   ) {}
 
@@ -39,18 +35,17 @@ export class UberGeneratorV1 implements CodeGenerator<UberSchema> {
 
   generate(uberSchema: UberSchema) {
     const fileContentByPath = new Map<AbsolutePath, string>();
-    const etsOutputPath = this.etsOutputPath || this.rnohModulePath;
     const componentCodeGenerator = new ArkTSComponentCodeGeneratorArkTS(
       this.cppOutputPath,
-      etsOutputPath!.copyWithNewSegment('components'),
+      this.etsOutputPath.copyWithNewSegment('components'),
       this.codegenNoticeLines,
-      this.etsOutputPath ? `${RNOH_OHOS_NAME}/ts` : '../../ts'
+      '../../ts'
     );
     const nativeModuleCodeGenerator = new NativeModuleCodeGenerator(
       this.cppOutputPath,
-      etsOutputPath!.copyWithNewSegment('turboModules'),
+      this.etsOutputPath.copyWithNewSegment('turboModules'),
       this.codegenNoticeLines,
-      this.etsOutputPath ? `${RNOH_OHOS_NAME}/ts` : '../../ts'
+      '../../ts'
     );
     const generatorBySpecType = {
       Component: componentCodeGenerator,
