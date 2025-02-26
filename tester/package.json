@@ -14,7 +14,7 @@
     "pack_inner_hvigor_plugin": "cd ../react-native-harmony-inner-hvigor-plugin && npm i && npm pack && cd ../tester",
     "pack_react_native_harmony_sample_package": "cd ../react-native-harmony-sample-package && npm run codegen-lib && npm pack && cd ../tester",
     "dev:codegen": "npm run reinstall:react_native_harmony_sample_package && npm run install:local-cli && npm run codegen -- --debug",
-    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.0.29.tgz",
+    "install:local-cli": "cd ../react-native-harmony-cli && npm pack && cd ../tester && npm i ../react-native-harmony-cli/rnoh-react-native-harmony-cli-0.0.28.tgz",
     "dev:rn": "npm i && npm run dev",
     "dev": "npm run codegen && react-native bundle-harmony --dev --minify=false",
     "prod": "npm run codegen && react-native bundle-harmony --dev=false --minify=true",

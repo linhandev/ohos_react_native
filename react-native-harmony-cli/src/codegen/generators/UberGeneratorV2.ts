@@ -15,9 +15,6 @@ import { NativeModuleCodeGenerator } from './NativeModuleCodeGenerator';
 import { GlueCodeDataV2 } from './AppBuildTimeGlueCodeGenerator';
 import { SharedComponentCodeGenerator } from './SharedComponentCodeGenerator';
 
-// The name of rnoh OHOS module
-const RNOH_OHOS_NAME = '@rnoh/react-native-openharmony';
-
 /**
  * Generates code for libraries built on top of RNOH's C-API architecture.
  */
@@ -26,8 +23,7 @@ export class UberGeneratorV2 implements CodeGenerator<LibraryData[]> {
 
   constructor(
     private cppOutputPath: AbsolutePath,
-    private etsOutputPath: AbsolutePath | undefined,
-    private rnohModulePath: AbsolutePath | undefined,
+    private etsOutputPath: AbsolutePath,
     private codegenNoticeLines: string[]
   ) {}
 
@@ -89,16 +85,15 @@ export class UberGeneratorV2 implements CodeGenerator<LibraryData[]> {
         .getSpecSchemaByFilenameMap()
         .entries()) {
         if (specSchema.type === 'NativeModule') {
-          const etsOutputPath = this.etsOutputPath || this.rnohModulePath;
           const nativeModuleCodeGenerator = new NativeModuleCodeGenerator(
             libraryCppOutput.copyWithNewSegment(
               'RNOH',
               'generated',
               'turbo_modules'
             ),
-            etsOutputPath!.copyWithNewSegment('turboModules'),
+            this.etsOutputPath.copyWithNewSegment('turboModules'),
             this.codegenNoticeLines,
-            this.etsOutputPath ? `${RNOH_OHOS_NAME}/ts` : '../../ts'
+            '../../ts'
           );
           nativeModuleCodeGenerator
             .generate(specSchema)
