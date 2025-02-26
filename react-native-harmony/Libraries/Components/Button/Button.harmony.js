@@ -380,7 +380,7 @@ class Button extends React.Component<ButtonProps> {
         disabled={disabled}
         onPress={onPress}
         touchSoundDisabled={touchSoundDisabled}>
-        <View style={buttonStyles}>
+        <View style={buttonStyles} focusable={false}>
           <Text style={textStyles} disabled={disabled}>
             {formattedTitle}
           </Text>
