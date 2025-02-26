@@ -108,7 +108,7 @@ export default struct SandBoxApp {
           initialProps: { 'params1': '哈哈哈' },
           wrappedCustomRNComponentBuilder: wrapBuilder(buildCustomComponent),
           onSetUp: (rnInstance) => {
-            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP")
+            rnInstance.enableFeatureFlag("ENABLE_RN_INSTANCE_CLEAN_UP");
           },
           jsBundleProvider: new TraceJSBundleProviderDecorator(
             new AnyJSBundleProvider([

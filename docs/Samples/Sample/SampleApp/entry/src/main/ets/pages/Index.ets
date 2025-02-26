@@ -147,7 +147,7 @@ struct Index {
       .resourceManager, 'bundle/basic/basic.harmony.bundle'));
     instanceMap.set('CPReactInstance', cpInstance);
     instanceMap.set('BPReactInstance', bpInstance);
-    return instanceMap
+    return instanceMap;
   }
 
   build() {

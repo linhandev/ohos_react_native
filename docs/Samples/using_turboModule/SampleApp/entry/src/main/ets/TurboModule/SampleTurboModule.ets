@@ -62,7 +62,7 @@ export class SampleTurboModule extends TurboModule {
     if (!preferences) {
       return;
     }
-    preferences.putSync(key, value)
+    preferences.putSync(key, value);
     try {
       preferences.flush((err: BusinessError) => {
         if (err) {

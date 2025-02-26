@@ -77,7 +77,7 @@ export struct BasePrecreateView {
 
   private async getOrCreateRNInstance(): Promise<CachedInstance> {
     // 获取上次 disappear 时预创建的 RNInstance
-    this.shouldDestroyRNInstance = true
+    this.shouldDestroyRNInstance = true;
     if (this.rnInstances.length > 0) {
       console.log("BasePrecreateView getOrCreateRNInstance 获取预创建的 RNInstance：", this.rnInstances[0]);
       const instance = this.rnInstances.removeByIndex(0);

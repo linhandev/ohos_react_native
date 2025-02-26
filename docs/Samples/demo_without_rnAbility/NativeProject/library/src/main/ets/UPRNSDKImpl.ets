@@ -40,13 +40,13 @@ export class UPRNSDKImpl {
     } catch (paramError) {
       console.error(`error: ${(paramError as BusinessError).code}, ${(paramError as BusinessError).message}`);
     }
-    this.logger = this.createLogger().clone("RNAbility")
+    this.logger = this.createLogger().clone("RNAbility");
     this.rnInstancesCoordinator = RNInstancesCoordinator.create({
       fontSizeScale: this.context.config.fontSizeScale,
       logger: this.createLogger(),
       uiAbilityContext: this.context,
       defaultBackPressHandler: () => {
-        this.defaultBackPressHandler()
+        this.defaultBackPressHandler();
       },
     }, {
       launchURI: want.uri, onGetPackagerClientConfig: (buildMode) => buildMode === "DEBUG" ? {
