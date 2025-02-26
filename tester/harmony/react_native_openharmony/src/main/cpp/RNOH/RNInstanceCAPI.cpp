@@ -14,12 +14,14 @@
 #include <react/renderer/debug/SystraceSection.h>
 #include <react/renderer/scheduler/Scheduler.h>
 #include "ArkTSBridge.h"
+#include "NativeLogger.h"
 #include "RNInstanceArkTS.h"
 #include "RNOH/Assert.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
+#include "RNOH/Performance/NativeTracing.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/SchedulerDelegate.h"
 #include "RNOH/ShadowViewRegistry.h"
@@ -31,6 +33,7 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TaskExecutor/TaskExecutor.h"
+#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
 namespace rnoh {
