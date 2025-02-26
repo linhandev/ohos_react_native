@@ -279,7 +279,7 @@ if (textContentType == "addressCity") {
       return {.i32 = TextInput_TextContentType::DETAIL_INFO_WITHOUT_STREET};
   } else if (textContentType == "formatAddress") {
       return {.i32 = TextInput_TextContentType::FORMAT_ADDRESS};
-  } else if (textContentType == "passPortNumber") {
+  } else if (textContentType == "passportNumber") {
       return {.i32 = TextInput_TextContentType::PASSPORT_NUMBER};
   } else if (textContentType == "validity") {
       return {.i32 = TextInput_TextContentType::VALIDITY};
@@ -301,6 +301,8 @@ if (textContentType == "addressCity") {
       return {.i32 = TextInput_TextContentType::ENGINE_NUMBER};
   } else if (textContentType == "licenseChassisNumber") {
       return {.i32 = TextInput_TextContentType::LICENSE_CHASSIS_NUMBER};
+  } else if (textContentType == "licensePlate") {
+      return {.i32 = TextInput_TextContentType::LICENSE_PLATE};
   } else {
       return {.i32 = -1};
   }
