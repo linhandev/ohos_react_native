@@ -14,3 +14,7 @@ NativeProject -- 原生工程
 3. 检查 `NativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
 4. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
 5. 点击右上角的 **run** 启动项目。
+
+# 效果预览
+- 功能页面
+[!RootTag运行界面](../../zh-cn/figures/RootTag消息发送前.png)
