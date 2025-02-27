@@ -7,3 +7,5 @@ packages:
   - "packages/tester-ecosystem"
   - "packages/testerino"
   - "packages/react-native-core/packages/react-native"
+  - "packages/hdc-server"
+  - "packages/react-native-harmony-test-kit"

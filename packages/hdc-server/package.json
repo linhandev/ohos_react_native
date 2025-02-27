@@ -1,0 +1,20 @@
+{
+  "name": "@rnoh/hdc-server",
+  "version": "0.0.1",
+  "bin": "./HdcServer.ts",
+  "scripts": {
+    "format": "prettier *.ts -w",
+    "lint": "eslint *.ts --max-warnings 0",
+    "typecheck": "tsc",
+    "verify": "npm run format && npm run lint && npm run typecheck"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.13",
+    "concurrently": "^9.1.2",
+    "typescript": "5.0.4"
+  },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "ws": "^8.18.0"
+  }
+}

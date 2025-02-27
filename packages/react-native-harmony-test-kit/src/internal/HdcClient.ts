@@ -1,0 +1,120 @@
+type Direction = 0 | 1 | 2 | 3;
+
+function isCoord(num: number): boolean {
+  return Number.isInteger(num) && num > 0;
+}
+
+function isVelocity(num: number): boolean {
+  return Number.isInteger(num) && num >= 200 && num <= 40000;
+}
+
+export class HdcClientError extends Error {}
+
+export class HdcClient {
+  private ws: WebSocket;
+
+  protected constructor(ws: WebSocket) {
+    this.ws = ws;
+  }
+
+  protected static async connect(
+    url: string = 'localhost',
+    port: number = 8083,
+  ): Promise<WebSocket> {
+    const ws = new WebSocket(`ws://${url}:${port}`);
+    const isConnected = new Promise<void>((resolve, reject) => {
+      ws.addEventListener('open', () => {
+        console.log('Connected to hdc server');
+        resolve();
+      });
+
+      ws.addEventListener('error', error => {
+        reject(
+          new HdcClientError(
+            `Cannot connect to WebSocket server: ${error.message}`,
+          ),
+        );
+      });
+    });
+    await isConnected;
+    return ws;
+  }
+
+  static async create(
+    url: string = 'localhost',
+    port: number = 8083,
+  ): Promise<HdcClient> {
+    return new HdcClient(await this.connect(url, port));
+  }
+
+  private async sendCommand(cmd: string): Promise<string> {
+    const id = Date.now();
+    const msg = {id, cmd};
+
+    return new Promise<string>((resolve, reject) => {
+      const onMessage = (event: WebSocketMessageEvent) => {
+        const data = JSON.parse(event.data) as {id: number; result: string};
+        if (data.id === id) {
+          this.ws.removeEventListener('message', onMessage);
+          resolve(data.result);
+        }
+      };
+
+      this.ws.addEventListener('message', onMessage);
+      this.ws.send(JSON.stringify(msg));
+
+      setTimeout(() => {
+        this.ws.removeEventListener('message', onMessage);
+        reject(
+          new HdcClientError(
+            `Server did not confirm command execution: ${cmd}`,
+          ),
+        );
+      }, 4000);
+    });
+  }
+
+  uiTest() {
+    return {
+      uiInput: () => {
+        return {
+          click: async (x: number, y: number): Promise<void> => {
+            if (!isCoord(x) || !isCoord(y)) {
+              throw new HdcClientError(
+                'Coordinates must be a positive integers',
+              );
+            }
+            await this.sendCommand(`uitest uiInput click ${x} ${y}`);
+          },
+
+          dircFling: async (
+            dir: Direction,
+            speed: number = 600,
+          ): Promise<void> => {
+            if (!isVelocity(speed)) {
+              throw new HdcClientError(
+                'Velocity must be integer between 200 and 40000',
+              );
+            }
+
+            await this.sendCommand(`uitest uiInput dircFling ${dir} ${speed}`);
+          },
+        };
+      },
+    };
+  }
+
+  hitrace() {
+    return {
+      begin: async (tag: string): Promise<void> => {
+        await this.sendCommand(`hitrace --trace_begin ${tag}`);
+      },
+      dump: async (): Promise<string> => {
+        return this.sendCommand('hitrace --trace_dump');
+      },
+      finish: async (): Promise<string> => {
+        return this.sendCommand('hitrace --trace_finish');
+      },
+    };
+  }
+}

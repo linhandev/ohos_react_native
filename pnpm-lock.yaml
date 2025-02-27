@@ -33,6 +33,25 @@ importers:
         specifier: 5.0.4
         version: 5.0.4
 
+  packages/hdc-server:
+    dependencies:
+      commander:
+        specifier: ^13.0.0
+        version: 13.1.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.0
+    devDependencies:
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.5.14
+      concurrently:
+        specifier: ^9.1.2
+        version: 9.1.2
+      typescript:
+        specifier: 5.0.4
+        version: 5.0.4
+
   packages/react-native-core/packages/react-native:
     dependencies:
       '@jest/create-cache-key-function':
@@ -369,6 +388,19 @@ importers:
         specifier: 0.77.0
         version: 0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.2.0)
 
+  packages/react-native-harmony-test-kit:
+    dependencies:
+      '@rnoh/hdc-server':
+        specifier: workspace:*
+        version: link:../hdc-server
+      '@types/websocket':
+        specifier: ^1.0.10
+        version: 1.0.10
+    devDependencies:
+      typescript:
+        specifier: 5.0.4
+        version: 5.0.4
+
   packages/tester:
     dependencies:
       '@gorhom/portal':
@@ -383,12 +415,15 @@ importers:
       '@react-native-oh/react-native-core':
         specifier: workspace:@rnoh/react-native-core@*
         version: link:../react-native-core/packages/react-native
+      '@rnoh/hdc-server':
+        specifier: workspace:*
+        version: link:../hdc-server
       '@rnoh/react-native-harmony-cli':
         specifier: file:../react-native-harmony-cli
         version: file:packages/react-native-harmony-cli(@babel/preset-env@7.26.7(@babel/core@7.26.7))(metro@0.81.1)
       '@rnoh/react-native-harmony-test-kit':
-        specifier: ^1.0.5
-        version: 1.0.5(@rnoh/hdc-server@0.0.1)(@rnoh/react-native-harmony@0.77.1(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))
+        specifier: workspace:*
+        version: link:../react-native-harmony-test-kit
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2028,10 +2063,6 @@ packages:
       react-native-safe-area-context: '>= 3.0.0'
       react-native-screens: '>= 3.0.0'
 
-  '@rnoh/hdc-server@0.0.1':
-    resolution: {integrity: sha1-yRM/dnM1+nFoMT+NvyhfjFuay1I=, tarball: https://gl.swmansion.com/api/v4/projects/458/packages/npm/@rnoh/hdc-server/-/@rnoh/hdc-server-0.0.1.tgz}
-    hasBin: true
-
   '@rnoh/react-native-harmony-cli@file:packages/react-native-harmony-cli':
     resolution: {directory: packages/react-native-harmony-cli, type: directory}
     peerDependencies:
@@ -2045,19 +2076,6 @@ packages:
       react-native: '*'
       react-native-gesture-handler: 2.20.2
       react-native-harmony: npm:@rnoh/react-native-harmony@>=0.72.39
-
-  '@rnoh/react-native-harmony-test-kit@1.0.5':
-    resolution: {integrity: sha1-OK6F7Bj5i11HOla2uX7fpkMy+dM=, tarball: https://gl.swmansion.com/api/v4/projects/458/packages/npm/@rnoh/react-native-harmony-test-kit/-/@rnoh/react-native-harmony-test-kit-1.0.5.tgz}
-    peerDependencies:
-      '@rnoh/hdc-server': ^0.0.1
-      '@rnoh/react-native-harmony': ^0.75.3
-
-  '@rnoh/react-native-harmony@0.77.1':
-    resolution: {integrity: sha1-HBfDxoAdfXIrcPF5qo0YEZCmKh8=, tarball: https://gl.swmansion.com/api/v4/projects/458/packages/npm/@rnoh/react-native-harmony/-/@rnoh/react-native-harmony-0.77.1.tgz}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@react-native-oh/react-native-core': npm:@rnoh/react-native-core@0.77.0-rn.0.77.0
-      react-native: 0.77.0
 
   '@rnoh/react-native-harmony@file:packages/react-native-harmony':
     resolution: {directory: packages/react-native-harmony, type: directory}
@@ -2214,6 +2232,9 @@ packages:
 
   '@types/websocket@1.0.10':
     resolution: {integrity: sha512-svjGZvPB7EzuYS94cI7a+qhwgGU1y89wUgjT6E2wVUfmAGIvRfT7obBvRtnhXCSsoMdlG4gBFGE7MfkIXZLoww==}
+
+  '@types/ws@8.5.14':
+    resolution: {integrity: sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -7818,14 +7839,6 @@ snapshots:
       react-native-screens: 4.6.0(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       warn-once: 0.1.1
 
-  '@rnoh/hdc-server@0.0.1':
-    dependencies:
-      commander: 13.1.0
-      ws: 8.18.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@rnoh/react-native-harmony-cli@file:packages/react-native-harmony-cli(@babel/preset-env@7.26.7(@babel/core@7.26.7))(metro@0.81.1)':
     dependencies:
       '@react-native-community/cli-tools': 13.6.9(encoding@0.1.13)
@@ -7851,24 +7864,6 @@ snapshots:
       react-native: 0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-gesture-handler: 2.23.0(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       react-native-harmony: '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
-
-  '@rnoh/react-native-harmony-test-kit@1.0.5(@rnoh/hdc-server@0.0.1)(@rnoh/react-native-harmony@0.77.1(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))':
-    dependencies:
-      '@rnoh/hdc-server': 0.0.1
-      '@rnoh/react-native-harmony': 0.77.1(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
-      '@types/websocket': 1.0.10
-
-  '@rnoh/react-native-harmony@0.77.1(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
-    dependencies:
-      '@react-native-oh/react-native-core': link:packages/react-native-core/packages/react-native
-      colors: 1.4.0
-      fs-extra: 11.3.0
-      invariant: 2.2.4
-      metro-runtime: 0.80.12
-      metro-source-map: 0.80.12
-      react-native: 0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
-    transitivePeerDependencies:
-      - supports-color
 
   '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.0(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
     dependencies:
@@ -8038,6 +8033,10 @@ snapshots:
   '@types/tmp@0.2.6': {}
 
   '@types/websocket@1.0.10':
+    dependencies:
+      '@types/node': 22.13.1
+
+  '@types/ws@8.5.14':
     dependencies:
       '@types/node': 22.13.1
 
