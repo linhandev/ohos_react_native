@@ -6,3 +6,4 @@ packages:
   - "packages/tester"
   - "packages/tester-ecosystem"
   - "packages/testerino"
+  - "packages/react-native-core/packages/react-native"

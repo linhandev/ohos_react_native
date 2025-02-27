@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {
   FlatList,
-  Image,
   Platform,
   StyleSheet,
   Systrace,
@@ -110,11 +109,6 @@ export function IndexPage() {
               paddingHorizontal: 16,
               paddingVertical: 16,
             }}>
-            <Image
-              style={{width: 32, height: 32}}
-              resizeMode="contain"
-              source={require('react-native/Libraries/NewAppScreen/components/logo.png')}
-            />
             <Text
               style={{
                 color: '#EEE',

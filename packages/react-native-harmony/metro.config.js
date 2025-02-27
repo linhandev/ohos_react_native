@@ -27,6 +27,8 @@ function info(msg) {
 function createHarmonyMetroConfig(options) {
   const reactNativeHarmonyName =
     options?.reactNativeHarmonyPackageName ?? 'react-native-harmony';
+  const reactNativeCorePattern = 
+    options?.reactNativeCorePattern ?? `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
   return {
     transformer: {
       assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
@@ -70,7 +72,7 @@ function createHarmonyMetroConfig(options) {
           ) {
             return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
-            isInternalReactNativeRelativeImport(ctx.originModulePath)
+            isInternalReactNativeRelativeImport(ctx.originModulePath, reactNativeCorePattern)
           ) {
             if (moduleName.startsWith('.')) {
               const moduleAbsPath = pathUtils.resolve(
@@ -85,7 +87,7 @@ function createHarmonyMetroConfig(options) {
               {
                 const originPackagePathAndRelativeModulePath =
                   moduleAbsPath.split(
-                    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
+                    reactNativeCorePattern
                   );
                 if (originPackagePathAndRelativeModulePath.length > 1) {
                   modulePathRelativeToReactNative =
@@ -100,11 +102,12 @@ function createHarmonyMetroConfig(options) {
                 );
               }
               try {
-                return ctx.resolveRequest(
+                const result = ctx.resolveRequest(
                   ctx,
                   `${reactNativeHarmonyName}${pathUtils.sep}${modulePathRelativeToReactNative}`,
                   'harmony'
                 );
+                return result;
               } catch (err) {}
             }
             return ctx.resolveRequest(ctx, moduleName, 'ios');
@@ -286,12 +289,13 @@ function isHarmonyPackageInternalImport(
 }
 
 /**
- * @param originModulePath {string}
+ * @param originModulePath {string} 
+ * @param reactNativeCorePattern {string}
  * @returns {boolean}
  */
-function isInternalReactNativeRelativeImport(originModulePath) {
+function isInternalReactNativeRelativeImport(originModulePath, reactNativeCorePattern) {
   return originModulePath.includes(
-    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
+    reactNativeCorePattern
   );
 }
 

@@ -2,6 +2,7 @@
   "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
     "jsx": "react-native",
+    "preserveSymlinks": true,
     "paths": {
       "react-native": [
         "../react-native-harmony"

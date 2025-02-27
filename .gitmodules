@@ -1,0 +1,3 @@
+[submodule "packages/react-native-core"]
+path = packages/react-native-core
+url = https://gl.swmansion.com/rnoh/react-native-core.git

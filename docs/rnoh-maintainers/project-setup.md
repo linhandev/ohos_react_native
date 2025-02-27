@@ -66,7 +66,7 @@ Follow [official instructions](https://pnpm.io/installation) or run `npm install
 1. Navigate to the directory where you want to store project files in your terminal.
 1. Run the `git clone` command to clone the repository (replace the `<url>` with the copied url of this remote repository).
 1. Navigate to the project directory.
-1. Run `pnpm i`.
+1. Run `pnpm init-ws`.
 1. Run `pnpm dev`.
 1. Open `packages/tester/harmony` project in DevEco Studio and wait for background jobs to finish.
 1. Connect the device.
