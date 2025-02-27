@@ -471,6 +471,8 @@
      import {AppRegistry, View, Text} from 'react-native';
      import AppDetails from './DetailsMainPage';
      import React from 'react';
+
+     const AppParamsContext = React.createContext(undefined)
      
      // 使用setWrapperComponentProvider来包装根组件。
      // children: 渲染RN侧组件；otherProps: OpenHarmony侧传递过来的数据内容。
@@ -481,7 +483,7 @@
                      <View style={{'borderRadius': 10, 'backgroundColor': 'blue', height: 100, justifyContent: 'center'}}>
                          <Text style={otherProps.initialProps.styles.apiFontSize}>{otherProps.initialProps.stringParam}</Text>
                      </View>
-                     <View>{children}</View>
+                     <AppParamsContext.Provider value={appParams}>{children}</AppParamsContext.Provider>
                  </View>
              )
          }
