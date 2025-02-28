@@ -100,23 +100,6 @@ struct RNPage {
         .onClick(() => {
           promptAction.showToast({ message: 'NodeContainer click', duration: 1000 });
         })
-      Button(this.hasRemoved ? '添加' : '卸载').width('100%').onClick(() => {
-        let tips = this.hasRemoved ? '添加' : '卸载';
-        promptAction.showToast({ message: tips, duration: 1000 });
-        if (this.nodeController != undefined) {
-          this.hasRemoved = !this.hasRemoved;
-          this.nodeController.setRemove(this.hasRemoved);
-          this.nodeController.rebuild();
-        }
-      })
-      Button('更新').width('100%').onClick(() => {
-        if (this.nodeController != undefined && !this.hasRemoved) {
-          let tips = '更新RNSurfaced的props';
-          promptAction.showToast({ message: tips, duration: 1000 });
-          const message = 'Text Update';
-          this.nodeController.update(message);
-        }
-      })
     }
     .padding({ left: 20, right: 20, top: 20 })
     .margin({ top: 32 })

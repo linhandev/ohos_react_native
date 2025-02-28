@@ -15,6 +15,43 @@ NativeProject -- 原生工程
 4. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
 5. 点击右上角的 **run** 启动项目。
 
+
 # 效果预览
-- 功能页面
-[!RootTag运行界面](../../zh-cn/figures/RootTag消息发送前.png)
+多个功能页面:
+- ReferenceError
+- Standard Error
+- Frozen Error
+- Warning
+
+![捕捉bundle异常运行界面图](../../zh-cn/figures/捕捉bundle运行界面图.png)
+
+日志输出  
+1.基础错误信息  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: error logged from entryability`过滤查询。  
+效果：
+![bundle_错误基本信息](../../zh-cn//figures/bundle_错误基本信息.jpg)
+
+2.错误消息  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getMessage`过滤查询。  
+效果：
+![bundle_错误消息](../../zh-cn//figures/bundle_错误消息.jpg)
+
+3.解决建议  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getSuggestions`过滤查询。  
+效果：
+![bundle_解决建议](../../zh-cn//figures/bundle_解决建议.jpg)
+
+4.额外数据  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getExtraData`过滤查询。  
+效果：
+![bundle_额外数据](../../zh-cn//figures/bundle_额外数据.jpg)
+
+5.堆栈数据  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getStack`过滤查询。  
+效果：
+![bundle_堆栈数据](../../zh-cn//figures/bundle_堆栈跟踪.jpg)
+
+6.RNInstanceError类型的错误实例  
+步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getRNInstance`过滤查询。  
+效果：
+![bundle_RNInstanceError类型的错误实例](../../zh-cn//figures/bundle_特定于RN实例的信息.jpg)
