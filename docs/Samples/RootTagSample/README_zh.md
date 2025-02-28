@@ -24,6 +24,8 @@ RootTagSample
 
 ![RootTag运行界面图](../../zh-cn/figures/RootTag消息发送前.png)
 
-- RootTag消息发送前界面图
+- RootTag发送消息  
+步骤：点击`CLICK ME`  
+效果：  
 
 ![RootTag运行界面图](../../zh-cn/figures/RootTag消息发送后.png)
