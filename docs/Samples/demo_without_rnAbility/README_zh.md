@@ -19,7 +19,6 @@ NativeProject -- 原生工程
 # 效果预览
 在成功运行demo工程之后，打开应用如下图所示：
 ![demo_without_rnAbility的应用首页](../../zh-cn//figures/demoWithoutRNAbility-App首页.jpg)
-![FrameNode Sample应用首页](../../zh-cn//figures/framenode_app首页界面图.png)
 
 **导航到RN页面**
 操作：点击首页中间的打开RN应用按钮，跳转到RN页面。
