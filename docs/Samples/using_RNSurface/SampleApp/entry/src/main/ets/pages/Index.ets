@@ -37,16 +37,17 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
 
 @Entry
 @Component
-struct Index {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
-  private instance: RNInstance | undefined;
+export struct Index {
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  private rnInstance: RNInstance | undefined;
   private bundlePath = 'bundle.harmony.js';
-  private moduleName = 'App';
+  private appKey = 'app_name';
   @State isBundleReady: boolean = false;
+  private ctx!: RNComponentContext;
+  private cleanUpCallbacks: (() => void)[] = [];
 
   aboutToAppear() {
     this.init();
-    this.subscribeReload();
   }
 
   aboutToDisappear(){
@@ -54,46 +55,45 @@ struct Index {
   }
 
   private async init() {
-    console.log("MultiSurface=====");
     if (!this.rnohCoreContext) {
       return;
     }
-
-    this.instance = await this.rnohCoreContext.createAndRegisterRNInstance({
+    this.rnInstance = await this.rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages: createRNPackages,
       enableNDKTextMeasuring: true,
       enableBackgroundExecutor: false,
       enableCAPIArchitecture: true,
       arkTsComponentNames: []
     });
-
-    await this.instance.runJSBundle(new TraceJSBundleProviderDecorator(
+    this.ctx = new RNComponentContext(
+      RNOHContext.fromCoreContext(this.rnohCoreContext!, this.rnInstance),
+      wrappedCustomRNComponentBuilder,
+      wrapBuilder(buildRNComponentForTag),
+      new Map()
+    )
+    // 监听 RELOAD
+    this.cleanUpCallbacks.push(this.ctx.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
+      await this.cleanUp()
+      this.init()
+      this.isBundleReady = false
+    }))
+    // 监听 jsBundle 状态
+    this.cleanUpCallbacks.push(this.rnInstance.subscribeToLifecycleEvents("JS_BUNDLE_EXECUTION_FINISH", () => {
+      this.isBundleReady = true
+    }))
+    // runJSBundle
+    this.rnInstance.runJSBundle(new TraceJSBundleProviderDecorator(
       new AnyJSBundleProvider([
-        new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath),
         new MetroJSBundleProvider(),
-        new FileJSBundleProvider('/data/storage/el2/base/files/bundle.harmony.js'),
-        new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
-        new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
-      ]), this.rnohCoreContext.logger))
-      .then(() => {
-        this.isBundleReady = true;
-        console.log('instance 加载完成' + this.bundlePath);
-      })
+        new FileJSBundleProvider(`/data/storage/el2/base/files/${this.bundlePath}`),
+        new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, this.bundlePath)
+      ]), this.rnohCoreContext.logger
+    ))
   }
 
   private async cleanUp() {
-    if (this.isBundleReady) {
-      await this.rnohCoreContext!.destroyAndUnregisterRNInstance(this.instance);
-    }
+    this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
   }
-
-  subscribeReload() {
-    this.rnohCoreContext!.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
-      this.cleanUp();
-      this.init();
-    })
-  }
-
 
   build() {
     NavDestination() {
@@ -101,14 +101,9 @@ struct Index {
         Column() {
           RNSurface({
             surfaceConfig: {
-              appKey: this.moduleName,
+              appKey: this.appKey,
             },
-            ctx: new RNComponentContext(
-              RNOHContext.fromCoreContext(this.rnohCoreContext!, this.instance),
-              wrappedCustomRNComponentBuilder,
-              wrapBuilder(buildRNComponentForTag),
-              new Map()
-            ),
+            ctx: this.ctx
           })
         }
         .width('100%')
