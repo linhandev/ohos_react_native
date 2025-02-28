@@ -18,12 +18,12 @@ NativeProject -- 原生工程
 
 # 效果预览
 在成功运行demo工程之后，打开应用如下图所示：
-![demo_without_rnAbility的应用首页](../../zh-cn//figures/demoWithoutRNAbility-App首页.png)
+![demo_without_rnAbility的应用首页](../../zh-cn//figures/demoWithoutRNAbility-App首页.jpg)
 
 **导航到RN页面**
 操作：点击首页中间的打开RN应用按钮，跳转到RN页面。
 效果：如下图所示
-![demo_without_rnAbility的RN页面](../../zh-cn//figures/demoWithoutRNAbility-RN页面.png)
+![demo_without_rnAbility的RN页面](../../zh-cn//figures/demoWithoutRNAbility-RN页面.jpg)
 
 
 # 注意事项
