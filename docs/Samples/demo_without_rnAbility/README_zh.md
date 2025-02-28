@@ -16,6 +16,16 @@ NativeProject -- 原生工程
 5. 点击右上角的 **run** 启动项目。
    
 
+# 效果预览
+在成功运行demo工程之后，打开应用如下图所示：
+![demo_without_rnAbility的应用首页](../../zh-cn//figures/demoWithoutRNAbility-App首页.png)
+
+**导航到RN页面**
+操作：点击首页中间的打开RN应用按钮，跳转到RN页面。
+效果：如下图所示
+![demo_without_rnAbility的RN页面](../../zh-cn//figures/demoWithoutRNAbility-RN页面.png)
+
+
 # 注意事项
 
 1. 主动调用`windowSizeChange`方法监听屏幕尺寸变化，调用`this.rnInstancesCoordinator?.onWindowSizeChange`设置正确的屏幕尺寸，否则会出现字体size不正常的问题。
