@@ -21,7 +21,7 @@
 
 ### 支持Worker线程执行自定义任务
 
-RNOH 5.1.0.205及以上版本，支持Worker线程执行自定义任务。在 `EtsUITurboModuleContext` 和 `RNComponentContext` 中添加 `runOnWorkerThread` 方法，允许 `UITurboModules` 和 `ArkTS` 组件调度WorkerTurboModule线程上的任务
+RNOH 5.1.0.205及以上版本，支持Worker线程执行自定义任务。在 `EtsUITurboModuleContext` 和 `RNComponentContext` 中添加 `runOnWorkerThread` 方法，允许 `EtsUITurboModules` 和 `ArkTS` 组件调度WorkerTurboModule线程上的任务
 
 具体详细请参考[API接口说明.md#runonworkerthreadtparams-tresult-trunnablerunnable-params](../API接口说明.md#runonworkerthreadtparams-tresult-trunnablerunnable-params)。
 
@@ -54,4 +54,4 @@ textContentType属性增加支持类型：
 
 # View组件支持focusable属性
 
-RNOH 5.1.0.205及以上版本，增加对于View组件的focusable属性的支持，在手机外接键盘使用Tab进行走焦时，若设置focusable属性为false的时候，对应的View组件将无法获取焦点。具体使用请参看RN官网对于focusable属性的说明：Focusable属性。
+RNOH 5.1.0.205及以上版本，增加对于View组件的focusable属性的支持，在手机外接键盘使用Tab进行走焦时，若设置focusable属性为false的时候，对应的View组件将无法获取焦点。具体使用请参看[RN官网](https://reactnative.dev/docs/0.72/view#focusable-android)对于focusable属性的说明：Focusable属性。
