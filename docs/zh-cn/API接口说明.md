@@ -180,7 +180,7 @@ onBackground(): void
 
 此处会将 `RNInstancesCoordinator` 中的 `appState` 变量设置为 "BACKGROUND"。
 
-`RNAbility` 旨在将大部分代码移动到 **RNOH** 方面，以提高稳定性。如果需要更自由的实现方式，可以使用 `RNInstancesCoordinator`，本节主要介绍了 `RNAbility` 的接口类型。
+`RNAbility` 大部分代码由 **RNOH** 实现，以提高稳定性。如果需要更自由的实现方式，可以使用 `RNInstancesCoordinator`，本节主要介绍了 `RNAbility` 的接口类型。
 
 ## RNApp
 

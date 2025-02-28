@@ -14,3 +14,37 @@
 | HarmonyOS SDK     | HarmonyOS SDK 5.1.0.52(SP3) |
 | 手机ROM           | ALN-AL00 205.1.0.52(SP31DEVC00E52R4P1) <br> ALN-AL80 205.1.0.52(SP31DEVC00E52R4P1) <br> BRA-AL00 205.1.0.52(SP31DEVC00E52R4P1) |
 
+## 新增特性
+
+### 支持Worker线程执行自定义任务
+
+RNOH 5.1.0.205及以上版本，支持Worker线程执行自定义任务。在 `EtsUITurboModuleContext` 和 `RNComponentContext` 中添加 `runOnWorkerThread` 方法，允许 `UITurboModules` 和 `ArkTS` 组件调度WorkerTurboModule线程上的任务
+
+具体详细请参考[API接口说明.md#runonworkerthreadtparams-tresult-trunnablerunnable-params](../API接口说明.md#runonworkerthreadtparams-tresult-trunnablerunnable-params)。
+
+
+### 新增textContentType类型
+
+RNOH 5.1.0.205及以上版本，增加TextInput/TextArea的textContentType的新增类型的支持，对应的枚举类值传入到ArkUI开放的CAPI接口：`NODE_TEXT_INPUT_CONTENT_TYPE`。
+
+textContentType属性增加支持类型：
+| enumeration type   | 输入场景      |
+| ------------------ | ------------ |
+| passportNumber | 护照号 |
+| validity | 护照有效期 |
+| issueAt | 护照签发地 |
+| organization | 发票抬头名称 |
+| taxId | 税号 |
+| addressCityAndState | 地址城市与省份 |
+| flightNumber | 航班号 |
+| licenseNumber | 驾驶证号 |
+| licenseFileNumber | 驾驶证档案编号 |
+| licensePlate | 车牌号 |
+| engineNumber | 行驶证发动机号 |
+| licenseChassisNumber | 许可证编号 |
+
+具体使用方法可以参考对应的[ArkUI contentType](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/ts-basic-components-textinput-V5#contenttype12%E6%9E%9A%E4%B8%BE%E8%AF%B4%E6%98%8E)
+
+# View组件支持focusable属性
+
+RNOH 5.1.0.205及以上版本，增加对于View组件的focusable属性的支持，在手机外接键盘使用Tab进行走焦时，若设置focusable属性为false的时候，对应的View组件将无法获取焦点。具体使用请参看RN官网对于focusable属性的说明：Focusable属性。
