@@ -124,17 +124,14 @@ function App() {
         />
         <Button
           title={
-            '•调用WorkerTurboModule异步回调方法：' + nativeWorkerCallbackValue
+            '•调用WorkerTurboModule异步回调方法：' + nativeWorkerAsyncCallbackValue
           }
           onPress={() => {
-            SampleWorkerTurboModule.doAsyncJob(false).then(
-              result => {
-                setNativeWorkerAsyncCallbackValue(result);
-              },
-              err => {
-                setNativeWorkerAsyncCallbackValue((err as Error).message);
-              },
-            );
+            SampleWorkerTurboModule.doAsyncJob(false).then(result => {
+              setNativeWorkerAsyncCallbackValue(result);
+            }).catch(err => {
+              setNativeWorkerAsyncCallbackValue((err as Error).message);
+            });
           }}
         />
         <Button
