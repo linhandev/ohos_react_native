@@ -14,3 +14,13 @@ FrameNodeSampleApp -- 原生工程
 3. 检查 `FrameNodeSampleApp`、`entry` 目录下是否生成 `oh-modules` 文件夹；
 4. 用 DevEco Studio 打开 `FrameNodeSampleApp`，执行 **Sync and Refresh Project**；
 5. 点击右上角的 **run** 启动项目。
+
+# 效果预览
+在成功运行demo工程之后，打开应用如下图所示：
+![FrameNode Sample应用首页](../../zh-cn//figures/framenode_app首页界面图.png)
+
+**RN 分列列表bundle预加载**
+操作：点击首页中间的按钮，跳转到新页面中，框内加载出RN bundle中的分列列表。
+效果：如下图所示
+![FrameNode Sample节点容器页面](../../zh-cn//figures/framenode_节点容器界面图.png)
+
