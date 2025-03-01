@@ -59,18 +59,6 @@ const Sandbox = () => {
           }}
         />
       </View>
-
-      <Text style={styles.text}>
-        如果图片未显示，需发送图片文件到沙箱。步骤如下bundletest1v{' '}
-      </Text>
-      <Text style={styles.text}>
-        1.通过hdc file send命令或IDE中右下的device file
-        browser都可发送文件到应用沙箱
-      </Text>
-      <Text style={styles.text}>
-        2.再将assets文件夹和其中的图片都增加读写权限，可进入hdc
-        shell中通过chmod命令完成
-      </Text>
     </View>
   );
 };

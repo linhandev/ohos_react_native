@@ -56,17 +56,17 @@ export default struct MultiHome {
         TabContent() {
           HomePage();
         }
-        .tabBar(this.TabBuilder(0, 'Home Page'))
+        .tabBar(this.TabBuilder(0, '首页'))
 
         TabContent() {
           Goods();
         }
-        .tabBar(this.TabBuilder(1, "Offerings"))
+        .tabBar(this.TabBuilder(1, "商品"))
 
         TabContent() {
           Test();
         }
-        .tabBar(this.TabBuilder(2, "Test Case"))
+        .tabBar(this.TabBuilder(2, "测试用例"))
       }
       .barHeight(this.barHeight)
       .scrollable(false)

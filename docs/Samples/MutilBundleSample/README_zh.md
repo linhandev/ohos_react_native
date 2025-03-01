@@ -23,6 +23,7 @@ MutilBundleSample
 
 ## 效果预览
 启动后页面效果如下：
+
 | ![Screenshot_home](./screenshots/Screenshot_home.jpeg) | ![Screenshot_hotel](./screenshots/Screenshot_hotel.jpeg) | ![Screenshot_flight](./screenshots/Screenshot_flight.jpeg) |
 |:--:|:--:|:--:|
 | 首页 | 前往酒店页面 | 前往机票页面 |
