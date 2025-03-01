@@ -17,41 +17,45 @@ NativeProject -- 原生工程
 
 
 # 效果预览
-多个功能页面:
-- ReferenceError
-- Standard Error
-- Frozen Error
-- Warning
+启动后页面效果如下：
 
-![捕捉bundle异常运行界面图](../../zh-cn/figures/捕捉bundle运行界面图.png)
-
-日志输出  
-1.基础错误信息  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: error logged from entryability`过滤查询。  
-效果：
-![bundle_错误基本信息](../../zh-cn//figures/bundle_错误基本信息.jpg)
-
-2.错误消息  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getMessage`过滤查询。  
-效果：
-![bundle_错误消息](../../zh-cn//figures/bundle_错误消息.jpg)
-
-3.解决建议  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getSuggestions`过滤查询。  
-效果：
-![bundle_解决建议](../../zh-cn//figures/bundle_解决建议.jpg)
-
-4.额外数据  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getExtraData`过滤查询。  
-效果：
-![bundle_额外数据](../../zh-cn//figures/bundle_额外数据.jpg)
-
-5.堆栈数据  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getStack`过滤查询。  
-效果：
-![bundle_堆栈数据](../../zh-cn//figures/bundle_堆栈跟踪.jpg)
-
-6.RNInstanceError类型的错误实例  
-步骤：点击`ReferenceError`、`Standard Error`或者`Frozen Error`,在Hilog输入`HERE: err.getRNInstance`过滤查询。  
-效果：
-![bundle_RNInstanceError类型的错误实例](../../zh-cn//figures/bundle_特定于RN实例的信息.jpg)
+<table style="width: 100%; margin: 0 auto; text-align: center;">
+  <thead>
+    <tr>
+      <th style="width: 20%;">
+        <img src="./screenshots/Screenshot_home.jpeg" alt="Screenshot_home">
+      </th>
+      <th style="width: 20%;">
+        <img src="./screenshots/Screenshot_reference.jpeg" alt="Screenshot_reference">
+      </th>
+      <th style="width: 20%;">
+        <img src="./screenshots/Screenshot_standard.jpeg" alt="Screenshot_standard">
+      </th>
+      <th style="width: 20%;">
+        <img src="./screenshots/Screenshot_Frozen.jpeg" alt="Screenshot_Frozen">
+      </th>
+      <th style="width: 20%;">
+        <img src="./screenshots/Screenshot_Warning.jpeg" alt="Screenshot_Warning">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width: 20%;">
+        首页
+      </td>
+      <td style="width: 20%;">
+        点击【ReferenceError】按钮
+      </td>
+      <td style="width: 20%;">
+        点击【Standard Error】按钮
+      </td>
+      <td style="width: 20%;">
+        点击【Frozen Error】按钮
+      </td>
+      <td style="width: 20%;">
+        点击【Warning】按钮
+      </td>
+    </tr>
+  </tbody>
+</table>

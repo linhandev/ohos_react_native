@@ -16,6 +16,7 @@ SampleApp -- 原生工程
 
 ## 效果预览
 启动后页面效果如下：
+
 ![using_turboModule运行界面](./screenshots/Screenshot.jpeg)
 
 1. 点击【•调用TurboModule回调方法】按钮，会有返回结果（... from native side）回填到按钮；

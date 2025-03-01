@@ -41,9 +41,6 @@
 ---
 
 # 效果预览
-- 通过代码将bundle推送到沙箱。  
-- 通过`hdc file send`命令或IDE中右下的device file browser都可发送文件到应用沙箱。  
-- 将assets文件夹和其中的图片都增加读写权限，可进入hdc shell中通过chmod命令完成。  
+通过代码将bundle推送到沙箱：
 
-通过代码将bundle推送到沙箱：  
-![沙箱加载运行效果图](../../zh-cn/figures/沙箱加载运行效果图.png)
+![沙箱加载运行效果图](./screenshots/Screenshots.jpeg)

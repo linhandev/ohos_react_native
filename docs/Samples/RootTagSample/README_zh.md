@@ -1,5 +1,5 @@
 # 说明
-这是获取RNSurface对应RNInstance与rootTag的demo工程。
+这是获取RNSurface对应RNInstance与rootTag的demo工程。展示了通过`RNInstance.emitDeviceEvent`方法向指定的RNSurface（如Demo中的机票页面）发送消息。
 
 
 # 目录结构
