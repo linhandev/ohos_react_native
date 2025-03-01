@@ -196,7 +196,7 @@ onBackground(): void
 | appKey                          | string                          | 是   | 开发者在JS侧使用`AppRegistry.registerComponent`注册的名称。   |
 | jsBundleProvider                | JSBundleProvider                | 否   | 在`RNInstance`中运行JS Bundle。Bundle被加载后创建Surface(根容器)。 |
 | initialProps                    | Record<string, string>          | 否   | React Native应用的初始化原生参数。                           |
-| wrappedCustomRNComponentBuilder | WrappedCustomRNComponentBuilder | 是   | 构建自定义Fabric组件构造器。                                   |
+| wrappedCustomRNComponentBuilder | WrappedCustomRNComponentBuilder | 是   | 构建自定义Fabric组件构造器。如果这一参数不设置或设为undefined会导致RNApp初始化失败，显示白屏。 |
 | onSetUp                         | void                            | 否   | 在`RNInstance`创建完成且Surface可见前，调用此回调函数。        |
 
 ### 方法
@@ -902,7 +902,7 @@ JS Bundle 提供者，用于初始化 bundle 信息，获取 bundle 具体内容
 
 ### 基本介绍
 
-`RNAbility` 旨在将大部分代码移动到 **RNOH** 方面，以提高稳定性。这类项目不使用 `RNAbility` 和 `RNApp`。为此，React Native for OpenHarmony 提供了 `RNInstancesCoordinator` 给开发者，旨在更加灵活的控制 **RN** 的启动， 
+`RNAbility` 大部分代码由 **RNOH** 实现，以提高稳定性。这类项目不使用 `RNAbility` 和 `RNApp`。为此，React Native for OpenHarmony 提供了 `RNInstancesCoordinator` 给开发者，旨在更加灵活的控制 **RN** 的启动，
 
 ### 方法
 
