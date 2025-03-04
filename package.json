@@ -11,7 +11,7 @@
     "dev": "pnpm run --parallel dev",
     "harmony:tester": "pnpm run --filter ./packages/tester harmony",
     "clean": "npx del-cli \"**/node_modules\"",
-    "deploy": "echo \"not implemented\"",
+    "deploy:rnoh": "node ./scripts/deploy-rnoh.js",
     "test:ecosystem": "pnpm run --filter ./packages/tester-ecosystem test",
     "verify": "concurrently --kill-others-on-fail -n 'verify-packages,verify-docs' -c 'green,blue' \"pnpm run _verify:packages\" \"pnpm run _verify:docs\"",
     "gen:changelog": "ts-node ./scripts/generate-changelog.js",

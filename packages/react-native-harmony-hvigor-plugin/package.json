@@ -6,7 +6,7 @@
   "scripts": {
     "deploy": "npm run typecheck && npm run test && npm run build",
     "dev": "tsc --outDir dist -p tsconfig.build.json --watch",
-    "build": "tsc -p ./tsconfig.build.json && mkdir -p ../react-native-harmony-cli/harmony && npm pack --pack-destination ../react-native-harmony-cli/harmony",
+    "build": "tsc -p ./tsconfig.build.json && rm -rf ../react-native-harmony-cli/harmony && mkdir -p ../react-native-harmony-cli/harmony && npm pack --pack-destination ../react-native-harmony-cli/harmony",
     "verify": "npm run typecheck && npm run test",
     "typecheck": "tsc --noEmit",
     "test": "jest"
