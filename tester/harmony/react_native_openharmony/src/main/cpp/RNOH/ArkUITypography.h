@@ -29,21 +29,21 @@ class ArkUITypography final {
   facebook::react::TextMeasurement::Attachments getAttachments() const {
     facebook::react::TextMeasurement::Attachments result;
     result.reserve(m_attachmentCount);
-    auto placeholderRects =
-        OH_Drawing_TypographyGetRectsForPlaceholders(m_typography.get());
+    std::shared_ptr<OH_Drawing_TextBox> placeholderRects(
+        OH_Drawing_TypographyGetRectsForPlaceholders(m_typography.get()), OH_Drawing_TypographyDestroyTextBox);
     // calculate attachment sizes and positions
     for (auto i = 0; i < m_attachmentCount; i++) {
       facebook::react::TextMeasurement::Attachment attachment;
       attachment.frame.origin.x =
-          OH_Drawing_GetLeftFromTextBox(placeholderRects, i);
+          OH_Drawing_GetLeftFromTextBox(placeholderRects.get(), i);
       attachment.frame.origin.y =
-          OH_Drawing_GetTopFromTextBox(placeholderRects, i);
+          OH_Drawing_GetTopFromTextBox(placeholderRects.get(), i);
       attachment.frame.size.width =
-          OH_Drawing_GetRightFromTextBox(placeholderRects, i) -
-          OH_Drawing_GetLeftFromTextBox(placeholderRects, i);
+          OH_Drawing_GetRightFromTextBox(placeholderRects.get(), i) -
+          OH_Drawing_GetLeftFromTextBox(placeholderRects.get(), i);
       attachment.frame.size.height =
-          OH_Drawing_GetBottomFromTextBox(placeholderRects, i) -
-          OH_Drawing_GetTopFromTextBox(placeholderRects, i);
+          OH_Drawing_GetBottomFromTextBox(placeholderRects.get(), i) -
+          OH_Drawing_GetTopFromTextBox(placeholderRects.get(), i);
       attachment.frame.size.height /= m_scale;
       attachment.frame.size.width /= m_scale;
       attachment.frame.origin.x /= m_scale;
