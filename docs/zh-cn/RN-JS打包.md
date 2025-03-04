@@ -176,7 +176,7 @@ module.exports = {
      const fs = require('fs');
      const SHA256 = require('crypto-js/sha256');
      const basicNameArray = require('./map/basicNameMap.json');
-     const homepageArray = require('./map/pageNameMap.jsno');
+     const homepageArray = require('./map/pageNameMap.json');
 
      function getModuleId(projectRootPath, modulePath, ...bundles) {
        let startIndex = modulePath.indexOf(projectRootPath);
