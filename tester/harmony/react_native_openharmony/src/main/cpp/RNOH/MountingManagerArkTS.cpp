@@ -85,4 +85,9 @@ void MountingManagerArkTS::updateView(
 void MountingManagerArkTS::clearPreallocatedViews() {
   throw RNOHError("Preallocation is not implemented in ArkTS architecture.");
 }
+
+void MountingManagerArkTS::clearPreallocationRequestQueue()
+{
+    throw RNOHError("Preallocation is not implemented in ArkTS architecture.");
+}
 } // namespace rnoh
