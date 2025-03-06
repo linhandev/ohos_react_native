@@ -89,7 +89,8 @@ class MountingManagerCAPI final : public MountingManager {
       const facebook::react::ShadowView& shadowView,
       std::string const& eventType) override;
 
-  void clearPreallocatedViews();
+    void clearPreallocatedViews();
+    void clearPreallocationRequestQueue();
 
  private:
   void updateComponentWithShadowView(

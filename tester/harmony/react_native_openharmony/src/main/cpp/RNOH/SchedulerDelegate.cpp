@@ -65,11 +65,18 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
             [otherMutation, mutationVecs, this](
                 MountingManager::Shared const& mountingManager) {
               mountingManager->didMount(otherMutation);
-              mountingManager->clearPreallocatedViews();
               mountingManager->finalizeMutationUpdates(mutationVecs);
+            });
+        performOnMainThread(
+            [otherMutation, mutationVecs, this](
+                MountingManager::Shared const& mountingManager) {
+                mountingManager->clearPreallocatedViews();
             });
         logTransactionTelemetryMarkers(transaction);
       });
+        if (auto mountingManager = m_mountingManager.lock()) {
+            mountingManager->clearPreallocationRequestQueue();
+        }
 }
 
 void SchedulerDelegate::logTransactionTelemetryMarkers(

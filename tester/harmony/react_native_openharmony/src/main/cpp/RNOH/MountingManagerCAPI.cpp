@@ -66,15 +66,15 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
  
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_START); 
-  m_componentInstanceProvider->clearPreallocationRequestQueue();
-  for (auto const& mutation : mutations) {
-    try {
-      this->handleMutation(mutation);
-    } catch (std::exception const& e) {
-      LOG(ERROR) << "Mutation " << getMutationNameFromType(mutation.type)
-                 << " failed: " << e.what();
+
+    for (auto const& mutation : mutations) {
+        try {
+            this->handleMutation(mutation);
+        } catch (std::exception const& e) {
+            LOG(ERROR)  << "Mutation " << getMutationNameFromType(mutation.type)
+                        << " failed: " << e.what();
+        }
     }
-  }
   HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
@@ -373,5 +373,10 @@ void MountingManagerCAPI::schedulerDidSendAccessibilityEvent(
 
 void MountingManagerCAPI::clearPreallocatedViews() {
   m_componentInstanceProvider->clearPreallocatedViews();
+}
+
+void MountingManagerCAPI::clearPreallocationRequestQueue()
+{
+    m_componentInstanceProvider->clearPreallocationRequestQueue();
 }
 } // namespace rnoh
