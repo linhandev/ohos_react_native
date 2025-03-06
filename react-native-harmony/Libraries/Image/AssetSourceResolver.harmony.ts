@@ -31,14 +31,20 @@ class AssetSourceResolver {
     return !!this.serverUrl;
   }
 
+  isLoadedFromFileSystem(): boolean {
+    return !!(this.jsbundleUrl && this.jsbundleUrl.startsWith('file://'));
+  }
+
   public defaultAsset(): ResolvedAssetSource {
     if (this.isLoadedFromServer()) {
       return this.assetServerURL();
     }
 
+    const prefix = this.isLoadedFromFileSystem() ? this.jsbundleUrl : 'asset://';
+
     return {
       __packager_asset: this.asset.__packager_asset,
-      uri: `asset://${getAssetDestRelativePath(this.asset)}`,
+      uri: `${prefix}${getAssetDestRelativePath(this.asset)}`,
       scale: 1,
       width: this.asset.width,
       height: this.asset.height,
