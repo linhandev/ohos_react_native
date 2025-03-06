@@ -27,6 +27,7 @@ import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
 import type { SurfaceContext } from './RNOH/RNInstance';
 import { NodeContent } from '@ohos.arkui.node'
+import { uiObserver } from '@kit.ArkUI';
 
 interface RootViewState {}
 
@@ -121,8 +122,32 @@ export struct RNSurface {
   */
   private readonly delayTime: number = 100;
 
+  private navigationId: string | undefined;
+
+  registerNavDestinationCallback(): void {
+    if (this.navigationId != undefined) {
+      return;
+    }
+    this.navigationId = this.queryNavigationInfo()?.navigationId;
+    if (this.navigationId == undefined) {
+      return;
+    }
+    const navDestinationSwitchInfoCallback = (info: uiObserver.NavDestinationSwitchInfo) => {
+      const navDestinationId = this.queryNavDestinationInfo()?.navDestinationId;
+      if (info.from != "navBar" && ((info.from) as NavDestinationInfo).navDestinationId == navDestinationId) {
+        this.surfaceHandle.setDisplayMode(DisplayMode.Suspended);
+      }
+      if (info.to != "navBar" && ((info.to) as NavDestinationInfo).navDestinationId == navDestinationId) {
+        this.surfaceHandle.setDisplayMode(DisplayMode.Visible);
+      }
+    }
+    uiObserver.on('navDestinationSwitch', this.getUIContext(), {navigationId: this.navigationId},
+      navDestinationSwitchInfoCallback);
+  }
+
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
+    this.registerNavDestinationCallback()
     if (!(this.ctx instanceof RNComponentContext)) {
       this.ctx.reportRNOHError(new RNOHError({
         whatHappened: "RNSurface received RNOHContext instead of RNComponentContext. Custom RN components won't be visible.",
@@ -166,6 +191,9 @@ export struct RNSurface {
 
   aboutToDisappear() {
     const surfaceHandle = this.surfaceHandle;
+    if (this.navigationId != undefined) {
+      uiObserver.off('navDestinationSwitch', this.getUIContext(), {navigationId: this.navigationId}, null);
+    }
     if (this.timerId) {
       clearTimeout(this.timerId);
       this.timerId = undefined;
