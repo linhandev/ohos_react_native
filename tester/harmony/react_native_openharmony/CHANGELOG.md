@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72.60
+- fix preallocation queue clean up timing,([841008d8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/841008d88ed1821879c6abeccb184b4288e3f138))
+- Suspend surface on navigation,([f7e86ed8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e86ed8ef9bc222e1739bf2b7d5f113ba98ee30))
+- fix: textBox not released,([4be94157](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4be94157a6f161c162a71965ef5adbd1b092c5c5))
+- fix: memory leak in ComponentInstance,([4ae6d456](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4ae6d456166b0fa3ab5c6ebaee77a7162e4941c0))
+- chore: update to version 5.1.0.205(0.72.59),([2bb49fa6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2bb49fa632a10f219625a83cf0ebb4b2bcb5fbde))
+
 ## v0.72.59
 - text lineHeight problem,([723f1814](https://gitcode.com/openharmony-sig/ohos_react_native/commit/723f1814c3400bd63daa705c150baf237617284f))
 - !431 feat: Add a new internal HVigor plugin for compiling release and bytecode HAR packages. Merge pull request !431 from xiedairong/hvigor,([2f4edf31](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f4edf313ff0d059af2da65dfcb044e668e5fc2e))
