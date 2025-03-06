@@ -539,25 +539,29 @@ class CppComponentInstance : public ComponentInstance,
           targetId = m_props->accessibilityLabelledBy.value[0];
         }
         if (!targetId.empty()) {
-          auto componentInstance =
-              m_deps->componentInstanceRegistry->findById(targetId);
-          if (componentInstance != nullptr) {
-            std::string newAccessibilityLabel = "";
-            if (m_props->accessibilityLabel != "") {
-              newAccessibilityLabel += m_props->accessibilityLabel;
+          auto componentInstanceRegistry =
+            m_deps->componentInstanceRegistry.lock();
+          if (componentInstanceRegistry != nullptr) {
+            auto componentInstance =
+                componentInstanceRegistry->findById(targetId);
+            if (componentInstance != nullptr) {
+              std::string newAccessibilityLabel = "";
+              if (m_props->accessibilityLabel != "") {
+                newAccessibilityLabel += m_props->accessibilityLabel;
+              }
+              auto targetAccessibilityLabel =
+                  componentInstance->getAccessibilityLabel();
+              if (!targetAccessibilityLabel.empty()) {
+                newAccessibilityLabel += " " + targetAccessibilityLabel;
+              }
+              if (!newAccessibilityLabel.empty()) {
+                this->getLocalRootArkUINode().setAccessibilityText(
+                    newAccessibilityLabel);
+              }
+            } else {
+              DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
+                            << targetId;
             }
-            auto targetAccessibilityLabel =
-                componentInstance->getAccessibilityLabel();
-            if (!targetAccessibilityLabel.empty()) {
-              newAccessibilityLabel += " " + targetAccessibilityLabel;
-            }
-            if (!newAccessibilityLabel.empty()) {
-              this->getLocalRootArkUINode().setAccessibilityText(
-                  newAccessibilityLabel);
-            }
-          } else {
-            DLOG(WARNING) << "Couldn't find ComponentInstance with Id: "
-                          << targetId;
           }
         }
       }

@@ -46,7 +46,7 @@ class ComponentInstance
 
   class Registry {
    public:
-    using Shared = std::shared_ptr<Registry>;
+   using Weak = std::weak_ptr<Registry>;
     virtual ComponentInstance::Shared findById(const std::string& id) const = 0;
   };
 
@@ -58,7 +58,7 @@ class ComponentInstance
     ArkTSChannel::Shared arkTSChannel;
     ArkTSMessageHub::Shared arkTSMessageHub;
     RNInstance::Weak rnInstance;
-    Registry::Shared componentInstanceRegistry;
+    Registry::Weak componentInstanceRegistry;
   };
 
   struct Context {
