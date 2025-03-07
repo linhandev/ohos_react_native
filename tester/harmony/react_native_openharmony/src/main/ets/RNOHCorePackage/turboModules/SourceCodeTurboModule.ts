@@ -6,11 +6,15 @@
  */
 
 import { TurboModule } from "../../RNOH/TurboModule";
+import uri from '@ohos.uri';
 
 export class SourceCodeTurboModule extends TurboModule {
   public static readonly NAME = 'SourceCode';
 
   getConstants(): { scriptURL: string | null; } {
-    return { scriptURL: this.ctx.rnInstance.getInitialBundleUrl() ?? '' };
+    const bundleUrl = this.ctx.rnInstance.getInitialBundleUrl() ?? '';
+    const parsedUri = new uri.URI(bundleUrl);
+    const isResourceJSBundle = !parsedUri.scheme && bundleUrl.indexOf('/') !== 0;
+    return { scriptURL: isResourceJSBundle ? `assets://${bundleUrl}` : bundleUrl };
   }
 }
