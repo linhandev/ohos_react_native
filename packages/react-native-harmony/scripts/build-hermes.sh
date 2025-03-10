@@ -8,7 +8,7 @@ fi
 HERMES_REPO_URL="https://github.com/facebook/hermes.git"
 
 # NOTE: these variables should be kept in sync with the React Native version RNOH is based off of
-REACT_NATIVE_VERSION="0.77.0"
+REACT_NATIVE_VERSION="0.77.1"
 HERMES_TAG="hermes-2024-11-25-RNv0.77.0-d4f25d534ab744866448b36ca3bf3d97c08e638c"
 
 SCRIPT_PATH=$(realpath "$0")
