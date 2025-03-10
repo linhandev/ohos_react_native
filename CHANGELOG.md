@@ -1,7 +1,30 @@
 # Changelog
 
 ## v0.77.3
+- [breaking] modified RNOHMarkerListener interface to have RNOHMarkerId enum as an argument ([456d71fc1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/456d71fc1fdbb6f6a43d2c7ee9183bf9373bf4e3))
 - update and react-native to 0.77.1 ([dc13728a65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc13728a651bdb777ec1c913730a0ded30ed7c52))
+- added RNPauseInDebuggerDialog component ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for onResume ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for getMetadata ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for onSetPausedInDebuggerMessage ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added automated tests for View ([619def3d84](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/619def3d84b7a62195536b7e3bccbf7427bfcf78))
+- adding AutomatedTester component ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- adding Manual Tests for AppRegistry ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- adding directory for automated tests ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- added support for symlinks and monorepos ([3bea2f0134](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3bea2f01349ac6d4106b37904765c04a29de1217))
+- added `--hermersc-dir` argument to bundle-harmony ([3bea2f0134](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3bea2f01349ac6d4106b37904765c04a29de1217))
+- added getSurfaceHandleByAppKey in RNInstance ([99e4a84a74](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/99e4a84a7400923cded9f8828bc20c29ab36eef6))
+- fixed RNOH Systraces which are broken since the update to RN 0.76 and include libhitrace_ndk.z.so only when necessary ([3272d6f65c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3272d6f65caf213f2082f0b6bcd68120eddc2ef5))
+- fix crashes on reloading/destruction of RNInstance ([5d8234419c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5d8234419cd434a5d79964c3d411b01d3a29de2c))
+- fixed BlobCollector crash ([eec6f4796b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eec6f4796b0b60f47a25effc0ad4fd999af0d115))
+- fixed Metro port forwarding step in Hvigor Plugin when the path to SDK includes a space ([ad331ecd28](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ad331ecd28c0a76b785ac956cb4d4424b98d5fc5))
+- fixed Metro config for Node.js environments older than 18.20 ([122085307d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/122085307d4f0790533d034fc8c0fab3ac9dc443))
+- fixes dimensions not being clamped ([7f388d4708](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7f388d470831c8dec4e2ca44e93cf85163096496))
+- fixed views inside text (regression introduced with 0.77.0) ([7f1edae449](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7f1edae4490748ff14f3711639cc1a773eedaf53))
+- fixed crashes caused by getValueAsDouble method in ValueAnimatedNode ([55a4f8a214](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/55a4f8a2149ed3a48ab94d6d87a0a0000e3ef493))
+- moved JSInspectorHostTArgetDelegete to separete file ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- published CLI 0.77.1 (0.77.0 doesn't include hvigor-plugin) ([a9996639d9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a9996639d915298871eab2790c8b570754195401))
+- switched to jsi-based operation mode in Animated ([5772a08de8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5772a08de8ef9639a28eeba52b3ec8d9fdc4035c))
 
 
 ## v0.77.1
