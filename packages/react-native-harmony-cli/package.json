@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony-cli",
-  "version": "0.77.1",
+  "version": "0.77.3",
   "description": "",
   "scripts": {
     "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js && pnpm run --filter @rnoh/hvigor-plugin build",

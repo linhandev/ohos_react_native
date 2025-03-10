@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/react-native-harmony",
-  "version": "0.77.1",
+  "version": "0.77.3",
   "description": "",
   "scripts": {
     "build": "node ./scripts/build-har.js",

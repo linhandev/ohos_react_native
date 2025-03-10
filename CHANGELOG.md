@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.77.3
+- update and react-native to 0.77.1 ([dc13728a65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc13728a651bdb777ec1c913730a0ded30ed7c52))
+
+
 ## v0.77.1
 - added Yarn workspaces support ([35f7e2a0b0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/35f7e2a0b0d16d627fd1a5e01cb366408f28ee91))
 - fixed displaying incorrect error in some cases when it occurs on JS side during bundle loading from Metro ([827b97f2e3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/827b97f2e384d5cfe88508ce11e6605175124f3c))
