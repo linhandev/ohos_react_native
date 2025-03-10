@@ -105,7 +105,7 @@ async function runDeployment() {
 
   await askUserToContinueOrAbort();
 
-  // await publishPackage(RN_CORE_PACKAGE_PATH);
+  await publishPackage(RN_CORE_PACKAGE_PATH);
   await prepareMergeRequestAndAwaitForMerging(
     "react-native-core",
     RN_CORE_PACKAGE_PATH,
