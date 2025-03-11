@@ -4,5 +4,7 @@
 .DS_Store
 *.drawio.*
 package-lock.json
-# build
 .hvigor/
+build
+.yarn
+.husky

@@ -1,0 +1,26 @@
+/**
+ * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+#pragma once
+#include <arkui/native_dialog.h>
+#include <arkui/native_interface.h>
+
+namespace rnoh {
+/**
+ * @api
+ */
+class NativeDialogApi {
+ public:
+  static ArkUI_NativeDialogAPI_1* getInstance();
+
+ private:
+  NativeDialogApi() {}
+
+  static ArkUI_NativeDialogAPI_1* api;
+};
+
+} // namespace rnoh

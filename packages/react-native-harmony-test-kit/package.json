@@ -1,0 +1,23 @@
+{
+  "name": "@rnoh/react-native-harmony-test-kit",
+  "version": "1.0.0",
+  "description": "E2E testing toolkit for RNOH.",
+  "main": "./src/index.ts",
+  "scripts": {
+    "format": "prettier ./src -w",
+    "lint": "eslint ./src --max-warnings 0",
+    "typecheck": "tsc",
+    "verify": "npm run format && npm run lint && npm run typecheck"
+  },
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "@rnoh/hdc-server": "workspace:*"
+  },
+  "dependencies": {
+    "@types/websocket": "^1.0.10"
+  },
+  "devDependencies": {
+    "typescript": "5.0.4"
+  }
+}

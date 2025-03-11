@@ -1,0 +1,4 @@
+*.tgz
+*.tar.gz
+package-lock.json
+harmony/sample_package.har
