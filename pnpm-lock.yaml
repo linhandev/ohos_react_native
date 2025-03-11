@@ -174,9 +174,6 @@ importers:
 
   packages/react-native-harmony:
     dependencies:
-      '@react-native-oh/react-native-core':
-        specifier: workspace:@rnoh/react-native-core@*
-        version: link:../react-native-core/packages/react-native
       colors:
         specifier: ^1.4.0
         version: 1.4.0
@@ -199,6 +196,9 @@ importers:
       '@react-native-community/cli-types':
         specifier: ^11.2.0
         version: 11.4.1
+      '@react-native-oh/react-native-core':
+        specifier: workspace:@rnoh/react-native-core@*
+        version: link:../react-native-core/packages/react-native
       '@react-native/metro-config':
         specifier: 0.77.1
         version: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))
@@ -444,7 +444,7 @@ importers:
         version: 0.4.0
       react-native-harmony:
         specifier: file:../react-native-harmony
-        version: '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
+        version: '@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
       react-native-harmony-sample-package:
         specifier: file:../react-native-harmony-sample-package
         version: file:packages/react-native-harmony-sample-package(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -631,7 +631,7 @@ importers:
         version: file:packages/react-native-harmony-cli(@babel/preset-env@7.26.7(@babel/core@7.26.7))(metro@0.81.1)
       '@rnoh/react-native-harmony-gesture-handler':
         specifier: ^2.20.1
-        version: 2.20.1(@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))(react-native-gesture-handler@2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+        version: 2.20.1(@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))(react-native-gesture-handler@2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       chai:
         specifier: 4.3.7
         version: 4.3.7
@@ -646,7 +646,7 @@ importers:
         version: 0.4.0
       react-native-harmony:
         specifier: file:../react-native-harmony
-        version: '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
+        version: '@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
     devDependencies:
       '@babel/core':
         specifier: ^7.25.2
@@ -2149,6 +2149,7 @@ packages:
     resolution: {directory: packages/react-native-harmony, type: directory}
     engines: {node: '>=18'}
     peerDependencies:
+      '@react-native-oh/react-native-core': '*'
       react-native: 0.77.1
 
   '@rnoh/testerino@0.0.10':
@@ -8078,14 +8079,14 @@ snapshots:
       - encoding
       - supports-color
 
-  '@rnoh/react-native-harmony-gesture-handler@2.20.1(@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))(react-native-gesture-handler@2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+  '@rnoh/react-native-harmony-gesture-handler@2.20.1(@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)))(react-native-gesture-handler@2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-gesture-handler: 2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
-      react-native-harmony: '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
+      react-native-harmony: '@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))'
 
-  '@rnoh/react-native-harmony@file:packages/react-native-harmony(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
+  '@rnoh/react-native-harmony@file:packages/react-native-harmony(@react-native-oh/react-native-core@packages+react-native-core+packages+react-native)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
     dependencies:
       '@react-native-oh/react-native-core': link:packages/react-native-core/packages/react-native
       colors: 1.4.0
