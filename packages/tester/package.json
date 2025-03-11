@@ -36,7 +36,7 @@
     "benchmark-fps": "node ./scripts/get-frame-times | node ./scripts/create-fps-stats",
     "hiprofiler": "./scripts/run-hiprofiler-cmd.sh",
     "measure-performance": "./scripts/performance_measurement/measure-performance.sh",
-    "init-sample-project": "npm i && rimraf ./__SampleProject__ && ts-node ./scripts/init-sample-project.ts"
+    "init-sample-project": "pnpm i && rimraf ./__SampleProject__ && ts-node ./scripts/init-sample-project.ts"
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",

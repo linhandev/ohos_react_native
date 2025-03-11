@@ -54,13 +54,14 @@ it('should add harmony boilerplate to existing project', async () => {
   const filesCountInHarmonyDir = fs
     .readDirentsSync(tmpDir.copyWithNewSegment('harmony'), { recursive: true })
     .flatMap((dirent) => !dirent.isDirectory()).length;
-  expect(filesCountInHarmonyDir).toEqual(57);
+  expect(filesCountInHarmonyDir).toEqual(58);
   expect(allFilesInProject).toEqual(
     expect.arrayContaining([
       'metro.config.js',
       'package.json',
       'harmony/.gitignore',
       'harmony/build-profile.json5',
+      'harmony/build-profile.template.json5',
       'harmony/codelinter.json',
       'harmony/hvigorfile.ts',
       'harmony/oh-package.json5',

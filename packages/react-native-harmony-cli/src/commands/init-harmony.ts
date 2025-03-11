@@ -215,6 +215,20 @@ export const commandInitHarmony: Command = {
       dynamicTemplateContentByPath.forEach((content, path) => {
         fs.writeTextSync(path, content);
       });
+
+      const buildProfileTemplateComment = "build-profile.json5 can contain signingConfigs which are unique for each developer, therefore that file is ignored by Git. Create a build-profile.json5 based on this template after cloning this repository to be able to open this project in DevEco Studio.";
+
+      const buildProfilePath = harmonyDirPath.copyWithNewSegment('build-profile.json5');
+      const buildProfileContent = fs.readTextSync(buildProfilePath);
+      const contentLines = buildProfileContent.split('\n');
+      contentLines.splice(1, 0, "  // " + buildProfileTemplateComment);
+      const buildProfileTemplateContent = contentLines.join('\n');
+
+      fs.writeTextSync(
+        harmonyDirPath.copyWithNewSegment('build-profile.template.json5'),
+        buildProfileTemplateContent
+      );
+
       logger.info((s) =>
         [
           s.bold('Run on a physical device:'),
