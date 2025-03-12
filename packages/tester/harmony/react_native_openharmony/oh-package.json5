@@ -1,0 +1,14 @@
+{
+  license: 'MIT',
+  types: '',
+  devDependencies: {},
+  name: '@rnoh/react-native-openharmony',
+  description: 'React Native for OpenHarmony',
+  ohos: {
+    org: '',
+  },
+  type: 'module',
+  version: '0.77.3',
+  dependencies: {},
+  main: 'index.ets',
+}

@@ -1,552 +1,1018 @@
 # Changelog
 
-## 5.1.0.304
-- fix preallocation queue clean up timing,([841008d8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/841008d88ed1821879c6abeccb184b4288e3f138))
-- Suspend surface on navigation,([f7e86ed8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e86ed8ef9bc222e1739bf2b7d5f113ba98ee30))
-- update 版本说明.md,([f0832ef6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f0832ef68c6061569d5f741ae0a6bbfa28cc4adc))
-- fix: textBox not released,([4be94157](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4be94157a6f161c162a71965ef5adbd1b092c5c5))
-- fix: memory leak in ComponentInstance,([4ae6d456](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4ae6d456166b0fa3ab5c6ebaee77a7162e4941c0))
-- doc(api): clarify ambiguous description,([d310d9c6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d310d9c62ed29f56abaf1f8fecb5053a8ffa3b9c))
-- Sample运行效果问题修改,([ed367143](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ed367143d8c80d493015f184a142a65444638abc))
-- 新增“支持javascript多虚拟机切换”特性描述,([4acbd488](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4acbd488fc7960177f458dceb2712044b3b87293))
-- doc(build): add compiler tuning instructions,([04fb64d8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/04fb64d86a5cb6441b63dfd1f03ad7dceab91403))
-- 补充using_turboModule运行效果及操作步骤,([1b8408c1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1b8408c1ce7b655d846501fb9f5bea0ee5ed8136))
-- doc:demo_without_rnAbility README增加效果预览说明,([4a8d982b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4a8d982b6706c858ee1cec40503f1b50422b069c))
-- doc:demo_without_rnAbility README增加效果预览说明,([86c42f86](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86c42f8634ceba03ccd777b220f6203bc548d05e))
-- doc:demo_without_rnAbility README增加效果预览说明,([a5f98b74](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a5f98b7451e126d5300b84a065db0b196af97ee3))
-- home_fluency readme优化操作描述,([852de3b6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/852de3b60fb690af1f646b8797b5b792287d4abb))
-- doc:demo_without_rnAbility README增加效果预览说明,([0ba1f763](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ba1f763ece17245625465571780ec897b14a018))
-- doc:demo_without_rnAbility README增加效果预览说明,([60c714f4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/60c714f4e8024be8d5dcea204cec5ae9343c9b4a))
-- Supplement the focused attribute RN official website link,([af35073e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af35073e2180c0db9846e578a662826831aaa178))
-- Sandbox && RegisterFont Add Preview,([a6b4a452](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a6b4a4522f9e0d8c972038b5c001177dc67b9420))
-- FrameNode README增加效果预览说明,([321e45e0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/321e45e02c3981ea099837d509154709d4eed39a))
-- doc(bisheng): release doc on how to switch to bisheng compiler,([ae0b8c95](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ae0b8c954daa092fbac95de4f1e20d592ebb06f2))
-- RNSurface & 自定义组件 & 多Bundle demo增加预期效果,([a576a29a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a576a29ab3f22aeb938c18f5afc7ae7a6816430e))
-- 修复using_RNSurface Sample Metro 热加载功能,([b971c083](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b971c083268d65339fab1174b8dbfffb1794e196))
-- Add new features to version 5.1.0.205,([670c3d56](https://gitcode.com/openharmony-sig/ohos_react_native/commit/670c3d5613f359ab07227628aca55801e1f128c9))
-- RootTagSample Add Preview,([5ff54e36](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5ff54e363ddb94e2f94e0c0c4b88f3863b1c76a7))
-- 修改文档中AppRegistry.setWrapperComponentProvider的用例,([5539f47c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5539f47c3fab7fe4f68b4aabec567fedebcbf9df))
-- docs: update README_zh.md about tester,([92089a4b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/92089a4b25e003a32367ad44e9bf39f6c2a851f9))
-- Capture Bundle and Sample Project Add Preview,([78f769f7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/78f769f7f9af7ff3d9931f8ee95f0d2718928277))
-- fix: Fix the incorrect parsing path of Image.resolveAssetSource in the case of jsBundle in the sandbox,([f9cbe88c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f9cbe88c5c7ac211645e95e29d0dca4b36ea2e03))
-- 补齐性能调优文档中在线监控RN页面的性能指标FCP的两种方式代码段的样式代码,([31c1fe31](https://gitcode.com/openharmony-sig/ohos_react_native/commit/31c1fe316ac71e6846b5d8f3f0952505106e0fcf))
-- chore: update to version 5.1.0.205(0.72.59),([2bb49fa6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2bb49fa632a10f219625a83cf0ebb4b2bcb5fbde))
-
-## 5.1.0.205
-- text lineHeight problem,([723f1814](https://gitcode.com/openharmony-sig/ohos_react_native/commit/723f1814c3400bd63daa705c150baf237617284f))
-- add react-native-harmony-v5.1.0.205版本说明,([b18ca25f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b18ca25fcf26e84f8bbe4362ec17f1503a75bb06))
-- Revert "Upgrade the version number of react-native-harmony-cli",([d563c2ec](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d563c2eccc8bcbc50412cdb6df727dc58de1b6ef))
-- Add a semicolon after logical statements,([6a83f2db](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6a83f2dbe1a7963ecffe3df005413673ea2852f2))
-- home_fluency sample readme fix,([7473b529](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7473b5293fd93061c33b5dcca7e78a5c3acae379))
-- Revert "调整Codegen和新版二进制包的使用指导文档",([bb7799b9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bb7799b9a2fc81c1fa7a214950bb930e6043245d))
-- !431 feat: Add a new internal HVigor plugin for compiling release and bytecode HAR packages. Merge pull request !431 from xiedairong/hvigor,([2f4edf31](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f4edf313ff0d059af2da65dfcb044e668e5fc2e))
-- fix：多行输入框onEndEdit回调事件返回对应的文本内容,([9bf1f5d2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9bf1f5d28608bf04363b633ce6b85176ef1aa826))
-- fix: licensePlate is not supported in textContentType,([b80157c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b80157c5c2cf8a32e5e4640542679b6cc6b27500))
-- Add rnSurface constraints docs,([59d1fed8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/59d1fed81e6ef33e54918e0cbcc527f46f0b1fb8))
-- fix: Button onPress cannot be triggered using keyboard space,([7d68915b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d68915bacf64821a502a366257dce1e994d082d))
-- Fixing the document,([3f5fc026](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3f5fc0262d01b3fd30143dd3513ecc0414bcd4f5))
-- Add a semicolon after logical statements,([fd654186](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fd654186a91a3f199645afeabdccebb5d26713e0))
-- fix:m_ctx destroyed when using by asyncTask,([92f6a550](https://gitcode.com/openharmony-sig/ohos_react_native/commit/92f6a550a2d17c6c684c05347f007df164239361))
-- fix:官网devtools链接失效问题,([36241ac7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/36241ac76f55de40c79007805f9e59b15f763b86))
-- Modify the space issue in Sandbox's readme,([bd4c0281](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bd4c02819c0b78d66f19696457cefdb7c64421dc))
-- home_fluency添加运行效果及特性描述,([1f67ee4a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1f67ee4abaa348c685c13b09244ba17082d6c6c2))
-- PR模板,([b3d84648](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b3d84648df78b4dd4891cdcdc338da58143b48fa))
-- update Turbomodule.md,([bc7ad74d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bc7ad74d4df66886733d09f1c3b964caf022903a))
-- chore: update to version 5.1.0.204(0.72.58),([b0f7d1e4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b0f7d1e4e8f0a7a6eaa0a5cde62f682170385d58))
-
-## 5.1.0.204
-- feat(dfx): add trace slices for linking task generation/execution and functions performed on main thread,([f26cd9c6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f26cd9c629b3707763a4c1a42f55840c307971ed))
-- fix: Fix cross-module dynamic conversion failure.,([48c8f948](https://gitcode.com/openharmony-sig/ohos_react_native/commit/48c8f948dc73f0ed9a2ef7de034da273c61592f7))
-- fix：TextInput的onEndEditing和onSubmitEditing问题修复,([7d590a14](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d590a148ec5d0d6beb40f8bc7dbc7e3fc9f2e7c))
-- finalizeMutationUpdates不再新起一个Thread,([1d954da6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1d954da6c82531d4569398117a143a85c16ed9d8))
-- fix:文档修改,([11894ab5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/11894ab5664ee7b696257e7e04dbc082530a23ee))
-- 删除掉didMount中的finalizeMutationUpdates,([138db056](https://gitcode.com/openharmony-sig/ohos_react_native/commit/138db0567792988c910eac89df2ade54cfc2d914))
-- add react-native-harmony-v5.1.0.204版本说明,([bfd1e63d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bfd1e63d066675621ddf1b709bfe45875d41733c))
-- fix：TextAreaNode format code,([9ded13f1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9ded13f136a560735a12fb474508fe51ad2b3e5f))
-- fix：TextInput的allowFontScaling问题修复,([30b7d596](https://gitcode.com/openharmony-sig/ohos_react_native/commit/30b7d59610440cd5091e7838af47ca20c653558a))
-- fix: default Image accessibility behavior On Android images can be focused by default in accessibility mode, on OHOS they are not. This MR fixes this problem. Also, in bridgeless mode `importantForAccessibility` doesn't work, because RN chooses view configs defined on JS side. Run the following demo. I didn't add a test case because currently tester doesn't render all test cases properly. (https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1502),([c7defe99](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c7defe9919e31fb5425ea3bf3c8bbbe2c66531c2))
-- The time when finalizeMutationUpdates is triggered due to mutation submission is fixed.,([63271c43](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63271c43fc40d116c0bd28d48ccdcf2bda32c7a9))
-- Text visible for screen reader This PR makes text visible for screen reader by default. - Set `ARKUI_ACCESSIBILITY_MODE_ENABLED` if text isn't in component with `AccessibilityGroup` set to true 1. Open tester app. 2. Run "Text::make the screen reader say "This is accessible text". - [ ] Project compiles and the tester application works. Closes: #1404,([78bce0e2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/78bce0e2ea237289efbc7635a87b877a0b171530))
-- fix: map the accessible prop correctly The `accessible` prop was mapped improperly. - fixed behavior of the accessible prop - deprecated ArkUINode::setAccessibilityLevel Run test cases added in this PR. - [x] Project compiles and the tester application works. Closes https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1381,([8c035cd3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8c035cd32ebbdb98997f692ef4dc34ac671a9bcf))
-- update home_fluency,([83367efd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/83367efd75356d4cb65a3d9310d011b73989e685))
-- Fix remote dependency switch to local configuration file,([1fc1d99a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1fc1d99ab1150ba7ed60f28628d2246a10866c63))
-- 调整Codegen和新版二进制包的使用指导文档,([3d7819b5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3d7819b5ad8e9900a648643fdb2ae6de809e2c39))
-- feat: TextInput/TextArea textContentType extends,([d593c8b1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d593c8b1a289796e6365680996d4ba8d20c354fc))
-- 统一readme格式，readme添加RN SDK更新步骤，更新版本，格式化代码,([66540bd1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/66540bd1cf8e2cf7a4859f57cb9f0d9033891a3a))
-- Format the code format of the Sample project,([555542c6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/555542c657a84fdcf21bc20ac28c27b88bfd632c))
-- Fix example project's readme font error,([803959f3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/803959f3df74bb31ec34014e5f951d39cd673ecf))
-- Supplement the hot loading function of the using_SNSurface project,([deddb6d3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/deddb6d3c810a89c029671696c92bc0b49bd2d8f))
-- Feature Description of Fix Registered Font,([bd96ecb4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bd96ecb40b719ed56ff5ce918d50b88a6862a40d))
-- Upgrade the version number of react-native-harmony-cli,([eb492574](https://gitcode.com/openharmony-sig/ohos_react_native/commit/eb492574609a8074dfc631b00103871eaeb5ae4a))
-- feat: Add a new --ets-output-path parameter to codegen-harmony.,([31166aed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/31166aedcdf20dd3ad5606b1465885415129e6d6))
-- feat: add runOnWorkerThread,([ae4e47d6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ae4e47d6290ecf4a4970efa3116d568fb25c21f1))
-- Delete the .tgz binary file.,([967e72c1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/967e72c16697805afd4de6137932a4e2a200b346))
-- Sources for jsvm_executor and hermes_executor,([2c39d2d5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c39d2d58b59abb526a4d4c0610aa202ae7ec154))
-- add react-native-harmony.cmake,([425a01ad](https://gitcode.com/openharmony-sig/ohos_react_native/commit/425a01ad4cecdb5f4db9390cf55767e3790ded94))
-- add react-native-harmony-v5.1.0.203版本说明,([dcb4feeb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dcb4feeb85de01162adc9a1f20d2e4ee9229241b))
-
-## 5.1.0.203
-- chore: update to version 0.72.57,([e10c9b86e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e10c9b86e27d638261e28d8f18048bafb5ef47a1))
-- fix:crash when Animated remove native event,([62fd10343](https://gitcode.com/openharmony-sig/ohos_react_native/commit/62fd10343f8061dac00ad3c0f72ccc45855b15ec))
-- fix lineHeight inconsistency,([325a3319c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/325a3319c642880e007aa0cffcebe8b32cc351ef))
-- chore: update to version 5.1.0.202(0.72.56),([6d5003245](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6d5003245109243b330adeb32156a0fe9de28575))
-- fix(codecheck): unsafe memcpy,([9b42afd1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9b42afd1aa3aa6c4200e51577aa1260fdd75479d))
-- feat(mmap): speed up bundle loading with mmap,([1451c57a5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1451c57a5c5a63607a0020c1b1ca4cb861372805))
-
-## 5.1.0.202
-- Supplement the pull third-party library dependency command,([18e052f9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/18e052f9e2073ab4860f1526e21ecd8c0daab360))
-- doc(performance): update performance tuning instructions and add BiSheng compiler usage,([c3ad53c3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c3ad53c3dac1f260af07016e49924d5d0563e777))
-- fix: 解决bundle加载状态精准度问题,([d6152766](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d6152766fc9d4f3653aaf3c1c41db6802a4a5a3c))
-- chore(.gitignore): git ignore build log,([0ce01aa2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ce01aa2f6142bcff1c23f4e6a8ac01dcbd63fc2))
-- doc(marker): add instruction on how to enable react marker tracing,([0b7a0b9c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0b7a0b9cabf2586e9980fa3865f57961af3e1d17))
-- fix: Fix the issue of accessibility and inability to click,([749e1142](https://gitcode.com/openharmony-sig/ohos_react_native/commit/749e114265807198047a0d9b9a0e5838e529575c))
-- chore: update to version 5.1.0.201(0.72.54),([7e416696](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7e4166966306c256037986008cf034b5ba57c0e7))
-- 添加react-native-harmony-v5.1.0.200版本说明,([51490cb9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51490cb9adda446fa778e3cfea1f6a76b680dfee))
-
-## 5.1.0.111
-- fix:change delay time,([f19bda388](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f19bda388633c9e3290737c1500df1b2387b8cdc))
-- fix:surface change delay in non-windowed change scenes,([f084903c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f084903c58d2dcc321e5f225a824ffe981d0f686))
-- ix: Modify the type of onFinished,([8973483e3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8973483e36fbbfe445944ab5ed572576c23514cf))
-- fix: MaxFontSizeMultiplier property adds a judgment greater than or equal to 1,([39a36feb0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/39a36feb0a8343a296245fe50bf32aaba4ace91e))
-- config: RN Tester add fontSizeScale config,([4256e190a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4256e190a7691e454a6e2ee72d5aed93af3451d1))
-- fix:crash when updateConstraints called on a destroyed surface,([cbd6bf44b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cbd6bf44bf2e449a3a88454a7fd9236ebb7369bf))
-- add enum UI_INPUT_EVENT_SOURCE_TYPE_KEY,([c5625dbe0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c5625dbe04cbca9ab3dda1ac1e7ceeae1a3d1d15))
-- fix: Fix the mouse click onPress responding twice on PC.,([6b628dfb4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6b628dfb4c0966c0bcac4774ef453f091a7578d8))
-- fix large scrollEventThrottle ScrollView missing items on ends,([16c6ef3aa](https://gitcode.com/openharmony-sig/ohos_react_native/commit/16c6ef3aab69502a506e4fd089a6e2491bcbebbc))
--版本升到0.72.52,([5355c1015](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5355c1015c1b4412557ab6b9a186f60d914101d7))
-- fix text info null pointer cppcrash,([e8e869565](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8e869565fd8d6bde9f42081e44adf919002a9df))
-- remove copyright header,([56ee06e23](https://gitcode.com/openharmony-sig/ohos_react_native/commit/56ee06e2301e1e94fe3abfbd863e0a81a33d093e))
-- fix fontSizeScale incompatibility,([891b3a67d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/891b3a67da08f0b08a1bb3e77faa812684a06bf5))
-- fix:crash when TextLayoutManager::measureLines get error position,([2259ec65a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2259ec65ad6df8d24554fa660756ef53d8e48e2e))
-- 版本升级到0.72.51,([e1756583f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e1756583f89591248903120bc4cb5526315ff1b6))
-- Compatible with older versions,([ffa10682a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ffa10682a6c460eb1151a4137b329e3ee270377b))
-- fix: Do not use cache when there are attachments.,([dd7f349d7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dd7f349d7c3ef31daf3787a59d730538857b3240))
-- add 0.72.48 CHANGELOG,([395b15494](https://gitcode.com/openharmony-sig/ohos_react_native/commit/395b15494f09fea98c7ac0bb01cb818ab2e7b228))
-- changelog,([006caf12b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/006caf12bf02caf0129e1e573d64533c3006c793))
-- fix animationTick crash,([6fc3a4e80](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6fc3a4e80a14deab6e4cb55194f0a65c148795bf))
-- mark new tree dirty upon pointScaleFactor update,([062475498](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0624754982742e42f1c7c0c4e9e5779fa44e2bea))
-- fix multi windows Incompatibility,([b1fae8ce7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b1fae8ce7f59f39c43f2da4526fbf124f7cf3f3f))
-- fix: getNativeNodeIdByTag should return a string.,([41054c90d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/41054c90d0fef4619ea9bf494b68b3b8dfa4e78d))
-- fix:Accumulate layout events when ths Window size change,([7fa4e0a76](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7fa4e0a769ad121c630af95e2a82a0687fc9880b))
-- fix:Part of the text setting color is abnormal,([bef3559ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bef3559ed3f9069659424762851c9400f077506e))
-- Add the copyright notice for HUAWEI,([ce5bfeaf1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ce5bfeaf194f336c2b155b1b117eaaf3a729dead))
-- fix custom node focus problem,([a23c77854](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a23c7785440a484eece69c42286749eea03e982f))
-- 版本号升到0.72.50,([6b859fb7b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6b859fb7b044ca4a7b2e96a1176e0386fabdadbc))
-- fix:fix crash when click alert button after cancel,([6709a2c00](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6709a2c00315fb0efc654910d10c41d63fd00e8c))
-- fix codecheck,([c17dfba54](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c17dfba543f7ae4bc6a08d4339d4872c33a1b1ad))
-- compare scale when finding cache,([e9821abe0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e9821abe0d21b33358683702371b770efdc71113))
-- Refactor fontSizeScale,([2a99e4440](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2a99e4440c1ed597a497a89c11e565a635a0e414))
-- adapt displayInstance,([04b520f47](https://gitcode.com/openharmony-sig/ohos_react_native/commit/04b520f47ac2d2372b8f27fb8a0503ea3384d695))
-- 版本号升到0.72.49,([88668a843](https://gitcode.com/openharmony-sig/ohos_react_native/commit/88668a84301c838f0a4587241dcae1cc00ab9b1c))
-- docs: 修改DevMenu注释，增加在release模式下调试的代码注释方法,([2000ee9d6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2000ee9d6d11133379e4e9abef69a6b8b8c97bb8))
-- remove this,([bf64134ac](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bf64134acafdf0ab7720499c0e94fa6735017ffd))
-- fix: 修复onDestroyCallbacks拼写错误,([f759e76d7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f759e76d7f7026889a13e0a447af6f1b3f72e852))
-- Trick: skip empty task submission,([1771dd5c8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1771dd5c823d3235cc25d6e2a0eb7efcd95cbe05))
-- WebSocket的connect接口补充protocol参数,([acaf91727](https://gitcode.com/openharmony-sig/ohos_react_native/commit/acaf91727048439156a16818fcf785f519e85363))
-
-## 5.0.0.813
-- fix: disable DevMenu in release mode,([4e0fde3c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4e0fde3c1ab6f6311640c6d0f4f15728c9b74a30))
-
-## 5.0.0.812
-- 删除注释的代码,([7b9fc79c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7b9fc79c221cae10bb44fb5260a7ccd5cc5a266c))
-- changelog,([59490d0f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/59490d0fb8bebac1e9bf4aed792333a5d85b3272))
-- Trick: skip empty task submission,([a238743e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a238743e27f46acda5b303fc289c47e68188e8b8))
-- 添加react-native-harmony-5.0.0.812版本说明,([3d403ad1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3d403ad1d269b9c92ef78f87830b80876860882f))
-- 版本升到0.72.46,([04f9313b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/04f9313b96fa03167ededfed3fbeef42d9559528))
-- fix: reconnecting websocket floods logs with errors when trying to reconnect,([e708b330](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e708b3302b4dcb545e1a208f135da994a96b138d))
-- fix: setValue for Animated transforms sometimes is not applied,([cea35762](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cea35762ed36c9a6f70fe206ad9ddd7b0fc71750))
-- fix: 修复metro设置死地址后强制转换为localhost的问题,([62d637a7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/62d637a703280850e1482ed90bf9108c55bbc4dc))
-- 更新0.72.44 CHANGELOG.md,([2b85bf3d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2b85bf3d0774b5a8c2fb75ccf2cf87df049fb267))
-- 添加react-native-harmony-5.0.0.811版本说明,([20a6402c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/20a6402c36f0e87cc6d2e53459a559068a23fce2))
-- 版本升到0.72.44,([4182eff0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4182eff0c6dfe958414c2ac8ff13d0b93be55b01))
-- fix: selectTextOnFocus cannot select all after manually typing,([afefa6c7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/afefa6c7d07eeb18c908641e369d6bf8b24da9ac))
-- remove return,([6f902b00](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6f902b000f7fe7f33a1914cbaee2603b83f6f9bc))
-- Standardized,([28f5ff37](https://gitcode.com/openharmony-sig/ohos_react_native/commit/28f5ff379791e467f27d26519ff5577d5293c89e))
-- fix: set accessibilty only when provided on JS side,([38b57815](https://gitcode.com/openharmony-sig/ohos_react_native/commit/38b57815af35b89e14586314b1a2af8c303ad81f))
-- fix: Move the add and delete operations of nodeByHandle to the constructor and destructor,([af815e9a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af815e9acb3481729e84f9755c2b677de9fe467a))
-- 补充图片,([74cb5d9c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/74cb5d9c46fb1678ded5436274654c8a631a7b33))
-- 新增release编译报头文件缺失FAQ,([a7f6ad51](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7f6ad51af97ef8cbdd2718bd7728dfa4d4ef55d))
-- fix: save and get ArkUINode from nodeByHandle instead of userData,([1e6f74dd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1e6f74dd57f1e89a085b57a1becf3ef55e498dba))
-- 添加README.OpenSource文件,([aa1924a2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aa1924a208a3e9107336ee983fc92c1910981d45))
-- 解决规格类FAQ.md合并冲突,([20706e98](https://gitcode.com/openharmony-sig/ohos_react_native/commit/20706e984e7e6d35e6f33553e38d8f3591121d1c))
-- RN偶现崩溃，报Fault thread info，Name:RNOH_BACKGROUND错误,([9f771e63](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9f771e63f998c894f0417584f93bf1d8517e7bc4))
-- RN中规定日期格式问题说明问题,([9b786bc8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9b786bc820ca97525f01c31212b2df658b04e9cd))
-- RN偶现崩溃，报Fault thread info，Name:RNOH_BACKGROUND错误,([11f4b527](https://gitcode.com/openharmony-sig/ohos_react_native/commit/11f4b527d748dee991a866aa6f1abd36755d3c7a))
-- RN中规定日期格式问题说明问题,([965e0406](https://gitcode.com/openharmony-sig/ohos_react_native/commit/965e04067bdb6fb25943c53a3074730dd1a8950c))
-- 性能调优:两处图片未换行,([5f21fe29](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5f21fe29305ff5b1c6e2dfc11de2885bf9de55b0))
-- 常见开发场景文档:本地依赖切换至远程依赖的描述重复,([a44bbe00](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a44bbe00fd36fca3a0f8c72c6820f176d4499278))
-- 新增FAQ，补充enableBackgroundExecutor、getPagePath说明,([0b0f52e5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0b0f52e525d979c5a416c41b46ed2d6e904b38b8))
-- 增加已知问题链接,([93ed8a15](https://gitcode.com/openharmony-sig/ohos_react_native/commit/93ed8a15f1d3873a24637b168124a63588734be0))
-- fix typo,([4b8e0cab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4b8e0cabced789055c2bcd62024dfb70011ef888))
-- 增加setNativeProps说明,([5fa81df1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5fa81df1537cbff779e4f43f1e4496b490cf9e22))
-- 增加setNativeProps问题说明,([d43993b6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d43993b631e119931bd10446aea1ca0f96b701fb))
-- CHANGELOG,([ceb76a60](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ceb76a60d0f51f8bdb03558a3ca9de2d37a363d1))
-- 添加省略号,([00e1bb6d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/00e1bb6d2e3e15eb8ba8e2db6c022135ab43dc6b))
-- 修改concurrentRoot说明位置,([4c76ef53](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4c76ef5398d8ae3120f9b8409e6f662920bc9395))
-- 增加对concurrentRoot的说明,([e4f6ee43](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e4f6ee437342c27689ac566d21b898d5911795cd))
-- 针对外部问题单提出的文档补充说明,([7ae927d2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7ae927d2eb8086e6cd5726ffbd949f65fed550c7))
-- formatting,([b38e8df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b38e8df4996f0f1cc544f91407d691ebe52fa7e3))
-- 解决RN侧开发，当用到Modal组件时，在鸿蒙中不起作用,([fc243c18](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fc243c18c9f6c6adbcfd6c2ae3e1e8160a69a3b6))
-- 解决RN中不支持字符串显示日期的格式,([85eaa8b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/85eaa8b8a009ade2fd35df9e317683d8cf7bbfbf))
-- release模式需要将folly引入代码中,([852ba263](https://gitcode.com/openharmony-sig/ohos_react_native/commit/852ba26303679aade6649cbdc9f24f0071c4fe25))
-- formatting,([4bafff0d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4bafff0d59fb1bedabe3401774e6a7346cf5c646))
-- formatting change,([5c7ff090](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5c7ff090aaafc86ddc196bc9c02a02b6ca52abe1))
-- 在进行光标位置设置时使用NODE_TEXT_INPUT_CARET_OFFSET接口,([77ef91aa](https://gitcode.com/openharmony-sig/ohos_react_native/commit/77ef91aad6b045dbc958ca37aa5d7d0337396cf8))
-- 添加react-native-harmony-5.0.0.810版本说明,([165b2bff](https://gitcode.com/openharmony-sig/ohos_react_native/commit/165b2bff3f7b4597dbdb2ea8d7b77d9b0852bfb2))
-- 版本升到0.72.43,([5ef52f8e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5ef52f8ee34cd922c481646d39e2910eb6a43a8f))
-- 修改编译类.md图片不显示问题,([3ae4c66d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3ae4c66d85618e198929ebe91ceb0eacd7d1c56a))
-- 补充常见开发场景-引入三方库报错.png,([14342472](https://gitcode.com/openharmony-sig/ohos_react_native/commit/14342472fbe2ae0cfea646ddce54949d2727d75e))
-- 把license文件复制到RNOH目录内,([27f2d71d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/27f2d71d49ca02e5eb4d98f9ffb2ebd629b9e4ed))
-- 补充说明原生页面切换到RN页面字体偏小问题现象,([60739d0c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/60739d0c9e8bb117fc72d346b93941c82886d12b))
-- OAT文件修改，屏蔽react-native-harmony/Libraries/内所有文件的版权检测,([fc1a6853](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fc1a6853b23791f7a3807c7cbce68039b2471c81))
-- 新增NOTICE文件,([311bedc9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/311bedc950ca0206820da57700535c810983b24f))
-- LICENSE文件更新，新增LICENSE-MIT,([ed2b5c27](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ed2b5c278489d4184ec0c60018b728a3ea3794c4))
-- docs:Added the description of using npm for local installation and remote installation of Harmony dependency packages.,([3a83ed49](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3a83ed49f9fc822804849536cc96d458e2142ef7))
-- 修改在线监控RN页面的性能指标FCP标题为四级目录,([ede1ecdf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ede1ecdf382773bfad0ee5632d5f6b4e2a5acf9f))
-- 在性能调优中新增在线监控rn页面的性能指标FCP内容,([cfce5d0f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cfce5d0fa468abecadc37b176c099eade923e1cc))
-- Revert "remove taskExecutor from EventBeat",([6a65a70c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6a65a70c34c6cc344fd60da5610250099b64d1c4))
-- Revert "use react RuntimeScheduler",([9d33c477](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9d33c477412baab050c67cd1bbe04dd3061310d7))
-- Revert "implement sync and async event beat",([21e88a3d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/21e88a3d3e9e60d68c99c6ead72772b26ce4fa2d))
-- fix: Fix some description issues,([3d432924](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3d432924a3504dbfce678754ca00e5c4fd49d6a4))
-- avoid codecheck alert,([cb6f1e1e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cb6f1e1ec2a385efc1e12df281d6e1625c93d372))
-- 修改使用类FAQ代码格式不一致问题,([4cbdb488](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4cbdb488038542ac4af9868fb52523d92f501240))
-- fix: Modify the demo and add a faq.,([3f171351](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3f171351b8cdb184a406f3568862dec5558178a4))
-- 解决架构介绍中ContentSlot点击不能跳转,([79e25299](https://gitcode.com/openharmony-sig/ohos_react_native/commit/79e252997c75da7bc5e36e2c538b31decf249e85))
-- 解决架构介绍中ContentSlot点击不能跳转,([707fc8a3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/707fc8a3d1f2d8667d5e07dcf52eb4865f86c621))
-- 修改使用类编译流程步骤,([0fe7a27f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0fe7a27f94e57bc75fe24ab6aea8550b7686c822))
-- 修改调试调测文档未换行问题,([6a60705e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6a60705e0efb3c86bd986695a5502d47e5f3de7b))
-- 修改编译类文档语句不通,([a827efd4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a827efd479173819bc53ff5b87d0f12d2cc8daad))
-- 修改ArkTs写法不一致,([69e57995](https://gitcode.com/openharmony-sig/ohos_react_native/commit/69e57995bd1bf97f674603cf6f0def193473e7af))
-- 修改使用类FAQ代码格式不一致问题,([2ec24a25](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2ec24a25719f4b09bf289a3d91fb500cf81ad1f7))
-- 修改架构介绍字体大小一致问题,([b2acdc73](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b2acdc730f8f4240adb90c5fb80b29e947e03cc6))
-- 修改使用类FAQ图片不显示问题,([f4def7a6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f4def7a60650aa43ee6425fa40845f394091edb8))
-- format patch,([c24edfad](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c24edfad2629966e39051fb5af2eecd2b272261f))
-- update,([6adb7bd8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6adb7bd863e99967def47d0fb3d3afc7b903268c))
-- update Flatlist performance optimization doc,([90ca13d3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/90ca13d32185390f6de87e65838fe8ded85a0b43))
-- Adapt I18nManager for harmony,([78ebbf53](https://gitcode.com/openharmony-sig/ohos_react_native/commit/78ebbf53eabad6744ccebf2724d648c5d2f2fd20))
-- 特性变更:ContentSlot接入,([ff18f216](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ff18f216eea687b59222dd1ba4193e698e9f9c79))
-- 添加支持Metro局域网内远程调试说明,([42c64c65](https://gitcode.com/openharmony-sig/ohos_react_native/commit/42c64c65df30a409889c4e56a045933bfd7827ef))
-- 添加react-native-harmony-v5.0.0.804版本说明,([d3136bc8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d3136bc8ca19caebec705f395b02c68c9386dff6))
-- 版本升级到0.72.42,([41b6a61b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/41b6a61ba0629f62407be087c346192177f37f49))
-- 添加架构介绍-RNOH启动流程图,([34fadcc5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/34fadcc52eddb94402603a0deaa6f39da84f4e2c))
-- 添加架构介绍-ContentSlot接入流程图,([525963f1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/525963f1a7dfba8e8f72dce06f0abaddd533eee3))
-- update docs/zh-cn/架构介绍.md.,([ae8943c9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ae8943c9513662fa6d221bc1752b8c6f4b52fe49))
-- fix typo,([e75336e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e75336e7551f20af691006dec3bf86a6a431cdd9))
-- RN页面挂载到ContentSlot文档更新,([0a081640](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0a081640aa30e356f5310e81040947644cc67b12))
-- 删除过期图片,([e8cfb803](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8cfb803b90772795de5dc945b9da421d29bfb5a))
-- fix: Should be implemented in subclasses,([c89de884](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c89de88478a61d6c9494680517939f6641e2533c))
-- remove redundant preallocation parameter passing,([388011a9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/388011a9f22f2140f344c8fb68e3561f6cd57077))
-- 文本格式修正,([86c17e87](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86c17e8792358c2cf1bda9d0bc980602892c472c))
-- FAQ: 加载多个实例后，页面侧滑返回执行了多次返回动作的问题说明,([49825de2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/49825de23df057485cc9aa400605cbe4fa7c9468))
-- fix: Setting the Open Source Repository,([9c4f3ceb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9c4f3ceb5340ebd49271ebcc576a3be6dea3f19b))
-- revert: Cancel the uniqueness of componentId.,([f78d6518](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f78d6518c360d802f37b92e0b682367d8e5b83ce))
-- 对setState会触发onchangeText修改的补充,([18150718](https://gitcode.com/openharmony-sig/ohos_react_native/commit/18150718f5c02fe42edbb88c5522bd82314aeeda))
-- update custom font faq,([e9d2788f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e9d2788f1c100da1c707a174180a8cb78b8f6448))
-- Update custom font doc,([55145b62](https://gitcode.com/openharmony-sig/ohos_react_native/commit/55145b6276decdacb306a62e7198b5848c0dccdd))
-- compatibleSdkVersion改为12,([18c69014](https://gitcode.com/openharmony-sig/ohos_react_native/commit/18c69014f0af70a9df1f86b7f8d0ce6a74b375c0))
-- fix: Sets whether the Text component can be focused by default in barrier-free mode.,([98e7d7bc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/98e7d7bc575ac66fdfaead109f76318643a40b62))
-- 添加问题说明标题,([b0b5abc4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b0b5abc4e68cd7e6516fb7d445bb6974f9cf7f3f))
-- 修改描述，代码说明用反引号包裹,([d160c3b0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d160c3b05fbfe7564fb06cdd301ebff9e6e29314))
-- FAQ: 使用KeyboardAvoidingView组件页面被异常抬高的问题说明,([4723e489](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4723e4895e30cba40991930f915ea568115a6478))
-- fix: KeyboardAvoidingView: React.cloneElement should have a non-null child as an argument,([ee59aa70](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee59aa704cab320d3ccac5d8b520512780dae1e6))
-- 715版本特性变更说明,([61511881](https://gitcode.com/openharmony-sig/ohos_react_native/commit/615118815b1a05b8fa29c2eca6a197669f09bf38))
-- 版本号升级到0.72.41,([2bd8abac](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2bd8abacfcaced711a16d9d1333fce0dd019217b))
-- 添加原生页面切换到RN页面字体偏小问题图,([751cf6ff](https://gitcode.com/openharmony-sig/ohos_react_native/commit/751cf6ffaa78dfaeb9d09c68526267b14376cef5))
-- Revert "fix: Modify the import of Text by other components.",([57804e56](https://gitcode.com/openharmony-sig/ohos_react_native/commit/57804e5606742c21faaec8ec0b29fb519a3763ed))
-- Revert "fix: The accessible attribute is set for the Text component but is not transferred to the native side.",([77b747c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/77b747c5c5a0b28b683da567bee948bc907bf728))
-- 添加react-native-harmony-v5.0.0.803版本说明,([54afee4b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/54afee4bf5437dd080826dc2069ad9c03d8e395e))
-- 版本号升级到0.72.41,([7c079d5e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7c079d5e35b8d535fc241e0972e1cdabfedb216c))
-- RNOHCorePackage导入方式变更,([f03f0b52](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f03f0b525e94d2c9cf9ff87b966ab53ec3d06286))
-- RNOHCorePackage导入方式变更,([167f0948](https://gitcode.com/openharmony-sig/ohos_react_native/commit/167f09489ae6611e86c3e986e6ed3c48471189e3))
-- 说明RNOHCorePackage export的代码报错，使用到RNOHCorePackage的代码报错解决方式,([5ab63785](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5ab6378513243e184602375158b42958ee7bf402))
-- 说明RNOHCorePackage export的代码报错，使用到RNOHCorePackage的代码报错解决方式,([439483ec](https://gitcode.com/openharmony-sig/ohos_react_native/commit/439483ec43da0909b0bac08dc0d690083f39da0c))
-- fix: use unordered_set,([7969b1cb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7969b1cb285d4444b4ee3921e5cedde389315519))
-- fix: canonical code,([bbf2ca3d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bbf2ca3da5b611dea4190dbeed0216beb8bedbdd))
-- 补充FAQ关于windowSizeChange的相关内容,([1c2f60b4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1c2f60b4074eb8ae9b7047acd9d0948d1f1f6492))
-- 整改版本说明为ohpm的版本号,([718e7385](https://gitcode.com/openharmony-sig/ohos_react_native/commit/718e7385df8c69314f7268ebd255816c0b90d286))
-- update tester/harmony/react_native_openharmony/src/main/cpp/RNOH/arkui/TextAreaNode.cpp.,([0b08b586](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0b08b58615ce180018b57c78004ea466fc8af4a3))
-- docs:Added dependency notes on how to introduce rnoh in third-party libraries or custom modules.,([d8e86c4b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d8e86c4baae3f553472bed33f866f1745847afd5))
-- fix: 文档格式调整,([641aecf2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/641aecf2c82f3c5faa582cc7c2f73d296c5ae07d))
-- fix: Modify the import of Text by other components.,([ceb3f4cd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ceb3f4cd3a2003a0b65e777b6da0eb0ed1243eb3))
-- feat:常见开发场景.md 补充内容,([328da795](https://gitcode.com/openharmony-sig/ohos_react_native/commit/328da7953bf597d97140c5c7c0b22199337830a4))
-- fix: The accessible attribute is set for the Text component but is not transferred to the native side.,([4b3ce8c9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4b3ce8c967732044c7030704774b437006b95913))
-- fix:The default value of the blurOnSubmit property for TextInput is true.,([6fe83b00](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6fe83b00160b0900faf179acb2e3aab20193ccb5))
-- fix: Delete Redundant Code,([bb6ee98b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bb6ee98b8b2cd20f176450f96bee2bb39d89ef6e))
-- fix: Standard Code,([5f863937](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5f863937c494a83b9a13eb626580b90aa52536a1))
-- 整改版本说明为ohpm的版本号,([ac652cf4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ac652cf4a40fcb97de264c00f6db9c48b5db6f16))
-- 环境搭建.md添加codegen说明,([79edfc9c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/79edfc9c6b6927ccde0270a82ec4b911025e17dc))
-- fix: If a single-node component such as svg obtains the root node, a crash message is reported.,([1c3afb39](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1c3afb39d5650c1d4e72b923ed31babb80562456))
-- suport abortPrefetch,([8bd54b32](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8bd54b3249a6c22bd28eb61d7327a604006b85a9))
-- TurboModule.md图片换行处理,([2389fdfb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2389fdfb5a4f78967e8f31f9d532d53d3648f7f2))
-- update tester/harmony/react_native_openharmony/src/main/cpp/RNOH/arkui/TextInputNode.cpp.,([03492563](https://gitcode.com/openharmony-sig/ohos_react_native/commit/034925636eea2759293383f09080ef3e4f3cd9ac))
-- fix:setState will trigger an onChange,([1a4ddcb9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1a4ddcb9e0930fdc289a0676b9cfd57bd8a89615))
-- fix: the soft keyboard popping up with an abnormal height.,([f5185ad1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f5185ad196d4dac38781ea63139fee0c9a6a7753))
-- 添加react-native-harmony-v5.0.0.802版本说明,([e8140c77](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8140c77601089d7c0169e77d6576110deb861dc))
-- 版本号升级到0.72.40,([f8fd6473](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f8fd64733cf76e7baa23a55ea4316db3bfad3ef6))
-- Upgrade compatibleSdkVersion,([5fc2aa7b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5fc2aa7b63ebc2e8516e7f3966132ae48d8fdd66))
-- revert pull Fabric transaction to JS thread,([396ebb30](https://gitcode.com/openharmony-sig/ohos_react_native/commit/396ebb30446d5c12721cf4d65c0519bb30422255))
-- Fixed onMomentumScrollEnd event trigger error,([58278cf4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/58278cf409703466a4d6a10a0e6e2264d60e7c79))
-- Support needsOffscreenAlphaCompositing,([5bd81a9e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5bd81a9e201205afd33be1f23ca2bc418bedc977))
-- Remove Update During Preallocation,([97ec5afc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/97ec5afcb3215940b4a65fbfd349f766319c0867))
-- 修改801版本号,([22b71f9e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/22b71f9efd727ddc8deb111276b15f7cbe581ada))
-- docs:Deleted the description of using the ArkTS component from the C-API component.,([0f129b77](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0f129b774d71ea9421aca49b9d282f796f86af56))
-- docs:Synchronize to API13->5.0.1(13).,([10daf715](https://gitcode.com/openharmony-sig/ohos_react_native/commit/10daf715f68d179d1e195127830582883771300a))
-- docs:Synchronize to API13.,([b6f4c196](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b6f4c196e8662e0535648607846046698a17d8e7))
-- docs:The HAR package references each other.,([9703bbf9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9703bbf922011466ac974da9b721794ead55b9b6))
-- 版本说明.md添加800版本说明跳转链接,([a6b6d1d7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a6b6d1d7fd63b9cac498e05e617f3f574173aad1))
-- 添加react-native-harmony-v5.0.0.800版本说明,([3a3a1786](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3a3a17864cbffe681748f065c61beb0b4649fcec))
-- 增加keyboard回调事件中startCoordinates属性的实现,([638b5571](https://gitcode.com/openharmony-sig/ohos_react_native/commit/638b557125eca40d6cb968eace48cde4e93ce6ed))
-- fix: caret is still black when selection while setting caretHidden as true,([7c3edf4e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7c3edf4ea060c47f773a5a1fc4bb5c37ae463cf7))
-- avoid white screen crashing,([d7821328](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d7821328a8bf9428f1fba5093a9c85c8a8519a8b))
-- hermes编译教程,([a8baaf7e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a8baaf7e123e7448a5fde6769326fd3b52309fc3))
-- feat: allow custom native components (ArkTS) to have non-ArkTS React children,([93d286d9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/93d286d9569642043b23080697c2faecd8654082))
-- 版本号升为0.72.39,([4b9efbcf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4b9efbcf802390a832f6c7ca02a2170ad1b3a8e9))
-- @rnoh/react-native-harmony-cli 依赖改成相对路径,([31948b6f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/31948b6f0fff7441877d7e4a97f295f972728341))
-- Restore ArkUINodeRegistry.,([be17627c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/be17627c4632eb5dfb28b8093c46222d771f0d57))
-- chore: update project to be compatible with IDE (5.0.3.402) / SDK (shipped with IDE) / ROM (NEXT.0.0.26) This PR updates the project to be compatible with latest IDE/SDK/ROM. - [x] Project compiles and the tester application works.,([f2dbc442](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f2dbc442c291d11bfd4840f3d1375300d4cf2894))
-- [TicketNo:] DTS2024110570061 [Description:] fix: setInterval is called multiple times when restoring from background [Binary Source:]NA,([8a2be144](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8a2be144ceaaa434a838e21f8d14b77681d6b093))
-- fix: setBundleUrl时机调整为getBundle之前,([378bf593](https://gitcode.com/openharmony-sig/ohos_react_native/commit/378bf593c586d7843e780229b0e8906f374c095e))
-- fix: The code format is modified.,([6e68f7cb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6e68f7cb1aa6d3ef1fb8a8033b766296f9b1cdb8))
-- fix: image is never accessible We mapped the RN `accessible` property to wrong ArkUI node attribute: - `NODE_ACCESSIBILITY_GROUP` means that the node forms a "group" with its child nodes, and is treated as a single element by the screen reader - `NODE_ACCESSIBILITY_MODE` controls whether a node (and its children) are recognized by the screen reader - fixed: `accessible` View property not applying correctly 1. Open tester app. 2. Go to Image test suite. 3. Verify the `alt` test case works. - [x] Project compiles and the tester application works. Closes #1320,([a821d697](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a821d6976000987f83f2876434614b5e3c2503d8))
-- feat: 补充metro远程调试文档,([41c4064f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/41c4064f9e4be19777f1a844bf68c44b8d01f361))
-- 调整rnoh和rnoh-sample-package的包名,([56378358](https://gitcode.com/openharmony-sig/ohos_react_native/commit/56378358a098f82a803f74a0ad3577d7053f42f7))
-- Refactor node event handling to omit ArkUINodeRegistry,([026c7c9e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/026c7c9e7178923005d3207662c56f41e459f8f6))
-- Performance: vsync and preallocation,([385499f1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/385499f1793aa318a94ae1f8c905649877d69ee5))
-- implement sync and async event beat,([174c64f9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/174c64f98f28a3635784e16b57d5c5577942bf5b))
-- use react RuntimeScheduler,([1fb19e74](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1fb19e74d4676461f76b180b34bd16d375ea0ac0))
-- unbind UITicker listener id with RNInstance id,([bb289bb0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bb289bb0d8046722791e47f4481260b5f04b7086))
-- remove taskExecutor from EventBeat,([da35ecbb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/da35ecbb952f3c680a373eba1c76b644c22b0062))
-- fix:interal redirects for scoped aliases in Metro config for Windows,([b78bd95b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b78bd95baba3068544f10455db524dc56c28e5ff))
-- fix: make Shake to open Dev Menu a non-breaking change,([8d04e8db](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8d04e8db6e2db797fb0a912afe5e5f4e6a4ef231))
-- 更新文档 （cherry picked commit from <gitee.com//openharmony-sig/ohos_react_native/commit/0bc85bd4172576f12eee81626d651292dc06c449>,([c9a10762](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c9a1076291f4fdb25c11f3ac8eaa05b2f4e14edb))
-- 更新5.0.0.715版本赋能文档 （cherry picked commit from <gitee.com//openharmony-sig/ohos_react_native/commit/119b529665ce2abec6f9c46890ee77b38c5cd0c6>,([63fbb11a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63fbb11a12923a6814624ba1e18cfc636688448f))
-- 更新文档,([0bc85bd4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0bc85bd4172576f12eee81626d651292dc06c449))
-- support handling assets by Networking,([b88fef09](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b88fef09983b0d9e4bb21dd06acd09e4ace7a77c))
-- fix:增加OAT版权头许可证头流水线配置,([7d6987b0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d6987b00544f6d74a6883ccf8cd3d32a295771f))
-- fix:增加OAT版权头许可证头流水线配置,([fd7fa636](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fd7fa636006b3f58b4cd8382d57b1ef5a370ac92))
-- feat:metro无线调试,补充DevMenu类型,([d166383b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d166383b02f6696de1fcdf18069a8e0554fd073c))
-- feat:metro无线调试,补充DevMenu类型,([09499d3f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/09499d3fa30b1a634163f3373cf1a2c65a7dffc0))
-- refactor:using guard statements,([d78950ac](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d78950ac58fdddaa224cd71361f761e90cddb425))
-- feat:metro无线调试,去掉log,([0de2bb4e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0de2bb4e522e972a2f569b4086dc75d7af15bd81))
-- feat:metro无线调试,([f7949a49](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7949a499a3a6c7f23ba38e025c3df18c65c62d1))
-- feat: automatically reconnect to Metro,([0df76433](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0df764330e395f0e196a70724ea8e8542d9e7f46))
-- feat: shake the device to open dev menu,([791eab5e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/791eab5e897e6d33bcffaebea77456661b21372e))
-- feat:change the DPI when using freedom multi windows,([a09738cd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a09738cd826500c7b92ba110e91d4e7bb65c1365))
-- 实现TextInput的textAlignVertical属性,([7bc59502](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7bc59502d14bfb6cf13abff054b452c3ca896126))
-- Merge pull request #935 from react-native-openharmony/br_dev_430_performance_accessibility_1011,([311c67d3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/311c67d3f7dfd265851694dc22b7bf514fac022d))
-- refactor:recovery safeArea code,([30ddde1d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/30ddde1d3ef1ea15156a1c4aa774083aff7f3692))
-- Replace XComponent with ContentSlot,([0d83b291](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0d83b29137a6135cfb22cde7039715b6adbe29aa))
-- Rename XComponentHandle to ArkUISurface,([cf2f23b9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cf2f23b953efa77c3f74ff14574e77b8fb696d92))
-- chore: implement NodeContentHandle C++ wrapper,([b22e7e6a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b22e7e6a8a1faf2d9cdb4d14d353c2b0e8781b20))
-- 更新5.0.0.715版本赋能文档,([119b5296](https://gitcode.com/openharmony-sig/ohos_react_native/commit/119b529665ce2abec6f9c46890ee77b38c5cd0c6))
-- add changelog,([c8565344](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c8565344825fda744b340a6419b8df60435a71d2))
-- !29 新增从5,.0.0.601到5.0.0.715的changelog * fix changelog * add changelog 5.0.0.500 * add changelog 5.0.0.715 * Merge remote-tracking branch 'upstream/master' * Clearly define what was changed in the merge * add logs * add log * add changelog,([39c5c05c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/39c5c05c99f59347f29315df7225882a8f2dc525))
-
-## 5.0.0.715
-- apply LongLivedObjectCollection fix from newer version of RN (#991) ([1daf5b1a](https://github.com/react-native-openharmony/rnoh/commit/1daf5b1aa2706b2755a4efcaf513652fad76d12f))
-- fix: deadlock when calling TurboModuleProvider::getTurboModule (#987) ([a26036ba](https://github.com/react-native-openharmony/rnoh/commit/a26036ba21240eb9c86af2eccf9881b8983d4444))
-- fix: Images are not displayed during caching (#982) ([dbb09f91](https://github.com/react-native-openharmony/rnoh/commit/dbb09f919c04820f1fbd994f0f1b718a03d803df))
-- fix: readme ([c2b8c090](https://github.com/react-native-openharmony/rnoh/commit/c2b8c09014fa23ac29a7ae561099eb09c8129b0d))
-- Added rnoh har package necessary files for publishing ohpm ([6677e27b](https://github.com/react-native-openharmony/rnoh/commit/6677e27bbd3c4aacba12c48cc9bd2a8588d60c2a))
-- fix: wrong ArkUI_NumberValue array size (#977) ([66227ec9](https://github.com/react-native-openharmony/rnoh/commit/66227ec9923c03076cf47405c6f890bb4c55f660))
-- fix: RNSurface compatibility (#974) ([8fc37fdc](https://github.com/react-native-openharmony/rnoh/commit/8fc37fdcd2efb644d7fb9c221a8fb3b69802b4cf))
-- fix: Share problem (#972) ([963c228e](https://github.com/react-native-openharmony/rnoh/commit/963c228eeee4ad383c8d65ba4df72482cf97dd90))
-- fix: incorrect cursor placement when setting content through props (#969) ([dc20cf7d](https://github.com/react-native-openharmony/rnoh/commit/dc20cf7d849a301a5183143addf204135298fb40))
-- fix: sort crash ([8e0c1ad6](https://github.com/react-native-openharmony/rnoh/commit/8e0c1ad6a8d158f69ac041773c8976ba26286d0d))
-- fix: TurboModuleProvider crashes ([df8e9227](https://github.com/react-native-openharmony/rnoh/commit/df8e9227ce7abf11fbea938a70bc7403ee2c7777))
-- fix:build error ([5a4ae20e](https://github.com/react-native-openharmony/rnoh/commit/5a4ae20eaf988dde462e3050e3dee110ae3c66c4))
-- fix:The layout of textArea is abnormal, and textinput will additionally trigger clearFocus ([0f6e8fae](https://github.com/react-native-openharmony/rnoh/commit/0f6e8faeffdef4d297abc59fecfcef49a8fb1430))
-- fix: TimingTurboModule crashes when destroyed ([f36aace5](https://github.com/react-native-openharmony/rnoh/commit/f36aace5be653804fc8b89f7b43420b20a99edf3))
-- fix: scrollToEnd scrolls to start in rtl mode ([05429e2c](https://github.com/react-native-openharmony/rnoh/commit/05429e2ccfba915d378c978ea0d789ca551d5060))
-- fix: crash when destroying RNInstance due to ArkTSChannel use-after-free ([3a0324a5](https://github.com/react-native-openharmony/rnoh/commit/3a0324a59267dd755abc5d92d5ea1cc7e9623ef0))
-- fix: Add debug.so switch ([b7d0011e](https://github.com/react-native-openharmony/rnoh/commit/b7d0011ec2acb3f5268ba1ced005f3a28eb12770))
-- fix: Adjust the logic of image prefixes. ([61d8e581](https://github.com/react-native-openharmony/rnoh/commit/61d8e5810d2b9b5bb8a528c67bffa6463a4f55b9))
-- fix: third party lib dependency on ArkTSMessageHandler (#955) ([75086f03](https://github.com/react-native-openharmony/rnoh/commit/75086f03f9a5e0e703e8c6201366f289b09a13db))
-- delete componentInstanceRegistry in ComponentInstance (#954) ([81368010](https://github.com/react-native-openharmony/rnoh/commit/81368010a279b96c8aeada1541b50c80884eea91))
-- Support image prefetch (#946) ([bbab1233](https://github.com/react-native-openharmony/rnoh/commit/bbab1233aca3fce486ea36fd3de153e8b64d1c35))
-- fix: ScrollView with refreshControl can't be pulled down (#951) ([5ef82127](https://github.com/react-native-openharmony/rnoh/commit/5ef82127228c2c1295f3e5cfcad24fec80c2704f))
-- fix: Remove the default value of backPressHandler in RNInstanceRegistry (#947) ([fb60cf79](https://github.com/react-native-openharmony/rnoh/commit/fb60cf79447fdd55f1d0ab03921d3bd5f34842a7))
-- fix: call js timers once per frame (#945) ([388e7963](https://github.com/react-native-openharmony/rnoh/commit/388e7963c375120dad8a2f2891c9ea6ef6687502))
-- fix: setStyle blocks main thread ([4eebfb11](https://github.com/react-native-openharmony/rnoh/commit/4eebfb1173b1fa2ac1207206c7c8b415a963207d))
-- sync fonts implementation with SWM ([09944afe](https://github.com/react-native-openharmony/rnoh/commit/09944afe3587ed5f51c69d629bf14d4c16f4a879))
-- fix: set C++ standard version correctly ([a0975fe9](https://github.com/react-native-openharmony/rnoh/commit/a0975fe904df7e210a11ff6b904065c56729ab4d))
-- fix: Delete libreact_debug.so and libreact_renderer_debug.so in release mode. ([c257e0fd](https://github.com/react-native-openharmony/rnoh/commit/c257e0fd61b292de20f8dde5cd06ce389bb71d6d))
-- add 5.0.0.601 changelog ([02cdc754](https://github.com/react-native-openharmony/rnoh/commit/02cdc754cdfb745b6bacab3433d46d3b078908b9))
-- feat: refactor error handling (#937) ([7deda9cd](https://github.com/react-native-openharmony/rnoh/commit/7deda9cd9a88013bd9c77590be3e7aa97b365a60))
-- feat: codegen-lib-harmony (cli) (#859) ([96f8ace0](https://github.com/react-native-openharmony/rnoh/commit/96f8ace00f96cbf766d9e528ea4430e87a59084b))
-- fix: Encodes only Chinese characters. ([c784e2b3](https://github.com/react-native-openharmony/rnoh/commit/c784e2b3657d346c8ea752eeb3da0ba982a7779c))
-- fix:incorrect default value of lineheight ([d3572598](https://github.com/react-native-openharmony/rnoh/commit/d35725987873887515a9f9c4eec9c0189a7f90b5))
-- !25 更新赋能文档 Merge pull request !25 from yujunsong/0.72.5-ohos-5.0-release ([8bc98b4c](https://github.com/react-native-openharmony/rnoh/commit/8bc98b4cb4cbe71a767b86f6e36fdfc0d8d003bd))
-- fix:fix build error ([72653082](https://github.com/react-native-openharmony/rnoh/commit/72653082e3dd60dfb924559533e097901c07de21))
-- optimization: run ImageLoaderTurboModule on UI to avoid thread communication overhead ([9c6d7f20](https://github.com/react-native-openharmony/rnoh/commit/9c6d7f2074f95227111dc618eeb754c55231558e))
-- fix: Fix RemoteImageDiskCache's maxSize not working ([33f4a5ba](https://github.com/react-native-openharmony/rnoh/commit/33f4a5ba6a8328da39c21b6e3b402f19476c7625))
-- fix: cant read measured RNSurface size ([f2f89c49](https://github.com/react-native-openharmony/rnoh/commit/f2f89c4921521b0700b2cd7298d07671b7df8fb0))
-- fix: prevent TextInput from triggering both typing key and backspace ([cf797f1b](https://github.com/react-native-openharmony/rnoh/commit/cf797f1be106ecc9beb22f71732a4df030d0f2ba))
-- fix:export AnyThreadTurboModuleContext from RNOHContext ([b08baee9](https://github.com/react-native-openharmony/rnoh/commit/b08baee93d6893ff07d763a8f2095a73ff448b2f))
-- [TicketNo:] NA [Description:] 解决银行卡号输入框中间删除光标问题 [Binary Source:]NA ([3483cdf9](https://github.com/react-native-openharmony/rnoh/commit/3483cdf9a90931dccd16be0b6c9a5bb7f5ecc920))
-- maybe fix: handle undefined descriptor in RNViewBase Checks if descriptor is undefined and throws an error instead of letting the application crash. The root cause is not fixed and it's unknown. This crash happens when `undefined` descriptor is used when constructing `ViewDescriptorWrapper`. - maybe fixed "Cannot read property props of undefined" ([52e21e5d](https://github.com/react-native-openharmony/rnoh/commit/52e21e5dd19b501462a792e847262bbd4c09ad54))
-- fix:revert Code modifications ([b5a953f2](https://github.com/react-native-openharmony/rnoh/commit/b5a953f231fe9f9764e7574da0cdc757efff5d9d))
-- fix:move createCodeCache to jsQueue ([5c676192](https://github.com/react-native-openharmony/rnoh/commit/5c676192a346b9ff88cab5ca3b16036b335432d7))
-- 更新赋能文档 ([3d827f93](https://github.com/react-native-openharmony/rnoh/commit/3d827f93bfe7e7d9ef0d49ce6668e9640108d368))
-- fix typo in TextInputComponentInstance ([6b6aae5d](https://github.com/react-native-openharmony/rnoh/commit/6b6aae5d39b683dee765f36ccd401654309ac070))
-- Update CustomNode.cpp and fix typo ([14983f30](https://github.com/react-native-openharmony/rnoh/commit/14983f30ea0af47ac825022e7d4936128c12c0c0))
-- fix: TextInput keyboard would bounce when switching using navigation ([54109e6f](https://github.com/react-native-openharmony/rnoh/commit/54109e6f363477af8335cfcda224954a7a1ee0f5))
-- Clearly define what was changed in the merge ([5209a596](https://github.com/react-native-openharmony/rnoh/commit/5209a596db69e8e937dfd6c6680b601f88745b51))
-- fix: lifecycleState should not be changed before runJSBundle ([c012ba27](https://github.com/react-native-openharmony/rnoh/commit/c012ba27ecc5df83b2bee4ec30b3e9773348d36a))
-- fix: Keep only one delegate in TextInputComponentInstance This PR sets the delegate in `TextInputComponentInstance` according to the multiline attribute to prevent events such as `onTextSelectionChange` being triggered twice. - [x] Project compiles and the tester application works. ([7266e717](https://github.com/react-native-openharmony/rnoh/commit/7266e717be16bdeb856324f673e09118fb735504))
-- feat: adjust RNSurface size to its content (#910) ([ef34e0b2](https://github.com/react-native-openharmony/rnoh/commit/ef34e0b2bce55015fe21f45e04501941b6a33b22))
-- feat: support loading fonts dynamically from the sandboxed filesystem (#906) ([804275aa](https://github.com/react-native-openharmony/rnoh/commit/804275aab496984058cf40319cecca49413dc4ca))
-- to update the version of project ([a7eb9f27](https://github.com/react-native-openharmony/rnoh/commit/a7eb9f27e7e4474530d0d401d6b82db2f66675f4))
-- fix:set fromRNOHCoreContext to fromCoreContext ([e23042c0](https://github.com/react-native-openharmony/rnoh/commit/e23042c0c3af75536c833e24b7f184a382d511db))
-- fix:post message failed ([a6777d2a](https://github.com/react-native-openharmony/rnoh/commit/a6777d2aff2a5248b7b255dd3bacb728834c945a))
-- fix:deadlock by measure in TM ([de550275](https://github.com/react-native-openharmony/rnoh/commit/de55027599cf37c3c6116c9bc0f63171e7f6e1d1))
-- chore: eliminate broken and failing tests ([45fe3a03](https://github.com/react-native-openharmony/rnoh/commit/45fe3a037c2303958fff7d8bd683d142fe3a9a26))
-- fix:image loader failed because function change ([86c061df](https://github.com/react-native-openharmony/rnoh/commit/86c061df1845299e69760fec0155bf9ba9fc4e5c))
-- fix:fix build error ([862b11eb](https://github.com/react-native-openharmony/rnoh/commit/862b11eb3008e9bcdbf3c07f14ace71108267b94))
-- feat: make worker thread optional ([2493760e](https://github.com/react-native-openharmony/rnoh/commit/2493760eeb4eacec038ab22521eef1911721c36c))
-- feat: introduce TMs which can run on either thread ([06f33003](https://github.com/react-native-openharmony/rnoh/commit/06f33003c7957d2166daa906e2e72bc437174575))
-- Move permission requests out of RNOH package ([c41728af](https://github.com/react-native-openharmony/rnoh/commit/c41728af0defa82e7d6054036ac699f2baff7ecd))
-- [breaking] refactor: support creating WorkerRNInstanceConfig dynamically ([8e7af509](https://github.com/react-native-openharmony/rnoh/commit/8e7af5096ad96b7068fa95877bacd44d744804c6))
-- optimization: reduce number of copies when translating dynamics to NAPI ([e8423e2f](https://github.com/react-native-openharmony/rnoh/commit/e8423e2ff289516eda55e77926ada3a7f8175993))
-- fix: incorrect use of condition variable in ThreadTaskRunner init ([dfbb936f](https://github.com/react-native-openharmony/rnoh/commit/dfbb936fb4abd13ad87b9155c5e77dd3bb0e8a01))
-- fix: synchronous ArkTSTM calls can deadlock due to TM being dropped ([32b0eea7](https://github.com/react-native-openharmony/rnoh/commit/32b0eea7a33681c6a54fe475f5f98ede35c669e3))
-- fix: don't hold JS callback strongly ([65bb4f4c](https://github.com/react-native-openharmony/rnoh/commit/65bb4f4cacc890e87ed7c2bf7fac502c5229035b))
-- fix: clean up after WorkerRNInstance ([c43ea919](https://github.com/react-native-openharmony/rnoh/commit/c43ea9191d0413af431f8d2c8506f41f461630c4))
-- fix: store jsi promises in LongLivedObjectCollection ([c0b3cad8](https://github.com/react-native-openharmony/rnoh/commit/c0b3cad86488dbaecb10cb050b2a0015554a275b))
-- fix: Instance initialisation sometimes causes deadlocks ([8964254b](https://github.com/react-native-openharmony/rnoh/commit/8964254bb58f80a1b0fee6ccc5a74e2186723578))
-- fix: blob is called incorrectly on MAIN ([7346285c](https://github.com/react-native-openharmony/rnoh/commit/7346285c219dd9d31dcb123428b0564c74312bd7))
-- fix: use folly::Function instead of std::function in TaskExecutor ([5145690c](https://github.com/react-native-openharmony/rnoh/commit/5145690c9d543095faf34379eaee30519725c7db))
-- optimization: move SafeAreaTM and StatusBarTM to worker thread ([3c60951d](https://github.com/react-native-openharmony/rnoh/commit/3c60951dee75aa9080ab553e8effefb71991edbc))
-- optimization: move Networking, WebSocket, Blob and FileReader Turbo Modules to worker ([3d27384f](https://github.com/react-native-openharmony/rnoh/commit/3d27384f73ab09cb4946af6a59593262a2f22b6c))
-- feat: warn about long sync TM calls ([60f0b63f](https://github.com/react-native-openharmony/rnoh/commit/60f0b63fde1da8f9fd6a4018398e7117687cad8a))
-- optimization: schedule only one task when calling asynchronous TurboModule ([15dfb0f1](https://github.com/react-native-openharmony/rnoh/commit/15dfb0f17cbd61a186907212821a20a63943788f))
-- feat: Add UIContext to RNInstance ([49be9e4a](https://github.com/react-native-openharmony/rnoh/commit/49be9e4a40dd00fd9e14fa675e2e4cb6e686d4d6))
-- fix: worker TurboModules are created on wrong thread ([38052d55](https://github.com/react-native-openharmony/rnoh/commit/38052d5512b01c85e1753aa8367129d92d2d8bb2))
-- chore: update multi_surface and performance_measurement to new APIs ([69b5a3da](https://github.com/react-native-openharmony/rnoh/commit/69b5a3daf385ffd234e7988a123a6716950388fe))
-- refactor: change setupRNOHWorker params + feat: WorkerRNInstance::getWorkerTurboModule ([bed4f81c](https://github.com/react-native-openharmony/rnoh/commit/bed4f81c7d398f5289cf37fa12224db71dc38dab))
-- optimization: move AppearanceTM to Worker thread ([ece93ea5](https://github.com/react-native-openharmony/rnoh/commit/ece93ea5de720a34e33b982d3fe48a1b59a220fa))
-- optimization: move ImageLoaderTurboModule to worker thread in C-API arch ([2e6b8230](https://github.com/react-native-openharmony/rnoh/commit/2e6b823004ea1faabe006e69dec3c70291cdb530))
-- chore: force app developers to setup worker thread in their applications ([3462af81](https://github.com/react-native-openharmony/rnoh/commit/3462af81fe1052106bd19d557e0f22cd7a85b58d))
-- hotfix: crash in release mode caused by double underscore prefixes ([b2dd726b](https://github.com/react-native-openharmony/rnoh/commit/b2dd726b026ceab544247cb4c8f76113cb05f1a2))
-- delete RNOHCoreContext ([ede9046e](https://github.com/react-native-openharmony/rnoh/commit/ede9046e5025d96bece5c0263785d91463efebe6))
-- refactor: simplify context extending ([ba75cfad](https://github.com/react-native-openharmony/rnoh/commit/ba75cfadc51d35136affddada15cceb207879faf))
-- fix: call WorkerTurboModule::__onDestroy__ ([5682b015](https://github.com/react-native-openharmony/rnoh/commit/5682b015ed2dc54a08711c31034797149dd24ca3))
-- feat: add partial RNInstance and UIAbilityContext to  WorkerTurboModuleContext ([0bcd1dba](https://github.com/react-native-openharmony/rnoh/commit/0bcd1dbaeba7f4b19026e89d099436c342ae6994))
-- refactor: WorkerThread ([aa33b2df](https://github.com/react-native-openharmony/rnoh/commit/aa33b2df2564748a45717b87d626e4d9b8896aa3))
-- feat: EtsWorkerTurboModuleContext::runOnUIThread ([0746f4ef](https://github.com/react-native-openharmony/rnoh/commit/0746f4efa5c59d15049de4469da5f66c7fa773b9))
-- fix: TaskRunner thread names are not set ([e6b9f571](https://github.com/react-native-openharmony/rnoh/commit/e6b9f5714ff9d255e3c12610efc86680a21f4c65))
-- chore: add async call test for WorkerTurboModule ([8f6fdfea](https://github.com/react-native-openharmony/rnoh/commit/8f6fdfeac997f716be3dd43db14fac4d658ed8d5))
-- fix: worker turbo module provider isn't created properly when factory is null ([e4cf9cf6](https://github.com/react-native-openharmony/rnoh/commit/e4cf9cf69a00b90893d3c7a6021020356584326e))
-- feat: WorkerTurboModules ([c79d966c](https://github.com/react-native-openharmony/rnoh/commit/c79d966c172afe75d458344d00f14e4f35e07650))
-- fix textinput font scale ([c9a0022f](https://github.com/react-native-openharmony/rnoh/commit/c9a0022fa05cc3c488f4f463370534e1b5fd92a1))
-- add import in RNSurface ([df4f70a3](https://github.com/react-native-openharmony/rnoh/commit/df4f70a3e8a5937d53e3951a0626a8cca3c5a04f))
-- Feature: Support RNSurface get RootTag ([9f6b82ec](https://github.com/react-native-openharmony/rnoh/commit/9f6b82ec166888e4f5fad3f101ebdd6b1160233c))
-- fix: incorrect Scroll offset when RTL is enabled ([e4b38316](https://github.com/react-native-openharmony/rnoh/commit/e4b3831615fb73953d6df5fb7053d2158aeaf933))
-- Improve removeClippedSubviews feature ([bf4bc760](https://github.com/react-native-openharmony/rnoh/commit/bf4bc7606cb0dbf77aa5bb54ac7441dc2dc75e1f))
-- fix:fix crash napi_value destruct in JS thread ([054f447c](https://github.com/react-native-openharmony/rnoh/commit/054f447c5718e01642a81289f158ffd6593352fc))
-- fix: Change the version number. ([bc6523e9](https://github.com/react-native-openharmony/rnoh/commit/bc6523e948383fe25f17412a47244818862ec9b4))
-- [TicketNo:] NA [Description:] 修改代码提交错误 [Binary Source:]NA ([2e2a2a29](https://github.com/react-native-openharmony/rnoh/commit/2e2a2a290c9cad849e6c9724f831f1e2cbdea896))
-- fix: cursor would move to the end of textinput if formatted ([5a8960e0](https://github.com/react-native-openharmony/rnoh/commit/5a8960e0197d0a02e25b8b004d335a049858cb01))
-
-## 5.0.0.601
-- fixed `Br dev 430 fontcollection lifecycle` ([ab1d03b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ab1d03b4807b80c67599836ceb70c5177d6ecbbe))
-- fixed `Update version number 0.72.32` ([d8724d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ad8724db8b9aa4f96103dbf9eede1c9ccf76d127))
-- fixed `Encodes only Chinese characters` ([7cac71a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7cac71a5576e3bd4dbfedb70b1d8bb8eadcd60e2))
-- feat `HarmonyReactMarker: move CREATE_REACT_CONTEXT_START marker` ([c7b3199](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c7b3199aa65e3ba39fa90d597f1e848cb348e167))
-- fixed `eventLoop not release` ([7c57292](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7c572928b7a3a105883435ef63b674bdfa451841))
-- fixed `TextInput selection need double click to activate` ([d9e669e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d9e669e62a03487304e0993444eca87d7b2e63c5))
-- fixed `scheduler not released` ([a70a1f8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a70a1f84f85ec82725a724a7fff7d95f30eba460))
-- fixed `Fixed ScrollInternalState` ([df8445d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/df8445d75123660e4f8376b18150adddba627515))
-- fixed `crash onScrollStop` ([b05d5cf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b05d5cfc5904afd02ae833fe2a90c6911c1a23f5))
-- fixed `optimization: perform mounting operations immediately when on UI thread` ([449f20a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/449f20ab70a7f69df24aeb25e68b4cd33be7980d))
-- fixed `crash - Cannot read property getDisplayMode of undefined` ([5828f6f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5828f6f131466b7620a7b76da98e32e2e5ba6636))
-- fixed `state is idle when running animated scrollTo` ([8c76704](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8c76704374674e5c54f3006d95d453a4932f561a))
-- fixed `include hitrace lib only when WITH_HITRACE_SYSTRACE or WITH_HITRACE_REACT_MARKER is set` ([da2aeb8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/da2aeb87d3c15529ddef85ac6955c36d2324a7c4))
-- fixed `Caret position is not right after clear` ([df3177d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/df3177d2ce0329499b4f23dc71c6dfbc280e8652))
-- fixed `Version No` ([20b9755](https://gitcode.com/openharmony-sig/ohos_react_native/commit/20b9755f2be9aeca797f5c068434249543e5071c))
-- fixed `include hitrace lib only when WITH_HITRACE_SYSTRACE or WITH_HITRA…` ([00ab910](https://gitcode.com/openharmony-sig/ohos_react_native/commit/00ab910fddfb1f9342f1b99590e6f67f8415e43b))
-- fixed `Caret position is not right after clear` ([991236a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/991236a8e5e3bfae5e0ebc8ef1a8293cd9209c77))
-- feat `OHReactMarkerListener: delete NATIVE_MODULE_SETUP_START` ([9254ed6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9254ed6cb51abda2a8f4eac68e6e1282be54e0d0))
-- feat `OHReactMarkerListener: add missing CHANGE_THREAD_PRIORITY marker` ([56678bc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/56678bcc91532880ca8aaaa5b387841b121e6720))
-- fixed `OHReactMarkerListener: delete NATIVE_MODULE_SETUP_START and NATIVE_M` ([6a53369](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6a53369f552d49e5a50dabf3ed8e571f2fe15a78))
-- fixed `add ArkTSTurboModule::callSync runSyncTask trace` ([13620ab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/13620ab689edf687c1c3b2461bfa0ba7f708b09a))
-- feat `OHReactMarkerListener: add missing CHANGE_THREAD_PRIORITY marker` ([0ea8c9f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ea8c9fb40bdd845ab06d504b49f0be8a567d666))
-- fixed `modify Version NO` ([98f93d1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/98f93d11667350759435ab4a322d1f66f6e05740))
-- fixed `fix deadlock stopSurface when use setNativeProps` ([8d62c97](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8d62c97a9164f6d4f23196eb3c7c399aaf06c79a))
-- fixed `fix deadlock stopSurface when use setNativeProps` ([c2c635f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c2c635f842dfbf46d704fdc4809445e9d4ac6015))
-- fixed `fix multiInstance crash by thread change` ([cfd3a5f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cfd3a5fae7a212139e129a3f0773e1de774ae4f7))
-- fixed `Keep ArkUINodeRegistry singleton` ([003fa8c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/003fa8c5290c03f06ec013ed1f18b10419fdd74e))
-- fixed `Load the bundle and include optional text prompts.` ([b299c89](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b299c895b2e398f246bb9cb28ed2df95dc20cf48))
-- fixed `changed ON_SCROLL to ON_DID_SCROLL in ScrollNode` ([63f68a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63f68a8bac6347940aac200df66cf996ce39b298))
-- fixed `changed ON_SCROLL to ON_DID_SCROLL in ScrollNode` ([ddce254](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ddce2540c7a6573d8d03b7aeef973ec7243ee43a))
-- feat `OHReactMarkerListener: fix fabric markers and logMarker method` ([d986862](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d986862fc6d6ad7709a1469fe5467b64b7345b20))
-- fixed `Fixed an issue where the first render would not work` ([5b431c0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5b431c0408bd99572f71733672342269ccb13607))
-- fixed `optimize` ([1ddf1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1ddf1a761aa245e7692e93d18dbcb0300042ea64))
-- fixed `OHReactMarkerListener: fix fabric markers and logMarker method` ([c1accbb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c1accbb0835a76357cc8f001084f0231be934b67))
-- feat `Load the bundle and include optional text prompts.` ([71bb7ab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/71bb7abd05d756890b33a797880c739cce0fdc99))
-- fixed `Load the bundle and include optional text prompts.` ([fb12c76](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fb12c763d464e6d84348f6dd3ed348e9593df583))
-- fixed `fix multiInstance crash by thread change` ([9bae543](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9bae54384e559edd6ca10ebae34393a0d5959fe8))
-- fixed `Adjust prefetchImage scheme` ([870a5a5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/870a5a541050327aa70b33242caa65dff319d197))
-- fixed `setting overflow visible not working` ([00dcc02](https://gitcode.com/openharmony-sig/ohos_react_native/commit/00dcc020b1be52cfbc59f58d73f53eceb8570d04))
-- fixed `load codeCache failed when use sandBoxing` ([13ef23c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/13ef23cf9258a3bcdccbe628cead250e335d9110))
-- feat `Listen for Avoid Area Change` ([76fc4e6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/76fc4e65f8cadd4ab5dad75dcf67d04621c64d96))
-- fixed `CPPCrash when m_eventEmitter is null` ([b68e6e6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b68e6e641e3267eb308ec25c92b24d9fbc0dc275))
-- fixed `release JSVM_ReferenceRef timely` ([0430cf0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0430cf00f3881ef3282553c7de0410a01f2fa864))
-- fixed `Add UIContext to RNInstance` ([525bc64](https://gitcode.com/openharmony-sig/ohos_react_native/commit/525bc64574e6d3046444efceb4b7891cb0764c1c))
-- fixed `clear buffer after finish all batched mutation` ([e818c3b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e818c3bd1a97d722bc3ca56d390a83305e174800))
-- fixed `memory leak of preallocated views which are never mounted` ([16da68f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/16da68f90c57f00fbda6ef2f6f07b54db3415815))
-- fixed `textMeasureRegistry memory leak` ([dcc58e6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dcc58e614091c8f769a718c3329c28b1d9300828))
-- fixed `edge case for nested safeAreaView` ([6ee6a07](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6ee6a07e28da7c690175bbc4e49fb6952ee9588f))
-- fixed `touches are improperly ended in multitouch scenarios` ([15ccd6e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/15ccd6eebee541587c6a539d189bdf7abfeb7b43))
-- fixed `Image.getSize returning success for empty string` ([56a039b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/56a039b15b1ad9fd74ade3aba3f505dc6b1fe6de))
-- fixed `crash when m_eventEmitter is null` ([0aa9fcf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0aa9fcff41b3dd7f207b7457ac8d786094f5250f))
-- feat  `add jsvm to rnoh` ([3811bfe](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3811bfe011a1f220dc5c3e28e61c151e7545a239))
+## v0.77.3
+- [breaking] modified RNOHMarkerListener interface to have RNOHMarkerId enum as an argument ([456d71fc1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/456d71fc1fdbb6f6a43d2c7ee9183bf9373bf4e3))
+- update and react-native to 0.77.1 ([dc13728a65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc13728a651bdb777ec1c913730a0ded30ed7c52))
+- added RNPauseInDebuggerDialog component ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for onResume ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for getMetadata ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added implementation for onSetPausedInDebuggerMessage ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- added automated tests for View ([619def3d84](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/619def3d84b7a62195536b7e3bccbf7427bfcf78))
+- adding AutomatedTester component ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- adding Manual Tests for AppRegistry ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- adding directory for automated tests ([e8997a501b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e8997a501b7971fb604877a0d45e13581e4b4c1c))
+- added support for symlinks and monorepos ([3bea2f0134](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3bea2f01349ac6d4106b37904765c04a29de1217))
+- added `--hermersc-dir` argument to bundle-harmony ([3bea2f0134](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3bea2f01349ac6d4106b37904765c04a29de1217))
+- added getSurfaceHandleByAppKey in RNInstance ([99e4a84a74](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/99e4a84a7400923cded9f8828bc20c29ab36eef6))
+- fixed RNOH Systraces which are broken since the update to RN 0.76 and include libhitrace_ndk.z.so only when necessary ([3272d6f65c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3272d6f65caf213f2082f0b6bcd68120eddc2ef5))
+- fix crashes on reloading/destruction of RNInstance ([5d8234419c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5d8234419cd434a5d79964c3d411b01d3a29de2c))
+- fixed BlobCollector crash ([eec6f4796b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eec6f4796b0b60f47a25effc0ad4fd999af0d115))
+- fixed Metro port forwarding step in Hvigor Plugin when the path to SDK includes a space ([ad331ecd28](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ad331ecd28c0a76b785ac956cb4d4424b98d5fc5))
+- fixed Metro config for Node.js environments older than 18.20 ([122085307d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/122085307d4f0790533d034fc8c0fab3ac9dc443))
+- fixes dimensions not being clamped ([7f388d4708](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7f388d470831c8dec4e2ca44e93cf85163096496))
+- fixed views inside text (regression introduced with 0.77.0) ([7f1edae449](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7f1edae4490748ff14f3711639cc1a773eedaf53))
+- fixed crashes caused by getValueAsDouble method in ValueAnimatedNode ([55a4f8a214](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/55a4f8a2149ed3a48ab94d6d87a0a0000e3ef493))
+- moved JSInspectorHostTArgetDelegete to separete file ([1c55ddce57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c55ddce570ed55bc7e4335c2542be99df1b8ba6))
+- published CLI 0.77.1 (0.77.0 doesn't include hvigor-plugin) ([a9996639d9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a9996639d915298871eab2790c8b570754195401))
+- switched to jsi-based operation mode in Animated ([5772a08de8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5772a08de8ef9639a28eeba52b3ec8d9fdc4035c))
 
 
-## 5.0.0.500
-- fixed `turn halfleading on when no lineheight configured` ([c66bf19](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c66bf19b46997e25715f1800e0cc7446fd89a9e8))
-- fixed `Start the timer immediately after receiving the FOREGROUND event` ([14e3b6a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/14e3b6a6a2c11af675ccff8bfc1b28f1afec2b90))
-- fixed `The measured width returned in the onTextLayout method in the text component does not match the actual width` ([b48ee59](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b48ee593c2e0724940fb439baa80e3a6e243ee0f))
-- fixed `removeClippedSubviews after changing to horizontal` ([93244c1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/93244c16533bda1ebf2151e0f9f9753b8f058ced))
-- fixed `nested SafeAreaViews + change: make SafeAreaView apply bottom inset` ([883da9f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/883da9f3068db124fb4436d4fdacc9f7ccaafab5))
-- fixed `The width and height obtained by onCcontentSizeChange are incorrect` ([e7bc68f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e7bc68f80470fff3098f214e7efeec479565eeee))
-- fixed `maybe fix EventTarget destruction crash` ([79f80fb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/79f80fbd5cca91cbf5f6471a0c880d1e9aa848cd))
-- fixed `When textinput sets secureTextEntry, hide the small eye icon` ([ef7a543](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ef7a543e7b3c05f2838dba398eac204459783f06))
-- fixed `safeArea does not have safe distance in certain situations` ([18cb462](https://gitcode.com/openharmony-sig/ohos_react_native/commit/18cb462ee10833ffb7e29c2e6d42e5b3ea2836e1))
-- fixed `web-view getId error` ([f2c2803](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f2c2803b02befaf8ed1246978578c1b86396f194))
-- fixed `contentOffset.y of ScrollView to zero when contentSize height is less than the containerSize height` ([e32faa5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e32faa589a0d03025c7de5e6181f80db8c958866))
-- feat `Add support for multi-touches` ([4d9c634](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4d9c6340ab653aae949426cff0320762b0578493))
-- fixed `When the back to top button is clicked, the search box is not displayed occasionally` ([9a5d67d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9a5d67d59fe224c798a8b38742c8d0b49e9db111))
-- fixed `An issue that cannot be clicked after using the transform property` ([24e4aa0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/24e4aa058cbbe568cba6c5d5042225746787b12b))
-- fixed `Dynamically adding new components can cause the input box to lose focus` ([c57f45c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c57f45cf1e6abc7187e1aaa252be516c10bd7b2c))
-- fixed `TextInput selelction cannot be triggered when focus` ([8e67f71](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8e67f71c2e6ff026d59949487c225a6a66525042))
-- fixed `contentOffset not set at the first render` ([7156e8b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7156e8bb89facdbd3fa12d8cd728a93ccbe9a7cb))
-- feat `system default font` ([12bceda](https://gitcode.com/openharmony-sig/ohos_react_native/commit/12bceda558533b4e069214b3a30a244a511437d9))
-- fixed `aiconfont was invalid in cases of multiple rninstance instances` ([87fb491](https://gitcode.com/openharmony-sig/ohos_react_native/commit/87fb491c36a376f7800ef71405e979769d9d323c))
-- fixed `Fix VirtualizedList not triggering onEndReached after executing scrollToEnd` ([2d34b04](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2d34b044c8811dc67043308bad4a8b232b6dad10))
-- feat `support handling assets by Networking` ([98c6694](https://gitcode.com/openharmony-sig/ohos_react_native/commit/98c66948f50e4681237e71f523d7206ccccc8ec0))
-- fixed `native responder block not taking place` ([62485b1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/62485b1ee9856046da1dba86fdcaa1a5f2d9b67f))
-- feat `Move_AppearanceTM_to_WorkerThread` ([8bcc169](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8bcc1698c185e154d8cb0ab6d2a33cab9c39c600))
-- feat `Support container arkTs component when its children are arkTs components` ([6c0e2aa](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6c0e2aa6347b187bdfa4f77ab6ce5d5bbd181c35))
-- fixed `clear text failed` ([51ec1d7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51ec1d750f0e72e76615be21e56f148c682b74fa))
-- fixed `DataDetectorType not working.` ([30c2cc9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/30c2cc96ac2d2716b58bbd0f91d37bb70e804da1))
-- fixed `allowFontScaling not working.` ([f43bc7a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f43bc7a210fa1f0dab70524b9a2241e455302e7f))
-- improvement `Searching for Local Cache Files on the C++ Side.` ([f7cad33](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7cad33944ecfd91f487b8a5f874747df750531b))
-- feat `imageLoader by WorkerTurboModule.` ([9802db1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9802db1f15e311055a5f93573ba2640c0e2843cf))
-- feat `add Surface class.` ([1850cc1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1850cc160a805730f4fe8c2582d89dc1935a5c63))
-- fixed `animation did not reset.` ([0ca8c0b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ca8c0bea70f529b14e50d0855eea31a04b9c190))
-- fixed `onMomentumScrollBegin when bouncing + refactor: use State pattern in ScrollViewComponentInstance.` ([e73f1e1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e73f1e1e6e3eaa7d05418d5e335c36293bae28d8))
-- fixed `Two onRefresh callbacks caused by changing the refreshing variable.` ([69b1cfc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/69b1cfc537e7a31611c840221b6cf0ed48d7dfd3))
-- fixed `onKeyPress cannot be triggered.` ([0a6b5de](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0a6b5dee2060e18526d154aea5787a2515b00f6d))
-- fixed `blueOnSubmit is not working when set as false.` ([6f676fe](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6f676fe1be2a43d10041c421084b8226ef90214b))
-- fixed `KeyboardAvoidingView, enabled If enabled is true, the behavior attribute will disappear when edit text in the input box to hide the input keyboard.` ([d7c9554](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d7c95540c16c224153e751bdc7a498132ad4748a))
-- fixed `animated events don't update view properties.` ([678c2e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/678c2e7fbca22a640619ec3c8f598715b170f292))
-- refactor `make ComponentInstanceFactory MAIN thread only.` ([958df16](https://gitcode.com/openharmony-sig/ohos_react_native/commit/958df1667ce958fd62fe308995d55729e69f71ce))
-- fixed `Fix fetchDataFromUrl method responseCode loss.` ([ac9552e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ac9552ef8dc145c01e4233e6137072b646b28db0))
-- fixed `resolving contentOffset after folding/expanding on foldable phones.` ([b716df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b716df4ab16be494fe3905f2b3c3265e585c4ffb))
-- feat `removeClippedSubviews update` ([8f93c5b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8f93c5b738aa0cbdfde97e90c2a58d441c9d4506))
-- fixed `nested text highlight` ([a4678b6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a4678b64193c8ffb17eb2ddbbb112f9577bbac40))
-- fixed `Fixed the problem that when extraData is an empty object, there is an extra & at the end of the url received by the server.` ([d943d76](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d943d7688f8895ae272fb18ad7d6f82821388b6e))
-- fixed `onMomentumScrollBegin when bouncing + refactor: use State pattern in ScrollViewComponentInstance` ([839988e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/839988e02ba23375763a7a056539e0a938cbc9d3))
-- fixed `The text component wrapped by view displays multiple lines` ([d6f21f6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d6f21f6d0735f046e58d5425e7cb0ccb96c080a9))
-- fixed `crash when m_eventEmitter was released` ([a3fb813](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a3fb813b0eb91964459917a8920853f9ec4f2f7d))
+## v0.77.1
+- added Yarn workspaces support ([35f7e2a0b0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/35f7e2a0b0d16d627fd1a5e01cb366408f28ee91))
+- fixed displaying incorrect error in some cases when it occurs on JS side during bundle loading from Metro ([827b97f2e3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/827b97f2e384d5cfe88508ce11e6605175124f3c))
+
+
+## v0.77.0
+- [breaking] RN 0.77 changed `CoreFeatures::enablePropIteratorSetter` to `ReactNativeFeatureFlags::enableCppPropsIteratorSetter` ([765b370e46](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/765b370e46cda2e1397347d9bc038c4c91b8437a))
+- updated react-native-core (and react-native) to 0.77.0 ([765b370e46](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/765b370e46cda2e1397347d9bc038c4c91b8437a))
+
+
+## v0.76.1
+- [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI` in favor of `disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode (Hvigor Plugin) ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
+## v0.76.1
+ - [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI in favor of disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
+## v0.76.1
+ - [breaking] removed `RNInstanceOptions::enablePartialSyncOfDescriptorRegistryInCAPI in favor of disablePartialSyncOfDescriptorRegistryInCAPI` (partial sync is enabled by default) ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- [breaking] moved RNOH hvigor plugin to the CLI package — app developers need to update a path to the hvigor plugin (`<PROJECT_ROOT>/node_modules/<RNOH_CLI>/harmony/rnoh-hvigor-plugin-X.X.X.tgz`) ([31d07ae3eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31d07ae3eb9c4606598baa0f3b8ab96e2aceddd8))
+- [breaking] bundle-harmony CLI command with --dev flag set to false will automatically generate HBC bundle  ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- added `clean-harmony` command ([f87fae4463](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f87fae4463d56a35ce9968570352d13b5b9dd8ad))
+- added automatic HBC bundle generation in release mode ([cf71ef06c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf71ef06c2b2248d0f28f09e02dabc0d05e4a224))
+- added an option to generate HBC bundles in bundle-harmony CLI command ([9122b29ca3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9122b29ca33b4e0f607fd90d4be04ee37ad6ed21))
+- removed deprecated `RNInstanceOptions::enableImageLoader` and `RNInstanceOptions::enableCAPIArchitecture` feature flag ([249e072044](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/249e07204439d09cac2e4cf4d3dfa86fd3593318))
+- integrated RNOH with new DevTools introduced in RN 0.76 ([c610f34dc7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c610f34dc7a63d2de66a0f5acfbc32da0bd9ae99))
+
+
+## v0.76.0
+ - updated react-native-core to 0.76 (react-native 0.76.5)
+
+## v0.75.4
+- added support for `Text` components' `textShadow` style properties ([78590dbae2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/78590dbae2a1125d40d5787343610089a7b71176))
+- fixed incorrect values for Animated properties when `display` property of its parent changes to 'none' ([d3ec8b44dc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d3ec8b44dccde49e35b48fb08d9593a9f78ed682))
+- rnoh NPM package requires a specific version of react-native-core ([1af343dca2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1af343dca2185755f3ac91e58e3a0b622d43503f))
+
+
+## v0.75.3
+- [breaking] removed ReactCommon directory — app developers are expected to specify `RNOH_REACT_COMMON_DIR` in their entry CMakeLists file ( `set(RNOH_REACT_COMMON_DIR "${NODE_MODULES}/@react-native-oh/react-native-core/ReactCommon")`) ([c79e9e23e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c79e9e23e4755d3f0f2822e89818620c1d0a072e))
+- [breaking] added a new peer dependency `react-native-core` ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- deprecated `ArkUINode::setHitTestMode` (hitTestBehavior is now set by listening to NODE_ON_TOUCH_INTERCEPT) ([d12fcff142](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d12fcff142e35f32fa40dce16d5f22d46572adcd))
+- added support for calling callbacks passed from JS to TMs multiple times ([afc45f1e00](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/afc45f1e005560c408c23794006eee1b36eb343c))
+- added init-harmony command ([0f5d44ef79](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0f5d44ef79197f827d3f3f886fb6a602c8ba74a2))
+- added `NODE_BY_HANDLE` to save `ArkUINode` by `ArkUI_NodeHandle`. ([ef75f23b47](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef75f23b474b3eece32d16873ac5919e99098dcc))
+- added `ArkUINodeDelegate::onArkUINodeTouchIntercept` ([d12fcff142](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d12fcff142e35f32fa40dce16d5f22d46572adcd))
+- fixed incorrect transforms in more complex scenarios ([02c240af3e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/02c240af3ee592adbbbd4800989ff5b32c62ad6b))
+- fixed Button default style ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- fixed repeating vibrations ([c3ef1b0937](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c3ef1b0937ad8db0bd57a6e3e1b675318511d911))
+- fixed application flooding logs with errors when trying to reconnect to Metro ([ab1b77a82a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ab1b77a82aca1bed3d0892c99bd42288a5485508))
+- fixed native props not being passed to core components ([efa2de0c7d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/efa2de0c7d6850c77d568482e31aa850fd03977b))
+- fixed KeyboardAvoidingView for `null` children ([5241ffbb8a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5241ffbb8a81b2c3ab8fd7c903f6bec51e0dee2d))
+- changed hvigor-plugin to use `DEVECO_SDK_HOME` environment variable instead of expecting `hdc` to be in the path when configuring phone for Metro ([8c9d571a85](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8c9d571a850d4d178f65cbe4a571d0b30e82830e))
+- changed scripts used by git hooks in the tester to find clang-format in $DEVECO_SDK_HOME ([14b3841203](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/14b38412039e1702f33456e7250e998a1536b1cf))
+- removed code that sets a default transformOrigin from ArkUInode ([25c1b104ce](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/25c1b104ceb22a693ad22c34b7cd02022bae55a0))
+- removed `folly` source submodule from the project repository ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- removed `libfmt`, `double-conversion`, `libboost`, `glog`, `hermes` and `libevent` source submodules/directories from the project repository ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- removed deprecated ArkTS software elements: `Descriptor::isDynamicBinder` property, `DescriptorRegistry::getDescriptorByTagMap`, and `BorderMetrics` type (ArkTS) ([b7ac8577fc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b7ac8577fce08527db84220d0eebe60ac08a07f4))
+- bumped @rnoh/react-native-harmony-cli to 0.75.4 ([4f955982c2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4f955982c2231958246075bfeafeef044405a7fb))
+- disables DevMenu when building in release mode ([1401530450](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/14015304504f4d065426c355a18f134a84f57fe9))
+- optimized bundle loading for files and rawfiles by using `mmap` instead of reading the bundle contents to a buffer ([a65956cc23](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a65956cc23e73d1659cbe1573011887ce8fb3fb2))
+- get `ArkUINode` from `NODE_BY_HANDLE` instead of userData. ([ef75f23b47](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef75f23b474b3eece32d16873ac5919e99098dcc))
+- download `folly` dependency during CMake config ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- sync `folly` version to that used by RN Android 0.75.4 ([3e26e328c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e26e328c83e979f682b3951eeb65c749bde5167))
+- download `libfmt`, `double-conversion`, `libboost`, `glog`, `hermes` (source) and `libevent` dependencies during CMake config ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- sync `libfmt`, `double-conversion`, `glog` and `libevent` versions to those used by Android 0.75.4 ([db4e1121a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db4e1121a6fcdacd7a25fbc0f838dcb6eabc02e7))
+- set `ARKUI_ACCESSIBILITY_MODE_ENABLED` if text isn't in component with `AccessibilityGroup` set to true ([45932c80a6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/45932c80a6a443f023b3acd93e7ce0c061506494))
+- optimized rendering pipeline (10-15ms/1500 views) ([437ddc250d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/437ddc250d614e83d615e6fd182b15a0b5f6216a))
+
+
+## v0.75.2
+- [breaking] disable autolinking of libraries by default; enable only for libraries that explicitly support autolinking (CLI: link-harmony) ([cdb02f5b9b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cdb02f5b9b414c4a1d32327f8f0d8848bd98cc52))
+- [breaking] renamed HarmonyReactMarker to RNOHMarker ([eabcfa775b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eabcfa775b0c8693cb2294bec66745f8cc6f5c00))
+- deprecated ArkUINode::setAccessibilityLevel ([33f7d39098](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/33f7d39098bfd9c198635d9673986c26de0ef91c))
+- deprecated `RNApp::wrappedCustomRNComponentBuilder` property ([da736db8c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/da736db8c137e62fabcc13d8e01115cb72a82030))
+- added `RNOHMarker` class to simplify listening to React Marker events in ArkTS ([6dc552093d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6dc552093d954c90272c6d174401dac9425a1f70))
+- added support for `UIManagerMountHook`s ([c81afac77e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c81afac77e4aef0c0674a586a12eee889a3367cb))
+- added `react-native run-harmony` command ([a949e41538](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a949e41538199decdea38899210a2789c9737905))
+- added `getInitialBundleUrl` in `AnyThreadRNInstance` ([9067901709](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9067901709c47b3156fff2c6d33c4396e6baf061))
+- added support for React Native bridgeless mode ([da736db8c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/da736db8c137e62fabcc13d8e01115cb72a82030))
+- fixed text not being clipping by default ([9038018d55](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9038018d5559813446e90df02de8ca9d8749b70b))
+- fixed behavior of the accessible prop  ([33f7d39098](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/33f7d39098bfd9c198635d9673986c26de0ef91c))
+- fixed incorrect keyboard behavior in modals ([78e86bee77](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/78e86bee779f27b2d477aec9b8bf12759615d23e))
+- fixed Metro config on Windows ([37f37074f2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37f37074f2ca8a4b26649accf02f993e32be13bc))
+- fixed deadlocks caused by reentrant mounting transaction ([caf6320d27](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/caf6320d279fe6e441a2abf9b4b9796d2b954687))
+- fixed `setInterval` callback triggering multiple times when restoring the app from background ([1449bc6a95](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1449bc6a95972f025bfe7de1b6d58b0cd662569d))
+- fixed `fetch` for local assets when `FileJSBundleProvider` was used to load a bundle ([9067901709](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9067901709c47b3156fff2c6d33c4396e6baf061))
+
+
+## v0.75.1
+- added support for @2x @3x image suffixes ([7a26d1dc7e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7a26d1dc7ebc3fef76e5447224546e36a0907073))
+- added shake to open dev menu feature ([eba4c3d728](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eba4c3d728cde8a460d73e555930de40d3a817bc))
+- added possibility to pass touches through RNSurface to its siblings when no RN touch target is found ([3ce303c40d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3ce303c40d23847e04aadbc1f1497d386c013e4f))
+- added support for `facebook::react::SystraceSection` ([37cc8ca57e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37cc8ca57efb692529b156a0ea3e25c9005debbe))
+- added `NoArkUINodeError` for representing Components with no native nodes ([4b8397b0bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4b8397b0bb9f34ffa0d9da0d96698062bc4ca124), [512bf12ae2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/512bf12ae2bc1c19bd793eb973231ce780052814))
+- added automatic Metro reconnecting support ([689f76a81d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/689f76a81d7b20badad3b495af2a17fcf9580fa4))
+- optimized power consumption by ~4% of the power used by a screen by not requesting VSync frames if it's not necessary ([42f054b88f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/42f054b88f13e55a241be4024a5cb2956bcbb2f7))
+- fixed `style::transform` issue introduced when updating RN to 0.75.4 ([99a35016c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/99a35016c340d8e4f1f24ca7717191294dfd3ea1))
+- fixed unexpected text overflowing ([d6d70530b3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d6d70530b3f44cefc85e92be6444c089aac593cb))
+- fixed breaking change introduced in SurfaceContext in v0.72.40 ([89c0d254bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/89c0d254bb624a3a5950663d7b8a61ff7f15bcb1))
+- fixed cleanup of callbacks passed to ArkTS runtime ([2ab4b6e606](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2ab4b6e6064ecc6a2fb69b5cd5193e15d1639b37))
+- fixed not applying selection when focused for the first time ([6e9b078647](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6e9b0786479eac8a29626f7b418669102f7cb1ab))
+- fixed compilation error related to DLOG(INFO) in ~ShadowViewRegistry when compiling in the release mode ([c85ec42e70](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c85ec42e70789e372aa4cd54e06ee32a058429f4))
+- fixed wrong alignment of `ScrollView` when it's larger than its content ([f703eb09dd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f703eb09dd4d385b6dfa9fae8db485b966afc18b))
+- fixed `ScrollView` with `refreshControl` not moving down when pulled ([637165669b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/637165669b0f097d53876b7e56b075b9bab20e58))
+- fixed `tsconfig.json` ([65c6dc0e16](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/65c6dc0e16104e1469b70d482409646ec95739ea))
+- fixed internal redirects for aliases with scoped package name on Windows ([febf0e97b9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/febf0e97b935717066649f9ff675dee1b00e089c))
+- removed deprecated `ComponentBuilderContext::descriptor`, `ComponentBuilderContext::rnohContext`, `DescriptorEssence` type ([10d72501dd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/10d72501dd817834a4dba4fb8b2ef81b303dffc9))
+- removed deprecated `HttpClientProvider` and `RNInstancesCoordinatorOptions::httpClientProvider` ([ccadd1fc13](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ccadd1fc1399bc31c010d39ecab5833dc9d1736f))
+
+
+## v0.75.0
+- [breaking] updated peer dependency to react-native to 0.75.4 and other NPM dependencies related to react-native — app projects may need to update their configuration files (package.json, babel.config.js, metro.config.js, .eslintrc, and tsconfig.json) to be in sync with RN (use https://react-native-community.github.io/upgrade-helper/ to update platform-agnostic files in your React Native project): (react: 18.3.1; react-native: 0.75.4; @react-native/eslint-config: 0.75.4; @react-native/metro-config: 0.75.4; @react-native/typescript-config: 0.75.4; @types/react: ^18.2.6; babel-jest: ^29.6.3) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- [breaking] changed props->yogaStyle in ComponentInstances (C++) ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- deprecated `ArkUINode::setAccessibilityState(const facebook::react::AccessibilityState& state)` in favor of `ArkUINode& setAccessibilityState(const std::optional<facebook::react::AccessibilityState>& state)` ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+- added codegen support for object props ([6068348723](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6068348723e2c4d7a274b5c02bdac6a7851a1c34))
+
+
+## v0.72.41
+- added `EtsUITurboModule` which provides ets-only TurboModule APIs by using `EtsUITurboModuleContext` ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- added `EtsUITurboModuleContext.runOnWorkerThread` to allow scheduling tasks on the worker thread from `EtsUITurboModule`s ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- added `RNComponentContext.runOnWorkerThread` to allow scheduling tasks on the worker thread from custom ArkTS components ([12ba9a8d9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/12ba9a8d9fa58805603b3dc173c2f3ac68eb8588))
+- fixed crash when shadowColor was used in ArkTS component ([086971ca73](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/086971ca733fc27b37d93602a41821cc467d580d))
+- fixed possible deadlock when calling TurboModuleProvider::getTurboModule ([9d329d2973](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9d329d2973af36b472c982838d8351c85641c88d))
+- fixed crashes in TimingTurboModule ([79db3615f9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/79db3615f9334d1cc9e9b342ee32303b94a5c245))
+- fixed crashes due to unsynchronized access to TurboModule cache ([41a1551d82](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/41a1551d82b90244d11f9023bcaa7312e9af2da0))
+- fixed crashes when an ArkTSTurboModule is registered on ArkTS side, but not on CPP side ([41a1551d82](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/41a1551d82b90244d11f9023bcaa7312e9af2da0))
+- fixed incorrect thread assertion inside `TimingTurboModule` destructor ([d4d47e2cce](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d4d47e2ccee94959c5250ab0317ff59eb1188965))
+- fixed ScrollView with refresh control ([4085845307](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4085845307922a1ad47cb8826cbb18d8ae0d05e7))
+- fixed `accessible` View property not applying correctly ([7994e7f977](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7994e7f97797b2f923128f5b4cd4057128921dc2))
+- removed deprecated `resolveBorderEdgeProps` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderMetrics` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderRadius` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `resolveBorderEdges` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `RNInstance::commandDispatcher` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- removed deprecated `RNApp::buildCustomComponent` (ets) ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- undeprecated `convertColorValueToRGBA` (ets) — there are use cases where this method must be used because Color class cannot ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `ComponentInstanceRegistry::registerComponentManager` ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `RNComponentFactory` and changed this component to be NOOP ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+- redeprecated (delayed removal) `RNViewManager::updateBoundingBox` ([bd25c10ad2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd25c10ad22f4b7da98ded195f0247b87e6f8a84))
+
+
+## v0.72.40
+- [breaking] removed TouchDispatcher and TouchTargetHelper (those classes were used internally in ArkTS architecture, it's unlikely libraries or project used them) ([bcf1490d2f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bcf1490d2f6360639d4f8e8694559a46f6d57c6e))
+- [breaking] changed `m_deps->componentInstanceRegistry` from shared to weak pointer ([9a835de206](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a835de2068ce0e095fa1200770c45988bdcbced))
+- [breaking] removed outdated CLI commands: pack-harmony, unpack-harmony, create-metro-host-constants ([8861ee5682](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8861ee5682841c5f1801f1a9413a879c7276ba8f))
+- [breaking] removed ArkTS architecture support (it didn't work for some time anyway) ([a465880a52](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a465880a529d1887507382d1110f9bb67d2c9950))
+- [breaking] removed classes related to ArkTS architecture ([a465880a52](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a465880a529d1887507382d1110f9bb67d2c9950))
+- [breaking] removed deprecated ArkUINodeRegistry ([7f487044c7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7f487044c7a53717f9dea587ee24513ece5a1007))
+- [breaking] changed StandardRNOHLogger to not trigger RedBox on error messages ([389bc7acd7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/389bc7acd799e8b6abad5d4d5855d05b5f343ff0))
+- deprecated SurfaceConfig1 and SurfaceConfig2 types ([b12217056e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b12217056ebb30941720167706ef1519de045e96))
+- added autolinking support (`link-harmony` command + updated hvigor plugin) ([0888ccff31](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0888ccff31a7058363ccb604609cb3ee3aae7c94))
+- added @Require decorator to the required properties of RNOH ArkUI components ([cc800bcd9e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cc800bcd9e9ff6833a12d9f339b0bfce085e1fdf))
+- added document listing supported RN API ([e4210fc5c8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e4210fc5c847ed2ad8bcb432d3cda1c10b2191d5))
+- added RNOHErrorEventEmitter, RNInstanceError, and refined error handling ([389bc7acd7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/389bc7acd799e8b6abad5d4d5855d05b5f343ff0))
+- added support for multiple sources of remote images ([77b9b9c4de](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/77b9b9c4de65227f54f69b0e2da9fdfd39c1dab3))
+- added support for mounting React children in ArkTS components through `ContentSlot` API ([ac195946e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ac195946e4333de7443675c9a4a96f2e342f1798))
+- added a support for registering fonts loaded from sandbox filesystem with OHOS to allow using them in non-`Text` components ([927cac47a0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/927cac47a04ede03f79a47f7176d27b02b8d96ec))
+- fixed defaultBackPressHandler not being triggered when it should be ([47e195a860](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/47e195a8606eba548796f9c7ed176b522f924556))
+- fixed issue with mutations to ArkTS components not applying correctly ([27457f4cde](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/27457f4cdedfee4fa5a039533d655776628d2164))
+- fixed passing multiple values for one argument for `cli` commands ([3ff65b0263](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3ff65b026306ae008867c86ad044086330433b96))
+- fixed triggering JS timers so that in happens only once per frame ([8bab695031](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8bab6950313c100775d8b8c1086fc756db768815))
+- fixed a memory leak that occurred when deallocating ArkUINodes, which can have children ([9a835de206](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a835de2068ce0e095fa1200770c45988bdcbced))
+- fixed a memory leak caused by not deallocating the ComponentInstanceRegistry and its content when removing an RNInstance ([9a835de206](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a835de2068ce0e095fa1200770c45988bdcbced))
+- fixed a crash when creating a `TextInput` with `autofocus` property set ([3f2e20fe20](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3f2e20fe20de1d462c133e297d9fe5ef9f34c1d4))
+- fixed TextInput triggering both typing key and backspace ([0868320a59](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0868320a5936d1912bc279d659e9057b4b6ac2d5))
+- changed RNSurface::surfaceConfig type in order to remove the need of casting the config type from RN App developers ([b12217056e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b12217056ebb30941720167706ef1519de045e96))
+- changed ImageLoaderTurboModule to run on UI thread to avoid task scheduling overhead when updating `ImageComponentInstance`s ([2871b8d0b4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2871b8d0b42b2f0de0010fbd82230acfc346894f))
+- changed preallocation logic to set all `ShadowView` attributes, not just `props` ([f457363cb8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f457363cb87c07ac78761c627f08d1d67b5198bd))
+- removed (internal) ParagraphMeasurer module ([3b0e9c8509](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3b0e9c850990cfe6488150eb3a0ea55fbcd426ef))
+- removed workaround of wrapping Custom ArkTS components in `RootComponentInstance`s ([1603f6bd1e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1603f6bd1e8c065554da5b45c446bffd68c63a97))
+- optimized triggering JS timers that finish at a similar time together, reducing the number of JSI calls ([8bab695031](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8bab6950313c100775d8b8c1086fc756db768815))
+- updated precompiled libhermes.so with the latest OHOS toolchain ([6d675683a9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6d675683a96803825e1759e139883423873b9445))
+- moved Fabric transaction processing to the MAIN thread ([13036b3c8a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/13036b3c8abd4847cb6666f54c776c95502c08e5))
+
+
+## v0.72.39
+- deprecated RNPackage (ts) class in favor of RNOHPackage (ets) — RNPackage becomes internal ([4d532834b7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4d532834b7d5d187b9044cfe91b419a745ccf3d6))
+- added RNOH Hvigor Plugin, which triggers code generation on project synchronization ([59be79de4d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59be79de4dc99577b0e543747e6d969fd2dec5c9))
+- added `AnyThreadTurboModule` class to allow writing TurboModules which can run on either UI or Worker threads ([d613657731](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d613657731ab3bb2cfb69ff06bd59ce238fe308c))
+- added support for registering fonts from the application sandbox filesystem ([d700228cd2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d700228cd2cbfd87432578e06284af007ce6c3a4))
+- added `RNSurface::constraints` and ability of adjusting dimensions of `RNSurface` to its content ([0f9863370a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0f9863370a72f818fd8e7cd5c2f2dd38701ad32b))
+- added support for loading images from sandbox when using FileJSBundle ([6e08d79ccc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6e08d79ccc7b1a169358c0e7a1080f7a99f1e5e3))
+- added logs for errors caused by lack of permisssions ([367d4b7180](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/367d4b718091516532983a5d43631d4acd1ba5b2))
+- added `WITH_HITRACE_REACT_MARKER` definition which allows to disable logging React Markers ([8131272101](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/813127210172855236685023485f6e396cebe385))
+- added basic support for `View::accessibilityLabelledBy` ([f662cf6dd0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f662cf6dd0b9518e26af46ee011944311685f3e7))
+- added `ComponentInstance::Registry` interface to `ComponentInstance::m_deps` ([f662cf6dd0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f662cf6dd0b9518e26af46ee011944311685f3e7))
+- added `RNInstance.registerFont` method for dynamic font registration ([f6a797c7d4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f6a797c7d43d4bad8a0151c5393588609282d10a))
+- added AccessibilityInfo::isBoldTextEnabled support ([0bb7ef49ea](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0bb7ef49eab600606718839dc26363e7dbec2333))
+- added View::onAccessibilityAction and View::accessibilityActions support ([6a3ee952b8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6a3ee952b8a1ff38f2fbfdbacba7a850768f15c6))
+- added View::accessibilityState{disabled, selected, checked} + View:{aria-disabled, aria-checked} support ([18ee4202ff](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ee4202ff67088d93bc1072265ba1521afc847d))
+- added View::role and View::accessibilityRole support ([cacaf2ac42](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cacaf2ac42545d132aa93fc4476571bbfd2e3f7c))
+- added getMetadata to ArkTSBridge ([b205473f65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b205473f6574aa8f9393dd8b9595a9de51661103))
+- added AccessibilityInfo::setAccessibilityFocus support ([4028406659](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/402840665967512860a6a1c5718922b547b32e43))
+- added `AccessibilityInfo::sendAccessibilityEvent::focus` support ([5f177c2476](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f177c247603861752167f74f4b56821f79c8715))
+- added `AccessibilityInfo::announceForAccessibility` support ([b815acdb58](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b815acdb58e2a4de7fa42241be2a3887a9e94241))
+- added support for `AccessibilityInfo::isScreenReaderEnabled` and `AccessibilityInfo::addEventListener::screenReaderChanged` ([cc9830a7b9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cc9830a7b9701ce54aba7b42769757ea61d9e04d))
+- added halfLeading support ([b205473f65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b205473f6574aa8f9393dd8b9595a9de51661103))
+- maybe added `AccessibilityInfo::sendAccessibilityEvent::{click, viewHoverEnter}` support ([5f177c2476](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f177c247603861752167f74f4b56821f79c8715))
+- fixed `onLoad*` callbacks not triggering in certain cases for the Image component ([8b9a9c8cbe](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8b9a9c8cbe98c9b4af0f70bc2d62388202c99366))
+- fixed crashes due to use-after-free of `ArkTSChannel` when destroying an `RNInstance` ([9dd6ee1516](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9dd6ee1516d812b3db179eec4acfacafecbee27a))
+- fixed incorrect cursor placement when setting content via state ([40ee441745](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40ee4417454174017492bd5eded7b249d8f4cc0d))
+- fixed incorrect CMake configuration preventing linking C libraries with `librnoh` ([cf3cf9eeff](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf3cf9eeff6f6250fc9b09dedae3934708c77ff9))
+- fixed ScrollInternalState stuck in wrong state ([d91e366ea7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d91e366ea74b137d2b33344ea68c275fb8fa3064))
+- fixed logs with multiple arguments not working properly ([367d4b7180](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/367d4b718091516532983a5d43631d4acd1ba5b2))
+- fixed `overScrollMode` value resets after orientation change ([31131d892e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/31131d892e361216d99df0a703b2617c6f5f33d8))
+- fixed `WITH_HITRACE_SYSTRACE` definition behavior ([8131272101](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/813127210172855236685023485f6e396cebe385))
+- fixed CHANGE_THREAD_PRIORITY React Marker not appearing in the trace file ([cc36e991ec](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cc36e991ec976c21b292c841590630dab00f7c37))
+- fixed: incorrect `ScrollView` content offset returned when RTL is enabled ([5b673360ac](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5b673360ac8bd45057629e9941309d823c74c11a))
+- fixed: `stopSurface` never resolves its promise, breaking Surface / RNInstance cleanup ([fb0cc6f3fb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fb0cc6f3fb1e47482c04a0ba8293c908dfb06c1d))
+- fixed TextInput native event count being incremented incorrectly ([87437c7d28](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/87437c7d285798ce45c10b3cafa973d851e76323))
+- fixed never ending React Markers in a trace files ([bce30aa5c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bce30aa5c168174ecac605dca3cd98cd07588d63))
+- fixed remote images disk cache ([3a888acb7b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3a888acb7b268da740c04fc01ce65056a8590c42))
+- fixed crash caused by using undefined this.surfaceHandle in RNSurface::aboutToDisappear ([8162155868](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/81621558681579c89dde3146e7753531d8cfaf7a))
+- maybe fixed "Cannot read property props of undefined" ([f82c1ae941](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f82c1ae941fbbe7b2feca10ea7f2bd1788762a15))
+- changed `RNAbility.getRNOHWorkerScriptUrl()` to be optional, with `WorkerThread` not running unless configured ([28641fc3e8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/28641fc3e88f999e235fbe2273887d5251a8daa3))
+- changed DLOG(ERROR) to LOG(ERROR) ([abee8bfc81](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/abee8bfc815c359a9212ad917ffdadb214850851))
+- changed `ScrollNode` `onScroll` delegate callback to respond to native `ON_DID_SCROLL` event (instead of `ON_SCROLL`) ([2199c8ed99](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2199c8ed995f0c1f510ed7f47c05a5eabe6b795b))
+- optimized performance by changing changed VLOG(1) to DLOG(INFO) ([abee8bfc81](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/abee8bfc815c359a9212ad917ffdadb214850851))
+- optimized removeClippedSubviews feature ([734fd6d5af](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/734fd6d5af03a4d574df9e122993558ea5a3065a))
+- optimized SchedulerDelegate operations latency when called from MAIN thread ([dea2d6f980](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dea2d6f98058f34b3c8b1b114385474807188996))
+- removed ENABLE_RN_INSTANCE_CLEAN_UP flag ([750eadea5f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/750eadea5ff9006bdce81e332236cca5b109c757))
+- removed `TextMeasureRegistry` instead storing the ArkUI `StyledString`s and OHOS `Typography` objects in `HostTextStorage` in `Paragraph`'s `state` ([fbd4b89869](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fbd4b89869bab142cc4bff868417e095652d2cec))
+
+## v0.72.38
+- [breaking] changed SafeAreaView to include bottom inset by default (previous behavior can be restored by specifying `paddingBottom: 0`) ([7071e43300](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7071e43300546daaa39b23180c6ee52e920bfbba))
+- updated @rnoh/react-native-harmony-cli to version 0.0.27 — this version adds a new command `codegen-lib-harmony` ([03524e7ab9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/03524e7ab9fe6d78444f9ca36c96a51af5398ef9))
+- added support for font variants ([1857b57d4c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1857b57d4cce1bc3c9217402095caea49d2664a3))
+- added TextMeasureRegistry to cache text measurements ([6023919e4e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6023919e4e5fd6827a6089c6a93b29540c437f13))
+- fixed a deadlock occurring when the surface is being stopped and setNativeProps is used at the same time ([a4af7034ec](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a4af7034ec715282ad30d458a506f7d0ac463336))
+- fixed not failing Image.getSize('') ([95f464ac7c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/95f464ac7c535aaae66f0c06a9f0376c06c53172))
+- fixed scroll aligning to the end when contentSize smaller than containerSize ([71e5624b9f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/71e5624b9ff1919890dd9b0650e8774e7826fdc7))
+- fixed SafeAreaView insets when SafeAreaViews are nested ([c7fd583168](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c7fd58316869ab0d8232186f6c7285cfc66de502)) ([7071e43300](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7071e43300546daaa39b23180c6ee52e920bfbba))
+- fixed memory leak in View preallocation ([580d06fbc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/580d06fbc5796af176a3ec07b0c95efa2eca5624))
+- fixed overscrolling behavior when removeClippedSubviews is enabled ([c0ca29e55d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c0ca29e55db9c543741bd59d4475344c4d5d4e5b))
+- fixed removeClippedSubviews when scroll direction changes to horizontal ([1923572377](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/192357237711034d44fc186fe80532c304fa7401))
+
+
+## v0.72.37
+- [breaking] replaced workerRNInstanceConfigByRNInstanceName with createWorkerRNInstanceConfig to support creating configs dynamically ([e4885b2041](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e4885b2041e0cc9840b83756e77d7276230f88c9))
+- [breaking] optimized creating napi values from dynamics by changing the signature of `ArkJS::createFromDynamics` to take the vector of dynamics by const reference ([96d7cef977](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/96d7cef9779391b9618930790bbfd8760a3ea2be))
+- added string interpolation for native animations ([73610a29eb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/73610a29eb8020ba7b040af5db8e0da07d574618))
+- fixed disabling removeClippedSubviews ([860adaf0cc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/860adaf0cc2f44e919de830a805b6f3c6573707e))
+- fixed sticky headers when screen is rotated or folding screen is expanded/collapsed ([ef3be2da79](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ef3be2da794eb08b0467b1d5ddf1630fc43d8f95))
+- optimized removeClippedSubviews performance by removing redundant RemoveClipped calls ([73f7978b8d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/73f7978b8d5995e4e59c38ec5735f86c03282350))
+- optimized text measuring ([f0e01edede](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f0e01edede74c4e24d2ff0780e82a9d44017ad3c))
+- maybe fixed EventTarget destruction crash ([c2f00e8781](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c2f00e878120cf3b1f1fd2cc5859dfdc9e66dee1))
+- maybe fixed nullptr dereference crash originating from `RNInstanceInternal::onUITick` ([971dab6676](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/971dab6676e335cff0e2c8d0a0803a64981aa973))
+- improved responsiveness by dispatching certain events as soon as possible instead of waiting for the next vsync ([00deaad18a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00deaad18afbf003ace617b37130702cd5ff1362))
+
+
+## v0.72.36
+- added Text::dataDetectorType (email, phoneNumber, etc.) feature ([67035f4e5d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/67035f4e5d3979dd512e8ec244c0a931564c372e))
+- added support for adding custom listeners in HarmonyReactMarker ([93833d25c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/93833d25c1358f25411c2b8f7f52cceec1246760))
+- fixed possible deadlock when destroying a RNInstance ([3fe266423a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3fe266423a2135dbe75f446556c0acc417b307dd))
+- fixed a deadlock when an ArkTSTurboModule waiting on the ArkTS thread is dropped ([766d7922c9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/766d7922c98735ceee85c0dcbbd8754264ca308c))
+- fixed occasional crashes due to JS callbacks being freed on a wrong thread ([dea1d9dd31](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dea1d9dd316482ed3d2ed5def98b661c72fbd79c))
+- fixed not cleaning WorkerRNInstance environment ([c92d8555b4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c92d8555b44f5b5b1df8c35fabfc11a7b2ef83fe))
+- fixed crashes when cleaning up TurboModules with pending promises ([b318477e0e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b318477e0e2cc3d922bea91646ca67fa26ecb071))
+- maybe fixed potential deadlock when creating a `ThreadTaskRunner` ([3a623fbc62](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3a623fbc626ebe3342c30f9b123743b1ec320c47))
+- maybe fixed potential deadlocks when scheduling sync tasks caused by incorrect use of condition variables ([a489a3f395](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a489a3f3953f793edcb5b42980981d8581ccd173))
+- optimized rendering components nested in the `Text` component ([4db5657c65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4db5657c65a383e75466eeec7db8e633e01959ca))
+- optimized ScrollView::removeClippedSubviews ([e6b90968b3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e6b90968b3d3f7aa792465fea39947fa2ec12d39))
+- reduced the delay when scheduling delayed task on current thread ([21d45fbc5f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/21d45fbc5f2f5018887d2ed71d6c8a8b7f0f4434))
+
+
+## v0.72.35
+- added assertions for Napi reference use ([f7bddd2b14](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f7bddd2b149d3f1536c8ec1808fbdc45dcd225be))
+- added `WorkerRNInstanceConfig::httpClient` ([c93b50f494](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c93b50f494f1d2d17e9df4d85c394856a7c64c06))
+- added warning logs for sync TM calls that take long time to execute ([a35101f875](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a35101f875eb55ce91ae9eb14fd5a4ea35c455cd))
+- fixed a possible deadlock during `RNInstance` initialization ([e90806a7da](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e90806a7da42b8bdf6e6924b46b3cb9e3ef0baba))
+- fixed reporting errors emitted from C++ side (sometimes errors weren't displayed in the ErrorBox and not logged properly) ([80fab398e1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/80fab398e119fc0b0a92cf31b7d2144af6422288))
+- fixed issue with mutlitouch scenarios cancelling touches ([96db756646](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/96db756646e7371cc72be9c3069c289172032c72))
+- fixed `VirtualizedList::onEndReached` not being called after calling `ref.scrollToEnd()` ([b558534d62](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b558534d62204085c147a474121b0c6d2a8a2775))
+- fixed `transform` not being set correctly on first render ([eb8040bf06](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eb8040bf068a02f8853c07d380c9ee6c53d02e17))
+- fixed insert/remove mutations not being passed to ArkTS components in C-API architecture ([f30acafebb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f30acafebbc3418d0390378999497d448f6a4bbd))
+- changed `TaskExecutor::Task` to only require the passed object to be moveable, not copyable ([4e22bff9e9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4e22bff9e9c1efe4d78052b5555385887a78a4f8))
+- optimized number of ScrollView state updates ([9ef1005983](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9ef10059838ac42323f06d8c4e113e1904e7db4f))
+- optimized JS runtime responsiveness by moving SafeAreaTM and StatusBarTM to the worker thread ([80fab398e1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/80fab398e119fc0b0a92cf31b7d2144af6422288))
+- optimized main thread utilization by moving Networking, WebSocket, Blob and FileReader Turbo Modules to the worker thread ([c93b50f494](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c93b50f494f1d2d17e9df4d85c394856a7c64c06))
+- optimized async Turbo Module calls by removing unnecessary synchronization and calls to TaskExecutor ([af66e80497](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/af66e80497535e3747c61d1f42d00fc9f3eda5d1))
+
+
+## v0.72.34
+- [breaking] changed setupRNOHWorker params ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- [breaking] made RNInstanceOptions::name required ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- [breaking] made `RNAbility::getRNOHWorkerScriptUrl` abstract — RNOHWorker is now required because some core Turbo Modules are going to be moved to the Worker thread ([a8d200324d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a8d200324d59a58cb79d300f95d0a0c3e52ae716))
+- [breaking] changed the type of `ArkTSTurboModule::Context::arkTSTurboModuleInstanceRef` ([f286a844e0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f286a844e00f55d2d63de1d546113bee8ba97f4f))
+- [breaking] changed RNOHCoreContext::destroyAndUnregisterRNInstance to be async ([2d123b4cc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d123b4cc59ea0647a4cb60e1bbd72c69d28647f))
+- [breaking] removed enableNDKTextMeasuring feature flag ([efe644bd9d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/efe644bd9dbe242257c00db78bb9fcb737fa0803))
+- deprecated RNInstance::getTurboModule in favor of RNInstance::getUITurboModule ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- added WorkerRNInstance::getWorkerTurboModule ([32e1cfabf4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32e1cfabf40ffdba67f53b418b68df977fe2f44d))
+- added support for writing directions ([00b1ae1067](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00b1ae106795ee1a18b983021913c51ba74bde67))
+- added WorkerRNInstance::postMessage ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- added WorkerRNInstance::getArchitecture ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- added decorationType ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- added lengthMetricUnit ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- added selectedBackgroundColor ([5f34b7203c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f34b7203cc21a54f1b63e7a558675387d8cb0ef))
+- fixed a bug where worker TurboModules were created on a wrong thread ([5302f38e35](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5302f38e3532c61c5bab66a8c9a2b420a1c656bf))
+- fixed incorrect prefix used by WorkerTurboModuleContext::logger ([18ec98e46a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/18ec98e46ab82d8d949bde01577fb3dce1a2c252))
+- fixed WorkerTurboModule::__onDestroy__ not being called ([2d123b4cc5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d123b4cc59ea0647a4cb60e1bbd72c69d28647f))
+- fixed not working lint:js:fix script ([f2396f5f72](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f2396f5f72c334b3f53342cf13ed4a5c7d0fd8fa))
+- changed default textBreakStrategy to Balanced ([1c58d37759](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c58d37759e69ebf463fc0c067f1b6a1bb0e5fcd))
+- rearranged ArkJS::createFromDynamic branches by frequency decreasing order ([90357cd6a2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/90357cd6a26b1c4edf591a6a55d1eb55c68a1dcd))
+- optimized main thread usage by moving AppearanceTM on the worker thread ([d98c568f97](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d98c568f976d98766bb2129dd165d77b531b200c))
+- optimized image prefetching by moving ImageLoaderTurboModule on the worker thread ([874d3e719f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/874d3e719fb32a4cae38b5654f1dde7725f06c6d))
+- early return in onScrollFrameBegin function for scroll components with scrollEnabled false ([0d24b2f01e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0d24b2f01ede99fe5679acf6321ff82a2af22406))
+
+
+## v0.72.33
+- [breaking] changed `setupRNOHWorker.ts` to `setupRNOHWorker.ets` — `setupRNOHWorker` can't be imported from TypeScript files anymore ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
+- [breaking] changed compatibleSdkVersion to 5.0.0(12) ([23a0506e75](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/23a0506e75a21b558eca408cb4b6a810e8c8dedc))
+- added Surface class and RNInstance::getSurfaceByRootTag ([4fa36118c7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4fa36118c789f9d793314b8b72a0c0126957ad25))
+- added (Worker)RNInstance and UIAbilityContext to WorkerTurboModuleContext ([6226da81fc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6226da81fc5ebca3fd96e6d2dd047261bbbbed44))
+- added `EtsWorkerTurboModule` and `EtsWorkerTurboModuleContext` — this context provides a function `runOnUIThread` which allows WorkerTurboModules to run tasks on UI thread and access `UITurboModuleContext` ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
+- added sendable `UITaskRunnable` — use this class to implement tasks that should run on the UI thread from WorkerTurboModules ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
+- added RNOH errors handling thrown on the worker thread ([f211e048ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f211e048ca29f1f76ecbe0dd1d56948203c33248))
+- added @api markers to software elements in the `RNOH/arkui` directory (added @internal marker to ImageSpanNode, TextInputNodeBase, TouchPoint, XComponentSurfaces) ([6ba9dd0124](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6ba9dd01240428fd2844b544669fe80668eb27eb))
+- added CustomNode ([190703cde4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/190703cde42612e3fe62b16ff28262f118e1c6ce))
+- added ArkUINode::setLayoutRect ([190703cde4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/190703cde42612e3fe62b16ff28262f118e1c6ce))
+- fixed ScrollView offset resetting when navigating to a different page ([3465c258a7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3465c258a7d025005ff4c6d0cf138269eb00b3af))
+- fixed thread names not being set correctly ([23e923e029](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/23e923e0295971d581b497284d5a06cbdc754ca6))
+- fixed crash when an Instance with running Surfaces is destroyed ([45e360bd19](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/45e360bd198f3ed6397b2b642748b5338d2a1278))
+- fixed crashes when timers trigger during Instance destruction ([0babd5c77f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0babd5c77f9d3795bd21eabc6a3fbaa6f6bc26ed))
+- fixed text measurements for custom fonts ([4c22864ce8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4c22864ce8ba128be41374f68136cd5649ac8f9f))
+- optimized task scheduling on JS thread for better responsiveness ([1287256cd4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1287256cd42c2b7ef2d439ba6d4991bf1d539170))
+- optimized `onPropsChanged`/`onStateChanged`/`onLayoutChanged`/`onEventEmitterChanged` by calling them they actually changed ([3718106ec6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3718106ec6fd1047dfbfbcc3f7e3581c8232f7c8))
+- optimized first core components rendering by skipping setting default props ([1dac41647e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1dac41647ed42cc6b776be7bf954d0482a5c82a6))
+
+
+## v0.72.32
+- deprecated `TurboModule` and `TurboModuleContext` in favor of `UITurboModule` and `UITurboModuleContext` or `WorkerTurboModule` and `WorkerTurboModuleContext` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- deprecated `TurboModulesFactory` in favor of `UITurboModuleFactory` and `WorkerTurboModuleFactory` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `TextInput::passwordRules` experimental support ([6d4effb93c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6d4effb93c2a0d0b880d662b4adc984672fbb00d))
+- added `WorkerTurboModule` ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `RNPackage::createWorkerTurboModuleFactory` — this method is expected to be overridden by library developers if a library provides Turbo Modules that can run on the WorkerThread ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `setupRNOHWorker` — this function is expected to be used by app developers and it is expected to be called in the worker script ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- added `RNAbility::getRNOHWorkerScriptUrl` (and `RNInstancesCoordinatorDependencies::rnohWorkerScriptUrl`) — app developers are expected to override `getRNOHWorkerScriptUrl` to enable worker thread and WorkerTurboModules. Currently, WorkerThread is opt-in feature. ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- fixed a crash which could happen when a touch was cancelled while another is active ([b5bf4d383f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b5bf4d383f9d9745ee58b50f1b5fe67eb1eeac9f))
+- fixed animated events not updating views when no other animations are running ([16b7c2f0b2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/16b7c2f0b2c8804606cddf02278afd66966d5199))
+- fixes native responder blocking not taking place ([cf1c104b4b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cf1c104b4b20a4cb24c2bab85646f5683fdcabb5))
+- removed throttling from StandardRNOHLogger ([baa2da0850](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/baa2da085017ad461e322ac2cf6ad668aaaabe59))
+- optimized ComponentInstance allocation ([183106af39](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/183106af399adc69372a9cef8970dd149e2fa25d))
+- optimized native animations by batching multiple updates in single task ([9a9672fbbb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a9672fbbb36dcdaea40f220ccaedddc18e8c371))
+
+
+## v0.72.31
+- added support for `TextInput::inputMode`  ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
+- added support for `TextInput::contextMenuHidden` ([b873539cd1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b873539cd1719e64079d59bc8c5fcfaa5e222ed9))
+- added onHoverIn and onHoverOut support ([dd4b30ed38](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dd4b30ed38e4a3f5d60939b86f8b6e8b5f963083))
+- added `ArkTSMessageHub` to `TurboModule::Context` to allow TMs to listen to ArkTS messages ([8aeaf643bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8aeaf643bbaaef79cb7665a17a957b906def9a04))
+- fixed animation issues caused by Animated Scroll events throttling ([2579748710](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/25797487102bbb7282cc7154281de17661976deb))
+- fixed setNativeProps for values which can be defined outside `style` object   ([e90d1cd744](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e90d1cd744784175efb2b232161a617ab492c46e))
+- fixed TextInput sometimes being covered by keyboard ([e482abc673](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e482abc6732287f16052b3e24d5692e39bbe1787))
+- fixed incorrect keyValue in onKeyPress when non-ASCII characters were in the input text ([37092cdc38](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/37092cdc386955e0b2dde227117d33fccd22c7eb))
+- fixed ArkUI nodes' ids colliding in multi RNInstance environment ([04e23564e4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/04e23564e40d5e3eae6a44706b2ba773dd111c32))
+- removed ArkTS `TimingTurboModule` ([8aeaf643bb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8aeaf643bbaaef79cb7665a17a957b906def9a04))
+
+
+## v0.72.30
+- deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `arkTSMessageHub` ([59d7550bb4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59d7550bb4629787ec0ecbfa4eeee0e93b2ad10c))
+- added image prefetch support  ([6511bda8cf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6511bda8cf0da47c3b61663ff385ca1692c89441))
+- fixed cleaning up after ArkTS components — aboutToDisappear wasn't called when the ArkTS component was destroyed ([00e9ea3fbf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00e9ea3fbf201ecea6e60dd146c444dc05049c2f))
+- maybe fixed crash — "Trying to send a message on websocket "0" but there is no socket." ([7001556e85](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7001556e85dfa48c8dd57a50b8ec5d7dd09d6920))
+
+
+## v0.72.29
+- deprecated `ComponentInstance::Dependencies::arkTSChannel` in favor of `RNInstance::postMessageToArkTS` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3d15e2e7ed7c8424d5a8e1337aa26d28f7408c5f))
+- deprecated `ComponentInstance::Dependencies::arkTsMessageHub` in favor of `ComponentInstance::Dependencies::arkTsMessageHub` ([ca56635340](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ca56635340592d3f52de5447a8371a689660c6b0))
+- added traces in RNOH code ([b2e6ce9ebc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b2e6ce9ebc57992b0acce6ad01221a0ca5736881))
+- added support for multiple abilities using RNOH in one bundle ([0873ca8e45](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0873ca8e45348c66f84d26de3c333d51de33dd30))
+- added `disableCleaningRNInstances` option to `RNInstanceCoordinator` and `onShouldDisableCleaningRNInstances` to `RNAbility` ([0873ca8e45](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0873ca8e45348c66f84d26de3c333d51de33dd30))
+- added `getNativeNodeIdByTag` method to `RNInstance` (ArkTS class) ([39d6962924](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/39d6962924ced6c1188c91205621928aeb437e0f))
+- fixed issue with URL encoding in the `NetworkingTurboModule.sendRequest` ([61323e7fdd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/k61323e7fdd8d91a7655db7438f3bdaaa037247d9))
+- fixed a bug causing performance issues for large mutations ([1c380d38bc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c380d38bc91e9dcd8b8fbde40806e7e25c0d20d))
+- fixed useNativeDriver issue by running maybeStartAnimation on AnimatedNodesManager::connectNodeToView ([3741eddd27](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3741eddd27dab375e6a1cda86ad63b18d6d39716))
+- fixed `XComponentSurface`s clean up on `MAIN` thread ([eb0a5bb9af](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/eb0a5bb9afd09b3a0b773471f40909ffb5d5d5f3))
+- fixed onMomentumScrollEnd called instead of onScrollEndDrag ([3e44fc2279](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e44fc2279c4b8e54b68bb4bf2beb6514bf13bc6))
+- fixed `ScrollView`'s `onMomentumScrollBegin`, `onMomentumScrollEnd`, `onScrollDragEnd` ([6251ba80ea](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6251ba80ea93e0fbe7d7fb0e96c64d57d268bba0))
+
+
+## v0.72.28
+- deprecated `ComponentInstance::{setProps, setState, setLayout, setEventEmitter, finalizeUpdates (override onFinalizeUpdates instead), handleCommand (override onCommandReceived instead)}` — these methods will be inaccessible for library developers in the future ([8ccb62b664](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8ccb62b66437f4b818c2c659b855605a9b091a3c))
+- deprecated `HttpClientProvider` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
+- deprecated `DefaultHttpClientProvider` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
+- deprecated `RNInstancesCoordinatorOptions::httpClientProvider` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
+- deprecated `Package::createComponentInstanceFactoryDelegate` (C++) ([3e97be1e03](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e97be1e038dc80e23b7397be40b6fe6ca0ad48a))
+- deprecated `enableBackgroundExecutor` RNInstance option ([a009f7297e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a009f7297ea0b4e74b571cf229a9d86d9432bd65))
+- deprecated `LayoutProps` interface (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `DescriptorRegistry::getDescriptorByTagMap` (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `OverflowMode` enum (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `Descriptor::isDynamicBinder` (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `DescriptorEssence` (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `BorderMetrics` type (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `ComponentBuilderContext::descriptor` (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- deprecated `ComponentBuilderContext::rnohContext` (ArkTS) ([9af8a3b93d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9af8a3b93da01c3683e643963de7983674547699))
+- added `TextInput::style::lineHeight` support (however, when `TextInput::multiline` is enabled, this feature is buggy) ([3984d4c061](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3984d4c0611062997c0abdb8c8052217c6e925ab))
+- added `RNOHCoreContext::cancelTouches` ([6b919e42c4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6b919e42c4014cbb550894e79adde543bef26fc2))
+- added `RNInstance::cancelTouches` ([6b919e42c4](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6b919e42c4014cbb550894e79adde543bef26fc2))
+- added Linking.addEventListener() support ([7ede6d70aa](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7ede6d70aa21a955de8ff518ffc6d3dfd9507391))
+- added option `RNInstanceOptions::disableConcurrentRoot` to disable React 18 features ([799122339f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/799122339f82ef6db483c1a43375137419896016))
+- added removeClippedSubviews to ScrollView ([939713694d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/939713694d0bceffaf5ef0582b932787afa4b27a))
+- added `getNativeResourceManager` method to `RNInstance` (CPP) to allow accessing the OHOS `ResourceManager` from RNOH ComponentInstances and TurboModules ([8682455562](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8682455562f8fbb6437824ae6c6a673b92830d38))
+- added `RNInstancesCoordinatorOptions::defaultHttpClient` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
+- added `RNAbility::onCreateDefaultHttpClient` ([98cb478b05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98cb478b0592f21fec00a06f09e6795b37fff704))
+- added XMLHttpRequests's upload progress event handling ([9a1917dac9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a1917dac9d21c0429323be7553c6b1457f9c294))
+- added support for registering different native backpress handlers for each RNInstance used ([67c13f6f94](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/67c13f6f94cc4400518a2d062e8b203d0ce2761c))
+- added `Package::createComponentInstance` method (C++) ([3e97be1e03](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3e97be1e038dc80e23b7397be40b6fe6ca0ad48a))
+- added force parameter in TouchEvent ([89fd1328ff](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/89fd1328ffaaf35657e276ca1f3fa9cae27f8bf5))
+- added a feature flag `enablePartialSyncOfDescriptorRegistryInCAPI` ([7257c545fc](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7257c545fc2edce272e2f97a68314e58be0a67a8))
+- fixed SafeAreaView not working in certain situations ([624f7d7f0e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/624f7d7f0e15cd9bda28bd33f09238af3f43faa2))
+- fixed removed clipped throttling ([50d6856ee9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/50d6856ee97ec0ff1dcea84bc6004619faeb5e6b))
+- fixed bug when `NativeAnimated.removeAnimatedEventFromView` is called with incorrect arguments ([730a482cb7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/730a482cb76eee7656b828e150f1f0c907172d2d))
+- fixed problem with getting right bounding box for animated views with values from useNativeDrivers ([837f6f544c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/837f6f544c1a0cb590a409576593864af52d065e))
+- fixed `Switch` `onValueChange` event firing when value is changed via prop ([6975516d05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6975516d051934f33182a03fada1e4c7ab9f221a))
+- fixed `Switch` value set by prop being overridden by user input ([6975516d05](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6975516d051934f33182a03fada1e4c7ab9f221a))
+- fixes problems with cleaning up RNInstance when there was native animation running ([cfd30ed398](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/cfd30ed398796c301015fd5712da29d41ea869f5))
+- fixed calling endCallback from JS thread instead of cleanup thread ([51ee0ec070](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/51ee0ec070767dd9fd4a8af6bf89bb28dbc58c21))
+- fixed a use-after-free bug ([9a37f807b6](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a37f807b6f70e46bdc4369bd318e4f0c1886f4f))
+- fixed XMLHttpRequests timeout event ([9a1917dac9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9a1917dac9d21c0429323be7553c6b1457f9c294))
+- fixes use-after-free issues with native vsync listeners in Animated ([197a39392a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/197a39392a75219b78efe9e3171ac2b9a3fcc1d9))
+- changed default values for ScrollNode scrollTo animation ([976262dfc9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/976262dfc94a623748bcdc6b493cb2ed832e25c9))
+- changed the default background color of StatusBar ([2db53d46f0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2db53d46f0fd8e28a75f895651421863a9c7e09c))
+- handle `ViewEvents` props in ViewComponentJSIBinder ([8e3882ee3e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8e3882ee3e06819a0f9c0ec2b71259e6b209299d))
+
+
+## v0.72.27
+ - [breaking] added codegen support for C-API architecture (in the cli package v0.0.26). This change is breaking for RN app developers. They need to update their `harmony/entry/src/main/cpp/CMakeLists.txt` to support packages that rely on this feature by defining `RNOH_GENERATED_DIR` variable. RN app developers are expected to use the latest CLI version, because if a package is migrated before an application that depends on that package, the project won't compile. RN library developers can use codegen for C-API architecture by specifying `package.json::harmony::codegenConfig::version: 2` in their packages. The `codegenConfig` property now also supports a list of configs to allow developers to generate code for both RNOH architectures. In version 2, passing objects through a component property is not supported — the application won't compile. This issue may require updating `react-native`. ([59cc716e30](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59cc716e30ef55ebb2880ba32d9123a6a0955844))
+- deprecated `ComponentManagerRegistry::registerComponentManager` ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `convertColorSegmentsToString` ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `convertColorValueToRGBA` ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `BorderEdgePropsType` ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `resolveBorderMetrics` utility function ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `resolveBorderRadius` utility function ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- deprecated `resolveBorderEdgeProps` utility function ([40cdf653c3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/40cdf653c3e2ac14ba038cb97297c10be41eec65))
+- added `--no-safety-check` to `react-native codegen-harmony` that disables checking if path is in CWD before cleaning up directory for codegen output ([59cc716e30](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/59cc716e30ef55ebb2880ba32d9123a6a0955844))
+- added Deprecation Policy document ([643a872b82](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/643a872b82880b8ef8dbed3e736366e423c628d2))
+- added XMLHttpRequest.withCredentials support (cookie handling) ([b10f01b53d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b10f01b53d15938bf09520027f12bf6c13e11b07))
+- added proper offset to touches ([bc86521901](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bc865219016b19af329ba41a003c3e7a443563db))
+- added incrementalUpdates (onProgress) handling in NetworkingTurboModule ([2de583c831](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2de583c831eb085ec1a86c032d9c0206e9605b2c))
+- added support for RefreshControl's RefreshIndicator size property for C-API ([fdc11dd95e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fdc11dd95e24139d9bea9cc6b7eb6abd857fcd9f))
+- added support for ActivityIndicator size property for C-API ([fdc11dd95e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fdc11dd95e24139d9bea9cc6b7eb6abd857fcd9f))
+- fixed blocking and unblocking native responder not taking effect ([85b9840e7d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/85b9840e7d2133b61f4530a138dc6b070a320e22))
+- fixed nested text touch handling when multiple fragments have the same press callback ([8172368640](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/817236864091477ff7e3cfb65988aad2420236c9))
+- fixed text fragments handling touches before attachments, despite being drawn under them ([8172368640](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/817236864091477ff7e3cfb65988aad2420236c9))
+- fixed Text touch point calculations when paragraph attributes change ([d37ba1f8c1](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d37ba1f8c147a2e042159b4cf743103b8daf9ff2))
+- fixed JS callbacks passed to ArkTS being cleared prematurely ([1c4e1b142d](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1c4e1b142db3335be3104803eb9e38f8eb582bd8))
+- fixes how native node IDs are set by default ([adb80ca94b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/adb80ca94b060632e13ac05500cfe4a04ed430c6))
+- fixed how perspective transform is applied ([7c14eaf633](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7c14eaf633dcdd3365e19891f97d9457ade775ba))
+- fixed setting `opacity` for views with animated `transform` ([2e3353dcb9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2e3353dcb98c91dfdf989d301708ec1189fff335))
+- fixed `ScrollView::contentOffset` not set at the first render ([6fcb800859](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6fcb800859e76a0df3cb3d470d8d5290d6c7e9dc))
+- fixed `pointerEvents: "none"` ([c6537e1266](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c6537e1266ba3998e92bec0cb7006a30d5c4463e))
+- fixes event counter update mechanism in ArkTS TextInput implementation ([11daea8773](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/11daea87735bcb28ff4fb4ba4ce51c80e4061523))
+- fixed aligning in SafeAreaView ([8ba47eece9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8ba47eece96bdf627608000bfc06248f134ee716))
+- fixed `TextInput` hanging when fontSize is not provided ([f5a248d007](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f5a248d007bfa670ad09705671a52fbfdcf690c4))
+- fixed touches being off in Scrollable components during refreshing using RefreshControl ([00c64aafd2](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/00c64aafd28a7a933633483bb3f8422441c200ad))
+- fixed input being filtered out when it does not match the selected keyboardType on ArkTS architecture ([32d16d0655](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32d16d0655271091c172e89df177ce0c17c8d348))
+- fixed pointerEvents not being applied when set on the TextInput component on ArkTS architecture ([32d16d0655](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32d16d0655271091c172e89df177ce0c17c8d348))
+- fixed sending and receiving arraybuffer to/from the WebSocket server ([ca71e6ee37](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/ca71e6ee37b508d0fe2279e3b9c3598b6b897242))
+- fixed memory leak in DescriptorRegistry ([97f3fe935b](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/97f3fe935b583a2b8635775b5bd5779168952e07))
+- fixed `snapToOffsets` and `snapToInterval` still being applied after unsetting them ([399fbefadf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/399fbefadf5d501152e4a1be1edef45106c144d9))
+- fixed nested ScrollViews triggering parent scrolling when scrolled beyond its content right after initialisation ([399fbefadf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/399fbefadf5d501152e4a1be1edef45106c144d9))
+- schedulerdelegatecapi::schedulerdidsetisjsresponder now calls ComponentInstance::setNativeResponderBlocked asynchronously. ([20df62fab9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/20df62fab95637850c0139bc0955247fa945ee57))
+- ensured calling the onAction callback only once in AlertManagerTurboModule ([230b4ead92](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/230b4ead921524d836573108bfdd929d71f8506d))
+- always use properties from `ViewProps` in `CppComponentInstance` ([fd986c8211](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fd986c8211ce6203a414f816f097c311be55f2c3))
+- fixed TextInput by preventing sending onChange events when value is changed from state rather than typing ([0d0a3a4576](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0d0a3a4576e87760c8e4c5defc78b4355027be73))
+
+
+## v0.72.26
+ - added TouchTarget::getCurrentOffset method ([e2d3a5424f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e2d3a5424f1bad6d59892bcad79246e981edff1b))
+- added doc comments ([fd99f5dc98](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fd99f5dc98cee883f0cff3e5fc1dc1a0e32d515d))
+- added delegate releasing asyncHandle to the uv_close function call in class destructor. ([30d553764e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/30d553764efdc1e119d0bdf5ab82fa9dde198ed9))
+- wrapped NapiTaskRunner::asyncHandle into a pointer ([30d553764e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/30d553764efdc1e119d0bdf5ab82fa9dde198ed9))
+
+
+## v0.72.25
+ - [breaking] changed signature of `RNOHCoreContext.createAndRegisterRNInstance` ([a52a79cfee](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a52a79cfee2394977d431d064f136f9b3c3dbde1))
+- added support for `ScrollView::maintainVisibleContentPosition` ([c51f235c57](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/c51f235c577abd5ebf6abe48e173eb493dc14c31))
+- added support for setting `FrameNodeFactory` on an existing `RNInstance` ([a52a79cfee](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a52a79cfee2394977d431d064f136f9b3c3dbde1))
+- added allowRTl ([3b2eaede1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3b2eaede1f3350507d0c61a7576c5c196692444d))
+- added forceRTL ([3b2eaede1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3b2eaede1f3350507d0c61a7576c5c196692444d))
+- added getConstants ([3b2eaede1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/3b2eaede1f3350507d0c61a7576c5c196692444d))
+- moved initializing `FrameNodeFactory` to `RNSurface` (application code should not create its own `FrameNodeFactory` instances) ([a52a79cfee](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a52a79cfee2394977d431d064f136f9b3c3dbde1))
+- improved error handling when no FrameNode is provided ([a52a79cfee](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a52a79cfee2394977d431d064f136f9b3c3dbde1))
+
+
+## v0.72.24
+- added: setHeight/setWidth/setTranslate/setMargin/setPadding/setVisibility in ArkUINode ([7bb94f9db7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7bb94f9db76ff3bedc6be78b79cccacfaed708b4))
+- added support for `RefreshControl::enabled` ([4bbecc3810](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/4bbecc38105f2e7898f95d4f77483e8d52bdc721))
+- added onWindowStageChange in RNAbility ([51cf9aaf61](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/51cf9aaf617994ddf43bbccb47a786b5ca135860))
+- added StageChangeEventArgsByEventName in RNInstance ([51cf9aaf61](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/51cf9aaf617994ddf43bbccb47a786b5ca135860))
+- added onWindowStageChange in RNInstancesCoordinator ([51cf9aaf61](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/51cf9aaf617994ddf43bbccb47a786b5ca135860))
+- added listeners in AppStateTurboModule ([51cf9aaf61](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/51cf9aaf617994ddf43bbccb47a786b5ca135860))
+- added ArkUI properties (enableStatusBarAnimations) but they are not working yet ([f9262857e9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f9262857e96568f80ab4567b05ca29ab7e0058bf))
+- added support for `progressBackgroundColor`, `title` and `titleColor` for `RefreshControl` in C-API architecture ([49fd649b4f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/49fd649b4f05925bf32311b9e3e8a359d12f06a3))
+- added null check into onConfigurationUpdate() ([fb172fb9d7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/fb172fb9d7efc8156231da19c6a3cdc744eb2b81))
+- added HttpClient ([8a1bc5fab8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8a1bc5fab8758395248550002572e0b8e930b19d))
+- added `Modal::onOrientationChange` ([e28f54a321](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e28f54a321f2cab1229a6b5d61dacd408c66011f))
+- added NODE_TEXT_WORD_BREAK support  ([0e07813df7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/0e07813df70fb367ed07234d17ddaa4e448f3cdc))
+- added support for `TextInput::selectTextOnFocus` ([92ae1e1eb9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/92ae1e1eb91c1e96098f2c4e572404ba609bea2d))
+- added support for `TextInput::selection` in multiline ([92ae1e1eb9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/92ae1e1eb91c1e96098f2c4e572404ba609bea2d))
+- added full support for `TextInput::onKeyPress` in multiline ([92ae1e1eb9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/92ae1e1eb91c1e96098f2c4e572404ba609bea2d))
+- added test for ToastAndroid duration constants ([f857f1e73f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f857f1e73f5fa891032a681633792be99d344147))
+- fixed the Scroll bouncing back on first scroll when nested in another Scroll. ([1d24eddbcb](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/1d24eddbcba1fd50d6b26a6bf5b7525c98f2ad6a))
+- fixed animated views jittering when they are rerendered by React ([934d5d237e](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/934d5d237e9b57062dc6177b8b2787f198a441b2))
+- fixed issue with 0-sized views being incorrectly positioned by ArkUI ([499613f907](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/499613f90756a4f2680b67b19d7fc1400002e098))
+- fixed touches for non-ASCII text fragments ([644e022fcd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/644e022fcd443c23a2c9f89c62ebcd1b05d6d4f7))
+- fixed deadlock when trying to `postMessageToCpp` from a `cppEventEmitter` listener ([8ca81da316](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/8ca81da3160bfc6a1e23a3731f02a3dea1bbb0dc))
+- changed `ScrollView` child point calculation to take into account content centering ([b44780cfe9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b44780cfe96dc2dde3f5e8d5b6c241927f681ae9))
+- changed `Modal` display size to rely on window size rather than screen size to allow proper display in split screen mode ([e28f54a321](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e28f54a321f2cab1229a6b5d61dacd408c66011f))
+- removed setMargin in StackNode ([7bb94f9db7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7bb94f9db76ff3bedc6be78b79cccacfaed708b4))
+- updated ~RNInstanceCAPI thread-related codes ([bd729ca9f5](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/bd729ca9f553008462f52cf22b59f1eb1190dcf5))
+- manually setting color in StatusBar inside setInterval function (similar to Android implementation) ([f9262857e9](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f9262857e96568f80ab4567b05ca29ab7e0058bf))
+- implemented progressOffsetView of ArkUI Architecture ([48fca87ec0](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/48fca87ec056b046551b78f876a57f5bb662781b))
+
+
+## v0.72.23
+- added Image's `loadingIndicatorSource` support in both architectures ([32787795ca](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/32787795ca075b1fe25e9807924fbb7c1e5304b3))
+- fixed har file not being included in the npm package ([f5e07d7791](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f5e07d77916ab593af7a83dbc17b88d57cd6d3e8))
+- fixed AppState listeners not being called ([2405372295](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2405372295e963ee1983c9e2b3b75a05cd25c978))
+
+
+## v0.72.22
+- [breaking] react-native-openharmony ships with a har file rather than module.tgz - pack-harmony and unpack-harmony should no longer be needed and they will be removed in the future
+- added setting native node `id`s to `testID` or `nativeID` prop values ([6a7d0a5cc3](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6a7d0a5cc373c7a01331c1515218f31e2ab19d9c))
+- changed blocklist in metro configuration ([aba0358d36](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/aba0358d369ca9dbd3515959dfbd9e5106f9ca92))
+- reverted code added in this PR - while this fixes touches, it breaks some styling in ScrollView with RefreshControl but working touches seems more important ([5872d9629a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5872d9629a51d7ce6ceaa565aa688222c0940ae5))
+- support alignment in text measurement, calculate the correct position for children views ([6092118b76](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/6092118b769f88dfe6e1570dc1053bcc5f16d7ed))
+- support setting `TextInput` component's contents by setting its `children` ([569513d344](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/569513d3444bb55cefbdbf9c419871a8cc8e0d44))
+
+
+## v0.72.21
+- [breaking] `onWindowSetup` is now private and was renamed to onAppSetup - use one of the following methods onPrepareRNInstance, onWindowSetup, or onWindowStageSetup instead ([98682eb3bf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/98682eb3bf7e6284647843f599ca37cf87c94f60))
+- added onKeyPress event ([e9887ef98c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e9887ef98cd9e3594432e2228a8c0bc0df268c6c))
+- added support for `ScrollView::disableIntervalMomentum`  ([17f45cea3f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/17f45cea3fc161b9b7be3ea16987a43c0cbec885))
+- added sorting `snapToOffsets` before passing them to ArkUI node - the ArkUI snapping is not working when the offsets are not ordered  ([17f45cea3f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/17f45cea3fc161b9b7be3ea16987a43c0cbec885))
+- added passing `INFINITY` as a last snap if `snapToOffsets` has only 1 element to tackle bug #988  ([17f45cea3f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/17f45cea3fc161b9b7be3ea16987a43c0cbec885))
+- add overridable `defaultBackPressHandler()` to `RNAbility` ([35e4bf30fa](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/35e4bf30fa0e7a5670a50651c75cca787c849320))
+- add `defaultBackPressHandler` to `RNInstanceCoordinator` dependencies ([35e4bf30fa](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/35e4bf30fa0e7a5670a50651c75cca787c849320))
+- added `react-native verify-package-harmony` CLI command ([7d4ef1fe4a](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/7d4ef1fe4aed20708542d17f98d6af8a4735478e))
+- add `ScrollView::contentOffset` prop support ([a324775f09](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a324775f090e59f6a63b04b377ef22ec8c5be3fb))
+- added missing C_API tags ([b93b924a9c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b93b924a9ced15f7ccc1a25fab58a8080ca7edec))
+- added build-profile.json5 in react_native_openharmony folder ([996de9afb7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/996de9afb759d6940f9712b7b98f4a08082aef04))
+- added event counter to TextInput in C-API architecture. ([9ddcf52121](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/9ddcf5212144793274593dac09b76163b0f4a7c0))
+- adds default issue template for bug reporting ([db2a63a5da](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/db2a63a5da1847a0d9664045871cf5caf7116f21))
+- added tests for View::NextFocus and Button::NextFocus ([5f7e94cdbd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5f7e94cdbdd1e99580a6f9b2eab18077b199a754))
+- added additional test for loading images from different subfolders. ([5dde8e1adf](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/5dde8e1adfc4a08c364e892c481257fcdb47b5dd))
+- added support for setting different padding on each edge in `TextInput` ([725bf8fa08](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/725bf8fa08f80b1c26ac6f6488ad3849f720c2d6))
+- added `resolveEdges` method that resolves `YogaEdges` object into `RectangleEdges<>`  ([725bf8fa08](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/725bf8fa08f80b1c26ac6f6488ad3849f720c2d6))
+- added `RNInstancesCoordinator` ([de24f8e125](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/de24f8e1257438235226ce52b205f5f344916abf))
+- added test for that case ([f5576361ba](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f5576361bad8f272312fc15f4d2c9fecb87c69e0))
+- add lazy bounding box calculation ([d0cf8628fd](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/d0cf8628fdc64cb1b6b89c30ae6105d43d34d068))
+- fixed root `Modal's` root `Stack` node's position to `{0,0}` . ([2d1826f9ef](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d1826f9efb61920bdff8c448ddd841244829734))
+- changed order of event firing ([e9887ef98c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/e9887ef98cd9e3594432e2228a8c0bc0df268c6c))
+- changed oh module and package name (third party libraries should import from `@rnoh/react-native-openharmony` instead of `rnoh`) ([41eff41379](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/41eff4137968b8d08bb5583efffb563d925f57f8))
+- changed the `backgroundColor` of `TextInputNode` and `TextAreaNode` to `transparent` when the property is not set ([f5576361ba](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/f5576361bad8f272312fc15f4d2c9fecb87c69e0))
+- removed build-profile.json5 in react_native_openharmony folder from .gitignore ([996de9afb7](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/996de9afb759d6940f9712b7b98f4a08082aef04))
+- settet NODE_TEXT_INPUT_ENABLE_KEYBOARD_ON_FOCUS to True in TextInputNode constructor. ([a50d7edef8](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a50d7edef885c0f8000f56ba60ce80a5935c60c5))
+- call `defaultBackPressHandler()` in `DeviceEventManagerTurboModule.invokeDefaultBackPressHandler`  ([35e4bf30fa](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/35e4bf30fa0e7a5670a50651c75cca787c849320))
+- unskip relevant tests ([a324775f09](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/a324775f090e59f6a63b04b377ef22ec8c5be3fb))
+- refactor of SectionList tests ([b93b924a9c](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/b93b924a9ced15f7ccc1a25fab58a8080ca7edec))
+- refined RNOHCoreContext ([de24f8e125](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/de24f8e1257438235226ce52b205f5f344916abf))
+- nested scrolling is now handled manually ([dc879c4aac](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc879c4aac75a5a98f881a676005040d7ea79c5b))
+- when a child Scroll is scrolled from its end towards the outside, the parent Scroll starts scrolling ([dc879c4aac](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc879c4aac75a5a98f881a676005040d7ea79c5b))
+- when a child Scroll is scrolled from its end towards the inside or it is scrolled from its inside, the parent Scroll will not start scrolling when the child's end is reached ([dc879c4aac](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc879c4aac75a5a98f881a676005040d7ea79c5b))
+- bouncing is now turned off in nested Scrolls whose content size is smaller than container size (just like on iOS) ([dc879c4aac](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc879c4aac75a5a98f881a676005040d7ea79c5b))
+- conditional include for libqos ([233029f294](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/233029f29488fdddd2012bbea4fdb17f68551fe7))
+- logging warning when calling setTaskThreadPriority on C_API_ARCH disabled ([233029f294](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/233029f29488fdddd2012bbea4fdb17f68551fe7))
+- unskipped passing tests in `ModalTest.tsx` ([2d1826f9ef](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/2d1826f9efb61920bdff8c448ddd841244829734))
+
+
+## v0.72.20
+- added Systrace support
+- fixed nativeEvent timestamps unit
+
+### ArkTS architecture
+- added support for placing images in a custom assets directory
+- fixed ScrollView styles when using RefreshControl
+- fixed changing TextInput value
+
+### C-API architecture
+- various touch handling improvements
+- added ScrollView events support in Animated 
+- added support for touches in nested Text components
+- added TextInput support
+- fixed ScrollView alignment
+- fixed dynamically changing number of lines in a Text component
+- fixed TextInput default padding and caret color
+- fixed touches not being cancelled
+- improved error handling
+
+## v0.72.19
+- added basic Share module support
+- fixed Linking::openSettings
+
+### ArkTS architecture
+- added TextInput::contextMenuHidden support
+
+### C-API architecture
+- added RefreshControl support
+- added Text specific props support
+- added Modal support
+- added ArkTSTurboModule::callSync method that can be used to call turbo modules from ComponentInstances
+- added a way to block scrolling
+
+## v0.72.18
+### ArkTS architecture
+- added LogBox support
+- added Image::onLoadEnd support
+- added Image::defaultSource support
+- fixed Image position not being updated properly
+- fixed dimensions not being set correctly when they were set to 0
+- fixed crashes due to Image cache issues
+- fixed displaying error dialog
+- fixed dismissing alerts
+
+### Experimental C-API architecture
+- added common View props support
+- added Native animations support
+- added transform style prop support
+- added ActivityIndicator support
+- added common ScrollView props support
+- added common Switch props support
+- added common Image props support
+- added basic backward compatibility with ArkTS arch
+- changed the design of CppComponentInstance class
+
+## v0.72.17
+- added foundations for an experimental C-API based architecture
+- added optional approach of building components based on LazyForEach and DataSources that provides better performance
+- added `TextInput::onSelectionChange` support
+- added `TextInput::selection` support
+- added `TextInput::selectTextOnFocus` support
+- optimized disk caching of Images
+- fixed react-native codegen crash when generating code
+- fixed `Switch::value`
+- fixed `Image` intercepting touches when it shouldn't
+
+## v0.72.16
+- BREAKING: removed dependencies on RNAbility in RNOHContext
+- added internal import resolving for harmony packages with `redirectInternalImports: true`
+- added support for `ToastAndroid`
+- added `enableNDKTextMeasuring` feature flag which allows optional faster text measuring using NDK
+- added support for Appearance API
+- restored partial support for `TextInput::onKeyPress`
+- fixed `Alert` breaking when created without any buttons
+- fixed websockets not connecting after updating to API 11
+- fixed `fontHeight` calculations
+- fixed `Modal` being shifted up by soft keyboard instead of being covered
+- fixed `RefreshControl` not working correctly in nested `ScrollViews`
+- fixed `Touchables` not detecting all touches when nested in `ScrollView`
+- fixed `topLayout` event being unsupported
+
+## v0.72.15
+
+- BREAKING: deprecated `RNComponentFactory` in favour of `wrappedCustomRNComponentBuilder` 
+which must now be provided to `RNApp` ([!797](https://gl.swmansion.com/rnoh/react-native-harmony/-/merge_requests/797))
+- BREAKING: `RNSurface` expects `RNComponentContext` instead of `RNOHContext` ([!797](https://gl.swmansion.com/rnoh/react-native-harmony/-/merge_requests/797))
+- BREAKING: asset file names in HAP resources are now hashes of the asset path instead of encoded asset paths ([!810](https://gl.swmansion.com/rnoh/react-native-harmony/-/merge_requests/810))
+- added imports hijacking support for packages with no harmony native code
+- added `Modal::animationType` support
+- added support for loading assets from Metro dev server
+- added partial `TextInput::clearButtonMode` support
+- added `FileJSBundleProvider` for loading bundles from device filesystem
+- fixed errors when trying to access unimplemented `UIManager` functions
+- fixed issues with `TextInput` updates not applying correctly
+- fixed `Text::textShadowRadius` not being applied correctly
+- fixed `Image` errors not being reported correctly
+- fixed `Dimensions` display metrics not updating on window size changes
+- fixed `ScrolLView::scrollToEnd` not scrolling when called after `onLayout`
+- fixed `TextInput::value` and `TextInput::defaultValue` no applying correctly
+- fixed `RNApp` not being covered by the virtual keyboard
+
+## v0.72.14
+
+- added `DevSettings::addMenuItem` support
+- added `TextInput::onEndEditing` support
+- added Codegen support
+- added `BlobTurboModule` support
+- added JS debugger and profiler support
+- disabled background thread by default
+- fixed crashes in `Image`
+- fixed scrolling issues when `ScrollView` contains a collapsable `PanResponder`
+- fixed crashes connected to TextHeightAdaptivePolicy
+- fixed crashes upon `RNInstance` destroying
+- fixed deadlocks related to text measurements when shutting down surface
+- fixed `View::pointerEvents::box-only`
+- fixed `Modal` component not adapting to window size changes
+
+## v0.72.13
+- added `View::focusable` support
+- added `DevLoadingView` support
+- added `Text::adjustFontSizeToFit` support
+- added RedBox support
+- added LogBox support
+- added Layout inspector support
+- added `DevMenu` support
+- added hot reloading support
+- added `TextInput::allowFontScaling` support
+- added `Image::resizeMethod` support
+- removed `TextInput::onKeyPress`
+- fixed errors on loading `Image`
+- fixed border displaying in `Image`
+- fixed nested scrolling issues
+- fixed `textAlign: justify`
+- fixed timers not being cleaned up when TimingTurboModule was destroyed
+- fixed `Modal` not changing position after screen rotation
+- fixed `TextInputState` issues
+- fixed `TextInput` sending change event when value changed in props
+- fixed large bundles not being able to load from Metro
+- fixed issues with instance cleanup
+- fixed `ScrollView` offset not updating after content size changed
+- fixed native responder unlocking too soon
+- fixed problems with disabled components intercepting touches
+- fixed issues related to app teardown
+- fixed `RefreshControl::progressViewOffset`
+- fixed crashes with NativeAnimated destructor
+- fixed crashes when using `PanResponder`
+- fixed crashes on subsequent app starts
+- fixed `Animated.View` props animations
+- fixed `onPress` in nested `Text`
+
+## v0.72.12
+- added `ScrollView::inverted` prop support
+- added more detailed logs
+- added `ScrollView::maintainVisibleContentPosition` support
+- added `TextInput::clearOnFocus` support
+- added `hints` support:
+  - `debug` hint
+  - `ready` hint
+- added `RNInstance::blockComponentsGestures` method
+- added error handling for errors thrown from turbo modules
+- fixed unnecessary text wrapping issue
+- fixed touches when transform was provided
+- fixed image sometimes not changing on source change
+- fixed imports not being hijacked to scoped third-party harmony packages
+- fixed `fontColor` in `TextInput`
+- fixed opacity exceeding the range
+- fixed some props sometimes not being provided to native components
+- fixed RefreshControl behavior
+- fixed inserting ellipsis when `Text` has padding
+- fixed opacity not being animated when using layout animations
+- fixed reacting on dimensions change on devices with folding screen
+- fixed aggressive page snapping
+
+## v0.72.11
+- BREAKING: `react-native-harmony/metro.config` exports now a function that creates configuration instead of configuration
+- added `TextInput::keyboardType` support
+- added a way to replace implementation of any RN component
+- added custom fonts support
+- added animated gif support in `Image` component
+- added http redirects support in `Image` component
+- added `arrayBuffer` response type support in `fetch`
+- added `Animated.{diffClamp, tracking, modulus}` support when native driver is enabled
+- added `I18nManager::isRTL` support
+- added data URIs in `Image`
+- added basic `RefreshControl::progressViewOffset` support
+- added `console.log` support
+- added Image::alt support
+- added padding support in `TextInput`
+- added `ScrollView::snapToStart/End` support
+- added `TextInput::onBlur` support
+- added sms schema support in `Linking` module
+- added `TextInput::onKeyPress` support
+- added `requireNativeComponent` support
+- added `RootTagContext` support
+- added `ScrollView::pagingEnabled` support
+- added `ScrollView::snapToAlignment` support
+- added `ScrollView::flashScrollIndicators` support
+- added `ScrollView::disableIntervalMomentum` support
+- fixed text being slightly bigger than views containing that text
+- fixed infinite `TextInput::value` updates
+- fixed crashes when view inside text was trimmed by `numberOfLines`
+- fixed deadlock when using multiple surfaces
+- fixed touch issues caused by not unregistering component managers properly
+- fixed `textDecorationLine` color
+- fixed `ScrollView` position when content size changes
+- fixed freeze caused by having multiple empty lines in `Text` component
+- fixed font style not being applied to `TextInput::placeholder`
+- fixed jittering sticky headers
+- fixed precision of layout positions and dimensions
+- fixed jumping animations, when a render happens during native animation
+- fixed vertical alignment of text and attachments inside `Text`
+- fixed displaying multiple attachments on top of each other in `Text`
+- fixed padding in `Text` component
+- fixed WebSocket error handling
+- fixed `VirtualizedList::initialIndex`
+- fixed `TextInput` autofocus outside of modal
+- fixed `PlatformConstants::reactNativeVersion` format
+
+## v0.72.10
+- breaking change: SurfaceHandle::start is now async
+- added basic support for KeyboardAvoidingView
+- added Model to Platform.constants
+- added Image::onLoad support
+- added basic TextInput::autoFocus support
+- fixed loading remote images when urls is redirected
+- fixed presses for views with translations animated with native driver
+- fixed text wrapping after characters
+- fixed onBlur crashing the app
+- fixed empty values in TextInputs
+- fixed maxLength in TextInput
+- fixed nested scroll views
+- fixed RNViewManager::parentTag incorrectly returning undefined
+- fixed Text's onLayout
+- fixed deadlock caused by creating/updating/destroying surfaces
+- fixed unnecessary text wrapping
+- fixed locking scroll from component manager
+
+## v0.72.9
+- breaking change: SurfaceHandle::stop and SurfaceHandle::destroy are now async
+- added hitSlop support
+- added basic onBlur support
+- added support for TextInput content passed in onFocus event
+- added basic useColorScheme support
+- added Animated.decay support
+- added Animated.spring support
+- added ScrollView::scrollToEnd support
+- fixed incorrect lineHeight calculation
+- fixed onPress not firing when view and pressable were flattened
+- fixed onPress working unreliably
+- fixed TextInput autofocus
+- fixed TextInput::value
+- fixed wrapping of Chinese characters
+- fixed single view in Text crashing the app
+- fixed not working props for multiline TextInput
+- fixed Animated.Value callback timing issue
+- fixed deadlock caused when creating/destroying surfaces
+
+## v0.72.8
+- added layout animations support
+- added ellipsis support when text components are nested or text component inside another text component
+- fixed timer behavior when an app is in background
+- fixed text input styling issues
+- fixed `fetch`
+- fixed errors reported by new ArkTS linter
+- fixed app crashes caused sometimes caused by touches
+
+## v0.72.7
+- added ScrollView::persistentScrollbar
+- added ActivityIndicator support
+- added Text props/styles support:
+  - vertical alignement
+  - letter spacing 
+  - selectable
+  - ellipsizeMode
+  - disabled
+  - textShadow
+- added View::borderStyle
+- added ScrollView::contentOffset prop support
+- added edge specific border width support
+- added overflow support
+- added ScrollView::scrollEnabled support
+- added ScrollView::indicatorStyle support
+- added ScrollView::decelerationRate support
+- added basic linking API support
+- added an option to blur images
+- added nested text support
+- added views inside text support
+- added hermes bytecode bundles support
+- added basic Keyboard module support
+- added SafeAreaView support
+- support TextInput props:
+  - editable
+  - caretHidden
+  - maxLength
+  - selectionColor
+  - secureTextEntry
+  - placeholder
+  - placeholderTextColor
+- fixed custom RefreshControl components
+- fixed timers not being paused when the app is in background
+- fixed awaiting JS Bundle execution
+- updated React Native to 0.72.5
+- changed approach to handling touches
+  
+## v0.72.6
+- added support for Switch:disabled
+- added support for Animated.Value listeners
+- added Image.getSize support
+- added Image::resizeMode prop support
+- added RefreshControl component support
+- added Text::textDecoration and Text::textDecorationColor support
+- added iOS View shadow props support
+- added support for multiple RN Instances and surfaces
+- added border edge specific colors
+- added interface JSBundleProvider
+- added Image::tintColor support
+- added ComponentManagers
+- added Image::prefetch support
+- added Text::padding support
+- added View::borderStyle support
+- fixed DrawerLayoutAndroid causing compilation errors
+- fixed flickering modal contents
+- fixed bundle-harmony arguments
+- changed assets directory
+- fixed deadlock caused by timing and animated turbo modules
+
+## v0.72.5
+- added support for Switch component
+- reexported DeviceEventEmitter and findNodeHandle
+- improved logging fatal errors
+- fixed ScrollView offset when a ScrollView had a border
+- fixed tap not stopping scrolling
+
+## v0.72.4
+- BREAKING CHANGE: replaced `EventEmitterRegistry.cpp` with `ShadowViewRegistry.cpp`
+- added `Modal` component support
+- added an option to set CPP state from eTS
+- added Addition, Subtraction, Multiplication, and Division Animation Nodes
+- fixed transforms
+- reexported `dispatchCommand` method for custom fabric components that don't use code generation utility
+
+## v0.72.3
+- fixed TextInput not working correctly since v0.72.0
+- fixed crashing on Open Harmony 4.0.8.5
+
+## v0.72.2
+- BREAKING CHANGE: renamed harmony module from `@ohos/rnoh` to `rnoh`
+- BREAKING CHANGE: changed the interface of `EventEmitRequestHandler` and `Package::createEventEmitRequestHandlers`
+- added support for `pointerEvents`
+- added support for scroll driven animations to  native driver
+- added support for horizontal scrolling
+- added support for `BackHandler.exitApp()`
+- various memory management tweaks that probably fix some memory leaks
+- bumped react-native-harmony-cli to fix crash caused by `node_modules/.bin` when unpacking harmony modules
+
+## v0.72.1
+- fixed react-native unpack-harmony not replacing the native module when updating npm package
+- fixed crash when removing a scrolling ScrollView
+- fixed color transformation for custom components when a NapiBinder was not provided
+- fixed an error thrown by React Native renderer caused by dispatching wrong touch events 
+- fixed `collapsable` property
+- fixed `onLayout` property
+- fixed `FlatList` displaying wrong items
+- added development mode (which can be disabled by using `prod` flag: `react-native bundle-harmony --prod`)
+- added caching text measurements
+- added a basic support for a native driver
+- added back button handler - requires adapting `entry/pages/Index.ets` code, since listener for back button callbacks can only be added to the entry component
+- removed rnInstance property from RNOHContext in favor of rnInstanceManager
+- 
+## v0.72.0
+- upgraded React Native from 0.71.3 to 0.72.0
+- added support for transform properties
+- added support for momentum scroll events
+- improved setTimeout by respecting native call delay
+- fixed layout issues after hiding status bar
+
+## v0.0.20
+- added RNBaseView in order to share common styles and handlers with custom components
+- added ability to provide custom logger
+- added text width measurer (height must be provided)
+- added support for nesting Text components
+- added support for specifying border radius per corner
+- added support for text alignement
+- added ability to overwrite bundle loading code
+- added basic support for StatusBar
+- improved rendering performance
+- styles support should be similar across various components
+- fixed drawing order
+- fixed touches in ScrollView
+
+## v0.0.19
+- breaking change: changed interface on the native side
+  - made the `RNAbility` more robust
+- improved lifecycle management
+- fixed background/border colors updates
+- added an option to send initialProps from native side to RN app
+
+## v0.0.18
+- breaking change: removed `@Provide`/`@Consume` from RNOH components to improve performance
+- fixed source of fatal crashes
+- fixed default colors
+- added a event communication channel for third party libraries
+- added support for AppState

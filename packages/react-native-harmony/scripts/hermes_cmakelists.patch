@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4373048..f2bf7bd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -672,7 +672,7 @@ include_directories(BEFORE
+   )
+ 
+ if(HERMES_IS_ANDROID)
+-  find_package(fbjni REQUIRED CONFIG)
++  # find_package(fbjni REQUIRED CONFIG)
+ endif()
+ 
+ set(CMAKE_CXX_STANDARD 17)
+@@ -685,7 +685,7 @@ add_subdirectory(lib)
+ add_subdirectory(public)
+ add_subdirectory(external)
+ add_subdirectory(API)
+-add_subdirectory(android/intltest/java/com/facebook/hermes/test)
++# add_subdirectory(android/intltest/java/com/facebook/hermes/test)
+ add_subdirectory(unsupported)
+ 
+ if(HERMES_ENABLE_TOOLS)

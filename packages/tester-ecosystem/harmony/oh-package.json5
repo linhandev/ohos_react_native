@@ -1,0 +1,32 @@
+{
+  modelVersion: "5.0.0",
+  license: "ISC",
+  devDependencies: {
+    "@ohos/hypium": "1.0.6",
+  },
+  name: "rnoh",
+  description: "example description",
+  repository: {},
+  version: "1.0.0",
+  dependencies: {
+    "@rnoh/react-native-openharmony": "file:../../react-native-harmony/harmony/react_native_openharmony.har",
+    "@react-native-oh-tpl/async-storage": "file:../../../node_modules/@react-native-oh-tpl/async-storage/harmony/async_storage.har",
+    "@react-native-oh-tpl/blur": "file:../../../node_modules/@react-native-oh-tpl/blur/harmony/blur.har",
+    "@react-native-oh-tpl/clipboard": "file:../../../node_modules/@react-native-oh-tpl/clipboard/harmony/clipboard.har",
+    "@react-native-oh-tpl/cookies": "file:../../../node_modules/@react-native-oh-tpl/cookies/harmony/rn_cookies.har",
+    "@react-native-oh-tpl/datetimepicker": "file:../../../node_modules/@react-native-oh-tpl/datetimepicker/harmony/datetimepicker.har",
+    "@react-native-oh-tpl/flash-list": "file:../../../node_modules/@react-native-oh-tpl/flash-list/harmony/flash_list.har",
+    "@react-native-oh-tpl/geolocation": "file:../../../node_modules/@react-native-oh-tpl/geolocation/harmony/geolocation.har",
+    "@react-native-oh-tpl/lottie-react-native": "file:../../../node_modules/@react-native-oh-tpl/lottie-react-native/harmony/lottie.har",
+    "@react-native-oh-tpl/masked-view": "file:../../../node_modules/@react-native-oh-tpl/masked-view/harmony/masked_view.har",
+    "@react-native-oh-tpl/netinfo": "file:../../../node_modules/@react-native-oh-tpl/netinfo/harmony/netinfo.har",
+    "@react-native-oh-tpl/react-native-exception-handler": "file:../../../node_modules/@react-native-oh-tpl/react-native-exception-handler/harmony/exception_handler.har",
+    "@react-native-oh-tpl/react-native-image-picker": "file:../../../node_modules/@react-native-oh-tpl/react-native-image-picker/harmony/image_picker.har",
+    "@react-native-ohos/checkbox": "file:../../../node_modules/@react-native-ohos/checkbox/harmony/checkbox.har",
+    "@react-native-ohos/react-native-linear-gradient": "file:../../../node_modules/@react-native-ohos/react-native-linear-gradient/harmony/linear_gradient.har",
+    "@rnoh/react-native-openharmony-gesture-handler": "file:../../../node_modules/@rnoh/react-native-harmony-gesture-handler/harmony/gesture_handler.har",
+  },
+  overrides: {
+    "@rnoh/react-native-openharmony": "file:../../react-native-harmony/harmony/react_native_openharmony.har",
+  },
+}

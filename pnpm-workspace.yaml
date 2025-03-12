@@ -1,0 +1,11 @@
+packages:
+  - "packages/react-native-harmony"
+  - "packages/react-native-harmony-cli"
+  - "packages/react-native-harmony-hvigor-plugin"
+  - "packages/react-native-harmony-sample-package"
+  - "packages/tester"
+  - "packages/tester-ecosystem"
+  - "packages/testerino"
+  - "packages/react-native-core/packages/react-native"
+  - "packages/hdc-server"
+  - "packages/react-native-harmony-test-kit"
