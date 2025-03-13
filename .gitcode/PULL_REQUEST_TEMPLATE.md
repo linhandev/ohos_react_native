@@ -1,43 +1,38 @@
-<!-- 请在合并之前删除注释代码，以避免将其包含在GIT历史记录中 -->
-## 描述
+<!-- Please remove all comments before submitting to avoid them being included in merge commit message -->
+
+# Description
 <!--
-简要描述PR的目的，例如:
-这条PR主要实现metro局域网内远程调试的功能. 
+What's this pr for, eg:
+Implements metro remote debugging within lan
 -->
 
-## 变更日志
+# Changelog
 <!--
-列出可包含在变更日志中的要点的主要变更。
-不要列出内部更改。请以下列开头来写每个变更点：
-- added
-- fixed
-- deprecated
-- removed
-如果是一条新增属性的变更，则以[added]开头，例如:
-- [added] FlatList组件新增inverted属性
+This section is supposed to go into the changelog section of the release note.
+Thus only list changes that are visible to downstream users, don't list internal changes.
+Each line should start with
+- [added]
+- [fixed]
+- [deprecated]
+- [removed]
+
+eg:
+- [added] Add inverted property support for FlatList
 -->
 
-## 测试步骤
+# Test Plan
 <!-- 
-如何测试这条PR。例如：
-1. 打开Tester工程.
-2. 执行npm run start命令.
+How to test changes in this pr. eg:
+1. Open tester project
+2. run `npm start`
 ...
 -->
 
-
-
-## 合入前自检
+# Checklist
 <!--
-请在合入前根据以下条例进行自检
-自检完成后在[ ]内填入"x", 例如：
+Please check the following and mark [x] for completed checks. eg:
 - [x] 不涉及非兼容性变更；若涉及，已通过相应评审。
 -->
-- [ ] 不涉及非兼容性变更；若涉及，已通过相应评审。
-- [ ] 不涉及性能或已进行性能测试且无性能劣化。
-- [ ] 符合对应的编码规范。
-- [ ] 不涉及文档更新，或已更新了文档。
-- [ ] 针对可测试性要求，已增加必要的自测用例、合理的日志记录或Trace信息。
-- [ ] 不存在非法的文件引入，包括图片和代码等
-
-
+- [ ] No breaking change to downstream developer experience or the breaking change has been reviewed and approved
+- [ ] Performance didn't deteriorate
+- [ ] Pre-push hook succeeded
