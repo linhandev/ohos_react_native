@@ -1,5 +1,6 @@
 import { Command } from './types';
-import fs from 'fs';
+import fs from 'node:fs';
+import os from 'os';
 import fse from 'fs-extra';
 import Metro from 'metro';
 import { RunBuildOptions as BuildOptions } from 'metro';
@@ -9,19 +10,24 @@ import { getAssetDestRelativePath } from '../assetResolver';
 import { execSync } from 'child_process';
 import { Logger } from '../io';
 import { DescriptiveError } from '../core';
+import { randomUUID } from 'node:crypto';
 
 type MetroConfig = Awaited<ReturnType<typeof Metro.loadConfig>>;
 
-const HERMESC_BIN_DIR = {
-  darwin: 'osx-bin',
-  linux: 'linux64-bin',
-  win32: 'win64-bin',
+const HERMESC_BIN_PATH = {
+  darwin: pathUtils.normalize('osx-bin/hermesc'),
+  linux: pathUtils.normalize('linux64-bin/hermesc'),
+  win32: pathUtils.normalize('win64-bin/hermesc.exe'),
 };
-const HERMESC_PATH_PREFIX = './node_modules/react-native/sdks/hermesc/';
-const HARMONY_RESOURCE_PATH = './harmony/entry/src/main/resources/rawfile';
-const ASSETS_DEFAULT_DEST_PATH =
-  './harmony/entry/src/main/resources/rawfile/assets';
-const TMP_BUNDLE_PATH = '/tmp/bundle.harmony.js';
+const HERMESC_PATH_PREFIX = pathUtils.normalize(
+  './node_modules/react-native/sdks/hermesc/'
+);
+const HARMONY_RESOURCE_PATH = pathUtils.normalize(
+  './harmony/entry/src/main/resources/rawfile'
+);
+const ASSETS_DEFAULT_DEST_PATH = pathUtils.normalize(
+  './harmony/entry/src/main/resources/rawfile/assets'
+);
 
 type AssetData = Metro.AssetData;
 type Bundle = { code: string; map: string };
@@ -44,25 +50,30 @@ export const commandBundleHarmony: Command = {
       description:
         'Path to the root JS file, either absolute or relative to JS root',
       default: 'index.js',
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--config <path>',
       description: 'Path to the Metro configuration file',
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--bundle-output <path>',
       description: `File name where to store the resulting bundle (default: "${HARMONY_RESOURCE_PATH}/hermes_bundle.hbc" if generating HBC bundle, otherwise "${HARMONY_RESOURCE_PATH}/bundle.harmony.js").`,
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--assets-dest <path>',
       description:
         'Directory name where to store assets referenced in the bundle',
       default: ASSETS_DEFAULT_DEST_PATH,
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--sourcemap-output <path>',
       description:
         'File name where to store the resulting source map, ex. /tmp/groups.map',
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--minify [boolean]',
@@ -74,6 +85,7 @@ export const commandBundleHarmony: Command = {
       description:
         'Path to hermesc directory. hermesc is used only when generating a HBC bundle.',
       default: HERMESC_PATH_PREFIX,
+      parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--hermesc-options <string...>',
@@ -88,8 +100,8 @@ export const commandBundleHarmony: Command = {
       const bundleOutput: string =
         args.bundleOutput ??
         (!args.dev
-          ? `${HARMONY_RESOURCE_PATH}/hermes_bundle.hbc`
-          : `${HARMONY_RESOURCE_PATH}/bundle.harmony.js`);
+          ? `${HARMONY_RESOURCE_PATH}${pathUtils.sep}hermes_bundle.hbc`
+          : `${HARMONY_RESOURCE_PATH}${pathUtils.sep}bundle.harmony.js`);
       const shouldGenerateHbcBundle = bundleOutput
         .toLowerCase()
         .endsWith('hbc');
@@ -166,8 +178,7 @@ async function saveHbcBundle(
   }
   const resolvedHermescPath = pathUtils.resolve(
     hermescPath,
-    HERMESC_BIN_DIR[process.platform as OSType],
-    'hermesc'
+    HERMESC_BIN_PATH[process.platform as OSType]
   );
 
   if (!fs.existsSync(resolvedHermescPath)) {
@@ -178,19 +189,21 @@ async function saveHbcBundle(
       ],
     });
   }
-  await fse.writeFile(TMP_BUNDLE_PATH, bundleCode);
+
+  const tmpBundlePath = `${os.tmpdir()}${pathUtils.sep}b-${randomUUID()}.harmony.js`;
+  await fse.writeFile(tmpBundlePath, bundleCode);
   const hbcFilePath = bundleOutput.endsWith('.hbc')
     ? bundleOutput
     : pathUtils.join(pathUtils.dirname(bundleOutput), 'hermes_bundle.hbc');
   const hermescOptionsString =
     hermescOptions?.map((e) => `-${e}`).join(' ') || '';
   execSync(
-    `${resolvedHermescPath} ${hermescOptionsString} --emit-binary -out ${hbcFilePath} ${TMP_BUNDLE_PATH}`,
+    `${resolvedHermescPath} ${hermescOptionsString} --emit-binary -out ${hbcFilePath} ${tmpBundlePath}`,
     {
       stdio: 'inherit',
     }
   );
-  fs.unlinkSync(TMP_BUNDLE_PATH);
+  fs.unlinkSync(tmpBundlePath);
   logger.info((s) => `Created ${hbcFilePath}`);
 }
 
@@ -311,8 +324,4 @@ function copyFile(
       .pipe(fs.createWriteStream(dest))
       .on('finish', onFinished);
   });
-}
-
-function stringToBoolean(value: string): boolean {
-  return value.toLowerCase() === 'true';
 }
