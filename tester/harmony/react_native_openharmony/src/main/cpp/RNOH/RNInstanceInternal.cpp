@@ -101,6 +101,7 @@ void RNInstanceInternal::loadScript(
                 std::move(jsBundle), sourceURL, true);
             onFinish("");
         } catch (std::exception const &e) {
+            LOG(ERROR) << "The bundle failed to load for the following message and stack: " << e.what();
             try {
                 std::rethrow_if_nested(e);
                 onFinish(e.what());

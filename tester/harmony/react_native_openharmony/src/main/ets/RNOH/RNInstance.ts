@@ -828,7 +828,7 @@ export class RNInstanceImpl implements RNInstance {
         }
         suggestions.push("Please revise your application code. It may contain syntax errors or unhandled exceptions at the top level that could be causing runtime failures.")
         this.reportRNOHError(new RNOHError({
-          whatHappened: "Couldn't run a JS bundle",
+          whatHappened: `Couldn't run a JS bundle: ${bundleURL}`,
           howCanItBeFixed: suggestions,
           extraData: err,
         }))
