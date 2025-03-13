@@ -205,6 +205,9 @@ jsi::Value ArkTSTurboModule::callAsync(
                       });
                     });
               } catch (const std::exception& e) {
+                LOG(ERROR) << std::string("#RNOH::ArkTSTurboModule::callAsync (" + 
+                    name + "::" + methodName + ") failed.")
+                    .c_str();
                 jsInvoker->invokeAsync(
                     [message = std::string(e.what()), weakJsiPromise] {
                       auto jsiPromise = weakJsiPromise.lock();
