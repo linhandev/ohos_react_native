@@ -15,7 +15,7 @@
     "test:ecosystem": "pnpm run --filter ./packages/tester-ecosystem test",
     "verify": "concurrently --kill-others-on-fail -n 'verify-packages,verify-docs' -c 'green,blue' \"pnpm run _verify:packages\" \"pnpm run _verify:docs\"",
     "gen:changelog": "ts-node ./scripts/generate-changelog.js",
-    "_verify:docs": "npx markdown-link-check ./README.md && find ./docs -name '*.md' -print0 | xargs -0 -n1 npx markdown-link-check",
+    "_verify:docs": "ts-node ./scripts/verify-docs.ts",
     "_verify:packages": "pnpm run --recursive --parallel verify"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
     "typescript": "5.0.4",
     "eslint": "^8.19.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "3.2.4"
+    "prettier": "3.2.4",
+    "glob": "^11.0.1"
   }
 }

@@ -17,6 +17,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.0.1
         version: 5.2.3(eslint-config-prettier@8.10.0(eslint@8.57.1))(eslint@8.57.1)(prettier@3.2.4)
+      glob:
+        specifier: ^11.0.1
+        version: 11.0.1
       husky:
         specifier: ^8.0.3
         version: 8.0.3

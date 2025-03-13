@@ -22,7 +22,6 @@
     "_find-changed-files": "{ git diff --name-only --diff-filter=d $(git rev-list --exclude $(git branch --show-current) --branches -1) HEAD; git diff --name-only --diff-filter=d; git diff --name-only --diff-filter=d --cached; } | sort | uniq",
     "test:unit": "jest ./jests",
     "test:e2e": "clear && kill-port 8082 && hdc rport tcp:8082 tcp:8082 && npm start -- --port 8082 > /dev/null & npm run harmony && npm run _build:test-e2e && npm run _install:test-e2e && npm run _open:test-e2e && kill-port 8082 && echo \"\\033[1;42mE2E: PASS\\033[0m\" || (kill-port 8082 && echo \"\\033[1;41mE2E: FAIL\\033[0m\" && exit 1)",
-    "test:links": "npx markdown-link-check ../README.md && find ../docs -name '*.md' -print0 | xargs -0 -n1 npx markdown-link-check",
     "_build:test-e2e": "cd ./harmony && $DEVECO_SDK_HOME/../tools/node/bin/node $DEVECO_SDK_HOME/../tools/hvigor/bin/hvigorw.js --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=normal --parallel --incremental --daemon && cd ..",
     "_install:test-e2e": "hdc install ./harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap",
     "_open:test-e2e": "hdc shell aa test -b com.rnoh.tester -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000 | grep -q \"Error: [1-9]\\|Failure: [1-9]\\|Error in\" && exit 1 || exit 0",
