@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.72.61
+- refactor: Add code maintenance logs,([da9d3873](https://gitcode.com/openharmony-sig/ohos_react_native/commit/da9d38736a1a00284555104c98ac07cbbdfecb8d))
+- fix: Fix the issue where fetch cannot retrieve sandboxed files.,([61e201d6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/61e201d6b78429f82031fd8436df94be416938b3))
+- fix: Add the assets:// prefix to the bundleUrl provided by ResourceJSBundleProvider,([56318dd0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/56318dd0958f6d85c27750cb5dd77666e46f84db))
+- chore: update to version 5.1.0.304(0.72.60),([fbdb399a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fbdb399a27f2165c56b9b81b9f539630e3b29ffb))
+
 ## v0.72.60
 - fix preallocation queue clean up timing,([841008d8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/841008d88ed1821879c6abeccb184b4288e3f138))
 - Suspend surface on navigation,([f7e86ed8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e86ed8ef9bc222e1739bf2b7d5f113ba98ee30))
