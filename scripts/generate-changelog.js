@@ -85,7 +85,7 @@ function extractChangesFromCommit(commit) {
  * @returns {Array<Change>}
  */
 function extractChangesFromCommitBody(body, hash) {
-  const sectionIdentifier = '## Changes';
+  const sectionIdentifier = '# Changelog';
   const changesIndex = body.indexOf(sectionIdentifier);
   if (changesIndex === -1) return [];
   const changesEndIndex = body.indexOf(
