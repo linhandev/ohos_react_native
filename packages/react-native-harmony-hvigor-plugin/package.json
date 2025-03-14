@@ -15,8 +15,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@ohos-rnoh/hvigor-ohos-plugin": "npm:@ohos/hvigor-ohos-plugin@5.13.1",
-    "@ohos-rnoh/hvigor": "npm:@ohos/hvigor@5.13.1"
+    "@ohos/hvigor-ohos-plugin": "5.13.1",
+    "@ohos/hvigor": "5.13.1"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",

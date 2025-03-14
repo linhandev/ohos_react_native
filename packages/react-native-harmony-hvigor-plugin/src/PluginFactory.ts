@@ -1,4 +1,4 @@
-import { HvigorNode, HvigorPlugin } from '@ohos-rnoh/hvigor';
+import { HvigorNode, HvigorPlugin } from '@ohos/hvigor';
 import { PrebuildTask } from './PrebuildTask';
 import fs from 'node:fs';
 import { Logger } from './Logger';

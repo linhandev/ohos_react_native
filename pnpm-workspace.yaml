@@ -1,11 +1,15 @@
 packages:
-  - "packages/react-native-harmony"
-  - "packages/react-native-harmony-cli"
-  - "packages/react-native-harmony-hvigor-plugin"
-  - "packages/react-native-harmony-sample-package"
-  - "packages/tester"
-  - "packages/tester-ecosystem"
-  - "packages/testerino"
-  - "packages/react-native-core/packages/react-native"
-  - "packages/hdc-server"
-  - "packages/react-native-harmony-test-kit"
+  - 'packages/react-native-harmony'
+  - 'packages/react-native-harmony-cli'
+  - 'packages/react-native-harmony-sample-package'
+  - 'packages/tester'
+  - 'packages/tester-ecosystem'
+  - 'packages/testerino'
+  - 'packages/react-native-core/packages/react-native'
+  - 'packages/hdc-server'
+  - 'packages/react-native-harmony-test-kit'
+
+  # In the monorepo setup, @ohos packages used by hvigor-plugin are hoisted to the root node_modules and
+  # it seems hvigor in tester or tester-ecosystem tries to use those packages when building a project,
+  # but that build fails with some internal errors.
+  # - "packages/react-native-harmony-hvigor-plugin"

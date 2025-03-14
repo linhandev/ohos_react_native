@@ -1,18 +1,11 @@
 import { Logger } from './Logger';
-/**
- * @ohos/* packages are installed under alias because they affect harmony projects.
- * In the current monorepo setup those packages are hoisted to the root node_modules and
- * it seems hvigor in tester/tester-ecosystem tries to use those packages, but it fails on some errors.
- * The alternative (and better) approach would be configuring pnpm to not hoist those packages,
- * but I couldn't make that happen.
- */
-import { HvigorNode, hvigor } from '@ohos-rnoh/hvigor';
+import { HvigorNode, hvigor } from '@ohos/hvigor';
 import {
   OhosAppContext,
   OhosHapContext,
   OhosPluginId,
   Target,
-} from '@ohos-rnoh/hvigor-ohos-plugin';
+} from '@ohos/hvigor-ohos-plugin';
 import pathUtils from 'node:path';
 import {
   FS,
