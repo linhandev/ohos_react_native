@@ -113,7 +113,7 @@ struct ReactPage {
         Row() {
           RNSurface({
             ctx: new RNComponentContext(
-              RNOHContext.fromRNOHCoreContext(this.rnohCoreContext!, this.rnInstance),
+              RNOHContext.fromCoreContext(this.rnohCoreContext!, this.rnInstance),
               wrappedCustomRNComponentBuilder,
               wrapBuilder(buildRNComponentForTag),
               new Map(),

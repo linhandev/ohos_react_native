@@ -180,9 +180,9 @@ type RNOHContextDependencies = {
  */
 export class RNOHContext extends RNOHCoreContext {
   /**
-   * @internal
+   * @api: RN_APP_DEVELOPER
    */
-  static fromRNOHCoreContext(
+  static fromCoreContext(
     rnohCoreContext: RNOHCoreContext,
     rnInstance: RNInstance,
   ): RNOHContext {

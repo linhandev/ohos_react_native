@@ -226,7 +226,7 @@ export class RNInstancesCoordinator {
       napiBridge,
       this.devToolsController,
       (rnInstance) => new EtsUITurboModuleContext({
-        rnohContext: RNOHContext.fromRNOHCoreContext(this.rnohCoreContext, rnInstance)
+        rnohContext: RNOHContext.fromCoreContext(this.rnohCoreContext, rnInstance)
       }),
       options?.defaultHttpClient ?? new DefaultHttpClient(),
       this.uiAbilityContext.resourceManager,
