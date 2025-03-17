@@ -12,8 +12,7 @@
 #include <react/renderer/components/view/ViewEventEmitter.h>
 
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 class CodegenLibArkTSSampleComponentEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
@@ -32,5 +31,4 @@ class CodegenLibCppSampleComponentEventEmitter : public ViewEventEmitter {
     };
   void onMount(OnMount value) const;
 };
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

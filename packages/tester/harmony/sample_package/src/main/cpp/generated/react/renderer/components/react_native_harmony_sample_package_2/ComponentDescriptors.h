@@ -10,14 +10,16 @@
 
 #pragma once
 
-#include <react/renderer/components/react_native_harmony_sample_package_2/ShadowNodes.h>
+#include "ShadowNodes.h"
 #include <react/renderer/core/ConcreteComponentDescriptor.h>
+#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 using CodegenLibArkTSSampleComponentComponentDescriptor = ConcreteComponentDescriptor<CodegenLibArkTSSampleComponentShadowNode>;
 using CodegenLibCppSampleComponentComponentDescriptor = ConcreteComponentDescriptor<CodegenLibCppSampleComponentShadowNode>;
 
-} // namespace react
-} // namespace facebook
+void react_native_harmony_sample_package_2_registerComponentDescriptorsFromCodegen(
+  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry);
+
+} // namespace facebook::react

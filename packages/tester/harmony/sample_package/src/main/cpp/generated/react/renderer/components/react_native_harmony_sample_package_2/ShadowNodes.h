@@ -10,14 +10,13 @@
 
 #pragma once
 
-#include <react/renderer/components/react_native_harmony_sample_package_2/EventEmitters.h>
-#include <react/renderer/components/react_native_harmony_sample_package_2/Props.h>
-#include <react/renderer/components/react_native_harmony_sample_package_2/States.h>
+#include "EventEmitters.h"
+#include "Props.h"
+#include "States.h"
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <jsi/jsi.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 JSI_EXPORT extern const char CodegenLibArkTSSampleComponentComponentName[];
 
@@ -41,5 +40,4 @@ using CodegenLibCppSampleComponentShadowNode = ConcreteViewShadowNode<
     CodegenLibCppSampleComponentEventEmitter,
     CodegenLibCppSampleComponentState>;
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

@@ -12,8 +12,7 @@
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/PropsParserContext.h>
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 class CodegenLibArkTSSampleComponentProps final : public ViewProps {
  public:
@@ -35,5 +34,4 @@ class CodegenLibCppSampleComponentProps final : public ViewProps {
   std::string text{};
 };
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react

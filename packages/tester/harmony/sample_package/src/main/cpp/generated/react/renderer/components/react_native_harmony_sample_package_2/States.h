@@ -10,12 +10,9 @@
 
 #ifdef ANDROID
 #include <folly/dynamic.h>
-#include <react/renderer/mapbuffer/MapBuffer.h>
-#include <react/renderer/mapbuffer/MapBufferBuilder.h>
 #endif
 
-namespace facebook {
-namespace react {
+namespace facebook::react {
 
 class CodegenLibArkTSSampleComponentState {
 public:
@@ -25,9 +22,6 @@ public:
   CodegenLibArkTSSampleComponentState(CodegenLibArkTSSampleComponentState const &previousState, folly::dynamic data){};
   folly::dynamic getDynamic() const {
     return {};
-  };
-  MapBuffer getMapBuffer() const {
-    return MapBufferBuilder::EMPTY();
   };
 #endif
 };
@@ -41,11 +35,7 @@ public:
   folly::dynamic getDynamic() const {
     return {};
   };
-  MapBuffer getMapBuffer() const {
-    return MapBufferBuilder::EMPTY();
-  };
 #endif
 };
 
-} // namespace react
-} // namespace facebook
+} // namespace facebook::react
