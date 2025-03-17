@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "deploy": "npm run typecheck && npm run test && npm run build",
+    "setup": "npm run build",
+    "deploy": "npm run typecheck && npm run test && npm run build && rimraf ../react-native-harmony-cli/harmony && mkdirp ../react-native-harmony-cli/harmony && npm pack --pack-destination ../react-native-harmony-cli/harmony",
     "dev": "tsc --outDir dist -p tsconfig.build.json --watch",
-    "build": "tsc -p ./tsconfig.build.json && rimraf ../react-native-harmony-cli/harmony && mkdirp ../react-native-harmony-cli/harmony && npm pack --pack-destination ../react-native-harmony-cli/harmony",
+    "build": "tsc -p ./tsconfig.build.json",
     "verify": "npm run typecheck && npm run test",
     "typecheck": "tsc --noEmit",
     "test": "jest"

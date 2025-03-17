@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@10.3.0",
   "scripts": {
-    "init-ws": "git submodule update --init --recursive --progress && pnpm i && cd ./packages/react-native-harmony-hvigor-plugin && npm i && cd ../",
+    "init-ws": "git submodule update --init --recursive --progress && pnpm i && cd ./packages/react-native-harmony-hvigor-plugin && npm i && npm run setup && cd ../",
     "preinstall": "ts-node ./scripts/check-pnpm-version.ts",
     "postinstall": "pnpm run _setup:husky",
     "_setup:husky": "ts-node ./scripts/setup-husky.ts",
