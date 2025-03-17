@@ -176,8 +176,7 @@ StyledStringWrapper TextMeasurer::createStyledString(
       typographyStyle.get(),
       m_fontRegistry->getFontCollection(),
       m_scale,
-      fontMultiplier,
-      m_halfLeading);
+      fontMultiplier);
   for (auto const& fragment : attributedString.getFragments()) {
     styledStringWrapper.addFragment(fragment);
   }
@@ -260,11 +259,9 @@ auto TextMeasurer::findFitFontSize(
 
 void TextMeasurer::setTextMeasureParams(
     float fontScale,
-    float scale,
-    bool halfLeading) {
+    float scale) {
   m_fontScale = fontScale;
   m_scale = scale;
-  m_halfLeading = halfLeading;
 }
 
 } // namespace rnoh

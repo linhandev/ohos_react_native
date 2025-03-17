@@ -117,7 +117,6 @@ void StyledStringWrapper::addTextFragment(
     const facebook::react::AttributedString::Fragment& fragment) {
   UniqueTextStyle textStyle(
       OH_Drawing_CreateTextStyle(), OH_Drawing_DestroyTextStyle);
-  OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), m_halfLeading);
 
   auto fontSize = fragment.textAttributes.fontSize;
   if (fontSize <= 0) {
@@ -127,6 +126,11 @@ void StyledStringWrapper::addTextFragment(
 
   OH_Drawing_SetTextStyleFontSize(
       textStyle.get(), fontSize * m_scale * m_fontMultiplier);
+
+  // halfLeading
+  if (!isnan(fragment.textAttributes.lineHeight)) {
+    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), fragment.textAttributes.lineHeight > fontSize);
+  }
 
   // fontStyle
   if (fragment.textAttributes.fontStyle.has_value()) {
