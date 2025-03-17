@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "node ./scripts/create-build-profile",
     "dev": "concurrently -n 'metro,hdc-server' -c 'yellow,cyan' \"pnpm metro:harmony\" \"pnpm hdc-server\"",
-    "metro:harmony": "pnpm cross-env RNOH_TESTER_ONLY__TARGET_PLATFORM=harmony && react-native start",
+    "metro:harmony": "pnpm cross-env RNOH_TESTER_ONLY__TARGET_PLATFORM=harmony && react-native start --client-logs",
     "metro:android": "react-native start",
     "hdc-server": "hdc rport tcp:8083 tcp:8083 && npx hdc-server",
     "android": "react-native run-android",
