@@ -13,7 +13,7 @@ const EnvCtx = React.createContext<EnvCtxType>({isConnectedToInternet: false});
 
 async function checkIsInternetAvailable() {
   try {
-    await fetch('https://www.google.com', {
+    await fetch('https://www.gitcode.com', {
       method: 'HEAD',
     });
     return true;
