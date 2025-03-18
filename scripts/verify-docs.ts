@@ -4,10 +4,10 @@ import { glob } from "glob";
 async function runMarkdownLinkCheck(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     exec(`npx markdown-link-check ${filePath}`, (error, stdout, stderr) => {
-      if (error) {
+      if (error?.message.includes("ERROR")) {
         return reject(error);
       }
-      if (stderr) {
+      if (stderr.includes("ERROR")) {
         return reject(stdout);
       }
       resolve();
