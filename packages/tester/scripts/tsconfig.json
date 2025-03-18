@@ -4,4 +4,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
   },
+  "ts-node": {
+    "swc": true,
+  },
 }
