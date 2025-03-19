@@ -213,7 +213,7 @@ void TextInputComponentInstance::onPropsChanged(
   }
   if (props->textAttributes != m_props->textAttributes) {
     auto fontSizeScale =
-        this->m_deps->displayMetricsManager->getFontSizeScale();
+        this->m_deps->displayMetricsManager->getDisplayMetrics().windowPhysicalPixels.fontScale;
     m_textAreaNode.setFont(props->textAttributes, fontSizeScale);
     m_textInputNode.setFont(props->textAttributes, fontSizeScale);
   }
@@ -221,7 +221,7 @@ void TextInputComponentInstance::onPropsChanged(
       props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
     if (props->textAttributes.lineHeight) {
       auto fontSizeScale =
-          this->m_deps->displayMetricsManager->getFontSizeScale();
+          this->m_deps->displayMetricsManager->getDisplayMetrics().windowPhysicalPixels.fontScale;
       m_textAreaNode.setTextInputLineHeight(
           props->textAttributes, fontSizeScale);
       m_textInputNode.setTextInputLineHeight(
