@@ -97,9 +97,7 @@ void RNInstanceInternal::start() {
   float fontScale = displayMetrics.fontScale;
   float scale = displayMetrics.scale;
 
-  auto halfLeading = m_arkTSBridge->getMetadata("halfLeading") == "true";
-
-  textMeasurer->setTextMeasureParams(fontScale, scale, halfLeading);
+  textMeasurer->setTextMeasureParams(fontScale, scale);
 }
 
 bool RNInstanceInternal::s_hasInitializedFeatureFlags = false;

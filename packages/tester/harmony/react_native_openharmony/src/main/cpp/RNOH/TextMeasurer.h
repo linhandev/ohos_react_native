@@ -53,7 +53,7 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::LayoutConstraints layoutConstraints) const;
 
   void
-  setTextMeasureParams(float m_fontScale, float m_scale, bool m_halfLeading);
+  setTextMeasureParams(float m_fontScale, float m_scale);
 
  private:
   TextStorage findFitFontSize(
@@ -72,6 +72,5 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
   float m_fontScale = 1.0f;
   float m_scale = 1.0f;
   int m_rnInstanceId = 0;
-  bool m_halfLeading = false;
 };
 } // namespace rnoh
