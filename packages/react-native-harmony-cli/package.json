@@ -3,7 +3,7 @@
   "version": "0.77.3",
   "description": "",
   "scripts": {
-    "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js && pnpm run --filter @rnoh/hvigor-plugin build",
+    "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js",
     "prepack": "npm run build && npm run _recreate-hvigor-plugin",
     "_recreate-hvigor-plugin": "cd ../react-native-harmony-hvigor-plugin && npm i && npm run deploy && cd ../react-native-harmony-cli",
     "verify": "tsc --noEmit && npm run test",
