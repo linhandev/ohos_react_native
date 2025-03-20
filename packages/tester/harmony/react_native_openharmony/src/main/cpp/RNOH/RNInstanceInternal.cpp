@@ -353,10 +353,34 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   }
 }
 
+void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload){
+  if (payload.isNull()) {
+    return;
+  }
+  auto screenPhysicalPixels = payload["screenPhysicalPixels"];
+  if (screenPhysicalPixels.isNull()) {
+    return;
+  }
+  auto scale = screenPhysicalPixels["scale"];
+  auto fontScale = screenPhysicalPixels["fontScale"];
+  if (!scale.isDouble() || !fontScale.isDouble()) {
+    return;
+  }
+  auto textMeasurer = m_contextContainer->
+      at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
+  if (!textMeasurer) {
+    return;
+  }
+  textMeasurer->setTextMeasureParams(fontScale.asDouble(), scale.asDouble());
+}
+
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
   facebook::react::SystraceSection s("RNInstanceInternal::handleArkTSMessage");
+  if (name == "CONFIGURATION_UPDATE") {
+    onConfigurationChange(payload);
+  }
   if (m_shouldEnableDebugger && name == "RNOH::RESUME_DEBUGGER" &&
       m_inspectorHostTarget) {
     m_inspectorHostTarget->sendCommand(

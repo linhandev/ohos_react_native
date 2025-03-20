@@ -162,6 +162,8 @@ class RNInstanceInternal
       std::string const& componentName,
       facebook::react::Tag tag,
       napi_value newState);
+  void onConfigurationChange(
+      folly::dynamic const& payload);
   void handleArkTSMessage(
       const std::string& name,
       folly::dynamic const& payload);
