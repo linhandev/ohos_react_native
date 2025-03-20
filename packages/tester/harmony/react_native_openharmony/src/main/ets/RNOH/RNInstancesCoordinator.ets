@@ -111,6 +111,7 @@ export class RNInstancesCoordinator {
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
     const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    displayMetricsManager.updateConfiguration(dependencies.uiAbilityContext.config);
     const globalRNOHErrorEventEmitter: RNOHErrorEventEmitter = new EventEmitter();
     globalRNOHErrorEventEmitter.subscribe("NEW_ERROR", (err) => {
       dependencies.logger.error(err);
@@ -308,7 +309,7 @@ export class RNInstancesCoordinator {
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
-    this.displayMetricsManager?.updateDisplayMetrics();
+    this.displayMetricsManager?.updateConfiguration(systemConfiguration);
     this.rnInstanceRegistry?.forEach((rnInstance): void => rnInstance.onConfigurationUpdate(systemConfiguration))
   }
 
