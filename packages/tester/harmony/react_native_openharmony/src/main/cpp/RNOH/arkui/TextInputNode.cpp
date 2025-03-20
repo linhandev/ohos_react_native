@@ -302,6 +302,7 @@ void TextInputNode::setInputType(
       TextInputNodeBase::convertInputType(rawKeyboardType);
   if (securityEntry) {
     keyboardType = ARKUI_TEXTINPUT_TYPE_PASSWORD;
+    this->setPasswordIconVisibility(false);
   }
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
