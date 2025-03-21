@@ -14,5 +14,5 @@
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
 | DevEco Studio     | DevEco Studio 5.1.0.404 |
-| HarmonyOS SDK     | HarmonyOS SDK 5.1.0.55(SP3) |
-| 手机ROM           | ALN-AL00 205.1.0.55(SP31DEVC00E55R4P1) <br> ALN-AL80 205.1.0.55(SP31DEVC00E55R4P1) <br> BRA-AL00 205.1.0.55(SP31DEVC00E55R4P1) |
+| HarmonyOS SDK     | HarmonyOS SDK 5.1.0.56(SP2) |
+| 手机ROM           | ALN-AL00 205.1.0.56(SP30DEVC00E56R4P1) <br> ALN-AL80 205.1.0.56(SP30DEVC00E56R4P1) <br> BRA-AL00 205.1.0.56(SP30DEVC00E56R4P1) |
