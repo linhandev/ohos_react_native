@@ -44,7 +44,6 @@ type Result<TOK = null> = {
 export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
   handleError: (rnohError: RNOHError) => void
-  getFontSizeScale: () => number
   getMetadata: (name: string) => string;
 }
 
@@ -99,7 +98,6 @@ export class NapiBridge {
         }))
       },
       getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics(),
-      getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale(),
       getMetadata: (name: string) => arkTSBridgeHandler.getMetadata(name),
     } satisfies ArkTSBridgeHandler))
   }

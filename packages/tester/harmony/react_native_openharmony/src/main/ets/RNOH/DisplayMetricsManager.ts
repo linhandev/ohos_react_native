@@ -10,7 +10,7 @@ import window from '@ohos.window';
 import { RNOHLogger } from './RNOHLogger';
 import display from '@ohos.display';
 import { RNOHError } from "./RNOHError"
-import UIContext from '@ohos.arkui.UIContext';
+import AbilityConfiguration from '@ohos.app.ability.Configuration';
 
 const defaultDisplayMetrics: DisplayMetrics = {
   windowPhysicalPixels: {
@@ -35,41 +35,43 @@ const defaultDisplayMetrics: DisplayMetrics = {
 export class DisplayMetricsManager {
   private displayMetrics: DisplayMetrics = defaultDisplayMetrics;
   private logger: RNOHLogger
-  private fontSizeScale: number
+  private displayId: number | undefined;
 
-  constructor(fontSizeScale: number,logger: RNOHLogger) {
-    this.fontSizeScale = fontSizeScale;
+  constructor(logger: RNOHLogger) {
     this.logger = logger.clone("DisplayMetricsManager");
   }
 
   public updateWindowSize(windowSize: window.Size | window.Rect) {
     this.displayMetrics.windowPhysicalPixels.height = windowSize.height;
     this.displayMetrics.windowPhysicalPixels.width = windowSize.width;
-    this.updateDisplayMetrics(this.fontSizeScale)
+    this.updateDisplayMetrics()
   }
 
-  public getFontSizeScale():number{
-    return AppStorage.get("fontSizeScale") ?? this.fontSizeScale
+  public updateConfiguration(config: AbilityConfiguration.Configuration) {
+    this.displayId = config.displayId;
+    if (config.fontSizeScale) {
+      this.displayMetrics.screenPhysicalPixels.fontScale = config.fontSizeScale;
+      this.displayMetrics.windowPhysicalPixels.fontScale = config.fontSizeScale;
+    }
+    this.updateDisplayMetrics()
   }
 
-  public updateDisplayMetrics(fontSizeScale: number) {
-
+  public updateDisplayMetrics() {
     try {
-      this.fontSizeScale = this.fontSizeScale;
-      const displayInstance = display.getDefaultDisplaySync();
+      const displayInstance = display.getDisplayByIdSync(this.displayId);
       this.displayMetrics = {
         screenPhysicalPixels: {
           width: displayInstance.width,
           height: displayInstance.height,
           scale: displayInstance.densityPixels,
-          fontScale: 1,
+          fontScale: this.displayMetrics.screenPhysicalPixels.fontScale,
           densityDpi: displayInstance.densityDPI,
         },
         windowPhysicalPixels: {
           width: this.displayMetrics.windowPhysicalPixels.width,
           height: this.displayMetrics.windowPhysicalPixels.height,
           scale: displayInstance.densityPixels,
-          fontScale: 1,
+          fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
           densityDpi: displayInstance.densityDPI,
         }
       };

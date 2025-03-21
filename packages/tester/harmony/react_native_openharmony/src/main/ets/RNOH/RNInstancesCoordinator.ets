@@ -33,7 +33,10 @@ import { EtsUITurboModuleContext } from './EtsRNOHContext';
  * create a breaking change.
  */
 export interface RNInstancesCoordinatorDependencies {
-  fontSizeScale: number | undefined,
+  /**
+   * @deprecated
+   */
+  fontSizeScale?: number,
   logger: RNOHLogger,
   uiAbilityContext: common.UIAbilityContext,
   rnohWorkerScriptUrl?: string,
@@ -107,7 +110,8 @@ export class RNInstancesCoordinator {
     const onDestroyCallbacks: Function[] = []
     const devToolsController = new DevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
-    const displayMetricsManager = new DisplayMetricsManager(dependencies.fontSizeScale ?? 1, dependencies.logger);
+    const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
+    displayMetricsManager.updateConfiguration(dependencies.uiAbilityContext.config);
     const globalRNOHErrorEventEmitter: RNOHErrorEventEmitter = new EventEmitter();
     globalRNOHErrorEventEmitter.subscribe("NEW_ERROR", (err) => {
       dependencies.logger.error(err);
@@ -121,7 +125,6 @@ export class RNInstancesCoordinator {
             globalRNOHErrorEventEmitter.emit("NEW_ERROR", rnohError)
           },
           getDisplayMetrics: () => displayMetricsManager.getDisplayMetrics(),
-          getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
           getMetadata,
         });
 
@@ -306,7 +309,7 @@ export class RNInstancesCoordinator {
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
-    this.displayMetricsManager?.updateDisplayMetrics(systemConfiguration.fontSizeScale);
+    this.displayMetricsManager?.updateConfiguration(systemConfiguration);
     this.rnInstanceRegistry?.forEach((rnInstance): void => rnInstance.onConfigurationUpdate(systemConfiguration))
   }
 
