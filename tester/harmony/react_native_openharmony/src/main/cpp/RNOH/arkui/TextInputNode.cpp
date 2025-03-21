@@ -343,13 +343,15 @@ void TextInputNode::SetContextMenuHidden(bool const& hidden) {
 
 void TextInputNode::setTextContentType(std::string const& textContentType){
    ArkUI_NumberValue type = rnoh::convertContentType(textContentType); 
-    if (type.i32 == -1){
-        return;
-    }
-    std::array<ArkUI_NumberValue, 1> value = {type}; 
-    ArkUI_AttributeItem item = {value.data(), value.size()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
+  if (type.i32 == -1) { 
+    this->setAutoFill(false); // The purpose is to fix the issue where an autofill bubble still pops up when textContentType is dynamically changed to none.
+  } else {
+    this->setAutoFill(true);
+  }
+  std::array<ArkUI_NumberValue, 1> value = {type}; 
+  ArkUI_AttributeItem item = {value.data(), value.size()};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
 }
 
 void TextInputNode::setAutoFill(bool autoFill) {
