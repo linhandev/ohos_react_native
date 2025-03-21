@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.72.62
+- fix: auto-fill is disabled when textContentType is set to none,([b41df9ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b41df9ed6b5b34e1314ba73cfdb915190e938773))
+- chore: update to version 5.1.0.305(0.72.61),([2c73465a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c73465a00e2df0b10948d5b64fa6f272eecc23d))
+
 ## v0.72.61
 - refactor: Add code maintenance logs,([da9d3873](https://gitcode.com/openharmony-sig/ohos_react_native/commit/da9d38736a1a00284555104c98ac07cbbdfecb8d))
 - fix: Fix the issue where fetch cannot retrieve sandboxed files.,([61e201d6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/61e201d6b78429f82031fd8436df94be416938b3))

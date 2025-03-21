@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.0.306
+- docs: Add a sample for navigation between native and RN pages.,([fdb4b6b5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fdb4b6b5d5acc1df2637b40f0ae6954525376566))
+- Add instructions for version 5.1.0.306 of React native Harmony,([a66de643](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a66de6434523ee843a086473b10b867f6dc81e0a))
+- doc: global performance issues troubleshooting,([63cd33e5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63cd33e5f2712f6f2ebc502bfeb71cc81486015e))
+- doc: fix ambiguous use on native,([c379406e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c379406e6c4df617a08cff73b1f6d124601ed8ef))
+- fix: auto-fill is disabled when textContentType is set to none,([b41df9ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b41df9ed6b5b34e1314ba73cfdb915190e938773))
+- Modify typos in the readme of FabricWidgetSample,([fe35e978](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fe35e978f21dc7a418f1b77e5e934f8f4947b6da))
+- Add instructions for version 5.1.0.305 of React native Harmony,([d4ae39bf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d4ae39bfbdb0075d58fd0aaf6d58303acd96217d))
+- chore: update to version 5.1.0.305(0.72.61),([2c73465a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c73465a00e2df0b10948d5b64fa6f272eecc23d))
+
 ## 5.1.0.305
 - refactor: Add code maintenance logs,([da9d3873](https://gitcode.com/openharmony-sig/ohos_react_native/commit/da9d38736a1a00284555104c98ac07cbbdfecb8d))
 - Add instructions for version 5.1.0.305 of React native Harmony,([ad703173](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ad70317340dcfff3d4abcaec18a58c7c4798135e))
