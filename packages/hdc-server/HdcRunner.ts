@@ -1,5 +1,6 @@
 import {execSync} from 'node:child_process';
-import * as pathUtils from 'path';
+import {globSync} from 'glob';
+import pathUtils from 'node:path';
 
 export class HdcRunner {
   target: string;
@@ -13,13 +14,13 @@ export class HdcRunner {
       throw new Error('DEVECO_SDK_HOME environment variable is undefined');
     }
 
-    this.hdcPath = pathUtils.join(
-      DEVECO_SDK_HOME,
-      'default',
-      'openharmony',
-      'toolchains',
-      'hdc',
-    );
+    const basePath = pathUtils.join(DEVECO_SDK_HOME, '..');
+    const files = globSync(`${basePath}/**/hdc`, {nodir: true});
+    if (files.length === 0) {
+      throw new Error('hdc not found in DEVECO_SDK_HOME');
+    }
+
+    this.hdcPath = files[0];
   }
 
   public run(command: string): string {
