@@ -13,10 +13,14 @@
     "clean": "npx del-cli \"**/node_modules\"",
     "deploy:rnoh": "node ./scripts/deploy-rnoh.js",
     "test:ecosystem": "pnpm run --filter ./packages/tester-ecosystem test",
-    "verify": "concurrently --kill-others-on-fail -n 'verify-packages,verify-docs' -c 'green,blue' \"pnpm run _verify:packages\" \"pnpm run _verify:docs\"",
+    "verify": "concurrently --kill-others-on-fail -n 'verify-packages,verify-docs,verify-formatting' -c 'green,blue,red' \"pnpm run _verify:packages\" \"pnpm run _verify:docs\" \"pnpm run _verify:formatting\"",
     "gen:changelog": "ts-node ./scripts/generate-changelog.js",
     "_verify:docs": "ts-node ./scripts/verify-docs.ts",
-    "_verify:packages": "pnpm run --recursive --parallel verify"
+    "_verify:packages": "pnpm run --recursive --parallel verify",
+    "_verify:formatting": "pnpm run format:cpp:check",
+    "format": "pnpm run --recursive format:js && pnpm run format:cpp",
+    "format:cpp": "ts-node ./scripts/format-cpp.ts",
+    "format:cpp:check": "ts-node ./scripts/format-cpp.ts --check"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
