@@ -12,7 +12,7 @@ import { DescriptorRegistry, DescriptorWrapperFactory } from './DescriptorRegist
 import { ComponentManagerRegistry } from './ComponentManagerRegistry'
 import { SurfaceHandle } from './SurfaceHandle'
 import { TurboModuleProvider } from './TurboModuleProvider'
-import { EventEmitter } from './EventEmitter'
+import { EventEmitter, EventEmitterOptions } from './EventEmitter'
 import type { RNOHLogger } from './RNOHLogger'
 import type { CppFeatureFlag, NapiBridge } from './NapiBridge'
 import type { UITurboModuleContext } from './RNOHContext'
@@ -73,6 +73,7 @@ export type LifecycleEventArgsByEventName = {
   ];
   RELOAD: [{ reason: string | undefined }];
   WINDOW_SIZE_CHANGE: [windowSize: window.Size];
+  WINDOW_RECT_DRAG: [isWindowRectDrag: boolean];
 };
 
 export type StageChangeEventArgsByEventName = {
@@ -142,6 +143,7 @@ export interface RNInstance {
   subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void,
+    options?: EventEmitterOptions
   ) => () => void;
 
   /**
@@ -150,6 +152,7 @@ export interface RNInstance {
   subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void,
+    options?: EventEmitterOptions
   ) => () => void;
 
   /**
@@ -724,15 +727,17 @@ export class RNInstanceImpl implements RNInstance {
   public subscribeToLifecycleEvents<TEventName extends keyof LifecycleEventArgsByEventName,>(
     type: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void,
+    options?: EventEmitterOptions
   ) {
-    return this.lifecycleEventEmitter.subscribe(type, listener);
+    return this.lifecycleEventEmitter.subscribe(type, listener, options);
   }
 
   public subscribeToStageChangeEvents<TEventName extends keyof StageChangeEventArgsByEventName,>(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void,
+    options?: EventEmitterOptions
   ): () => void {
-    return this.stageEventEmitter.subscribe(eventName, listener);
+    return this.stageEventEmitter.subscribe(eventName, listener, options);
   }
 
   public getLifecycleState(): LifecycleState {
@@ -938,6 +943,10 @@ export class RNInstanceImpl implements RNInstance {
     ...args: Parameters<UIAbility['onConfigurationUpdate']>
   ) {
     this.lifecycleEventEmitter.emit('CONFIGURATION_UPDATE', ...args);
+  }
+
+  public onWindowReactChange(isWindowRectDrag: boolean) {
+    this.lifecycleEventEmitter.emit("WINDOW_RECT_DRAG", isWindowRectDrag);
   }
 
   public onWindowSizeChange(windowSize: window.Size) {

@@ -114,6 +114,16 @@ export struct RNSurface {
   private initialProps!: SurfaceProps;
   private logger!: RNOHLogger
   private rootViewNodeContent: NodeContent = new NodeContent();
+  private timerId: undefined | number = undefined;
+  private lastChangeTimeInMs: number = 0;
+  private isWindowRectDrag: boolean = false;
+  private currentMeasuredSize: Size | undefined = undefined;
+  private isLatestConstraintsUpdateFromTimeout: boolean = false;
+  /**
+  * Note: You may need to change this delay along with RNInstancesCoordinator's 
+  * onWindowSizeChange delay, as both have an effect on window changes. 
+  */
+  private readonly surfaceConstraintsDebounceTimeInMs: number = 100;
 
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
@@ -144,6 +154,12 @@ export struct RNSurface {
           this.rootComponentSize = { width: payload.width, height: payload.height }
         }
       }))
+    this.cleanUpCallbacks.push(
+      this.ctx.rnInstance.subscribeToLifecycleEvents("WINDOW_RECT_DRAG",
+      (isWindowRectDrag: boolean) => {
+        this.isWindowRectDrag = isWindowRectDrag;
+      })
+    )
     this.surfaceHandle.attachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag(),
       this.rootViewNodeContent);
     stopTracing()
@@ -151,6 +167,10 @@ export struct RNSurface {
 
   aboutToDisappear() {
     const surfaceHandle = this.surfaceHandle;
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = undefined;
+    }
     (async () => {
       const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
       this.cleanUpCallbacks.forEach(cb => cb())
@@ -195,15 +215,44 @@ export struct RNSurface {
 
   override onMeasureSize(selfLayoutInfo: GeometryInfo, children: Array<Measurable>,
     constraint: ConstraintSizeOptions): SizeResult {
-    const measuredSize =
-      this.updateSurfaceConstraints({
-        minWidth: constraint.maxWidth as number, // NOTE: width: 100% doesn't work on the root component hence maxWidth is used here
-        minHeight: constraint.minHeight as number,
-        maxWidth: constraint.maxWidth as number,
-        maxHeight: constraint.maxHeight as number,
-      })
+    const currentTime = Date.now(); 
+    if (!this.isWindowRectDrag || 
+      (currentTime - this.lastChangeTimeInMs > this.surfaceConstraintsDebounceTimeInMs) || 
+      this.isLatestConstraintsUpdateFromTimeout) {
+      if (this.timerId) {
+        clearTimeout(this.timerId);
+        this.timerId = undefined;
+      }
+      this.currentMeasuredSize =
+        this.updateSurfaceConstraints({
+          minWidth: constraint.maxWidth as number, // NOTE: width: 100% doesn't work on the root component hence maxWidth is used here
+          minHeight: constraint.minHeight as number,
+          maxWidth: constraint.maxWidth as number,
+          maxHeight: constraint.maxHeight as number,
+        })
+      this.isLatestConstraintsUpdateFromTimeout = false;
+      this.lastChangeTimeInMs = currentTime;
+    } else {
+      if(this.timerId){
+        clearTimeout(this.timerId)
+        this.timerId = undefined;
+      }
+      this.timerId = setTimeout(() =>{
+        this.currentMeasuredSize =
+        this.updateSurfaceConstraints({
+          minWidth: constraint.maxWidth as number, // NOTE: width: 100% doesn't work on the root component hence maxWidth is used here
+          minHeight: constraint.minHeight as number,
+          maxWidth: constraint.maxWidth as number,
+          maxHeight: constraint.maxHeight as number,
+        })
+        this.timerId = undefined;
+        this.isLatestConstraintsUpdateFromTimeout = true;
+        this.lastChangeTimeInMs = Date.now();
+      }, this.surfaceConstraintsDebounceTimeInMs)
+    }
+    const measuredSize = this.currentMeasuredSize;
     const newSize: Size =
-      { width: measuredSize.width || selfLayoutInfo.width, height: measuredSize.height || selfLayoutInfo.height }
+      { width: measuredSize?.width || selfLayoutInfo.width, height: measuredSize?.height || selfLayoutInfo.height }
     children.forEach((child) => {
       child.measure({
         minHeight: newSize.height,

@@ -18,7 +18,8 @@ export class DeviceInfoTurboModule extends TurboModule {
   }
 
   private displayMetrics?: DisplayMetrics = null;
-  private cleanUpCallbacks?: (() => void)[] = []
+  private cleanUpCallbacks?: (() => void)[] = [];
+  private readonly windowSizeChangeDebounceTimeInMs: number = 500;
 
   constructor(protected ctx: TurboModuleContext, initialDisplayMetrics: DisplayMetrics) {
     super(ctx);
@@ -32,7 +33,7 @@ export class DeviceInfoTurboModule extends TurboModule {
       this.ctx.rnInstance.subscribeToLifecycleEvents("CONFIGURATION_UPDATE", updateDisplayMetrics)
     )
     this.cleanUpCallbacks.push(
-      this.ctx.rnInstance.subscribeToLifecycleEvents("WINDOW_SIZE_CHANGE", updateDisplayMetrics)
+      this.ctx.rnInstance.subscribeToLifecycleEvents("WINDOW_SIZE_CHANGE", updateDisplayMetrics, { debounceInMs: this.windowSizeChangeDebounceTimeInMs })
     )
   }
 
