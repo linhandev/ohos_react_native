@@ -86,6 +86,10 @@ using TextMeasureCache = SimpleThreadSafeCache<
 inline bool areTextAttributesEquivalentLayoutWise(
     TextAttributes const &lhs,
     TextAttributes const &rhs) {
+  // RNOH patch:
+  // Harmony skipped the second mesurement by setting textAttributes during first measurement
+  // Thus, all textAttributes should be compared here on Harmony platform
+  return lhs == rhs;
   // Here we check all attributes that affect layout metrics and don't check any
   // attributes that affect only a decorative aspect of displayed text (like
   // colors).
@@ -113,36 +117,25 @@ inline bool areTextAttributesEquivalentLayoutWise(
 
 inline size_t textAttributesHashLayoutWise(
     TextAttributes const &textAttributes) {
+  // RNOH patch:
+  // Harmony skipped the second mesurement by setting textAttributes during first measurement
+  // Thus, all textAttributes should be compared here on Harmony platform
+  return folly::hash::StdHasher()(textAttributes);
   // Taking into account the same props as
   // `areTextAttributesEquivalentLayoutWise` mentions.
   return folly::hash::hash_combine(
       0,
-      textAttributes.foregroundColor,
-      textAttributes.backgroundColor,
-      textAttributes.fontSize,
-      textAttributes.opacity,
-      textAttributes.fontSizeMultiplier,
       textAttributes.fontFamily,
+      textAttributes.fontSize,
+      textAttributes.fontSizeMultiplier,
       textAttributes.fontWeight,
       textAttributes.fontStyle,
       textAttributes.fontVariant,
       textAttributes.allowFontScaling,
       textAttributes.dynamicTypeRamp,
-      textAttributes.alignment,
-      textAttributes.baseWritingDirection,
-      textAttributes.lineBreakStrategy,
       textAttributes.letterSpacing,
-      textAttributes.textDecorationColor,
-      textAttributes.textDecorationLineType,
-      textAttributes.textDecorationStyle,
-      textAttributes.textShadowOffset,
-      textAttributes.textShadowColor,
-      textAttributes.textShadowRadius,
-      textAttributes.isHighlighted,
-      textAttributes.layoutDirection,
-      textAttributes.accessibilityRole,
-      textAttributes.textTransform
-      );
+      textAttributes.lineHeight,
+      textAttributes.alignment);
 }
 
 inline bool areAttributedStringFragmentsEquivalentLayoutWise(
