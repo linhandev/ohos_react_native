@@ -16,7 +16,7 @@ NavigationApp -- 原生工程
 
 
 # 效果预览
-在成功运行demo工程之后，打开应用如下图所示：
+在成功运行demo工程之后，打开应用如下图所示：  
 ![NativeReactNavSwitch的应用首页](../../zh-cn//figures/NativeReactNavSwitch-首页.png)
 
 **导航到RN页面B**
