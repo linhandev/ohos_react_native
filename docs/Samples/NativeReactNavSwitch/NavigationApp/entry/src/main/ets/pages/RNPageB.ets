@@ -15,12 +15,12 @@ import {
   buildRNComponentForTag,
   ComponentBuilderContext
 } from '@rnoh/react-native-openharmony';
-
-import { createRNPackages } from '../RNPackage/RNPackagesFactory'
+import { createRNPackages } from '../RNPackage/RNPackagesFactory';
 
 @Builder
 export function buildCustomComponent(ctx: ComponentBuilderContext) {
-  Stack() {}.position({ x: 0, y: 0 })
+  Stack() {
+  }.position({ x: 0, y: 0 })
 }
 
 const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomComponent);
@@ -33,19 +33,16 @@ export function RNPageBBuilder() {
 @Entry
 @Component
 export struct RNPageB {
-  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined
+  @StorageLink('RNOHCoreContext') rnohCoreContext: RNOHCoreContext | undefined = undefined;
   private instance: RNInstance | undefined;
-  private bundlePath = 'bundle.harmony.js'
-  private moduleName = 'App'
+  private bundlePath = 'bundle.harmony.js';
+  private moduleName = 'App';
   @State isBundleReady: boolean = false;
-
-
 
   async aboutToAppear() {
     if (!this.rnohCoreContext) {
       return;
     }
-
     this.instance = await this.rnohCoreContext.createAndRegisterRNInstance({
       createRNPackages: createRNPackages,
       enableNDKTextMeasuring: true,
@@ -59,10 +56,11 @@ export struct RNPageB {
       wrapBuilder(buildRNComponentForTag),
       new Map()
     );
-    await this.instance.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath)).then(() => {
-      this.isBundleReady = true
-      console.log('instance 加载完成' + this.bundlePath)
-    })
+    await this.instance.runJSBundle(new ResourceJSBundleProvider(getContext().resourceManager, this.bundlePath))
+      .then(() => {
+        this.isBundleReady = true;
+        console.log('instance 加载完成' + this.bundlePath);
+      })
   }
 
   @Builder

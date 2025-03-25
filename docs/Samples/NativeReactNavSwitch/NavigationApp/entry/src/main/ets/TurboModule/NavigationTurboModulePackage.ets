@@ -22,7 +22,7 @@ class NavigationTurboModuleFactory extends TurboModulesFactory {
   }
 }
 
-export default  class NavigationTurboModulePackage extends RNPackage {
+export default class NavigationTurboModulePackage extends RNPackage {
   createTurboModulesFactory(ctx: TurboModuleContext): TurboModulesFactory {
     return new NavigationTurboModuleFactory(ctx);
   }

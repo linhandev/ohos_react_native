@@ -6,7 +6,7 @@
  */
 
 import { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony/ts';
-import NavigationTurboModulePackage from '../TurboModule/NavigationTurboModulePackage'
+import NavigationTurboModulePackage from '../TurboModule/NavigationTurboModulePackage';
 
 export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
   return [

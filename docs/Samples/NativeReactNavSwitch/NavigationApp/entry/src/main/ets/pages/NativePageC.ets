@@ -16,7 +16,7 @@ export function NativePageCBuilder() {
 struct NativePageC {
   @State message: string = '跳转到RN页面B';
   pathStack: NavPathStack | undefined;
-  info: string = '原生页面C'
+  info: string = '原生页面C';
 
   build() {
     NavDestination() {
@@ -35,7 +35,7 @@ struct NativePageC {
     .id('NativePageC')
     .title('原生页面C')
     .onReady((context: NavDestinationContext) => {
-      this.pathStack = context.pathStack
+      this.pathStack = context.pathStack;
     })
   }
 }

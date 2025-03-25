@@ -5,7 +5,7 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import { NavigationManager } from '../NavigationTool/NavigationManager'
+import { NavigationManager } from '../NavigationTool/NavigationManager';
 
 @Entry
 @Component

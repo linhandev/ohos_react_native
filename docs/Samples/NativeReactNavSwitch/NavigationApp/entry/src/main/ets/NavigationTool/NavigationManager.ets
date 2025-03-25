@@ -6,7 +6,6 @@
  */
 
 export class NavigationManager {
-
   private static sInstance: NavigationManager = new NavigationManager();
   pathStack: NavPathStack | undefined;
 

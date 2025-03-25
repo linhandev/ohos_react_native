@@ -6,17 +6,16 @@
  */
 
 import { TurboModule } from '@rnoh/react-native-openharmony/ts';
-import { NavigationManager } from '../NavigationTool/NavigationManager'
+import { NavigationManager } from '../NavigationTool/NavigationManager';
 
 export class NavigationTurboModule extends TurboModule {
-
   navigatePush(name: string) {
     console.log("NavigationTurboModule navigatePush name: " + name);
     NavigationManager.getInstance().pushDestinationByName(name);
   }
 
   navigatePop() {
-    console.log("NavigationTurboModule navigatePop")
+    console.log("NavigationTurboModule navigatePop");
     NavigationManager.getInstance().popDestination();
   }
 }
