@@ -1,5 +1,7 @@
-import { execSync, ExecSyncOptionsWithStringEncoding } from "node:child_process";
-import { toKebabCase } from "./utils/kebabCase";
+import {
+  execSync,
+  ExecSyncOptionsWithStringEncoding,
+} from "node:child_process";
 
 export class CommandExecutor {
   public run(
@@ -29,7 +31,7 @@ export class CommandExecutor {
       .map(([key, value]) => {
         if (value === undefined) return "";
 
-        const formattedKey = toKebabCase(key);
+        const formattedKey = this.toKebabCase(key);
 
         if (typeof value === "boolean") {
           return `--${formattedKey}`;
@@ -38,5 +40,12 @@ export class CommandExecutor {
         return `--${formattedKey} ${value}`;
       })
       .join(" ");
+  }
+
+  protected toKebabCase(str: string): string {
+    return str
+      .replace(/([a-z])([A-Z])/g, "$1-$2")
+      .replace(/[\s_]+/g, "-")
+      .toLowerCase();
   }
 }
