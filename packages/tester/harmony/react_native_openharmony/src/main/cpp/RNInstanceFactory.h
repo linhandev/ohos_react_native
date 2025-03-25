@@ -146,7 +146,12 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
          package->createComponentNapiBinderByName()) {
       componentNapiBinderByName.insert({name, componentNapiBinder});
     };
-    auto packageGlobalJSIBinders = package->createGlobalJSIBinders();
+    auto deprecatedGlobalJSIBinders = package->createGlobalJSIBinders();
+    auto packageGlobalJSIBinders = package->createGlobalJSIBinders({});
+    globalJSIBinders.insert(
+        globalJSIBinders.end(),
+        std::make_move_iterator(deprecatedGlobalJSIBinders.begin()),
+        std::make_move_iterator(deprecatedGlobalJSIBinders.end()));
     globalJSIBinders.insert(
         globalJSIBinders.end(),
         std::make_move_iterator(packageGlobalJSIBinders.begin()),

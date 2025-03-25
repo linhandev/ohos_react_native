@@ -27,6 +27,11 @@ GlobalJSIBinders rnoh::Package::createGlobalJSIBinders() {
   return {};
 }
 
+GlobalJSIBinders rnoh::Package::createGlobalJSIBinders(
+    const GlobalJSIBinder::Context& ctx) {
+  return {};
+}
+
 ComponentJSIBinderByString rnoh::Package::createComponentJSIBinderByName() {
   return {};
 }

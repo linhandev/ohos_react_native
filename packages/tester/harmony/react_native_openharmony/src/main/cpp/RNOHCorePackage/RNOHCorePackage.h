@@ -230,9 +230,9 @@ class RNOHCorePackage : public Package {
          std::make_shared<ActivityIndicatorComponentJSIBinder>()}};
   };
 
-  GlobalJSIBinders createGlobalJSIBinders() override {
-    return {std::make_shared<rnoh::BlobCollectorJSIBinder>(
-        GlobalJSIBinder::Context{})};
+  GlobalJSIBinders createGlobalJSIBinders(
+      const GlobalJSIBinder::Context& ctx) override {
+    return {std::make_shared<rnoh::BlobCollectorJSIBinder>(ctx)};
   }
 };
 

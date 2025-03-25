@@ -35,7 +35,15 @@ class Package {
   virtual std::unique_ptr<TurboModuleFactoryDelegate>
   createTurboModuleFactoryDelegate();
 
+  /**
+   * @deprecated: Override
+   * `createGlobalJSIBinders(constGlobalJSIBinder::Context& ctx)` instead
+   * (latestRNOHVersion: 0.77.1)
+   */
   virtual GlobalJSIBinders createGlobalJSIBinders();
+
+  virtual GlobalJSIBinders createGlobalJSIBinders(
+      const GlobalJSIBinder::Context& ctx);
 
   /**
    * @internal
