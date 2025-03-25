@@ -24,10 +24,10 @@ export function AnimatedTest() {
       <AnimatedValueTest />
       <TestSuite name="timing">
         <TestSuite name="start">
-          <TestCase.Manual
+          <TestCase.Automated
             itShould="call start callback"
             initialState={-1}
-            arrange={({setState, state}) => {
+            arrange={({setState, state, done}) => {
               return (
                 <Effect
                   onMount={() => {
@@ -38,12 +38,14 @@ export function AnimatedTest() {
                       duration: 1000,
                     }).start(() => {
                       setState(c => c + 1);
+                      done();
                     });
                   }}>
                   <Text>{state}</Text>
                 </Effect>
               );
             }}
+            act={() => {}}
             assert={async ({expect, state}) => {
               const result = await new Promise(resolve => {
                 if (state > 0) {

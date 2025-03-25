@@ -1,14 +1,18 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../../components';
-import {useState} from 'react';
+import {createRef, forwardRef, useState} from 'react';
 import {TextStyleTest} from './TextStyleTest';
 import {TextMeasuringTest} from './TextMeasuringTest';
 import {TextPaddingTest} from './TextPaddingTest';
 import {TextAccessibilityTest} from './TextAccessibilityTest';
 import {TextNestedTest} from './TextNestedTest';
+import {useEnvironment} from '../../contexts';
 
 export function TextTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
   return (
     <TestSuite name="Text">
       <TextMeasuringTest />
@@ -131,12 +135,26 @@ export function TextTest() {
         skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/277
       />
-      <TestCase.Manual
+      <TestCase.Automated
+        tags={['sequential']}
         itShould="fire onLayout event after layout change"
-        initialState={{}}
-        arrange={ctx => <OnLayoutView ctx={ctx} />}
+        initialState={{
+          innerRef: createRef<View>(),
+          layout: {} as Partial<{
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+          }>,
+        }}
+        arrange={ctx => <OnLayoutView ctx={ctx} ref={ctx.state.innerRef} />}
+        act={async ({state}) => {
+          await driver?.click({ref: state.innerRef});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.have.all.keys('x', 'y', 'width', 'height');
+          expect(state.layout).to.have.all.keys('x', 'y', 'width', 'height');
+          expect(state.layout.width).to.be.greaterThan(0);
+          expect(state.layout.height).to.be.greaterThan(0);
         }}
       />
       <TestCase.Example itShould="display text with a selection color of Indian Red">
@@ -177,16 +195,41 @@ export function TextTest() {
     </TestSuite>
   );
 }
-const OnLayoutView = (props: {
+type OnLayoutViewProps<T> = {
   ctx: {
-    state: {};
-    setState: React.Dispatch<React.SetStateAction<{}>>;
+    state: T & {
+      layout: Partial<{
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }>;
+    };
+    setState: React.Dispatch<
+      React.SetStateAction<
+        T & {
+          layout: Partial<{
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+          }>;
+        }
+      >
+    >;
     reset: () => void;
+    done: () => void;
   };
-}) => {
+};
+
+const OnLayoutView = forwardRef<
+  View,
+  OnLayoutViewProps<{innerRef: React.RefObject<View>}>
+>((props, ref) => {
   const [width, setWidth] = useState(100);
+
   return (
-    <View>
+    <View ref={ref}>
       <Text
         style={{
           width: width,
@@ -196,14 +239,21 @@ const OnLayoutView = (props: {
           backgroundColor: 'rgba(100,100,255,0.5)',
         }}
         onLayout={event => {
-          props.ctx.setState(event.nativeEvent.layout);
+          const layout = {...event.nativeEvent.layout};
+
+          props.ctx.setState(prevState => ({
+            ...prevState,
+            layout,
+          }));
+
+          props.ctx.done();
         }}
-        onPress={() => setWidth((prev: number) => (prev === 100 ? 200 : 100))}>
+        onPress={() => setWidth(prev => (prev === 100 ? 200 : 100))}>
         resize
       </Text>
     </View>
   );
-};
+});
 const OnTextLayoutView = (props: {
   ctx: {
     state: boolean;

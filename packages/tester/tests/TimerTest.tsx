@@ -1,7 +1,7 @@
 import {TestSuite} from '@rnoh/testerino';
 import React, {useEffect} from 'react';
 import {AppState, AppStateStatus, Text, View} from 'react-native';
-import {Button, TestCase} from '../components';
+import {TestCase} from '../components';
 
 async function wait(ms: number) {
   return new Promise(resolve => {
@@ -9,26 +9,16 @@ async function wait(ms: number) {
   });
 }
 
-const PRECISION_IN_MS = 100;
+const PRECISION_IN_MS = 25;
 
 export function TimerTest() {
   return (
     <TestSuite name="Timer">
-      <TestCase.Manual
-        itShould="take three seconds to finish this test (setTimeout, 3s)"
-        initialState={0}
-        arrange={({setState}) => {
-          return (
-            <Button
-              label="Start Timeout"
-              onPress={() => {
-                setState(prev => prev + 1);
-              }}
-            />
-          );
-        }}
-        assert={async ({expect}) => {
-          const waitTimeInMs = 3000;
+      <TestCase.Logical
+        itShould="take one second to finish this test (setTimeout, 1s)"
+        tags={['sequential']}
+        fn={async ({expect}) => {
+          const waitTimeInMs = 1000;
           const time1 = new Date().getTime();
           await wait(waitTimeInMs);
           const time2 = new Date().getTime();
@@ -40,20 +30,10 @@ export function TimerTest() {
           );
         }}
       />
-      <TestCase.Manual
+      <TestCase.Logical
         itShould="take a short time to finish this test (setTimeout, 0ms)"
-        initialState={0}
-        arrange={({setState}) => {
-          return (
-            <Button
-              label="Start Timeout"
-              onPress={() => {
-                setState(prev => prev + 1);
-              }}
-            />
-          );
-        }}
-        assert={async ({expect}) => {
+        tags={['sequential']}
+        fn={async ({expect}) => {
           const waitTimeInMs = 0;
           const time1 = new Date().getTime();
           await wait(waitTimeInMs);
@@ -66,21 +46,10 @@ export function TimerTest() {
           );
         }}
       />
-      <TestCase.Manual
-        itShould="take three seconds to finish this test (setInterval)"
-        initialState={0}
-        arrange={({setState}) => {
-          return (
-            <Button
-              label="Start Interval"
-              onPress={() => {
-                setState(prev => prev + 1);
-              }}
-            />
-          );
-        }}
-        assert={async ({expect}) => {
-          await wait(3000);
+      <TestCase.Logical
+        itShould="take one second to finish this test (setInterval)"
+        tags={['sequential']}
+        fn={async ({expect}) => {
           let i = 0;
           const time1 = new Date().getTime();
 
@@ -90,40 +59,30 @@ export function TimerTest() {
                 resolve(null);
               }
               i++;
-            }, 1000);
+            }, 500);
           });
 
           const time2 = new Date().getTime();
-          expect(Math.abs(time2 - time1 - 2000)).to.be.lessThan(
+          expect(Math.abs(time2 - time1 - 1000)).to.be.lessThan(
             PRECISION_IN_MS,
           );
         }}
       />
-      <TestCase.Manual
+      <TestCase.Logical
         itShould="cancel the timer before it's triggered"
-        initialState={0}
-        arrange={({setState}) => {
-          return (
-            <Button
-              label="Start test"
-              onPress={() => {
-                setState(prev => prev + 1);
-              }}
-            />
-          );
-        }}
-        assert={async ({expect}) => {
+        tags={['sequential']}
+        fn={async ({expect}) => {
           let finished = 0;
           const timerId = setTimeout(() => {
             finished = 2;
-          }, 1000);
+          }, 500);
 
           setTimeout(() => {
             clearTimeout(timerId);
             finished = 1;
-          }, 500);
+          }, 250);
 
-          await wait(2000);
+          await wait(1000);
           expect(finished).to.be.eq(1);
         }}
       />

@@ -61,7 +61,9 @@ export function PlatformConstantsTest() {
         itShould="specify product model"
         fn={({expect}) => {
           if (Platform.OS === 'harmony') {
-            expect(['NOH', 'ALN-AL00']).to.include(Platform.constants.Model);
+            expect(['NOH', 'ALN-AL00', 'ALT-AL10']).to.include(
+              Platform.constants.Model,
+            );
           }
         }}
       />

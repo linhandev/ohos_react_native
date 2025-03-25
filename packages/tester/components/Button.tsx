@@ -1,9 +1,19 @@
-import {Text, TouchableHighlight} from 'react-native';
+import React, {forwardRef} from 'react';
+import {Text, TouchableHighlight, TouchableHighlightProps} from 'react-native';
 import {PALETTE} from './palette';
 
-export function Button({label, onPress}: {onPress: () => void; label: string}) {
+interface ButtonProps extends TouchableHighlightProps {
+  label: string;
+  onPress: () => void;
+}
+
+export const Button = forwardRef<
+  React.ElementRef<typeof TouchableHighlight>,
+  ButtonProps
+>(({label, onPress, ...rest}, ref) => {
   return (
     <TouchableHighlight
+      ref={ref}
       underlayColor={PALETTE.REACT_CYAN_DARK}
       style={{
         paddingVertical: 6,
@@ -12,10 +22,13 @@ export function Button({label, onPress}: {onPress: () => void; label: string}) {
         borderWidth: 2,
         borderColor: PALETTE.REACT_CYAN_DARK,
       }}
-      onPress={onPress}>
+      onPress={onPress}
+      {...rest}>
       <Text style={{color: 'black', fontWeight: 'bold', fontSize: 12}}>
         {label}
       </Text>
     </TouchableHighlight>
   );
-}
+});
+
+export default Button;

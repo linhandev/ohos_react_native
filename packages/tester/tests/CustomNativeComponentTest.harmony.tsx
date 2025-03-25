@@ -140,14 +140,12 @@ function GeneratedCustomComponentTest() {
   return (
     <TestSuite name="generated custom component">
       <TestSuite name="ArkTS">
-        <TestCase.Manual<
-          | GeneratedSampleNativeComponentArkTSCustomProps
-          | undefined
-          | 'IN_PROGRESS'
+        <TestCase.Automated<
+          GeneratedSampleNativeComponentArkTSCustomProps | undefined
         >
           itShould="ensure equality between provided and received data"
           initialState={undefined}
-          arrange={({setState}) => {
+          arrange={({setState, done}) => {
             return (
               <Ref<GeneratedSampleComponentArkTSRef>
                 render={ref => (
@@ -165,10 +163,12 @@ function GeneratedCustomComponentTest() {
                       readOnlyArrayTest: ['foo', 'bar'],
                       intEnumTest: 1,
                     }}
-                    onDirectEvent={setState}>
+                    onDirectEvent={(state: any) => {
+                      setState(state);
+                      done();
+                    }}>
                     <Effect
                       onMount={() => {
-                        setState('IN_PROGRESS');
                         setTimeout(() =>
                           ref.current?.emitNativeEvent('directEvent'),
                         );
@@ -179,11 +179,8 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
+          act={({}) => {}}
           assert={async ({expect, state}) => {
-            if (state === 'IN_PROGRESS') {
-              await new Promise(() => {});
-              return;
-            }
             expect(state?.booleanTest).to.be.true;
             expect(state?.booleanWithDefaultTest).to.be.true;
             expect(state?.intTest).to.be.eq(42);
@@ -203,10 +200,8 @@ function GeneratedCustomComponentTest() {
         />
       </TestSuite>
       <TestSuite name="C-API">
-        <TestCase.Manual<
-          | GeneratedSampleNativeComponentCAPICustomProps
-          | undefined
-          | 'IN_PROGRESS'
+        <TestCase.Automated<
+          GeneratedSampleNativeComponentCAPICustomProps | undefined
         >
           skip={{
             android: true,
@@ -214,7 +209,7 @@ function GeneratedCustomComponentTest() {
           }}
           itShould="receive props and emit them back via event"
           initialState={undefined}
-          arrange={({setState}) => {
+          arrange={({setState, done}) => {
             return (
               <Ref<GeneratedSampleComponentCAPIRef>
                 render={ref => (
@@ -231,10 +226,12 @@ function GeneratedCustomComponentTest() {
                       readOnlyArrayTest: ['foo', 'bar'],
                       objectTest: {foo: {bar: 'baz'}},
                     }}
-                    onDirectEvent={setState}>
+                    onDirectEvent={(state: any) => {
+                      setState(state);
+                      done();
+                    }}>
                     <Effect
                       onMount={() => {
-                        setState('IN_PROGRESS');
                         setTimeout(() =>
                           ref.current?.emitNativeEvent('directEvent'),
                         );
@@ -245,11 +242,8 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
+          act={() => {}}
           assert={async ({expect, state}) => {
-            if (state === 'IN_PROGRESS') {
-              await new Promise(() => {});
-              return;
-            }
             expect(state?.booleanTest).to.be.true;
             expect(state?.booleanWithDefaultTest).to.be.true;
             expect(state?.intTest).to.be.eq(42);
@@ -267,18 +261,17 @@ function GeneratedCustomComponentTest() {
             expect(state?.objectTest?.foo?.bar).to.be.eq('baz');
           }}
         />
-        <TestCase.Manual<
-          | GeneratedSampleNativeComponentCAPICommandArgs
-          | undefined
-          | 'IN_PROGRESS'
+        <TestCase.Automated<
+          GeneratedSampleNativeComponentCAPICommandArgs | undefined
         >
+          tags={['sequential']}
           skip={{
             android: true,
             harmony: {arkTs: 'C-API only test', cAPI: false},
           }}
           itShould="receive command args and emit them back via event"
           initialState={undefined}
-          arrange={({setState}) => {
+          arrange={({setState, done}) => {
             return (
               <Ref<GeneratedSampleComponentCAPIRef>
                 render={ref => (
@@ -296,10 +289,12 @@ function GeneratedCustomComponentTest() {
                       readOnlyArrayTest: [],
                       objectTest: {foo: {bar: ''}},
                     }}
-                    onReceivedCommandArgs={setState}>
+                    onReceivedCommandArgs={(state: any) => {
+                      setState(state);
+                      done();
+                    }}>
                     <Effect
                       onMount={() => {
-                        setState('IN_PROGRESS');
                         setTimeout(() => {
                           ref.current?.emitCommandArgs(
                             42 /* intTest */,
@@ -316,11 +311,8 @@ function GeneratedCustomComponentTest() {
               />
             );
           }}
+          act={({}) => {}}
           assert={async ({expect, state}) => {
-            if (state === 'IN_PROGRESS') {
-              await new Promise(() => {});
-              return;
-            }
             expect(state?.intTest).to.be.eq(42);
             expect(state?.floatTest).closeTo(42.5, 0.1);
             expect(state?.doubleTest).closeTo(42.5, 0.1);

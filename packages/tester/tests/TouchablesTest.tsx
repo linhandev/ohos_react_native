@@ -8,10 +8,14 @@ import {
   ViewProps,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import {useState} from 'react';
+import {createRef, useState} from 'react';
 import {TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 export const TouchablesTest = () => {
+  const {
+    env: {driver},
+  } = useEnvironment();
   const [pressCountHighlight, setPressCountHighlight] = useState(0);
   return (
     <TestSuite name="Touchables">
@@ -54,27 +58,43 @@ export const TouchablesTest = () => {
       <TestCase.Example itShould="handle press without showing feedback">
         <TouchableWithoutFeedbackDemo />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
+        tags={['sequential']}
         itShould="handle presses on empty views"
-        initialState={false}
-        arrange={({setState}) => {
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => {
           return (
             <View style={{height: 100, backgroundColor: 'red'}}>
-              <TouchableWithoutFeedback onPress={() => setState(true)}>
-                <View style={{height: '100%', width: '100%'}} />
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setState(prev => ({...prev, pressed: true}));
+                  done();
+                }}>
+                <View ref={state.ref} style={{height: '100%', width: '100%'}} />
               </TouchableWithoutFeedback>
             </View>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass when blue background is pressed"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, done, state}) => (
           <View
+            ref={state.ref}
             style={{
               backgroundColor: 'blue',
               alignSelf: 'center',
@@ -83,7 +103,8 @@ export const TouchablesTest = () => {
             <TouchableWithoutFeedback
               hitSlop={{top: 48, left: 48, bottom: 48, right: 48}}
               onPress={() => {
-                setState(true);
+                setState((prev: any) => ({...prev, pressed: true}));
+                done();
               }}>
               <View style={{width: 48, height: 48, margin: 48}} />
             </TouchableWithoutFeedback>
@@ -102,8 +123,11 @@ export const TouchablesTest = () => {
             />
           </View>
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref, offset: {x: 48, y: 48}});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
     </TestSuite>

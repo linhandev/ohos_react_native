@@ -1,5 +1,5 @@
 import {TestSuite} from '@rnoh/testerino';
-import {useEffect, useRef, useState} from 'react';
+import {createRef, forwardRef, useEffect, useRef, useState} from 'react';
 import {
   Animated,
   FlatList,
@@ -18,10 +18,13 @@ import {
 import {Button, StateKeeper, TestCase} from '../components';
 import React from 'react';
 import {PALETTE} from '../components/palette';
+import {useEnvironment} from '../contexts';
 
 export function TouchHandlingTest() {
   const [refreshing, setRefreshing] = React.useState(false);
-
+  const {
+    env: {driver},
+  } = useEnvironment();
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -30,76 +33,129 @@ export function TouchHandlingTest() {
   }, []);
   return (
     <TestSuite name="Touch Handling">
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass when pressed red rectangle"
-        initialState={false}
-        arrange={({setState}) => {
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => {
           return (
             <TouchIssue1
+              onNRendersChanged={() => {
+                driver?.click({ref: state.ref});
+              }}
+              ref={state.ref}
               onPress={() => {
-                setState(true);
+                setState(prev => ({...prev, pressed: true}));
+                done();
               }}
             />
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass when pressed red rectangle which is outside its green parent view"
-        initialState={false}
-        arrange={({setState}) => {
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => {
           return (
             <TouchIssue2
+              ref={state.ref}
               onPress={() => {
-                setState(true);
+                setState(prev => ({...prev, pressed: true}));
+                done();
               }}
             />
           );
         }}
+        act={async ({state}) => {
+          driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="register a touch after native transform animation"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => (
           <RectangleSlider
+            ref={state.ref}
             onPress={() => {
-              setState(prev => !prev);
+              setState(prev => ({...prev, pressed: true}));
+              done();
+            }}
+            onAnimationFinished={() => {
+              setTimeout(() => {
+                driver?.click({ref: state.ref});
+              }, 100);
             }}
           />
         )}
+        act={() => {}}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="handle press on rotated view"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => (
           <TouchableTransformedTest
-            setState={setState}
+            ref={state.ref}
+            onPress={() => {
+              setState(prev => ({...prev, pressed: true}));
+              done();
+            }}
             transform={[{rotate: '180deg'}, {translateX: 100}]}
           />
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="handle press on scaled view"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => (
           <TouchableTransformedTest
-            setState={setState}
+            ref={state.ref}
+            onPress={() => {
+              setState(prev => ({...prev, pressed: true}));
+              done();
+            }}
             transform={[{scaleX: -1}, {translateX: 100}]}
           />
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
       <TestCase.Manual
@@ -190,15 +246,23 @@ export function TouchHandlingTest() {
           }}
         />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="respond to touches on disabled components when wrapped in Touchables"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        //TODO: https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1522
+        skip={'broken'}
+        initialState={{
+          pressed: false,
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({setState, state, done}) => (
           <TouchableOpacity
             onPress={() => {
-              setState(true);
+              setState(prev => ({...prev, pressed: true}));
+              done();
             }}>
             <TextInput
+              ref={state.ref}
               editable={false}
               style={{
                 borderWidth: 2,
@@ -208,8 +272,11 @@ export function TouchHandlingTest() {
             />
           </TouchableOpacity>
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
       <TestCase.Example
@@ -217,10 +284,14 @@ export function TouchHandlingTest() {
         itShould="allow vertical scroll when flinging fast after horizontal swipe on gray area">
         <ScrollViewLockedIssue />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass after tapping cyan area but not red area (child's hitSlop)"
-        initialState={false}
-        arrange={({setState}) => {
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => {
           return (
             <View style={{alignItems: 'center', backgroundColor: 'black'}}>
               <View
@@ -233,9 +304,11 @@ export function TouchHandlingTest() {
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setState(true);
+                    setState(prev => ({...prev, pressed: true}));
+                    done();
                   }}>
                   <View
+                    ref={state.ref}
                     style={{backgroundColor: 'purple', width: 48, height: 48}}
                     hitSlop={{top: 48, bottom: 48, left: 48, right: 48}}
                   />
@@ -253,18 +326,30 @@ export function TouchHandlingTest() {
             </View>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref, offset: {x: 48, y: 48}});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="handle views with scale: 0 correctly"
-        initialState={false}
-        arrange={({setState, reset}) => {
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, done, state}) => {
           return (
             <View>
-              <TouchableOpacity onPress={() => setState(true)}>
+              <TouchableOpacity
+                onPress={() => {
+                  setState(prev => ({...prev, pressed: true}));
+                  done();
+                }}>
                 <View
+                  ref={state.ref}
                   style={{
                     backgroundColor: 'red',
                     width: 100,
@@ -299,32 +384,47 @@ export function TouchHandlingTest() {
                   height: 100,
                 }}
               />
-              <Button label="Reset" onPress={reset} />
             </View>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
       <TestCase.Example itShould="emit touch events with resonable timestamps (event.timeStamp is the UNIX time, nativeEvent.timestamp is the device uptime, both are in ms)">
         <TimestampExample />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="report touches to transformed children that exceed parent"
-        initialState={false}
-        arrange={({setState}) => {
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => {
           return (
             <View>
-              <TouchableWithoutFeedback onPress={() => setState(false)}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setState(prev => ({...prev, pressed: false}));
+                  done();
+                }}>
                 <View
                   style={{
                     width: 50,
                     height: 50,
                     backgroundColor: 'red',
                   }}>
-                  <TouchableWithoutFeedback onPress={() => setState(true)}>
+                  <TouchableWithoutFeedback
+                    onPress={() => {
+                      setState(prev => ({...prev, pressed: true}));
+                      done();
+                    }}>
                     <View
+                      ref={state.ref}
                       style={{
                         width: 50,
                         height: 50,
@@ -338,8 +438,11 @@ export function TouchHandlingTest() {
             </View>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
       <TestCase.Manual
@@ -413,7 +516,10 @@ function TimestampExample() {
   );
 }
 
-function RectangleSlider(props: {onPress: () => void}) {
+const RectangleSlider = forwardRef<
+  View,
+  {onPress: () => void; onAnimationFinished: () => void}
+>(({onPress, onAnimationFinished}, ref) => {
   const square1Anim = useRef(new Animated.Value(0)).current;
   const animation = Animated.timing(square1Anim, {
     toValue: 64,
@@ -422,15 +528,20 @@ function RectangleSlider(props: {onPress: () => void}) {
   });
   const handleAnimation = () => {
     animation.reset();
-    animation.start();
+    animation.start(onAnimationFinished);
   };
+
+  useEffect(() => {
+    handleAnimation();
+  }, []);
 
   return (
     <>
       <Animated.View
         onTouchEnd={() => {
-          props.onPress();
+          onPress();
         }}
+        ref={ref}
         style={{
           height: 64,
           width: 64,
@@ -445,29 +556,30 @@ function RectangleSlider(props: {onPress: () => void}) {
       <Button label="Animate" onPress={handleAnimation} />
     </>
   );
-}
+});
 
-function TouchableTransformedTest({
-  setState,
-  transform,
-}: {
-  setState: (v: boolean) => void;
-  transform: ViewStyle['transform'];
-}) {
+const TouchableTransformedTest = forwardRef<
+  View,
+  {
+    onPress: () => void;
+    transform: ViewStyle['transform'];
+  }
+>(({onPress, transform}, ref) => {
   return (
     <View
+      ref={ref}
       style={{
         alignSelf: 'center',
         width: 75,
         backgroundColor: 'red',
         transform,
       }}>
-      <TouchableOpacity onPress={() => setState(true)}>
+      <TouchableOpacity onPress={onPress}>
         <Text>Press me!</Text>
       </TouchableOpacity>
     </View>
   );
-}
+});
 
 function TouchCoordinatesTest({
   transform,
@@ -506,25 +618,33 @@ function TouchCoordinatesTest({
   );
 }
 
-const TouchIssue1 = ({onPress}: {onPress: () => void}) => {
+const TouchIssue1 = forwardRef<
+  View,
+  {onNRendersChanged: () => void; onPress: () => void}
+>(({onPress, onNRendersChanged}, ref) => {
   const nPressesRef = useRef(0);
   const [nRenders, setNRenders] = useState(0);
   const [label, setLabel] = useState('hello');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setNRenders(1);
+      setNRenders(prev => prev + 1);
     }, 2000);
     return () => {
       clearTimeout(timeout);
     };
   }, []);
 
+  useEffect(() => {
+    onNRendersChanged();
+  }, [nRenders]);
+
   if (nRenders > 0) {
     return (
       <View style={{opacity: 1, marginTop: 50}}>
         <View collapsable={false}>
           <TouchableOpacity
+            ref={ref}
             onPress={() => {
               onPress();
               setLabel(`${label}+${nPressesRef.current}`);
@@ -548,25 +668,30 @@ const TouchIssue1 = ({onPress}: {onPress: () => void}) => {
       </View>
     );
   }
-};
+});
 
-const TouchIssue2 = ({onPress}: {onPress: () => void}) => {
-  return (
-    <View style={{height: 150}}>
-      <View
-        style={{opacity: 1, width: 100, height: 50, backgroundColor: 'green'}}
-        collapsable={false}>
-        <TouchableOpacity
-          style={{marginTop: 50}}
-          onPress={() => {
-            onPress();
-          }}>
-          <View style={{height: 100, width: 100, backgroundColor: 'red'}} />
-        </TouchableOpacity>
+const TouchIssue2 = forwardRef<View, {onPress: () => void}>(
+  ({onPress}: {onPress: () => void}, ref) => {
+    return (
+      <View style={{height: 150}}>
+        <View
+          style={{opacity: 1, width: 100, height: 50, backgroundColor: 'green'}}
+          collapsable={false}>
+          <TouchableOpacity
+            style={{marginTop: 50}}
+            onPress={() => {
+              onPress();
+            }}>
+            <View
+              ref={ref}
+              style={{height: 100, width: 100, backgroundColor: 'red'}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  },
+);
 
 class ScrollViewLockedIssue extends React.Component {
   textInput: any;

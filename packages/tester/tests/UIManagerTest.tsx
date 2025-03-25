@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {createRef, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,13 +13,13 @@ import {Effect, Ref, Button, TestCase} from '../components';
 export function UIManagerTest() {
   return (
     <TestSuite name="UIManager.measure">
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="not round text measurement to integers"
         initialState={{
           view: {width: 0, height: 0},
           text: {width: 0, height: 0},
         }}
-        arrange={({setState}) => {
+        arrange={({setState, done}) => {
           return (
             <Ref<View>
               render={refView => {
@@ -46,7 +46,8 @@ export function UIManagerTest() {
                                   }));
                                 },
                               );
-                            }, 1000);
+                              done();
+                            }, 100);
                           }}>
                           <Text
                             ref={refText}
@@ -80,6 +81,7 @@ export function UIManagerTest() {
             />
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state.view.width).to.be.closeTo(16.5, 0.49);
           expect(state.view.width).not.to.be.eq(16);
@@ -114,17 +116,42 @@ export function UIManagerTest() {
           expect(UIManager.hasViewManagerConfig('RCTNotAView')).to.be.false;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="measure the view with respect to the window"
-        initialState={
-          {} as {x: number; y: number; width: number; height: number}
-        }
-        arrange={({setState}) => <MeasureInWindowTest setState={setState} />}
+        initialState={{
+          measure: {} as {x: number; y: number; width: number; height: number},
+          ref: createRef<View>(),
+        }}
+        arrange={({state}) => {
+          return (
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                backgroundColor: 'blue',
+              }}
+              ref={state.ref}
+            />
+          );
+        }}
+        act={({state, setState, done}) => {
+          setTimeout(() => {
+            state.ref.current?.measureInWindow(
+              (x: number, y: number, width: number, height: number) => {
+                setState(prevState => ({
+                  ...prevState,
+                  measure: {x, y, width, height},
+                }));
+              },
+            );
+            done();
+          }, 1000);
+        }}
         assert={({state, expect}) => {
-          expect(state.width).to.be.equal(20);
-          expect(state.height).to.be.equal(20);
-          expect(state.x).to.be.greaterThan(10);
-          expect(state.y).to.be.greaterThan(100);
+          expect(state.measure.width).to.equal(20);
+          expect(state.measure.height).to.equal(20);
+          expect(state.measure.x).to.be.greaterThan(10);
+          expect(state.measure.y).to.be.greaterThan(100);
         }}
       />
       <TestCase.Manual
@@ -192,34 +219,6 @@ const MeasureLayoutTest = (props: {
               },
             );
           }
-        }}
-      />
-    </>
-  );
-};
-
-const MeasureInWindowTest = (props: {
-  setState: React.Dispatch<
-    React.SetStateAction<{x: number; y: number; width: number; height: number}>
-  >;
-}) => {
-  const ref = useRef<View>(null);
-  return (
-    <>
-      <View
-        style={{
-          width: 20,
-          height: 20,
-          backgroundColor: 'blue',
-        }}
-        ref={ref}
-      />
-      <Button
-        label="measureInWindow"
-        onPress={() => {
-          ref.current?.measureInWindow((x, y, width, height) => {
-            props.setState({x: x, y: y, width: width, height: height});
-          });
         }}
       />
     </>

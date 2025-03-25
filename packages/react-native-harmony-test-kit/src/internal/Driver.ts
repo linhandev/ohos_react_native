@@ -26,6 +26,11 @@ enum UIDirectionEnum {
   UP = 3,
 }
 
+interface Offset {
+  x: number;
+  y: number;
+}
+
 export class DriverError extends Error {}
 
 export type UIDirection = 'LEFT' | 'RIGHT' | 'DOWN' | 'UP';
@@ -64,8 +69,10 @@ export class Driver {
 
   async click({
     ref,
+    offset = {x: 0, y: 0},
   }: {
     ref: React.RefObject<React.Component<any>>;
+    offset?: Offset;
   }): Promise<void> {
     if (!ref.current) {
       throw new DriverError('Ref is undefined');
@@ -77,8 +84,8 @@ export class Driver {
 
     ref.current.measure(
       async (_, __, width: number, height: number, pageX, pageY) => {
-        const pX = this.dpToPhysical(pageX + width / 2);
-        const pY = this.dpToPhysical(pageY + height / 2);
+        const pX = this.dpToPhysical(pageX + width / 2 + offset.x);
+        const pY = this.dpToPhysical(pageY + height / 2 + offset.y);
         await this.hdcClient.uiTest().uiInput().click(pX, pY);
       },
     );

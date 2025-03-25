@@ -1,28 +1,41 @@
-import React, {useState} from 'react';
+import React, {createRef, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 export function PressableTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
   return (
     <TestSuite name="Pressable">
-      <TestCase.Manual
+      <TestCase.Automated
+        tags={['sequential']}
         itShould="handle short presses"
         initialState={{
           onPressIn: false,
           onPress: false,
+          ref: createRef<React.ElementRef<typeof Pressable>>(),
         }}
-        arrange={({setState}) => {
+        arrange={({setState, state, done}) => {
           return (
             <Pressable
+              ref={state.ref}
               onPressIn={() => setState(prev => ({...prev, onPressIn: true}))}
-              onPress={() => setState(prev => ({...prev, onPress: true}))}>
+              onPress={() => {
+                setState(prev => ({...prev, onPress: true}));
+                done();
+              }}>
               <View style={styles.unpressed} />
             </Pressable>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.be.include({
             onPressIn: true,
             onPress: true,
           });
@@ -46,45 +59,67 @@ export function PressableTest() {
           });
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="handle pressing out"
+        tags={['sequential']}
         initialState={{
           onPressOut: false,
+          ref: createRef<React.ElementRef<typeof Pressable>>(),
         }}
-        arrange={({setState}) => {
+        arrange={({setState, state, done}) => {
           return (
-            <Pressable onPressOut={() => setState({onPressOut: true})}>
+            <Pressable
+              ref={state.ref}
+              onPressOut={() => {
+                setState(prev => ({...prev, onPressOut: true}));
+                done();
+              }}>
               <View style={styles.unpressed} />
             </Pressable>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.include({
             onPressOut: true,
           });
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="inner view should not react to presses"
+        tags={['sequential']}
         initialState={{
           tested: false,
           pressed: false,
+          ref: createRef<React.ElementRef<typeof Pressable>>(),
         }}
-        arrange={({setState}) => {
+        arrange={({setState, state, done}) => {
           return (
             <Pressable
-              onPress={() => setState(prev => ({...prev, tested: true}))}
+              onPress={() => {
+                setState(prev => ({...prev, tested: true}));
+                done();
+              }}
               style={styles.pressed}>
               <Pressable
-                onPress={() => setState(prev => ({...prev, pressed: true}))}
+                ref={state.ref}
+                onPress={() => {
+                  setState(prev => ({...prev, pressed: true}));
+                  done();
+                }}
                 style={styles.unpressed}
                 disabled
               />
             </Pressable>
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.include({
             tested: true,
             pressed: false,
           });
@@ -96,10 +131,14 @@ export function PressableTest() {
       >
         <HoverView />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass when blue background is pressed"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          pressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({setState, state, done}) => (
           <View
             style={{
               backgroundColor: 'blue',
@@ -115,10 +154,12 @@ export function PressableTest() {
                 margin: 48,
               }}
               onPress={() => {
-                setState(true);
+                setState(prev => ({...prev, pressed: true}));
+                done();
               }}
             />
             <View
+              ref={state.ref}
               style={{
                 width: 48,
                 height: 48,
@@ -133,8 +174,11 @@ export function PressableTest() {
             />
           </View>
         )}
+        act={async ({state}) => {
+          await driver?.click({ref: state.ref, offset: {x: 48, y: 48}});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.pressed).to.be.true;
         }}
       />
     </TestSuite>

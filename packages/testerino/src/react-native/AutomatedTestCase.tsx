@@ -17,7 +17,11 @@ export type SmartAutomatedTestCaseProps<TState> = {
     reset: () => void;
     done: () => void;
   }) => JSX.Element;
-  act: (ctx: {state: TState; done: () => void}) => void;
+  act: (ctx: {
+    state: TState;
+    done: () => void;
+    setState: React.Dispatch<React.SetStateAction<TState>>;
+  }) => void;
   assert: (utils: {
     expect: typeof expect_;
     state: TState;
@@ -75,7 +79,7 @@ export function AutomatedTestCase<TState>({
     } else {
       reportTestCaseResult('waitingForTester');
       setResult({status: 'running'});
-      act({done: () => setIsDone(true), state: value});
+      act({done: () => setIsDone(true), state: value, setState: setValue});
     }
   }, [isDone]);
 

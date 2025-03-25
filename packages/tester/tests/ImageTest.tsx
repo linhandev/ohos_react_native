@@ -224,46 +224,57 @@ export const ImageTest = () => {
           capInsets={{top: 10, left: 10, bottom: 10, right: 10}}
         />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call onLoadStart"
         initialState={'not called'}
-        arrange={({state, setState}) => {
+        arrange={({state, setState, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
               <Image
                 source={LOCAL_IMAGE_ASSET_ID}
-                onLoadStart={() => setState('called')}
+                onLoadStart={() => {
+                  setState('called');
+                  done();
+                }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.be.eq('called');
         }}
       />
-      <TestCase.Manual
+
+      <TestCase.Automated
         itShould="call onProgress"
+        //TODO: https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1521
+        skip={'broken'}
         initialState={'not called'}
-        arrange={({state, setState}) => {
+        arrange={({state, setState, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
               <Image
                 source={LOCAL_IMAGE_ASSET_ID}
-                onProgress={() => setState('called')}
+                onProgress={() => {
+                  setState('called');
+                  done();
+                }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.be.eq('called');
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call onLoad"
         initialState={{}}
-        arrange={({setState, state}) => {
+        arrange={({setState, state, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
@@ -271,19 +282,21 @@ export const ImageTest = () => {
                 source={LOCAL_IMAGE_ASSET_ID}
                 onLoad={event => {
                   setState(event.nativeEvent.source);
+                  done();
                 }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.contain.all.keys('width', 'height', 'uri');
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call onLoadEnd"
         initialState={'not called'}
-        arrange={({setState, state}) => {
+        arrange={({setState, state, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
@@ -291,19 +304,21 @@ export const ImageTest = () => {
                 source={LOCAL_IMAGE_ASSET_ID}
                 onLoadEnd={() => {
                   setState('called');
+                  done();
                 }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.be.eq('called');
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call onError (local)"
         initialState={null}
-        arrange={({setState, state}) => {
+        arrange={({setState, state, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
@@ -311,19 +326,21 @@ export const ImageTest = () => {
                 source={require('../assets/fonts/Pacifico-Regular.ttf')}
                 onError={event => {
                   setState(event.nativeEvent.error);
+                  done();
                 }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.be.not.null;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call onError (remote)"
         initialState={null}
-        arrange={({setState, state}) => {
+        arrange={({setState, state, done}) => {
           return (
             <View>
               <Text>{JSON.stringify(state)}</Text>
@@ -331,11 +348,13 @@ export const ImageTest = () => {
                 source={{uri: 'https://www.google.com/image'}}
                 onError={event => {
                   setState(event.nativeEvent.error);
+                  done();
                 }}
               />
             </View>
           );
         }}
+        act={() => {}}
         assert={({expect, state}) => {
           expect(state).to.be.not.null;
         }}
