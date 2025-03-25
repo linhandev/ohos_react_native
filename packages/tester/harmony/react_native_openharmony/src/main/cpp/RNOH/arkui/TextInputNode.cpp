@@ -21,12 +21,11 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
     NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE};
 
-
 /**
- * TextInput_TextContentType is defined to replace 
+ * TextInput_TextContentType is defined to replace
  * ArkUI_TextInputContentType. Directly using enum from IDE SDK may raise
  * compiling error when developer use lower IDE SDK version that does not
- * contain new supported type. 
+ * contain new supported type.
  */
 typedef enum {
   USER_NAME,
@@ -62,7 +61,7 @@ typedef enum {
   LICENSE_PLATE,
   ENGINE_NUMBER,
   LICENSE_CHASSIS_NUMBER,
-  
+
 } TextInput_TextContentType;
 
 namespace rnoh {
@@ -89,142 +88,89 @@ TextInputNode::~TextInputNode() {
 inline ArkUI_NumberValue convertContentType(
     std::string const& textContentType) {
   if (textContentType == "addressCity") {
-    return {
-        .i32 = TextInput_TextContentType::
-            CITY_ADDRESS};
+    return {.i32 = TextInput_TextContentType::CITY_ADDRESS};
   } else if (textContentType == "addressState") {
-    return {
-        .i32 = TextInput_TextContentType::
-            PROVINCE_ADDRESS};
+    return {.i32 = TextInput_TextContentType::PROVINCE_ADDRESS};
   } else if (textContentType == "countryName") {
-    return {
-        .i32 = TextInput_TextContentType::
-            COUNTRY_ADDRESS};
+    return {.i32 = TextInput_TextContentType::COUNTRY_ADDRESS};
   } else if (textContentType == "creditCardNumber") {
-    return {
-        .i32 = TextInput_TextContentType::
-            BANK_CARD_NUMBER};
+    return {.i32 = TextInput_TextContentType::BANK_CARD_NUMBER};
   } else if (textContentType == "fullStreetAddress") {
-    return {
-        .i32 = TextInput_TextContentType::
-            FULL_STREET_ADDRESS};
+    return {.i32 = TextInput_TextContentType::FULL_STREET_ADDRESS};
   } else if (textContentType == "sublocality") {
-    return {
-        .i32 = TextInput_TextContentType::
-            DISTRICT_ADDRESS};
+    return {.i32 = TextInput_TextContentType::DISTRICT_ADDRESS};
   } else if (textContentType == "telephoneNumber") {
-    return {
-        .i32 = TextInput_TextContentType::
-            PHONE_NUMBER};
+    return {.i32 = TextInput_TextContentType::PHONE_NUMBER};
   } else if (textContentType == "username") {
-    return {
-        .i32 =
-            TextInput_TextContentType::USER_NAME};
+    return {.i32 = TextInput_TextContentType::USER_NAME};
   } else if (textContentType == "password") {
-    return {
-        .i32 =
-            TextInput_TextContentType::PASSWORD};
+    return {.i32 = TextInput_TextContentType::PASSWORD};
   } else if (textContentType == "newPassword") {
-    return {
-        .i32 = TextInput_TextContentType::NEW_PASSWORD};
+    return {.i32 = TextInput_TextContentType::NEW_PASSWORD};
   } else if (textContentType == "houseNumber") {
-    return {
-        .i32 = TextInput_TextContentType::HOUSE_NUMBER};
+    return {.i32 = TextInput_TextContentType::HOUSE_NUMBER};
   } else if (textContentType == "districtAddress") {
-    return {
-        .i32 = TextInput_TextContentType::DISTRICT_ADDRESS};
+    return {.i32 = TextInput_TextContentType::DISTRICT_ADDRESS};
   } else if (textContentType == "cityAddress") {
-    return {
-        .i32 = TextInput_TextContentType::CITY_ADDRESS};
+    return {.i32 = TextInput_TextContentType::CITY_ADDRESS};
   } else if (textContentType == "provinceAddress") {
-    return {
-        .i32 = TextInput_TextContentType::PROVINCE_ADDRESS};
+    return {.i32 = TextInput_TextContentType::PROVINCE_ADDRESS};
   } else if (textContentType == "countryAddress") {
-    return {
-        .i32 = TextInput_TextContentType::COUNTRY_ADDRESS};
+    return {.i32 = TextInput_TextContentType::COUNTRY_ADDRESS};
   } else if (textContentType == "personFullName") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_FULL_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_FULL_NAME};
   } else if (textContentType == "personLastName") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_LAST_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_LAST_NAME};
   } else if (textContentType == "personFirstName") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_FIRST_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_FIRST_NAME};
   } else if (textContentType == "phoneNumber") {
-    return {
-        .i32 = TextInput_TextContentType::PHONE_NUMBER};
+    return {.i32 = TextInput_TextContentType::PHONE_NUMBER};
   } else if (textContentType == "phoneCountryCode") {
-    return {
-        .i32 = TextInput_TextContentType::PHONE_COUNTRY_CODE};
+    return {.i32 = TextInput_TextContentType::PHONE_COUNTRY_CODE};
   } else if (textContentType == "fullPhoneNumber") {
-    return {
-        .i32 = TextInput_TextContentType::FULL_PHONE_NUMBER};
+    return {.i32 = TextInput_TextContentType::FULL_PHONE_NUMBER};
   } else if (textContentType == "emailAddress") {
-    return {
-        .i32 =
-            TextInput_TextContentType::EMAIL_ADDRESS};
+    return {.i32 = TextInput_TextContentType::EMAIL_ADDRESS};
   } else if (textContentType == "bankCardNumber") {
-    return {
-        .i32 = TextInput_TextContentType::BANK_CARD_NUMBER};
+    return {.i32 = TextInput_TextContentType::BANK_CARD_NUMBER};
   } else if (textContentType == "idCardNumber") {
-    return {
-        .i32 = TextInput_TextContentType::ID_CARD_NUMBER};
+    return {.i32 = TextInput_TextContentType::ID_CARD_NUMBER};
   } else if (textContentType == "nickName") {
-    return {
-        .i32 =
-            TextInput_TextContentType::NICKNAME};
+    return {.i32 = TextInput_TextContentType::NICKNAME};
   } else if (textContentType == "name") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_FULL_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_FULL_NAME};
   } else if (textContentType == "familyName") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_LAST_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_LAST_NAME};
   } else if (textContentType == "givenName") {
-    return {
-        .i32 = TextInput_TextContentType::PERSON_FIRST_NAME};
+    return {.i32 = TextInput_TextContentType::PERSON_FIRST_NAME};
   } else if (textContentType == "detailInfoWithoutStreet") {
-    return {
-        .i32 = TextInput_TextContentType::DETAIL_INFO_WITHOUT_STREET};
+    return {.i32 = TextInput_TextContentType::DETAIL_INFO_WITHOUT_STREET};
   } else if (textContentType == "formatAddress") {
-    return {
-        .i32 = TextInput_TextContentType::FORMAT_ADDRESS};
+    return {.i32 = TextInput_TextContentType::FORMAT_ADDRESS};
   } else if (textContentType == "passportNumber") {
-    return {
-        .i32 = TextInput_TextContentType::PASSPORT_NUMBER};
+    return {.i32 = TextInput_TextContentType::PASSPORT_NUMBER};
   } else if (textContentType == "validity") {
-    return {
-        .i32 = TextInput_TextContentType::VALIDITY};
+    return {.i32 = TextInput_TextContentType::VALIDITY};
   } else if (textContentType == "issueAt") {
-    return {
-        .i32 = TextInput_TextContentType::ISSUE_AT};
+    return {.i32 = TextInput_TextContentType::ISSUE_AT};
   } else if (textContentType == "organization") {
-    return {
-        .i32 = TextInput_TextContentType::ORGANIZATION};
+    return {.i32 = TextInput_TextContentType::ORGANIZATION};
   } else if (textContentType == "taxId") {
-    return {
-        .i32 = TextInput_TextContentType::TAX_ID};
+    return {.i32 = TextInput_TextContentType::TAX_ID};
   } else if (textContentType == "addressCityAndState") {
-    return {
-        .i32 = TextInput_TextContentType::ADDRESS_CITY_AND_STATE};
+    return {.i32 = TextInput_TextContentType::ADDRESS_CITY_AND_STATE};
   } else if (textContentType == "flightNumber") {
-    return {
-        .i32 = TextInput_TextContentType::FLIGHT_NUMBER};
+    return {.i32 = TextInput_TextContentType::FLIGHT_NUMBER};
   } else if (textContentType == "licenseNumber") {
-    return {
-        .i32 = TextInput_TextContentType::LICENSE_NUMBER};
+    return {.i32 = TextInput_TextContentType::LICENSE_NUMBER};
   } else if (textContentType == "licenseFileNumber") {
-    return {
-        .i32 = TextInput_TextContentType::LICENSE_FILE_NUMBER};
+    return {.i32 = TextInput_TextContentType::LICENSE_FILE_NUMBER};
   } else if (textContentType == "engineNumber") {
-    return {
-        .i32 = TextInput_TextContentType::ENGINE_NUMBER};
+    return {.i32 = TextInput_TextContentType::ENGINE_NUMBER};
   } else if (textContentType == "licenseChassisNumber") {
-    return {
-        .i32 = TextInput_TextContentType::LICENSE_CHASSIS_NUMBER};
+    return {.i32 = TextInput_TextContentType::LICENSE_CHASSIS_NUMBER};
   } else if (textContentType == "licensePlate") {
-    return {
-        .i32 = TextInput_TextContentType::LICENSE_PLATE};
+    return {.i32 = TextInput_TextContentType::LICENSE_PLATE};
   } else {
     return {.i32 = -1};
   }

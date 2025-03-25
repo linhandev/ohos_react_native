@@ -50,24 +50,24 @@ CustomNode::CustomNode()
       ON_LAYOUT_TARGET_ID,
       this));
   /**
-   * This is for 2in1 CustomNode focusing problem, we want to mark 
+   * This is for 2in1 CustomNode focusing problem, we want to mark
    * custom node focusable, so that when using keyboard tab to switch
-   * focus between element, we want CustomNode to be focusable. 
+   * focus between element, we want CustomNode to be focusable.
    */
   ArkUI_NumberValue focusValue[] = {{.i32 = 1}};
   ArkUI_AttributeItem focusItem = {.value = focusValue, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance() -> setAttribute(
-    m_nodeHandle, NODE_FOCUSABLE, &focusItem));
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_FOCUSABLE, &focusItem));
   /**
-   * This is for 2in1 CustomNode focusing problem, focusing would 
+   * This is for 2in1 CustomNode focusing problem, focusing would
    * raise the component and setting ZIndex as 2^31-1, which would
-   * setting it at the top to display. 
-   * Setting z-index ahead would prevent focusing drawing to 
-   * set the z-index again. 
+   * setting it at the top to display.
+   * Setting z-index ahead would prevent focusing drawing to
+   * set the z-index again.
    */
   ArkUI_NumberValue zIndexValue[] = {{.i32 = 0}};
   ArkUI_AttributeItem zIndexItem = {.value = zIndexValue, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance() -> setAttribute(
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_Z_INDEX, &zIndexItem));
 }
 

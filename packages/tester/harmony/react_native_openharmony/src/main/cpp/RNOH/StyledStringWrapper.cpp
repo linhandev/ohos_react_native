@@ -129,7 +129,8 @@ void StyledStringWrapper::addTextFragment(
 
   // halfLeading
   if (!isnan(fragment.textAttributes.lineHeight)) {
-    OH_Drawing_SetTextStyleHalfLeading(textStyle.get(), fragment.textAttributes.lineHeight > fontSize);
+    OH_Drawing_SetTextStyleHalfLeading(
+        textStyle.get(), fragment.textAttributes.lineHeight > fontSize);
   }
 
   // fontStyle

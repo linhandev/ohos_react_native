@@ -52,8 +52,7 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes paragraphAttributes,
       facebook::react::LayoutConstraints layoutConstraints) const;
 
-  void
-  setTextMeasureParams(float m_fontScale, float m_scale);
+  void setTextMeasureParams(float m_fontScale, float m_scale);
 
  private:
   TextStorage findFitFontSize(

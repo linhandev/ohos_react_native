@@ -353,7 +353,7 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   }
 }
 
-void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload){
+void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
   if (payload.isNull()) {
     return;
   }
@@ -366,8 +366,9 @@ void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload){
   if (!scale.isDouble() || !fontScale.isDouble()) {
     return;
   }
-  auto textMeasurer = m_contextContainer->
-      at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
+  auto textMeasurer =
+      m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
+          "textLayoutManagerDelegate");
   if (!textMeasurer) {
     return;
   }

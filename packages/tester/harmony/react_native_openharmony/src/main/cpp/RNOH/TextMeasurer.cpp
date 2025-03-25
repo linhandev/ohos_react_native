@@ -257,9 +257,7 @@ auto TextMeasurer::findFitFontSize(
       layoutConstraints};
 }
 
-void TextMeasurer::setTextMeasureParams(
-    float fontScale,
-    float scale) {
+void TextMeasurer::setTextMeasureParams(float fontScale, float scale) {
   m_fontScale = fontScale;
   m_scale = scale;
 }
