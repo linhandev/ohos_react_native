@@ -16,10 +16,9 @@ export function copyMetroConfig(rootPath: string, filePath: string) {
     'safe'
   );
   const colorsLine = "const colors = require('colors/safe');";
-  const updatedFileContent = fileContent.replace(
-    colorsLine,
-    `const colors = require("${absoluteColorsPath}")`
-  );
+  const newColorsLine =
+    `const colors = require("${absoluteColorsPath}");`.replaceAll("\\", "\\\\");
+  const updatedFileContent = fileContent.replace(colorsLine, newColorsLine);
 
   fs.writeFileSync(localPath, updatedFileContent);
 
