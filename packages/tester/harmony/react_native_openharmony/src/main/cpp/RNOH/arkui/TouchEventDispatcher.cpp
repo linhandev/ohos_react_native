@@ -399,20 +399,19 @@ void TouchEventDispatcher::sendEvent(
     m_previousEvent = touchEvent;
     switch (action) {
       case UI_TOUCH_EVENT_ACTION_DOWN:
-        VLOG(2) << "TOUCH::DOWN";
+        DLOG(INFO) << "TouchEventDispatcher::sendEvent DOWN";
         eventTarget->getTouchEventEmitter()->onTouchStart(touchEvent);
         break;
       case UI_TOUCH_EVENT_ACTION_MOVE:
-        VLOG(2) << "TOUCH::MOVE";
         eventTarget->getTouchEventEmitter()->onTouchMove(touchEvent);
         break;
       case UI_TOUCH_EVENT_ACTION_UP:
-        VLOG(2) << "TOUCH::UP";
+        DLOG(INFO) << "TouchEventDispatcher::sendEvent UP";
         eventTarget->getTouchEventEmitter()->onTouchEnd(touchEvent);
         break;
       case UI_TOUCH_EVENT_ACTION_CANCEL:
       default:
-        DLOG(INFO) << "TOUCH::CANCEL";
+        DLOG(INFO) << "TouchEventDispatcher::sendEvent CANCEL";
         eventTarget->getTouchEventEmitter()->onTouchCancel(touchEvent);
         break;
     }
@@ -429,9 +428,47 @@ void TouchEventDispatcher::cancelActiveTouches() {
     auto touchTarget = touchIdAndTouchTarget->second.lock();
     if (touchTarget) {
       if (m_previousEvent.changedTouches.size() > 0) {
-        DLOG(INFO) << "TOUCH::CANCEL";
         m_touchTargetByTouchId.erase(touchIdAndTouchTarget->first);
         touchTarget->getTouchEventEmitter()->onTouchCancel(m_previousEvent);
+      }
+    }
+  }
+}
+
+void TouchEventDispatcher::cancelTouchTargetEvent(
+    TouchTarget::Weak weakTouchTarget) {
+  auto touchTargetToCancel = weakTouchTarget.lock();
+  if (touchTargetToCancel == nullptr) {
+    return;
+  }
+  auto touchTargetByTouchId = m_touchTargetByTouchId;
+
+  for (const auto& [touchId, weakActiveTouchTarget] : touchTargetByTouchId) {
+    auto touchCancelEvent = m_previousEvent;
+    touchCancelEvent.targetTouches = {};
+    touchCancelEvent.changedTouches = {};
+    touchCancelEvent.touches = {};
+    auto activeTouchTarget = weakActiveTouchTarget.lock();
+    if (activeTouchTarget == nullptr) {
+      continue;
+    }
+    for (auto touch : m_previousEvent.touches) {
+      if (touch.target != touchTargetToCancel->getTouchTargetTag() ||
+          touch.identifier != touchId) {
+        continue;
+      }
+
+      auto newTouch = touch;
+      newTouch.timestamp = newTouch.timestamp + 1;
+      newTouch.identifier = touchId;
+      touchCancelEvent.changedTouches.insert(newTouch);
+    }
+    if (touchTargetToCancel->getTouchTargetTag() ==
+        activeTouchTarget->getTouchTargetTag()) {
+      m_touchTargetByTouchId.erase(touchId);
+      auto eventEmitter = touchTargetToCancel->getTouchEventEmitter();
+      if (eventEmitter != nullptr) {
+        eventEmitter->onTouchCancel(touchCancelEvent);
       }
     }
   }

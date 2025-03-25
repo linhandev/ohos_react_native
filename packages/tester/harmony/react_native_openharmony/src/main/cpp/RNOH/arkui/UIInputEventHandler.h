@@ -9,6 +9,7 @@
 
 #include <arkui/native_node.h>
 #include <arkui/ui_input_event.h>
+#include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
 
 namespace rnoh {
@@ -30,9 +31,9 @@ class UIInputEventHandler {
   UIInputEventHandler(ArkUINode& node);
   virtual ~UIInputEventHandler() noexcept;
   virtual void onTouchEvent(ArkUI_UIInputEvent* event) = 0;
+  virtual void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget) {}
 
  private:
   ArkUINode& m_node;
 };
-
 } // namespace rnoh

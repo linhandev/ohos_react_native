@@ -24,6 +24,7 @@
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 #include "TaskExecutor/TaskExecutor.h"
 
 namespace rnoh {
@@ -219,6 +220,10 @@ class ComponentInstance
       m_nativeResponderBlockOrigins.erase(origin);
     }
     onNativeResponderBlockChange(m_nativeResponderBlockOrigins.size() > 0);
+  }
+
+  virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() {
+    return {};
   }
 
   // TouchTarget implementation

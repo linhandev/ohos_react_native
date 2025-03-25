@@ -86,6 +86,7 @@ class ArkUISurface : public Surface,
   void stop(std::function<void()> onStop);
   void setDisplayMode(facebook::react::DisplayMode displayMode);
   Surface::LayoutContext getLayoutContext() override;
+  std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override;
 
  private:
   facebook::react::SurfaceId m_surfaceId;
@@ -95,7 +96,7 @@ class ArkUISurface : public Surface,
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   facebook::react::SurfaceHandler m_surfaceHandler;
   ThreadGuard m_threadGuard{};
-  std::unique_ptr<UIInputEventHandler> m_touchEventHandler;
+  std::shared_ptr<UIInputEventHandler> m_touchEventHandler;
   TaskExecutor::Shared m_taskExecutor;
 };
 

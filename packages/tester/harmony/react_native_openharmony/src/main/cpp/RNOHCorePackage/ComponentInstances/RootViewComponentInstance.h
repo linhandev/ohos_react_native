@@ -37,5 +37,21 @@ class RootViewComponentInstance
   bool canHandleTouch() const override {
     return false;
   }
+
+  std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override {
+    auto rnInstance = m_deps->rnInstance.lock();
+    if (!rnInstance) {
+      return {};
+    }
+    auto maybeWeakSurface = rnInstance->getSurfaceByRootTag(m_tag);
+    if (!maybeWeakSurface.has_value()) {
+      return {};
+    }
+    auto surface = maybeWeakSurface.value().lock();
+    if (surface == nullptr) {
+      return {};
+    }
+    return surface->getUIInputEventHandler();
+  }
 };
 } // namespace rnoh
