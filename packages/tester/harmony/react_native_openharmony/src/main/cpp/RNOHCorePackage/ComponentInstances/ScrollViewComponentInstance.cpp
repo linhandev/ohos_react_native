@@ -31,6 +31,10 @@ void IdleScrollViewInternalState::onDragStart() {
       std::make_unique<DraggingScrollViewInternalState>(m_instance));
 };
 
+void IdleScrollViewInternalState::onScroll() {
+  m_instance->onEmitOnScrollEvent();
+};
+
 void DraggingScrollViewInternalState::onDragStop() {
   m_instance->onEmitOnScrollEndDragEvent();
   m_instance->onChangeInternalState(

@@ -74,6 +74,7 @@ class IdleScrollViewInternalState : public ScrollViewInternalState {
 
   void onScrollStart() override;
   void onDragStart() override;
+  void onScroll() override;
 };
 
 class DraggingScrollViewInternalState : public ScrollViewInternalState {
