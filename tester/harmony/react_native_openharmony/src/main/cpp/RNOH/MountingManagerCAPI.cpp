@@ -53,8 +53,7 @@ void MountingManagerCAPI::willMount(MutationList const& mutations) {
 }
 
 void MountingManagerCAPI::doMount(MutationList const& mutations) {
-    facebook::react::SystraceSection s(
-        "#RNOH::MountingManager::doMount");
+    facebook::react::SystraceSection s("#RNOH::MountingManager::doMount");
     m_arkTsMountingManager->doMount(mutations);
 }
 

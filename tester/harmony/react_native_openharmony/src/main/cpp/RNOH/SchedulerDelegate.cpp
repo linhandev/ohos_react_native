@@ -27,6 +27,9 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
             });
       },
       [this](auto const& transaction, auto const& surfaceTelemetry) {
+        int taskId = random();
+        std::string taskTrace =
+            "#RNOH::TaskExecutor::runningTask t" + std::to_string(taskId);
         auto mutationVecs = transaction.getMutations();
         facebook::react::ShadowViewMutationList mutationVec;
         facebook::react::ShadowViewMutationList otherMutation;
@@ -54,25 +57,29 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
                             std::min(mutationSize, i + fragmentSize));
             }
             for (const auto& mutations : destVec) {
-                    performOnMainThread(
-                        [mutations](
-                            MountingManager::Shared const& mountingManager) {
-                          mountingManager->didMount(mutations);
-                        });
+                performOnMainThread(
+                    [mutations, taskTrace](
+                        MountingManager::Shared const &mountingManager) {
+                    facebook::react::SystraceSection s(taskTrace.c_str());
+                    mountingManager->didMount(mutations);
+                });
             }
         }
         performOnMainThread(
-            [otherMutation, mutationVecs, this](
-                MountingManager::Shared const& mountingManager) {
-              mountingManager->didMount(otherMutation);
-              mountingManager->finalizeMutationUpdates(mutationVecs);
-            });
+            [otherMutation, mutationVecs, taskTrace, this](
+                MountingManager::Shared const &mountingManager) {
+            facebook::react::SystraceSection s(taskTrace.c_str());
+            mountingManager->didMount(otherMutation);
+            mountingManager->finalizeMutationUpdates(mutationVecs);
+        });
         performOnMainThread(
             [otherMutation, mutationVecs, this](
                 MountingManager::Shared const& mountingManager) {
                 mountingManager->clearPreallocatedViews();
             });
         logTransactionTelemetryMarkers(transaction);
+        facebook::react::SystraceSection s(
+            "#RNOH::TaskExecutor::runTask t", taskId);
       });
         if (auto mountingManager = m_mountingManager.lock()) {
             mountingManager->clearPreallocationRequestQueue();
