@@ -94,7 +94,11 @@ class RNInstance {
 class RNInstanceInternal : public RNInstance,
                            public std::enable_shared_from_this<RNInstance> {
  public:
-    explicit RNInstanceInternal(SharedNativeResourceManager nativeResourceManager);
+    explicit RNInstanceInternal(
+        int id,
+        std::shared_ptr<facebook::react::ContextContainer> contextContainer,
+        std::shared_ptr<TaskExecutor> taskExecutor,
+        SharedNativeResourceManager nativeResourceManager);
 
   virtual ~RNInstanceInternal() = default;
 
@@ -180,7 +184,13 @@ class RNInstanceInternal : public RNInstance,
         std::string const sourceURL,
         std::function<void(const std::string)> onFinish);
     NativeResourceManager const *getNativeResourceManager() const;
+    
+    TaskExecutor::Shared taskExecutor;
 
+protected:
+    int m_id;
+    facebook::react::ContextContainer::Shared m_contextContainer;
+    std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
     SharedNativeResourceManager m_nativeResourceManager;
     std::string m_bundlePath;
     /**

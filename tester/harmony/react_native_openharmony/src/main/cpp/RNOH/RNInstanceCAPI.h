@@ -76,10 +76,11 @@ class RNInstanceCAPI : public RNInstanceInternal,
       SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
-      : RNInstanceInternal(std::move(nativeResourceManager)),
-        m_id(id),
-        m_contextContainer(contextContainer),
-        taskExecutor(taskExecutor),
+      : RNInstanceInternal(
+            id,
+            contextContainer,
+            std::move(taskExecutor),
+            std::move(nativeResourceManager)),
         m_shadowViewRegistry(shadowViewRegistry),
         m_turboModuleFactory(std::move(turboModuleFactory)),
         m_componentDescriptorProviderRegistry(
@@ -177,8 +178,6 @@ class RNInstanceCAPI : public RNInstanceInternal,
 
   TurboModule::Shared getTurboModule(const std::string& name) override;
 
-  std::shared_ptr<TaskExecutor> taskExecutor;
-
   ComponentInstance::Shared findComponentInstanceByTag(
       facebook::react::Tag tag);
 
@@ -206,10 +205,7 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void setJavaScriptExecutorFactory(
       std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) override;
     
-
  protected:
-  int m_id;
-  facebook::react::ContextContainer::Shared m_contextContainer;
   std::map<
       facebook::react::Tag,
       std::shared_ptr<facebook::react::SurfaceHandler>>
@@ -237,7 +233,6 @@ class RNInstanceCAPI : public RNInstanceInternal,
   ComponentInstanceRegistry::Shared m_componentInstanceRegistry;
   ComponentInstanceFactory::Shared m_componentInstanceFactory;
   MountingManager::Shared m_mountingManager;
-  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
   float m_densityDpi;
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;

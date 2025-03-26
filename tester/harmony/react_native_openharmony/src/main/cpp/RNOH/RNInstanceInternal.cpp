@@ -17,8 +17,14 @@ namespace rnoh {
 using namespace facebook;
 
 RNInstanceInternal::RNInstanceInternal(
+    int id,
+    std::shared_ptr<facebook::react::ContextContainer> contextContainer,
+    std::shared_ptr<TaskExecutor> taskExecutor,
     SharedNativeResourceManager nativeResourceManager)
-    : m_nativeResourceManager(std::move(nativeResourceManager))
+    :  m_id(id),
+       m_contextContainer(std::move(contextContainer)),
+       taskExecutor(std::move(taskExecutor)),
+       m_nativeResourceManager(std::move(nativeResourceManager))
 {
     instance = std::make_shared<facebook::react::Instance>();
     scheduler = nullptr;

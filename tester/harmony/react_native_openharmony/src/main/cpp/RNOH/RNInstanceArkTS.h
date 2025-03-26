@@ -58,12 +58,13 @@ class RNInstanceArkTS : public RNInstanceInternal,
       std::vector<ArkTSMessageHandler::Shared> arkTSMessageHandlers,
       bool shouldEnableDebugger,
       bool shouldEnableBackgroundExecutor)
-      : RNInstanceInternal(nullptr),
-        m_id(id),
+      : RNInstanceInternal(
+            id,
+            contextContainer,
+            std::move(taskExecutor),
+            nullptr),
         instance(std::make_shared<facebook::react::Instance>()),
-        m_contextContainer(contextContainer),
         scheduler(nullptr),
-        taskExecutor(taskExecutor),
         m_shadowViewRegistry(shadowViewRegistry),
         m_turboModuleFactory(std::move(turboModuleFactory)),
         m_componentDescriptorProviderRegistry(
@@ -186,17 +187,12 @@ class RNInstanceArkTS : public RNInstanceInternal,
   void setJavaScriptExecutorFactory(
       std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) override;
 
-  std::shared_ptr<TaskExecutor> taskExecutor;
-
  protected:
-  int m_id;
-  facebook::react::ContextContainer::Shared m_contextContainer;
   std::map<
       facebook::react::Tag,
       std::shared_ptr<facebook::react::SurfaceHandler>>
       surfaceHandlers;
   std::shared_ptr<facebook::react::Scheduler> scheduler;
-  std::unique_ptr<facebook::react::SchedulerDelegate> m_schedulerDelegate = nullptr;
     MountingManager::Shared m_mountingManager;
   std::shared_ptr<facebook::react::Instance> instance;
   TurboModuleProvider::Shared m_turboModuleProvider;
