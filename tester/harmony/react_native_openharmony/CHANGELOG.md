@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72.63
+- optimize time consuming dfx trace,([d9a7ec7e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d9a7ec7e5f97b22d8a6d46d7febf9adb87661ceb))
+- fix:crash when push ComponentInstancePreallocationRequestQueue,([4a233029](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4a233029ad2abcc4033e3716afe9cd6bf1c0c51a))
+- Suspend surface on navigation,([88bb97d3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/88bb97d3bf42b3c7f79552895f5b78ed524848be))
+- fix text measure cache leak and bug,([4d19eeab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4d19eeab7100d2da6f5ac35d4cc06740d496f089))
+- chore: update to version 5.1.0.306(0.72.62),([64bf2419](https://gitcode.com/openharmony-sig/ohos_react_native/commit/64bf2419f151b84dff220752fc1f941e4e2c5c76))
+
 ## v0.72.62
 - fix: auto-fill is disabled when textContentType is set to none,([b41df9ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b41df9ed6b5b34e1314ba73cfdb915190e938773))
 - chore: update to version 5.1.0.305(0.72.61),([2c73465a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c73465a00e2df0b10948d5b64fa6f272eecc23d))

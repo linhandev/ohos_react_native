@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.1.0.307
+- optimize time consuming dfx trace,([d9a7ec7e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d9a7ec7e5f97b22d8a6d46d7febf9adb87661ceb))
+- fix:crash when push ComponentInstancePreallocationRequestQueue,([4a233029](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4a233029ad2abcc4033e3716afe9cd6bf1c0c51a))
+- Suspend surface on navigation,([88bb97d3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/88bb97d3bf42b3c7f79552895f5b78ed524848be))
+- docs: Fix the code format of the NativeReactNavSwitch sample project is not standardized.,([87132651](https://gitcode.com/openharmony-sig/ohos_react_native/commit/871326510a1fc99394c2a2ded77c6716843d1c15))
+- docs: Fix the sample project documentation of NativeReactNavSwitch does not use CRLF line breaks.,([576e5367](https://gitcode.com/openharmony-sig/ohos_react_native/commit/576e53678d58ac73e74e2a57c8e2369135b20041))
+- fix text measure cache leak and bug,([4d19eeab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4d19eeab7100d2da6f5ac35d4cc06740d496f089))
+- chore: update to version 5.1.0.306(0.72.62),([64bf2419](https://gitcode.com/openharmony-sig/ohos_react_native/commit/64bf2419f151b84dff220752fc1f941e4e2c5c76))
+
 ## 5.1.0.306
 - docs: Add a sample for navigation between native and RN pages.,([fdb4b6b5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fdb4b6b5d5acc1df2637b40f0ae6954525376566))
 - Add instructions for version 5.1.0.306 of React native Harmony,([a66de643](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a66de6434523ee843a086473b10b867f6dc81e0a))
