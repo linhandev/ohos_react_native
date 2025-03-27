@@ -21,20 +21,20 @@ NavigationApp -- 原生工程
 
 **导航到RN页面B**
 操作：点击首页的跳转到RN页面B按钮，导航到RN页面B。
-效果：如下图所示
+效果：如下图所示  
 ![NativeReactNavSwitch的RN页面B](../../zh-cn//figures/NativeReactNavSwitch-RN页面B.png)
 
 **导航到原生页面C**
 操作：点击RN页面B的跳转到原生页面C按钮，导航到原生页面C。
-效果：如下图所示
+效果：如下图所示  
 ![NativeReactNavSwitch的原生页面C](../../zh-cn//figures/NativeReactNavSwitch-原生页面C.png)
 
 **回到RN页面B**
 操作：点击原生页面C的回到上一个页面按钮或侧滑返回，回到RN页面B。
-效果：如下图所示
+效果：如下图所示  
 ![NativeReactNavSwitch的RN页面B](../../zh-cn//figures/NativeReactNavSwitch-RN页面B.png)
 
 **回到原生页面A**
 操作：点击RN页面B的回到上一个页面按钮或侧滑返回，回到原生页面A。
-效果：如下图所示
+效果：如下图所示  
 ![NativeReactNavSwitch的原生页面A](../../zh-cn//figures/NativeReactNavSwitch-首页.png)
