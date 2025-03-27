@@ -167,8 +167,10 @@ CustomNode& ModalHostViewComponentInstance::getLocalRootArkUINode() {
 void ModalHostViewComponentInstance::onMessageReceived(
     ArkTSMessage const& message) {
   if (message.name == "WINDOW_SIZE_CHANGE") {
-    auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
-    updateDisplaySize(displayMetrics, m_state);
+    if (m_state) {
+      auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
+      updateDisplaySize(displayMetrics, m_state);
+    }
   }
 }
 
