@@ -23,7 +23,7 @@ async function checkClangFormat(): Promise<void> {
   if (changedFiles.size === 0) {
     return;
   }
-  const command = `${clangFormatPath} --dry-run --Werror --style=file:.clang-format ${stringifyFilePaths(changedFiles)}`;
+  const command = `"${clangFormatPath}" --dry-run --Werror --style=file:.clang-format ${stringifyFilePaths(changedFiles)}`;
 
   execSync(command, { stdio: 'inherit' });
 }
@@ -34,7 +34,7 @@ async function clangFormat(): Promise<void> {
   if (changedFiles.size === 0) {
     return;
   }
-  const command = `${clangFormatPath} -i ${stringifyFilePaths(changedFiles)} --style=file:.clang-format`;
+  const command = `"${clangFormatPath}" -i ${stringifyFilePaths(changedFiles)} --style=file:.clang-format`;
 
   execSync(command, { stdio: 'inherit' });
 }
