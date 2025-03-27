@@ -8,6 +8,7 @@ import {
 import Mustache from 'mustache';
 import Case from 'case';
 import { Logger } from '../io';
+import pathUtils from 'node:path';
 
 type Version = string;
 type DependencySpecifier = `file:${string}` | Version;
@@ -254,10 +255,10 @@ export class Autolinking {
           );
           if (
             !autolinkableHarFilePathsRelativeToHarmony.includes(
-              harFilePathRelativeToHarmony
+              pathUtils.normalize(harFilePathRelativeToHarmony)
             ) &&
             input.nodeModuleHarFilePathsRelativeToHarmony.includes(
-              harFilePathRelativeToHarmony
+              pathUtils.normalize(harFilePathRelativeToHarmony)
             )
           ) {
             unmanagedNativeDependencySpecifierByName[name] =

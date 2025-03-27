@@ -3,6 +3,7 @@ import { RealFS } from '../src/io';
 import { buildDirTree, createFileStructure } from './fsUtils';
 import { ReactNativeFixture } from './ReactNativeFixture';
 import tmp from 'tmp';
+import pathUtils from 'node:path';
 
 let tmpDir: AbsolutePath;
 
@@ -56,42 +57,44 @@ it('should add harmony boilerplate to existing project', async () => {
     .flatMap((dirent) => !dirent.isDirectory()).length;
   expect(filesCountInHarmonyDir).toEqual(58);
   expect(allFilesInProject).toEqual(
-    expect.arrayContaining([
-      'metro.config.js',
-      'package.json',
-      'harmony/.gitignore',
-      'harmony/build-profile.json5',
-      'harmony/build-profile.template.json5',
-      'harmony/codelinter.json',
-      'harmony/hvigorfile.ts',
-      'harmony/oh-package.json5',
-      'harmony/AppScope/app.json5',
-      'harmony/entry/.gitignore',
-      'harmony/entry/build-profile.json5',
-      'harmony/entry/hvigorfile.ts',
-      'harmony/entry/oh-package.json5',
-      'harmony/hvigor/hvigor-config.json5',
-      'harmony/entry/src/main/module.json5',
-      'harmony/entry/src/ohosTest/module.json5',
-      'harmony/AppScope/resources/base/element/string.json',
-      'harmony/AppScope/resources/base/media/app_icon.png',
-      'harmony/entry/src/main/cpp/.gitignore',
-      'harmony/entry/src/main/cpp/CMakeLists.txt',
-      'harmony/entry/src/main/cpp/PackageProvider.cpp',
-      'harmony/entry/src/main/ets/.gitignore',
-      'harmony/entry/src/main/ets/PackageProvider.ets',
-      'harmony/entry/src/main/resources/.gitignore',
-      'harmony/entry/src/main/ets/codegen/.gitignore',
-      'harmony/entry/src/main/ets/entryability/EntryAbility.ets',
-      'harmony/entry/src/main/ets/pages/.gitkeep',
-      'harmony/entry/src/main/ets/pages/Index.ets',
-      'harmony/entry/src/main/ets/workers/RNOHWorker.ets',
-      'harmony/entry/src/ohosTest/ets/test/List.test.ets',
-      'harmony/entry/src/main/resources/base/element/color.json',
-      'harmony/entry/src/main/resources/base/element/string.json',
-      'harmony/entry/src/main/resources/base/media/startIcon.png',
-      'harmony/entry/src/main/resources/base/profile/main_pages.json',
-    ])
+    expect.arrayContaining(
+      [
+        'metro.config.js',
+        'package.json',
+        'harmony/.gitignore',
+        'harmony/build-profile.json5',
+        'harmony/build-profile.template.json5',
+        'harmony/codelinter.json',
+        'harmony/hvigorfile.ts',
+        'harmony/oh-package.json5',
+        'harmony/AppScope/app.json5',
+        'harmony/entry/.gitignore',
+        'harmony/entry/build-profile.json5',
+        'harmony/entry/hvigorfile.ts',
+        'harmony/entry/oh-package.json5',
+        'harmony/hvigor/hvigor-config.json5',
+        'harmony/entry/src/main/module.json5',
+        'harmony/entry/src/ohosTest/module.json5',
+        'harmony/AppScope/resources/base/element/string.json',
+        'harmony/AppScope/resources/base/media/app_icon.png',
+        'harmony/entry/src/main/cpp/.gitignore',
+        'harmony/entry/src/main/cpp/CMakeLists.txt',
+        'harmony/entry/src/main/cpp/PackageProvider.cpp',
+        'harmony/entry/src/main/ets/.gitignore',
+        'harmony/entry/src/main/ets/PackageProvider.ets',
+        'harmony/entry/src/main/resources/.gitignore',
+        'harmony/entry/src/main/ets/codegen/.gitignore',
+        'harmony/entry/src/main/ets/entryability/EntryAbility.ets',
+        'harmony/entry/src/main/ets/pages/.gitkeep',
+        'harmony/entry/src/main/ets/pages/Index.ets',
+        'harmony/entry/src/main/ets/workers/RNOHWorker.ets',
+        'harmony/entry/src/ohosTest/ets/test/List.test.ets',
+        'harmony/entry/src/main/resources/base/element/color.json',
+        'harmony/entry/src/main/resources/base/element/string.json',
+        'harmony/entry/src/main/resources/base/media/startIcon.png',
+        'harmony/entry/src/main/resources/base/profile/main_pages.json',
+      ].map((e) => pathUtils.normalize(e))
+    )
   );
   expect(
     await fs.readText(tmpDir.copyWithNewSegment('metro.config.js'))

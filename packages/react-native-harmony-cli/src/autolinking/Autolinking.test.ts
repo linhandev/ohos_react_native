@@ -2,6 +2,7 @@ import { Autolinking, AutolinkingConfig } from './Autolinking';
 import { NestedDirectoryJSON } from 'memfs';
 import { AbsolutePath, DescriptiveError } from '../core/';
 import { MockedLogger, MemFS } from '../io/__fixtures__';
+import pathUtils from "node:path"
 
 function createAutolinking({
   fsStructure,
@@ -91,7 +92,7 @@ it('should generate correct templates with scoped package default configuration'
   await runAutolinking();
 
   expect(
-    memFS.readTextSync(new AbsolutePath('./harmony/oh-package.json5'))
+    memFS.readTextSync(new AbsolutePath('./harmony/oh-package.json5')).replace(/\\\\/g, '/')
   ).toBe(
     `
 {
@@ -322,14 +323,14 @@ it('should log updated files', async () => {
   const { logs } = await runAutolinking();
 
   const combinedLogs = logs.map((log) => log.msg).join('\n');
-  expect(combinedLogs).toContain('harmony/entry/src/main/cpp/autolink.cmake');
-  expect(combinedLogs).toContain(
-    'harmony/entry/src/main/ets/RNOHPackageFactory.ets'
+  expect(combinedLogs).toContain(pathUtils.normalize('harmony/entry/src/main/cpp/autolink.cmake'));
+  expect(combinedLogs).toContain(pathUtils.normalize(
+    'harmony/entry/src/main/ets/RNOHPackageFactory.ets')
   );
-  expect(combinedLogs).toContain(
-    'harmony/entry/src/main/cpp/RNOHPackageFactory.h'
+  expect(combinedLogs).toContain(pathUtils.normalize(
+    'harmony/entry/src/main/cpp/RNOHPackageFactory.h')
   );
-  expect(combinedLogs).toContain('harmony/oh-package.json5');
+  expect(combinedLogs).toContain(pathUtils.normalize('harmony/oh-package.json5'));
 });
 
 it('should log linked and skipped packages', async () => {

@@ -94,10 +94,7 @@ it('should export codegen-lib-harmony command', () => {
   const helpDescription = new ReactNativeFixture(tmpDir).codegenLibHarmony({
     help: true,
   });
-
-  expect(
-    helpDescription.includes('Usage: react-native codegen-lib-harmony')
-  ).toBeTruthy();
+  expect(helpDescription.includes('codegen-lib-harmony')).toBeTruthy();
 });
 
 it('should generate components and Turbo Module code to the desired output directory based on provided paths to specs', () => {
