@@ -67,28 +67,84 @@ export class Driver {
       .dircFling(UIDirectionEnum[direction], speed);
   }
 
+  private getAbsolutePosition(
+    ref: React.RefObject<React.Component<any>>,
+    offset: Offset = {x: 0, y: 0},
+  ): Promise<{x: number; y: number}> {
+    return new Promise((resolve, reject) => {
+      if (!ref.current) {
+        return reject(new DriverError('Ref is undefined'));
+      }
+      if (!isMeasurable(ref.current)) {
+        return reject(
+          new DriverError('Component does not have measure method'),
+        );
+      }
+
+      ref.current.measure((_, __, width, height, pageX, pageY) => {
+        resolve({
+          x: this.dpToPhysical(pageX + width / 2 + offset.x),
+          y: this.dpToPhysical(pageY + height / 2 + offset.y),
+        });
+      });
+    });
+  }
+
   async click({
     ref,
-    offset = {x: 0, y: 0},
+    offset,
   }: {
     ref: React.RefObject<React.Component<any>>;
     offset?: Offset;
   }): Promise<void> {
-    if (!ref.current) {
-      throw new DriverError('Ref is undefined');
-    }
+    const {x, y} = await this.getAbsolutePosition(ref, offset);
+    await this.hdcClient.uiTest().uiInput().click(x, y);
+  }
 
-    if (!isMeasurable(ref.current)) {
-      throw new DriverError('Component does not have measure method');
-    }
+  async doubleClick({
+    ref,
+    offset,
+  }: {
+    ref: React.RefObject<React.Component<any>>;
+    offset?: Offset;
+  }): Promise<void> {
+    const {x, y} = await this.getAbsolutePosition(ref, offset);
+    await this.hdcClient.uiTest().uiInput().doubleClick(x, y);
+  }
 
-    ref.current.measure(
-      async (_, __, width: number, height: number, pageX, pageY) => {
-        const pX = this.dpToPhysical(pageX + width / 2 + offset.x);
-        const pY = this.dpToPhysical(pageY + height / 2 + offset.y);
-        await this.hdcClient.uiTest().uiInput().click(pX, pY);
+  async longClick({
+    ref,
+    offset,
+  }: {
+    ref: React.RefObject<React.Component<any>>;
+    offset?: Offset;
+  }): Promise<void> {
+    const {x, y} = await this.getAbsolutePosition(ref, offset);
+    await this.hdcClient.uiTest().uiInput().longclick(x, y);
+  }
+
+  keyEvent() {
+    const keyEventInstance = this.hdcClient.uiTest().uiInput().keyEvent();
+
+    const keyEventChain = {
+      back: () => {
+        keyEventInstance.back();
+        return keyEventChain;
       },
-    );
+      home: () => {
+        keyEventInstance.home();
+        return keyEventChain;
+      },
+      power: () => {
+        keyEventInstance.power();
+        return keyEventChain;
+      },
+      send: async () => {
+        await keyEventInstance.send();
+      },
+    };
+
+    return keyEventChain;
   }
 
   async beginTracing() {

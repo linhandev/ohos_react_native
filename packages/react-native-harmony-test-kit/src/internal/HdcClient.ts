@@ -86,7 +86,22 @@ export class HdcClient {
             }
             await this.sendCommand(`uitest uiInput click ${x} ${y}`);
           },
-
+          doubleClick: async (x: number, y: number): Promise<void> => {
+            if (!isCoord(x) || !isCoord(y)) {
+              throw new HdcClientError(
+                'Coordinates must be a positive integers',
+              );
+            }
+            await this.sendCommand(`uitest uiInput doubleClick ${x} ${y}`);
+          },
+          longclick: async (x: number, y: number): Promise<void> => {
+            if (!isCoord(x) || !isCoord(y)) {
+              throw new HdcClientError(
+                'Coordinates must be a positive integers',
+              );
+            }
+            await this.sendCommand(`uitest uiInput longClick ${x} ${y}`);
+          },
           dircFling: async (
             dir: Direction,
             speed: number = 600,
@@ -98,6 +113,54 @@ export class HdcClient {
             }
 
             await this.sendCommand(`uitest uiInput dircFling ${dir} ${speed}`);
+          },
+          keyEvent: () => {
+            const that = this;
+            let keyChain: (string | number)[] = [];
+
+            const keyEventChain: {
+              back: () => typeof keyEventChain;
+              home: () => typeof keyEventChain;
+              power: () => typeof keyEventChain;
+              send: () => Promise<void>;
+            } = {
+              back: (): typeof keyEventChain => {
+                if (keyChain.length >= 3) {
+                  throw new HdcClientError(
+                    'Cannot send more than 3 key events at once.',
+                  );
+                }
+                keyChain.push('Back');
+                return keyEventChain;
+              },
+              home: (): typeof keyEventChain => {
+                if (keyChain.length >= 3) {
+                  throw new HdcClientError(
+                    'Cannot send more than 3 key events at once.',
+                  );
+                }
+                keyChain.push('Home');
+                return keyEventChain;
+              },
+              power: (): typeof keyEventChain => {
+                if (keyChain.length >= 3) {
+                  throw new HdcClientError(
+                    'Cannot send more than 3 key events at once.',
+                  );
+                }
+                keyChain.push('Power');
+                return keyEventChain;
+              },
+              send: async (): Promise<void> => {
+                if (keyChain.length === 0) {
+                  throw new HdcClientError('At least one key must be sent.');
+                }
+                const command = `uitest uiInput keyEvent ${keyChain.join(' ')}`;
+                keyChain = [];
+                await that.sendCommand(command);
+              },
+            };
+            return keyEventChain;
           },
         };
       },

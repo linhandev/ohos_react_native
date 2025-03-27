@@ -3,92 +3,148 @@ import {Platform, ScrollView, View} from 'react-native';
 import {getScrollViewContent} from './fixtures';
 import {Button} from '../../components';
 import {TestCase} from '../../components/TestCase';
+import {createRef, forwardRef} from 'react';
+import {useEnvironment} from '../../contexts';
 
 export function PointerEventsTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   return (
     <TestSuite name="pointer events">
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="call inner and outer view when pressing inner"
-        initialState={{inner: false, outer: false, outerContainer: false}}
-        arrange={({setState, reset}) => {
+        tags={['sequential']}
+        initialState={{
+          inner: false,
+          outer: false,
+          outerContainer: false,
+          scrollViewRef: createRef<React.ElementRef<typeof ScrollView>>(),
+        }}
+        arrange={({setState, state, done, reset}) => {
           return (
             <PointerEventsView
               pointerEventsOuter="auto"
-              setState={setState}
+              setState={props => {
+                setState(props);
+                done();
+              }}
               reset={reset}
+              ref={state.scrollViewRef}
             />
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.scrollViewRef});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.include({
             inner: true,
             outer: true,
             outerContainer: true,
           });
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
-          harmony: 'fails on Android',
-        })} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/424
+        })}
+        tags={['sequential']}
         itShould="call only outer when pressing inner view"
-        initialState={{inner: false, outer: false, outerContainer: true}}
-        arrange={({setState, reset}) => {
+        initialState={{
+          inner: false,
+          outer: false,
+          outerContainer: true,
+          scrollViewRef: createRef<React.ElementRef<typeof ScrollView>>(),
+        }}
+        arrange={({setState, state, done, reset}) => {
           return (
             <PointerEventsView
               pointerEventsOuter="box-only"
-              setState={setState}
+              ref={state.scrollViewRef}
+              setState={props => {
+                setState(props);
+                done();
+              }}
               reset={reset}
             />
           );
         }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.scrollViewRef});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.include({
             inner: false,
             outer: true,
             outerContainer: true,
           });
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
         })}
+        tags={['sequential']}
         itShould="call inner and outer only when pressing inner view"
-        initialState={{inner: false, outer: false, outerContainer: false}}
-        arrange={({setState, reset}) => {
+        initialState={{
+          inner: false,
+          outer: false,
+          outerContainer: true,
+          scrollViewRef: createRef<React.ElementRef<typeof ScrollView>>(),
+        }}
+        arrange={({setState, reset, state, done}) => {
           return (
             <PointerEventsView
               disableOuterContainerTouch
               pointerEventsOuter="box-none"
-              setState={setState}
+              ref={state.scrollViewRef}
+              setState={props => {
+                setState(props);
+                done();
+              }}
               reset={reset}
             />
           );
+        }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.scrollViewRef});
         }}
         assert={({expect, state}) => {
           expect(state.inner).to.be.true;
           expect(state.outer).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         //it seems there's a bug on Android, which causes pointerEvents to not work correctly for ScrollViews
         skip={Platform.select({
           android: 'known bug',
         })}
         itShould="not call inner or outer when pressing inner or outer views"
-        initialState={{inner: false, outer: false, outerContainer: false}}
-        arrange={({setState, reset}) => {
+        initialState={{
+          inner: false,
+          outer: false,
+          outerContainer: true,
+          scrollViewRef: createRef<React.ElementRef<typeof ScrollView>>(),
+        }}
+        arrange={({setState, reset, state, done}) => {
           return (
             <PointerEventsView
               pointerEventsOuter="none"
-              setState={setState}
+              ref={state.scrollViewRef}
+              setState={props => {
+                setState(props);
+                done();
+              }}
               reset={reset}
             />
           );
+        }}
+        act={async ({state}) => {
+          await driver?.click({ref: state.scrollViewRef});
         }}
         assert={({expect, state}) => {
           expect(state).to.be.deep.eq({
@@ -102,19 +158,23 @@ export function PointerEventsTest() {
   );
 }
 
-function PointerEventsView(props: {
-  disableOuterContainerTouch?: boolean;
-  pointerEventsOuter?: 'box-none' | 'none' | 'box-only' | 'auto';
-  pointerEventsInner?: 'box-none' | 'none' | 'box-only' | 'auto';
-  setState: React.Dispatch<
-    React.SetStateAction<{
-      inner: boolean;
-      outer: boolean;
-      outerContainer: boolean;
-    }>
-  >;
-  reset: () => void;
-}) {
+const PointerEventsView = forwardRef<
+  ScrollView,
+  {
+    disableOuterContainerTouch?: boolean;
+    pointerEventsOuter?: 'box-none' | 'none' | 'box-only' | 'auto';
+    pointerEventsInner?: 'box-none' | 'none' | 'box-only' | 'auto';
+    setState: React.Dispatch<
+      React.SetStateAction<{
+        inner: boolean;
+        outer: boolean;
+        outerContainer: boolean;
+        scrollViewRef: React.RefObject<ScrollView>; // Added this to match TestCase.Automated
+      }>
+    >;
+    reset: () => void;
+  }
+>((props, ref) => {
   return (
     <View style={{height: 100, width: '100%', flexDirection: 'row'}}>
       <View
@@ -127,6 +187,7 @@ function PointerEventsView(props: {
               }
         }>
         <ScrollView
+          ref={ref}
           nestedScrollEnabled
           style={{
             height: 100,
@@ -150,4 +211,4 @@ function PointerEventsView(props: {
       <Button label="reset" onPress={props.reset} />
     </View>
   );
-}
+});

@@ -35,26 +35,38 @@ export function PressableTest() {
           await driver?.click({ref: state.ref});
         }}
         assert={({expect, state}) => {
-          expect(state).to.be.include({
+          expect(state).to.include({
             onPressIn: true,
             onPress: true,
           });
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="handle long press"
+        tags={['sequential']}
         initialState={{
           onLongPress: false,
+          ref: createRef<React.ElementRef<typeof Pressable>>(),
         }}
-        arrange={({setState}) => {
+        arrange={({setState, state, done}) => {
           return (
-            <Pressable onLongPress={() => setState({onLongPress: true})}>
+            <Pressable
+              ref={state.ref}
+              onLongPress={() => {
+                setState(prev => ({...prev, onLongPress: true}));
+                // The long click in the test kit is very long.
+                // If we don't wait for it to finish and proceed, it will cause the next test to fail.
+                setTimeout(done, 1000);
+              }}>
               <View style={styles.unpressed} />
             </Pressable>
           );
         }}
+        act={async ({state}) => {
+          await driver?.longClick({ref: state.ref});
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.deep.eq({
+          expect(state).to.include({
             onLongPress: true,
           });
         }}
