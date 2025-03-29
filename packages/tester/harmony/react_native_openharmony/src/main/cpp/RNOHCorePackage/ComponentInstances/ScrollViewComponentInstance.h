@@ -11,6 +11,7 @@
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ScrollNode.h"
 #include "RNOH/arkui/StackNode.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 #include "RNOHCorePackage/TurboModules/Animated/NativeAnimatedTurboModule.h"
 
 namespace rnoh {
@@ -167,13 +168,18 @@ class ScrollViewComponentInstance
   bool m_shouldAdjustScrollPositionOnNextRender = false;
   std::vector<facebook::react::Float> m_snapToOffsets = {};
   std::optional<ChildTagWithOffset> m_firstVisibleView = std::nullopt;
+  std::unique_ptr<UIInputEventHandler> m_touchHandler;
+
   /**
-   * `onScrollFrameBegin` is not called in certain situations, but it's needed
-   * to detect when the user stops dragging. This property is used by a hacky
-   * fix. The fix assumes `onScrollFrameBegin` is always called after `onScroll`
-   * when the user is actively scrolling.
+   * `onScrollFrameBegin` is not always called but is needed to detect when
+   * the user stops dragging. The properties
+   * `m_onScrollCallsAfterFrameBeginCallCounter` and
+   * `wasInDraggingStateAtTouchUp` are part of a workaround. The fix assumes
+   * `onScrollFrameBegin` follows `onScroll` during active scrolling if not, the
+   * user has either stopped dragging or is overscrolling.
    */
   int m_onScrollCallsAfterFrameBeginCallCounter = 0;
+  bool wasInDraggingStateAtTouchUp = false;
 
   // ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
   struct ScrollViewRawProps {
@@ -270,6 +276,8 @@ class ScrollViewComponentInstance
 
   bool setKeyboardAvoider(
       ComponentInstance::Weak keyboardAvoidingComponentInstance);
+
+  void onTouchEventActionUp();
 
  protected:
   void onNativeResponderBlockChange(bool isBlocked) override;

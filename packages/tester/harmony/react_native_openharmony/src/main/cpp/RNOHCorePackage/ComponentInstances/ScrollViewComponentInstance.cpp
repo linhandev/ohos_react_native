@@ -12,10 +12,36 @@
 #include <cmath>
 #include <optional>
 #include "PullToRefreshViewComponentInstance.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 #include "ViewComponentInstance.h"
 #include "conversions.h"
 
 namespace rnoh {
+
+class ScrollViewTouchHandler : public UIInputEventHandler {
+ private:
+  ScrollViewComponentInstance* m_scrollViewComponentInstance;
+
+ public:
+  ScrollViewTouchHandler(ScrollViewTouchHandler const& other) = delete;
+  ScrollViewTouchHandler& operator=(ScrollViewTouchHandler const& other) =
+      delete;
+  ScrollViewTouchHandler(ScrollViewTouchHandler&& other) = delete;
+  ScrollViewTouchHandler& operator=(ScrollViewTouchHandler&& other) = delete;
+
+  ScrollViewTouchHandler(ScrollViewComponentInstance* rootView)
+      : UIInputEventHandler(rootView->getLocalRootArkUINode()),
+        m_scrollViewComponentInstance(rootView) {}
+
+  void onTouchEvent(ArkUI_UIInputEvent* event) override {
+    auto action = OH_ArkUI_UIInputEvent_GetAction(event);
+
+    if (action == UI_TOUCH_EVENT_ACTION_UP) {
+      m_scrollViewComponentInstance->onTouchEventActionUp();
+    }
+  }
+};
+
 ScrollViewInternalState::ScrollViewInternalState(
     ScrollViewComponentInstance* instance)
     : m_instance(instance) {}
@@ -152,8 +178,10 @@ void ScrollViewComponentInstance::onScrollStart() {
 }
 
 void ScrollViewComponentInstance::onScroll() {
-  if (m_onScrollCallsAfterFrameBeginCallCounter == 1) {
+  if (m_onScrollCallsAfterFrameBeginCallCounter == 1 &&
+      wasInDraggingStateAtTouchUp) {
     m_internalState->onDragStop();
+    wasInDraggingStateAtTouchUp = false;
   }
   m_internalState->onScroll();
   m_onScrollCallsAfterFrameBeginCallCounter++;
@@ -171,6 +199,7 @@ float ScrollViewComponentInstance::onScrollFrameBegin(
   auto newScrollNodeState = static_cast<ScrollNodeState>(scrollNodeState);
   if (m_internalState->asScrollNodeState() != newScrollNodeState) {
     if (newScrollNodeState == ScrollNodeState::DRAGGING) {
+      wasInDraggingStateAtTouchUp = false;
       m_internalState->onDragStart();
     } else if (
         m_internalState->asScrollNodeState() == ScrollNodeState::DRAGGING) {
@@ -191,11 +220,19 @@ void ScrollViewComponentInstance::onScrollStop() {
   }
 }
 
+void ScrollViewComponentInstance::onTouchEventActionUp() {
+  if (m_internalState->asScrollNodeState() != ScrollNodeState::DRAGGING) {
+    return;
+  }
+  wasInDraggingStateAtTouchUp = true;
+}
+
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // CppComponentInstance overrides
 
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)) {
+    : CppComponentInstance(std::move(context)),
+      m_touchHandler(std::make_unique<ScrollViewTouchHandler>(this)) {
   m_internalState = std::make_unique<IdleScrollViewInternalState>(this);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?
