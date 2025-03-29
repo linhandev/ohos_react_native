@@ -288,6 +288,16 @@ void TextInputNode::setCaretHidden(bool hidden) {
     ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item));
+
+    /**
+     * Following setting is trying to set caret as transparent when 
+     * user sets caretHidden as true and selects input content
+     * in TextInput Component. 
+     */
+    value = {.u32 = 0};
+    item = {&value, sizeof(ArkUI_NumberValue)};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
   } else {
     ArkUI_NumberValue value = {
         .f32 = 2}; // The default width of the cursor in ArkUI is 2 vp
