@@ -102,10 +102,10 @@ export class SampleTurboModule extends EtsUITurboModule implements TM.GeneratedS
     console.log(`RNOH SampleTurboModule::getValueWithCallback`);
     setTimeout(() => {
       onComplete?.('2');
-    }, 1000);
+    }, 300);
     setTimeout(() => {
       onComplete?.('3');
-    }, 2000);
+    }, 600);
   }
 
   getValueWithPromise(error: boolean): Promise<string> {
@@ -119,7 +119,7 @@ export class SampleTurboModule extends EtsUITurboModule implements TM.GeneratedS
   registerFunction(onComplete: (value: string) => void): void {
     console.log(`RNOH SampleTurboModule::registerFunction + trigger`);
     setTimeout(() => {
-      onComplete?.('... from native side');
+      onComplete('... from native side');
     }, 1000);
   }
 

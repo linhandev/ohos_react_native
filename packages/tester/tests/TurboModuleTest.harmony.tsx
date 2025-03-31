@@ -37,6 +37,7 @@ export function TurboModuleTest() {
         />
         <TestCase.Logical
           itShould="call the passed callback twice"
+          tags={['sequential']}
           fn={async ({expect}) => {
             let sum = 0;
             let timesCalled = 0;
@@ -46,7 +47,7 @@ export function TurboModuleTest() {
               timesCalled++;
             });
 
-            await sleep(4000);
+            await sleep(1000);
 
             expect(sum).to.equal(5);
             expect(timesCalled).to.equal(2);
@@ -234,7 +235,7 @@ function CommonTurboModuleTestCases({
         }}
       />
       <TestCase.Logical
-        itShould="call the callback and providing string argument"
+        itShould="call back the callback that returns a string"
         fn={async ({expect}) => {
           const promise = new Promise<string>(resolve => {
             sampleTurboModule.registerFunction(resolve);

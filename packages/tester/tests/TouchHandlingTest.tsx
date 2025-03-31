@@ -523,7 +523,7 @@ const RectangleSlider = forwardRef<
   const square1Anim = useRef(new Animated.Value(0)).current;
   const animation = Animated.timing(square1Anim, {
     toValue: 64,
-    duration: 1000,
+    duration: 250,
     useNativeDriver: true,
   });
   const handleAnimation = () => {
@@ -629,7 +629,7 @@ const TouchIssue1 = forwardRef<
   useEffect(() => {
     const timeout = setTimeout(() => {
       setNRenders(prev => prev + 1);
-    }, 2000);
+    }, 0);
     return () => {
       clearTimeout(timeout);
     };

@@ -390,15 +390,17 @@ function ContainerViewTest() {
       </TestCase.Example>
 
       <TestCase.Example itShould="maintain correct positions of custom components when removing">
-        <ContainerView>
-          <View collapsable={false}>
-            {Array.from({length: childCount}, (_v, k) => (
-              <ContainerView key={k}>
-                <Text>Element no. {k + 1}</Text>
-              </ContainerView>
-            ))}
-          </View>
-        </ContainerView>
+        <View style={{height: 128, backgroundColor: 'silver'}}>
+          <ContainerView style={{backgroundColor: 'white'}}>
+            <View collapsable={false}>
+              {Array.from({length: childCount}, (_v, k) => (
+                <ContainerView key={k}>
+                  <Text>Element no. {k + 1}</Text>
+                </ContainerView>
+              ))}
+            </View>
+          </ContainerView>
+        </View>
       </TestCase.Example>
 
       <TestCase.Example itShould="display a custom component with toggleable child">

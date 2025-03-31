@@ -278,17 +278,21 @@ IntermediaryCallback createIntermediaryCallback(
         if (!jsInvoker) {
           return;
         }
-        jsInvoker->invokeAsync(
-            [weakCallbackWrapper, callbackArgs = std::move(cbArgs)]() {
-              auto callbackWrapper = weakCallbackWrapper.lock();
-              if (!callbackWrapper) {
-                return;
-              }
-              const auto jsArgs = convertDynamicsToJSIValues(
-                  callbackWrapper->runtime(), callbackArgs);
-              callbackWrapper->callback().call(
-                  callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
-            });
+        jsInvoker->invokeAsync([weakCallbackWrapper,
+                                callbackArgs = std::move(cbArgs),
+                                maybeAllowReleaseCallbackWrapperOwner = std::move(
+                                    maybeAllowReleaseCallbackWrapperOwner)]() {
+          auto callbackWrapper = weakCallbackWrapper.lock();
+          if (!callbackWrapper) {
+            LOG(WARNING)
+                << "Couldn't call a callback provided to TurboModule's method. This shouldn't happen.";
+            return;
+          }
+          const auto jsArgs = convertDynamicsToJSIValues(
+              callbackWrapper->runtime(), callbackArgs);
+          callbackWrapper->callback().call(
+              callbackWrapper->runtime(), jsArgs.data(), jsArgs.size());
+        });
       });
 }
 

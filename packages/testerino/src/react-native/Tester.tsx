@@ -2,7 +2,14 @@ import {FC, useCallback, useEffect, useState, Children} from 'react';
 import {TestCaseResultType} from '../core';
 import {Filter, TestingContext} from './TestingContext';
 import {PALETTE} from './palette';
-import {ScrollView, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 const defaultTestingSummary: Record<TestCaseResultType | 'total', number> = {
   total: 0,
@@ -105,6 +112,17 @@ export const Tester: FC<{
                     testingSummary.broken +
                     testingSummary.skipped)
                 }
+                onPress={() => {
+                  const msg = Object.entries(
+                    testCaseResultTypeByTestCaseId,
+                  ).reduce((acc, [testCaseId, result]) => {
+                    if (result !== 'unknown') {
+                      return acc;
+                    }
+                    return acc + testCaseId + '\n';
+                  }, '');
+                  Alert.alert('Running Test Cases', msg || '—');
+                }}
               />
             </>
           )}
@@ -136,11 +154,35 @@ export const Tester: FC<{
             name="FAIL"
             color={PALETTE.red}
             value={testingSummary.fail}
+            onPress={() => {
+              const msg = Object.entries(testCaseResultTypeByTestCaseId).reduce(
+                (acc, [testCaseId, result]) => {
+                  if (result !== 'fail') {
+                    return acc;
+                  }
+                  return acc + testCaseId + '\n';
+                },
+                '',
+              );
+              Alert.alert('Failing Test Cases', msg || '—');
+            }}
           />
           <SummaryItem
             name="BROKEN"
             color={PALETTE.red}
             value={testingSummary.broken}
+            onPress={() => {
+              const msg = Object.entries(testCaseResultTypeByTestCaseId).reduce(
+                (acc, [testCaseId, result]) => {
+                  if (result !== 'broken') {
+                    return acc;
+                  }
+                  return acc + testCaseId + '\n';
+                },
+                '',
+              );
+              Alert.alert('Broken Test Cases', msg || '—');
+            }}
           />
           <SummaryItem
             name="EXAMPLES"
@@ -164,7 +206,7 @@ const SummaryItem: FC<{
   name: string;
   color: string;
   value: number;
-  onPress?: () => {};
+  onPress?: () => void;
 }> = ({name, color, value, onPress}) => {
   return (
     <View style={styles.summaryItemContainer} onTouchEnd={() => onPress?.()}>
