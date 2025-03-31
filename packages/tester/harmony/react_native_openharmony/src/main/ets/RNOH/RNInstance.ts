@@ -393,6 +393,30 @@ export type RNInstanceOptions = {
    * }
    */
   fontResourceByFontFamily?: Record<string, Resource | string>;
+  /**
+   * @architecture: ArkTS
+   * Enables text measurement using NDK (C++) interface.
+   * The NDK approach is faster and relatively stable, and will become the default in future versions.
+   * @deprecated: Do not enable this option.
+   */
+  enableNDKTextMeasuring?: boolean;
+  /**
+   * UNSTABLE: Enables an additional BACKGROUND thread for layout calculations. This improves performance
+   * but increases the risk of deadlocks and crashes. Usually crashes the app due to "Assertion failed: parser was already assigned" error.
+   * @deprecated: Do not enable this option. This feature causes too many problems to justify performance improvements (latestRNOHVersion: 0.72.27)
+   */
+  enableBackgroundExecutor?: boolean;
+  /**
+   * Toggles between the ArkTS (older, more stable but slower) and C-API (newer, less stable but faster) architectures.
+   * Choose based on preference for stability or performance.
+   * @deprecated: Do not enable this option.
+   */
+  enableCAPIArchitecture?: boolean;
+   /**
+   * config the ArkTsComponent names to be use
+   * @deprecated: Do not enable this option.
+   */
+  arkTsComponentNames?: Array<string>;
 };
 
 /**
@@ -993,13 +1017,13 @@ export class RNInstanceImpl implements RNInstance {
   private subscribeToDevTools() {
     const emitter = this.devToolsController.eventEmitter;
     emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
-    this.emitDeviceEvent('toggleElementInspector', {}),
+      this.emitDeviceEvent('toggleElementInspector', {}),
     );
     emitter.subscribe('DEV_MENU_SHOWN', () =>
-    this.emitDeviceEvent('RCTDevMenuShown', {}),
+      this.emitDeviceEvent('RCTDevMenuShown', {}),
     );
     emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
-    this.emitDeviceEvent('didPressMenuItem', item),
+      this.emitDeviceEvent('didPressMenuItem', item),
     );
     emitter.subscribe('OPEN_URL', (url, onError) => {
       DevServerHelper.openUrl(url, this.getInitialBundleUrl(), onError);
@@ -1053,7 +1077,7 @@ export class RNInstanceImpl implements RNInstance {
         if (!fontResource.startsWith('/')) {
           throw new RNOHError({
             whatHappened:
-            'Font path must be an absolute path or a $rawfile Resource',
+              'Font path must be an absolute path or a $rawfile Resource',
             howCanItBeFixed: [
               'Provide an absolute path to the font (starting with a "/")',
             ],
@@ -1073,9 +1097,9 @@ export class RNInstanceImpl implements RNInstance {
   private registerRNOHMarker() {
     this.cppEventEmitter.subscribe("logRNOHMarker",
       (payload: RNOHMarkerEventPayload): void =>
-      RNOHMarker.notifyListeners(payload.markerId, payload.tag,
-        payload.timestamp
-      )
+        RNOHMarker.notifyListeners(payload.markerId, payload.tag,
+          payload.timestamp
+        )
     )
   }
 }
