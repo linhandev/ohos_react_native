@@ -4,6 +4,7 @@ import { CommandExecutor } from "../../common/CommandExecutor";
 import { Subtask } from "../../types";
 import { ValidationError } from "./SyncTask";
 import * as pathUtils from "node:path";
+import os from "os";
 
 export type MetroPortForwardSubtaskInput = { port: any } | null;
 
@@ -36,7 +37,8 @@ export class MetroPortForwardSubtask implements Subtask {
     }
 
     const basePath = pathUtils.join(DEVECO_SDK_HOME, "..");
-    const files = globSync(`${basePath}/**/hdc`, { nodir: true });
+    const hdcBinary = os.platform() === "win32" ? "hdc.exe" : "hdc";
+    const files = globSync(`${basePath}/**/${hdcBinary}`, { nodir: true });
     if (files.length === 0) {
       throw new Error("hdc not found in DEVECO_SDK_HOME");
     }

@@ -1,6 +1,7 @@
 import {execSync} from 'node:child_process';
 import {globSync} from 'glob';
 import pathUtils from 'node:path';
+import os from 'os';
 
 export class HdcRunner {
   target: string;
@@ -15,12 +16,13 @@ export class HdcRunner {
     }
 
     const basePath = pathUtils.join(DEVECO_SDK_HOME, '..');
-    const files = globSync(`${basePath}/**/hdc`, {nodir: true});
+    const hdcBinary = os.platform() === 'win32' ? 'hdc.exe' : 'hdc';
+    const files = globSync(`${basePath}/**/${hdcBinary}`, {nodir: true});
     if (files.length === 0) {
       throw new Error('hdc not found in DEVECO_SDK_HOME');
     }
 
-    this.hdcPath = files[0];
+    this.hdcPath = `"${files[0]}"`;
   }
 
   public run(command: string): string {
