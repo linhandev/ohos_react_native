@@ -13,6 +13,11 @@ module.exports = mergeConfig(
     reactNativeCorePattern: `${pathUtils.sep}react-native-core${pathUtils.sep}packages${pathUtils.sep}react-native${pathUtils.sep}`
   }),
   {
+    serializer: {
+      getModulesRunBeforeMainModule: () => [
+        require.resolve('@react-native-oh/react-native-core/Libraries/Core/InitializeCore'),
+      ]
+    },
     transformer: {
       getTransformOptions: async () => ({
         transform: {
