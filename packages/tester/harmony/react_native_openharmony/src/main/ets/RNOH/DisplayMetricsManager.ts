@@ -57,28 +57,39 @@ export class DisplayMetricsManager {
   }
 
   public updateDisplayMetrics() {
+    let displayInstance: display.Display | undefined = undefined;
+    const errors: Object[] = []
     try {
-      const displayInstance = display.getDisplayByIdSync(this.displayId);
-      this.displayMetrics = {
-        screenPhysicalPixels: {
-          width: displayInstance.width,
-          height: displayInstance.height,
-          scale: displayInstance.densityPixels,
-          fontScale: this.displayMetrics.screenPhysicalPixels.fontScale,
-          densityDpi: displayInstance.densityDPI,
-        },
-        windowPhysicalPixels: {
-          width: this.displayMetrics.windowPhysicalPixels.width,
-          height: this.displayMetrics.windowPhysicalPixels.height,
-          scale: displayInstance.densityPixels,
-          fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
-          densityDpi: displayInstance.densityDPI,
-        }
-      };
+      // displayId can be "-1" on older ROMs. In that case, fallback to getDefaultDisplaySync.
+      displayInstance = display.getDisplayByIdSync(this.displayId);
+    } catch (err) {
+      errors.push(err)
+      try {
+        displayInstance = display.getDefaultDisplaySync()
+      } catch (err2) {
+        errors.push(err2)
+      }
     }
-    catch (err) {
-      this.logger.error('Failed to update display size ' + JSON.stringify(err));
+    if (!displayInstance) {
+      this.logger.error('Failed to update display size: ' + JSON.stringify(errors));
+      return;
     }
+    this.displayMetrics = {
+      screenPhysicalPixels: {
+        width: displayInstance.width,
+        height: displayInstance.height,
+        scale: displayInstance.densityPixels,
+        fontScale: this.displayMetrics.screenPhysicalPixels.fontScale,
+        densityDpi: displayInstance.densityDPI,
+      },
+      windowPhysicalPixels: {
+        width: this.displayMetrics.windowPhysicalPixels.width,
+        height: this.displayMetrics.windowPhysicalPixels.height,
+        scale: displayInstance.densityPixels,
+        fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
+        densityDpi: displayInstance.densityDPI,
+      }
+    };
   }
 
   public getDisplayMetrics(): DisplayMetrics {
