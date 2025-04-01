@@ -193,6 +193,11 @@ export function PressableTest() {
           expect(state.pressed).to.be.true;
         }}
       />
+      <TestCase.Example
+        itShould="change color upon mouse click"
+        skip={{android: true, harmony: false}}>
+        <PressView />
+      </TestCase.Example>
     </TestSuite>
   );
 }
@@ -210,6 +215,20 @@ const HoverView = () => {
         console.log('onHoverOut');
       }}
       style={{...styles.unpressed, backgroundColor: hovered ? 'blue' : 'red'}}
+    />
+  );
+};
+
+let pressed = true;
+const PressView = () => {
+  const [count, setCount] = useState(0);
+  return (
+    <Pressable
+      onPress={() => {
+        pressed = !pressed;
+        setCount(count + 1);
+      }}
+      style={{...styles.unpressed, backgroundColor: pressed ? 'blue' : 'red'}}
     />
   );
 };
