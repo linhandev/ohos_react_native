@@ -31,6 +31,7 @@ class StyledStringWrapper final {
   StyledStringWrapper(
       OH_Drawing_TypographyStyle* typographyStyle,
       SharedFontCollection fontCollection,
+      const std::string& themeFontFamily,
       float scale,
       float fontMultiplier)
       : m_styledString(
@@ -38,7 +39,8 @@ class StyledStringWrapper final {
             OH_ArkUI_StyledString_Destroy),
         m_scale(scale),
         m_fontMultiplier(fontMultiplier),
-        m_fontCollection(std::move(fontCollection)) {}
+        m_fontCollection(std::move(fontCollection)),
+        m_themeFontFamilyName(themeFontFamily) {}
 
   ArkUI_StyledString* get() const {
     return m_styledString.get();
@@ -68,6 +70,7 @@ class StyledStringWrapper final {
   SharedFontCollection m_fontCollection;
   float m_scale;
   float m_fontMultiplier;
+  std::string m_themeFontFamilyName;
 
   friend class TextMeasurer;
 };

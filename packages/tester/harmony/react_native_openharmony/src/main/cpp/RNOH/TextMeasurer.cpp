@@ -175,6 +175,7 @@ StyledStringWrapper TextMeasurer::createStyledString(
   StyledStringWrapper styledStringWrapper(
       typographyStyle.get(),
       m_fontRegistry->getFontCollection(),
+      m_fontRegistry->getThemeFontFamily(),
       m_scale,
       fontMultiplier);
   for (auto const& fragment : attributedString.getFragments()) {
@@ -260,6 +261,7 @@ auto TextMeasurer::findFitFontSize(
 void TextMeasurer::setTextMeasureParams(float fontScale, float scale) {
   m_fontScale = fontScale;
   m_scale = scale;
+  m_fontRegistry->updateThemeFont();
 }
 
 } // namespace rnoh
