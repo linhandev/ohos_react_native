@@ -375,6 +375,22 @@ void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
   textMeasurer->setTextMeasureParams(fontScale.asDouble(), scale.asDouble());
 }
 
+void RNInstanceInternal::addArkTSMessageHandler(
+    ArkTSMessageHandler::Shared handler) {
+  m_arkTSMessageHandlers.push_back(handler);
+}
+
+void RNInstanceInternal::removeArkTSMessageHandler(
+    ArkTSMessageHandler::Shared handler) {
+  for (auto it = m_arkTSMessageHandlers.begin();
+       it != m_arkTSMessageHandlers.end();
+       it++) {
+    if (*it == handler) {
+      m_arkTSMessageHandlers.erase(it);
+    }
+  }
+}
+
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
