@@ -377,11 +377,21 @@ void TextComponentInstance::updateFragmentTouchTargets(
   auto nativeTextLayoutManager =
       textLayoutManager->getNativeTextLayoutManager();
   auto textMeasurer = static_cast<TextMeasurer*>(nativeTextLayoutManager);
+  auto left = m_layoutMetrics.contentInsets.left;
+  auto right = m_layoutMetrics.contentInsets.right;
+  auto top = m_layoutMetrics.contentInsets.top;
+  auto width = m_layoutMetrics.frame.size.width;
+  auto height = m_layoutMetrics.frame.size.height;
+  auto maxWidth = width - left - right;
+  Size size = {maxWidth, height};
+  auto attributedString = newState.attributedString;
+  auto paragraphAttributes = m_props->paragraphAttributes;
+  textMeasurer->dealTextCase(attributedString, paragraphAttributes);
   auto typography = textMeasurer->measureTypography(
-      newState.attributedString,
-      m_props->paragraphAttributes,
-      {m_layoutMetrics.frame.size, m_layoutMetrics.frame.size}).build();
-  auto rects = typography.getRectsForFragments();
+      attributedString,
+      paragraphAttributes,
+      {size, size}).build();
+  auto rects = typography.getRectsForFragments({left, top});
 
   FragmentTouchTargetByTag touchTargetByTag;
   size_t textFragmentCount = 0;

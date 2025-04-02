@@ -67,7 +67,7 @@ class ArkUITypography final {
 
   using Rects = std::vector<facebook::react::Rect>;
 
-  std::vector<Rects> getRectsForFragments() const {
+  std::vector<Rects> getRectsForFragments(facebook::react::Point origin) const {
     std::vector<Rects> result;
     result.reserve(m_fragmentLengths.size());
     size_t fragmentBegin = 0;
@@ -84,8 +84,8 @@ class ArkUITypography final {
       rects.reserve(textBoxCount);
       for (size_t j = 0; j < textBoxCount; j++) {
         facebook::react::Rect rect;
-        rect.origin.x = (OH_Drawing_GetLeftFromTextBox(textBoxes, j)) / m_scale;
-        rect.origin.y = (OH_Drawing_GetTopFromTextBox(textBoxes, j)) / m_scale;
+        rect.origin.x = (OH_Drawing_GetLeftFromTextBox(textBoxes, j)) / m_scale + origin.x;
+        rect.origin.y = (OH_Drawing_GetTopFromTextBox(textBoxes, j)) / m_scale + origin.y;
         rect.size.width = (OH_Drawing_GetRightFromTextBox(textBoxes, j) -
             OH_Drawing_GetLeftFromTextBox(textBoxes, j)) / m_scale;
         rect.size.height = (OH_Drawing_GetBottomFromTextBox(textBoxes, j) -

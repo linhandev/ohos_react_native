@@ -38,6 +38,10 @@ class TextMeasurer : public facebook::react::TextLayoutManagerDelegate {
       facebook::react::ParagraphAttributes paragraphAttributes,
       facebook::react::LayoutConstraints layoutConstraints) override;
 
+  void dealTextCase(
+      facebook::react::AttributedString& attributedString,
+      facebook::react::ParagraphAttributes const& paragraphAttributes);
+
   ArkUITypographyBuilder measureTypography(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes,

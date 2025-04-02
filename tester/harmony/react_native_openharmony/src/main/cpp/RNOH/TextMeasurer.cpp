@@ -36,22 +36,9 @@ TextMeasurement TextMeasurer::measure(
   auto isNDKTextMeasuringEnabled =
       this->m_featureFlagRegistry->getFeatureFlagStatus(
           "ENABLE_NDK_TEXT_MEASURING");
+  // first deal textCase
+  dealTextCase(attributedString, paragraphAttributes);
   if (canUseOHOSTextMeasurer || isNDKTextMeasuringEnabled) {
-    // first deal textCase
-    float fontMultiplier = 1.0;
-    if (paragraphAttributes.allowFontScaling) {
-      fontMultiplier = m_fontScale;
-      if (!isnan(paragraphAttributes.maxFontSizeMultiplier) && paragraphAttributes.maxFontSizeMultiplier >= 1) {
-        fontMultiplier = std::min(m_fontScale, (float)paragraphAttributes.maxFontSizeMultiplier);
-      }
-    }
-    for (auto& fragment : attributedString.getFragments()) {
-      if (fragment.textAttributes.textTransform.has_value()) {
-        textCaseTransform(
-            fragment.string, fragment.textAttributes.textTransform.value());
-      }
-      fragment.textAttributes.fontSize *= fontMultiplier;
-    }
     // calc typograph
     facebook::react::TextMeasureCacheKey cacheKey{attributedString, paragraphAttributes, layoutConstraints};
     std::optional<std::shared_ptr<TextMeasureInfo>> measureInfo = TextMeasureRegistry::getTextMeasureRegistry().getTextMeasureInfo(cacheKey, m_scale);
@@ -224,6 +211,33 @@ TextMeasurement TextMeasurer::measure(
         });
     return result;
   }
+}
+
+void TextMeasurer::dealTextCase(
+    facebook::react::AttributedString& attributedString,
+    facebook::react::ParagraphAttributes const& paragraphAttributes) {
+    auto const& fragments = attributedString.getFragments();
+    auto canUseOHOSTextMeasurer = fragments.size() == 1 &&
+        !fragments[0].isAttachment() &&
+        isnan(fragments[0].textAttributes.letterSpacing) &&
+        isnan(fragments[0].textAttributes.lineHeight);
+    auto isNDKTextMeasuringEnabled =
+        this->m_featureFlagRegistry->getFeatureFlagStatus("ENABLE_NDK_TEXT_MEASURING");
+    if (canUseOHOSTextMeasurer || isNDKTextMeasuringEnabled) {
+        float fontMultiplier = 1.0;
+        if (paragraphAttributes.allowFontScaling) {
+            fontMultiplier = m_fontScale;
+            if (!isnan(paragraphAttributes.maxFontSizeMultiplier) && paragraphAttributes.maxFontSizeMultiplier >= 1) {
+                fontMultiplier = std::min(m_fontScale, (float)paragraphAttributes.maxFontSizeMultiplier);
+            }
+        }
+        for (auto& fragment : attributedString.getFragments()) {
+            if (fragment.textAttributes.textTransform.has_value()) {
+                textCaseTransform(fragment.string, fragment.textAttributes.textTransform.value());
+            }
+            fragment.textAttributes.fontSize *= fontMultiplier;
+        }
+    }
 }
 
 ArkUITypographyBuilder TextMeasurer::measureTypography(
