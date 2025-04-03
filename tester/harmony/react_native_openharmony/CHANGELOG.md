@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.72.64
+- fix: url encode check cannot cover encodeURIComponent type,([4276dacd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4276dacd892830a2706e9b54e6e75bc262b0bd5b))
+- fix: TextInput maxLength null and 0 do not work,([880d38aa](https://gitcode.com/openharmony-sig/ohos_react_native/commit/880d38aab3f96db590920d1af56d03ae22522e93))
+- TextInput gained focus when it shouldn't have,([2dc4dc4e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2dc4dc4e64ae9e21582d51fbc879e22fdec16cba))
+- fix: Fix the press position offset in text nesting scenarios.,([44dbb008](https://gitcode.com/openharmony-sig/ohos_react_native/commit/44dbb0088b1f3bd9a1742c0b09319007ccc2f462))
+
 ## v0.72.63
 - optimize time consuming dfx trace,([d9a7ec7e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d9a7ec7e5f97b22d8a6d46d7febf9adb87661ceb))
 - fix:crash when push ComponentInstancePreallocationRequestQueue,([4a233029](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4a233029ad2abcc4033e3716afe9cd6bf1c0c51a))
