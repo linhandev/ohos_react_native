@@ -177,6 +177,17 @@ export const NetworkingTest = () => {
             expect(secondHeader).to.be.eq('second');
           }}
         />
+        <TestCase.Logical 
+          skip={noInternetSkipMsg}
+          itShould="correctly send params with special symbols"
+          fn={async ({expect}) => {
+            const response = await fetch(
+              'https://httpbin.org/get?url=https%3A%2F%2Fexample.org%2Fuser%2F12345%3Fref%3Dabc%252Fdef%253A',
+            );
+            const data = await response.json();
+            expect(data.args.url).to.be.eq('https://api.example.org/v1/qr-generator?url=https://example.org/user/12345?ref=abc%2Fdef:');
+          }}
+        />
         <TestCase.Logical
           skip={noInternetSkipMsg}
           itShould="fail on bad url"
