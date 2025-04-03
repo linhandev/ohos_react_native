@@ -26,6 +26,8 @@
 #include "RNOH/TaskExecutor/TaskExecutor.h"
 #include "RNOH/TurboModule.h"
 #include "RNOH/TurboModuleProvider.h"
+#include "RNOH/TouchTarget.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
 using MutationsListener = std::function<void(
@@ -52,6 +54,8 @@ class Surface {
   using Weak = std::weak_ptr<Surface>;
 
   virtual LayoutContext getLayoutContext() = 0;
+  
+  virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() = 0;
 };
 
 class RNInstance {

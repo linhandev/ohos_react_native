@@ -28,7 +28,7 @@ class ModalHostViewComponentInstance
   CustomNode m_virtualNode;
   CustomNode m_rootStackNode;
   ArkUIDialogHandler m_dialogHandler;
-  std::unique_ptr<UIInputEventHandler> m_touchHandler;
+  std::shared_ptr<UIInputEventHandler> m_touchHandler;
   std::shared_ptr<ArkTSMessageHandler> m_displaySizeChangeHandler;
   std::optional<ScreenOrientation> m_screenOrientation;
 
@@ -44,7 +44,9 @@ class ModalHostViewComponentInstance
 
  public:
   ModalHostViewComponentInstance(Context context);
-
+  
+  std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override { return m_touchHandler; }
+    
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override;

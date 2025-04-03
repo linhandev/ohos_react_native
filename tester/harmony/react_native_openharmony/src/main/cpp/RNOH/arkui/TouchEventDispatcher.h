@@ -41,6 +41,11 @@ class TouchEventDispatcher {
    */
   void cancelActiveTouches();
 
+  /**
+   * @internal
+   */
+  void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget);
+    
  private:
   TouchTarget::Shared registerTargetForTouch(
       TouchPoint touchPoint,

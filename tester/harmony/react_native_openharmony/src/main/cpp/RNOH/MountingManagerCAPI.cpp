@@ -299,9 +299,8 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
         auto parentComponentInstance = m_componentInstanceRegistry->findByTag(
             mutation.parentShadowView.tag);
         if (parentComponentInstance) {
-          parentComponentInstance->removeChild(
-              m_componentInstanceRegistry->findByTag(
-                  mutation.oldChildShadowView.tag));
+            auto childComponentInstance = m_componentInstanceRegistry->findByTag(mutation.oldChildShadowView.tag);
+            parentComponentInstance->removeChild(childComponentInstance);
         }
         break;
       }

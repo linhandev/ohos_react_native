@@ -21,6 +21,7 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/arkui/ArkUINode.h"
+#include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
 
@@ -223,6 +224,8 @@ class ComponentInstance
     onNativeResponderBlockChange(m_nativeResponderBlockOrigins.size() > 0);
   }
 
+    virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() { return {}; }
+    
   // TouchTarget implementation
   Tag getTouchTargetTag() const override {
     return getTag();
