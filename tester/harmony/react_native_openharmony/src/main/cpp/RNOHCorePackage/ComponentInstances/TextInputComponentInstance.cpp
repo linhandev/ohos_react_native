@@ -302,8 +302,11 @@ void TextInputComponentInstance::onPropsChanged(
       m_textInputNode.setPasswordIconVisibility(false);      
     }
   }
-  if (props->maxLength != 0) {
-    if (!m_props || props->maxLength != m_props->maxLength) {
+  if (!m_props || props->maxLength != m_props->maxLength) {
+    if (!props->maxLength) {
+      m_textAreaNode.resetMaxLength();
+      m_textInputNode.resetMaxLength();
+    } else {
       m_textAreaNode.setMaxLength(props->maxLength);
       m_textInputNode.setMaxLength(props->maxLength);
     }

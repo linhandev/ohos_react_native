@@ -221,6 +221,9 @@ export function TextInputTest() {
       <TestCase.Example itShould="render text input with maximally 10 characters">
         <TextInputWithText style={styles.textInput} maxLength={10} />
       </TestCase.Example>
+      <TestCase.Example modal itShould="toggle between maxLength 5 and 0">
+        <SwitchBetweenDiffMaxLength />
+      </TestCase.Example>
       <TestCase.Example
         modal
         itShould="toggle between rendering 10 and 5 characters">
@@ -758,6 +761,17 @@ const AutoCapitalize = () => {
     </>
   );
 };
+const SwitchBetweenDiffMaxLength = () => {
+  const [state, setState] = useState(5)
+
+  return (
+    <>
+      <TextInputWithText style={styles.textInput} maxLength={state} />
+      <Button label="toggle return key type" onPress={() => {setState(state == 0 ? 5 : 0)}} />
+      <Text>maxLength: {state}</Text>
+    </>
+  );
+}
 const ReturnKeyTypeView = () => {
   const [state, setState] = useState<ReturnKeyType | ReturnKeyTypeAndroid>(
     'none',

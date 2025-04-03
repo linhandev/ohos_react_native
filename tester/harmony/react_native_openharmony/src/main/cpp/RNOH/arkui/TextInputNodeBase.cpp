@@ -166,4 +166,9 @@ void TextInputNodeBase::setTextSelection(int32_t start, int32_t end) {
             m_nodeHandle, NODE_TEXT_INPUT_TEXT_SELECTION, &item));
     }
 }
+
+void TextInputNodeBase::resetMaxLength() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH));
+}
 } // namespace rnoh

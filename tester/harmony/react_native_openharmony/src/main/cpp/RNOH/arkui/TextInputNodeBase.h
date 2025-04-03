@@ -57,6 +57,8 @@ class TextInputNodeBase : public ArkUINode {
   std::string virtual getTextContent() = 0;
   
   virtual facebook::react::Rect getTextContentRect() const = 0;
+
+  void resetMaxLength();
 };
 
 } // namespace rnoh
