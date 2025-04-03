@@ -417,6 +417,20 @@ export type RNInstanceOptions = {
    * @deprecated: Do not enable this option.
    */
   arkTsComponentNames?: Array<string>;
+  /**
+   * @architecture: ArkTS
+   * Manages image loading and caching. When enabled, RNOH takes responsibility; when disabled, it delegates to ArkUI's Image component.
+   * Each approach presents issues under different scenarios.
+   * @deprecated: Do not enable this option.
+   */
+  enableImageLoader?: boolean;
+  /**
+   * Disables advanced React 18 features, such as Automatic Batching.
+   * Setting this to `true` will revert to the behavior of React 17,
+   * where state updates are processed synchronously and separately.
+   * @deprecated: Do not enable this option.
+   */
+  disableConcurrentRoot?: boolean;
 };
 
 /**
