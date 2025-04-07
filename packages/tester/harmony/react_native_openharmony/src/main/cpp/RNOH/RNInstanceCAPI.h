@@ -79,6 +79,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
 
   ~RNInstanceCAPI() noexcept override;
 
+  int getId() override;
+
   void createSurface(
       facebook::react::Tag surfaceId,
       std::string const& moduleName) override;

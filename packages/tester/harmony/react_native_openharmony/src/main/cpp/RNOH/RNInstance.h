@@ -69,6 +69,7 @@ class RNInstance {
 
   virtual ~RNInstance() = default;
 
+  virtual int getId() = 0;
   virtual ContextContainer const& getContextContainer() const = 0;
   virtual TurboModule::Shared getTurboModule(const std::string& name) = 0;
   template <typename T>

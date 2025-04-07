@@ -51,6 +51,10 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
 
+int RNInstanceCAPI::getId() {
+  return m_id;
+}
+
 void RNInstanceCAPI::synchronouslyUpdateViewOnUIThread(
     facebook::react::Tag tag,
     folly::dynamic props) {

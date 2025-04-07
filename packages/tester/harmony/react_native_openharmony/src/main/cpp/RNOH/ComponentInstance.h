@@ -255,6 +255,15 @@ class ComponentInstance
     return m_ignoredPropKeys;
   }
 
+  /**
+   * @deprecated: It's no longer part of the API. Do NOT use it. Use downcasting
+   * instead.
+   * @internal
+   */
+  virtual bool isRefreshControlComponentInstance() const {
+    return false;
+  }
+
  protected:
   virtual void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
@@ -311,6 +320,23 @@ class ComponentInstance
    * @internal
    */
   std::unordered_set<std::string> m_ignoredPropKeys;
+  /**
+   * @api
+   */
+  int m_rnInstanceId = -1;
+  /**
+   * @deprecated This property is no longer part of the native API. It was
+   * deprecated when preparing 0.77 branch for release.
+   * @internal
+   */
+  float m_oldPointScaleFactor = 0.0f;
+  /**
+   * @deprecated This property is no longer part of the native API. It was
+   * deprecated when preparing 0.77 branch for release. This property should be
+   * private and in CppComponentInstance
+   * @internal
+   */
+  facebook::react::BorderMetrics m_oldBorderMetrics;
 };
 
 } // namespace rnoh

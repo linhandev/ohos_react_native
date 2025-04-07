@@ -15,7 +15,12 @@ ComponentInstance::ComponentInstance(Context ctx)
     : m_tag(ctx.tag),
       m_componentHandle(ctx.componentHandle),
       m_componentName(std::move(ctx.componentName)),
-      m_deps(std::move(ctx.dependencies)) {}
+      m_deps(std::move(ctx.dependencies)) {
+  auto rnInstance = m_deps->rnInstance.lock();
+  if (m_deps != nullptr && rnInstance != nullptr) {
+    m_rnInstanceId = rnInstance->getId();
+  }
+}
 
 void ComponentInstance::insertChild(
     ComponentInstance::Shared childComponentInstance,

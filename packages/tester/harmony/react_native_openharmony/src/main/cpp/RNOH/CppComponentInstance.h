@@ -320,15 +320,21 @@ class CppComponentInstance : public ComponentInstance,
       localRoot.setAccessibilityActions(props->accessibilityActions);
     }
 
-    /**
-     * NOTE: resolveTransform returns identity when layoutMetrics width or
-     * height is 0, which happens during the preallocation phase.
-     */
-    auto transform = props->resolveTransform(m_layoutMetrics);
-    if (!isTransformManagedByAnimated && transform != m_transform) {
-      m_transform = transform;
-      localRoot.setTransform(transform, m_layoutMetrics.pointScaleFactor);
-      markBoundingBoxAsDirty();
+    if (!isTransformManagedByAnimated) {
+      /**
+       * NOTE: resolveTransform returns identity when layoutMetrics width or
+       * height is 0, which happens during the preallocation phase.
+       */
+      auto transform = props->resolveTransform(m_layoutMetrics);
+      if (transform != m_transform ||
+          abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
+              0.001f) {
+        m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+        m_transform = transform;
+        this->getLocalRootArkUINode().setTransform(
+            transform, m_layoutMetrics.pointScaleFactor);
+        markBoundingBoxAsDirty();
+      }
     }
 
     if (props->accessibilityRole != old->accessibilityHint) {
@@ -580,7 +586,6 @@ class CppComponentInstance : public ComponentInstance,
   SharedConcreteEventEmitter m_eventEmitter;
   std::optional<facebook::react::Rect> m_boundingBox;
   bool m_isClipping = false;
-  facebook::react::BorderMetrics m_oldBorderMetrics = {};
 
   static ArkUI_Direction convertLayoutDirection(
       facebook::react::LayoutDirection layoutDirection) {
