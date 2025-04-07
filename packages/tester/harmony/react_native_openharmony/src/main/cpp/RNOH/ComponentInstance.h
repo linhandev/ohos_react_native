@@ -218,6 +218,29 @@ class ComponentInstance
     m_parent = parent;
   }
 
+  /**
+   * @internal
+   * @deprecated: Do not use it. This method is internal. This method was added
+   * and deprecated when preparing 0.77 version.
+   */
+  virtual facebook::react::ShadowView& getShadowView() {
+    return m_shadowView;
+  }
+
+  /**
+   * @internal
+   * @deprecated: Do not use it. This method is meant to be internal. This
+   * method was added and immediately deprecated when preparing 0.77 version.
+   */
+  virtual void setShadowView(facebook::react::ShadowView const& shadowView) {
+    /**
+     * NOOP, because it was NOOP in RNOH 0.72, but some library may override
+     * this method. This method could make sense if methods like onPropsChanged,
+     * onStateChanged etc. were replaced with with e.g.
+     * onShadowViewChanged(newShadowView, oldShadowView).
+     */
+  }
+
   void setNativeResponderBlocked(
       bool blocked,
       const std::string& origin = "REACT_NATIVE") {
@@ -325,6 +348,13 @@ class ComponentInstance
    * @api
    */
   Dependencies::Shared m_deps;
+  /**
+   * @internal
+   * @deprecated Do not use it. It's an internal property. This property was
+   * added and immediately deprecated when preparing 0.77 version.
+   * Warning: This property isn't always set.
+   */
+  facebook::react::ShadowView m_shadowView;
   /**
    * @internal
    */

@@ -151,6 +151,7 @@ void MountingManagerCAPI::updateComponentWithShadowView(
   // NOTE: updating tag by id must happen before updating props
   m_componentInstanceRegistry->updateTagById(
       shadowView.tag, shadowView.props->nativeId, componentInstance->getId());
+  componentInstance->setShadowView(shadowView);
   componentInstance->setLayout(shadowView.layoutMetrics);
   componentInstance->setEventEmitter(shadowView.eventEmitter);
   componentInstance->setState(shadowView.state);
