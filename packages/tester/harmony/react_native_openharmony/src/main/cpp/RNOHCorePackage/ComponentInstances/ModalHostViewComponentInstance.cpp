@@ -50,7 +50,9 @@ void ModalHostViewComponentInstance::updateDisplaySize(
 
   if (m_screenOrientation != screenOrientation) {
     m_screenOrientation = screenOrientation;
-    m_eventEmitter->onOrientationChange({.orientation = screenOrientation});
+    if (m_eventEmitter) {
+      m_eventEmitter->onOrientationChange({.orientation = screenOrientation});
+    }
   }
   facebook::react::Size screenSize = {
       .width = windowMetrics.width / windowMetrics.scale,
