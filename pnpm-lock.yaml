@@ -563,8 +563,8 @@ importers:
         specifier: ^3.1.0-0.0.7
         version: 3.1.0-0.0.7(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/lottie-react-native':
-        specifier: ^6.4.1-0.1.15
-        version: 6.4.1-0.1.15(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+        specifier: ^6.4.1-0.1.16
+        version: 6.4.1-0.1.16(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/masked-view':
         specifier: ^0.2.9-0.2.2
         version: 0.2.9-0.2.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -1789,8 +1789,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  '@react-native-oh-tpl/lottie-react-native@6.4.1-0.1.15':
-    resolution: {integrity: sha512-DKnKVoip62/JGxWj8n3beo2eVzhhfbOIEtnWqjbvgWj1lHlA621rtKqM6+GgPehbTkpNL09NMBSLO4NWtjqXEw==}
+  '@react-native-oh-tpl/lottie-react-native@6.4.1-0.1.16':
+    resolution: {integrity: sha512-uQ7p0mWn9jwoQ1G7tvkeWYWOI4phWD6IjJqV71R6+IE51BBJMyMixGrdCwfAm/c+KxUaqThRSO9nwpUH7yrH2w==}
     peerDependencies:
       '@dotlottie/react-player': ^1.6.1
       '@lottiefiles/react-lottie-player': ^3.5.3
@@ -7561,7 +7561,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 
-  '@react-native-oh-tpl/lottie-react-native@6.4.1-0.1.15(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+  '@react-native-oh-tpl/lottie-react-native@6.4.1-0.1.16(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       lottie-react-native: 6.4.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       react: 18.3.1

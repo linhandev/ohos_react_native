@@ -34,6 +34,58 @@ export function TouchHandlingTest() {
   return (
     <TestSuite name="Touch Handling">
       <TestCase.Automated
+        tags={['sequential']}
+        itShould="recognize the subsequent touch correctly after a target view has been removed during touch"
+        initialState={{
+          isVisible: true,
+          ref1: createRef<View>(),
+          ref2: createRef<View>(),
+          wasTouchEndCalled: false,
+        }}
+        arrange={({state, setState, done}) => {
+          return (
+            <View style={{width: 128, height: 128}}>
+              <View
+                ref={state.ref1}
+                style={{
+                  width: 64,
+                  height: 64,
+                  backgroundColor: state.wasTouchEndCalled ? 'green' : 'red',
+                }}
+                onTouchEnd={() => {
+                  setState(prev => ({...prev, wasTouchEndCalled: true}));
+                  done();
+                }}
+              />
+              {state.isVisible && (
+                <View
+                  ref={state.ref2}
+                  style={{width: 64, height: 64, backgroundColor: 'blue'}}
+                  onTouchStart={() => {
+                    setState(prev => ({...prev, isVisible: false}));
+                  }}
+                />
+              )}
+            </View>
+          );
+        }}
+        act={async ({state, done}) => {
+          driver?.click({ref: state.ref2});
+          await new Promise(resolve => {
+            setTimeout(resolve, 0);
+          });
+          driver?.click({ref: state.ref1});
+          await new Promise(resolve => {
+            setTimeout(resolve, 1000);
+          });
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.wasTouchEndCalled).to.be.eq(true);
+        }}
+      />
+
+      <TestCase.Automated
         itShould="pass when pressed red rectangle"
         tags={['sequential']}
         initialState={{
