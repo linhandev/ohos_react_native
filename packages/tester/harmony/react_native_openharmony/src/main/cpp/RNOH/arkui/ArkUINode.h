@@ -57,6 +57,12 @@ class ArkUINode {
   using EventArgs = ArkUI_NumberValue[MAX_COMPONENT_EVENT_ARG_NUM];
 
  public:
+  enum {
+    UI_INPUT_EVENT_SOURCE_TYPE_UNKNOWN = 0,
+    UI_INPUT_EVENT_SOURCE_TYPE_MOUSE = 1,
+    UI_INPUT_EVENT_SOURCE_TYPE_TOUCH_SCREEN = 2,
+    UI_INPUT_EVENT_SOURCE_TYPE_KEY = 4
+  };
   using Alignment = ArkUI_Alignment;
 
   ArkUI_NodeHandle getArkUINodeHandle();
@@ -69,6 +75,28 @@ class ArkUINode {
   virtual ArkUINode& setAccessibilityRole(std::string const& role);
   virtual ArkUINode& setPosition(facebook::react::Point const& position);
   virtual ArkUINode& setSize(facebook::react::Size const& size);
+
+  /**
+   * @deprecated Do not use it. This is a method specific to CustomNode and
+   * CustomNode already has an equivalent method called updateMeasuredSize.
+   * Deprecated when preparing RNOH 0.77 for release.
+   */
+  void saveSize(int32_t width, int32_t height);
+  /**
+   * @deprecated Do not use it. This is a method specific to CustomNode and
+   * CustomNode already has an equivalent method called getMeasuredWidth.
+   * This method shouldn't be public. Deprecated when preparing RNOH 0.77 for
+   * release.
+   */
+  int32_t getSavedWidth();
+  /**
+   * @deprecated Do not use it. This is a method specific to CustomNode and
+   * CustomNode already has an equivalent method called getMeasuredHeight.
+   * This method shouldn't be public. Deprecated when preparing RNOH 0.77 for
+   * release.
+   */
+  int32_t getSavedHeight();
+
   virtual ArkUINode& setLayoutRect(
       facebook::react::Point const& position,
       facebook::react::Size const& size,
@@ -205,5 +233,9 @@ class ArkUINode {
   }
 
   ArkUI_NodeHandle m_nodeHandle;
+
+ private:
+  int32_t m_measuredWidth = 0;
+  int32_t m_measuredHeight = 0;
 };
 } // namespace rnoh
