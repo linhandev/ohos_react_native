@@ -66,6 +66,10 @@ class CppComponentInstance : public ComponentInstance,
     return m_tag;
   }
 
+  std::string getCompId() override {
+    return this->getIdFromProps(m_props);
+  }
+
   facebook::react::Props::Shared getProps() const override {
     return m_props;
   }

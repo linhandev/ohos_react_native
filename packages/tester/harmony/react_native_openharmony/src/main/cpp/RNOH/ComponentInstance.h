@@ -108,6 +108,10 @@ class ComponentInstance
     return m_tag;
   }
 
+  /**
+    @return A string representing the nativeId if it exists; otherwise, an empty
+    string.
+   */
   std::string getId() const {
     auto props = getProps();
     if (props == nullptr) {
@@ -115,6 +119,11 @@ class ComponentInstance
     }
     return props->nativeId;
   }
+
+  /**
+   * @return Either the test ID, the native ID, or a generated unique ID.
+   */
+  virtual std::string getCompId() = 0;
 
   const std::string getComponentName() const {
     return m_componentName;
