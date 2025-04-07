@@ -44,5 +44,12 @@ class RefreshNode : public ArkUINode {
   RefreshNode& setRefreshNodeDelegate(RefreshNodeDelegate* refreshNodeDelegate);
   RefreshNode& setRefreshContent(ArkUINode& refreshContent);
   RefreshNode& setRefreshPullDownRatio(float pullDownRatio);
+  /**
+   * @deprecated: use setRefreshPullDownRatio. Deprecated when preparing the
+   * 0.77 branch for release.
+   */
+  RefreshNode& setRefreshPullDownRation(float pullDownRatio) {
+    return setRefreshPullDownRatio(pullDownRatio);
+  };
 };
 } // namespace rnoh

@@ -11,10 +11,56 @@
 #include "react/renderer/components/textinput/TextInputProps.h"
 #include "react/renderer/graphics/Color.h"
 
+/**
+ * TextInput_TextContentType is defined to replace
+ * ArkUI_TextInputContentType. Directly using enum from IDE SDK may raise
+ * compiling error when developer use lower IDE SDK version that does not
+ * contain new supported type.
+ * @internal
+ * @deprecated: This enum is no longer part of the native API. Deprecated when
+ * preparing the 0.77 branch for release.
+ */
+typedef enum {
+  USER_NAME,
+  PASSWORD,
+  NEW_PASSWORD,
+  FULL_STREET_ADDRESS,
+  HOUSE_NUMBER,
+  DISTRICT_ADDRESS,
+  CITY_ADDRESS,
+  PROVINCE_ADDRESS,
+  COUNTRY_ADDRESS,
+  PERSON_FULL_NAME,
+  PERSON_LAST_NAME,
+  PERSON_FIRST_NAME,
+  PHONE_NUMBER,
+  PHONE_COUNTRY_CODE,
+  FULL_PHONE_NUMBER,
+  EMAIL_ADDRESS,
+  BANK_CARD_NUMBER,
+  ID_CARD_NUMBER,
+  NICKNAME,
+  DETAIL_INFO_WITHOUT_STREET,
+  FORMAT_ADDRESS,
+  PASSPORT_NUMBER,
+  VALIDITY,
+  ISSUE_AT,
+  ORGANIZATION,
+  TAX_ID,
+  ADDRESS_CITY_AND_STATE,
+  FLIGHT_NUMBER,
+  LICENSE_NUMBER,
+  LICENSE_FILE_NUMBER,
+  LICENSE_PLATE,
+  ENGINE_NUMBER,
+  LICENSE_CHASSIS_NUMBER,
+
+} TextInput_TextContentType;
+
 namespace rnoh {
 
 /**
- * @internal
+ * @api
  */
 class TextInputNodeBase : public ArkUINode {
  protected:
@@ -64,21 +110,33 @@ class TextInputNodeBase : public ArkUINode {
   std::string virtual getTextContent() = 0;
 
   virtual facebook::react::Rect getTextContentRect() const = 0;
-
+  /**
+   * @internal
+   */
   static uint32_t convertColorToTranslucentUnderline(
       facebook::react::SharedColor const& color);
-
+  /**
+   * @internal
+   */
   static uint32_t convertColorToTranslucentSelection(
       facebook::react::SharedColor const& color);
-
+  /**
+   * @internal
+   */
   static ArkUI_NumberValue convertContentType(
       std::string const& textContentType);
-
+  /**
+   * @internal
+   */
   static ArkUI_EnterKeyType convertEnterKeyType(
       facebook::react::ReturnKeyType returnKeyType);
-
+  /**
+   * @internal
+   */
   static ArkUI_EnterKeyType convertEnterKeyLabel(std::string returnKeyLabel);
-
+  /**
+   * @internal
+   */
   static ArkUI_TextInputType convertInputType(
       facebook::react::KeyboardType keyboardType);
 };
