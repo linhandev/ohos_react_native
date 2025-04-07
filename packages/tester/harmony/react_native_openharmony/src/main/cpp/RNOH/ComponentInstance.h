@@ -133,6 +133,15 @@ class ComponentInstance
 
   /**
    * @internal
+   * @deprecated Do not use it.
+   * This method was used by a hack in MountingManager in RNOH 0.72.
+   */
+  virtual bool checkUpdateBaseNode() {
+    return false;
+  }
+
+  /**
+   * @internal
    */
   void removeChild(ComponentInstance::Shared childComponentInstance);
 
