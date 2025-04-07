@@ -171,6 +171,19 @@ class RNInstanceInternal
       std::string const& fontFamily,
       std::string const& fontFilePath);
 
+  /**
+   * @deprecated: If a message needs to be handled by a specific component
+   * or turbo module, use ArkTSMessageHub::Observer instead. The class
+   * is expected to be instantiated in Package::createArkTSMessageHandlers.
+   */
+  void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  /**
+   * @deprecated: If a message needs to be handled by a specific component
+   * or turbo module, use ArkTSMessageHub::Observer instead. The class
+   * is expected to be instantiated in Package::createArkTSMessageHandlers.
+   */
+  void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+
  protected:
   void initialize();
   void initializeScheduler(
