@@ -588,7 +588,12 @@ ArkUINode& ArkUINode::setBackgroundColor(
   uint32_t colorValue = facebook::react::isColorMeaningful(color)
       ? *color
       : *facebook::react::clearColor();
-  ArkUI_NumberValue preparedColorValue[] = {{.u32 = colorValue}};
+  setBackgroundColor(colorValue);
+  return *this;
+}
+
+ArkUINode& ArkUINode::setBackgroundColor(uint32_t color) {
+  ArkUI_NumberValue preparedColorValue[] = {{.u32 = color}};
   ArkUI_AttributeItem colorItem = {
       preparedColorValue,
       sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};

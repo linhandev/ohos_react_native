@@ -51,6 +51,12 @@ class ScrollNode : public ArkUINode {
   ScrollNode& setEnableScrollInteraction(bool enableScrollInteraction);
   ScrollNode& setFriction(float friction);
   ScrollNode& setEdgeEffect(bool bounces, bool alwaysBounces);
+  /**
+   * @Deprecated: this method is no longer part of the native API. Use
+   * setEdgeEffect. Deprecated when preparing the 0.77 branch for release.
+   */
+  void setScrollOverScrollMode(std::string const& overScrollMode);
+
   ScrollNode& setScrollBarDisplayMode(
       ArkUI_ScrollBarDisplayMode scrollBarDisplayMode);
   ScrollNode& setScrollBarColor(uint32_t scrollBarColor);
@@ -71,6 +77,17 @@ class ScrollNode : public ArkUINode {
       bool animated,
       bool scrollToOverflowEnabled = false);
   void setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode);
+  /**
+   * @Deprecated: this method is no longer part of the native API. Deprecated
+   * when preparing the 0.77 branch for release.
+   */
+  void setNestedScrollEnabled(bool nestedScrollEnabled);
+  /**
+   * @Deprecated: this method is no longer part of the native API. Use
+   * ArkUINode::setBackgroundColor. Deprecated when preparing the 0.77 branch
+   * for release.
+   */
+  void setEndFillColor(uint32_t color);
 };
 
 } // namespace rnoh

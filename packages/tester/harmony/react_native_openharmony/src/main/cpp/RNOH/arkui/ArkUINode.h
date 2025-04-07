@@ -90,6 +90,7 @@ class ArkUINode {
       facebook::react::BorderStyles const& borderStyles);
   virtual ArkUINode& setBackgroundColor(
       facebook::react::SharedColor const& color);
+  virtual ArkUINode& setBackgroundColor(uint32_t color);
   virtual ArkUINode& setTransform(
       facebook::react::Transform const& transform,
       facebook::react::Float pointScaleFactor);
