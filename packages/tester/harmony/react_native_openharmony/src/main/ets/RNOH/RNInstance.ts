@@ -823,8 +823,10 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   public async runJSBundle(jsBundleProvider: JSBundleProvider) {
+    let bundleURL: string = "";
+    const activeBundleUrl = jsBundleProvider.getURL();
+    const processedBundleUrls: string[] = [];
     const stopTracing = this.logger.clone('runJSBundle').startTracing();
-    const bundleURL = jsBundleProvider.getURL();
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null;
     try {
       this.devToolsController.eventEmitter.emit(
@@ -832,7 +834,9 @@ export class RNInstanceImpl implements RNInstance {
         this.id,
         `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`,
       );
-      this.bundleExecutionStatusByBundleURL.set(bundleURL, 'RUNNING');
+      if (activeBundleUrl) {
+        this.bundleExecutionStatusByBundleURL.set(activeBundleUrl, "RUNNING");
+      }
       this.logMarker('DOWNLOAD_START');
       const jsBundle = await jsBundleProvider.getBundle(progress => {
         this.devToolsController.eventEmitter.emit(
@@ -840,10 +844,26 @@ export class RNInstanceImpl implements RNInstance {
           this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`,
         );
+      },(currentProvider) => {
+        const currentURL = currentProvider.getURL();
+        if (currentURL) {
+          bundleURL = currentURL;
+          processedBundleUrls.push(currentURL);
+          this.bundleExecutionStatusByBundleURL.set(currentURL, "RUNNING");
+        }
       });
       this.logMarker('DOWNLOAD_END');
+      const bundleURLCur = jsBundleProvider.getURL()
+      if(bundleURLCur !== activeBundleUrl && processedBundleUrls.length){
+        for(const url of processedBundleUrls){
+          this.bundleExecutionStatusByBundleURL.delete(url)
+        }
+        this.bundleExecutionStatusByBundleURL.set(bundleURL, "RUNNING")
+      }else {
+        bundleURL = bundleURLCur
+      }
       this.initialBundleUrl =
-        this.initialBundleUrl ?? jsBundleProvider.getURL();
+        this.initialBundleUrl ?? bundleURL;
 
       await this.napiBridge.loadScript(
         this.id,
