@@ -45,6 +45,7 @@ class SpanNode : public ArkUINode {
   SpanNode& setTextLineHeight(float textLineHeight);
   SpanNode& setTextCase(int32_t textCase);
   SpanNode& setBackgroundStyle(uint32_t color);
+  SpanNode& resetBackgroundStyle();
   SpanNode& setLengthMetricUnit(ArkUI_LengthMetricUnit unit);
 };
 
