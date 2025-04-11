@@ -67,7 +67,7 @@ class RNInstance {
  public:
   using Weak = std::weak_ptr<RNInstance>;
 
-  virtual ~RNInstance() = default;
+  virtual ~RNInstance();
 
   virtual int getId() = 0;
   virtual ContextContainer const& getContextContainer() const = 0;
