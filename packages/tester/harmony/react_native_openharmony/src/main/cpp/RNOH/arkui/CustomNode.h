@@ -16,9 +16,9 @@ namespace rnoh {
 class CustomNodeDelegate {
  public:
   virtual ~CustomNodeDelegate() = default;
-  virtual void onClick(CustomNodeDelegate*){};
-  virtual void onHoverIn(CustomNodeDelegate*){};
-  virtual void onHoverOut(CustomNodeDelegate*){};
+  virtual void onClick(){};
+  virtual void onHoverIn(){};
+  virtual void onHoverOut(){};
 };
 
 /**
@@ -45,17 +45,24 @@ class CustomNode : public ArkUINode {
   CustomNode& operator=(CustomNode&& other) = delete;
 
   void insertChild(ArkUINode& child, std::size_t index);
+  void addChild(ArkUINode& child);
   void removeChild(ArkUINode& child);
   void onNodeEvent(ArkUI_NodeEventType eventType, EventArgs& eventArgs)
       override;
   void onClick();
   void setCustomNodeDelegate(CustomNodeDelegate* customNodeDelegate);
   CustomNode& setAlign(int32_t align);
+  CustomNode& setFocusable(bool focusable);
   CustomNode& setLayoutRect(
       facebook::react::Point const& position,
       facebook::react::Size const& size,
       facebook::react::Float pointScaleFactor) override;
   void updateMeasuredSize(int32_t width, int32_t height);
+  /**
+   * @Deprecated: Use onMeasure(). Deprecated when preparing 0.77 branch for
+   * release.
+   */
+  void onMeasure(ArkUI_NodeCustomEventType eventType);
 
  private:
   static void receiveCustomEvent(ArkUI_NodeCustomEvent* event);

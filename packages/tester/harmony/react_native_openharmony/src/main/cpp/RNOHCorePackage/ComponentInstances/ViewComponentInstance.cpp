@@ -32,7 +32,7 @@ void ViewComponentInstance::onChildRemoved(
   m_customNode.removeChild(childComponentInstance->getLocalRootArkUINode());
 };
 
-void ViewComponentInstance::onHoverIn(CustomNodeDelegate*) {
+void ViewComponentInstance::onHoverIn() {
   if (m_eventEmitter != nullptr) {
     m_eventEmitter->dispatchEvent(
         "pointerEnter", [=](facebook::jsi::Runtime& runtime) {
@@ -42,7 +42,7 @@ void ViewComponentInstance::onHoverIn(CustomNodeDelegate*) {
   }
 }
 
-void ViewComponentInstance::onHoverOut(CustomNodeDelegate*) {
+void ViewComponentInstance::onHoverOut() {
   if (m_eventEmitter != nullptr) {
     m_eventEmitter->dispatchEvent(
         "pointerLeave", [=](facebook::jsi::Runtime& runtime) {
@@ -130,7 +130,7 @@ void ViewComponentInstance::onFinalizeUpdates() {
   updateClippedSubviews(true);
 }
 
-void ViewComponentInstance::onClick(CustomNodeDelegate*) {
+void ViewComponentInstance::onClick() {
   if (m_eventEmitter != nullptr) {
     m_eventEmitter->dispatchEvent(
         "click", [=](facebook::jsi::Runtime& runtime) {

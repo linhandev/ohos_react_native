@@ -41,9 +41,9 @@ class ViewComponentInstance
 
   void onFinalizeUpdates() override;
 
-  void onClick(CustomNodeDelegate*) override;
-  void onHoverIn(CustomNodeDelegate*) override;
-  void onHoverOut(CustomNodeDelegate*) override;
+  void onClick() override;
+  void onHoverIn() override;
+  void onHoverOut() override;
   CustomNode& getLocalRootArkUINode() override;
 };
 } // namespace rnoh

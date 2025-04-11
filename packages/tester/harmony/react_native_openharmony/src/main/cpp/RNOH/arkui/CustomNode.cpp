@@ -23,6 +23,7 @@ void CustomNode::receiveCustomEvent(ArkUI_NodeCustomEvent* event) {
   switch (type) {
     case ARKUI_NODE_CUSTOM_EVENT_ON_MEASURE:
       node->onMeasure();
+      node->onMeasure(type);
       break;
     case ARKUI_NODE_CUSTOM_EVENT_ON_LAYOUT:
       node->onLayout();
@@ -75,7 +76,10 @@ void CustomNode::insertChild(ArkUINode& child, std::size_t index) {
   maybeThrow(NativeNodeApi::getInstance()->insertChildAt(
       m_nodeHandle, child.getArkUINodeHandle(), static_cast<int32_t>(index)));
 }
-
+void CustomNode::addChild(ArkUINode& child) {
+  maybeThrow(NativeNodeApi::getInstance()->addChild(
+      m_nodeHandle, child.getArkUINodeHandle()));
+}
 void CustomNode::removeChild(ArkUINode& child) {
   maybeThrow(NativeNodeApi::getInstance()->removeChild(
       m_nodeHandle, child.getArkUINodeHandle()));
@@ -97,9 +101,9 @@ void CustomNode::onNodeEvent(
   if (eventType == ArkUI_NodeEventType::NODE_ON_HOVER) {
     if (m_customNodeDelegate != nullptr) {
       if (eventArgs[0].i32 != 0) {
-        m_customNodeDelegate->onHoverIn(m_customNodeDelegate);
+        m_customNodeDelegate->onHoverIn();
       } else {
-        m_customNodeDelegate->onHoverOut(m_customNodeDelegate);
+        m_customNodeDelegate->onHoverOut();
       }
     }
   }
@@ -107,7 +111,7 @@ void CustomNode::onNodeEvent(
 
 void CustomNode::onClick() {
   if (m_customNodeDelegate != nullptr) {
-    m_customNodeDelegate->onClick(m_customNodeDelegate);
+    m_customNodeDelegate->onClick();
   }
 }
 
@@ -117,6 +121,7 @@ void CustomNode::onMeasure() {
   maybeThrow(NativeNodeApi::getInstance()->setMeasuredSize(
       m_nodeHandle, width, height));
 }
+void CustomNode::onMeasure(ArkUI_NodeCustomEventType eventType) {}
 
 void CustomNode::onLayout() {}
 
@@ -150,6 +155,16 @@ CustomNode& CustomNode::setLayoutRect(
   auto height = static_cast<int32_t>(size.height * pointScaleFactor + 0.5);
   updateMeasuredSize(width, height);
   ArkUINode::setLayoutRect(position, size, pointScaleFactor);
+  return *this;
+}
+
+CustomNode& CustomNode::setFocusable(bool focusable) {
+  int32_t focusableValue = focusable;
+  ArkUI_NumberValue preparedFocusable[] = {{.i32 = focusableValue}};
+  ArkUI_AttributeItem focusItem = {
+      preparedFocusable, sizeof(preparedFocusable) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_FOCUSABLE, &focusItem));
   return *this;
 }
 
