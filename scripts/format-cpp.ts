@@ -61,7 +61,7 @@ export async function findChangedCppFiles(): Promise<Set<string>> {
   for (const path of changedFiles) {
     if (
       (!path.endsWith('.cpp') && !path.endsWith('.h')) ||
-      path.includes('third-party') ||
+      (path.includes('third-party') && !path.includes('third-party/jsvm')) ||
       path.includes('generated') ||
       path.includes('patches')
     ) {

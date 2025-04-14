@@ -24,6 +24,7 @@ target_link_libraries(
          folly
          reactnative
          bridgelesshermes
+         bridgelessjsvm
          hermes_inspector_modern
          )
 

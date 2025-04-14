@@ -56,3 +56,4 @@ set(hermes_include_dirs "${hermes_SOURCE_DIR}/API"
                         "${hermes_SOURCE_DIR}/public")
 
 add_subdirectory("rn")
+add_subdirectory("jsvm")
