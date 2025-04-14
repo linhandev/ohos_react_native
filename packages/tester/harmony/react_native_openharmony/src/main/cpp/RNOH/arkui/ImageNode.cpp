@@ -15,6 +15,10 @@ static constexpr ArkUI_NodeEventType IMAGE_NODE_EVENT_TYPES[] = {
     NODE_IMAGE_ON_ERROR,
     NODE_IMAGE_ON_DOWNLOAD_PROGRESS};
 
+using namespace std::literals;
+constexpr std::string_view ASSET_PREFIX = "asset://"sv;
+const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
+
 namespace rnoh {
 
 ImageNode::ImageNode()
@@ -58,6 +62,20 @@ void ImageNode::onNodeEvent(
       m_imageNodeDelegate->onProgress(eventArgs[0].u32, eventArgs[1].u32);
     }
   }
+}
+ImageNode& ImageNode::setSources(std::string const& uri, std::string prefix) {
+  m_uri = uri;
+  ArkUI_AttributeItem item;
+  std::string absolutePath = prefix == "" ? RAWFILE_PREFIX : prefix;
+  if (uri.rfind(ASSET_PREFIX, 0) == 0) {
+    absolutePath += uri.substr(ASSET_PREFIX.size());
+    item = {.string = absolutePath.c_str()};
+  } else {
+    item = {.string = uri.c_str()};
+  }
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_IMAGE_SRC, &item));
+  return *this;
 }
 
 ImageNode& ImageNode::setSource(std::string const& imageSource) {
@@ -200,9 +218,11 @@ ImageNode& ImageNode::setResizeMethod(std::string const& resizeMethod) {
   return *this;
 }
 
-ImageNode& ImageNode::setAlt(std::string const& imageSource) {
-  if (!imageSource.empty()) {
-    ArkUI_AttributeItem item = {.string = imageSource.c_str()};
+ImageNode& ImageNode::setAlt(std::string const& uri, std::string prefix) {
+  if (!uri.empty()) {
+    std::string resourceStr = prefix == "" ? RAWFILE_PREFIX : prefix;
+    resourceStr += uri.substr(ASSET_PREFIX.size());
+    ArkUI_AttributeItem item = {.string = resourceStr.c_str()};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_IMAGE_ALT, &item));
   }

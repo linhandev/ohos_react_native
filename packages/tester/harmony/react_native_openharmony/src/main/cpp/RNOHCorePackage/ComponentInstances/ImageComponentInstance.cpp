@@ -32,13 +32,6 @@ ImageComponentInstance::ImageComponentInstance(Context context)
       facebook::react::ImportantForAccessibility::Auto);
 }
 
-std::string ImageComponentInstance::resolveSourceWithAssetPrefix(
-    std::string const& imageUri) {
-  auto assetsPrefix = this->getAssetsPrefix();
-  auto imageSource = assetsPrefix + imageUri.substr(ASSET_PREFIX.size());
-  return imageSource;
-}
-
 void ImageComponentInstance::setSources(
     facebook::react::ImageSources const& sources) {
   // Defined layoutMetrics are necessary for determining the best source
@@ -139,14 +132,14 @@ void ImageComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
 
   if (m_props->defaultSource != props->defaultSource) {
     this->getLocalRootArkUINode().setAlt(
-        this->resolveSourceWithAssetPrefix(props->defaultSource.uri));
+        props->defaultSource.uri, this->getAssetsPrefix());
   }
 
   if (m_rawProps.loadingIndicatorSource != rawProps.loadingIndicatorSource) {
     m_rawProps.loadingIndicatorSource = rawProps.loadingIndicatorSource;
     if (m_rawProps.loadingIndicatorSource.has_value()) {
-      this->getLocalRootArkUINode().setAlt(this->resolveSourceWithAssetPrefix(
-          m_rawProps.loadingIndicatorSource.value()));
+      this->getLocalRootArkUINode().setAlt(
+          m_rawProps.loadingIndicatorSource.value(), this->getAssetsPrefix());
     }
   }
 
@@ -270,7 +263,7 @@ std::string ImageComponentInstance::getAssetsPrefix() {
   auto bundlePath = getBundlePath();
   auto position = bundlePath.rfind('/');
 
-  if (position == std::string::npos) {
+  if (position == std::string::npos || bundlePath.find('/', 0) != 0) {
     return std::string(RAWFILE_PREFIX);
   }
 
