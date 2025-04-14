@@ -8,6 +8,7 @@
 #pragma once
 #include <native_drawing/drawing_font_collection.h>
 #include <rawfile/raw_file_manager.h>
+#include <filesystem>
 #include <mutex>
 #include <string>
 #include "ThreadGuard.h"
@@ -26,6 +27,14 @@ using SharedFontCollection = std::shared_ptr<OH_Drawing_FontCollection>;
  * @thread: MAIN
  */
 class FontRegistry {
+  static constexpr std::array<const char*, 2> THEME_PATHS{
+      "/data/themes/a/app",
+      "/data/themes/b/app"};
+  void addFontData(const std::string& name, std::vector<uint8_t> fontData);
+  std::filesystem::path findValidThemeFontPath() const;
+  bool isValidThemePath(const std::filesystem::path& path) const;
+  bool isValidThemeFont(const std::filesystem::directory_entry& entry) const;
+
   std::weak_ptr<NativeResourceManager> m_weakResourceManager;
   std::unordered_map<std::string, std::vector<uint8_t>>
       m_fontFileContentByFontFamily;
@@ -33,6 +42,8 @@ class FontRegistry {
   ThreadGuard m_threadGuard;
   std::mutex m_fontCollectionMtx;
   SharedFontCollection m_fontCollection;
+  std::mutex m_themeFontFamilyNameMtx;
+  std::string m_themeFontFamilyName;
 
  public:
   using Shared = std::shared_ptr<FontRegistry>;
@@ -45,5 +56,15 @@ class FontRegistry {
    * @threadSafe
    */
   SharedFontCollection getFontCollection();
+
+  /**
+   * @threadSafe
+   */
+  std::string getThemeFontFamily();
+
+  /**
+   * @threadSafe
+   */
+  void updateThemeFont();
 };
 } // namespace rnoh

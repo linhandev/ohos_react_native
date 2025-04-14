@@ -61,14 +61,21 @@ void FontRegistry::registerFont(
   auto resourceManager = m_weakResourceManager.lock();
   if (resourceManager == nullptr) {
     LOG(ERROR) << "Couldn't register font " << name
-               << " — resourceManager is nullptr";
+               << " - resourceManager is nullptr";
     return;
   };
-  auto fontData = fontFilePath[0] == '/'
+  auto fontData = fontFilePath.starts_with('/')
       ? readSandboxFile(fontFilePath)
       : readRawFile(resourceManager.get(), fontFilePath);
+  addFontData(name, std::move(fontData));
+}
+
+void FontRegistry::addFontData(
+    const std::string& name,
+    std::vector<uint8_t> fontData) {
+  m_threadGuard.assertThread();
   auto lock = std::lock_guard(m_fontFileContentByFontFamilyMtx);
-  m_fontFileContentByFontFamily.emplace(name, std::move(fontData));
+  m_fontFileContentByFontFamily.insert_or_assign(name, std::move(fontData));
   // NOTE: fonts cannot be added to an existing collection, so we need to
   // recreate it the next time `getFontCollection` is called
   auto fontCollectionLock = std::lock_guard(m_fontCollectionMtx);
@@ -93,4 +100,77 @@ SharedFontCollection FontRegistry::getFontCollection() {
   }
   m_fontCollection = fontCollection;
   return fontCollection;
+}
+
+std::string FontRegistry::getThemeFontFamily() {
+  std::lock_guard<std::mutex> lock(m_themeFontFamilyNameMtx);
+  return m_themeFontFamilyName;
+}
+
+void FontRegistry::updateThemeFont() {
+  std::lock_guard lock(m_themeFontFamilyNameMtx);
+
+  if (auto fontPath = findValidThemeFontPath(); !fontPath.empty()) {
+    std::filesystem::path path(fontPath);
+    const auto fontName = path.stem().string();
+
+    if (fontName == "default") {
+      m_themeFontFamilyName.clear();
+      return;
+    }
+
+    if (fontName != m_themeFontFamilyName) {
+      addFontData(m_themeFontFamilyName, readSandboxFile(fontPath));
+    }
+    m_themeFontFamilyName = fontName;
+  } else {
+    m_themeFontFamilyName.clear();
+  }
+}
+
+std::filesystem::path FontRegistry::findValidThemeFontPath() const {
+  for (const auto& basePath : THEME_PATHS) {
+    try {
+      std::filesystem::path themePath(basePath);
+      if (!isValidThemePath(themePath))
+        continue;
+
+      auto fontDir = themePath / "fonts";
+      for (const auto& entry : std::filesystem::directory_iterator(fontDir)) {
+        if (isValidThemeFont(entry)) {
+          return entry;
+        }
+      }
+    } catch (const std::filesystem::filesystem_error& e) {
+      LOG(WARNING) << "Theme scan error: " << e.what();
+    }
+  }
+  return {};
+}
+
+bool FontRegistry::isValidThemePath(const std::filesystem::path& path) const {
+  bool hasFlag = false;
+  bool hasFonts = false;
+
+  try {
+    for (const auto& entry : std::filesystem::directory_iterator(path)) {
+      if (entry.is_regular_file() && entry.path().filename() == "flag") {
+        hasFlag = true;
+      } else if (entry.is_directory() && entry.path().filename() == "fonts") {
+        hasFonts = true;
+      }
+
+      if (hasFlag && hasFonts)
+        return true;
+    }
+  } catch (const std::filesystem::filesystem_error&) {
+    return false;
+  }
+  return false;
+}
+
+bool FontRegistry::isValidThemeFont(
+    const std::filesystem::directory_entry& entry) const {
+  return entry.is_regular_file() && (entry.path().extension() == ".ttf") &&
+      entry.path().stem().string() != m_themeFontFamilyName;
 }

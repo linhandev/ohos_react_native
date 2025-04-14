@@ -226,9 +226,18 @@ void StyledStringWrapper::addTextFragment(
         textStyle.get(),
         mapValueToFontWeight(int(fragment.textAttributes.fontWeight.value())));
   }
+
+  // fontFamily
+  std::vector<const char*> fontFamilies;
+  if (!m_themeFontFamilyName.empty()) {
+    fontFamilies.emplace_back(m_themeFontFamilyName.c_str());
+  }
   if (!fragment.textAttributes.fontFamily.empty()) {
-    const char* fontFamilies[] = {fragment.textAttributes.fontFamily.c_str()};
-    OH_Drawing_SetTextStyleFontFamilies(textStyle.get(), 1, fontFamilies);
+    fontFamilies.emplace_back(fragment.textAttributes.fontFamily.c_str());
+  }
+  if (fontFamilies.size() > 0) {
+    OH_Drawing_SetTextStyleFontFamilies(
+        textStyle.get(), fontFamilies.size(), fontFamilies.data());
   }
 
   if (fragment.textAttributes.fontVariant.has_value()) {
