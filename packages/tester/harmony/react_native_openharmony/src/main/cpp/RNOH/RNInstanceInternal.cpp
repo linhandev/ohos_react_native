@@ -420,8 +420,12 @@ void RNInstanceInternal::onAnimationStarted() {
   m_unsubscribeUITickListener =
       m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
         m_taskExecutor->runTask(
-            TaskThread::MAIN, [this, recentVSyncTimestamp]() {
-              this->onUITick(recentVSyncTimestamp);
+            TaskThread::MAIN,
+            [weakSelf = weak_from_this(), recentVSyncTimestamp]() {
+              if (auto self = std::dynamic_pointer_cast<RNInstanceInternal>(
+                      weakSelf.lock())) {
+                self->onUITick(recentVSyncTimestamp);
+              }
             });
       });
 }
