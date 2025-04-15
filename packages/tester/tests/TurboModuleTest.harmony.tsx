@@ -53,6 +53,13 @@ export function TurboModuleTest() {
             expect(timesCalled).to.equal(2);
           }}
         />
+        <TestCase.Logical
+          itShould="return expect result when calling getValueWithPromise"
+          fn={async ({expect}) => {
+            const result = await SampleTurboModule.getValueWithPromise(false);
+            expect(result).to.equal('result!');
+          }}
+        />
         <CommonTurboModuleTestCases sampleTurboModule={SampleTurboModule} />
       </TestSuite>
       <TestSuite name="generated">
