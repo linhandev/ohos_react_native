@@ -115,7 +115,7 @@ LOG(INFO) << "StartupLogger " << startupLogger.getRunJSBundleEndTime();
 You should not use ReactMarker for adding your custom traces. For such cases please use regular Systrace.
 
 ## Further details
-- [Common trace usage instructions](https://docs.openharmony.cn/pages/v4.0/en/application-dev/performance/common-trace-using-instructions.md)
-- [Analyzing application performance using SmartPerf-Host](https://docs.openharmony.cn/pages/v4.0/zh-cn/application-dev/performance/performance-optimization-using-smartperf-host.md)
+- [Common trace usage instructions](https://docs.openharmony.cn/pages/v5.0/en/application-dev/performance/common-trace-using-instructions.md)
+- [Analyzing application performance using SmartPerf-Host](https://docs.openharmony.cn/pages/v5.0/en/application-dev/performance/performance-optimization-using-smartperf-host.md)
 - [Development of Performance Tracing (ArkTS)
-](https://docs.openharmony.cn/pages/v4.0/en/application-dev/dfx/hitracemeter-guidelines.md)
+](https://docs.openharmony.cn/pages/v5.0/en/application-dev/dfx/hitracemeter-guidelines.md)

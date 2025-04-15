@@ -201,6 +201,25 @@ class ComponentInstance
   virtual void finalizeUpdates() {
     this->onFinalizeUpdates();
   }
+  /**
+   * @deprecated: This method shouldn't be part of the API. It's an internal
+   * method. Deprecated when preparing 0.77 branch for a release.
+   * @internal
+   * @return Index of this component within its parent.
+   */
+  virtual std::size_t const getIndex() const {
+    return m_index;
+  }
+
+  /**
+   * @deprecated: This method shouldn't be part of the API. It's an internal
+   * method. Deprecated when preparing 0.77 branch for a release.
+   * @internal
+   * @param index — of this component within its parent.
+   */
+  virtual void setIndex(std::size_t index) {
+    m_index = index;
+  }
 
  public:
   /**
@@ -308,19 +327,7 @@ class ComponentInstance
  protected:
   virtual void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
-      std::size_t index) {
-    m_index = index;
-  }
-
-  /**
-   * @deprecated: This method shouldn't be part of the API. It's an internal
-   * method. Deprecated when preparing 0.77 branch for a release.
-   * @internal
-   * @return Index of this component within its parent.
-   */
-  virtual std::size_t const getIndex() const {
-    return m_index;
-  }
+      std::size_t index) {}
 
   virtual void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) {}
@@ -400,6 +407,7 @@ class ComponentInstance
   /**
    * @deprecated: This property should be private.
    * Deprecated when preparing 0.77 version for a release.
+   * Index of this component within its parent.
    * @internal
    */
   std::size_t m_index = 0;
