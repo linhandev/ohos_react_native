@@ -71,6 +71,11 @@ export default function RemoveClippedTest() {
         itShould="display items correctly when `removeClippedSubviews` property is toggled">
         <ToggleablePropTest />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="display without blank upon swiftly flinging from the bottom to the top">
+        <LargeScrollEventThrottleTest />
+      </TestCase.Example>
     </TestSuite>
   );
 }
@@ -168,5 +173,29 @@ const ToggleablePropTest = () => {
         style={{marginHorizontal: 15}}
       />
     </View>
+  );
+};
+
+const LargeScrollEventThrottleTest = () => {
+  const blocks = Array.from({length: 20}, (_, i) => i);
+
+  return (
+    <ScrollView
+      style={{height: 150}}
+      showsVerticalScrollIndicator={false}
+      scrollEventThrottle={200}
+      bounces={false}
+      removeClippedSubviews>
+      {blocks.map((_, index) => (
+        <View
+          key={index}
+          style={{
+            height: 24,
+            backgroundColor: 'red',
+          }}>
+          <Text>{index}</Text>
+        </View>
+      ))}
+    </ScrollView>
   );
 };
