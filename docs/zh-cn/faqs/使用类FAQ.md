@@ -567,3 +567,28 @@
   ```json5
     "querySchemes": ["http", "https"],
   ```
+  ### RNApp、RNSurface作为子组件嵌入ArkTs原生Scroll组件时，滑动会触发子组件的点击事件
+
+- 现象
+
+  在用户滚动过程中，当触碰到React Native组件时，滚动事件和点击事件会同时触发，导致滚动过程中意外触发了子组件的点击。
+
+- 原因
+
+  在ArkTs原生Scroll组件（或者类似有滚动功能的ArkTs原生组件）的滚动事件里，未对 React Native 框架的点击事件透传进行取消操作。
+
+- 方案
+
+  当遇到类似问题时，可以在原生滚动组件上设置 `onScroll` 事件。在该事件的处理逻辑中，调被封装的 React Native 组件 `rnInstance` 或者 `rnohCoreContext` 的 `cancelTouches` 方法，以阻止滑动过程中 React Native 内部触摸的触发。
+
+- 示例代码  
+
+```typescript
+    Scroll() {
+        RNApp({...})
+    }
+    .onScroll(() => {
+        this.rnInstance!.cancelTouches();
+    })  
+``` 
+
