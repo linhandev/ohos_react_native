@@ -20,6 +20,8 @@ import {
 } from './RNOH';
 import {
   ViewBaseProps,
+  ViewDescriptorWrapper,
+  ViewDescriptorWrapperBase,
   ViewRawProps
 } from './RNOHCorePackage/components/RNViewBase';
 import { TouchDispatcher } from './RNOH/TouchDispatcher';
@@ -35,12 +37,14 @@ export type RootDescriptor = Descriptor<"RootView", ViewBaseProps, RootViewState
 export interface SurfaceConfig {}
 
 export interface SurfaceConfig1 extends SurfaceConfig {
-  surfaceHandle: SurfaceHandle
+  surfaceHandle: SurfaceHandle,
+  isSurfaceContentAdaptive?: boolean
 }
 
 export interface SurfaceConfig2 extends SurfaceConfig {
   appKey: string,
   initialProps: SurfaceProps,
+  isSurfaceContentAdaptive?: boolean
 }
 
 interface RootComponentDimensionsChangedPayload {
@@ -64,11 +68,8 @@ interface Constraints {
   maxHeight?: number
 }
 
-/**
- * @api: RN_APP_DEVELOPER
- */
 @Component
-export struct RNSurface {
+struct ContentAdaptiveSurface {
   /**
    * Required.
    */
@@ -310,3 +311,261 @@ export struct RNSurface {
     .onTouch((e) => this.handleTouch(e))
   }
 }
+
+@Component
+struct ParentBoundSurface {
+  /**
+   * Required.
+   */
+  public ctx!: RNOHContext | RNComponentContext;
+  /**
+   * Required
+   */
+  public surfaceConfig!: SurfaceConfig;
+  /**
+   * Not Required,
+   * Used to return the corresponding RNInstance and root tag for this 
+   * specific RNSurface. 
+   */
+  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
+  /**
+   * Required if ctx isn't RNComponentContext
+   * @deprecated: provide RNComponentContext to RNSurface::ctx instead
+   */
+  @BuilderParam buildCustomComponent: (ctx: ComponentBuilderContext) => void;
+  // -------------------------------------------------------------------------------------------------------------------
+  private surfaceWidth: number = 0;
+  private surfaceHeight: number = 0;
+  private surfaceOffsetX: number = 0;
+  private surfaceOffsetY: number = 0;
+  @State private descriptor: RootDescriptor = Object() as RootDescriptor;	
+  @State private descriptorWrapper: ViewDescriptorWrapperBase | undefined = undefined
+  @State private shouldStartSurface: boolean = false;
+  private surfaceHandle!: SurfaceHandle;
+  private cleanUpCallbacks: (() => void)[] = [];
+  private touchDispatcher!: TouchDispatcher;
+  private shouldStopSurface: boolean = false;
+  private initialProps!: SurfaceProps;
+  private logger!: RNOHLogger
+  private rootViewNodeContent: NodeContent = new NodeContent();
+  private timerId: undefined | number = undefined;
+  private lastChangeTime: number = 0;
+  private isWindowRectDrag: boolean = false;
+  private currentMeasuredSize: Size | undefined = undefined;
+  private lastChangeFlag: boolean = false;
+  /**
+  * Note: You may need to change this delay along with RNInstancesCoordinator's 
+  * onWindowSizeChange delay, as both have an effect on window changes. 
+  */
+  private readonly delayTime: number = 100;
+
+  aboutToAppear() {
+    this.logger = this.ctx.logger.clone("RNSurface")
+    if (!(this.ctx instanceof RNComponentContext)) {
+      this.ctx.reportRNOHError(new RNOHError({
+        whatHappened: "RNSurface received RNOHContext instead of RNComponentContext. Custom RN components won't be visible.",
+        howCanItBeFixed: ["Provide RNComponentContext instead of RNOHContext"]
+      }))
+    }
+    const stopTracing = this.logger.clone("aboutToAppear").startTracing();
+    (this.ctx.rnInstance as RNInstanceImpl).setUIContext(this.getUIContext());
+    this.ctx.rnInstance.setFrameNodeFactory(new CustomRNComponentFrameNodeFactory(this.getUIContext(), this.ctx.logger,
+      () => {
+        return this.ctx as RNComponentContext
+      }))
+    if (Object.keys(this.surfaceConfig).includes("surfaceHandle")) {
+      this.surfaceHandle = (this.surfaceConfig as SurfaceConfig1).surfaceHandle;
+      this.surfaceHandle.setDisplayMode(DisplayMode.Visible);
+    } else {
+      this.surfaceHandle = this.ctx.rnInstance.createSurface((this.surfaceConfig as SurfaceConfig2).appKey);
+      this.initialProps = (this.surfaceConfig as SurfaceConfig2).initialProps;
+      this.shouldStartSurface = true;
+      this.shouldStopSurface = true;
+    }
+    const tag = this.surfaceHandle.getTag();
+    this.updateViewRootTag && this.updateViewRootTag(this.ctx.rnInstance, tag);
+    this.onUpdateComponent(this.ctx.rnInstance.descriptorRegistry.getDescriptor(tag))
+    this.touchDispatcher = new TouchDispatcher(tag, this.ctx.rnInstance, this.ctx.logger)
+    this.cleanUpCallbacks.push(this.ctx.descriptorRegistry.subscribeToDescriptorChanges(	
+      tag,	
+      (newDescriptor) => this.onUpdateComponent(newDescriptor)	
+    ))
+    this.cleanUpCallbacks.push(
+      this.ctx.rnInstance.subscribeToLifecycleEvents("WINDOW_REACT_DRAG", 
+      (isWindowRectDrag: boolean) => {
+        this.isWindowRectDrag = isWindowRectDrag;
+      })
+    )
+    this.surfaceHandle.attachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag(),
+      this.rootViewNodeContent);
+    stopTracing()
+  }
+
+  aboutToDisappear() {
+    const surfaceHandle = this.surfaceHandle;
+    if (this.timerId) {
+      clearTimeout(this.timerId);
+      this.timerId = undefined;
+    }
+    (async () => {
+      const stopTracing = this.logger.clone("aboutToDisappear").startTracing()
+      this.cleanUpCallbacks.forEach(cb => cb())
+      if (this.shouldStopSurface) {
+        if (!surfaceHandle.isDestroyed()) {
+          // NOTE: when the app is stopping, it's possible the ability cleaned up the surface
+          // before us. This is fine.
+          await surfaceHandle.stop();
+          surfaceHandle.destroy();
+        }
+      } else if (surfaceHandle.getDisplayMode() === DisplayMode.Visible) {
+        surfaceHandle.setDisplayMode(DisplayMode.Suspended);
+      }
+      this.surfaceHandle.detachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag())
+      stopTracing()
+    })()
+
+  }
+
+  onUpdateComponent(newDescriptor: Descriptor) {	
+    this.descriptor = newDescriptor as RootDescriptor	
+    this.descriptorWrapper = new ViewDescriptorWrapper(newDescriptor)
+  }
+
+  handleAreaChange(_oldValue: Area, newValue: Area) {
+    const stopTracing = this.logger.clone("handleAreaChange").startTracing()
+    this.surfaceWidth = newValue.width as number
+    this.surfaceHeight = newValue.height as number
+    this.surfaceOffsetX = newValue.globalPosition.x as number
+    this.surfaceOffsetY = newValue.globalPosition.y as number
+    this.updateSurfaceConstraints()
+    stopTracing()
+  }
+
+  updateSurfaceConstraints() {
+    let isRTL = this.ctx.rnInstance.getTurboModule<I18nManagerTurboModule>('I18nManager').getConstants()
+      .isRTL;
+    if (this.shouldStartSurface) {
+      this.surfaceHandle.setDisplayMode(DisplayMode.Visible)
+      this.surfaceHandle.start(	
+        {
+          width: this.surfaceWidth,
+          height: this.surfaceHeight,
+          surfaceOffsetX: this.surfaceOffsetX,
+          surfaceOffsetY: this.surfaceOffsetY,
+          pixelRatio: vp2px(1),
+          isRTL,
+        },
+        this.initialProps)
+      this.shouldStartSurface = false
+    } else {
+      this.surfaceHandle.updateConstraints({	
+        width: this.surfaceWidth,
+        height: this.surfaceHeight,
+        surfaceOffsetX: this.surfaceOffsetX,
+        surfaceOffsetY: this.surfaceOffsetY,
+        pixelRatio: vp2px(1),
+        isRTL,
+      });
+    }
+  }
+
+  handleTouch(event: TouchEvent) {
+    if (this.ctx.rnInstance.getArchitecture() === "ARK_TS") {
+      this.logger.clone("handleTouch").debug()
+      this.touchDispatcher.handleTouchEvent(event)
+    }
+  }
+
+  build() {
+    Stack() {
+      if (this.ctx.rnInstance.getArchitecture() === "C_API") {
+        ContentSlot(this.rootViewNodeContent)
+      } else {
+        if (this.ctx instanceof RNComponentContext) {
+          RNView({
+            ctx: this.ctx,
+            tag: this.surfaceHandle.getTag()
+          }) //  NOTE: This is wrong. RNOH should allow replacing RootComponent.
+        } else {
+          RNComponentFactory({
+            ctx: this.ctx,
+            tag: this.surfaceHandle.getTag(),
+            buildCustomComponent: this.buildCustomComponent
+          })
+        }
+      }
+    }
+    .width("100%")	
+    .height("100%")	
+    .onAreaChange((oldArea, newArea) => this.handleAreaChange(oldArea, newArea))
+    .onTouch((e) => this.handleTouch(e))
+  }
+}
+
+
+/**
+ * @api: RN_APP_DEVELOPER
+ */
+@Component
+export struct RNSurface {
+  /**
+   * Required.
+   */
+  public ctx!: RNOHContext | RNComponentContext;
+  /**
+   * Required
+   */
+  public surfaceConfig!: SurfaceConfig;
+  /**
+   * Not Required,
+   * Used to return the corresponding RNInstance and root tag for this 
+   * specific RNSurface. 
+   */
+  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
+  /**
+   * Optional
+   * If provided, those constraints will be used instead of those provided by ArkUI. Useful, if maxWidth or maxHeight
+   * must be different than the default values with .width(...) and .height(...).
+   *
+   * NOTE: you may need to remove "flex: 1" style from AppContainer in your JS bundle to adjust RNSurface to its content.
+   * In RN@0.72.5, this is not possible without patching RN code. RN@0.75.0 introduced a new method:
+   * AppRegistry.setRootViewStyleProvider which should allow removing that flex without creating the patch.
+   */
+  public constraints: Constraints | undefined = undefined
+  /**
+   * Required if ctx isn't RNComponentContext
+   * @deprecated: provide RNComponentContext to RNSurface::ctx instead
+   */
+  @BuilderParam buildCustomComponent: (ctx: ComponentBuilderContext) => void
+  // -------------------------------------------------------------------------------------------------------------------
+  private isSurfaceContentAdaptive: boolean | undefined = undefined
+
+  aboutToAppear() {
+    if (Object.keys(this.surfaceConfig).includes("surfaceHandle")) {
+      this.isSurfaceContentAdaptive = (this.surfaceConfig as SurfaceConfig1).isSurfaceContentAdaptive;
+    } else {
+      this.isSurfaceContentAdaptive = (this.surfaceConfig as SurfaceConfig2).isSurfaceContentAdaptive;
+    }
+  }
+
+  build() {
+    if (this.isSurfaceContentAdaptive == undefined ||
+          this.isSurfaceContentAdaptive) {
+      ContentAdaptiveSurface({
+        ctx: this.ctx,
+        surfaceConfig: this.surfaceConfig,
+        updateViewRootTag: this.updateViewRootTag,
+        constraints: this.constraints,
+        buildCustomComponent: this.buildCustomComponent
+      })
+    } else {
+      ParentBoundSurface({
+        ctx: this.ctx,
+        surfaceConfig: this.surfaceConfig,
+        updateViewRootTag: this.updateViewRootTag,
+        buildCustomComponent: this.buildCustomComponent
+      })
+    } 
+  }
+}
+
