@@ -278,7 +278,11 @@ void RNInstanceInternal::loadScriptFromRawFile(
       rawFileUrl, m_nativeResourceManager.get());
   uint64_t extractedMagic{};
   if (jsBundle->size() >= sizeof(uint64_t)) {
-    memcpy(&extractedMagic, jsBundle->c_str(), sizeof(uint64_t));
+    const char* source = jsBundle->c_str();
+    std::copy(
+        source,
+        source + sizeof(uint64_t),
+        reinterpret_cast<uint8_t*>(&extractedMagic));
   }
   if (jsBundle) {
     DLOG(INFO) << "Loaded bundle from rawfile resource";
