@@ -7,7 +7,6 @@
 
 import http from '@ohos.net.http'
 import util from "@ohos.util";
-import { url } from '@kit.ArkTS';
 
 import { AnyThreadTurboModule, WorkerTurboModule } from "../../../RNOH/TurboModule";
 import { NetworkEventsDispatcher } from './NetworkEventDispatcher';
@@ -191,18 +190,7 @@ export class NetworkingTurboModule extends AnyThreadTurboModule {
 
   private isEncodedURI(str: string): boolean {
     try {
-      /**
-       * Only encodeURI and encodeURIComponent are used for 
-       * URI encoding by default. 
-       * There's situation that decodeURI cannot decode all 
-       * special symbols in the given url, e.g. symbols like / and :. 
-       * Therefore we decode given url twice and see if they are the same 
-       * to avoid double encoding. 
-       */
-      let decodedStr = decodeURI(str);
-      if (decodedStr === str) {
-        decodedStr = decodeURIComponent(str);
-      }
+      const decodedStr = decodeURI(str);
       return decodedStr !== str;
     } catch (e) {
       return false;
@@ -213,18 +201,7 @@ export class NetworkingTurboModule extends AnyThreadTurboModule {
     if (this.isEncodedURI(str)) {
       return str;
     }
-    try {
-      const urlObject = url.URL.parseURL(str);
-      urlObject.host = encodeURI(urlObject.host);
-      urlObject.pathname = encodeURI(urlObject.pathname);
-      urlObject.params.forEach((value, name) => {
-        var encodedValue = encodeURIComponent(value)
-        urlObject.params.set(name, encodedValue);
-      });
-      return urlObject.toString();
-    } catch (e) {
-      return encodeURI(str);
-    }
+    return str.replace(/[\u4e00-\u9fa5]/g, (char) => encodeURIComponent(char));
   }
 
   async sendRequest(query: Query, onRequestRegistered: (requestId: number) => void) {
