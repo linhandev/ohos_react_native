@@ -428,6 +428,51 @@ export const NetworkingTest = () => {
         />
       </TestSuite>
       <TestSuite name="WebSocket">
+        <TestSuite name="protocols">
+          <TestCase.Logical
+            skip={noInternetSkipMsg}
+            itShould="not fail when a protocol is specified"
+            fn={async ({expect}) => {
+              const ws = new WebSocket(
+                'ws://choiceappws.eastmoney.com/apprt',
+                'binary',
+              );
+              ws.binaryType = 'arraybuffer';
+
+              const result = await new Promise<boolean>((resolve, reject) => {
+                ws.addEventListener('open', () => {
+                  resolve(true);
+                });
+                ws.onerror = () => {
+                  reject();
+                };
+              });
+
+              expect(result).to.be.true;
+            }}
+          />
+          <TestCase.Logical
+            skip={noInternetSkipMsg}
+            itShould="fail when protocol is not specified"
+            fn={async ({expect}) => {
+              const ws = new WebSocket('ws://choiceappws.eastmoney.com/apprt');
+              ws.binaryType = 'arraybuffer';
+
+              try {
+                await new Promise<boolean>((resolve, reject) => {
+                  ws.addEventListener('open', () => {
+                    resolve(true);
+                  });
+                  ws.onerror = () => {
+                    reject();
+                  };
+                });
+                expect.fail('Expected failure');
+              } catch (err) {}
+            }}
+          />
+        </TestSuite>
+
         <TestCase.Logical
           skip={noInternetSkipMsg}
           itShould="receive back submitted data"

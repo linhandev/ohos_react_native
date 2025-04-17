@@ -100,8 +100,14 @@ export class WebSocketTurboModule extends AnyThreadTurboModule {
       })
 
     })
-
-    ws.connect(url, { header: options.headers, protocol: (protocols ? protocols.join(',') : undefined) },
+    const wsOptions: webSocket.WebSocketRequestOptions = {}
+    if (options.headers) {
+      wsOptions.header = options.headers
+    }
+    if (protocols && protocols.length > 0) {
+      wsOptions.protocol = protocols.join(",")
+    }
+    ws.connect(url, wsOptions,
       (err) => this.maybeHandleError(socketID, err));
     this.socketById.set(socketID, ws);
   }
