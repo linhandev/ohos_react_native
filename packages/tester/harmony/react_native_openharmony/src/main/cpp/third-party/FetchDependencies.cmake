@@ -33,20 +33,6 @@ FetchContent_Declare(
   URL https://github.com/boostorg/boost/releases/download/boost-1.82.0/boost-1.82.0.tar.xz
   OVERRIDE_FIND_PACKAGE)
 
-# LIBEVENT
-set(EVENT__DISABLE_THREAD_SUPPORT
-    ON
-    CACHE BOOL "" FORCE)
-set(EVENT__DISABLE_OPENSSL
-    ON
-    CACHE BOOL "" FORCE)
-FetchContent_Declare(
-  LibEvent
-  GIT_REPOSITORY https://gitcode.com/gh_mirrors/li/libevent.git
-  GIT_TAG 5df3037d10556bfcb675bc73e516978b75fc7bc7 # release-2.1.12-stable
-  GIT_SHALLOW TRUE
-  OVERRIDE_FIND_PACKAGE)
-
 # HERMES
 FetchContent_Declare(
   Hermes
@@ -84,7 +70,6 @@ FetchContent_MakeAvailable(
   DoubleConversion
   Glog
   Boost
-  LibEvent
   Hermes
   Folly)
 
