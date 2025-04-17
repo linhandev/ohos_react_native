@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.72.65
+- fix: When shadowOpacity is greater than 1, the shadow effect is not rendered.,([64abbcc7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/64abbcc76c446cd7d73c62a320246be4c83468ad))
+- fix:Allow RNSurface to adapt to content or parent,([b970eb1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b970eb1ad4828bb1855ae84266cad77f6f996502))
+- revert url encode,([6efd70cf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6efd70cff8379a1ceecbfc26c6e696f03f2ea861))
+- chore: update to version 5.1.0.401(0.72.64),([aa734606](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aa734606c837ca55e5be03a479faf0200081e4f8))
+
 ## v0.72.64
 - fix: url encode check cannot cover encodeURIComponent type,([4276dacd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4276dacd892830a2706e9b54e6e75bc262b0bd5b))
 - fix: TextInput maxLength null and 0 do not work,([880d38aa](https://gitcode.com/openharmony-sig/ohos_react_native/commit/880d38aab3f96db590920d1af56d03ae22522e93))

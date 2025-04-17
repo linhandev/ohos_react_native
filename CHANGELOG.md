@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.1.0.402
+- fix: When shadowOpacity is greater than 1, the shadow effect is not rendered.,([64abbcc7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/64abbcc76c446cd7d73c62a320246be4c83468ad))
+- fix:Allow RNSurface to adapt to content or parent,([b970eb1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b970eb1ad4828bb1855ae84266cad77f6f996502))
+- Add instructions for version 5.1.0.402 of React native Harmony,([d2a4a0b5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d2a4a0b584f8be52dd0f9d3f071955f3c7c98dbc))
+- Add instructions for version 5.1.0.307 of React native Harmony,([1284ee94](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1284ee943f8b245fc7020ac49296998ea74d817a))
+- revert url encode,([6efd70cf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6efd70cff8379a1ceecbfc26c6e696f03f2ea861))
+- docx: 在FAQ里补充原生滚动阻止透传至RN组件点击事件的相关内容,([539fa3e3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/539fa3e3c0b751a9990bcf534758244f3f0f5b57))
+- Synchronize the Chinese and English readme content in the RN root directory,([63275293](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63275293664fa9df7f098b3e2997df2bd77e3896))
+- chore: update to version 5.1.0.401(0.72.64),([aa734606](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aa734606c837ca55e5be03a479faf0200081e4f8))
+
 ## 5.1.0.401
 - fix: url encode check cannot cover encodeURIComponent type,([4276dacd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4276dacd892830a2706e9b54e6e75bc262b0bd5b))
 - Add instructions for version 5.1.0.401 of React native Harmony,([1667dc10](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1667dc107ad79eabc544b2e5aa5e552a3030fdcd))
