@@ -336,6 +336,20 @@ export interface RNInstance {
    * @example registerFont("Pacifico-Regular", "/data/storage/el2/base/files/Pacifico-Regular.ttf")
    */
   registerFont(fontFamily: string, fontResource: Resource | string);
+
+  /**
+   * @architecture: C-API
+   * Sends an ArkTS `TouchEvent` to a specific `ComponentInstance` identified by the given tag.
+   * This is necessary when ArkTS touch events need to be propagated to a component instance—
+   * for example, when using ArkTS modal components such as `.bindSheet`.
+   *
+   * @param rootTouchTargetTag - The tag identifying the root touch target component.
+   * @param touchEvent - The touch event to be sent.
+   */
+  postTouchEventMessageToCpp(
+    rootTouchTargetTag: number,
+    touchEvent: TouchEvent,
+  );
 }
 
 /**
@@ -1119,6 +1133,16 @@ export class RNInstanceImpl implements RNInstance {
     })();
     this.fontPathByFontFamily[fontFamily] = fontPath;
     this.napiBridge.registerFont(this.id, fontFamily, fontPath);
+  }
+
+  public postTouchEventMessageToCpp(
+    rootTouchTargetTag: number,
+    touchEvent: TouchEvent,
+  ) {
+    this.postMessageToCpp('RNOH::TOUCH_EVENT', {
+      tag: rootTouchTargetTag,
+      touchEvent: touchEvent,
+    });
   }
 
   private registerRNOHMarker() {

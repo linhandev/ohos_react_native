@@ -10,20 +10,9 @@
 #include <arkui/ui_input_event.h>
 #include <unordered_map>
 #include "RNOH/TouchTarget.h"
+#include "TouchEvent.h"
 
 namespace rnoh {
-/**
- * @internal
- */
-struct TouchPoint {
-  int32_t id;
-  float force;
-  int32_t nodeX;
-  int32_t nodeY;
-  int32_t screenX;
-  int32_t screenY;
-};
-
 /**
  * @api
  */
@@ -33,6 +22,10 @@ class TouchEventDispatcher {
 
   void dispatchTouchEvent(
       ArkUI_UIInputEvent* event,
+      TouchTarget::Shared const& rootTarget);
+
+  void dispatchTouchEvent(
+      const TouchEvent& event,
       TouchTarget::Shared const& rootTarget);
 
   /**
@@ -53,6 +46,10 @@ class TouchEventDispatcher {
   void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget);
 
  private:
+  void findTargetAndSendTouchEvent(
+      TouchTarget::Shared const& rootTarget,
+      const TouchEvent& touchEvent);
+
   TouchTarget::Shared registerTargetForTouch(
       TouchPoint touchPoint,
       TouchTarget::Shared const& rootTarget);

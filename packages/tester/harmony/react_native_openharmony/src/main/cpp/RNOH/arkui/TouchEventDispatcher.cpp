@@ -11,7 +11,6 @@
 #include "RNOH/Assert.h"
 
 namespace rnoh {
-
 using Point = facebook::react::Point;
 
 static std::pair<TouchTarget::Shared, Point> findTargetForTouchPoint(
@@ -31,6 +30,12 @@ static std::pair<TouchTarget::Shared, Point> findTargetForTouchPoint(
     for (auto const& child : children) {
       if (child == nullptr) {
         RNOH_ASSERT(child != nullptr);
+        continue;
+      }
+      // If the child is used as a root touch target, we shouldn't attempt to
+      // find the touch point there. This prevents detecting unnecessary touches
+      // on components that are intended to receive touches only from ArkTS.
+      if (child->isRootTouchTarget()) {
         continue;
       }
       auto childPoint = target->computeChildPoint(point, child);
@@ -131,73 +136,21 @@ bool TouchEventDispatcher::canIgnoreMoveEvent(
   return true;
 }
 
-TouchPoint getActiveTouchFromEvent(ArkUI_UIInputEvent* event) {
-  TouchPoint actionTouch{};
-  auto screenX = int32_t(OH_ArkUI_PointerEvent_GetDisplayX(event));
-  auto screenY = int32_t(OH_ArkUI_PointerEvent_GetDisplayY(event));
-  auto touchPointCount = OH_ArkUI_PointerEvent_GetPointerCount(event);
-
-  for (auto idx = 0; idx < touchPointCount; idx++) {
-    if (screenX ==
-            int32_t(OH_ArkUI_PointerEvent_GetDisplayXByIndex(event, idx)) &&
-        screenY ==
-            int32_t(OH_ArkUI_PointerEvent_GetDisplayYByIndex(event, idx))) {
-      actionTouch = TouchPoint{
-          .id = OH_ArkUI_PointerEvent_GetPointerId(event, idx),
-          .force = OH_ArkUI_PointerEvent_GetPressure(event, idx),
-          .nodeX = int32_t(OH_ArkUI_PointerEvent_GetX(event)),
-          .nodeY = int32_t(OH_ArkUI_PointerEvent_GetY(event)),
-          .screenX = int32_t(OH_ArkUI_PointerEvent_GetDisplayX(event)),
-          .screenY = int32_t(OH_ArkUI_PointerEvent_GetDisplayY(event))};
-      break;
-    }
-  }
-  return actionTouch;
-}
-
-std::vector<TouchPoint> getTouchesFromEvent(ArkUI_UIInputEvent* event) {
-  std::vector<TouchPoint> result;
-  auto touchPointCount = OH_ArkUI_PointerEvent_GetPointerCount(event);
-  result.reserve(touchPointCount);
-  for (auto idx = 0; idx < touchPointCount; idx++) {
-    result.emplace_back(TouchPoint{
-        .id = OH_ArkUI_PointerEvent_GetPointerId(event, idx),
-        .force = OH_ArkUI_PointerEvent_GetPressure(event, idx),
-        .nodeX = int32_t(OH_ArkUI_PointerEvent_GetXByIndex(event, idx)),
-        .nodeY = int32_t(OH_ArkUI_PointerEvent_GetYByIndex(event, idx)),
-        .screenX =
-            int32_t(OH_ArkUI_PointerEvent_GetDisplayXByIndex(event, idx)),
-        .screenY =
-            int32_t(OH_ArkUI_PointerEvent_GetDisplayYByIndex(event, idx))});
-  }
-  return result;
-}
-
-void TouchEventDispatcher::dispatchTouchEvent(
-    ArkUI_UIInputEvent* event,
-    TouchTarget::Shared const& rootTarget) {
-  auto action = OH_ArkUI_UIInputEvent_GetAction(event);
-  auto timestamp = OH_ArkUI_UIInputEvent_GetEventTime(event);
-  std::vector<TouchPoint> activeTouchPoints;
-
-  if (action == UI_TOUCH_EVENT_ACTION_MOVE) {
-    activeTouchPoints = getTouchesFromEvent(event);
-  } else {
-    activeTouchPoints = {getActiveTouchFromEvent(event)};
-  }
-
+void TouchEventDispatcher::findTargetAndSendTouchEvent(
+    TouchTarget::Shared const& rootTarget,
+    const TouchEvent& touchEvent) {
   // react-native expects a timestamp in seconds (because rn multiplies the
   // value by 1e3). The timestamp passed by ArkUI is in nanoseconds. We convert
   // it first to miliseconds before casting to lose unnecessary precision. Then
   // we cast it to a double and convert it to seconds.
-  double timestampSeconds = static_cast<double>(timestamp) / 1e9;
+  double timestampSeconds = static_cast<double>(touchEvent.timestamp) / 1e9;
 
   facebook::react::Touches touches(m_previousEvent.touches);
   facebook::react::Touches changedTouches;
   facebook::react::Touches cancelTouches;
 
-  for (auto activeTouch : activeTouchPoints) {
-    if (action == UI_TOUCH_EVENT_ACTION_DOWN) {
+  for (auto activeTouch : touchEvent.activeTouchPoints) {
+    if (touchEvent.action == UI_TOUCH_EVENT_ACTION_DOWN) {
       auto [touchTarget, touchPoint] = findTargetForTouchPoint(
           Point{
               .x = static_cast<facebook::react::Float>(activeTouch.nodeX),
@@ -240,7 +193,8 @@ void TouchEventDispatcher::dispatchTouchEvent(
 
     auto touch = convertTouchPointToReactTouch(
         activeTouch, eventTarget, timestampSeconds, rootTarget);
-    if (!touch.has_value() || action == UI_TOUCH_EVENT_ACTION_CANCEL) {
+    if (!touch.has_value() ||
+        touchEvent.action == UI_TOUCH_EVENT_ACTION_CANCEL) {
       Point rootPoint{
           .x = static_cast<facebook::react::Float>(activeTouch.nodeX),
           .y = static_cast<facebook::react::Float>(activeTouch.nodeY)};
@@ -273,11 +227,11 @@ void TouchEventDispatcher::dispatchTouchEvent(
     return;
   }
 
-  if (action == UI_TOUCH_EVENT_ACTION_MOVE) {
+  if (touchEvent.action == UI_TOUCH_EVENT_ACTION_MOVE) {
     touches = changedTouches;
   } else {
     auto touch = *(changedTouches.begin());
-    if (action == UI_TOUCH_EVENT_ACTION_UP) {
+    if (touchEvent.action == UI_TOUCH_EVENT_ACTION_UP) {
       touches.erase(touch);
     } else {
       // update touches and targetTouches with the new touch object
@@ -286,7 +240,20 @@ void TouchEventDispatcher::dispatchTouchEvent(
     }
   }
 
-  sendEvent(touches, changedTouches, action);
+  sendEvent(touches, changedTouches, touchEvent.action);
+}
+
+void TouchEventDispatcher::dispatchTouchEvent(
+    ArkUI_UIInputEvent* event,
+    TouchTarget::Shared const& rootTarget) {
+  TouchEvent touchEvent(event);
+  findTargetAndSendTouchEvent(rootTarget, touchEvent);
+}
+
+void TouchEventDispatcher::dispatchTouchEvent(
+    const TouchEvent& event,
+    TouchTarget::Shared const& rootTarget) {
+  findTargetAndSendTouchEvent(rootTarget, event);
 }
 
 TouchTarget::Shared TouchEventDispatcher::registerTargetForTouch(
