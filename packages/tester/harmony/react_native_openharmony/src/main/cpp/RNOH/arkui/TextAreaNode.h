@@ -20,13 +20,52 @@ namespace rnoh {
 class TextAreaNodeDelegate {
  public:
   virtual ~TextAreaNodeDelegate() = default;
-  virtual void onChange(std::string text){};
-  virtual void onBlur(){};
-  virtual void onFocus(){};
-  virtual void onPasteOrCut(){};
-  virtual void onTextSelectionChange(int32_t location, int32_t length){};
-  virtual void onContentScroll(){};
-  virtual void onContentSizeChange(float width, float height){};
+
+  virtual void onChange(ArkUINode* node, const std::string& text) {}
+  virtual void onBlur(ArkUINode* node) {}
+  virtual void onFocus(ArkUINode* node) {}
+  virtual void onPasteOrCut(ArkUINode* node) {}
+  virtual void
+  onTextSelectionChange(ArkUINode* node, int32_t location, int32_t length) {}
+  virtual void onContentScroll(ArkUINode* node) {}
+  virtual void onContentSizeChange(ArkUINode* node, float width, float height) {
+  }
+
+  /**
+   * @Deprecated: use onChange(ArkUINode*, const std::string&).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onChange(std::string text) {}
+  /**
+   * @Deprecated: use onBlur(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onBlur() {}
+  /**
+   * @Deprecated: use onFocus(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onFocus() {}
+  /**
+   * @Deprecated: use onPasteOrCut(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onPasteOrCut() {}
+  /**
+   * @Deprecated: use onTextSelectionChange(ArkUINode*, int32_t,
+   * int32_t). Deprecated when preparing 0.77 for release.
+   */
+  virtual void onTextSelectionChange(int32_t location, int32_t length) {}
+  /**
+   * @Deprecated: use onContentScroll(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onContentScroll() {}
+  /**
+   * @Deprecated: use onContentSizeChange(ArkUINode*, float, float).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onContentSizeChange(float width, float height, bool multiline) {}
 };
 
 /**

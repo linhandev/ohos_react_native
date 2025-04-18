@@ -25,8 +25,10 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
       ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {}
 
-void TextInputComponentInstance::onChange(std::string text) {
-  m_content = std::move(text);
+void TextInputComponentInstance::onChange(
+    ArkUINode* node,
+    const std::string& text) {
+  m_content = text;
   m_nativeEventCount++;
   if (m_eventEmitter) {
     m_eventEmitter->onChange(getTextInputMetrics());
@@ -35,13 +37,13 @@ void TextInputComponentInstance::onChange(std::string text) {
   m_valueChanged = content != m_content;
 }
 
-void TextInputComponentInstance::onSubmit() {
+void TextInputComponentInstance::onSubmit(ArkUINode* node) {
   if (m_eventEmitter) {
     m_eventEmitter->onSubmitEditing(getTextInputMetrics());
   }
 }
 
-void TextInputComponentInstance::onBlur() {
+void TextInputComponentInstance::onBlur(ArkUINode* node) {
   this->m_focused = false;
   if (m_props->traits.clearButtonMode ==
       facebook::react::TextInputAccessoryVisibilityMode::WhileEditing) {
@@ -59,7 +61,7 @@ void TextInputComponentInstance::onBlur() {
   }
 }
 
-void TextInputComponentInstance::onFocus() {
+void TextInputComponentInstance::onFocus(ArkUINode* node) {
   this->m_focused = true;
   if (this->m_clearTextOnFocus) {
     m_textAreaNode.setTextContent("");
@@ -83,11 +85,12 @@ void TextInputComponentInstance::onFocus() {
   }
 }
 
-void TextInputComponentInstance::onPasteOrCut() {
+void TextInputComponentInstance::onPasteOrCut(ArkUINode* node) {
   m_textWasPastedOrCut = true;
 }
 
 void TextInputComponentInstance::onTextSelectionChange(
+    ArkUINode* node,
     int32_t location,
     int32_t length) {
   if (m_textWasPastedOrCut) {
@@ -123,16 +126,20 @@ void TextInputComponentInstance::onTextSelectionChange(
 }
 
 void TextInputComponentInstance::onContentSizeChange(
+    ArkUINode* node,
     float width,
     float height) {
-  m_contentSizeWidth = width;
-  m_contentSizeHeight = height;
-  if (m_eventEmitter) {
-    m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+  bool calledByTextArea = (dynamic_cast<TextAreaNode*>(node) != nullptr);
+  if (calledByTextArea == m_multiline) {
+    m_contentSizeWidth = width;
+    m_contentSizeHeight = height;
+    if (m_eventEmitter) {
+      m_eventEmitter->onContentSizeChange(getTextInputMetrics());
+    }
   }
 }
 
-void TextInputComponentInstance::onContentScroll() {
+void TextInputComponentInstance::onContentScroll(ArkUINode* node) {
   if (m_eventEmitter) {
     m_eventEmitter->onScroll(getTextInputMetrics());
   }

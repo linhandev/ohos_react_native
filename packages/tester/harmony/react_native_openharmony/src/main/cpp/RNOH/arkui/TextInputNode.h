@@ -18,15 +18,72 @@ namespace rnoh {
 class TextInputNodeDelegate {
  public:
   virtual ~TextInputNodeDelegate() = default;
-  virtual void onChange(std::string text){};
-  virtual void onBlur(){};
-  virtual void onFocus(){};
-  virtual void onSubmit(){};
-  virtual void onPasteOrCut(){};
-  virtual void onContentScroll(){};
-  virtual void onContentSizeChange(float width, float height){};
 
-  virtual void onTextSelectionChange(int32_t location, int32_t length){};
+  virtual void onChange(ArkUINode* node, const std::string& text) {}
+
+  virtual void onBlur(ArkUINode* node) {}
+
+  virtual void onFocus(ArkUINode* node) {}
+
+  virtual void onSubmit(ArkUINode* node) {}
+
+  virtual void onPasteOrCut(ArkUINode* node) {}
+
+  virtual void onContentScroll(ArkUINode* node) {}
+
+  virtual void onContentSizeChange(ArkUINode* node, float width, float height) {
+  }
+
+  virtual void
+  onTextSelectionChange(ArkUINode* node, int32_t location, int32_t length) {}
+
+  /**
+   * @Deprecated: use onChange(ArkUINode*, const std::string&).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onChange(std::string text) {}
+
+  /**
+   * @Deprecated: use onBlur(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onBlur() {}
+
+  /**
+   * @Deprecated: use onFocus(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onFocus() {}
+
+  /**
+   * @Deprecated: use onSubmit(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onSubmit() {}
+
+  /**
+   * @Deprecated: use onPasteOrCut(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onPasteOrCut() {}
+
+  /**
+   * @Deprecated: use onContentScroll(ArkUINode*).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onContentScroll() {}
+
+  /**
+   * @Deprecated: use onContentSizeChange(ArkUINode*, float, float).
+   * Deprecated when preparing 0.77 for release.
+   */
+  virtual void onContentSizeChange(float width, float height, bool multiline) {}
+
+  /**
+   * @Deprecated: use onTextSelectionChange(ArkUINode*, int32_t,
+   * int32_t). Deprecated when preparing 0.77 for release.
+   */
+  virtual void onTextSelectionChange(int32_t location, int32_t length) {}
 };
 
 /**

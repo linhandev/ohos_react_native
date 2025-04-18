@@ -77,21 +77,21 @@ class TextInputComponentInstance
       std::string const& commandName,
       folly::dynamic const& args) override;
 
-  void onChange(std::string text) override;
+  void onChange(ArkUINode* node, const std::string& text) override;
 
-  void onBlur() override;
+  void onBlur(ArkUINode* node) override;
 
-  void onSubmit() override;
+  void onSubmit(ArkUINode* node) override;
 
-  void onFocus() override;
+  void onFocus(ArkUINode* node) override;
 
-  void onPasteOrCut() override;
+  void onPasteOrCut(ArkUINode* node) override;
 
-  void onTextSelectionChange(int32_t location, int32_t length) override;
+  void onTextSelectionChange(ArkUINode* node, int32_t location, int32_t length)
+      override;
+  void onContentSizeChange(ArkUINode* node, float width, float height) override;
 
-  void onContentScroll() override;
-
-  void onContentSizeChange(float width, float height) override;
+  void onContentScroll(ArkUINode* node) override;
 
   ArkUINode& getLocalRootArkUINode() override;
 

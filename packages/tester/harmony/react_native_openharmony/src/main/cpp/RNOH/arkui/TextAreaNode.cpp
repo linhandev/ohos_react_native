@@ -99,10 +99,12 @@ void TextAreaNode::onNodeEvent(
   ArkUINode::onNodeEvent(eventType, eventArgs);
   if (eventType == ArkUI_NodeEventType::NODE_ON_FOCUS) {
     if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onFocus(this);
       m_textAreaNodeDelegate->onFocus();
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_ON_BLUR) {
     if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onBlur(this);
       m_textAreaNodeDelegate->onBlur();
     }
   } else if (
@@ -112,11 +114,14 @@ void TextAreaNode::onNodeEvent(
       int32_t selectionLocation = eventArgs[0].i32;
       int32_t selectionLength = eventArgs[1].i32 - eventArgs[0].i32;
       m_textAreaNodeDelegate->onTextSelectionChange(
+          this, selectionLocation, selectionLength);
+      m_textAreaNodeDelegate->onTextSelectionChange(
           selectionLocation, selectionLength);
     }
   } else if (
       eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_CONTENT_SCROLL) {
     if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onContentScroll(this);
       m_textAreaNodeDelegate->onContentScroll();
     }
   } else if (
@@ -124,7 +129,8 @@ void TextAreaNode::onNodeEvent(
     if (m_textAreaNodeDelegate != nullptr) {
       float width = eventArgs[0].f32;
       float height = eventArgs[1].f32;
-      m_textAreaNodeDelegate->onContentSizeChange(width, height);
+      m_textAreaNodeDelegate->onContentSizeChange(this, width, height);
+      m_textAreaNodeDelegate->onContentSizeChange(width, height, true);
     }
   }
 }
@@ -138,15 +144,18 @@ void TextAreaNode::onNodeEvent(
       if (m_setTextContent && text == m_textContent) {
         m_setTextContent = false;
       } else {
+        m_textAreaNodeDelegate->onChange(this, std::move(text));
         m_textAreaNodeDelegate->onChange(std::move(text));
       }
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_PASTE) {
     if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onPasteOrCut(this);
       m_textAreaNodeDelegate->onPasteOrCut();
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_CUT) {
     if (m_textAreaNodeDelegate != nullptr) {
+      m_textAreaNodeDelegate->onPasteOrCut(this);
       m_textAreaNodeDelegate->onPasteOrCut();
     }
   }
