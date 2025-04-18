@@ -34,6 +34,9 @@ export function TouchHandlingTest() {
   return (
     <TestSuite name="Touch Handling">
       <TestCase.Automated
+        skip={
+          'The fix for this test case has been reverted because it caused different issues.'
+        }
         tags={['sequential']}
         itShould="recognize the subsequent touch correctly after a target view has been removed during touch"
         initialState={{

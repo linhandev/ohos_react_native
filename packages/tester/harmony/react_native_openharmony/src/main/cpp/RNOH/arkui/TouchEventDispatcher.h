@@ -40,11 +40,6 @@ class TouchEventDispatcher {
    */
   void cancelActiveTouches();
 
-  /**
-   * @internal
-   */
-  void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget);
-
  private:
   void findTargetAndSendTouchEvent(
       TouchTarget::Shared const& rootTarget,

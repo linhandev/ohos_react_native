@@ -70,10 +70,6 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
 
-  void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget) {
-    m_touchEventDispatcher.cancelTouchTargetEvent(weakTouchTarget);
-  }
-
   void onMessageReceived(ArkTSMessage const& message) override {
     LOG(INFO) << "onMessageReceived: " << message.name;
     if (message.name == "CANCEL_TOUCHES" &&
