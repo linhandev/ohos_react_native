@@ -14,13 +14,16 @@ import {useEnvironment} from '../contexts';
 
 const WRONG_IMAGE_SRC = 'not_image';
 const LOCAL_IMAGE_ASSET_ID = require('../assets/pravatar-131.jpg');
-const REMOTE_IMAGE_URL = 'https://i.pravatar.cc/100?img=31';
+const REMOTE_IMAGE_URL =
+  'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=400&q=80';
 const INVALID_IMAGE_URL = '';
 const BASE64_IMAGE_STRING =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC';
 const LARGE_REMOTE_IMAGE_URL =
   'https://images.unsplash.com/photo-1556740749-887f6717d7e4';
-const REMOTE_REDIRECT_IMAGE_URL = 'http://placeholder.com/350x150';
+const RANDOM_REMOTE_IMAGE_URL = 'https://picsum.photos/5000';
+const REMOTE_REDIRECT_IMAGE_URL =
+  'https://ix-marketing.imgix.net/bg-remove_after.png?auto=format,compress&w=1946';
 const REMOTE_GIF_URL =
   'https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif';
 const DATA_URI =
@@ -192,6 +195,23 @@ export const ImageTest = () => {
           expect(ex).to.be.not.undefined;
           expect(await Image.prefetch(REMOTE_IMAGE_URL)).to.be.true;
           expect(await Image.prefetch(REMOTE_IMAGE_URL)).to.be.true;
+        }}
+      />
+      <TestCase.Logical
+        skip={noInternetSkipMsg}
+        itShould="abort prefetch image"
+        fn={async ({expect}) => {
+          expect(
+            await Image.prefetch(
+              `${RANDOM_REMOTE_IMAGE_URL}?t=${new Date().getTime()}`,
+              // @ts-ignore
+              (requestId: number) => {
+                setTimeout(() => {
+                  Image.abortPrefetch?.(requestId);
+                }, 50);
+              },
+            ),
+          ).to.be.false;
         }}
       />
       <TestCase.Logical

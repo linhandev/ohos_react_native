@@ -16,10 +16,11 @@ rnoh::ImageLoaderTurboModule::ImageLoaderTurboModule(
     const std::string name)
     : rnoh::ArkTSTurboModule(ctx, name) {
   methodMap_ = {
+      ARK_METHOD_METADATA(abortRequest, 1),
       ARK_METHOD_METADATA(getConstants, 0),
       ARK_ASYNC_METHOD_METADATA(getSize, 1),
       ARK_ASYNC_METHOD_METADATA(getSizeWithHeaders, 2),
-      ARK_ASYNC_METHOD_METADATA(prefetchImage, 1),
+      ARK_ASYNC_METHOD_METADATA(prefetchImage, 2),
       ARK_ASYNC_METHOD_METADATA(prefetchImageWithMetadata, 3),
       ARK_ASYNC_METHOD_METADATA(queryCache, 1)};
 }

@@ -414,9 +414,9 @@
 |testID | |❔|✅|✅|
 |tintColor | |✅|✅|✅|
 |width | |✅|✅|✅|
-|abortPrefetch() | |❌|✅|❌|
+|abortPrefetch() | |✅|✅|❌|
 |getSize() | |✅|✅|✅|
-|getSizeWithHeaders() | |❌|✅|✅|
+|getSizeWithHeaders() | |✅|✅|✅|
 |prefetch() | |✅|✅|✅|
 |queryCache() | |❔|✅|✅|
 |resolveAssetSource() | |✅|✅|✅|

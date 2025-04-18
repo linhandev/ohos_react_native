@@ -18,6 +18,7 @@ import { common } from '@kit.AbilityKit';
 export class RemoteImageLoader {
   private activeRequestByUrl: Map<string, Promise<FetchResult>> = new Map();
   private activePrefetchByUrl: Map<string, Promise<boolean>> = new Map();
+  private abortRequestById: Map<number, request.DownloadTask> = new Map()
 
   public constructor(
     private memoryCache: RemoteImageMemoryCache,
@@ -136,7 +137,11 @@ export class RemoteImageLoader {
     return true;
   }
 
-  public async prefetch(uri: string): Promise<boolean> {
+  public abortRequest(requestId: number): void {
+    this.abortRequestById.get(requestId)?.delete();
+  }
+
+  public async prefetch(uri: string, requestId: number): Promise<boolean> {
     if (this.diskCache.has(uri)) {
       return true;
     }
@@ -150,7 +155,7 @@ export class RemoteImageLoader {
       this.memoryCache.remove(uri);
     }
 
-    const promise = this.downloadFile(uri);
+    const promise = this.downloadFile(uri, requestId);
     this.activePrefetchByUrl.set(uri, promise);
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
@@ -161,19 +166,33 @@ export class RemoteImageLoader {
     return await promise;
   }
 
-  private async performDownload(config: request.DownloadConfig): Promise<boolean> {
+  private async performDownload(config: request.DownloadConfig, requestId: number): Promise<boolean> {
     return await new Promise(async (resolve, reject) => {
       try {
         const downloadTask = await request.downloadFile(this.context, config);
-        downloadTask.on("complete", () => resolve(true));
-        downloadTask.on("fail", (err: number) => reject(`Failed to download the task. Code: ${err}`));
+        this.abortRequestById.set(requestId, downloadTask);
+        downloadTask.on("complete", () => {
+          this.abortRequestById.delete(requestId);
+          resolve(true)
+        });
+        downloadTask.on("remove", () => {
+          this.abortRequestById.delete(requestId);
+          reject({
+            code: 'E_PREFETCH_ABORT',
+            message: `The download task has been removed.`
+          })
+        });
+        downloadTask.on("fail", (err: number) => {
+          this.abortRequestById.delete(requestId);
+          reject(`Failed to download the task. Code: ${err}`)
+        });
       } catch (e) {
         reject(e);
       }
     });
   }
 
-  private async downloadFile(uri: string): Promise<boolean> {
+  private async downloadFile(uri: string, requestId: number): Promise<boolean> {
     const path = this.diskCache.getLocation(uri);
     const tempPath = path + '_tmp';
 
@@ -183,7 +202,7 @@ export class RemoteImageLoader {
       if (fs.accessSync(tempPath)){
         await fs.unlink(tempPath);
       }
-      await this.performDownload({ url: uri, filePath: tempPath });
+      await this.performDownload({ url: uri, filePath: tempPath }, requestId);
       // Move the file to the final location and remove the temporary file
       await fs.moveFile(tempPath, path);
       this.diskCache.set(uri);

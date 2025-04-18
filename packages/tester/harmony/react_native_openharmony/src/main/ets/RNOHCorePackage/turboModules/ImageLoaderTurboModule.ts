@@ -36,15 +36,22 @@ export class ImageLoaderTurboModule extends UITurboModule {
     return this.imageLoader.getPrefetchResult(uri);
   }
 
+  public abortRequest(requestId: number): void {
+    this.imageLoader.abortRequest(requestId)
+  }
+
   public getConstants() {
     return {}
   }
 
-  public async getSize(uri: string): Promise<number[]> {
+  public async getSize(uri: string): Promise<{
+    width: number,
+    height: number
+  }> {
     if (uri && uri.length > 0) {
       const imageSource = await this.imageLoader.getImageSource(uri)
       const imageInfo = await imageSource.getImageSource().getImageInfo()
-      return [imageInfo.size.width, imageInfo.size.height]
+      return { width: imageInfo.size.width, height: imageInfo.size.height }
     } else {
       throw 'Cannot get the size of an image for an empty URI'
     }
@@ -70,8 +77,13 @@ export class ImageLoaderTurboModule extends UITurboModule {
     return Promise.resolve({ width: imageInfo.size.width, height: imageInfo.size.height })
   }
 
-  public async prefetchImage(uri: string): Promise<boolean> {
-    return this.imageLoader.prefetch(uri);
+  public async prefetchImage(uri: string, requestId: number = 0): Promise<boolean> {
+    return this.imageLoader.prefetch(uri, requestId).catch(err => {
+      if (err?.code === 'E_PREFETCH_ABORT') {
+        return false;
+      }
+      return Promise.reject(err);
+    });
   }
 
   public prefetchImageWithMetadata(uri: string, queryRootName: string, rootTag: number): Promise<boolean> {
