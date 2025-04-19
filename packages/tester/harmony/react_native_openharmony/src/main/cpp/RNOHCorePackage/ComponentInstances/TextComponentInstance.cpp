@@ -146,6 +146,7 @@ void TextComponentInstance::onPropsChanged(
 }
 
 void TextComponentInstance::onFinalizeUpdates() {
+  CppComponentInstance::onFinalizeUpdates();
   auto parent = m_parent.lock();
   if (m_props->importantForAccessibility ==
           facebook::react::ImportantForAccessibility::Auto &&
