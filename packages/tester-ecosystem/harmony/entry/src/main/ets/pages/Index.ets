@@ -10,7 +10,7 @@ import {
 import { getRNOHPackages } from '../PackageProvider';
 import { RNDateTimePicker, DATETIME_PICKER_VIEW_TYPE } from "@react-native-oh-tpl/datetimepicker"
 import { LottieAnimationView } from '@react-native-oh-tpl/lottie-react-native';
-
+import { RNCToolbarAndroid} from '@react-native-ohos/toolbar-android/src/main/ets/RNCToolbarAndroid'
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -29,6 +29,11 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
       ctx: ctx.rnComponentContext,
       tag: ctx.tag,
     })
+  } else if (ctx.componentName === RNCToolbarAndroid.NAME) {
+    RNCToolbarAndroid({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+      })
   }
 }
 

@@ -6,6 +6,7 @@ import { LottieAnimationViewPackage } from '@react-native-oh-tpl/lottie-react-na
 import { NetInfoPackage } from '@react-native-oh-tpl/netinfo/ts';
 import { ExceptionHandlerPackage } from '@react-native-oh-tpl/react-native-exception-handler';
 import { ImagePickerViewPackage } from '@react-native-oh-tpl/react-native-image-picker';
+import {ToolbarAndroidPackage} from '@react-native-ohos/toolbar-android/src/main/ets/ToolbarAndroidPackage';
 
 import type { RNPackageContext, RNOHPackage, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
@@ -21,5 +22,6 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new LottieAnimationViewPackage(ctx),
     new ExceptionHandlerPackage(ctx),
     new ImagePickerViewPackage(ctx),
+    new ToolbarAndroidPackage(ctx),
   ]
 }

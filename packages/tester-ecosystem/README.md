@@ -20,7 +20,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/progress-view                           |        |
 | @react-native-oh-tpl/push-notification-ios                   |        |
 | @react-native-oh-tpl/slider                                  |        |
-| @react-native-oh-tpl/toolbar-android                         |        |
+| @react-native-oh-tpl/toolbar-android                         | ✅      |
 | @react-native-oh-tpl/cookies                                 | ✅      |
 | @react-native-oh-tpl/masked-view                             | ✅      |
 | @react-native-oh-tpl/picker                                  |        |

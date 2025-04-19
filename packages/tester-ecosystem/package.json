@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@gorhom/portal": "^1.0.14",
-    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-oh-tpl/async-storage": "^1.21.0-0.2.2",
     "@react-native-oh-tpl/blur": "^4.4.0-0.1.1",
     "@react-native-oh-tpl/clipboard": "^1.13.2-0.0.9",
@@ -28,8 +27,10 @@
     "@react-native-oh-tpl/react-native-image-picker": "^7.0.3-0.1.6",
     "@react-native-oh-tpl/react-native-image-zoom-viewer": "^3.0.1-0.0.1",
     "@react-native-oh-tpl/react-native-keyboard-aware-scroll-view": "^0.9.5-0.0.4",
+    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-ohos/checkbox": "^0.5.17-rc.1",
     "@react-native-ohos/react-native-linear-gradient": "^3.0.1-rc.1",
+    "@react-native-ohos/toolbar-android": "0.2.2-rc.1",
     "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@rnoh/react-native-harmony-gesture-handler": "^2.20.1",
     "chai": "4.3.7",
