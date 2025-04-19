@@ -369,15 +369,16 @@ ArkUINode& ArkUINode::setShadow(
     float const shadowOpacity,
     float const shadowRadius,
     facebook::react::Float pointScaleFactor) {
-  if (shadowOpacity <= 0.0 || shadowOpacity > 1.0) {
+  if (shadowOpacity <= 0.0) {
     return *this;
   }
+  float shadowOpacityValue = shadowOpacity > 1.0 ? 1.0 : shadowOpacity;
   uint32_t shadowColorValue = 0xff000000;
   if (shadowColor) {
     shadowColorValue = *shadowColor;
   }
   auto alpha = static_cast<uint32_t>(
-      (float)((shadowColorValue >> 24) & (0xff)) * shadowOpacity);
+      (float)((shadowColorValue >> 24) & (0xff)) * shadowOpacityValue);
   shadowColorValue = (alpha << 24) + (shadowColorValue & 0xffffff);
   float offsetXInPx = shadowOffset.width * pointScaleFactor;
   float offsetYInPx = shadowOffset.height * pointScaleFactor;
