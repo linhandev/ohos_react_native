@@ -69,6 +69,9 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
   void setScheduler(
       std::shared_ptr<facebook::react::Scheduler> const& scheduler);
 
+  void performTransaction(
+      const std::shared_ptr<const MountingCoordinator>& mountingCoordinator);
+
  private:
   template <typename Operation>
   void performOnMainThread(Operation operation) {

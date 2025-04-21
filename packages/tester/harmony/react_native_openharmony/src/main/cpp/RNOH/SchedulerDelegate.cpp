@@ -100,29 +100,65 @@ void SchedulerDelegate::schedulerDidSetIsJSResponder(
   });
 }
 
-static void performTransaction(
-    const std::shared_ptr<const MountingCoordinator>& mountingCoordinator,
-    MountingManager::Shared const& mountingManager,
-    std::weak_ptr<facebook::react::Scheduler> const& weakScheduler) {
+void SchedulerDelegate::performTransaction(
+    const std::shared_ptr<const MountingCoordinator>& mountingCoordinator) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::performTransaction");
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::FABRIC_FINISH_TRANSACTION_START);
-  auto surfaceId = mountingCoordinator->getSurfaceId();
   mountingCoordinator->getTelemetryController().pullTransaction(
-      [&mountingManager](
-          auto const& transaction, auto const& /*surfaceTelemetry*/) {
-        mountingManager->willMount(transaction.getMutations());
+      [](auto const& transaction, auto const& /*surfaceTelemetry*/) {},
+      [this](auto const& transaction, auto const& surfaceTelemetry) {
+        performOnMainThread(
+            [transaction](MountingManager::Shared const& mountingManager) {
+              mountingManager->doMount(transaction.getMutations());
+            });
       },
-      [&mountingManager](
-          auto const& transaction, auto const& /*surfaceTelemetry*/) {
-        mountingManager->doMount(transaction.getMutations());
-      },
-      [&](auto const& transaction, auto const& /*surfaceTelemetry*/) {
-        mountingManager->didMount(transaction.getMutations());
-        if (auto scheduler = weakScheduler.lock()) {
-          scheduler->reportMount(surfaceId);
+      [this](auto const& transaction, auto const& surfaceTelemetry) {
+        auto allMutations = transaction.getMutations();
+        facebook::react::ShadowViewMutationList sliceableMutations;
+        facebook::react::ShadowViewMutationList otherMutations;
+        // The reason for using 70 here is that the average time for each
+        // mutation creation is about 60 microseconds,and the time for 70 is 4.2
+        // milliseconds which corresponds to the length of half a frame
+        size_t maxSliceSize = 70;
+        std::vector<facebook::react::ShadowViewMutationList> slicesOfMutations;
+        auto it = allMutations.begin();
+        while (it != allMutations.end()) {
+          if (it->type == facebook::react::ShadowViewMutation::Create) {
+            sliceableMutations.push_back(*it);
+          } else {
+            otherMutations.push_back(*it);
+          }
+          ++it;
         }
+        size_t sliceableMutationsSize = sliceableMutations.size();
+        if (sliceableMutationsSize > 0) {
+          slicesOfMutations.reserve(
+              (sliceableMutationsSize + maxSliceSize - 1) / maxSliceSize);
+          for (size_t i = 0; i < sliceableMutationsSize; i += maxSliceSize) {
+            slicesOfMutations.emplace_back(
+                sliceableMutations.begin() + i,
+                sliceableMutations.begin() +
+                    std::min(sliceableMutationsSize, i + maxSliceSize));
+          }
+          for (const auto& mutations : slicesOfMutations) {
+            facebook::react::SystraceSection s(
+                "#RNOH::SchedulerDelegate::slice");
+            performOnMainThread(
+                [mutations](MountingManager::Shared const& mountingManager) {
+                  mountingManager->didMount(mutations);
+                });
+          }
+        }
+        facebook::react::SystraceSection s(
+            "#RNOH::SchedulerDelegate::otherMutations");
+        performOnMainThread(
+            [otherMutations,
+             this](MountingManager::Shared const& mountingManager) {
+              mountingManager->didMount(otherMutations);
+              mountingManager->clearPreallocatedViews();
+            });
         logTransactionTelemetryMarkers(transaction);
       });
 }
@@ -131,23 +167,17 @@ void SchedulerDelegate::schedulerShouldRenderTransactions(
     const std::shared_ptr<const MountingCoordinator>& mountingCoordinator) {
   facebook::react::SystraceSection s(
       "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions");
-  performOnMainThread([transactionState = m_transactionState,
-                       mountingCoordinator,
-                       scheduler = m_scheduler](auto mountingManager) {
-    facebook::react::SystraceSection s(
-        "#RNOH::SchedulerDelegate::schedulerShouldRenderTransactions::MAIN");
-    if (transactionState->transactionInFlight) {
-      transactionState->followUpTransactionRequired = true;
-      return;
-    }
+  if (m_transactionState->transactionInFlight) {
+    m_transactionState->followUpTransactionRequired = true;
+    return;
+  }
 
-    do {
-      transactionState->followUpTransactionRequired = false;
-      transactionState->transactionInFlight = true;
-      performTransaction(mountingCoordinator, mountingManager, scheduler);
-      transactionState->transactionInFlight = false;
-    } while (transactionState->followUpTransactionRequired);
-  });
+  do {
+    m_transactionState->followUpTransactionRequired = false;
+    m_transactionState->transactionInFlight = true;
+    performTransaction(mountingCoordinator);
+    m_transactionState->transactionInFlight = false;
+  } while (m_transactionState->followUpTransactionRequired);
 }
 
 void SchedulerDelegate::setScheduler(

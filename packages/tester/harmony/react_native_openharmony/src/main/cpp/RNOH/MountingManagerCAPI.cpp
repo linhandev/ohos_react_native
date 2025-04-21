@@ -71,7 +71,6 @@ void MountingManagerCAPI::didMount(MutationList const& mutations) {
     }
   }
   this->finalizeMutationUpdates(mutations);
-  m_componentInstanceProvider->clearPreallocatedViews();
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::FABRIC_BATCH_EXECUTION_END);
 }
 
@@ -336,5 +335,9 @@ void MountingManagerCAPI::schedulerDidSendAccessibilityEvent(
   m_arkTSChannel->postMessage(
       "RNOH::schedulerDidSendAccessibilityEvent", payload);
 };
+
+void MountingManagerCAPI::clearPreallocatedViews() {
+  m_componentInstanceProvider->clearPreallocatedViews();
+}
 
 } // namespace rnoh
