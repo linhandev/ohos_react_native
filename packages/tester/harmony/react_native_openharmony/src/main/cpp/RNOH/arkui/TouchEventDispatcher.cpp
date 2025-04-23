@@ -166,7 +166,7 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
     } else if (auto touchTargetEntry =
                    m_touchTargetByTouchId.find(activeTouch.id);
                touchTargetEntry != m_touchTargetByTouchId.end()) {
-      auto touchTarget = touchTargetEntry->second.lock();
+      auto touchTarget = touchTargetEntry->second;
       if (touchTarget == nullptr) {
         continue;
       }
@@ -184,7 +184,7 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
               << activeTouch.id;
       continue;
     }
-    auto eventTarget = it->second.lock();
+    auto eventTarget = it->second;
     if (eventTarget == nullptr) {
       LOG(WARNING) << "Target for current touch event has been deleted";
       m_touchTargetByTouchId.erase(it);
@@ -319,7 +319,7 @@ void TouchEventDispatcher::sendEvent(
       continue;
     }
 
-    auto touchTarget = touchTargetIt->second.lock();
+    auto touchTarget = touchTargetIt->second;
     if (touchTarget == nullptr) {
       m_touchTargetByTouchId.erase(touchTargetIt);
       continue;
@@ -341,7 +341,7 @@ void TouchEventDispatcher::sendEvent(
       continue;
     }
 
-    auto touchTarget = touchTargetIt->second.lock();
+    auto touchTarget = touchTargetIt->second;
     if (touchTarget == nullptr) {
       m_touchTargetByTouchId.erase(touchTargetIt);
       continue;
@@ -392,7 +392,7 @@ void TouchEventDispatcher::cancelActiveTouches() {
       continue;
     }
     auto touchIdAndTouchTarget = m_touchTargetByTouchId.find(touch.identifier);
-    auto touchTarget = touchIdAndTouchTarget->second.lock();
+    auto touchTarget = touchIdAndTouchTarget->second;
     if (touchTarget) {
       if (m_previousEvent.changedTouches.size() > 0) {
         m_touchTargetByTouchId.erase(touchIdAndTouchTarget->first);
