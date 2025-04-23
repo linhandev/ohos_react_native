@@ -184,8 +184,8 @@ class ScrollViewComponentInstance
   // ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
   struct ScrollViewRawProps {
     std::optional<std::string> overScrollMode;
+    std::optional<bool> nestedScrollEnabled;
     std::optional<uint32_t> endFillColor;
-    bool horizontal = false;
     static ScrollViewRawProps getFromDynamic(folly::dynamic value);
   };
   ScrollViewRawProps m_rawProps;
@@ -222,7 +222,7 @@ class ScrollViewComponentInstance
   void sendEventForNativeAnimations(
       facebook::react::ScrollViewEventEmitter::Metrics const&
           scrollViewMetrics);
-  bool isHorizontal(ScrollViewRawProps const& props);
+  bool isHorizontal(SharedConcreteProps const& props);
   void disableIntervalMomentum();
   std::optional<float> getNextSnapTarget();
   void adjustVisibleContentPosition(
@@ -296,6 +296,7 @@ class ScrollViewComponentInstance
    * `onScroll` event.
    */
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
+  bool isNestedScroll();
   void onContentSizeChanged();
   facebook::react::Float adjustOffsetToRTL(facebook::react::Float x) const;
   facebook::react::Point getScrollOffset() const;
