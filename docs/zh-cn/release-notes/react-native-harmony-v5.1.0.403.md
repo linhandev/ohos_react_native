@@ -4,15 +4,15 @@
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| react-native-harmony.tgz        | 0.72.65 |
+| react-native-harmony.tgz        | 0.72.66 |
 | react-native-harmony-cli.tgz    | 0.0.28 |
-| react_native_openharmony-5.1.0.402.har                          | 0.72.65 |
-| react_native_openharmony_release-5.1.0.402.har                  | 5.1.0.402 |
+| react_native_openharmony-5.1.0.403.har                          | 0.72.66 |
+| react_native_openharmony_release-5.1.0.403.har                  | 5.1.0.403 |
 
 配套IDE、SDK版本和手机ROM:
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| DevEco Studio     | DevEco Studio 5.1.0.423 |
-| HarmonyOS SDK     | HarmonyOS SDK 5.1.0.103(SP31) |
-| 手机ROM           | ALN-AL00 205.1.0.103(SP31DEVC00E103R4P5) <br> ALN-AL80 205.1.0.103(SP31DEVC00E103R4P5) <br> BRA-AL00 205.1.0.103(SP31DEVC00E103R4P4) |
+| DevEco Studio     | DevEco Studio 5.1.0.803 |
+| HarmonyOS SDK     | HarmonyOS SDK 5.1.0.105(SP31) |
+| 手机ROM           | ALN-AL00 205.1.0.105(SP31DEVC00E105R4P5) <br> ALN-AL80 205.1.0.105(SP31DEVC00E105R4P5) <br> BRA-AL00 205.1.0.105(SP31DEVC00E105R4P4) |
