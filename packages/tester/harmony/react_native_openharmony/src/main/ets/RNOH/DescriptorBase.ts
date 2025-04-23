@@ -254,5 +254,37 @@ TRawProps extends Object = Object> extends DescriptorEssence<TType> {
 
 /**
  * @api
+ * @deprecated: Use "ViewStyle" instead.
+ * It was deprecated when preparing 0.77 branch for release.
+ */
+export type BorderMetrics = {
+  borderWidth?: number;
+  borderLeftWidth?: number;
+  borderTopWidth?: number;
+  borderRightWidth?: number;
+  borderBottomWidth?: number;
+  borderStartWidth?: number;
+  borderEndWidth?: number;
+  borderColor?: number;
+  borderLeftColor?: number;
+  borderTopColor?: number;
+  borderRightColor?: number;
+  borderBottomColor?: number;
+  borderStartColor?: number;
+  borderEndColor?: number;
+  borderRadius?: number;
+  borderTopStartRadius?: number;
+  borderTopEndRadius?: number;
+  borderTopLeftRadius?: number;
+  borderTopRightRadius?: number;
+  borderBottomLeftRadius?: number;
+  borderBottomRightRadius?: number;
+  borderBottomStartRadius?: number;
+  borderBottomEndRadius?: number;
+  borderStyle?: BorderStyle;
+}
+
+/**
+ * @api
  */
 export type BorderStyle = ViewStyle["borderStyle"]

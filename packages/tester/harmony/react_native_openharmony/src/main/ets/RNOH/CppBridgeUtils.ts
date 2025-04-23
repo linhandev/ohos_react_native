@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { ColorSegments, ColorValue } from './DescriptorBase'
+import type { BorderMetrics, ColorSegments, ColorValue } from './DescriptorBase'
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -206,6 +206,72 @@ export type ReadonlyTransformationMatrix = readonly [
   number
 ]
 
+/**
+ * @api
+ * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead.
+ * It was deprecated when preparing 0.77 branch for release.
+ */
+export enum BorderEdgePropsType {
+  COLOR = "Color",
+  WIDTH = "Width",
+}
+
+/**
+ * @api
+ * @deprecated Use ViewDescriptorWrapperBase::resolveEdges and ViewDescriptorWrapperBase::resolveCorners instead.
+ * It was deprecated when preparing 0.77 branch for release.
+ */
+export function resolveBorderMetrics(props: BorderMetrics, isRTL: boolean): BorderMetrics {
+  const colorProps = resolveBorderEdgeProps(props, BorderEdgePropsType.COLOR, isRTL);
+  const widthProps = resolveBorderEdgeProps(props, BorderEdgePropsType.WIDTH, isRTL);
+  const radiusProps = resolveBorderRadius(props);
+  return { ...colorProps, ...widthProps, ...radiusProps, borderStyle: props.borderStyle };
+}
+
+/**
+ * @api
+ * @deprecated Use ViewDescriptorWrapperBase::resolveCorners instead.
+ * It was deprecated when preparing 0.77 branch for release.
+ */
+export function resolveBorderRadius(props: BorderMetrics): BorderMetrics {
+  const topLeft = props.borderTopLeftRadius;
+  const topRight = props.borderTopRightRadius;
+  const bottomLeft = props.borderBottomLeftRadius;
+  const bottomRight = props.borderBottomRightRadius;
+  const all = props.borderRadius;
+  const resolvedProps = {
+    borderTopLeftRadius: topLeft ?? all,
+    borderTopRightRadius: topRight ?? all,
+    borderBottomLeftRadius: bottomLeft ?? all,
+    borderBottomRightRadius: bottomRight ?? all,
+  }
+  return resolvedProps;
+}
+
+/**
+ * @api
+ * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead.
+ * It was deprecated when preparing 0.77 branch for release.
+ */
+export function resolveBorderEdgeProps(props: BorderMetrics, type: BorderEdgePropsType,
+  isRTL: boolean): BorderMetrics {
+  const left = props[`borderLeft${type}`]
+  const top = props[`borderTop${type}`]
+  const right = props[`borderRight${type}`]
+  const bottom = props[`borderBottom${type}`]
+  const all = props[`border${type}`]
+  const start = props[`borderStart${type}`]
+  const end = props[`borderEnd${type}`]
+
+  const resolvedProps = {
+    [`borderLeft${type}`]: left ?? ((isRTL ? end : start) ?? all),
+    [`borderTop${type}`]: top ?? all,
+    [`borderRight${type}`]: right ?? ((isRTL ? start : end) ?? all),
+    [`borderBottom${type}`]: bottom ?? all,
+  };
+
+  return resolvedProps;
+}
 
 /**
  * @api
