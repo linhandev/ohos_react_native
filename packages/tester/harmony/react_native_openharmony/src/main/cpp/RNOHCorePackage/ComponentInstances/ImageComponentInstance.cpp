@@ -30,6 +30,8 @@ ImageComponentInstance::ImageComponentInstance(Context context)
   this->getLocalRootArkUINode().setDraggable(false);
   this->getLocalRootArkUINode().setAccessibilityMode(
       facebook::react::ImportantForAccessibility::Auto);
+  this->getLocalRootArkUINode().setResizeMode(
+      facebook::react::ImageResizeMode::Stretch);
 }
 
 void ImageComponentInstance::setSources(
