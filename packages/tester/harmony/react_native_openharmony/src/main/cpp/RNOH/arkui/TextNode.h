@@ -86,11 +86,20 @@ class TextNode : public ArkUINode {
   TextNode& setTextEnable(bool enableFlag);
   TextNode& setPadding(float top, float right, float bottom, float left);
   TextNode& setWordBreak(ArkUI_WordBreak wordBreak);
+  TextNode& setWritingDirection(int32_t direction);
   TextNode& setSelectedBackgroundColor(uint32_t color);
   TextNode& setTextContentWithStyledString(ArkUI_StyledString* styledString);
   TextNode& resetTextContentWithStyledString();
   TextNode& setTextDataDetectorEnable(int32_t enableFlag);
   TextNode& setTextDataDetectorType(ArkUI_TextDataDetectorType type);
+  /**
+   * @Deprecated: use setTextDataDetectorEnable and setTextDataDetectorType
+   * separately. Deprecated when preparing the 0.77 branch for release.
+   */
+  TextNode& setTextDataDetectorType(
+      int32_t enable,
+      const ArkUI_NumberValue types[],
+      int size);
 };
 
 } // namespace rnoh

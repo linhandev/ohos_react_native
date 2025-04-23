@@ -298,6 +298,15 @@ TextNode& TextNode::setWordBreak(ArkUI_WordBreak wordBreak) {
   return *this;
 }
 
+TextNode& TextNode::setWritingDirection(int32_t direction) {
+  ArkUI_NumberValue value[] = {{.i32 = direction}};
+  ArkUI_AttributeItem item = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_DIRECTION, &item));
+  return *this;
+}
+
 TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   ArkUI_NumberValue value = {.u32 = color};
   ArkUI_AttributeItem item = {&value, 1};
@@ -333,6 +342,22 @@ TextNode& TextNode::setTextDataDetectorType(ArkUI_TextDataDetectorType type) {
   ArkUI_AttributeItem item = {&value, 1};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+  return *this;
+}
+
+TextNode& TextNode::setTextDataDetectorType(
+    int32_t enable,
+    const ArkUI_NumberValue* types,
+    int size) {
+  ArkUI_AttributeItem item = {.value = types, .size = size};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+
+  ArkUI_NumberValue value[] = {{.i32 = enable}};
+  ArkUI_AttributeItem item2 = {
+      .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item2));
   return *this;
 }
 
