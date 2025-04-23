@@ -207,9 +207,8 @@ void TextAreaNode::setInputType(facebook::react::KeyboardType rawKeyboardType) {
 }
 
 void TextAreaNode::setFont(
-    facebook::react::TextAttributes const& textAttributes,
-    float fontSizeScale) {
-  TextInputNodeBase::setCommonFontAttributes(textAttributes, fontSizeScale);
+    facebook::react::TextAttributes const& textAttributes) {
+  TextInputNodeBase::setCommonFontAttributes(textAttributes);
 
   std::string fontFamily = "HarmonyOS Sans";
   if (!textAttributes.fontFamily.empty()) {
@@ -231,6 +230,8 @@ void TextAreaNode::setFont(
   if (!std::isnan(textAttributes.fontSize)) {
     fontSize = static_cast<float>(textAttributes.fontSize);
   }
+  float fontSizeScale =
+      static_cast<float>(textAttributes.maxFontSizeMultiplier);
 
   bool allowFontScaling = true;
   if (textAttributes.allowFontScaling.has_value()) {
@@ -238,6 +239,15 @@ void TextAreaNode::setFont(
   }
   if (!allowFontScaling) {
     fontSize /= fontSizeScale;
+  } else {
+    float clampedFontSizeScale = fontSizeScale;
+    if (textAttributes.maxFontSizeMultiplier) { // if it's 0, we should ignore
+      clampedFontSizeScale =
+          fminf(fontSizeScale, textAttributes.maxFontSizeMultiplier);
+    }
+    fontSize = fontSize / fontSizeScale *
+        clampedFontSizeScale; // ArkUI will scale the font, we divide it by
+                              // the scale to cancel that out
   }
 
   std::array<ArkUI_NumberValue, 3> value = {

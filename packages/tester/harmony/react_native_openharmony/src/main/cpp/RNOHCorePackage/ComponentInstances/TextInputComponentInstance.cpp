@@ -222,8 +222,8 @@ void TextInputComponentInstance::onPropsChanged(
     auto fontSizeScale =
         this->m_deps->displayMetricsManager->getDisplayMetrics()
             .windowPhysicalPixels.fontScale;
-    m_textAreaNode.setFont(props->textAttributes, fontSizeScale);
-    m_textInputNode.setFont(props->textAttributes, fontSizeScale);
+    m_textAreaNode.setFont(props->getEffectiveTextAttributes(fontSizeScale));
+    m_textInputNode.setFont(props->getEffectiveTextAttributes(fontSizeScale));
   }
   if (!m_props ||
       props->textAttributes.lineHeight != m_props->textAttributes.lineHeight) {
@@ -232,9 +232,9 @@ void TextInputComponentInstance::onPropsChanged(
           this->m_deps->displayMetricsManager->getDisplayMetrics()
               .windowPhysicalPixels.fontScale;
       m_textAreaNode.setTextInputLineHeight(
-          props->textAttributes, fontSizeScale);
+          props->getEffectiveTextAttributes(fontSizeScale));
       m_textInputNode.setTextInputLineHeight(
-          props->textAttributes, fontSizeScale);
+          props->getEffectiveTextAttributes(fontSizeScale));
     }
   }
   if (*(props->backgroundColor) != *(m_props->backgroundColor)) {

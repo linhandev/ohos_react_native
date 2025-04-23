@@ -447,6 +447,33 @@ export function TextInputTest() {
           defaultValue="Not scaled big"
         />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="render textinput with different maxFontSizeMultiplier (change font scale in settings)">
+        <TextInput
+          style={styles.textInput}
+          allowFontScaling={false}
+          defaultValue="Non scaled"
+        />
+        <TextInput
+          style={styles.textInput}
+          defaultValue="maxFontSizeMultiplier 1.2"
+          allowFontScaling
+          maxFontSizeMultiplier={1.2}
+        />
+        <TextInput
+          style={styles.textInput}
+          defaultValue="maxFontSizeMultiplier 1.4"
+          allowFontScaling
+          maxFontSizeMultiplier={1.4}
+        />
+        <TextInput
+          style={styles.textInput}
+          allowFontScaling={true}
+          maxFontSizeMultiplier={0}
+          defaultValue="Scaled without limit"
+        />
+      </TestCase.Example>
       <TestCase.Example itShould="show textInput with padding" modal>
         <View style={{width: 300, height: 200}}>
           <TextInputWithText

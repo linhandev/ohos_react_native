@@ -66,8 +66,7 @@ class TextInputNodeBase : public ArkUINode {
  protected:
   TextInputNodeBase(ArkUI_NodeType nodeType);
   void setCommonFontAttributes(
-      facebook::react::TextAttributes const& textAttributes,
-      float fontSizeScale);
+      facebook::react::TextAttributes const& textAttributes);
 
  public:
   void setPadding(
@@ -88,8 +87,7 @@ class TextInputNodeBase : public ArkUINode {
   void setFontColor(facebook::react::SharedColor const& color);
 
   virtual void setFont(
-      facebook::react::TextAttributes const& textAttributes,
-      float fontSizeScale) = 0;
+      facebook::react::TextAttributes const& textAttributes) = 0;
 
   virtual void setCaretColor(facebook::react::SharedColor const& color) = 0;
 
@@ -101,8 +99,7 @@ class TextInputNodeBase : public ArkUINode {
       facebook::react::SharedColor const& color) = 0;
 
   void setTextInputLineHeight(
-      facebook::react::TextAttributes const& textAttributes,
-      float fontSizeScale);
+      facebook::react::TextAttributes const& textAttributes);
 
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);

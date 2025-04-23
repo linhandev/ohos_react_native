@@ -232,18 +232,27 @@ void TextInputNodeBase::setFontColor(
 }
 
 void TextInputNodeBase::setTextInputLineHeight(
-    facebook::react::TextAttributes const& textAttributes,
-    float fontSizeScale) {
+    facebook::react::TextAttributes const& textAttributes) {
   bool allowFontScaling = true;
   if (textAttributes.allowFontScaling.has_value()) {
     allowFontScaling = textAttributes.allowFontScaling.value();
   }
   float lineHeight = static_cast<float>(textAttributes.lineHeight);
+  float fontSizeScale = static_cast<float>(textAttributes.fontSizeMultiplier);
   if (isnan(lineHeight)) {
     lineHeight = 0;
   }
   if (!allowFontScaling) {
     lineHeight /= fontSizeScale;
+  } else {
+    float clampedFontSizeScale = fontSizeScale;
+    if (textAttributes.maxFontSizeMultiplier) { // if it's 0, we should ignore
+      clampedFontSizeScale =
+          fminf(fontSizeScale, textAttributes.maxFontSizeMultiplier);
+    }
+    lineHeight = lineHeight / fontSizeScale *
+        clampedFontSizeScale; // ArkUI will scale the font, we divide it by
+                              // the scale to cancel that out
   }
   ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
@@ -252,8 +261,7 @@ void TextInputNodeBase::setTextInputLineHeight(
 }
 
 void TextInputNodeBase::setCommonFontAttributes(
-    facebook::react::TextAttributes const& textAttributes,
-    float fontSizeScale) {
+    facebook::react::TextAttributes const& textAttributes) {
   if (textAttributes.fontFamily.empty()) {
     maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_FONT_FAMILY));
@@ -271,10 +279,19 @@ void TextInputNodeBase::setCommonFontAttributes(
     if (textAttributes.allowFontScaling.has_value()) {
       allowFontScaling = textAttributes.allowFontScaling.value();
     }
-
+    float fontSizeScale = static_cast<float>(textAttributes.fontSizeMultiplier);
     float fontSize = static_cast<float>(textAttributes.fontSize);
     if (!allowFontScaling) {
       fontSize /= fontSizeScale;
+    } else {
+      float clampedFontSizeScale = fontSizeScale;
+      if (textAttributes.maxFontSizeMultiplier) { // if it's 0, we should ignore
+        clampedFontSizeScale =
+            fminf(fontSizeScale, textAttributes.maxFontSizeMultiplier);
+      }
+      fontSize = fontSize / fontSizeScale *
+          clampedFontSizeScale; // ArkUI will scale the font, we divide it by
+                                // the scale to cancel that out
     }
     std::array<ArkUI_NumberValue, 1> value = {{{.f32 = fontSize}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
