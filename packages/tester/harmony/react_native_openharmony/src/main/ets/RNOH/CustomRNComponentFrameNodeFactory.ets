@@ -6,7 +6,7 @@
  */
 
 import { BuilderNode, FrameNode, NodeContent, UIContext } from '@kit.ArkUI';
-import { Tag } from "./DescriptorBase"
+import { Tag, Descriptor } from "./DescriptorBase"
 import { RNComponentContext, ComponentBuilderContext } from "./EtsRNOHContext"
 import type { FrameNodeFactory } from "./RNInstance"
 import { RNOHLogger } from "./RNOHLogger"
@@ -45,8 +45,10 @@ export class CustomRNComponentFrameNodeFactory implements FrameNodeFactory {
     this.componentContext!.__setContentForTag(tag, nodeContent);
     const builderCtx = new ComponentBuilderContext(
       this.componentContext!,
+      this.componentContext!,
       tag,
       componentName,
+      this.componentContext!.descriptorRegistry.getDescriptor<Descriptor>(tag),
     );
     const builderNode = new BuilderNode<[ComponentBuilderContext]>(this.uiCtx);
     builderNode.build(this.componentContext!.wrappedCustomRNComponentBuilder, builderCtx);

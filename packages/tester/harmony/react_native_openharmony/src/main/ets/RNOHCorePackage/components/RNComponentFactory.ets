@@ -11,7 +11,9 @@ import {
   DescriptorWrapper,
   CustomComponentBuilder,
   ComponentBuilderContext,
+  DescriptorEssence,
 } from "../../RNOH"
+import { Descriptor } from "../../RNOH/DescriptorBase";
 
 /**
  * @internal
@@ -22,8 +24,10 @@ export function buildRNComponent(ctx: RNComponentContext, descriptorWrapper: Des
   if (ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_) !== '') {
     ctx.wrappedCustomRNComponentBuilder.builder(new ComponentBuilderContext(
       ctx,
+      ctx,
       descriptorWrapper.tag,
       ctx.rnInstance.getComponentNameFromDescriptorType(descriptorWrapper.type_),
+      ctx.descriptorRegistry.getDescriptor<Descriptor>(descriptorWrapper.tag) as DescriptorEssence,
     ))
   }
 }

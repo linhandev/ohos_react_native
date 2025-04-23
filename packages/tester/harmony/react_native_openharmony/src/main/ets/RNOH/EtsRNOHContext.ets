@@ -75,6 +75,15 @@ export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
 
 /**
  * @api
+ * @deprecated It was deprecated when preparing 0.77 branch for release.
+ */
+interface DescriptorEssence {
+  tag: Tag,
+  type: string
+}
+
+/**
+ * @api
  */
 export type CustomComponentBuilder = (ctx: ComponentBuilderContext) => void
 
@@ -194,8 +203,18 @@ function buildRNChildren(ctx: RNComponentContext, parentTag: Tag) {
  */
 export class ComponentBuilderContext {
   public rnComponentContext: RNComponentContext
+  /**
+   * @deprecated Use `rnComponentContext` instead.
+   * It was deprecated when preparing 0.77 branch for release.
+   */
+  public rnohContext: RNOHContext
   public tag: Tag
   public componentName: string
+  /**
+   * @deprecated: Use tag and componentName instead.
+   * It was deprecated when preparing 0.77 branch for release.
+   */
+  public descriptor: DescriptorEssence
   /**
    * @internal
    */
@@ -204,10 +223,13 @@ export class ComponentBuilderContext {
   /**
    * @internal
    */
-  constructor(rnComponentContext: RNComponentContext, tag: Tag, componentName: string) {
+  constructor(rnComponentContext: RNComponentContext, rnohContext: RNOHContext, tag: Tag, componentName: string,
+    descriptor: DescriptorEssence) {
     this.rnComponentContext = rnComponentContext
+    this.rnohContext = rnohContext
     this.tag = tag
     this.componentName = componentName
+    this.descriptor = descriptor
     const rnInstance = this.rnComponentContext.rnInstance;
     if (rnInstance instanceof RNInstanceImpl) {
       this.customRNComponentWrappedBuilderByName = rnInstance.getPackages().flatMap(pkg => {
