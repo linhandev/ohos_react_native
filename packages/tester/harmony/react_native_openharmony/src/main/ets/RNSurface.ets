@@ -215,6 +215,9 @@ export struct RNSurface {
 
   override onMeasureSize(selfLayoutInfo: GeometryInfo, children: Array<Measurable>,
     constraint: ConstraintSizeOptions): SizeResult {
+    if (this.surfaceHandle.isDestroyed()) {
+      return {width: 0, height: 0};
+    }    
     const currentTime = Date.now(); 
     if (!this.isWindowRectDrag || 
       (currentTime - this.lastChangeTimeInMs > this.surfaceConstraintsDebounceTimeInMs) || 
