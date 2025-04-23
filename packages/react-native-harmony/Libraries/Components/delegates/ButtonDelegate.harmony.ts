@@ -17,8 +17,8 @@ export default class ButtonDelegate extends BaseButtonDelegate {
 
   override getButtonStyle(): ViewStyle {
     return {
-      backgroundColor: '#0A59F7',
-      borderRadius: '100%',
+      backgroundColor: "#317aff",
+      borderRadius: 8,
     };
   }
 
