@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0.403
+- fix: incorrect press recognition && TextInput gains focus when it should not,([aad479f3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aad479f39f920142f2e40cd536c76926dcc2c934))
+- Modify the parameters of calling RN side methods on native components,([e3973354](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e39733544e7bdb0f3149bb51e4f06e0cc2c50478))
+- chore: update to version 5.1.0.402(0.72.65),([ee3e03eb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee3e03eb5e25c6bf590983e2656854fe2b4a5a10))
+
 ## 5.1.0.402
 - fix: When shadowOpacity is greater than 1, the shadow effect is not rendered.,([64abbcc7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/64abbcc76c446cd7d73c62a320246be4c83468ad))
 - fix:Allow RNSurface to adapt to content or parent,([b970eb1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b970eb1ad4828bb1855ae84266cad77f6f996502))
