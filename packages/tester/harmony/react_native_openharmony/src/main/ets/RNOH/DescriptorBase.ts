@@ -151,7 +151,10 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
     return this.descriptor.rawProps
   }
 
-  protected get cppProps(): TProps {
+  protected get cppProps(): TProps | Object {
+    if (this.descriptor.isDynamicBinder) {
+      return {}
+    }
     return this.descriptor.props as TProps
   }
 
@@ -244,6 +247,12 @@ TRawProps extends Object = Object> extends DescriptorEssence<TType> {
   rawProps: TRawProps;
   childrenTags: Tag[];
   layoutMetrics: LayoutMetrics;
+
+  /**
+   * @deprecated: Use `rawProps` instead.
+   * It was deprecated when preparing 0.77 branch for release.
+   */
+  isDynamicBinder: boolean;
 
   /**
    * A number which changes each time this component is updated

@@ -341,7 +341,7 @@ export class DescriptorRegistry {
 
   private applyMutation(mutation: Mutation): Tag[] {
     if (mutation.type === MutationType.CREATE) {
-      this.saveDescriptor(mutation.descriptor)
+      this.saveDescriptor(this.maybeOverwriteProps(mutation.descriptor))
       return [];
     } else if (mutation.type === MutationType.INSERT) {
       const childDescriptor = this.descriptorByTag.get(mutation.childTag);
@@ -365,15 +365,16 @@ export class DescriptorRegistry {
         return [];
       }
       const children = currentDescriptor.childrenTags;
+      const mutationDescriptor = this.maybeOverwriteProps(mutation.descriptor)
       const animatedProps = this.animatedRawPropsByTag.get(mutation.descriptor.tag);
 
       const newDescriptor = {
         ...currentDescriptor,
         ...mutation.descriptor,
         // NOTE: animated props override the ones from the mutation
-        props: { ...currentDescriptor.props, ...mutation.descriptor.props, ...animatedProps },
-        rawProps: { ...currentDescriptor.rawProps, ...mutation.descriptor.rawProps, ...animatedProps },
-        state: { ...currentDescriptor.state, ...mutation.descriptor.state },
+        props: { ...currentDescriptor.props, ...mutationDescriptor.props, ...animatedProps },
+        rawProps: { ...currentDescriptor.rawProps, ...mutationDescriptor.rawProps, ...animatedProps },
+        state: { ...currentDescriptor.state, ...mutationDescriptor.state },
         childrenTags: children,
       };
       this.saveDescriptor(newDescriptor)
@@ -426,10 +427,19 @@ export class DescriptorRegistry {
   }
 
   /**
+   * @deprecated: It was deprecated when preparing 0.77 branch for release.
+   */
+  private maybeOverwriteProps(descriptor: Descriptor) {
+    const props = descriptor.isDynamicBinder ? descriptor.rawProps : descriptor.props
+    return { ...descriptor, props }
+  }
+
+  /**
    * @internal
    */
   public createRootDescriptor(tag: Tag) {
     const rootDescriptor: RootDescriptor = {
+      isDynamicBinder: false,
       type: 'RootView',
       tag,
       childrenTags: [],
@@ -472,6 +482,14 @@ export class DescriptorRegistry {
         this.descriptorByTag.delete(tag);
       }
     });
+  }
+
+  /**
+   * @deprecated: Use other methods from this class instead.
+   * It was deprecated when preparing 0.77 branch for release.
+   */
+  public getDescriptorByTagMap() {
+    return this.descriptorByTag
   }
 
   public getStats() {
