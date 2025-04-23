@@ -51,11 +51,7 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
   void onTouchEvent(ArkUI_UIInputEvent* event) override {
     m_touchEventDispatcher.dispatchTouchEvent(event, m_rootView);
   }
-    
-  void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget) {
-      m_touchEventDispatcher.cancelTouchTargetEvent(weakTouchTarget);
-  }
-    
+  
   void onMessageReceived(ArkTSMessage const& message) {
     DLOG(INFO) << "onMessageReceived: " << message.name;
     if (message.name == "CANCEL_TOUCHES" &&
@@ -269,6 +265,4 @@ Surface::LayoutContext ArkUISurface::getLayoutContext() {
   m_threadGuard.assertThread();
   return Surface::LayoutContext::from(m_surfaceHandler.getLayoutContext());
 }
-
-std::weak_ptr<UIInputEventHandler> ArkUISurface::getUIInputEventHandler() { return m_touchEventHandler; };
 } // namespace rnoh

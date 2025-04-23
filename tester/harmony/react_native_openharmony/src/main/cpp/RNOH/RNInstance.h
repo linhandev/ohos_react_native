@@ -54,8 +54,6 @@ class Surface {
   using Weak = std::weak_ptr<Surface>;
 
   virtual LayoutContext getLayoutContext() = 0;
-  
-  virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() = 0;
 };
 
 class RNInstance {

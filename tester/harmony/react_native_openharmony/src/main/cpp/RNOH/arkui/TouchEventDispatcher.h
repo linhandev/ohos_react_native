@@ -40,11 +40,6 @@ class TouchEventDispatcher {
    * rnohCoreContext.cancelTouches().
    */
   void cancelActiveTouches();
-
-  /**
-   * @internal
-   */
-  void cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget);
     
  private:
   TouchTarget::Shared registerTargetForTouch(
@@ -60,7 +55,7 @@ class TouchEventDispatcher {
       facebook::react::Touches const& changedTouches,
       int32_t action);
 
-  std::unordered_map<TouchId, TouchTarget::Weak> m_touchTargetByTouchId;
+  std::unordered_map<TouchId, TouchTarget::Shared> m_touchTargetByTouchId;
   facebook::react::TouchEvent m_previousEvent;
 };
 } // namespace rnoh

@@ -223,8 +223,6 @@ class ComponentInstance
     }
     onNativeResponderBlockChange(m_nativeResponderBlockOrigins.size() > 0);
   }
-
-    virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() { return {}; }
     
   // TouchTarget implementation
   Tag getTouchTargetTag() const override {

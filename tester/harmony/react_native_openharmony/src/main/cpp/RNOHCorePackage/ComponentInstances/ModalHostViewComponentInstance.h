@@ -44,8 +44,6 @@ class ModalHostViewComponentInstance
 
  public:
   ModalHostViewComponentInstance(Context context);
-  
-  std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override { return m_touchHandler; }
     
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onStateChanged(SharedConcreteState const& state) override;

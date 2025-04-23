@@ -33,23 +33,6 @@ void ComponentInstance::insertChild(
 
 void ComponentInstance::removeChild(ComponentInstance::Shared childComponentInstance) {
     auto it = std::find(m_children.begin(), m_children.end(), childComponentInstance);
-    if (it != m_children.end()) {
-        auto childComponentInstance = std::move(*it);
-        auto currentAncestor = this->shared_from_this();
-        while (currentAncestor != nullptr) {
-            auto ancestorUIInputEventHandler = currentAncestor->getUIInputEventHandler().lock();
-            if (ancestorUIInputEventHandler != nullptr) {
-                /**
-                 * TouchDown events can arrive just before component removal, causing
-                 * the Gesture Responder System on the JS side to enter an unexpected
-                 * state. This code cancels such events to prevent this issue.
-                 */
-                ancestorUIInputEventHandler->cancelTouchTargetEvent(childComponentInstance);
-                break;
-            }
-            currentAncestor = currentAncestor->getParent().lock();
-        }
-    }
     m_children.erase(it);
     onChildRemoved(childComponentInstance);
 }

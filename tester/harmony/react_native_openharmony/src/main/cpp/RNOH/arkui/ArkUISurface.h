@@ -87,7 +87,6 @@ class ArkUISurface
   void setDisplayMode(facebook::react::DisplayMode displayMode);
     
   Surface::LayoutContext getLayoutContext() override;
-  std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override;
 
  private:
   facebook::react::SurfaceId m_surfaceId;

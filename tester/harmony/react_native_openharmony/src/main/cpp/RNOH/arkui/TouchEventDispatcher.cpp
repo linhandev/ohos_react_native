@@ -218,7 +218,7 @@ void TouchEventDispatcher::dispatchTouchEvent(
     } else if (auto touchTargetEntry =
                    m_touchTargetByTouchId.find(activeTouch.id);
                touchTargetEntry != m_touchTargetByTouchId.end()) {
-      auto touchTarget = touchTargetEntry->second.lock();
+      auto touchTarget = touchTargetEntry->second;
       if (touchTarget == nullptr) {
         continue;
       }
@@ -236,7 +236,7 @@ void TouchEventDispatcher::dispatchTouchEvent(
               << activeTouch.id;
       continue;
     }
-    auto eventTarget = it->second.lock();
+    auto eventTarget = it->second;
     if (eventTarget == nullptr) {
       DLOG(WARNING) << "Target for current touch event has been deleted";
       m_touchTargetByTouchId.erase(it);
@@ -358,7 +358,7 @@ void TouchEventDispatcher::sendEvent(
       continue;
     }
 
-    auto touchTarget = touchTargetIt->second.lock();
+    auto touchTarget = touchTargetIt->second;
     if (touchTarget == nullptr) {
       m_touchTargetByTouchId.erase(touchTargetIt);
       continue;
@@ -380,7 +380,7 @@ void TouchEventDispatcher::sendEvent(
       continue;
     }
 
-    auto touchTarget = touchTargetIt->second.lock();
+    auto touchTarget = touchTargetIt->second;
     if (touchTarget == nullptr) {
       m_touchTargetByTouchId.erase(touchTargetIt);
       continue;
@@ -432,7 +432,7 @@ void TouchEventDispatcher::cancelActiveTouches() {
       continue;
     }
     auto touchIdAndTouchTarget = m_touchTargetByTouchId.find(touch.identifier);
-    auto touchTarget = touchIdAndTouchTarget->second.lock();
+    auto touchTarget = touchIdAndTouchTarget->second;
     if (touchTarget) {
       if (m_previousEvent.changedTouches.size() > 0) {
         DLOG(INFO) << "TOUCH::CANCEL";
@@ -442,41 +442,4 @@ void TouchEventDispatcher::cancelActiveTouches() {
     }
   }
 }
-
-void TouchEventDispatcher::cancelTouchTargetEvent(TouchTarget::Weak weakTouchTarget) {
-    auto touchTargetToCancel = weakTouchTarget.lock();
-    if (touchTargetToCancel == nullptr) {
-        return;
-    }
-    auto touchTargetByTouchId = m_touchTargetByTouchId;
-
-    for (const auto& [touchId, weakActiveTouchTarget] : touchTargetByTouchId) {
-        auto touchCancelEvent = m_previousEvent;
-        touchCancelEvent.targetTouches = {};
-        touchCancelEvent.changedTouches = {};
-        touchCancelEvent.touches = {};
-        auto activeTouchTarget = weakActiveTouchTarget.lock();
-        if (activeTouchTarget == nullptr) {
-            continue;
-        }
-        for (auto touch : m_previousEvent.touches) {
-            if (touch.target != touchTargetToCancel->getTouchTargetTag() || touch.identifier != touchId) {
-                continue;
-            }
-
-            auto newTouch = touch;
-            newTouch.timestamp = newTouch.timestamp + 1;
-            newTouch.identifier = touchId;
-            touchCancelEvent.changedTouches.insert(newTouch);
-        }
-        if (touchTargetToCancel->getTouchTargetTag() == activeTouchTarget->getTouchTargetTag()) {
-            m_touchTargetByTouchId.erase(touchId);
-            auto eventEmitter = touchTargetToCancel->getTouchEventEmitter();
-            if (eventEmitter != nullptr) {
-                eventEmitter->onTouchCancel(touchCancelEvent);
-            }
-        }
-    }
-}
-
 } // namespace rnoh
