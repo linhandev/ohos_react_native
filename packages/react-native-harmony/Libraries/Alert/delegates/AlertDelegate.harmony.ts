@@ -34,17 +34,22 @@ export default class AlertDelegate extends BaseAlertDelegate {
     if (options && options.cancelable) {
       alertOptions.cancelable = options.cancelable;
     }
-    // At most two buttons. Ignore rest.
+    // At most three buttons. Ignore rest.
     const validButtons: AlertDelegateButton[] = (
       buttons ?? [{ text: 'OK' }]
-    ).slice(0, 2);
+    ).slice(0, 3);
     const secondaryButton = validButtons.pop();
     const primaryButton = validButtons.pop();
+    const tertiaryButton = validButtons.pop();
     if (primaryButton) {
       alertOptions.primaryButton = primaryButton.text || '';
     }
     if (secondaryButton) {
       alertOptions.secondaryButton = secondaryButton.text || '';
+    }
+    if (tertiaryButton) {
+      console.log("zicion: thirdary button!");
+      alertOptions.tertiaryButton = tertiaryButton.text || '';
     }
     const onAction = (
       action: 'buttonClicked' | 'dismissed',
@@ -58,6 +63,8 @@ export default class AlertDelegate extends BaseAlertDelegate {
         }
       } else if (action === constants.dismissed) {
         options && options.onDismiss && options.onDismiss();
+      } else if (buttonKey === constants.thirdaryButton) {
+        tertiaryButton?.onPress && tertiaryButton.onPress();
       }
     };
     const onError = (errorMessage: string) => console.warn(errorMessage);

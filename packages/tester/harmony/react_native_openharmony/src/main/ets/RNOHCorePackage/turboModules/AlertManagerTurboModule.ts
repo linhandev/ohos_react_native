@@ -14,6 +14,7 @@ type AlertOptions = {
   message?: string
   primaryButton?: string
   secondaryButton?: string
+  tertiaryButton?: string
   cancelable: boolean
 }
 
@@ -30,6 +31,7 @@ export class AlertManagerTurboModule extends TurboModule {
     dismissed: 'dismissed',
     primaryButton: 1,
     secondaryButton: 2,
+    tertiaryButton: 3,
   }
 
   private parseButton(button?: string, buttonKey?: number, onAction?: (action: string, buttonKey?: number) => void) {
@@ -56,13 +58,14 @@ export class AlertManagerTurboModule extends TurboModule {
 
         const primaryButton = this.parseButton(options.primaryButton, this.constants.primaryButton, onAction);
         const secondaryButton = this.parseButton(options.secondaryButton, this.constants.secondaryButton, onAction);
-
+        const tertiaryButton = this.parseButton(options.tertiaryButtons, this.constants.tertiaryButton, onAction);
+        const buttons = [primaryButton, secondaryButton, tertiaryButton];
+        
         const alertParams = {
           title: options.title,
           message: options.message,
           autoCancel: options.cancelable,
-          primaryButton: primaryButton,
-          secondaryButton: secondaryButton,
+          buttons: buttons.filter((button) => button !== undefined),
           cancel: () => {
             onAction(this.constants.dismissed);
           },
