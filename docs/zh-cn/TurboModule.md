@@ -107,6 +107,8 @@ export default TurboModuleRegistry.get<Spec>(
 
 #### 使用Codegen生成原生代码
 
+> Codegen自动生成的胶水代码会覆盖本地实现的胶水代码。
+
 Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
 
 1. 原工程添加命令

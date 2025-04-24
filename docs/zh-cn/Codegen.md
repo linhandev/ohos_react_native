@@ -17,6 +17,8 @@
 
 ### 使用Codegen工具创建Turbo Native Module和Fabric Native Component
 
+> Codegen自动生成的胶水代码会覆盖本地实现的胶水代码。
+
 同 Android 和 iOS ，使用 Codegen 工具创建 Turbo Native Module 和 Fabric Native Component 大致分为以下步骤：
 
 1. _[可选]_ 新建一个前端三方库;
