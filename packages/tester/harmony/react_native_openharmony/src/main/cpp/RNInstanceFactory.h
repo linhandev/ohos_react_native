@@ -71,7 +71,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     UITicker::Shared uiTicker,
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
-    std::unordered_map<std::string, std::string> fontPathByFontFamily) {
+    std::unordered_map<std::string, std::string> fontPathByFontFamily,
+    std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider) {
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_START, id);
 
@@ -269,7 +270,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       arkTSBridge,
       std::move(fontRegistry),
       std::move(markerListener),
-      std::move(componentJSIBinderByName));
+      std::move(componentJSIBinderByName),
+      std::move(jsEngineProvider));
   componentInstanceDependencies->rnInstance = rnInstance;
   auto imageSourceResolver =
       std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);

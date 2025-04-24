@@ -43,17 +43,11 @@ target_sources(
 target_link_libraries(folly PUBLIC Boost::context Boost::algorithm
                                    Boost::intrusive fmt glog double-conversion fast_float)
 
-# HERMES
-add_library(hermes-engine::libhermes SHARED IMPORTED)
-target_compile_definitions(hermes-engine::libhermes INTERFACE
- # TODO: check if building in debug mode
-                    HERMES_ENABLE_DEBUGGER)
-set_property(
-  TARGET hermes-engine::libhermes
-  PROPERTY IMPORTED_LOCATION
-           "${third_party_dir}/prebuilt/${OHOS_ARCH}/libhermes.so")
-set(hermes_include_dirs "${hermes_SOURCE_DIR}/API"
-                        "${hermes_SOURCE_DIR}/public")
-
 add_subdirectory("rn")
-add_subdirectory("jsvm")
+
+if(USE_HERMES)
+  add_subdirectory("hermes")
+else()
+  add_subdirectory("jsvm")
+endif()
+

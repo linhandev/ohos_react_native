@@ -1,8 +1,3 @@
-# Copyright (c) 2024 Huawei Technologies Co., Ltd.
-#
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
-
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_VERBOSE_MAKEFILE on)
 
@@ -24,4 +19,19 @@ target_link_libraries(bridgelessjsvm
         Boost::context
         Boost::stacktrace_addr2line
         Boost::locale
+)
+
+add_library(jsvmtooling
+        SHARED
+        $<TARGET_OBJECTS:bridgelessjsvm>
+)
+target_link_libraries(jsvmtooling
+        PUBLIC
+        reactnative
+        jsi
+        libjsvm.so
+)
+target_include_directories(jsvmtooling
+        PUBLIC
+        $<TARGET_PROPERTY:bridgelessjsvm,INTERFACE_INCLUDE_DIRECTORIES>
 )

@@ -23,9 +23,6 @@ target_link_libraries(
          uv
          folly
          reactnative
-         bridgelesshermes
-         bridgelessjsvm
-         hermes_inspector_modern
          )
 
 target_compile_options(rnoh_core PUBLIC ${folly_FLAGS})
@@ -35,4 +32,15 @@ if(DEFINED LOG_VERBOSITY_LEVEL)
   message("LOG_VERBOSITY_LEVEL is set to: ${LOG_VERBOSITY_LEVEL}")
   target_compile_definitions(rnoh_core
                              PUBLIC LOG_VERBOSITY_LEVEL=${LOG_VERBOSITY_LEVEL})
+endif()
+
+if(USE_HERMES)
+  target_link_libraries(rnoh_core
+                        PUBLIC hermestooling)
+  target_compile_definitions(rnoh_core
+                             PUBLIC USE_HERMES=1)
+else()
+  target_link_libraries(rnoh_core PUBLIC jsvmtooling)
+  target_compile_definitions(rnoh_core
+                             PUBLIC USE_HERMES=0)
 endif()

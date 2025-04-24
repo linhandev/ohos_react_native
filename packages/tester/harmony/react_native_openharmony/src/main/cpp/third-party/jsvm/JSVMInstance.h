@@ -15,11 +15,14 @@ using namespace facebook::react;
 
 namespace jsvm {
 
+class CrashManager;
+
 class JSVMInstance {
  public:
   static std::unique_ptr<JSRuntime> createJSRuntime(
       std::shared_ptr<const ReactNativeConfig> reactNativeConfig,
-      std::shared_ptr<MessageQueueThread> msgQueueThread,
+      std::shared_ptr<CrashManager> crashManager,
+      std::shared_ptr<facebook::react::MessageQueueThread> msgQueueThread,
       bool allocInOldGenBeforeTTI) noexcept;
 };
 

@@ -16,11 +16,11 @@
 #include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
 #include <react/renderer/runtimescheduler/RuntimeSchedulerBinding.h>
 #include <react/renderer/scheduler/Scheduler.h>
-#include <react/runtime/hermes/HermesInstance.h>
 #include <memory>
 #include <string_view>
 #include "HarmonyTimerRegistry.h"
 #include "JSBigStringHelpers.h"
+#include "JSEngineProvider.h"
 #include "JSInspectorHostTargetDelegate.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
@@ -110,9 +110,6 @@ void RNInstanceInternal::initialize() {
     RNInstanceInternal::s_hasInitializedFeatureFlags = true;
   }
 
-  auto reactConfig = std::make_shared<react::EmptyReactNativeConfig>();
-  m_contextContainer->insert("ReactNativeConfig", reactConfig);
-
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
   m_jsQueue = std::make_shared<MessageQueueThread>(m_taskExecutor);
@@ -132,8 +129,7 @@ void RNInstanceInternal::initialize() {
         LOG(ERROR) << "Error raised when executing JS: " << msg.str();
       };
 
-  auto jsRuntime = facebook::react::HermesInstance::createJSRuntime(
-      std::move(reactConfig), nullptr, m_jsQueue, false);
+  auto jsRuntime = m_jsEngineProvider->createJSRuntime(m_jsQueue);
 
   // start the inspector
   auto& inspectorFlags = jsinspector_modern::InspectorFlags::getInstance();
@@ -498,7 +494,8 @@ RNInstanceInternal::RNInstanceInternal(
     SharedNativeResourceManager nativeResourceManager,
     bool shouldEnableDebugger,
     ArkTSBridge::Shared arkTSBridge,
-    FontRegistry::Shared fontRegistry)
+    FontRegistry::Shared fontRegistry,
+    std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider)
     : m_id(id),
       m_taskExecutor(std::move(taskExecutor)),
       m_contextContainer(std::move(contextContainer)),
@@ -519,7 +516,8 @@ RNInstanceInternal::RNInstanceInternal(
       m_componentInstancePreallocationRequestQueue(
           std::move(componentInstancePreallocationRequestQueue)),
       m_inspectorHostDelegate(
-          std::make_unique<JSInspectorHostTargetDelegate>(m_arkTSChannel)) {
+          std::make_unique<JSInspectorHostTargetDelegate>(m_arkTSChannel)),
+      m_jsEngineProvider(std::move(jsEngineProvider)) {
   m_fontRegistry = std::move(fontRegistry);
 }
 

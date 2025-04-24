@@ -7,6 +7,11 @@ option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation"
 option(WITH_HITRACE_REACT_MARKER
        "enables HiTrace-based React Marker implementation" OFF)
 
+if(NOT DEFINED USE_HERMES)
+  set(USE_HERMES ON)
+endif()
+message("USE_HERMES is set to: ${USE_HERMES}")
+
 add_compile_options("-Wno-error=unused-command-line-argument")
 
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")

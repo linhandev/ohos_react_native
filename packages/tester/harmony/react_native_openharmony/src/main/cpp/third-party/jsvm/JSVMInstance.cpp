@@ -48,7 +48,8 @@ class JSVMJSRuntime : public JSRuntime {
 // TODO :param[1] crashManager
 std::unique_ptr<JSRuntime> JSVMInstance::createJSRuntime(
     std::shared_ptr<const ReactNativeConfig> reactNativeConfig,
-    std::shared_ptr<MessageQueueThread> msgQueueThread,
+    std::shared_ptr<CrashManager> crashManager,
+    std::shared_ptr<facebook::react::MessageQueueThread> msgQueueThread,
     bool allocInOldGenBeforeTTI) noexcept {
   assert(msgQueueThread != nullptr);
 

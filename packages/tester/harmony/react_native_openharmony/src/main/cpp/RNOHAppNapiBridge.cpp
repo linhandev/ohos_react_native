@@ -18,6 +18,7 @@
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/Inspector.h"
+#include "RNOH/JSEngineProvider.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HiTraceRNOHMarkerListener.h"
 #include "RNOH/Performance/RNOHMarker.h"
@@ -28,6 +29,16 @@
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
+
+#ifndef USE_HERMES
+#define USE_HERMES 1
+#endif
+
+#if USE_HERMES
+#include <react/runtime/hermes/HermesInstance.h>
+#else
+#include "JSVMInstance.h"
+#endif
 
 template <typename Map, typename K, typename V>
 auto getOrDefault(const Map& map, K&& key, V&& defaultValue)
@@ -49,6 +60,20 @@ auto extractOrDefault(Map& map, K&& key, V&& defaultValue)
     return value;
   }
   return std::forward<V>(defaultValue);
+}
+
+std::shared_ptr<facebook::react::JSRuntimeFactory> createJSRuntimeFactory() {
+  auto reactConfig =
+      std::make_shared<facebook::react::EmptyReactNativeConfig>();
+#if USE_HERMES
+  DLOG(INFO) << "Using HermesInstance";
+  return std::make_shared<JSEngineProvider<facebook::react::HermesInstance>>(
+      std::move(reactConfig));
+#else
+  DLOG(INFO) << "Using JSVMInstance";
+  return std::make_shared<JSEngineProvider<jsvm::JSVMInstance>>(
+      std::move(reactConfig));
+#endif
 }
 
 std::mutex RN_INSTANCE_BY_ID_MTX;
@@ -223,6 +248,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         std::make_unique<RNInstanceInternal::RNInstanceRNOHMarkerListener>(
             arkTSChannel);
     RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::APP_STARTUP_START);
+    auto jsEngineProvider = createJSRuntimeFactory();
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,
@@ -281,7 +307,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         UI_TICKER,
         jsResourceManager,
         shouldEnableDebugger,
-        std::move(fontPathByFontFamily));
+        std::move(fontPathByFontFamily),
+        std::move(jsEngineProvider));
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {

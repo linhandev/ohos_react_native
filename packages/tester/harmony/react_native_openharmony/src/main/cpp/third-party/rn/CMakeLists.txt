@@ -1,7 +1,7 @@
 if(NOT DEFINED RNOH_REACT_COMMON_DIR)
  set(RNOH_REACT_COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ReactCommon")
 endif()
-set(REACT_COMMON_DIR ${RNOH_REACT_COMMON_DIR})
+set(REACT_COMMON_DIR ${RNOH_REACT_COMMON_DIR} CACHE INTERNAL "")
 set(REACT_COMMON_PATCH_DIR "${patches_dir}/react_native_core")
 
 include_directories(${REACT_COMMON_PATCH_DIR})
@@ -41,13 +41,7 @@ add_react_common_subdir(cxxreact)
 add_react_common_subdir(jsi)
 add_react_common_subdir(callinvoker)
 add_react_common_subdir(jsinspector-modern)
-add_react_common_subdir(hermes/executor)
-target_include_directories(hermes_executor_common
-                           PUBLIC "${hermes_include_dirs}")
-# add_react_common_subdir(hermes/inspector)
 add_react_common_subdir(react/runtime)
-add_react_common_subdir(react/runtime/hermes)
-target_include_directories(bridgelesshermes PUBLIC "${hermes_include_dirs}")
 add_react_common_subdir(react/runtime/nativeviewconfig)
 add_react_common_subdir(react/featureflags)
 add_react_common_subdir(react/performance/timeline)
@@ -103,12 +97,6 @@ add_react_common_subdir(react/timing)
 add_react_common_subdir(jserrorhandler)
 target_include_directories(react_nativemodule_core
                            PRIVATE "${REACT_COMMON_DIR}/callinvoker")
-
-# HERMES INSPECTOR
-add_react_common_subdir(hermes/inspector-modern)
-target_include_directories(hermes_inspector_modern
-                           PRIVATE "${hermes_include_dirs}")
-target_compile_options(hermes_inspector_modern PRIVATE ${folly_FLAGS})
 
 # add hitrace systrace implementation for debugging
 if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
@@ -273,7 +261,7 @@ target_include_directories(reactnative
         $<TARGET_PROPERTY:yoga,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
-set(REACTNATIVE_LIBRARIES glog folly jsi hermes-engine::libhermes)
+set(REACTNATIVE_LIBRARIES glog folly jsi)
 
 # add hitrace systrace implementation
 if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
@@ -288,7 +276,6 @@ if(WITH_HITRACE_SYSTRACE OR WITH_HITRACE_REACT_MARKER)
 endif()
 
 target_link_libraries(reactnative PUBLIC ${REACTNATIVE_LIBRARIES})
-target_include_directories(reactnative PUBLIC "${hermes_include_dirs}")
 target_compile_definitions(reactnative PUBLIC
     RAW_PROPS_ENABLED
     REACT_NATIVE__RENDER__GRAPHICS__FLOAT=double

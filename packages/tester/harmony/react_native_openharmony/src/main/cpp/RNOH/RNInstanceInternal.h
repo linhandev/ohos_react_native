@@ -72,7 +72,8 @@ class RNInstanceInternal
       SharedNativeResourceManager nativeResourceManager,
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
-      FontRegistry::Shared fontRegistry);
+      FontRegistry::Shared fontRegistry,
+      std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider);
 
   virtual ~RNInstanceInternal() noexcept;
 
@@ -248,5 +249,6 @@ class RNInstanceInternal
   std::shared_ptr<facebook::react::jsinspector_modern::HostTarget>
       m_inspectorHostTarget;
   std::optional<size_t> m_inspectorPageId;
+  std::shared_ptr<facebook::react::JSRuntimeFactory> m_jsEngineProvider;
 };
 } // namespace rnoh

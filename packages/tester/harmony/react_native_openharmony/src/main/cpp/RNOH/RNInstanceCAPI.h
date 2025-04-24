@@ -51,7 +51,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared FontRegistry,
       RNOHMarker::RNOHMarkerListener::Unique markerListener,
-      ComponentJSIBinderByString componentJSIBinderByName)
+      ComponentJSIBinderByString componentJSIBinderByName,
+      std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider)
       : RNInstanceInternal(
             id,
             contextContainer,
@@ -70,7 +71,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
             std::move(nativeResourceManager),
             shouldEnableDebugger,
             std::move(arkTSBridge),
-            std::move(FontRegistry)),
+            std::move(FontRegistry),
+            std::move(jsEngineProvider)),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),
