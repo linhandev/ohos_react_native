@@ -425,17 +425,14 @@ void TextInputComponentInstance::onPropsChanged(
 void TextInputComponentInstance::onLayoutChanged(
     facebook::react::LayoutMetrics const& layoutMetrics) {
   CppComponentInstance::onLayoutChanged(layoutMetrics);
-  if (m_multiline) {
-    m_textAreaNode.setLayoutRect(
-        layoutMetrics.frame.origin,
-        layoutMetrics.frame.size,
-        layoutMetrics.pointScaleFactor);
-  } else {
-    m_textInputNode.setLayoutRect(
-        layoutMetrics.frame.origin,
-        layoutMetrics.frame.size,
-        layoutMetrics.pointScaleFactor);
-  }
+  m_textAreaNode.setLayoutRect(
+      layoutMetrics.frame.origin,
+      layoutMetrics.frame.size,
+      layoutMetrics.pointScaleFactor);
+  m_textInputNode.setLayoutRect(
+      layoutMetrics.frame.origin,
+      layoutMetrics.frame.size,
+      layoutMetrics.pointScaleFactor);
 }
 
 void TextInputComponentInstance::setTextContentAndSelection(
