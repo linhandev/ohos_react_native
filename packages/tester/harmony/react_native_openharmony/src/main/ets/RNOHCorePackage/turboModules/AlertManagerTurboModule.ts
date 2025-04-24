@@ -58,7 +58,7 @@ export class AlertManagerTurboModule extends TurboModule {
 
         const primaryButton = this.parseButton(options.primaryButton, this.constants.primaryButton, onAction);
         const secondaryButton = this.parseButton(options.secondaryButton, this.constants.secondaryButton, onAction);
-        const tertiaryButton = this.parseButton(options.tertiaryButtons, this.constants.tertiaryButton, onAction);
+        const tertiaryButton = this.parseButton(options.tertiaryButton, this.constants.tertiaryButton, onAction);
         const buttons = [primaryButton, secondaryButton, tertiaryButton];
         
         const alertParams = {

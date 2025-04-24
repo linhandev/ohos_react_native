@@ -199,6 +199,7 @@ export const ImageTest = () => {
       />
       <TestCase.Logical
         skip={noInternetSkipMsg}
+        tags={['sequential']}
         itShould="abort prefetch image"
         fn={async ({expect}) => {
           expect(
