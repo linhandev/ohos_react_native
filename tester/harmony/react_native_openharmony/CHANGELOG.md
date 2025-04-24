@@ -1,6 +1,8 @@
 # Changelog
 
 ## v0.72.66
+- fix: crash when loading the bundle located under the HSP,([de132df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de132df4a94f3761bd025e0d6aa7556e54ff26c7))
+- chore: update to version 5.1.0.403(0.72.66),([51d64922](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51d64922b658f9353457f73bc476de6a85e38568))
 - fix: incorrect press recognition && TextInput gains focus when it should not,([aad479f3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aad479f39f920142f2e40cd536c76926dcc2c934))
 - chore: update to version 5.1.0.402(0.72.65),([ee3e03eb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee3e03eb5e25c6bf590983e2656854fe2b4a5a10))
 

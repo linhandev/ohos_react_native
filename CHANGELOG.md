@@ -1,6 +1,11 @@
 # Changelog
 
 ## 5.1.0.403
+- fix: crash when loading the bundle located under the HSP,([de132df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de132df4a94f3761bd025e0d6aa7556e54ff26c7))
+- Codegen:Codegen自动生成的胶水代码会覆盖本地实现的胶水代码,([0020ef1e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0020ef1e20b30e7ee6c82e69bd6bba3dd05225f7))
+- chore: update to version 5.1.0.403(0.72.66),([51d64922](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51d64922b658f9353457f73bc476de6a85e38568))
+- Add instructions for version 5.1.0.403 of React native Harmony,([3c04ad3c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3c04ad3c5f98e4712aa7246cd4d02349785584bf))
+- chore: update to version 5.1.0.403(0.72.66),([f39abb8e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f39abb8eb903fe1d33506cc6858194d4a65a698a))
 - fix: incorrect press recognition && TextInput gains focus when it should not,([aad479f3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aad479f39f920142f2e40cd536c76926dcc2c934))
 - Modify the parameters of calling RN side methods on native components,([e3973354](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e39733544e7bdb0f3149bb51e4f06e0cc2c50478))
 - chore: update to version 5.1.0.402(0.72.65),([ee3e03eb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee3e03eb5e25c6bf590983e2656854fe2b4a5a10))
