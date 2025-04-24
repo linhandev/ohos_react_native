@@ -53,30 +53,33 @@ void RNInstanceInternal::loadScriptFromRawFile(std::string const rawFileUrl,
 {
     // Magic value used to indicate hermes bytecode
     const uint64_t hermesMagic = 0x1F1903C103BC1FC6;
-
-    auto jsBundle = JSBigStringHelpers::fromRawFilePath(
-        rawFileUrl, m_nativeResourceManager.get());
-    uint64_t extractedMagic{};
-    if (jsBundle->size() >= sizeof(uint64_t)) {
-        const char* source = jsBundle->c_str();
-        std::copy(source,
-            source + sizeof(uint64_t),
-            reinterpret_cast<uint8_t *>(&extractedMagic));
-    }
-    if (jsBundle) {
-        DLOG(INFO) << "Loaded bundle from rawfile resource";
-    }
-    if (extractedMagic == hermesMagic) {
-        this->loadScript(std::move(jsBundle), rawFileUrl, onFinish);
-    } else {
-        // NOTE: JS needs to be null terminated to be handled correctly by
-        // hermes. Buffers read from a rawfile aren't null terminated, so we
-        // pass the buffer as a string.
-        std::string s(jsBundle->c_str(), jsBundle->c_str() + jsBundle->size());
-        this->loadScript(
-            std::make_unique<facebook::react::JSBigStdString>(std::move(s)),
-            rawFileUrl,
-            onFinish);
+    try {
+        auto jsBundle = JSBigStringHelpers::fromRawFilePath(
+            rawFileUrl, m_nativeResourceManager.get());
+        uint64_t extractedMagic{};
+        if (jsBundle->size() >= sizeof(uint64_t)) {
+            const char* source = jsBundle->c_str();
+            std::copy(source,
+                source + sizeof(uint64_t),
+                reinterpret_cast<uint8_t *>(&extractedMagic));
+        }
+        if (jsBundle) {
+            DLOG(INFO) << "Loaded bundle from rawfile resource";
+        }
+        if (extractedMagic == hermesMagic) {
+            this->loadScript(std::move(jsBundle), rawFileUrl, onFinish);
+        } else {
+            // NOTE: JS needs to be null terminated to be handled correctly by
+            // hermes. Buffers read from a rawfile aren't null terminated, so we
+            // pass the buffer as a string.
+            std::string s(jsBundle->c_str(), jsBundle->c_str() + jsBundle->size());
+            this->loadScript(
+                std::make_unique<facebook::react::JSBigStdString>(std::move(s)),
+                rawFileUrl,
+                onFinish);
+        }
+    } catch (const std::runtime_error& e) {
+        LOG(ERROR) << e.what();
     }
 }
 

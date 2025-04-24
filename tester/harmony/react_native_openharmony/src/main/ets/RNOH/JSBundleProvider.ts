@@ -111,20 +111,33 @@ export class ResourceJSBundleProvider extends JSBundleProvider {
   async getBundle(
     onProgress?: (progress: number) => void, 
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
-  ): Promise<RawFileJSBundle> {
+  ): Promise<RawFileJSBundle|ArrayBuffer> {
     try {
-        // We check for the file descriptor here because there isn't a dedicated
-        // way to check if a rawfile exists apart from opening it or getting its
-        // descriptor
-        const fd = this.resourceManager.getRawFdSync(this.path)
-        if (fd) {
-            return {
-                rawFilePath : this.path,
-            };
+      const rnohCoreContext: RNOHCoreContext = AppStorage.get("RNOHCoreContext");      
+      if (!rnohCoreContext || 
+          rnohCoreContext.uiAbilityContext.resourceManager != this.resourceManager) {
+        if (!rnohCoreContext) {
+          console.warn("RNOHCoreContext is undefined, if you want to use mmap" + 
+                        "please use AppStorage to save RNOHCoreContext.");
+        } else {
+          rnohCoreContext.logger.warn("mmap was not used.");   
         }
-        else {
-            throw new Error("The rawfile descriptor can't be opened.");
-        }
+        const bundleFileContent = await this.resourceManager.getRawFileContent(this.path);
+        const bundle = bundleFileContent.buffer;
+        return bundle;
+      }
+      // We check for the file descriptor here because there isn't a dedicated
+      // way to check if a rawfile exists apart from opening it or getting its
+      // descriptor
+      const fd = this.resourceManager.getRawFdSync(this.path)
+      if (fd) {
+          return {
+              rawFilePath : this.path,
+          };
+      }
+      else {
+          throw new Error("The rawfile descriptor can't be opened.");
+      }
     } catch (err) {
         throw new JSBundleProviderError({
             whatHappened : `Couldn't access JSBundle in ${this.path}`,
