@@ -271,8 +271,11 @@ void TextInputComponentInstance::onPropsChanged(
       ;
     }
   }
-  if (props->maxLength != 0) {
-    if (props->maxLength != m_props->maxLength) {
+  if (!m_props || props->maxLength != m_props->maxLength) {
+    if (!props->maxLength) {
+      m_textAreaNode.resetMaxLength();
+      m_textInputNode.resetMaxLength();
+    } else {
       m_textAreaNode.setMaxLength(props->maxLength);
       m_textInputNode.setMaxLength(props->maxLength);
     }
@@ -379,6 +382,11 @@ void TextInputComponentInstance::onPropsChanged(
     m_textInputNode.setShowKeyboardOnFocus(props->traits.showSoftInputOnFocus);
   }
   if (!m_props ||
+      props->importantForAutofill != m_props->importantForAutofill) {
+    m_textAreaNode.setAutoFill(props->importantForAutofill);
+    m_textInputNode.setAutoFill(props->importantForAutofill);
+  }
+  if (!m_props ||
       *(props->underlineColorAndroid) != *(m_props->underlineColorAndroid)) {
     m_textInputNode.setUnderlineColor(props->underlineColorAndroid);
     m_textAreaNode.setUnderlineColor(props->underlineColorAndroid);
@@ -406,6 +414,11 @@ void TextInputComponentInstance::onPropsChanged(
   if (!m_props || props->traits.editable != m_props->traits.editable) {
     m_textAreaNode.setEnabled(props->traits.editable);
     m_textInputNode.setEnabled(props->traits.editable);
+  }
+  if (!m_props ||
+      props->traits.selectTextOnFocus != m_props->traits.selectTextOnFocus) {
+    m_textInputNode.setSelectAll(props->traits.selectTextOnFocus);
+    m_textAreaNode.setSelectAll(props->traits.selectTextOnFocus);
   }
 }
 

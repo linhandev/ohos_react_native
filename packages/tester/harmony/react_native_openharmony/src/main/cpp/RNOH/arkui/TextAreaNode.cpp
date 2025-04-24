@@ -206,6 +206,13 @@ void TextAreaNode::setInputType(facebook::react::KeyboardType rawKeyboardType) {
       m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
 }
 
+void TextAreaNode::setInputType(ArkUI_TextAreaType keyboardType) {
+  ArkUI_NumberValue value = {.i32 = keyboardType};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
+}
+
 void TextAreaNode::setFont(
     facebook::react::TextAttributes const& textAttributes) {
   TextInputNodeBase::setCommonFontAttributes(textAttributes);
@@ -308,6 +315,12 @@ void TextAreaNode::setEnterKeyType(
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_ENTER_KEY_TYPE, &item));
 }
+void TextAreaNode::setEnterKeyType(ArkUI_EnterKeyType returnKeyType) {
+  ArkUI_NumberValue value = {.i32 = returnKeyType};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_AREA_ENTER_KEY_TYPE, &item));
+}
 
 void TextAreaNode::defaultSetPadding() {
   ArkUI_NumberValue value = {.f32 = 0.f};
@@ -341,7 +354,11 @@ void TextAreaNode::setTextContentType(std::string const& textContentType) {
   ArkUI_NumberValue type =
       TextInputNodeBase::convertContentType(textContentType);
   if (type.i32 == -1) {
-    return;
+    this->setAutoFill(false); // The purpose is to fix the issue where an
+                              // autofill bubble still pops up when
+                              // textContentType is dynamically changed to none.
+  } else {
+    this->setAutoFill(true);
   }
   std::array<ArkUI_NumberValue, 1> value = {type};
   ArkUI_AttributeItem item = {value.data(), value.size()};
@@ -379,7 +396,21 @@ void TextAreaNode::setAutoFill(bool autoFill) {
   ArkUI_NumberValue value = {.u32 = isAutoFill};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
+      m_nodeHandle, NODE_TEXT_AREA_ENABLE_AUTO_FILL, &item));
+}
+
+void TextAreaNode::setAutoFill(std::string const& autoFill) {
+  bool enableAutoFill = true;
+  if (autoFill == "no" || autoFill == "noExcludeDescendants" ||
+      autoFill == "auto") {
+    enableAutoFill = false;
+  } else if (autoFill == "yes" || autoFill == "yesExcludeDescendants") {
+    enableAutoFill = true;
+  } else {
+    LOG(WARNING) << "Invalid ImportantForAutofill";
+    enableAutoFill = true;
+  }
+  this->setAutoFill(enableAutoFill);
 }
 
 void TextAreaNode::setShowKeyboardOnFocus(bool enable) {

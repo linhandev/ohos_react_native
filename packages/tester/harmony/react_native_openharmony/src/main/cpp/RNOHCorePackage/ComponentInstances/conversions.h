@@ -26,6 +26,7 @@ inline ArkUI_ScrollSnapAlign getArkUI_ScrollSnapAlign(
     return ArkUI_ScrollSnapAlign::ARKUI_SCROLL_SNAP_ALIGN_NONE;
   }
 }
+
 /**
  * @internal
  */

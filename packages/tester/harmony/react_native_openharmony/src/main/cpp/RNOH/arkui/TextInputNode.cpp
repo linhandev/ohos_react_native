@@ -202,6 +202,13 @@ void TextInputNode::setInputType(
       m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item));
 }
 
+void TextInputNode::setInputType(ArkUI_TextInputType keyboardType) {
+  ArkUI_NumberValue value = {.i32 = keyboardType};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item));
+}
+
 void TextInputNode::setPasswordIconVisibility(bool isVisible) {
   ArkUI_NumberValue value = {.i32 = isVisible ? 1 : 0};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
@@ -216,6 +223,12 @@ void TextInputNode::setEnterKeyType(
   if (rawReturnKeyType == facebook::react::ReturnKeyType::Default) {
     returnKeyType = TextInputNodeBase::convertEnterKeyLabel(rawReturnKeyLabel);
   }
+  ArkUI_NumberValue value = {.i32 = returnKeyType};
+  ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item));
+}
+void TextInputNode::setEnterKeyType(ArkUI_EnterKeyType returnKeyType) {
   ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
@@ -309,8 +322,8 @@ void TextInputNode::setCaretColor(facebook::react::SharedColor const& color) {
 }
 
 void TextInputNode::setUnderlineColor(
-    facebook::react::SharedColor const& underlineColorAndroid) {
-  if (*underlineColorAndroid >> 24 == 0) {
+    facebook::react::SharedColor const& underlineColor) {
+  if (*underlineColor >> 24 == 0) {
     return;
   }
   ArkUI_NumberValue showValue = {.i32 = 1};
@@ -319,13 +332,13 @@ void TextInputNode::setUnderlineColor(
       m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
   ArkUI_NumberValue value[] = {
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
-           underlineColorAndroid)},
+           underlineColor)},
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
-           underlineColorAndroid)},
+           underlineColor)},
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
-           underlineColorAndroid)},
+           underlineColor)},
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
-           underlineColorAndroid)}};
+           underlineColor)}};
 
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
@@ -364,7 +377,11 @@ void TextInputNode::setTextContentType(std::string const& textContentType) {
   ArkUI_NumberValue type =
       TextInputNodeBase::convertContentType(textContentType);
   if (type.i32 == -1) {
-    return;
+    this->setAutoFill(false); // The purpose is to fix the issue where an
+                              // autofill bubble still pops up when
+                              // textContentType is dynamically changed to none.
+  } else {
+    this->setAutoFill(true);
   }
   std::array<ArkUI_NumberValue, 1> value = {type};
   ArkUI_AttributeItem item = {value.data(), value.size()};
@@ -378,6 +395,20 @@ void TextInputNode::setAutoFill(bool autoFill) {
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
+}
+
+void TextInputNode::setAutoFill(std::string const& autoFill) {
+  bool enableAutoFill = true;
+  if (autoFill == "no" || autoFill == "noExcludeDescendants" ||
+      autoFill == "auto") {
+    enableAutoFill = false;
+  } else if (autoFill == "yes" || autoFill == "yesExcludeDescendants") {
+    enableAutoFill = true;
+  } else {
+    LOG(WARNING) << "Invalid ImportantForAutofill";
+    enableAutoFill = true;
+  }
+  this->setAutoFill(enableAutoFill);
 }
 
 void TextInputNode::setBlurOnSubmit(bool blurOnSubmit) {

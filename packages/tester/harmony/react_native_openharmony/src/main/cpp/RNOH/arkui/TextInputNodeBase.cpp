@@ -210,6 +210,19 @@ void TextInputNodeBase::setAutoFocus(bool autoFocus) {
       m_nodeHandle, NODE_DEFAULT_FOCUS, &item));
 }
 
+bool TextInputNodeBase::getTextFocusStatus() {
+  return NativeNodeApi::getInstance()
+      ->getAttribute(m_nodeHandle, NODE_FOCUS_STATUS)
+      ->value[0]
+      .i32;
+}
+void TextInputNodeBase::setSelectAll(bool selectAll) {
+  ArkUI_NumberValue value = {.i32 = int32_t(selectAll)};
+  ArkUI_AttributeItem item = {&value, 1};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECT_ALL, &item));
+}
+
 void TextInputNodeBase::setResponseRegion(
     facebook::react::Point const& position,
     facebook::react::Size const& size) {
@@ -351,5 +364,10 @@ void TextInputNodeBase::setTextSelection(int32_t start, int32_t end) {
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_TEXT_INPUT_TEXT_SELECTION, &item));
   }
+}
+
+void TextInputNodeBase::resetMaxLength() {
+  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH));
 }
 } // namespace rnoh

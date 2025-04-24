@@ -41,6 +41,7 @@ class TextInputComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "returnKeyLabel", "string");
     nativeProps.setProperty(rt, "blurOnSubmit", "boolean");
     nativeProps.setProperty(rt, "showSoftInputOnFocus", "boolean");
+    nativeProps.setProperty(rt, "importantForAutofill", "string");
 
     return nativeProps;
   };

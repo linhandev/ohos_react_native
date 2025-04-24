@@ -75,6 +75,8 @@ class TextInputNodeBase : public ArkUINode {
   void setFocusable(bool const& focusable);
 
   void setAutoFocus(bool autoFocus);
+  bool getTextFocusStatus();
+  void setSelectAll(bool selectAll);
 
   void setResponseRegion(
       facebook::react::Point const& position,
@@ -103,6 +105,8 @@ class TextInputNodeBase : public ArkUINode {
 
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);
+
+  void resetMaxLength();
 
   std::string virtual getTextContent() = 0;
 

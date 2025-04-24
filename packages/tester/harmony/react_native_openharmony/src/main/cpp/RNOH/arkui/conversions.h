@@ -341,6 +341,23 @@ inline ArkUI_TextAreaType convertTextAreaInputType(
 
 /**
  * @api
+ * @deprecated: This method is no longer part of the native API. Deprecated
+ * when preparing 0.77 branch for release.
+ */
+inline bool convertImportantForAutofill(std::string const& autoFill) {
+  auto string = (std::string)autoFill;
+  if (string == "no" || string == "noExcludeDescendants" || string == "auto") {
+    return false;
+  } else if (string == "yes" || string == "yesExcludeDescendants") {
+    return true;
+  } else {
+    LOG(WARNING) << "Invalid ImportantForAutofill";
+    return true;
+  }
+}
+
+/**
+ * @api
  */
 inline ArkUI_FontWeight convertFontWeight(
     facebook::react::FontWeight fontWeight) {

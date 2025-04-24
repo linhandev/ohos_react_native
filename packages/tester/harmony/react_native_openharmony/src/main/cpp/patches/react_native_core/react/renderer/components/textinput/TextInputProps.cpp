@@ -75,6 +75,12 @@ TextInputProps::TextInputProps(
           "blurOnSubmit", 
           sourceProps.blurOnSubmit,
           {})),
+      importantForAutofill(convertRawProp( // RNOH patch
+          context,
+          rawProps,
+          "importantForAutofill",
+          sourceProps.importantForAutofill,
+          {})),
       mostRecentEventCount(convertRawProp(
           context,
           rawProps,

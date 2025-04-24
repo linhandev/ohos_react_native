@@ -99,6 +99,8 @@ class TextAreaNode : public TextInputNodeBase {
 
   void setInputType(facebook::react::KeyboardType keyboardType);
 
+  void setInputType(ArkUI_TextAreaType keyboardType);
+
   void setFont(facebook::react::TextAttributes const& textAttributes) override;
 
   void setCaretColor(facebook::react::SharedColor const& color) override;
@@ -114,6 +116,13 @@ class TextAreaNode : public TextInputNodeBase {
   void setTextContentType(std::string const& textContentType);
 
   void setContextMenuHidden(bool hidden);
+  /**
+   * @Deprecated: use setContextMenuHidden.
+   * Deprecated when preparing 0.77 for release.
+   */
+  inline void SetContextMenuHidden(bool hidden) {
+    this->setContextMenuHidden(hidden);
+  }
 
   void setBlurOnSubmit(bool blurOnSubmit);
 
@@ -123,11 +132,30 @@ class TextAreaNode : public TextInputNodeBase {
       facebook::react::ReturnKeyType returnKeyType,
       std::string returnKeyLabel);
 
+  void setEnterKeyType(ArkUI_EnterKeyType returnKeyType);
+
   void setUnderlineColor(facebook::react::SharedColor const& underlineColor);
+  /**
+   * @Deprecated: use setUnderlineColor.
+   * Deprecated when preparing 0.77 for release.
+   */
+  inline void setUnderlineColorAndroid(
+      facebook::react::SharedColor const& underlineColorAndroid) {
+    this->setUnderlineColor(underlineColorAndroid);
+  };
 
   void setAutoFill(bool autoFill);
 
+  void setAutoFill(std::string const& autoFill);
+
   void setShowKeyboardOnFocus(bool enable);
+  /**
+   * @Deprecated: use setShowKeyboardOnFocus
+   * Deprecated when preparing 0.77 branch for release.
+   */
+  inline void setshowSoftInputOnFocus(bool enable) {
+    this->setShowKeyboardOnFocus(enable);
+  }
 
   void setInputFilter(std::string const& inputFilter);
 

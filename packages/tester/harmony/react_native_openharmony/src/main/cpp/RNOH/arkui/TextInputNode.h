@@ -122,6 +122,8 @@ class TextInputNode : public TextInputNodeBase {
       facebook::react::KeyboardType keyboardType,
       bool securityEntry);
 
+  void setInputType(ArkUI_TextInputType keyboardType);
+
   void setSelectedBackgroundColor(facebook::react::SharedColor const& color);
 
   void setPasswordIconVisibility(bool isVisible);
@@ -129,6 +131,8 @@ class TextInputNode : public TextInputNodeBase {
   void setEnterKeyType(
       facebook::react::ReturnKeyType returnKeyType,
       std::string returnKeyLabel);
+
+  void setEnterKeyType(ArkUI_EnterKeyType returnKeyType);
 
   void setCancelButtonMode(
       facebook::react::TextInputAccessoryVisibilityMode mode);
@@ -149,21 +153,41 @@ class TextInputNode : public TextInputNodeBase {
 
   void setContextMenuHidden(bool hidden);
 
+  /**
+   * @Deprecated: use setContextMenuHidden.
+   * Deprecated when preparing 0.77 for release.
+   */
+  inline void SetContextMenuHidden(bool hidden) {
+    this->setContextMenuHidden(hidden);
+  }
+
   void setBlurOnSubmit(bool blurOnSubmit);
 
   void setLineHeight(float lineHeight);
 
-  void setUnderlineColorAndroid(
-      facebook::react::SharedColor const& underlineColorAndroid);
-
   void setAutoFill(bool autoFill);
 
-  void setshowSoftInputOnFocus(bool enable);
+  void setAutoFill(std::string const& autoFill);
+
+  /**
+   * @Deprecated: use setShowKeyboardOnFocus
+   * Deprecated when preparing 0.77 branch for release.
+   */
+  inline void setshowSoftInputOnFocus(bool enable) {
+    this->setShowKeyboardOnFocus(enable);
+  }
 
   void setInputFilter(std::string const& inputFilter);
 
-  void setUnderlineColor(
-      facebook::react::SharedColor const& underlineColorAndroid);
+  void setUnderlineColor(facebook::react::SharedColor const& underlineColor);
+  /**
+   * @Deprecated: use setUnderlineColor.
+   * Deprecated when preparing 0.77 for release.
+   */
+  inline void setUnderlineColorAndroid(
+      facebook::react::SharedColor const& underlineColorAndroid) {
+    this->setUnderlineColor(underlineColorAndroid);
+  }
 
   void setShowKeyboardOnFocus(bool enable);
 
