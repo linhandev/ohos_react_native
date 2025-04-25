@@ -510,7 +510,7 @@ class CppComponentInstance : public ComponentInstance,
 
     auto opacity = props->opacity;
     float validOpacity = std::max(0.0f, std::min((float)opacity, 1.0f));
-    facebook::react::Transform transform = props->transform;
+    auto transform = props->resolveTransform(m_layoutMetrics);
     if (!isTransformManagedByAnimated &&
         props->backfaceVisibility ==
             facebook::react::BackfaceVisibility::Hidden) {
