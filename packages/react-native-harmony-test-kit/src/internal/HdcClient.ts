@@ -162,6 +162,14 @@ export class HdcClient {
             };
             return keyEventChain;
           },
+          text: async (text: string) => {
+            await this.sendCommand(`uitest uiInput text "${text}"`);
+          },
+          inputText: async (x: number, y: number, text: string) => {
+            await this.sendCommand(
+              `uitest uiInput inputText ${x} ${y} "${text}"`,
+            );
+          },
         };
       },
     };

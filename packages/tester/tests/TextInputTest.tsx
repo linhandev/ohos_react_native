@@ -1,8 +1,10 @@
 import {
   EnterKeyHintType,
   EnterKeyHintTypeAndroid,
+  type EmitterSubscription,
   KeyboardTypeOptions,
   Platform,
+  Keyboard,
   ReturnKeyType,
   ReturnKeyTypeAndroid,
   StyleSheet,
@@ -12,8 +14,9 @@ import {
   View,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import {useState, useRef} from 'react';
+import React, {useState, useRef, createRef, forwardRef} from 'react';
 import {Button, Effect, StateKeeper, TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 const KEYBOARD_TYPES: KeyboardTypeOptions[] = [
   'default',
@@ -26,19 +29,88 @@ const KEYBOARD_TYPES: KeyboardTypeOptions[] = [
 ];
 
 export function TextInputTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   return (
     <TestSuite name="TextInput">
-      <TestCase.Example itShould="render textinput and change the text component based on the values inputted">
-        <TextInputWithText style={styles.textInput} />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="not crash when invalid keyboardType is supplied">
-        <TextInputWithText
-          style={styles.textInput}
-          keyboardType={'invalid_type' as KeyboardTypeOptions}
-        />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="render textinput and change the text component based on the values inputted"
+        tags={['sequential']}
+        initialState={{
+          text: '',
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({setState, state, done}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            ref={state.ref}
+            onEndEditing={done}
+            onChangeText={text => {
+              setState(prev => ({...prev, text}));
+            }}
+          />
+        )}
+        act={async ({state, done}) => {
+          await driver?.inputText(state.ref, 'ab');
+          done();
+          Keyboard.dismiss();
+        }}
+        assert={({expect, state}) => {
+          expect(state.text).to.be.equal('ab');
+        }}
+      />
+      <TestCase.Automated
+        itShould="not crash when invalid keyboardType is supplied"
+        tags={['sequential']}
+        initialState={{
+          keyboardOpened: false,
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({state}) => (
+          <TextInputWithText style={styles.textInput} ref={state.ref} />
+        )}
+        act={async ({state, setState, done}) => {
+          if (state.ref?.current) {
+            let keyboardListener: EmitterSubscription | undefined;
+            try {
+              // Focus the input to open the keyboard
+              state.ref.current.focus();
+              // Ensure keyboard is opened or reject after 2s
+              await Promise.race([
+                new Promise<void>(resolve => {
+                  keyboardListener = Keyboard.addListener(
+                    'keyboardDidShow',
+                    () => {
+                      resolve();
+                    },
+                  );
+                }),
+                new Promise<void>((_, reject) => {
+                  setTimeout(
+                    () =>
+                      reject(new Error('Keyboard did not show within timeout')),
+                    2000,
+                  );
+                }),
+              ]);
+              setState(prev => ({...prev, keyboardOpened: true}));
+            } catch (error) {
+              console.error(error);
+            } finally {
+              if (keyboardListener) {
+                keyboardListener.remove();
+              }
+              Keyboard.dismiss();
+              done();
+            }
+          }
+        }}
+        assert={({expect, state}) => {
+          expect(state.keyboardOpened).to.be.equal(true);
+        }}
+      />
       <TestCase.Example itShould="render textinput with set content">
         <TextInputWithTextContent style={styles.textInput} />
       </TestCase.Example>
@@ -866,15 +938,30 @@ const TextInputWithTextContent = (props: TextInputProps) => {
   );
 };
 
-const TextInputWithText = (props: TextInputProps) => {
-  const [text, onChangeText] = useState(props.defaultValue ?? '');
-  return (
-    <>
-      <Text style={styles.text}>{text}</Text>
-      <TextInput {...props} onChangeText={onChangeText} value={text} />
-    </>
-  );
-};
+const TextInputWithText = forwardRef<TextInput, TextInputProps>(
+  (props, ref) => {
+    const [text, onChangeText] = useState(props.defaultValue ?? '');
+
+    const handleChangeText = (newText: string) => {
+      if (props.onChangeText) {
+        props.onChangeText(newText);
+      }
+      onChangeText(newText);
+    };
+
+    return (
+      <>
+        <Text style={styles.text}>{text}</Text>
+        <TextInput
+          ref={ref}
+          {...props}
+          onChangeText={handleChangeText}
+          value={text}
+        />
+      </>
+    );
+  },
+);
 type CapitalizationType = 'none' | 'sentences' | 'words' | 'characters';
 const AutoCapitalize = () => {
   const [state, setState] = useState<CapitalizationType>('none');

@@ -68,7 +68,11 @@ function App() {
                   <Page
                     key={testSuiteName}
                     name={`${testSuiteName.replace('Test', '')}`}>
-                    <Tester style={{flex: 1}}>
+                    <Tester
+                      style={{flex: 1}}
+                      filter={({tags}) => {
+                        return !tags.includes('sequential');
+                      }}>
                       <ScrollView style={{flex: 1}}>
                         <TestSuite key={testSuiteName} />
                       </ScrollView>

@@ -98,8 +98,8 @@ void TextInputNode::onNodeEvent(
       if (m_setTextContent && text == m_textContent) {
         m_setTextContent = false;
       } else {
+        m_textInputNodeDelegate->onChange(this, text);
         m_textInputNodeDelegate->onChange(std::move(text));
-        m_textInputNodeDelegate->onChange(this, std::move(text));
       }
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_PASTE) {

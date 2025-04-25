@@ -101,17 +101,6 @@ export class Driver {
     await this.hdcClient.uiTest().uiInput().click(x, y);
   }
 
-  async doubleClick({
-    ref,
-    offset,
-  }: {
-    ref: React.RefObject<React.Component<any>>;
-    offset?: Offset;
-  }): Promise<void> {
-    const {x, y} = await this.getAbsolutePosition(ref, offset);
-    await this.hdcClient.uiTest().uiInput().doubleClick(x, y);
-  }
-
   async longClick({
     ref,
     offset,
@@ -145,6 +134,11 @@ export class Driver {
     };
 
     return keyEventChain;
+  }
+
+  async inputText(ref: React.RefObject<React.Component<any>>, text: string) {
+    const {x, y} = await this.getAbsolutePosition(ref);
+    await this.hdcClient.uiTest().uiInput().inputText(x, y, text);
   }
 
   async beginTracing() {
