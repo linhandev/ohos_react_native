@@ -49,10 +49,13 @@ std::optional<facebook::react::SurfaceId> findSurfaceIdForComponentInstance(
 void MountingManagerCAPI::willMount(MutationList const& /*mutations*/) {}
 
 void MountingManagerCAPI::doMount(MutationList const& mutations) {
+  facebook::react::SystraceSection s("#RNOH::MountingManager::doMount");
   m_arkTSMountingManager->doMount(mutations);
 }
 
 void MountingManagerCAPI::didMount(MutationList const& mutations) {
+  facebook::react::SystraceSection s(
+      "#RNOH::MountingManager::didMount " + std::to_string(mutations.size()));
   if (!m_featureFlagRegistry->isFeatureFlagOn(
           "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
     m_arkTSMountingManager->didMount(mutations);
@@ -79,8 +82,7 @@ void MountingManagerCAPI::dispatchCommand(
     const std::string& commandName,
     folly::dynamic const& args) {
   facebook::react::SystraceSection s(
-      "RNOH::MountingManagerCAPI::dispatchCommand");
-
+      "#RNOH::MountingManager::dispatchCommand ", shadowView.tag, commandName);
   if (m_arkTSComponentNames.count(shadowView.componentName)) {
     m_arkTSMountingManager->dispatchCommand(shadowView, commandName, args);
   }
@@ -328,6 +330,8 @@ bool MountingManagerCAPI::isCAPIComponent(
 void MountingManagerCAPI::schedulerDidSendAccessibilityEvent(
     const facebook::react::ShadowView& shadowView,
     std::string const& eventType) {
+  facebook::react::SystraceSection s(
+      "#RNOH::MountingManager::schedulerDidSendAccessibilityEvent");
   auto componentInstance =
       m_componentInstanceRegistry->findByTag(shadowView.tag);
   folly::dynamic payload = folly::dynamic::object("type", eventType)(

@@ -13,13 +13,21 @@
 struct CustomSystraceSection {
  public:
   template <typename... ConvertsToStringPiece>
-  explicit CustomSystraceSection(
+  inline explicit CustomSystraceSection(
       const char* name,
       ConvertsToStringPiece&&... args) {
     std::ostringstream oss;
     (void)(oss << name);
     ([&] { oss << "[" << args << "]"; }(), ...);
     OH_HiTrace_StartTrace(oss.str().c_str());
+  }
+
+  inline explicit CustomSystraceSection(const char* name) {
+    OH_HiTrace_StartTrace(name);
+  }
+
+  inline explicit CustomSystraceSection(const std::string& name) {
+    OH_HiTrace_StartTrace(name.c_str());
   }
 
   ~CustomSystraceSection() {

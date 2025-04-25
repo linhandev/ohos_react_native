@@ -115,6 +115,9 @@ void SchedulerDelegate::performTransaction(
             });
       },
       [this](auto const& transaction, auto const& surfaceTelemetry) {
+        int taskId = random();
+        std::string taskTrace =
+            "#RNOH::TaskExecutor::runningTask t" + std::to_string(taskId);
         auto allMutations = transaction.getMutations();
         facebook::react::ShadowViewMutationList sliceableMutations;
         facebook::react::ShadowViewMutationList otherMutations;
@@ -143,23 +146,24 @@ void SchedulerDelegate::performTransaction(
                     std::min(sliceableMutationsSize, i + maxSliceSize));
           }
           for (const auto& mutations : slicesOfMutations) {
-            facebook::react::SystraceSection s(
-                "#RNOH::SchedulerDelegate::slice");
             performOnMainThread(
-                [mutations](MountingManager::Shared const& mountingManager) {
+                [mutations,
+                 taskTrace](MountingManager::Shared const& mountingManager) {
+                  facebook::react::SystraceSection s(taskTrace);
                   mountingManager->didMount(mutations);
                 });
           }
         }
-        facebook::react::SystraceSection s(
-            "#RNOH::SchedulerDelegate::otherMutations");
         performOnMainThread(
-            [otherMutations,
-             this](MountingManager::Shared const& mountingManager) {
+            [otherMutations, this, taskTrace](
+                MountingManager::Shared const& mountingManager) {
+              facebook::react::SystraceSection s(taskTrace);
               mountingManager->didMount(otherMutations);
               mountingManager->clearPreallocatedViews();
             });
         logTransactionTelemetryMarkers(transaction);
+        facebook::react::SystraceSection s(
+            "#RNOH::TaskExecutor::runTask t" + std::to_string(taskId));
       });
 }
 
