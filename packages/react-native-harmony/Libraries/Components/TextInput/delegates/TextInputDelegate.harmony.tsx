@@ -14,6 +14,10 @@ const RCTSinglelineTextInputView =
   require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTSingelineTextInputNativeComponent').default;
 const RCTMultilineTextInputView =
   require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').default;
+const RCTSinglelineTextInputNativeCommands =
+  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTSingelineTextInputNativeComponent').Commands;
+const RCTMultilineTextInputNativeCommands =
+  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
 
 export default class TextInputDelegate extends BaseTextInputDelegate {
   override createNativeTextInput(props: any): React.ReactNode {
@@ -82,5 +86,13 @@ export default class TextInputDelegate extends BaseTextInputDelegate {
     rejectResponderTermination: boolean
   ): boolean | null {
     return !rejectResponderTermination;
+  }
+  
+  override getTextInputCommands(multiline: boolean): any {
+    if (multiline) {
+      return RCTMultilineTextInputNativeCommands;
+    } else {
+      return RCTSinglelineTextInputNativeCommands;
+    }
   }
 }
