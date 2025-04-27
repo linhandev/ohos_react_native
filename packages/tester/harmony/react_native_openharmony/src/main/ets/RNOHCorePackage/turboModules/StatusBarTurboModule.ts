@@ -77,6 +77,7 @@ function rgbToHex(r: number, g: number, b: number, a: number): string {
 export class StatusBarTurboModule extends UITurboModule {
   public static readonly NAME = 'StatusBarManager';
 
+  private cleanUpCallbacks: (() => void)[] = [];
   private constants?: StatusBarConstants = null;
   private eventEmitter = new EventEmitter<StatusBarEventNameByListenerArgs>()
   private _isStatusBarHidden = false;
@@ -85,6 +86,7 @@ export class StatusBarTurboModule extends UITurboModule {
   constructor(protected ctx: UITurboModuleContext) {
     super(ctx);
     this.setConstants();
+    this.registerWindowAvoidAreaChangeListener();
   }
 
   private async setConstants() {
@@ -100,6 +102,24 @@ export class StatusBarTurboModule extends UITurboModule {
     } catch (exception) {
       this.ctx.logger.error('Failed to obtain the avoid area  (currentHeight). Cause:' + JSON.stringify(exception));
     }
+  }
+
+  private async registerWindowAvoidAreaChangeListener() {
+    const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+    const onWindowAvoidAreaChange = (avoidAreaOptions: window.AvoidAreaOptions) => {
+      if(avoidAreaOptions.type === window.AvoidAreaType.TYPE_SYSTEM){
+        const scaledStatusBarHeight = px2vp(avoidAreaOptions.area.topRect.height);
+        this.constants = {
+          DEFAULT_BACKGROUND_COLOR: '#00000000',
+          HEIGHT: scaledStatusBarHeight,
+        }
+      }
+    }
+
+    windowInstance.on('avoidAreaChange', onWindowAvoidAreaChange);
+    this.cleanUpCallbacks.push(() => {
+      windowInstance.off("avoidAreaChange", onWindowAvoidAreaChange);
+    });
   }
 
   getConstants(): StatusBarConstants {
@@ -183,5 +203,11 @@ export class StatusBarTurboModule extends UITurboModule {
 
   public isStatusBarHidden() {
     return this._isStatusBarHidden
+  }
+
+  __onDestroy__() {
+    super.__onDestroy__();
+    this.cleanUpCallbacks.forEach(cb => cb());
+    this.cleanUpCallbacks = [];
   }
 }
