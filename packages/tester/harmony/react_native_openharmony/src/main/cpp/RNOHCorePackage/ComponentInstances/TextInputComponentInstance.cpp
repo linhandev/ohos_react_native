@@ -19,6 +19,15 @@
 #include "conversions.h"
 #include "react/renderer/components/textinput/primitives.h"
 
+using RNTextVerticalAlignment = facebook::react::TextAlignmentVertical;
+
+std::unordered_map<RNTextVerticalAlignment, ArkUI_Alignment>
+    ARKUI_TEXT_ALIGNMENT_BY_RN_VERTICAL_TEXT_ALIGNMENT = {
+        {RNTextVerticalAlignment::Auto, ARKUI_ALIGNMENT_CENTER},
+        {RNTextVerticalAlignment::Top, ARKUI_ALIGNMENT_TOP},
+        {RNTextVerticalAlignment::Bottom, ARKUI_ALIGNMENT_BOTTOM},
+        {RNTextVerticalAlignment::Center, ARKUI_ALIGNMENT_CENTER}};
+
 namespace rnoh {
 
 TextInputComponentInstance::TextInputComponentInstance(Context context)
@@ -252,6 +261,14 @@ void TextInputComponentInstance::onPropsChanged(
       m_textAreaNode.setTextAlign(props->textAttributes.alignment);
       m_textInputNode.setTextAlign(props->textAttributes.alignment);
     }
+  }
+  if (props->textAttributes.textAlignVertical !=
+      m_props->textAttributes.textAlignVertical) {
+    ArkUI_Alignment alignmentVertical =
+        ARKUI_TEXT_ALIGNMENT_BY_RN_VERTICAL_TEXT_ALIGNMENT
+            [props->textAttributes.textAlignVertical.value()];
+    m_textInputNode.setAlignment(alignmentVertical);
+    m_textAreaNode.setAlignment(alignmentVertical);
   }
   if (*(props->cursorColor) != *(m_props->cursorColor)) {
     if (props->cursorColor) {

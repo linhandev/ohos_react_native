@@ -106,6 +106,8 @@ class TextInputNodeBase : public ArkUINode {
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);
 
+  void setAlignment(ArkUI_Alignment const& textAlignment);
+
   void resetMaxLength();
 
   std::string virtual getTextContent() = 0;

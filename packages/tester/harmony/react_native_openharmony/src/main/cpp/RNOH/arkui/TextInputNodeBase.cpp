@@ -370,4 +370,13 @@ void TextInputNodeBase::resetMaxLength() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH));
 }
+
+void TextInputNodeBase::setAlignment(ArkUI_Alignment const& textAlignment) {
+  ArkUI_NumberValue alignmentValue[] = {
+      {.i32 = static_cast<int32_t>(textAlignment)}};
+  ArkUI_AttributeItem alignmentItem = {
+      alignmentValue, sizeof(alignmentValue) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_ALIGNMENT, &alignmentItem));
+}
 } // namespace rnoh
