@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.72.67
+- fix:crash when string pos out of range,([ebe50d68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ebe50d68274f03f018c6fc080bc040db1253a7d9))
+- chore: update to version 5.1.0.403(0.72.66),([9ad2ac5a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9ad2ac5a26b9d34f0740be7283c977ab4cf02b98))
+
 ## v0.72.66
 - fix: crash when loading the bundle located under the HSP,([de132df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de132df4a94f3761bd025e0d6aa7556e54ff26c7))
 - chore: update to version 5.1.0.403(0.72.66),([51d64922](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51d64922b658f9353457f73bc476de6a85e38568))

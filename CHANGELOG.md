@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0.404
+- fix:crash when string pos out of range,([ebe50d68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ebe50d68274f03f018c6fc080bc040db1253a7d9))
+- Add instructions for version 5.1.0.404 of React native Harmony,([3c91537b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3c91537bfbfe7655c7364cd9182442ea477fefac))
+- chore: update to version 5.1.0.403(0.72.66),([9ad2ac5a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9ad2ac5a26b9d34f0740be7283c977ab4cf02b98))
+
 ## 5.1.0.403
 - fix: crash when loading the bundle located under the HSP,([de132df4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de132df4a94f3761bd025e0d6aa7556e54ff26c7))
 - Codegen:Codegen自动生成的胶水代码会覆盖本地实现的胶水代码,([0020ef1e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0020ef1e20b30e7ee6c82e69bd6bba3dd05225f7))
