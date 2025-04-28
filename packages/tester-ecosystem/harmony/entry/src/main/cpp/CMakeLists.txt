@@ -31,6 +31,11 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-image-pick
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/checkbox/src/main/cpp" ./checkbox)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-linear-gradient/src/main/cpp" ./linear-gradient)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/toolbar-android/src/main/cpp" ./toolbar-android)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-mlkit-ocr/src/main/cpp" ./rn_mlkit_ocr)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos-community/auto-fill/src/main/cpp" ./auto-fill)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-incall-manager/src/main/cpp" ./in_call_manager)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-blurhash/src/main/cpp" ./blurhash)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-ui-lib/src/main/cpp" ./ui-lib)
 # RNOH_END: manual_package_linking_1
 
 file(GLOB GENERATED_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp") # this line is needed by codegen v1
@@ -59,4 +64,9 @@ target_link_libraries(rnoh_app PUBLIC rnoh_image_picker)
 target_link_libraries(rnoh_app PUBLIC rnoh_checkbox)
 target_link_libraries(rnoh_app PUBLIC rnoh_linear_gradient)
 target_link_libraries(rnoh_app PUBLIC rnoh_toolbar_android)
+target_link_libraries(rnoh_app PUBLIC rnoh_mlkit_ocr)
+target_link_libraries(rnoh_app PUBLIC auto_fill)
+target_link_libraries(rnoh_app PUBLIC rnoh_in_call_manager)
+target_link_libraries(rnoh_app PUBLIC rnoh_blurhash)
+target_link_libraries(rnoh_app PUBLIC rnoh_ui_lib)
 # RNOH_END: manual_package_linking_2

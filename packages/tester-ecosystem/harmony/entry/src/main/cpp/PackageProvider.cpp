@@ -17,6 +17,11 @@
 #include "RNImagePickerPackage.h"
 #include "RNCNetInfoPackage.h"
 #include "ToolbarAndroidPackage.h"
+#include "RNMlkitOcrPackage.h"
+#include "AutoFillPackage.h" 
+#include "RNInCallManagerPackage.h"
+#include "BlurhashPackage.h"
+#include "UiLibPackage.h"
 
 using namespace rnoh;
 
@@ -39,6 +44,11 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<RNImagePickerPackage>(ctx));
   packages.push_back(std::make_shared<RNCNetInfoPackage>(ctx));
   packages.push_back(std::make_shared<ToolbarAndroidPackage>(ctx));
+  packages.push_back(std::make_shared<RNMlkitOcrPackage>(ctx));
+  packages.push_back(std::make_shared<AutoFillPackage>(ctx));
+  packages.push_back(std::make_shared<RNInCallManagerPackage>(ctx));
+  packages.push_back(std::make_shared<BlurhashPackage>(ctx));
+  packages.push_back(std::make_shared<UiLibPackage>(ctx));
   // manual linking: END
   return packages;
 }

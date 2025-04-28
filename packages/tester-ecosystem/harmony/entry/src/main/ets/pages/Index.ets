@@ -10,7 +10,21 @@ import {
 import { getRNOHPackages } from '../PackageProvider';
 import { RNDateTimePicker, DATETIME_PICKER_VIEW_TYPE } from "@react-native-oh-tpl/datetimepicker"
 import { LottieAnimationView } from '@react-native-oh-tpl/lottie-react-native';
-import { RNCToolbarAndroid} from '@react-native-ohos/toolbar-android/src/main/ets/RNCToolbarAndroid'
+import { RNCToolbarAndroid } from '@react-native-ohos/toolbar-android/src/main/ets/RNCToolbarAndroid'
+import { RNPDFView } from '@react-native-oh-tpl/react-native-view-pdf'
+import {
+  BarCharts,
+  LineCharts,
+  HorizontalBarCharts,
+  BubbleCharts,
+  PieCharts,
+  RadarCharts,
+  ScatterCharts,
+  CandleStickCharts,
+  CombinedCharts
+} from "@react-native-oh-tpl/react-native-charts-wrapper"
+import { RTNCameraKitView } from "@react-native-oh-tpl/react-native-camera-kit";
+import { HighlighterView } from "@react-native-oh-tpl/react-native-ui-lib";
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -33,7 +47,67 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
     RNCToolbarAndroid({
       ctx: ctx.rnComponentContext,
       tag: ctx.tag
-      })
+    })
+  } else if (ctx.componentName === RNPDFView.NAME) {
+    RNPDFView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    })
+  } else if (ctx.componentName === BarCharts.NAME) {
+    BarCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === LineCharts.NAME) {
+    LineCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === HorizontalBarCharts.NAME) {
+    HorizontalBarCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === BubbleCharts.NAME) {
+    BubbleCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === PieCharts.NAME) {
+    PieCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === RadarCharts.NAME) {
+    RadarCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === ScatterCharts.NAME) {
+    ScatterCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === CandleStickCharts.NAME) {
+    CandleStickCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === CombinedCharts.NAME) {
+    CombinedCharts({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    });
+  } else if (ctx.componentName === RTNCameraKitView.NAME) {
+    RTNCameraKitView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag,
+    })
+  } else if (ctx.componentName === HighlighterView.NAME) {
+    HighlighterView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    })
   }
 }
 
