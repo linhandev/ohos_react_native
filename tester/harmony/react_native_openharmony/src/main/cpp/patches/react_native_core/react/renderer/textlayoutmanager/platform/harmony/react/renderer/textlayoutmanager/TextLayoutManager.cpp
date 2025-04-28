@@ -49,6 +49,9 @@ LinesMeasurements TextLayoutManager::measureLines(
     AttributedString attributedString,
     ParagraphAttributes paragraphAttributes,
     Size size) const {
+    if (attributedString.getFragments().empty()) {
+        return LinesMeasurements{};
+    }    
     std::vector<OH_Drawing_LineMetrics> lineMetrics =
         m_textLayoutManagerDelegate->getLineMetrics(attributedString, paragraphAttributes, {size, size});
     VLOG(3) << "lineMetrics size=" << lineMetrics.size();
@@ -64,7 +67,7 @@ LinesMeasurements TextLayoutManager::measureLines(
     }
     std::u16string u16Text = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(text);
         
-    LinesMeasurements ret;
+    LinesMeasurements ret{};
     for (int i = 0; i < lineMetrics.size(); i++) {
         Rect frame;
         frame.origin.x = static_cast<Float>(lineMetrics[i].x);
@@ -81,7 +84,17 @@ LinesMeasurements TextLayoutManager::measureLines(
         Float xHeight = static_cast<Float>(lineMetrics[i].xHeight);
         std::u16string u16LineText;
         auto pos = lineMetrics[i].startIndex;
-        auto len = lineMetrics[i].endIndex- lineMetrics[i].startIndex;
+        auto len = lineMetrics[i].endIndex - lineMetrics[i].startIndex;
+        if (pos > u16Text.length()) {
+            LOG(ERROR) << "TextLayoutManager pos is out of range, text length = "
+                << u16Text.length() << ", pos = " << pos;
+            return ret;
+        }
+        if (pos != std::string::npos && pos + len > u16Text.length()) {
+            LOG(ERROR) << "TextLayoutManager pos + len is out of range, text length = "
+                << u16Text.length() << ", pos = " << pos << ", len = " << len;
+            return ret;
+        }
         u16LineText = u16Text.substr(pos, len);
         if (hasAttachmentCharacter) {
             // NOTE: Use std::remove and erase to remove the placeholder character `\uFFFC`
