@@ -185,7 +185,8 @@ TextInputComponentInstance::getTextInputMetrics() {
   textInputMetrics.contentSize.width = this->m_contentSizeWidth;
   textInputMetrics.contentSize.height = this->m_contentSizeHeight;
   textInputMetrics.zoomScale = 1;
-  textInputMetrics.text = this->m_content;
+  textInputMetrics.text = m_multiline ? m_textAreaNode.getTextContent()
+                                      : m_textInputNode.getTextContent();
   return textInputMetrics;
 }
 
