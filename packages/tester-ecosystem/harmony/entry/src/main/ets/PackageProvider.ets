@@ -29,6 +29,14 @@ import { RNPrintPackage } from '@react-native-oh-tpl/react-native-print/ts';
 import { UiLibPackage } from '@react-native-oh-tpl/react-native-ui-lib/ts';
 import { RNHapticFeedbackPackage } from '@react-native-oh-tpl/react-native-haptic-feedback/ts'
 import { RNBootSplashPackage } from '@react-native-oh-tpl/react-native-bootsplash/ts';
+import { RNOrientationLockerPackage } from '@react-native-oh-tpl/react-native-orientation-locker/ts';
+import { RNGetRandomValuesPackage } from "@react-native-oh-tpl/react-native-get-random-values/ts";
+import { RNFingerprintScannerPackage } from '@react-native-oh-tpl/react-native-fingerprint-scanner/ts';
+import { ShakePackage } from "@react-native-oh-tpl/react-native-shake/ts";
+import { RNDefaultPreferencePackage } from '@react-native-oh-tpl/react-native-default-preference/ts';
+import { RNKeepAwakePackage } from "@react-native-oh-tpl/react-native-keep-awake/ts";
+import { RNSystemSettingPackage } from '@react-native-oh-tpl/react-native-system-setting/ts';
+import { RNRestartPackage } from '@react-native-oh-tpl/react-native-restart/ts';
 
 import type { RNPackageContext, RNOHPackage, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
@@ -67,5 +75,13 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new UiLibPackage(ctx),
     new RNHapticFeedbackPackage(ctx),
     new RNBootSplashPackage(ctx),
+    new RNOrientationLockerPackage(ctx),
+    new RNGetRandomValuesPackage(ctx),
+    new RNFingerprintScannerPackage(ctx),
+    new ShakePackage(ctx),
+    new RNDefaultPreferencePackage(ctx),
+    new RNKeepAwakePackage(ctx),
+    new RNSystemSettingPackage(ctx),
+    new RNRestartPackage(ctx),
   ]
 }

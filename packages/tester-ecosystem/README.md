@@ -125,24 +125,20 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-qr-decode-image-camera     |        |
 | @react-native-oh-tpl/react-native-touch-id                   |        |
 | @react-native-oh-tpl/react-native-modal                      |        |
-| @react-native-oh-tpl/react-native-restart                    |        |
-| @react-native-oh-tpl/react-native-system-setting             |        |
-| @react-native-oh-tpl/react-native-keep-awake                 |        |
-| @react-native-oh-tpl/react-navigation                        |        |
-| @react-native-oh-tpl/react-native-default-preference         |        |
-| @react-native-oh-tpl/react-native-ble-manager                |        |
-| @react-native-oh-tpl/react-native-sensitive-info             |        |
-| @react-native-oh-tpl/react-native-multi-slider               |        |
+| @react-native-oh-tpl/react-native-restart                    | ✅     |
+| @react-native-oh-tpl/react-native-system-setting             | ✅     |
+| @react-native-oh-tpl/react-native-keep-awake                 | ✅     |
+| @react-native-oh-tpl/react-native-default-preference         | ✅     |
+| @react-native-oh-tpl/react-native-ble-manager                | ❌     |
+| @react-native-oh-tpl/react-native-sensitive-info             | ❌     |
 | @react-native-oh-tpl/react-native-orientation                |        |
-| @react-native-oh-tpl/rn-tourguide                            |        |
 | @react-native-oh-tpl/react-native-performance                |        |
-| @react-native-oh-tpl/react-native-shake                      |        |
+| @react-native-oh-tpl/react-native-shake                      | ✅     |
 | @react-native-oh-tpl/react-native-document-picker            |        |
-| @react-native-oh-tpl/react-native-fingerprint-scanner        |        |
-| @react-native-oh-tpl/react-native-get-random-values          |        |
+| @react-native-oh-tpl/react-native-fingerprint-scanner        | ✅     |
+| @react-native-oh-tpl/react-native-get-random-values          | ✅     |
 | @react-native-oh-tpl/native-base                             |        |
-| @react-native-oh-library/react-native-orientation-locker     |        |
-| @react-native-oh-tpl/nativewind                              |        |
+| @react-native-oh-library/react-native-orientation-locker     | ✅     |
 | @react-native-oh-tpl/react-native-haptic-feedback            | ✅     |
 | @react-native-oh-tpl/react-native-credit-card-input          |        |
 | @react-native-oh-tpl/react-native-unistyles                  |        |
@@ -176,4 +172,4 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-textinput-maxlength-fixed  | ✅     |
 | @react-native-oh-library/react-native-config                 |        |
 | @react-native-oh-tpl/realm-js                                |        |
-| @react-native-oh-tpl/react-native-ssl-pinning                |        |
+| @react-native-oh-tpl/react-native-ssl-pinning                | ❌     |
