@@ -480,11 +480,6 @@ void TextInputComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "focus") {
     focus();
-    if (m_selectionStart >= 0 && m_selectionEnd >= 0) {
-      m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
-      m_textAreaNode.setTextSelection(m_selectionStart, m_selectionEnd);
-    }
-
   } else if (commandName == "blur") {
     blur();
   } else if (
