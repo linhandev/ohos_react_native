@@ -136,6 +136,16 @@ void TextInputNodeBase::setCommonFontAttributes(
     maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_FONT_STYLE));
   }
+    
+  if (!std::isnan(textAttributes.letterSpacing)) {
+    ArkUI_NumberValue value[] = {{.f32 = static_cast<float>(textAttributes.letterSpacing)}};
+    ArkUI_AttributeItem item = {.value = value, .size = 1};
+    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+        m_nodeHandle, NODE_TEXT_LETTER_SPACING, &item));
+  } else {
+    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_TEXT_LETTER_SPACING));
+  }
 }
 
 void TextInputNodeBase::setTextAlign(
