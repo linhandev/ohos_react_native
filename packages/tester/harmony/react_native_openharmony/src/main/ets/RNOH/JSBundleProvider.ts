@@ -12,6 +12,9 @@ import { RNOHLogger } from './RNOHLogger';
 import urlUtils from '@ohos.url';
 import { fetchDataFromUrl } from './HttpRequestHelper';
 import fs from '@ohos.file.fs';
+import { preferences } from '@kit.ArkData';
+import { common } from '@kit.AbilityKit';
+import { RNOHCoreContext } from './RNOHContext';
 
 export interface HotReloadConfig {
   bundleEntry: string,
@@ -138,9 +141,31 @@ export class MetroJSBundleProvider extends JSBundleProvider {
       appKeys)
   }
 
-  constructor(private bundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false",
+  /**
+   *
+   * @param bundleUrl The URL for fetching the JS bundle.
+   *                  If not provided, the behavior depends on the runtime environment:
+   *                  - In Debug mode: Attempts to read the Metro server address from Preferences.
+   *                  - If reading fails or in Release mode: Falls back to the local Metro server.
+   * @param appKeys
+   */
+  constructor(
+    private bundleUrl: string = '',
     private appKeys: string[] = []) {
-    super()
+    super();
+    if (bundleUrl) {
+      return;
+    }
+    const defaultBundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false";
+    const rnohCoreContext: RNOHCoreContext = AppStorage.get('RNOHCoreContext');
+    if (rnohCoreContext?.isDebugModeEnabled) {
+      const dataPreferences: preferences.Preferences = preferences.getPreferencesSync(rnohCoreContext.uiAbilityContext, { name: 'devSettings' });
+      const address: preferences.ValueType = dataPreferences.getSync('devHostAndPortAddress', '');
+      this.bundleUrl = address.toString() ? `http://${address.toString()}/index.bundle?platform=harmony&dev=true&minify=false` : defaultBundleUrl;
+    } else {
+      console.warn('#RNOH_ARK: rnohCoreContext is unavailable or the app is not running in Debug mode; unable to connect to the Metro server specified in Settings.');
+      this.bundleUrl = defaultBundleUrl;
+    }
   }
 
   getAppKeys() {
@@ -229,6 +254,16 @@ export class MetroJSBundleProvider extends JSBundleProvider {
       howCanItBeFixed: []
     })
   }
+
+  /**
+   * @deprecated: do not use it.
+   */
+  setUIAbilityContext() {}
+
+  /**
+   * @deprecated: do not use it.
+   */
+  setBundleUrl() {}
 }
 
 export class AnyJSBundleProvider extends JSBundleProvider {

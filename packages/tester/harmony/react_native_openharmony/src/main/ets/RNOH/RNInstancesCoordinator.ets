@@ -26,6 +26,7 @@ import { bundleManager } from '@kit.AbilityKit';
 import { EventEmitter } from './EventEmitter';
 import { WorkerTaskRunner } from './WorkerTaskRunner';
 import { EtsUITurboModuleContext } from './EtsRNOHContext';
+import { RNSettingDialog } from './RNSettingDialog';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -132,7 +133,7 @@ export class RNInstancesCoordinator {
     // NOTE: only initialize DevMenu in debug mode
     if (envInfo.isDebugModeEnabled) {
       const internalDevMenu =
-        new InternalDevMenu(devToolsController, dependencies.uiAbilityContext, dependencies.logger);
+        new InternalDevMenu(devToolsController, new RNSettingDialog(), dependencies.uiAbilityContext, dependencies.logger);
       onDestroyCallbacks.push(() => {
         internalDevMenu.onDestroy()
       })

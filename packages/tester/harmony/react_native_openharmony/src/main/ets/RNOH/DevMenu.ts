@@ -34,6 +34,16 @@ export interface DevMenu {
 /**
  * @internal
  */
+export interface SettingDialog {
+  visible: boolean
+  createDevSettingDialog(uiAbilityContext: common.UIAbilityContext, logger: RNOHLogger): void
+  open(onClose?: () => void): void
+  close(): void
+}
+
+/**
+ * @internal
+ */
 export class InternalDevMenu implements DevMenu {
   private devMenuDialogVisible: boolean = false;
   private devMenuButtons: AlertDialogButtonOptions[] = []
@@ -43,8 +53,12 @@ export class InternalDevMenu implements DevMenu {
   /**
    * @internal
    */
-  constructor(private devToolsController: DevToolsController,
-    private uiAbilityContext: common.UIAbilityContext, logger: RNOHLogger) {
+  constructor(
+    private devToolsController: DevToolsController,
+    private settingDialog: SettingDialog,
+    private uiAbilityContext: common.UIAbilityContext,
+    logger: RNOHLogger
+  ) {
     this.logger = logger.clone("DevMenu")
     const localLogger = this.logger.clone("constructor")
     this.createDevMenuDefaultButtons()
@@ -101,10 +115,19 @@ export class InternalDevMenu implements DevMenu {
         this.hideDevMenuDialog();
       }
     });
+    this.devMenuButtons.push({
+      value: "Settings",
+      action: () => {
+        this.settingDialog.open(() => {
+          this.show();
+        });
+        this.hideDevMenuDialog();
+      }
+    });
   }
 
   public show() {
-    if (!this.devMenuDialogVisible) {
+    if (!this.devMenuDialogVisible && !this.settingDialog.visible) {
       this.showDevMenuDialog();
     }
   }
@@ -123,6 +146,7 @@ export class InternalDevMenu implements DevMenu {
         uiContext.showAlertDialog(dialogParams)
         this.devMenuDialogVisible = true;
         this.devToolsController.emitDevMenuShown();
+        this.settingDialog.createDevSettingDialog(this.uiAbilityContext, this.logger);
       }
     }).catch(() => {
       this.logger.error("DevMenu dialog couldn't be displayed.");

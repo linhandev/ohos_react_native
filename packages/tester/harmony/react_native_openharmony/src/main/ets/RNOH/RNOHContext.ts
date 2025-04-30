@@ -16,7 +16,7 @@ import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
 import type { HttpClient } from '../HttpClient/HttpClient';
 import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
-import type { DevMenu, InternalDevMenu } from './DevMenu';
+import type { DevMenu } from './DevMenu';
 import type { DevToolsController } from './DevToolsController';
 import type { DisplayMetrics } from './types';
 import type { RNInstanceOptions } from './RNInstance';
