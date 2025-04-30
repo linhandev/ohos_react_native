@@ -1,5 +1,17 @@
 include("${CMAKE_CURRENT_SOURCE_DIR}/FetchDependencies.cmake")
 
+# Boost
+set(BOOST_INCLUDE_LIBRARIES 
+  align
+  context
+  algorithm
+  intrusive
+  stacktrace
+  locale
+  numeric_conversion
+)
+add_subdirectory("${third_party_dir}/boost" EXCLUDE_FROM_ALL)
+
 # FAST_FLOAT
 add_library(fast_float INTERFACE)
 target_include_directories(fast_float INTERFACE "${fastfloat_SOURCE_DIR}/include")

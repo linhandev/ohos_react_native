@@ -26,13 +26,6 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   OVERRIDE_FIND_PACKAGE)
 
-# BOOST
-set(BOOST_ENABLE_CMAKE On)
-FetchContent_Declare(
-  Boost
-  URL https://github.com/boostorg/boost/releases/download/boost-1.82.0/boost-1.82.0.tar.xz
-  OVERRIDE_FIND_PACKAGE)
-
 # HERMES
 FetchContent_Declare(
   Hermes
@@ -62,14 +55,11 @@ FetchContent_Declare(
   SOURCE_SUBDIR "__none__" # ignore CMakeLists.txt
 )
 
-
-
 FetchContent_MakeAvailable(
   Fmt
   FastFloat
   DoubleConversion
   Glog
-  Boost
   Hermes
   Folly)
 

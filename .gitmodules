@@ -2,3 +2,6 @@
 path = packages/react-native-core
 url = https://gl.swmansion.com/rnoh/react-native-core.git
 branch = react-native-core/v0.77.1
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost
+	url = https://github.com/boostorg/boost.git
