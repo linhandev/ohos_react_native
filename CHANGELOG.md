@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.0.0.201
+- feat: supports adjusting the spacing between characters of TextInput by letterspacing,([37796d18](https://gitcode.com/openharmony-sig/ohos_react_native/commit/37796d182fc549e033d0748017e152cd01c1cc92))
+- chore: update to version 5.1.0.404(0.72.67),([5eab013d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5eab013da208461d9c1dff51a7bf7f90d8d7f0a9))
+
 ## 5.1.0.404
 - fix:crash when string pos out of range,([ebe50d68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ebe50d68274f03f018c6fc080bc040db1253a7d9))
 - Add instructions for version 5.1.0.404 of React native Harmony,([3c91537b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3c91537bfbfe7655c7364cd9182442ea477fefac))
