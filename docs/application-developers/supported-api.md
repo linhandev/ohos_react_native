@@ -638,7 +638,7 @@
 |onResponderTerminate | |✅|✅|✅|
 |onResponderTerminationRequest | |✅|✅|✅|
 |onStartShouldSetResponderCapture | |✅|✅|✅|
-|onTextLayout | |⚠️|✅|✅|
+|onTextLayout | |✅|✅|✅|
 |pressRetentionOffset | |❔|✅|✅|
 |role | |❌|✅|✅|
 |selectable | |✅|✅|✅|

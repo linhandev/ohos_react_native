@@ -25,6 +25,7 @@ class TextComponentInstance
   bool m_touchTargetChildrenNeedUpdate = false;
   std::optional<TextMeasurer::TextStorage> m_textStorage = std::nullopt;
   std::string m_textContent = "";
+  facebook::react::LinesMeasurements m_linesMeasurements;
 
  public:
   TextComponentInstance(Context context);
@@ -48,5 +49,6 @@ class TextComponentInstance
   void updateFragmentTouchTargets(
       facebook::react::ParagraphState const& newState);
   void disposeTextStorage();
+  void dispatchTextLayoutEvent();
 };
 } // namespace rnoh

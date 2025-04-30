@@ -132,8 +132,6 @@ export function TextTest() {
         assert={({expect, state}) => {
           expect(state).to.be.true;
         }}
-        skip={{android: false, harmony: {arkTs: true, cAPI: true}}}
-        //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/277
       />
       <TestCase.Automated
         tags={['sequential']}
