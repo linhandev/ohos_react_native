@@ -94,6 +94,7 @@ class TextInputNode : public TextInputNodeBase {
   uint32_t m_caretColorValue;
   bool m_setTextContent{false};
   std::string m_textContent;
+  bool m_autoFocus{false};
 
  protected:
   TextInputNodeDelegate* m_textInputNodeDelegate;
@@ -192,6 +193,8 @@ class TextInputNode : public TextInputNodeBase {
   void setShowKeyboardOnFocus(bool enable);
 
   void setPasswordRules(const std::string rules);
+
+  void setAutoFocus(bool autoFocus);
 
   std::string getTextContent() override;
 

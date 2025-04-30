@@ -73,9 +73,17 @@ class TextInputNodeBase : public ArkUINode {
       facebook::react::RectangleEdges<facebook::react::Float> padding);
 
   void setFocusable(bool const& focusable);
+  /**
+   * @Deprecated: use isFocused.
+   * Deprecated since the name is not matching behavior.
+   * Status should normally be enum instead of bool.
+   */
+  inline bool getTextFocusStatus() {
+    return this->isFocused();
+  };
 
-  void setAutoFocus(bool autoFocus);
-  bool getTextFocusStatus();
+  bool isFocused();
+
   void setSelectAll(bool selectAll);
 
   void setResponseRegion(

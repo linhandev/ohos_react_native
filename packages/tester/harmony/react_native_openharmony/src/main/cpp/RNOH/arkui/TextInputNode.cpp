@@ -19,7 +19,9 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_ON_BLUR,
     NODE_TEXT_INPUT_ON_TEXT_SELECTION_CHANGE,
     NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
-    NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE};
+    NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE,
+    NODE_EVENT_ON_APPEAR,
+    NODE_EVENT_ON_DISAPPEAR};
 namespace rnoh {
 
 TextInputNode::TextInputNode()
@@ -85,6 +87,20 @@ void TextInputNode::onNodeEvent(
       float height = eventArgs[1].f32;
       m_textInputNodeDelegate->onContentSizeChange(width, height, true);
       m_textInputNodeDelegate->onContentSizeChange(this, width, height);
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_APPEAR) {
+    if (m_autoFocus) {
+      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(1)};
+      ArkUI_AttributeItem item = {&value, 1};
+      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+          m_nodeHandle, NODE_FOCUS_STATUS, &item));
+    }
+  } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
+    if (isFocused()) {
+      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
+      ArkUI_AttributeItem item = {&value, 1};
+      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+          m_nodeHandle, NODE_FOCUS_STATUS, &item));
     }
   }
 }
@@ -451,4 +467,7 @@ void TextInputNode::setPasswordRules(const std::string rules) {
       m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item));
 }
 
+void TextInputNode::setAutoFocus(bool autoFocus) {
+  m_autoFocus = autoFocus;
+}
 } // namespace rnoh

@@ -320,9 +320,13 @@ void TextInputComponentInstance::onPropsChanged(
   m_textInputNode.setId(getIdFromProps(props));
 
   if (props->autoFocus != m_props->autoFocus) {
-    m_textAreaNode.setAutoFocus(props->autoFocus);
-    m_textInputNode.setAutoFocus(props->autoFocus);
+    if (m_multiline) {
+      m_textAreaNode.setAutoFocus(props->autoFocus);
+    } else {
+      m_textInputNode.setAutoFocus(props->autoFocus);
+    }
   }
+
   if (*(props->selectionColor) != *(m_props->selectionColor)) {
     if (props->selectionColor) {
       m_textInputNode.setSelectedBackgroundColor(props->selectionColor);
@@ -481,7 +485,15 @@ void TextInputComponentInstance::onCommandReceived(
   if (commandName == "focus") {
     focus();
   } else if (commandName == "blur") {
-    blur();
+    if (m_multiline) {
+      if (m_textAreaNode.isFocused()) {
+        blur();
+      }
+    } else {
+      if (m_textInputNode.isFocused()) {
+        blur();
+      }
+    }
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
