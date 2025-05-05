@@ -26,9 +26,13 @@ function info(msg) {
  */
 function createHarmonyMetroConfig(options) {
   const reactNativeHarmonyName =
+    /**
+     * The default value should be changed to @react-native-oh/react-native-harmony however this will be a breaking change.
+     */
     options?.reactNativeHarmonyPackageName ?? 'react-native-harmony';
-  const reactNativeCorePattern = 
-    options?.reactNativeCorePattern ?? `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`
+  const reactNativeCorePattern =
+    options?.reactNativeCorePattern ??
+    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`;
   return {
     transformer: {
       assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
@@ -72,7 +76,10 @@ function createHarmonyMetroConfig(options) {
           ) {
             return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
-            isInternalReactNativeRelativeImport(ctx.originModulePath, reactNativeCorePattern)
+            isInternalReactNativeRelativeImport(
+              ctx.originModulePath,
+              reactNativeCorePattern
+            )
           ) {
             if (moduleName.startsWith('.')) {
               const moduleAbsPath = pathUtils.resolve(
@@ -86,9 +93,7 @@ function createHarmonyMetroConfig(options) {
               let modulePathRelativeToReactNative;
               {
                 const originPackagePathAndRelativeModulePath =
-                  moduleAbsPath.split(
-                    reactNativeCorePattern
-                  );
+                  moduleAbsPath.split(reactNativeCorePattern);
                 if (originPackagePathAndRelativeModulePath.length > 1) {
                   modulePathRelativeToReactNative =
                     originPackagePathAndRelativeModulePath[1];
@@ -289,14 +294,15 @@ function isHarmonyPackageInternalImport(
 }
 
 /**
- * @param originModulePath {string} 
+ * @param originModulePath {string}
  * @param reactNativeCorePattern {string}
  * @returns {boolean}
  */
-function isInternalReactNativeRelativeImport(originModulePath, reactNativeCorePattern) {
-  return originModulePath.includes(
-    reactNativeCorePattern
-  );
+function isInternalReactNativeRelativeImport(
+  originModulePath,
+  reactNativeCorePattern
+) {
+  return originModulePath.includes(reactNativeCorePattern);
 }
 
 /**

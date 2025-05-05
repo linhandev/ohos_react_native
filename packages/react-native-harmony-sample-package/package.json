@@ -38,7 +38,7 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli",
+    "@react-native-oh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@types/react": "^18.2.47",
     "react": "18.2.0",
     "react-native": "0.77.1"

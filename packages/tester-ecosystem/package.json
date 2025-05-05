@@ -11,6 +11,10 @@
     "verify": "echo \"verify not supported\""
   },
   "dependencies": {
+    "react-native": "0.77.1",
+    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
+    "@react-native-oh/react-native-harmony": "workspace:*",
+    "@react-native-oh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@gorhom/portal": "^1.0.14",
     "@react-native-oh-tpl/async-storage": "latest",
     "@react-native-oh-tpl/blur": "latest",
@@ -56,18 +60,14 @@
     "@react-native-oh-tpl/react-native-tts": "latest",
     "@react-native-oh-tpl/react-native-ui-lib": "latest",
     "@react-native-oh-tpl/react-native-view-pdf": "latest",
-    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-ohos-community/auto-fill": "latest",
     "@react-native-ohos/checkbox": "latest",
     "@react-native-ohos/react-native-linear-gradient": "latest",
     "@react-native-ohos/toolbar-android": "latest",
-    "@rnoh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@rnoh/react-native-harmony-gesture-handler": "^2.20.1",
     "chai": "4.3.7",
     "react": "18.3.1",
-    "react-native": "0.77.1",
-    "react-native-flipper-performance-plugin": "^0.4.0",
-    "react-native-harmony": "file:../react-native-harmony"
+    "react-native-flipper-performance-plugin": "^0.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

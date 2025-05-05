@@ -13,7 +13,7 @@ import { Dimensions, Platform } from 'react-native';
 export type Asset = AssetData;
 
 /**
- * Keep this method in sync with the one use in @rnoh/react-native-harmony-cli/src/AssetResolver.
+ * Keep this method in sync with the one use in @react-native-oh/react-native-harmony-cli/src/AssetResolver.
  */
 export function getAssetDestRelativePath(asset: Asset): string {
   const fileName = getResourceIdentifier(asset);
