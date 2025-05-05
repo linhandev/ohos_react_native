@@ -12,7 +12,9 @@ module.exports = mergeConfig(
   getDefaultConfig(__dirname),
   createHarmonyMetroConfig({
     reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
-    reactNativeCorePattern: `${pathUtils.sep}react-native-core${pathUtils.sep}packages${pathUtils.sep}react-native${pathUtils.sep}`,
+    // internal
+    __reactNativeHarmonyPattern:
+      pathUtils.sep + 'react-native-harmony' + pathUtils.sep,
   }),
   {
     transformer: {

@@ -12,16 +12,13 @@ module.exports = mergeConfig(
   getDefaultConfig(__dirname),
   createHarmonyMetroConfig({
     reactNativeHarmonyPackageName: '@react-native-oh/react-native-harmony',
-    reactNativeCorePattern: `${pathUtils.sep}react-native-core${pathUtils.sep}packages${pathUtils.sep}react-native${pathUtils.sep}`,
+    /**
+     * This property is internal. We do it because RNOH isn't in node_modules (it's symlinked).
+     */
+    __reactNativeHarmonyPattern:
+      pathUtils.sep + 'react-native-harmony' + pathUtils.sep,
   }),
   {
-    serializer: {
-      getModulesRunBeforeMainModule: () => [
-        require.resolve(
-          '@react-native-oh/react-native-core/Libraries/Core/InitializeCore',
-        ),
-      ],
-    },
     transformer: {
       getTransformOptions: async () => ({
         transform: {

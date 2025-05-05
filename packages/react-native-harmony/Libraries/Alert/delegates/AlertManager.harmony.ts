@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
-import * as TurboModuleRegistry from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import type { TurboModule } from '../../TurboModule/RCTExport';
+import * as TurboModuleRegistry from '../../TurboModule/TurboModuleRegistry';
 
 /* 'buttonClicked' | 'dismissed' */
 type AlertAction = string;

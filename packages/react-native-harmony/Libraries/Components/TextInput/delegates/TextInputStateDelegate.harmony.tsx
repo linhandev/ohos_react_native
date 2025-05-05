@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseTextInputStateDelegate } from '@react-native-oh/react-native-core/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate';
+import { BaseTextInputStateDelegate } from './BaseTextInputStateDelegate';
 // @ts-ignore
-import { Commands } from '@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTSingelineTextInputNativeComponent';
+import { Commands } from '../RCTSingelineTextInputNativeComponent';
 
 export default class TextInputDelegate extends BaseTextInputStateDelegate {
   blur(ref: React.ComponentRef<any>): void {

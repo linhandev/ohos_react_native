@@ -6,7 +6,7 @@
  */
 
 import { TextStyle, ViewStyle } from 'react-native';
-import { BaseButtonDelegate } from '@react-native-oh/react-native-core/Libraries/Components/delegates/BaseButtonDelegate';
+import { BaseButtonDelegate } from './BaseButtonDelegate';
 
 export default class ButtonDelegate extends BaseButtonDelegate {
   override getButtonDisabledStyle(): ViewStyle {
@@ -17,7 +17,7 @@ export default class ButtonDelegate extends BaseButtonDelegate {
 
   override getButtonStyle(): ViewStyle {
     return {
-      backgroundColor: "#317aff",
+      backgroundColor: '#317aff',
       borderRadius: 8,
     };
   }

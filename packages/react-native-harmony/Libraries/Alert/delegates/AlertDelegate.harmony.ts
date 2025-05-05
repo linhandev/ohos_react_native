@@ -5,14 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { AlertOptions } from './AlertManager';
+import type { AlertOptions } from './AlertManager.harmony';
 import {
   BaseAlertDelegate,
   AlertDelegateButton,
   AlertDelegateOptions,
   AlertDelegateType,
-} from '@react-native-oh/react-native-core/Libraries/Alert/delegates/BaseAlertDelegate';
-import { UnsupportedByPlatformError } from '@react-native-oh/react-native-core/delegates/DelegateError';
+} from './BaseAlertDelegate';
+import { UnsupportedByPlatformError } from '../../../delegates/DelegateError';
 
 export default class AlertDelegate extends BaseAlertDelegate {
   override alert(
@@ -48,7 +48,7 @@ export default class AlertDelegate extends BaseAlertDelegate {
       alertOptions.secondaryButton = secondaryButton.text || '';
     }
     if (tertiaryButton) {
-      console.log("zicion: thirdary button!");
+      console.log('zicion: thirdary button!');
       alertOptions.tertiaryButton = tertiaryButton.text || '';
     }
     const onAction = (

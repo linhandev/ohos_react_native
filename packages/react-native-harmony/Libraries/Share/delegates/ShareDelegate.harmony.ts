@@ -11,9 +11,9 @@ import {
   ShareAction,
   ShareContent,
   ShareOptions,
-} from '@react-native-oh/react-native-core/Libraries/Share/delegates/BaseShareDelegate';
+} from './BaseShareDelegate';
 // @ts-ignore
-import NativeShareModule from '@react-native-oh/react-native-core/Libraries/Share/NativeShareModule';
+import NativeShareModule from '../NativeShareModule';
 
 export default class ShareDelegate extends BaseShareDelegate {
   override async onShare(

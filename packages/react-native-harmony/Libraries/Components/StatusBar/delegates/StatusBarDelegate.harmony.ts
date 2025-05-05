@@ -9,11 +9,10 @@ import {
   BaseStatusBarDelegate,
   StatusBarAnimation,
   StatusBarStyle,
-} from '@react-native-oh/react-native-core/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate';
-import NativeStatusBarManagerHarmony from './NativeStatusBarManagerHarmony';
+} from './BaseStatusBarDelegate';
+import NativeStatusBarManagerHarmony from './NativeStatusBarManagerHarmony.harmony';
 import invariant from 'invariant';
-// @ts-ignore
-import processColor from '@react-native-oh/react-native-core/Libraries/StyleSheet/processColor';
+import processColor from '../../../StyleSheet/processColor';
 
 export default class StatusBarDelegate extends BaseStatusBarDelegate {
   override getCurrentHeight(): number {

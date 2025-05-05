@@ -6,15 +6,15 @@
  */
 
 import React from 'react';
-import StyleSheet from '@react-native-oh/react-native-core/Libraries/StyleSheet/StyleSheet';
+import StyleSheet from '../../../StyleSheet/StyleSheet';
 import {
   BaseScrollViewDelegate,
   RenderScrollViewWithRefreshControlArgs,
-} from '@react-native-oh/react-native-core/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate';
+} from './BaseScrollViewDelegate';
 // @ts-ignore
-import flattenStyle from '@react-native-oh/react-native-core/Libraries/StyleSheet/flattenStyle';
+import flattenStyle from '../../../StyleSheet/flattenStyle';
 // @ts-ignore
-import splitLayoutProps from '@react-native-oh/react-native-core/Libraries/StyleSheet/splitLayoutProps';
+import splitLayoutProps from '../../../StyleSheet/splitLayoutProps';
 
 export default class ScrollViewDelegate extends BaseScrollViewDelegate {
   override renderScrollViewWithRefreshControl({

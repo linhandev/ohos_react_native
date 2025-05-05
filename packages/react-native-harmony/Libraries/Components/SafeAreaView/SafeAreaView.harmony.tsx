@@ -5,12 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
-import { Dimensions, TurboModuleRegistry, View, ViewProps } from 'react-native';
+import type { TurboModule } from '../../TurboModule/RCTExport';
+import * as TurboModuleRegistry from '../../TurboModule/TurboModuleRegistry';
+import { ViewProps } from '../View/ViewPropTypes';
+import Dimensions from '../../Utilities/Dimensions';
+import View from '../View/View';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
-import RCTDeviceEventEmitter from 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter.js';
+import RCTDeviceEventEmitter from '../../EventEmitter/RCTDeviceEventEmitter.js';
 
 type SafeAreaInsets = {
   top: number;

@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "packageManager": "pnpm@10.3.0",
   "scripts": {
-    "init-ws": "git submodule update --init --recursive --progress && pnpm i && cd ./packages/react-native-harmony-hvigor-plugin && npm i && npm run setup && cd ../",
+    "init-ws": "git submodule update --init --recursive --progress && pnpm i && pnpm run _integrate-upstream-code && cd ./packages/react-native-harmony-hvigor-plugin && npm i && npm run setup && cd ../",
+    "_integrate-upstream-code": "ts-node ./scripts/integrate-upstream-code.ts",
     "preinstall": "ts-node ./scripts/check-pnpm-version.ts",
     "postinstall": "pnpm run _setup:husky",
     "_setup:husky": "ts-node ./scripts/setup-husky.ts",
@@ -25,7 +26,7 @@
     "concurrently": "^9.1.2",
     "markdown-link-check": "^3.13.6",
     "husky": "^8.0.3",
-    "ts-node": "^10.9.2",
+    "ts-node": "10.9.2",
     "typescript": "5.0.4",
     "eslint": "^8.19.0",
     "eslint-plugin-prettier": "^5.0.1",

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { DecelerationRateType } from '@react-native-oh/react-native-core/Libraries/Components/ScrollView/delegates/types';
+import { DecelerationRateType } from '../ScrollView/delegates/types';
 
 export default function processDecelerationRate(
   decelerationRate: DecelerationRateType

@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseAccessibilityInfoDelegate } from '@react-native-oh/react-native-core/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate';
-import NativeAccessibilityInfoHarmony from './NativeAccessibilityInfoHarmony';
+import { BaseAccessibilityInfoDelegate } from './BaseAccessibilityInfoDelegate';
+import NativeAccessibilityInfoHarmony from './NativeAccessibilityInfoHarmony.harmony';
 
 export default class AccessibilityInfoDelegate extends BaseAccessibilityInfoDelegate {
   override isBoldTextEnabled(): Promise<boolean> {

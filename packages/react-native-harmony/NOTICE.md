@@ -7,8 +7,15 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 
 ## 1. Third Party Code
 
-### harmony/react_native_openharmony.har external code
+### `Libraries`, `src`, `types`
+These directories contain:
+- files copyrighted by Meta: See `./LICENSE-Meta`
+- files modified by Huawei but originally copyrighted by Meta: See `./LICENSE-Meta`
+- files copyrighted by Huawei: See `./LICENSE`
 
+Each file should have a documentation comment that specifies the copyright holder.
+
+### `harmony/react_native_openharmony.har`
 1. **Precompiled Hermes**
    - **Path**: `src/main/cpp/third-party/prebuilt/**/libhermes.so`
    - **License**: MIT License

@@ -10,7 +10,8 @@ const pathUtils = require('path');
 const fs = require('fs');
 const colors = require('colors/safe');
 
-let shouldPrintInfoAboutRNRedirection = true;
+const HARMONY_PLATFORM_NAME = 'harmony';
+const RNOH_FALLBACK_PLATFORM_NAME = 'ios';
 
 /**
  * @param msg {string}
@@ -21,18 +22,26 @@ function info(msg) {
 }
 
 /**
+ * @type {string | null}
+ */
+let REQUEST_RESOLUTION_LATEST_PLATFORM = null;
+
+/**
  * @param options {import("./metro.config").HarmonyMetroConfigOptions}
  * @returns {import("metro-config").InputConfigT}
  */
 function createHarmonyMetroConfig(options) {
-  const reactNativeHarmonyName =
-    /**
-     * The default value should be changed to @react-native-oh/react-native-harmony however this will be a breaking change.
-     */
+  /**
+   * The default value needs to be changed to @react-native-oh/react-native-harmony but this is a breaking change.
+   */
+  const reactNativeHarmonyPackageName =
     options?.reactNativeHarmonyPackageName ?? 'react-native-harmony';
-  const reactNativeCorePattern =
-    options?.reactNativeCorePattern ??
-    `${pathUtils.sep}@react-native-oh${pathUtils.sep}react-native-core${pathUtils.sep}`;
+  const reactNativeHarmonyPattern =
+    options?.__reactNativeHarmonyPattern ??
+    pathUtils.sep +
+      reactNativeHarmonyPackageName.replace('/', pathUtils.sep) +
+      pathUtils.sep;
+
   return {
     transformer: {
       assetRegistryPath: 'react-native/Libraries/Image/AssetRegistry',
@@ -43,79 +52,78 @@ function createHarmonyMetroConfig(options) {
         },
       }),
     },
+    serializer: {
+      getModulesRunBeforeMainModule: () => {
+        if (REQUEST_RESOLUTION_LATEST_PLATFORM !== 'harmony') {
+          return [];
+        }
+        return [require.resolve('./Libraries/Core/InitializeCore')];
+      },
+    },
     resolver: {
       blockList: [/\.cxx/],
       resolveRequest: (ctx, moduleName, platform) => {
+        REQUEST_RESOLUTION_LATEST_PLATFORM = platform;
         const nodeModulesPaths = [
           pathUtils.resolve('node_modules'),
           ...(ctx.nodeModulesPaths ?? []),
         ];
-
-        if (platform === 'harmony') {
-          if (shouldPrintInfoAboutRNRedirection) {
-            info(
-              `Redirected imports from ${colors.bold(
-                colors.gray('react-native')
-              )} to ${colors.bold(reactNativeHarmonyName)}`
+        if (platform === HARMONY_PLATFORM_NAME) {
+          if (
+            moduleName === 'react-native' ||
+            moduleName.startsWith(`react-native/`)
+          ) {
+            /**
+             * Importing from `react-native` when preparing offline bundle.
+             */
+            const newModuleName = moduleName.replace(
+              'react-native',
+              reactNativeHarmonyPackageName
             );
-            shouldPrintInfoAboutRNRedirection = false;
-          }
-          if (moduleName === 'react-native') {
-            return ctx.resolveRequest(ctx, reactNativeHarmonyName, platform);
-          } else if (moduleName.startsWith('react-native/')) {
+            try {
+              return ctx.resolveRequest(
+                ctx,
+                newModuleName,
+                HARMONY_PLATFORM_NAME
+              );
+            } catch {
+              return ctx.resolveRequest(
+                ctx,
+                newModuleName,
+                RNOH_FALLBACK_PLATFORM_NAME
+              );
+            }
+          } else if (
+            moduleName === reactNativeHarmonyPackageName ||
+            moduleName.startsWith(`${reactNativeHarmonyPackageName}/`)
+          ) {
+            /**
+             * Importing from `react-native` when bundle is provided from Metro server.
+             *
+             * `moduleName` is equal here to the value provided in
+             * react-native-harmony/react-native.config.js::config::platforms::harmony::npmPackageName
+             * when importing from `react-native`.
+             */
+            try {
+              return ctx.resolveRequest(ctx, moduleName, HARMONY_PLATFORM_NAME);
+            } catch {
+              return ctx.resolveRequest(
+                ctx,
+                moduleName,
+                RNOH_FALLBACK_PLATFORM_NAME
+              );
+            }
+          } else if (ctx.originModulePath.includes(reactNativeHarmonyPattern)) {
+            // Internal RN imports
+            const maybeResult = resolveRequestOnlyForHarmony(ctx, moduleName);
+            if (maybeResult) {
+              return maybeResult;
+            }
             return ctx.resolveRequest(
               ctx,
-              moduleName.replace(
-                'react-native/',
-                '@react-native-oh/react-native-core/'
-              ),
-              'ios'
+              moduleName,
+              RNOH_FALLBACK_PLATFORM_NAME
             );
-          } else if (
-            moduleName.startsWith('@react-native-oh/react-native-core/')
-          ) {
-            return ctx.resolveRequest(ctx, moduleName, 'ios');
-          } else if (
-            isInternalReactNativeRelativeImport(
-              ctx.originModulePath,
-              reactNativeCorePattern
-            )
-          ) {
-            if (moduleName.startsWith('.')) {
-              const moduleAbsPath = pathUtils.resolve(
-                pathUtils.dirname(ctx.originModulePath),
-                moduleName
-              );
-
-              /**
-               * @type string | undefined
-               */
-              let modulePathRelativeToReactNative;
-              {
-                const originPackagePathAndRelativeModulePath =
-                  moduleAbsPath.split(reactNativeCorePattern);
-                if (originPackagePathAndRelativeModulePath.length > 1) {
-                  modulePathRelativeToReactNative =
-                    originPackagePathAndRelativeModulePath[1];
-                }
-              }
-
-              if (modulePathRelativeToReactNative === undefined) {
-                throw new Error(
-                  'modulePathRelativeToReactNative is undefined. This should never happen. ' +
-                    moduleAbsPath
-                );
-              }
-              try {
-                const result = ctx.resolveRequest(
-                  ctx,
-                  `${reactNativeHarmonyName}${pathUtils.sep}${modulePathRelativeToReactNative}`,
-                  'harmony'
-                );
-                return result;
-              } catch (err) {}
-            }
-            return ctx.resolveRequest(ctx, moduleName, 'ios');
           } else if (
             isHarmonyPackageInternalImport(
               nodeModulesPaths,
@@ -172,7 +180,11 @@ function createHarmonyMetroConfig(options) {
                   '/'
                 )}`;
                 try {
-                  return ctx.resolveRequest(ctx, newModuleName, 'harmony');
+                  return ctx.resolveRequest(
+                    ctx,
+                    newModuleName,
+                    HARMONY_PLATFORM_NAME
+                  );
                 } catch (err) {}
               } else {
               }
@@ -216,6 +228,39 @@ function createHarmonyMetroConfig(options) {
 module.exports = {
   createHarmonyMetroConfig,
 };
+
+/**
+ * Let's say we have following files:
+ * foo.js
+ * foo.harmony.tsx
+ *
+ * By default, in that situation foo.js will be resolved. This function however chooses foo.harmony.tsx.
+ * In the past, RNOH redirected imports back to the RN package, and RNOH used different extensions than original files.
+ *
+ * @param ctx {Parameters<NonNullable<import("metro-config").ResolverConfigT["resolveRequest"]>>[0]}
+ * @param moduleName {string}
+ */
+function resolveRequestOnlyForHarmony(ctx, moduleName) {
+  for (const sourceExt of ctx.sourceExts) {
+    const newCtx = { ...ctx };
+    newCtx.sourceExts = [sourceExt];
+    try {
+      const result = ctx.resolveRequest(
+        newCtx,
+        moduleName,
+        HARMONY_PLATFORM_NAME
+      );
+      if (result.type === 'sourceFile') {
+        const lastDotIndex = result.filePath.lastIndexOf('.');
+        const beforeLastDot = result.filePath.substring(0, lastDotIndex);
+        if (beforeLastDot.endsWith('.' + HARMONY_PLATFORM_NAME)) {
+          return result;
+        }
+      }
+    } catch {}
+  }
+  return null;
+}
 
 /**
  * @param moduleName {string}
@@ -291,18 +336,6 @@ function isHarmonyPackageInternalImport(
   }
 
   return false;
-}
-
-/**
- * @param originModulePath {string}
- * @param reactNativeCorePattern {string}
- * @returns {boolean}
- */
-function isInternalReactNativeRelativeImport(
-  originModulePath,
-  reactNativeCorePattern
-) {
-  return originModulePath.includes(reactNativeCorePattern);
 }
 
 /**

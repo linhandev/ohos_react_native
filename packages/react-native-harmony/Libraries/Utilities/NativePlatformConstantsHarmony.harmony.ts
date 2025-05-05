@@ -6,7 +6,7 @@
  */
 
 import { TurboModule, TurboModuleRegistry } from 'react-native';
-import type { PlatformHarmonyConstants } from '@react-native-oh/react-native-core/Libraries/Utilities/Platform';
+import type { PlatformHarmonyConstants } from './Platform';
 
 interface Spec extends TurboModule {
   getConstants: () => PlatformHarmonyConstants;

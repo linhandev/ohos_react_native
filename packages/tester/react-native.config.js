@@ -1,5 +1,8 @@
 module.exports = {
-  reactNativePath: process.env.RNOH_TESTER_ONLY__TARGET_PLATFORM === 'harmony' ? '../react-native-core/packages/react-native' : undefined,
+  reactNativePath:
+    process.env.RNOH_TESTER_ONLY__TARGET_PLATFORM === 'harmony'
+      ? '../react-native-harmony'
+      : undefined,
   project: {
     ios: {},
     android: {},

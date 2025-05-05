@@ -34,7 +34,6 @@
     "@gorhom/portal": "^1.0.14",
     "@react-native-oh-tpl/react-native-fs": "2.20.0-0.1.14",
     "@react-native-oh-tpl/react-native-safe-area-context": "4.7.4-0.2.0",
-    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-oh/react-native-harmony": "workspace:*",
     "@react-native-oh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@rnoh/react-native-harmony-test-kit": "workspace:*",

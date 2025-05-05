@@ -4,8 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import baseViewConfigIOS from '@react-native-oh/react-native-core/Libraries/NativeComponent/BaseViewConfig.ios';
-import baseViewConfigAndroid from '@react-native-oh/react-native-core/Libraries/NativeComponent/BaseViewConfig.android';
+import baseViewConfigIOS from './BaseViewConfig.ios';
+import baseViewConfigAndroid from './BaseViewConfig.android';
 
 export default {
   bubblingEventTypes: {

@@ -8,11 +8,12 @@
 import {
   BaseRefreshControlDelegate,
   RefreshControlDelegateRenderInternalProps,
-} from '@react-native-oh/react-native-core/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate';
+} from './BaseRefreshControlDelegate';
+
 import PullToRefreshViewNativeComponent, {
   Commands,
   // @ts-ignore
-} from 'react-native/Libraries/Components/RefreshControl/PullToRefreshViewNativeComponent';
+} from '../PullToRefreshViewNativeComponent';
 
 export default class RefreshControlDelegate extends BaseRefreshControlDelegate<any> {
   override onSetNativeRefreshing(ref: unknown, refreshing: boolean): void {

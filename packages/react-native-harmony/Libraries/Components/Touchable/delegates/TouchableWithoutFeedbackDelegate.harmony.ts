@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseTouchableWithoutFeedbackDelegate } from '@react-native-oh/react-native-core/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate';
+import { BaseTouchableWithoutFeedbackDelegate } from './BaseTouchableWithoutFeedbackDelegate';
 
 export default class TouchableWithoutFeedbackDelegate extends BaseTouchableWithoutFeedbackDelegate {
   override getExtraProps(): Record<string, any> {

@@ -6,5 +6,5 @@
  */
 
 // @ts-ignore
-import BackHandler from '@react-native-oh/react-native-core/Libraries/Utilities/BackHandler.android';
+import BackHandler from './BackHandler.android';
 export default BackHandler;

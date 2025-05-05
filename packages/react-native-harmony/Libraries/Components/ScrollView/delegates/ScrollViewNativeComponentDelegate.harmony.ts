@@ -2,12 +2,10 @@
  * @format
  */
 
-import type { PartialViewConfig } from '@react-native-oh/react-native-core/Libraries/Renderer/shims/ReactNativeTypes';
-
-import {BaseScrollViewNativeComponentDelegate} from '@react-native-oh/react-native-core/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate';
+import { BaseScrollViewNativeComponentDelegate } from './BaseScrollViewNativeComponentDelegate';
 
 export default class ScrollViewNativeComponentDelegate extends BaseScrollViewNativeComponentDelegate {
-  override getIntenalViewConfig(): PartialViewConfig {
+  override getIntenalViewConfig() {
     return {
       uiViewClassName: 'RCTScrollView',
       bubblingEventTypes: {},
@@ -34,7 +32,7 @@ export default class ScrollViewNativeComponentDelegate extends BaseScrollViewNat
         bounces: true,
         centerContent: true,
         contentOffset: {
-          diff: require('@react-native-oh/react-native-core/Libraries/Utilities/differ/pointsDiffer'),
+          diff: require('../../../Utilities/differ/pointsDiffer'),
         },
         decelerationRate: true,
         disableIntervalMomentum: true,
@@ -60,28 +58,28 @@ export default class ScrollViewNativeComponentDelegate extends BaseScrollViewNat
         scrollToOverflowEnabled: true,
         borderStyle: true,
         borderRightColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         borderColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         borderBottomColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         persistentScrollbar: true,
         horizontal: true,
         endFillColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         overScrollMode: true,
         borderTopLeftRadius: true,
         borderTopColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         removeClippedSubviews: true,
         borderTopRightRadius: true,
         borderLeftColor: {
-          process: require('@react-native-oh/react-native-core/Libraries/StyleSheet/processColor').default,
+          process: require('../../../StyleSheet/processColor').default,
         },
         pointerEvents: true,
         isInvertedVirtualizedList: true,

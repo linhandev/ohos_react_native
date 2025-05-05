@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseTouchableHighlightDelegate } from '@react-native-oh/react-native-core/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate';
+import { BaseTouchableHighlightDelegate } from './BaseTouchableHighlightDelegate';
 
 export default class TouchableHighlightDelegate extends BaseTouchableHighlightDelegate {
   override getExtraContainerProps(): Record<string, any> {

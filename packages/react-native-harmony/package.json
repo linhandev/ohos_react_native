@@ -3,22 +3,20 @@
   "version": "0.77.3",
   "description": "",
   "scripts": {
+    "prepack": "cd .. && pnpm _integrate-upstream-code && cd react-native-harmony && pnpm build:har",
     "build": "node ./scripts/build-har.js",
     "build:hermes": "sh ./scripts/build-hermes.sh",
     "build:har": "node ./scripts/build-har.js",
-    "verify": "npm run typecheck && npm run test",
-    "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "verify": "npm run test",
+    "test": "jest"
   },
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "react-native": "0.77.1",
-    "@react-native-oh/react-native-core": "*"
+    "react-native": "0.77.1"
   },
-  "types": "types",
+  "types": "types/index.harmony.d.ts",
   "devDependencies": {
-    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-community/cli-types": "^11.2.0",
     "@react-native/metro-config": "0.77.1",
     "@react-native/typescript-config": "0.77.1",
@@ -39,6 +37,8 @@
   },
   "files": [
     "./Libraries/**/*",
+    "./delegates/**/*",
+    "./src/**/*",
     "./types/**/*",
     "./*.js",
     "./*.json",

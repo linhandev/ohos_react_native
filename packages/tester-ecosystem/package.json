@@ -6,13 +6,12 @@
     "postinstall": "node ./scripts/create-build-profile",
     "dev": "react-native start --port 8084",
     "build": "node ./scripts/build.js",
-    "test": "npm run build",
+    "test": "cd ../react-native-harmony && pnpm build:har && cd ../tester-ecosystem && pnpm build",
     "harmony": "react-native run-harmony",
     "verify": "echo \"verify not supported\""
   },
   "dependencies": {
     "react-native": "0.77.1",
-    "@react-native-oh/react-native-core": "workspace:@rnoh/react-native-core@*",
     "@react-native-oh/react-native-harmony": "workspace:*",
     "@react-native-oh/react-native-harmony-cli": "file:../react-native-harmony-cli",
     "@gorhom/portal": "^1.0.14",

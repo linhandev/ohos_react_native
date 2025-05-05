@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NativePlatformColor } from './NativePlatformColor';
+import { NativePlatformColor } from './NativePlatformColor.harmony';
 
 export const PlatformColor = (...colors: string[]) => {
   const color = NativePlatformColor.getSystemColor(colors);

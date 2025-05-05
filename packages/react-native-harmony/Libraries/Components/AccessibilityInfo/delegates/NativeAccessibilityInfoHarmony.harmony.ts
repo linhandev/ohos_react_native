@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { TurboModuleRegistry } from 'react-native';
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
+import * as TurboModuleRegistry from '../../../TurboModule/TurboModuleRegistry';
+import type { TurboModule } from '../../../TurboModule/RCTExport';
 
 export interface Spec extends TurboModule {
   isScreenReaderEnabled: () => Promise<boolean>;

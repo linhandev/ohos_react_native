@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { NativePlatformConstantsHarmony } from './NativePlatformConstantsHarmony';
+import { NativePlatformConstantsHarmony } from './NativePlatformConstantsHarmony.harmony';
 import type {
   PlatformHarmonyStatic,
   PlatformHarmonyConstants,
   PlatformOSType,
-} from '@react-native-oh/react-native-core/Libraries/Utilities/Platform';
+} from './Platform';
 
 module.exports = {
   _constants: undefined,
@@ -50,8 +50,8 @@ module.exports = {
     return 'harmony' in spec
       ? spec.harmony
       : 'native' in spec
-      ? spec.native
-      : spec.default;
+        ? spec.native
+        : spec.default;
   },
 } satisfies PlatformHarmonyStatic & {
   _constants: undefined | PlatformHarmonyConstants;

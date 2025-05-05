@@ -8,16 +8,16 @@
 import {
   BaseTextInputDelegate,
   GetNativeTextContentTypeOptions,
-} from '@react-native-oh/react-native-core/Libraries/Components/TextInput/delegates/BaseTextInputDelegate';
+} from './BaseTextInputDelegate';
 
 const RCTSinglelineTextInputView =
-  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTSingelineTextInputNativeComponent').default;
+  require('../RCTSingelineTextInputNativeComponent').default;
 const RCTMultilineTextInputView =
-  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').default;
+  require('../RCTMultilineTextInputNativeComponent').default;
 const RCTSinglelineTextInputNativeCommands =
-  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTSingelineTextInputNativeComponent').Commands;
+  require('../RCTSingelineTextInputNativeComponent').Commands;
 const RCTMultilineTextInputNativeCommands =
-  require('@react-native-oh/react-native-core/Libraries/Components/TextInput/RCTMultilineTextInputNativeComponent').Commands;
+  require('../RCTMultilineTextInputNativeComponent').Commands;
 
 export default class TextInputDelegate extends BaseTextInputDelegate {
   override createNativeTextInput(props: any): React.ReactNode {
@@ -78,8 +78,8 @@ export default class TextInputDelegate extends BaseTextInputDelegate {
     return textContentType != null
       ? textContentType
       : autocomplete && autocomplete in autocompleteWebToTextContentTypeMap
-      ? autocompleteWebToTextContentTypeMap[autocomplete]
-      : textContentType;
+        ? autocompleteWebToTextContentTypeMap[autocomplete]
+        : textContentType;
   }
 
   override shouldBeCancellable(
@@ -87,7 +87,7 @@ export default class TextInputDelegate extends BaseTextInputDelegate {
   ): boolean | null {
     return !rejectResponderTermination;
   }
-  
+
   override getTextInputCommands(multiline: boolean): any {
     if (multiline) {
       return RCTMultilineTextInputNativeCommands;

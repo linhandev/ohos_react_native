@@ -5,12 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type {I18nManagerConstants} from '@react-native-oh/react-native-core/Libraries/ReactNative/NativeI18nManager';
-
-import {BaseI18nManagerDelegate} from '@react-native-oh/react-native-core/Libraries/ReactNative/delegates/BaseI18nManagerDelegate';
+import { BaseI18nManagerDelegate } from './BaseI18nManagerDelegate';
 
 export default class I18nManagerDelegate extends BaseI18nManagerDelegate {
-  getConstants: () => I18nManagerConstants = () => {
+  override getConstants = () => {
     return this.ctx.constantsCallback();
   };
 

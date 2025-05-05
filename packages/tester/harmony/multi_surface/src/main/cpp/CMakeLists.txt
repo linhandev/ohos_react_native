@@ -6,8 +6,6 @@ set(RNOH_CPP_DIR
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../oh_modules/@rnoh/react-native-openharmony/src/main/cpp"
 )
 set(RNOH_GENERATED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
-set(RNOH_REACT_COMMON_DIR
-    "${NODE_MODULES}/@react-native-oh/react-native-core/ReactCommon")
 set(LOG_VERBOSITY_LEVEL 0)
 set(CMAKE_ASM_FLAGS
     "-Wno-error=unused-command-line-argument -Qunused-arguments")

@@ -2,7 +2,10 @@ import type { InputConfigT } from '@react-native/metro-config';
 
 interface HarmonyMetroConfigOptions {
   reactNativeHarmonyPackageName?: string;
-  reactNativeCorePattern?: string;
+  /**
+   * @internal
+   */
+  __reactNativeHarmonyPattern?: string;
 }
 
 export function createHarmonyMetroConfig(

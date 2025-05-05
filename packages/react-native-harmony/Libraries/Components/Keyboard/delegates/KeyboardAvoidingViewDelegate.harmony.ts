@@ -6,11 +6,11 @@
  */
 
 import React, { ReactNode } from 'react';
-import { KeyboardMetrics } from 'react-native';
+import { KeyboardMetrics } from '../../Keyboard/Keyboard';
 import {
   BaseKeyboardAvoidingViewDelegate,
   PrepareChildrenOptions,
-} from '@react-native-oh/react-native-core/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate';
+} from './BaseKeyboardAvoidingViewDelegate';
 
 export default class KeyboardAvoidingViewDelegate extends BaseKeyboardAvoidingViewDelegate {
   override getRelativeKeyboardHeight(

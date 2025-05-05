@@ -3,3 +3,9 @@
 react-native
 out
 harmony/*
+
+# To add a new file to one of those directories, use `git add -f`
+Libraries/*
+types/*
+src/*
+delegates/*

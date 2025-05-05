@@ -6,5 +6,5 @@
  */
 
 // @ts-ignore
-import Image from '@react-native-oh/react-native-core/Libraries/Image/Image.android';
+import Image from './Image.android';
 export default Image;

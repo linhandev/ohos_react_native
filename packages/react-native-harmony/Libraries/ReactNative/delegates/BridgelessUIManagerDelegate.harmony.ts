@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseBridgelessUIManagerDelegate } from '@react-native-oh/react-native-core/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate';
+import { BaseBridgelessUIManagerDelegate } from './BaseBridgelessUIManagerDelegate';
 
 export default class BridgelessUIManagerDelegate extends BaseBridgelessUIManagerDelegate {
   override selectAndroidOrIOSImplementation(): 'android' | 'ios' {

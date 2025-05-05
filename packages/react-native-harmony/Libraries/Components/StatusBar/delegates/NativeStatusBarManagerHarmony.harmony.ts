@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { TurboModule } from '@react-native-oh/react-native-core/Libraries/TurboModule/RCTExport';
-import * as TurboModuleRegistry from '@react-native-oh/react-native-core/Libraries/TurboModule/TurboModuleRegistry';
+import * as TurboModuleRegistry from '../../../TurboModule/TurboModuleRegistry';
+import type { TurboModule } from '../../../TurboModule/RCTExport';
 
 type NativeStatusBarManagerConstants = {
   HEIGHT: number;

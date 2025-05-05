@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { BaseVibrationDelegate } from '@react-native-oh/react-native-core/Libraries/Vibration/delegates/BaseVibrationDelegate';
+import { BaseVibrationDelegate } from './BaseVibrationDelegate';
 
 export default class VibrationDelegate extends BaseVibrationDelegate {
   override shouldUseAndroidImplementation(): boolean {
