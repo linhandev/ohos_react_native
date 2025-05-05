@@ -6,7 +6,7 @@ import { LottieAnimationViewPackage } from '@react-native-oh-tpl/lottie-react-na
 import { NetInfoPackage } from '@react-native-oh-tpl/netinfo/ts';
 import { ExceptionHandlerPackage } from '@react-native-oh-tpl/react-native-exception-handler';
 import { ImagePickerViewPackage } from '@react-native-oh-tpl/react-native-image-picker';
-import { ToolbarAndroidPackage } from '@react-native-ohos/toolbar-android/src/main/ets/ToolbarAndroidPackage';
+import { ToolbarAndroidPackage } from 'rnoh-toolbar-android/src/main/ets/ToolbarAndroidPackage';
 import { RNMlkitOcrPackage } from '@react-native-oh-tpl/react-native-mlkit-ocr/ts';
 import { RNNetworkInfoPackage } from '@react-native-oh-tpl/react-native-network-info/ts';
 import { AutoFillPackage } from '@react-native-ohos-community/auto-fill/ts'
@@ -37,6 +37,8 @@ import { RNDefaultPreferencePackage } from '@react-native-oh-tpl/react-native-de
 import { RNKeepAwakePackage } from "@react-native-oh-tpl/react-native-keep-awake/ts";
 import { RNSystemSettingPackage } from '@react-native-oh-tpl/react-native-system-setting/ts';
 import { RNRestartPackage } from '@react-native-oh-tpl/react-native-restart/ts';
+import { RNHttpBridgePackage } from "@react-native-oh-tpl/react-native-http-bridge/ts";
+import { AMapGeolocationPackage } from '@react-native-oh-tpl/react-native-amap-geolocation/ts';
 
 import type { RNPackageContext, RNOHPackage, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
@@ -83,5 +85,7 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new RNKeepAwakePackage(ctx),
     new RNSystemSettingPackage(ctx),
     new RNRestartPackage(ctx),
+    new RNHttpBridgePackage(ctx),
+    new AMapGeolocationPackage(ctx)
   ]
 }

@@ -571,6 +571,9 @@ importers:
       '@react-native-oh-tpl/netinfo':
         specifier: latest
         version: 11.1.0-0.0.8(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+      '@react-native-oh-tpl/react-native-amap-geolocation':
+        specifier: latest
+        version: 1.2.3-0.0.5
       '@react-native-oh-tpl/react-native-apple-authentication':
         specifier: latest
         version: 2.3.0-0.0.1
@@ -607,6 +610,9 @@ importers:
       '@react-native-oh-tpl/react-native-haptic-feedback':
         specifier: latest
         version: 2.2.0-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+      '@react-native-oh-tpl/react-native-http-bridge':
+        specifier: latest
+        version: 0.6.1-0.0.4
       '@react-native-oh-tpl/react-native-image-colors':
         specifier: latest
         version: 2.4.0-0.0.7(expo@52.0.46(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(encoding@0.1.13)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -692,7 +698,7 @@ importers:
         specifier: latest
         version: 0.2.2-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@rnoh/react-native-harmony-gesture-handler':
-        specifier: ^2.20.1
+        specifier: latest
         version: 2.20.1(react-native-gesture-handler@2.23.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       chai:
         specifier: 4.3.7
@@ -2170,6 +2176,9 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
 
+  '@react-native-oh-tpl/react-native-amap-geolocation@1.2.3-0.0.5':
+    resolution: {integrity: sha512-ND1q6BQpcbBZE6WgtNWb5zKbOpY9v7RQ3oweEDg1idJHPFVDDi/D1h8f/jSanWTJGn6rlb296/DQysiIVNoHCA==}
+
   '@react-native-oh-tpl/react-native-apple-authentication@2.3.0-0.0.1':
     resolution: {integrity: sha512-2y0MEZbk4B6Sh+70YuW6PTDU23cYskO7XyTw0SLEFll7+rPU9IUF3CZAl2MmC98oGvAMd343D4/Gt3cXyuN6QQ==}
     engines: {node: '>=14'}
@@ -2240,6 +2249,9 @@ packages:
     resolution: {integrity: sha512-huwsGbX3EqqXShZYICROwMnPWB74aFzSCMxKDOnc6RAi1R0ACqk8uHoMO81XNuBg5Ly5b3jhTcXe1JgJ1zc/DQ==}
     peerDependencies:
       react-native: '>=0.60.0'
+
+  '@react-native-oh-tpl/react-native-http-bridge@0.6.1-0.0.4':
+    resolution: {integrity: sha512-Lhd2yvhUGcy4vMUmCZXEwdHim4D7HjevbyKm1VaqW4e8h6nKN5KXSd0sa6dJ4+hfaiwlDkJITaJH/QWnQOWOBg==}
 
   '@react-native-oh-tpl/react-native-image-colors@2.4.0-0.0.7':
     resolution: {integrity: sha512-Yl6rJ7SOCidxaeLfQ2BfjG0+cKT2chKL8wXVZcXwT43ZHV4CmEPKfAyCnbX4JO10aaTKW7KfrWDF/4WeFrN6KQ==}
@@ -6463,6 +6475,9 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
+  react-native-amap-geolocation@1.2.3:
+    resolution: {integrity: sha512-NKQG1eKJGHFnSGAMtsXZYfoKzlDAyK23cuKaIcJaWfa0kNr23pVrxOss3TcNRZTu8Syr9AwRus7I0PLGEcAaNA==}
+
   react-native-bootsplash@6.1.1:
     resolution: {integrity: sha512-1bdz2Br+CZpPbv9jHsGlwH27ionWsBQNU5uQr06Dxa91BJTZe/15Ac89ubCVl07/BRE7UcfaPzNdelvwpKcmgw==}
     peerDependencies:
@@ -6499,6 +6514,9 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-http-bridge@0.6.1:
+    resolution: {integrity: sha512-XnPVdaYkKIC8bRGmADVLhgDO0Evnya3rOExVEzxk6pBJjNUewWljkGHt//OTpb4t7Te6oDqQAwa+gfVtzhRU1A==}
 
   react-native-image-pan-zoom@2.1.12:
     resolution: {integrity: sha512-BF66XeP6dzuANsPmmFsJshM2Jyh/Mo1t8FsGc1L9Q9/sVP8MJULDabB1hms+eAoqgtyhMr5BuXV3E1hJ5U5H6Q==}
@@ -9979,6 +9997,10 @@ snapshots:
       '@react-native-community/netinfo': 11.1.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 
+  '@react-native-oh-tpl/react-native-amap-geolocation@1.2.3-0.0.5':
+    dependencies:
+      react-native-amap-geolocation: 1.2.3
+
   '@react-native-oh-tpl/react-native-apple-authentication@2.3.0-0.0.1': {}
 
   '@react-native-oh-tpl/react-native-blurhash@2.0.3-0.0.7(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
@@ -10057,6 +10079,10 @@ snapshots:
     dependencies:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-haptic-feedback: 2.3.3(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+
+  '@react-native-oh-tpl/react-native-http-bridge@0.6.1-0.0.4':
+    dependencies:
+      react-native-http-bridge: 0.6.1
 
   '@react-native-oh-tpl/react-native-image-colors@2.4.0-0.0.7(expo@52.0.46(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(encoding@0.1.13)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -15481,6 +15507,8 @@ snapshots:
 
   react-is@18.3.1: {}
 
+  react-native-amap-geolocation@1.2.3: {}
+
   react-native-bootsplash@6.1.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@expo/config-plugins': 8.0.11
@@ -15525,6 +15553,8 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+
+  react-native-http-bridge@0.6.1: {}
 
   react-native-image-pan-zoom@2.1.12(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
     dependencies:

@@ -10,7 +10,7 @@ import {
 import { getRNOHPackages } from '../PackageProvider';
 import { RNDateTimePicker, DATETIME_PICKER_VIEW_TYPE } from "@react-native-oh-tpl/datetimepicker"
 import { LottieAnimationView } from '@react-native-oh-tpl/lottie-react-native';
-import { RNCToolbarAndroid } from '@react-native-ohos/toolbar-android/src/main/ets/RNCToolbarAndroid'
+import { RNCToolbarAndroid } from 'rnoh-toolbar-android/src/main/ets/RNCToolbarAndroid'
 import { RNPDFView } from '@react-native-oh-tpl/react-native-view-pdf'
 import {
   BarCharts,

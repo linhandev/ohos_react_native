@@ -114,15 +114,15 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-color-matrix-image-filters |        |
 | @react-native-oh-tpl/react-native-toast                      |        |
 | @react-native-oh-tpl/react-native-syan-image-picker          |        |
-| @react-native-oh-tpl/react-native-amap-geolocation           |        |
+| @react-native-oh-tpl/react-native-amap-geolocation           | ✅     |
 | @react-native-oh-tpl/react-native-splash-screen              |        |
-| @react-native-oh-tpl/react-native-baidu-map                  |        |
+| @react-native-oh-tpl/react-native-baidu-map                  | ❌     |
 | @react-native-oh-tpl/react-native-ble-plx                    |        |
 | @react-native-oh-tpl/react-native-device-info                |        |
 | @react-native-oh-tpl/react-native-amap3d                     |        |
 | @react-native-oh-tpl/react-native-background-timer           |        |
-| @react-native-oh-tpl/react-native-http-bridge                |        |
-| @react-native-oh-tpl/react-native-qr-decode-image-camera     |        |
+| @react-native-oh-tpl/react-native-http-bridge                | ✅     |
+| @react-native-oh-tpl/react-native-qr-decode-image-camera     | ❌     |
 | @react-native-oh-tpl/react-native-touch-id                   |        |
 | @react-native-oh-tpl/react-native-modal                      |        |
 | @react-native-oh-tpl/react-native-restart                    | ✅     |

@@ -30,7 +30,7 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-exception-
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-image-picker/src/main/cpp" ./image_picker)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/checkbox/src/main/cpp" ./checkbox)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-linear-gradient/src/main/cpp" ./linear-gradient)
-add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/toolbar-android/src/main/cpp" ./toolbar-android)
+add_subdirectory("${OH_MODULES_DIR}/rnoh-toolbar-android/src/main/cpp" ./toolbar-android)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-mlkit-ocr/src/main/cpp" ./rn_mlkit_ocr)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos-community/auto-fill/src/main/cpp" ./auto-fill)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-incall-manager/src/main/cpp" ./in_call_manager)
