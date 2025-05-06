@@ -8,8 +8,8 @@
 import { preferences } from '@kit.ArkData'
 import { BusinessError } from '@kit.BasicServicesKit';
 import type common from '@ohos.app.ability.common';
-import { RNOHLogger } from '@rnoh/react-native-openharmony';
 import { ComponentContent, PromptAction, window } from '@kit.ArkUI';
+import { RNOHLogger } from './RNOHLogger';
 
 class SettingsPageParams {
   public uiAbilityContext: common.UIAbilityContext;
