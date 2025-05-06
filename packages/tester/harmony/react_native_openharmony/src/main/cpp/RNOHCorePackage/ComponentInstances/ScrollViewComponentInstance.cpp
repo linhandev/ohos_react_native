@@ -152,7 +152,9 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
             << scrollViewMetrics.contentSize.height
             << "; containerSize: " << scrollViewMetrics.containerSize.width
             << ", " << scrollViewMetrics.containerSize.height << ")";
-    m_eventEmitter->onScroll(scrollViewMetrics);
+    if (m_eventEmitter) {
+      m_eventEmitter->onScroll(scrollViewMetrics);
+    }
     m_currentOffset = scrollViewMetrics.contentOffset;
     m_currentOffset.x = adjustOffsetToRTL(m_currentOffset.x);
     updateContentClippedSubviews();
@@ -165,7 +167,9 @@ void ScrollViewComponentInstance::onEmitOnScrollEndDragEvent() {
     disableIntervalMomentum();
   }
   auto scrollViewMetrics = getScrollViewMetrics();
-  m_eventEmitter->onScrollEndDrag(scrollViewMetrics);
+  if (m_eventEmitter) {
+    m_eventEmitter->onScrollEndDrag(scrollViewMetrics);
+  }
   updateStateWithContentOffset(scrollViewMetrics.contentOffset);
 }
 
