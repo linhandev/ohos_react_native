@@ -16,10 +16,15 @@ export class RemoteImageDiskCache extends RemoteImageCache<boolean> {
   constructor(maxSize: number, cacheDir: string) {
     super(maxSize);
     this.cacheDir = cacheDir;
+    if (!fs.accessSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, true);
+      return;
+    }
     const filenames: string[] = fs.listFileSync(cacheDir);
 
     // number of files in cache might be over maxSize but `listFile` cannot specify sort order by modification time
     filenames
+      .filter(filename => fs.statSync(`${cacheDir}/${filename}`).isFile())
       .map(filename => filename.replace('/', ''))
       .forEach(filename => {
         this.set(filename, true);
