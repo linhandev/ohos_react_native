@@ -42,22 +42,25 @@
 
 ## 版本说明
 
-当前发布的最新正式版本：
+1. 当前已基于上游社区RN 0.72.5版本进行鸿蒙化，有以下版本
+  - RN 0.72.5鸿蒙化最新发布的正式版本：
+    - [RNOH v5.0.0.813（2024-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
 
-- [RNOH v5.0.0.813（2024-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
+ - RN 0.72.5鸿蒙化历史发布的正式版本：
 
-历史发布的正式版本：
+    - [RNOH v5.0.0.812（2024-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
+    - [RNOH v5.0.0.715（2024-10-25）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
+    - [RNOH v5.0.0.601（2024-09-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
+    - [RNOH v5.0.0.500（2024-08-27）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
 
-- [RNOH v5.0.0.812（2024-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
-- [RNOH v5.0.0.715（2024-10-25）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
-- [RNOH v5.0.0.601（2024-09-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
-- [RNOH v5.0.0.500（2024-08-27）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
+2. 当前正在进行上游社区RN 0.77.1鸿蒙化适配开发，预计2025年Q3正式对外发布。
 
 ## 分支说明
 
 - 0.72.5-ohos-5.0-release分支：release分支，如需下载源码，请从此分支下载上述正式版本对应的tag点源码。
 - master分支：主分支，请勿从此分支拉取源码用于商用版本，不保证质量。
+- 0.77.1-rc.1-ohos：基于上游社区RN 0.77.1鸿蒙化的分支，目前正在适配中，未商用发布，不保证质量。
 - dev分支/partner-dev分支：开发分支，请勿从此分支拉取源码，不保证质量。
-- 其余分支(若存在):项目内部运行过程分支，请勿从相关分支拉取源码，不保证质量。
+- 其余分支(若存在)：项目内部运行过程分支，请勿从相关分支拉取源码，不保证质量。
 
 **说明：** 0.72.5-ohos-5.0-release分支在2025/01/23进行了开源整改，整改后的CommitID与整改前不一致，请开发者重新拉取仓库最新代码。
