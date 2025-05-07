@@ -32,7 +32,10 @@ namespace rnoh {
 
 TextInputComponentInstance::TextInputComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
-      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {}
+      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {
+  m_textAreaNode.setBackgroundColor(facebook::react::clearColor());
+  m_textInputNode.setBackgroundColor(facebook::react::clearColor());
+}
 
 void TextInputComponentInstance::onChange(
     ArkUINode* node,
