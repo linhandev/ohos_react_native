@@ -57,6 +57,9 @@ void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   if (!props->removeClippedSubviews && !m_childrenClippedState.empty()) {
     restoreClippedSubviews();
   }
+  if (props->rawProps.count("focusable") > 0) {
+    m_customNode.setFocusable(props->rawProps["focusable"].asBool());
+  }
 }
 
 bool ViewComponentInstance::isViewClipped(
