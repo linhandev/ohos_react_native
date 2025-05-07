@@ -38,9 +38,9 @@ export default class AlertDelegate extends BaseAlertDelegate {
     const validButtons: AlertDelegateButton[] = (
       buttons ?? [{ text: 'OK' }]
     ).slice(0, 3);
+    const tertiaryButton = validButtons.pop();
     const secondaryButton = validButtons.pop();
     const primaryButton = validButtons.pop();
-    const tertiaryButton = validButtons.pop();
     if (primaryButton) {
       alertOptions.primaryButton = primaryButton.text || '';
     }
@@ -48,7 +48,6 @@ export default class AlertDelegate extends BaseAlertDelegate {
       alertOptions.secondaryButton = secondaryButton.text || '';
     }
     if (tertiaryButton) {
-      console.log('zicion: thirdary button!');
       alertOptions.tertiaryButton = tertiaryButton.text || '';
     }
     const onAction = (
@@ -60,11 +59,11 @@ export default class AlertDelegate extends BaseAlertDelegate {
           primaryButton?.onPress && primaryButton.onPress();
         } else if (buttonKey === constants.secondaryButton) {
           secondaryButton?.onPress && secondaryButton.onPress();
+        } else if (buttonKey === constants.tertiaryButton) {
+          tertiaryButton?.onPress && tertiaryButton.onPress();
         }
       } else if (action === constants.dismissed) {
         options && options.onDismiss && options.onDismiss();
-      } else if (buttonKey === constants.thirdaryButton) {
-        tertiaryButton?.onPress && tertiaryButton.onPress();
       }
     };
     const onError = (errorMessage: string) => console.warn(errorMessage);
