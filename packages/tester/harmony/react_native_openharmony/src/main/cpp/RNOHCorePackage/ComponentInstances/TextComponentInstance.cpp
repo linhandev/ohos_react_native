@@ -194,8 +194,8 @@ void TextComponentInstance::onStateChanged(
   }
   m_textContent = ss.str();
   m_textNode.setTextContent(m_textContent);
+
   this->setTextAttributes(fragments[0].textAttributes);
-  this->dispatchTextLayoutEvent();
 }
 
 void TextComponentInstance::setTextAttributes(
@@ -384,42 +384,6 @@ void TextComponentInstance::updateFragmentTouchTargets(
     textFragmentCount++;
   }
   m_fragmentTouchTargetByTag = std::move(touchTargetByTag);
-}
-
-void TextComponentInstance::dispatchTextLayoutEvent() {
-  if (!m_textStorage.has_value()) {
-    return;
-  }
-  auto linesMeasurements = m_textStorage.value().linesMeasurements;
-  if (m_linesMeasurements == linesMeasurements) {
-    return;
-  }
-  m_linesMeasurements = linesMeasurements;
-  m_eventEmitter->dispatchEvent(
-      "textLayout",
-      [linesMeasurements =
-           m_linesMeasurements](facebook::jsi::Runtime& runtime) {
-        auto payload = facebook::jsi::Object(runtime);
-        auto lines = facebook::jsi::Array(runtime, linesMeasurements.size());
-        for (size_t i = 0; i < linesMeasurements.size(); ++i) {
-          const auto& lineMeasurement = linesMeasurements[i];
-          auto jsiLine = facebook::jsi::Object(runtime);
-          jsiLine.setProperty(runtime, "text", lineMeasurement.text);
-          jsiLine.setProperty(runtime, "x", lineMeasurement.frame.origin.x);
-          jsiLine.setProperty(runtime, "y", lineMeasurement.frame.origin.y);
-          jsiLine.setProperty(
-              runtime, "width", lineMeasurement.frame.size.width);
-          jsiLine.setProperty(
-              runtime, "height", lineMeasurement.frame.size.height);
-          jsiLine.setProperty(runtime, "descender", lineMeasurement.descender);
-          jsiLine.setProperty(runtime, "capHeight", lineMeasurement.capHeight);
-          jsiLine.setProperty(runtime, "ascender", lineMeasurement.ascender);
-          jsiLine.setProperty(runtime, "xHeight", lineMeasurement.xHeight);
-          lines.setValueAtIndex(runtime, i, jsiLine);
-        }
-        payload.setProperty(runtime, "lines", lines);
-        return payload;
-      });
 }
 
 void TextComponentInstance::disposeTextStorage() {

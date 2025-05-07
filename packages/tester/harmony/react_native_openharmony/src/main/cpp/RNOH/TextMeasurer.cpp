@@ -106,15 +106,12 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
       styledString.m_fragmentLengths,
       layoutConstraints,
       m_scale);
-  auto textContent = getTextContent(attributedString);
-  auto linesMeasurements = getLinesMeasurements(typography, textContent);
   return TextStorage{
       styledString,
       std::move(typography),
       attributedString,
       paragraphAttributes,
-      layoutConstraints,
-      linesMeasurements};
+      layoutConstraints};
 }
 
 StyledStringWrapper TextMeasurer::createStyledString(
@@ -187,59 +184,6 @@ StyledStringWrapper TextMeasurer::createStyledString(
   return styledStringWrapper;
 }
 
-TextMeasurer::U16TextContent TextMeasurer::getTextContent(
-    facebook::react::AttributedString const& attributedString) const {
-  std::stringstream ss;
-  bool hasAttachmentCharacter = false;
-  for (auto const& fragment : attributedString.getFragments()) {
-    if (fragment.isAttachment()) {
-      hasAttachmentCharacter = true;
-    }
-    ss << fragment.string;
-  }
-  std::u16string u16Text =
-      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}
-          .from_bytes(ss.str());
-  return {u16Text, hasAttachmentCharacter};
-}
-
-facebook::react::LinesMeasurements TextMeasurer::getLinesMeasurements(
-    ArkUITypography const& arkUITypography,
-    TextMeasurer::U16TextContent const& textContent) const {
-  auto metrics =
-      OH_Drawing_TypographyGetLineMetrics(arkUITypography.m_typography.get());
-  auto size = OH_Drawing_LineMetricsGetSize(metrics);
-  facebook::react::LinesMeasurements lineMetrics;
-  lineMetrics.reserve(size);
-  for (int i = 0; i < size; i++) {
-    OH_Drawing_TypographyGetLineMetricsAt(
-        arkUITypography.m_typography.get(), i, metrics);
-    auto u16LineText = textContent.text.substr(
-        metrics->startIndex, metrics->endIndex - metrics->startIndex);
-    if (textContent.hasAttachmentCharacter) {
-      // NOTE: Use std::remove and erase to remove the placeholder character
-      // `\uFFFC` in the UTF-16 string (corresponding to `0xFFFC` in UTF-16)
-      u16LineText.erase(
-          std::remove(u16LineText.begin(), u16LineText.end(), 0xFFFC),
-          u16LineText.end());
-    }
-    std::string lineText =
-        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}
-            .to_bytes(u16LineText);
-    facebook::react::LineMeasurement measurement(
-        lineText,
-        {{metrics->x / m_scale, metrics->y / m_scale},
-         {metrics->width / m_scale, metrics->height / m_scale}},
-        metrics->descender / m_scale,
-        metrics->capHeight / m_scale,
-        metrics->ascender / m_scale,
-        metrics->xHeight / m_scale);
-    lineMetrics.push_back(std::move(measurement));
-  }
-  OH_Drawing_DestroyLineMetrics(metrics);
-  return lineMetrics;
-}
-
 auto TextMeasurer::findFitFontSize(
     int maxFontSize,
     facebook::react::AttributedString const& attributedString,
@@ -255,8 +199,6 @@ auto TextMeasurer::findFitFontSize(
       finalStyledString.m_fragmentLengths,
       layoutConstraints,
       m_scale);
-  auto textContent = getTextContent(attributedString);
-  auto linesMeasurements = getLinesMeasurements(finalTypography, textContent);
 
   if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
       (paragraphAttributes.maximumNumberOfLines == 0 ||
@@ -266,8 +208,7 @@ auto TextMeasurer::findFitFontSize(
         std::move(finalTypography),
         attributedString,
         paragraphAttributes,
-        layoutConstraints,
-        linesMeasurements};
+        layoutConstraints};
   }
 
   auto fittedAttributedString = attributedString;
@@ -309,15 +250,12 @@ auto TextMeasurer::findFitFontSize(
       maxFontSize = curFontSize - 1;
     }
   }
-  linesMeasurements = getLinesMeasurements(finalTypography, textContent);
   return {
       finalStyledString,
       std::move(finalTypography),
       attributedString,
       paragraphAttributes,
-      layoutConstraints,
-      linesMeasurements,
-  };
+      layoutConstraints};
 }
 
 void TextMeasurer::setTextMeasureParams(float fontScale, float scale) {

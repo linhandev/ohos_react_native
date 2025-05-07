@@ -17,14 +17,6 @@ class TextComponentJSIBinder : public ViewComponentJSIBinder {
     nativeProps.setProperty(rt, "textDecorationStyle", "TextDecorationStyle");
     return nativeProps;
   };
-  facebook::jsi::Object createDirectEventTypes(
-      facebook::jsi::Runtime& rt) override {
-    facebook::jsi::Object events =
-        BaseComponentJSIBinder::createDirectEventTypes(rt);
-    events.setProperty(
-        rt, "topTextLayout", createDirectEvent(rt, "onTextLayout"));
-    return events;
-  }
 };
 
 } // namespace rnoh

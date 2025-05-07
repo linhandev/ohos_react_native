@@ -8,7 +8,6 @@
 #pragma once
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
-#include <codecvt>
 #include <string>
 #include "ArkUITypography.h"
 #include "FontRegistry.h"
@@ -17,16 +16,10 @@
 namespace rnoh {
 class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
  public:
-  struct U16TextContent {
-    std::u16string text;
-    bool hasAttachmentCharacter;
-  };
-
   class TextStorage {
     using AttributedString = facebook::react::AttributedString;
     using ParagraphAttributes = facebook::react::ParagraphAttributes;
     using LayoutConstraints = facebook::react::LayoutConstraints;
-    using LinesMeasurements = facebook::react::LinesMeasurements;
 
    public:
     StyledStringWrapper styledString;
@@ -34,7 +27,6 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
     AttributedString attributedString;
     ParagraphAttributes paragraphAttributes;
     LayoutConstraints layoutConstraints;
-    LinesMeasurements linesMeasurements;
   };
 
   TextMeasurer(
@@ -72,13 +64,6 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
   StyledStringWrapper createStyledString(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes) const;
-
-  facebook::react::LinesMeasurements getLinesMeasurements(
-      ArkUITypography const& arkUITypography,
-      U16TextContent const& textContent) const;
-
-  U16TextContent getTextContent(
-      facebook::react::AttributedString const& attributedString) const;
 
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
   FontRegistry::Shared m_fontRegistry;
