@@ -132,6 +132,8 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
+  m_selectionStart = static_cast<size_t>(location);
+  m_selectionEnd = static_cast<size_t>(location + length);
   if (m_eventEmitter) {
     m_eventEmitter->onSelectionChange(getTextInputMetrics());
   }
@@ -470,6 +472,7 @@ void TextInputComponentInstance::setTextContentAndSelection(
   m_textAreaNode.setTextSelection(selectionStart, selectionEnd);
   m_selectionStart = selectionStart;
   m_selectionEnd = selectionEnd;
+  m_content = content;
 }
 
 void TextInputComponentInstance::setTextContent(std::string const& content) {
@@ -487,6 +490,13 @@ void TextInputComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "focus") {
     focus();
+    if (m_selectionStart.has_value() && m_selectionEnd.has_value() &&
+        !m_props->traits.selectTextOnFocus) {
+      m_textInputNode.setTextSelection(
+          m_selectionStart.value(), m_selectionEnd.value());
+      m_textAreaNode.setTextSelection(
+          m_selectionStart.value(), m_selectionEnd.value());
+    }
   } else if (commandName == "blur") {
     if (m_multiline) {
       if (m_textAreaNode.isFocused()) {
