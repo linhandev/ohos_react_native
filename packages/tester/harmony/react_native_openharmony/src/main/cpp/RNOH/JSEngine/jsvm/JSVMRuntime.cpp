@@ -7,10 +7,9 @@
 
 #include "JSVMRuntime.h"
 #include <glog/logging.h>
-#include "JSVMConverter.h"
-// #include "mutex.h"
 #include <filesystem>
 #include <fstream>
+#include "JSVMConverter.h"
 #include "JSVMUtil.h"
 #include "RNOH/Assert.h"
 #include "common.h"

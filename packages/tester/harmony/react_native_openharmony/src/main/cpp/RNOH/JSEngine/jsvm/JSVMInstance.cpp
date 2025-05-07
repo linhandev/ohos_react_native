@@ -57,13 +57,6 @@ std::unique_ptr<JSRuntime> JSVMInstance::createJSRuntime(
   msgQueueThread->runOnQueueSync(
       [&]() { jsvmRuntime = std::make_unique<JSVMRuntime>(msgQueueThread); });
 
-  // Add js engine information to Error.prototype so in error reporting we
-  // can send this information.
-  //  auto errorPrototype = jsvmRuntime->global()
-  //                            .getPropertyAsObject(*jsvmRuntime, "Error")
-  //                            .getPropertyAsObject(*jsvmRuntime, "prototype");
-  //  errorPrototype.setProperty(*jsvmRuntime, "jsEngine", "JSVM");
-
   return std::make_unique<JSVMJSRuntime>(std::move(jsvmRuntime));
 }
 

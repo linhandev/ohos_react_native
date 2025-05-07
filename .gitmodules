@@ -5,3 +5,24 @@ branch = react-native-core/v0.77.1
 [submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost"]
 	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost
 	url = https://github.com/boostorg/boost.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fmt"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly
+	url = https://github.com/facebook/folly.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/double-conversion"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/double-conversion
+	url = https://github.com/google/double-conversion.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/glog"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/glog
+	url = https://github.com/google/glog.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent
+	url = https://github.com/libevent/libevent.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fast_float"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fast_float
+	url = https://github.com/fastfloat/fast_float.git
+[submodule "packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/hermes"]
+	path = packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/hermes
+	url = https://github.com/facebook/hermes.git

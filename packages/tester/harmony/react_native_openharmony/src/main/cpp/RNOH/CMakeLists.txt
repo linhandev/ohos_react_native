@@ -1,5 +1,8 @@
 file(GLOB_RECURSE RNOH_SRC_FILES "*.cpp")
 
+# code in JSEngine are to be conditionally added based on USE_HERMES
+list(FILTER RNOH_SRC_FILES EXCLUDE REGEX "JSEngine/.*$")
+
 add_library(
   rnoh_core SHARED
   ${RNOH_SRC_FILES})
@@ -35,11 +38,13 @@ if(DEFINED LOG_VERBOSITY_LEVEL)
 endif()
 
 if(USE_HERMES)
+  add_subdirectory("${RNOH_CPP_DIR}/RNOH/JSEngine/hermes")
   target_link_libraries(rnoh_core
                         PUBLIC hermestooling)
   target_compile_definitions(rnoh_core
                              PUBLIC USE_HERMES=1)
 else()
+  add_subdirectory("${RNOH_CPP_DIR}/RNOH/JSEngine/jsvm")
   target_link_libraries(rnoh_core PUBLIC jsvmtooling)
   target_compile_definitions(rnoh_core
                              PUBLIC USE_HERMES=0)

@@ -7,8 +7,8 @@ set_property(
   TARGET hermes-engine::libhermes
   PROPERTY IMPORTED_LOCATION
            "${third_party_dir}/prebuilt/${OHOS_ARCH}/libhermes.so")
-set(hermes_include_dirs "${hermes_SOURCE_DIR}/API"
-                        "${hermes_SOURCE_DIR}/public")
+set(hermes_include_dirs "${third_party_dir}/hermes/API"
+                        "${third_party_dir}/hermes/public")
 
 add_react_common_subdir(hermes/executor)
 target_include_directories(hermes_executor_common

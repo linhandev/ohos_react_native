@@ -1,4 +1,15 @@
-include("${CMAKE_CURRENT_SOURCE_DIR}/FetchDependencies.cmake")
+# Fmt
+add_subdirectory("${third_party_dir}/fmt")
+
+# Double Conversion 
+add_subdirectory("${third_party_dir}/double-conversion")
+
+# Glog
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+add_subdirectory("${third_party_dir}/glog")
+
+# Fast Float
+add_subdirectory("${third_party_dir}/fast_float")
 
 # Boost
 set(BOOST_INCLUDE_LIBRARIES 
@@ -12,13 +23,9 @@ set(BOOST_INCLUDE_LIBRARIES
 )
 add_subdirectory("${third_party_dir}/boost" EXCLUDE_FROM_ALL)
 
-# FAST_FLOAT
-add_library(fast_float INTERFACE)
-target_include_directories(fast_float INTERFACE "${fastfloat_SOURCE_DIR}/include")
-
 # FOLLY
-set(folly_include_dir "${folly_SOURCE_DIR}")
-set(folly_src_dir "${folly_SOURCE_DIR}/folly")
+set(folly_include_dir "${third_party_dir}/folly")
+set(folly_src_dir "${third_party_dir}/folly/folly")
 add_library(folly)
 target_include_directories(folly PUBLIC "${folly_include_dir}")
 set(folly_FLAGS
@@ -53,13 +60,6 @@ target_sources(
           "${folly_src_dir}/Unicode.cpp"
           "${folly_src_dir}/ScopeGuard.cpp")
 target_link_libraries(folly PUBLIC Boost::context Boost::algorithm
-                                   Boost::intrusive fmt glog double-conversion fast_float)
+                                   Boost::intrusive fmt::fmt glog double-conversion fast_float)
 
 add_subdirectory("rn")
-
-if(USE_HERMES)
-  add_subdirectory("hermes")
-else()
-  add_subdirectory("jsvm")
-endif()
-
