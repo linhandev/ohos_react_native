@@ -212,7 +212,7 @@ void StyledStringWrapper::addTextFragment(
   // new NDK for setting letterSpacing
   if (!isnan(fragment.textAttributes.letterSpacing)) {
     OH_Drawing_SetTextStyleLetterSpacing(
-        textStyle.get(), fragment.textAttributes.letterSpacing);
+        textStyle.get(), m_scale * fragment.textAttributes.letterSpacing);
   }
   if (!isnan(fragment.textAttributes.lineHeight) &&
       fragment.textAttributes.lineHeight > 0) {
