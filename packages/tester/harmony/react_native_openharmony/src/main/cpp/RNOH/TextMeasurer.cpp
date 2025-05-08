@@ -122,7 +122,8 @@ StyledStringWrapper TextMeasurer::createStyledString(
   float fontMultiplier = 1.0;
   if (paragraphAttributes.allowFontScaling) {
     fontMultiplier = m_fontScale;
-    if (!isnan(paragraphAttributes.maxFontSizeMultiplier)) {
+    if (!isnan(paragraphAttributes.maxFontSizeMultiplier) &&
+        paragraphAttributes.maxFontSizeMultiplier >= 1) {
       fontMultiplier = std::min(
           m_fontScale, (float)paragraphAttributes.maxFontSizeMultiplier);
     }
