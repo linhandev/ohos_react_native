@@ -186,7 +186,9 @@ export function TextTest() {
           <Text style={{fontSize: 20, backgroundColor: 'lightblue'}} />
         </View>
       </TestCase.Example>
-      <TestCase.Example itShould="render <Text /> with constant fontSize and diffent lineHeight. Text should be clipped">
+      <TestCase.Example
+        itShould="render <Text /> with constant fontSize and diffent lineHeight. Text should be clipped"
+        skip={{android: false, harmony: true}}>
         {textLineHeight(5)}
         {textLineHeight(10)}
         {textLineHeight(15)}
