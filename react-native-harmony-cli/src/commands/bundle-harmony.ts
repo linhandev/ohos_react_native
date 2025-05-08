@@ -125,7 +125,6 @@ async function retrieveAssetsData(
       ...MetroServer.DEFAULT_BUNDLE_OPTIONS,
       ...buildOptions,
       entryFile: buildOptions.entry,
-      bundleType: 'todo',
     });
   } finally {
     metroServer.end();
