@@ -53,6 +53,11 @@ export const commandBundleHarmony: Command = {
       parse: (val: string) => pathUtils.normalize(val),
     },
     {
+      name: '--reset-cache',
+      description: 'Removes cached files',
+      default: false,
+    },
+    {
       name: '--config <path>',
       description: 'Path to the Metro configuration file',
       parse: (val: string) => pathUtils.normalize(val),
@@ -130,7 +135,10 @@ export const commandBundleHarmony: Command = {
         sourceMap: args.sourcemapOutput,
         sourceMapUrl: args.sourcemapOutput,
       };
-      const metroConfig = await loadMetroConfig(args.config);
+      const metroConfig = await loadMetroConfig({
+        config: args.config,
+        resetCache: args.resetCache,
+      });
 
       const bundle = await createBundle(metroConfig, buildOptions);
       const assets = await retrieveAssetsData(metroConfig, buildOptions);
@@ -159,12 +167,14 @@ export const commandBundleHarmony: Command = {
   },
 };
 
-async function loadMetroConfig(
-  configPath: Path | undefined
-): Promise<MetroConfig> {
-  return configPath
-    ? await Metro.loadConfig({ config: configPath })
-    : await Metro.loadConfig();
+async function loadMetroConfig(options: {
+  config: Path | undefined;
+  resetCache: boolean;
+}): Promise<MetroConfig> {
+  if (!options.config) {
+    delete options.config;
+  }
+  return await Metro.loadConfig(options);
 }
 
 async function createBundle(
