@@ -95,25 +95,20 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-vision-camera              |        |
 | @react-native-oh-tpl/react-native-zip-archive                |        |
 | @react-native-oh-tpl/react-native-audio                      |        |
-| @react-native-oh-tpl/react-native-simple-toast               |        |
 | @react-native-oh-tpl/react-native-localize                   |        |
 | @react-native-oh-tpl/react-native-image-resizer              |        |
 | @react-native-oh-tpl/react-native-calendar-events            |        |
 | @react-native-oh-tpl/react-native-fileupload                 |        |
-| @react-native-oh-tpl/react-native-root-modal                 |        |
-| @react-native-oh-tpl/react-native-switch-pro                 |        |
-| @react-native-oh-tpl/react-native-nested-scroll-view         |        |
-| @react-native-oh-tpl/react-native-code-push                  |        |
-| @react-native-oh-tpl/react-native-safe-module                |        |
+| @react-native-oh-tpl/react-native-code-push                  | ❌     |
 | @react-native-oh-tpl/react-native-sqlite-storage             |        |
-| @react-native-oh-tpl/react-native-text-gradient              |        |
+| @react-native-oh-tpl/react-native-text-gradient              | ❌     |
 | @react-native-oh-tpl/react-native-bindingx                   |        |
-| @react-native-oh-tpl/react-native-cardview                   |        |
+| @react-native-oh-tpl/react-native-cardview                   | ❌     |
 | @react-native-oh-tpl/react-native-largelist                  |        |
 | @react-native-oh-tpl/react-native-spring-scrollview          |        |
-| @react-native-oh-tpl/react-native-color-matrix-image-filters |        |
-| @react-native-oh-tpl/react-native-toast                      |        |
-| @react-native-oh-tpl/react-native-syan-image-picker          |        |
+| @react-native-oh-tpl/react-native-color-matrix-image-filters | ✅     |
+| @react-native-oh-tpl/react-native-toast                      | ✅     |
+| @react-native-oh-tpl/react-native-syan-image-picker          | ✅     |
 | @react-native-oh-tpl/react-native-amap-geolocation           | ✅     |
 | @react-native-oh-tpl/react-native-splash-screen              |        |
 | @react-native-oh-tpl/react-native-baidu-map                  | ❌     |

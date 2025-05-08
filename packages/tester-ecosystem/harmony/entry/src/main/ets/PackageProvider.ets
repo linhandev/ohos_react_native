@@ -29,6 +29,8 @@ import { RNPrintPackage } from '@react-native-oh-tpl/react-native-print/ts';
 import { UiLibPackage } from '@react-native-oh-tpl/react-native-ui-lib/ts';
 import { RNHapticFeedbackPackage } from '@react-native-oh-tpl/react-native-haptic-feedback/ts'
 import { RNBootSplashPackage } from '@react-native-oh-tpl/react-native-bootsplash/ts';
+import { SyanImagePickerPackage } from '@react-native-oh-tpl/react-native-syan-image-picker/ts';
+import { ToastPackage } from '@react-native-oh-tpl/react-native-toast/ts';
 import { RNOrientationLockerPackage } from '@react-native-oh-tpl/react-native-orientation-locker/ts';
 import { RNGetRandomValuesPackage } from "@react-native-oh-tpl/react-native-get-random-values/ts";
 import { RNFingerprintScannerPackage } from '@react-native-oh-tpl/react-native-fingerprint-scanner/ts';
@@ -77,6 +79,7 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new UiLibPackage(ctx),
     new RNHapticFeedbackPackage(ctx),
     new RNBootSplashPackage(ctx),
+    new SyanImagePickerPackage(ctx),
     new RNOrientationLockerPackage(ctx),
     new RNGetRandomValuesPackage(ctx),
     new RNFingerprintScannerPackage(ctx),
@@ -86,6 +89,7 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new RNSystemSettingPackage(ctx),
     new RNRestartPackage(ctx),
     new RNHttpBridgePackage(ctx),
-    new AMapGeolocationPackage(ctx)
+    new AMapGeolocationPackage(ctx),
+    new ToastPackage(ctx),
   ]
 }

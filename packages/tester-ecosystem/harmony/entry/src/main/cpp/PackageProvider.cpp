@@ -22,6 +22,7 @@
 #include "RNInCallManagerPackage.h"
 #include "BlurhashPackage.h"
 #include "UiLibPackage.h"
+#include "ColorMatrixImageFiltersPackage.h"
 
 using namespace rnoh;
 
@@ -49,6 +50,7 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<RNInCallManagerPackage>(ctx));
   packages.push_back(std::make_shared<BlurhashPackage>(ctx));
   packages.push_back(std::make_shared<UiLibPackage>(ctx));
+  packages.push_back(std::make_shared<ColorMatrixImageFiltersPackage>(ctx));
   // manual linking: END
   return packages;
 }
