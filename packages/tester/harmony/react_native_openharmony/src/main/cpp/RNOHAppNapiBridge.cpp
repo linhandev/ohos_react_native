@@ -147,12 +147,17 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #ifdef REACT_NATIVE_DEBUG
     isDebugModeEnabled = true;
 #endif
+    auto jsEngineName = "jsvm";
+#ifdef USE_HERMES
+    jsEngineName = "hermes";
+#endif
     auto arkTSBridgeHandler = arkJS.createNapiRef(args[1]);
     ARK_TS_BRIDGE_BY_ENV_ID.emplace(
         nextEnvId,
         std::make_shared<ArkTSBridge>(env, std::move(arkTSBridgeHandler)));
     return arkJS.createObjectBuilder()
         .addProperty("isDebugModeEnabled", isDebugModeEnabled)
+        .addProperty("jsEngineName", jsEngineName)
         .addProperty("envId", nextEnvId)
         .build();
   });

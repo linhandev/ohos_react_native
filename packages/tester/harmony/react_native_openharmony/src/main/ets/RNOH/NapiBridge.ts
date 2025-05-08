@@ -12,7 +12,8 @@ import type { Mutation } from "./Mutation";
 import type { Tag } from "./DescriptorBase";
 import type { DisplayMode } from './CppBridgeUtils'
 import { RNOHLogger } from "./RNOHLogger"
-import type { DisplayMetrics, InspectorPackagerConnection, InspectorPackagerConnectionDelegate } from './types'
+import type { DisplayMetrics, InspectorPackagerConnection, InspectorPackagerConnectionDelegate,
+  JSEngineName } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
 import type { FrameNodeFactory } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
@@ -88,6 +89,7 @@ export class NapiBridge {
     }
     return this.unwrapResult<{
       isDebugModeEnabled: boolean,
+      jsEngineName: JSEngineName,
       envId: number
     }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
       handleError: (err: RawRNOHError) => {

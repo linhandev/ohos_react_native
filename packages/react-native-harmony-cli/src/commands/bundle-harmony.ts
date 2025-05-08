@@ -59,8 +59,22 @@ export const commandBundleHarmony: Command = {
     },
     {
       name: '--bundle-output <path>',
-      description: `File name where to store the resulting bundle (default: "${HARMONY_RESOURCE_PATH}/hermes_bundle.hbc" if generating HBC bundle, otherwise "${HARMONY_RESOURCE_PATH}/bundle.harmony.js").`,
+      description: `File path where to store the resulting bundle (default: "${HARMONY_RESOURCE_PATH}${pathUtils.sep}bundle.harmony.js")`,
       parse: (val: string) => pathUtils.normalize(val),
+    },
+    {
+      name: '--js-engine <string>',
+      description:
+        'JavaScript engine used to run the bundle. Supported engines: "hermes" and "any" (default: "any"). Setting this option to "hermes" will generate a HBC bundle instead of a JS bundle.',
+      default: 'any',
+      parse: (val: string) => {
+        if (val !== 'any' && val !== 'hermes') {
+          throw new Error(
+            `Only "any" and "hermes" are supported as JavaScript engines, but "${val}" was provided`
+          );
+        }
+        return val;
+      },
     },
     {
       name: '--assets-dest <path>',
@@ -83,25 +97,25 @@ export const commandBundleHarmony: Command = {
     {
       name: '--hermesc-dir <path>',
       description:
-        'Path to hermesc directory. hermesc is used only when generating a HBC bundle.',
+        'Path to hermesc directory. Relevant when --js-engine set to "hermes".',
       default: HERMESC_PATH_PREFIX,
       parse: (val: string) => pathUtils.normalize(val),
     },
     {
       name: '--hermesc-options <string...>',
       description:
-        'Used only when generating a HBC bundle. Additional options to pass to hermesc when generating HBC bundle. Example: --hermesc-options O g reuse-prop-cache.',
+        'Additional options to pass to hermesc when generating HBC bundle. Example: --hermesc-options O g reuse-prop-cache. Relevant when --js-engine set to "hermes".',
       parse: (val, prev) => (prev ? [...prev, val] : [val]),
     },
   ],
   func: async (argv, config, args: any) => {
     const logger = new Logger();
     try {
+      const defaultBundleName =
+        args.jsEngine === 'hermes' ? 'hermes_bundle.hbc' : 'bundle.harmony.js';
       const bundleOutput: string =
         args.bundleOutput ??
-        (!args.dev
-          ? `${HARMONY_RESOURCE_PATH}${pathUtils.sep}hermes_bundle.hbc`
-          : `${HARMONY_RESOURCE_PATH}${pathUtils.sep}bundle.harmony.js`);
+        `${HARMONY_RESOURCE_PATH}${pathUtils.sep}${defaultBundleName}`;
       const shouldGenerateHbcBundle = bundleOutput
         .toLowerCase()
         .endsWith('hbc');

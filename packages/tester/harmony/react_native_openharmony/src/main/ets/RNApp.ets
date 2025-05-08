@@ -231,7 +231,7 @@ export struct RNApp {
   build() {
     Stack() {
       if (this.shouldShow && this.rnohCoreContext!.isDebugModeEnabled) {
-        RNPauseInDebuggerDialog({ctx: this.ctx})
+        RNPauseInDebuggerDialog({ ctx: this.ctx })
       }
       if (this.shouldShow) {
         RNSurface({

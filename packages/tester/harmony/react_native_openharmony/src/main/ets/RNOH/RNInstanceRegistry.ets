@@ -19,6 +19,7 @@ import { WorkerThread } from "./WorkerThread"
 import common from '@ohos.app.ability.common'
 import { RNOHCorePackage } from '../RNOHCorePackage/Package'
 import { RNOHErrorEventEmitter } from './RNOHError';
+import { JSEngineName } from './types';
 
 const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
@@ -35,6 +36,8 @@ export class RNInstanceRegistry {
   private unregisterMessageListeners: (() => void)[] = []
   private uiAbilityContext: common.UIAbilityContext
   private envId: number
+  private isDebugModeEnabled: boolean
+  private jsEngineName: JSEngineName
   private logger: RNOHLogger
   private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter;
   private napiBridge: NapiBridge
@@ -47,6 +50,8 @@ export class RNInstanceRegistry {
   constructor(
     uiAbilityContext: common.UIAbilityContext,
     envId: number,
+    isDebugModeEnabled: boolean,
+    jsEngineName: JSEngineName,
     logger: RNOHLogger,
     rnohErrorEventEmitter: RNOHErrorEventEmitter,
     napiBridge: NapiBridge,
@@ -58,6 +63,8 @@ export class RNInstanceRegistry {
   ) {
     this.uiAbilityContext = uiAbilityContext
     this.envId = envId
+    this.isDebugModeEnabled = isDebugModeEnabled
+    this.jsEngineName = jsEngineName
     this.logger = logger
     this.globalRNOHErrorEventEmitter = rnohErrorEventEmitter
     this.napiBridge = napiBridge
@@ -88,6 +95,8 @@ export class RNInstanceRegistry {
     }
     const rnInstance = new RNInstanceImpl(
       this.envId,
+      this.isDebugModeEnabled,
+      this.jsEngineName,
       id,
       options?.name,
       this.logger,

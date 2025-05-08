@@ -27,6 +27,7 @@ import { EventEmitter } from './EventEmitter';
 import { WorkerTaskRunner } from './WorkerTaskRunner';
 import { EtsUITurboModuleContext } from './EtsRNOHContext';
 import { RNSettingDialog } from './RNSettingDialog';
+import { JSEngineName } from './types';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -154,6 +155,7 @@ export class RNInstancesCoordinator {
       dependencies.logger,
       displayMetricsManager,
       envInfo.isDebugModeEnabled,
+      envInfo.jsEngineName,
       envInfo.envId,
       dependencies.uiAbilityContext,
       devToolsController,
@@ -173,6 +175,7 @@ export class RNInstancesCoordinator {
   private napiBridge: NapiBridge;
   private displayMetricsManager: DisplayMetricsManager;
   private isDebugModeEnabled: boolean
+  private jsEngineName: JSEngineName
   private uiAbilityContext: common.UIAbilityContext
   private devToolsController: DevToolsController
   private devMenu: DevMenu
@@ -189,6 +192,7 @@ export class RNInstancesCoordinator {
     logger: RNOHLogger,
     displayMetricsManager: DisplayMetricsManager,
     isDebugModeEnabled: boolean,
+    jsEngineName: JSEngineName,
     envId: number,
     uiAbilityContext: common.UIAbilityContext,
     devToolsController: DevToolsController,
@@ -205,6 +209,7 @@ export class RNInstancesCoordinator {
     this.napiBridge = napiBridge
     this.displayMetricsManager = displayMetricsManager;
     this.isDebugModeEnabled = isDebugModeEnabled;
+    this.jsEngineName = jsEngineName;
     this.uiAbilityContext = uiAbilityContext;
     this.devToolsController = devToolsController;
     this.devMenu = devMenu;
@@ -225,6 +230,8 @@ export class RNInstancesCoordinator {
     this.rnInstanceRegistry = new RNInstanceRegistry(
       uiAbilityContext,
       this.envId,
+      this.isDebugModeEnabled,
+      this.jsEngineName,
       this.rawLogger,
       this.globalRNOHErrorEventEmitter,
       napiBridge,
@@ -242,6 +249,7 @@ export class RNInstancesCoordinator {
       logger: this.rawLogger,
       uiAbilityContext: this.uiAbilityContext,
       isDebugModeEnabled: this.isDebugModeEnabled,
+      jsEngineName: this.jsEngineName,
       rnInstanceRegistry: this.rnInstanceRegistry,
       displayMetricsProvider: () => this.displayMetricsManager.getDisplayMetrics(),
       uiAbilityStateProvider: () => this.appState,

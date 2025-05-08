@@ -81,3 +81,5 @@ export interface InspectorPackagerConnectionDelegate {
   connectWebSocket(url: string, websocketDelegate: InspectorWebsocketDelegate): InspectorWebsocket
   // void scheduleCallback implemented in CPP
 }
+
+export type JSEngineName = "hermes" | "jsvm";

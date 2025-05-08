@@ -18,7 +18,7 @@ import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
 import type { DevMenu } from './DevMenu';
 import type { DevToolsController } from './DevToolsController';
-import type { DisplayMetrics } from './types';
+import type { DisplayMetrics, JSEngineName } from './types';
 import type { RNInstanceOptions } from './RNInstance';
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 
@@ -37,6 +37,7 @@ type RNOHCoreContextDependencies = {
   logger: RNOHLogger;
   uiAbilityContext: common.UIAbilityContext;
   isDebugModeEnabled: boolean;
+  jsEngineName: JSEngineName;
   defaultBackPressHandler: () => void;
   devToolsController: DevToolsController;
   devMenu: DevMenu;
@@ -165,8 +166,11 @@ export class RNOHCoreContext {
  * @internal
  */
 export class InternalRNOHCoreContext extends RNOHCoreContext {
-  onDestroy() {
+  get jsEngineName(): JSEngineName {
+    return this._rnohCoreContextDeps.jsEngineName;
   }
+
+  onDestroy() {}
 }
 
 type RNOHContextDependencies = {

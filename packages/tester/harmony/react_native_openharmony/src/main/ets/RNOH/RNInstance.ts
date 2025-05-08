@@ -31,6 +31,7 @@ import resourceManager from '@ohos.resourceManager'
 import { WorkerThread } from "./WorkerThread"
 import font from "@ohos.font"
 import { RNOHMarker, RNOHMarkerEventPayload } from './RNOHMarker'
+import { JSEngineName } from './types'
 
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
 
@@ -482,6 +483,8 @@ export class RNInstanceImpl implements RNInstance {
 
   constructor(
     private envId: number,
+    private isDebugModeEnabled: boolean,
+    private jsEngineName: JSEngineName,
     private id: number,
     private name: string | undefined,
     private injectedLogger: RNOHLogger,
@@ -879,6 +882,16 @@ export class RNInstanceImpl implements RNInstance {
       }
       this.initialBundleUrl =
         this.initialBundleUrl ?? bundleURL;
+
+      if (!this.isDebugModeEnabled
+        && this.jsEngineName === 'hermes' &&
+        !this.initialBundleUrl.endsWith('hbc')
+      ) {
+        this.logger.warn(
+          "It's recommended to use the Hermes Bytecode Compiler (HBC) bundle format when using the Hermes engine. " +
+            "Using this can lead to general JS execution performance improvements within your app.",
+        );
+      }
 
       await this.napiBridge.loadScript(
         this.id,

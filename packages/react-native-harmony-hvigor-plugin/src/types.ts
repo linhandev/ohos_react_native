@@ -9,6 +9,7 @@ export type BundlerConfig = {
   entryFile?: string;
   config?: string;
   bundleOutput?: string;
+  jsEngine?: string;
   assetsDest?: string;
   sourcemapOutput?: string;
   minify?: boolean;
