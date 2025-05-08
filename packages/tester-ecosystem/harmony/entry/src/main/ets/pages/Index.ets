@@ -25,6 +25,8 @@ import {
 } from "@react-native-oh-tpl/react-native-charts-wrapper"
 import { RTNCameraKitView } from "@react-native-oh-tpl/react-native-camera-kit";
 import { HighlighterView } from "@react-native-oh-tpl/react-native-ui-lib";
+import { RNCImageCapInsets } from '@react-native-oh-tpl/react-native-image-capinsets-next';
+import { RNImageSequence } from "@react-native-ohos/react-native-image-sequence-2"
 
 @Builder
 export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
@@ -105,6 +107,16 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
     })
   } else if (ctx.componentName === HighlighterView.NAME) {
     HighlighterView({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag
+    })
+  } else if (ctx.componentName === RNCImageCapInsets.NAME) {
+    RNCImageCapInsets({
+      ctx: ctx.rnComponentContext,
+      tag: ctx.tag,
+    })
+  } else if (ctx.componentName === RNImageSequence.NAME) {
+    RNImageSequence({
       ctx: ctx.rnComponentContext,
       tag: ctx.tag
     })

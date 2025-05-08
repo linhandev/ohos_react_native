@@ -41,8 +41,15 @@ import { RNSystemSettingPackage } from '@react-native-oh-tpl/react-native-system
 import { RNRestartPackage } from '@react-native-oh-tpl/react-native-restart/ts';
 import { RNHttpBridgePackage } from "@react-native-oh-tpl/react-native-http-bridge/ts";
 import { AMapGeolocationPackage } from '@react-native-oh-tpl/react-native-amap-geolocation/ts';
+import { ZipArchivePackage } from '@react-native-oh-tpl/react-native-zip-archive/ts';
+import { RNCImageCapInsetsPackage } from '@react-native-oh-tpl/react-native-image-capinsets-next/ts';
+import { ClipPathPackage } from '@react-native-oh-tpl/react-native-clippathview/ts';
+import { ImageSequencePackage } from "@react-native-ohos/react-native-image-sequence-2/ts";
+import { SensorsPackage } from '@react-native-ohos/react-native-sensors/ts';
+import { WorkletsPackage } from "@react-native-oh-tpl/react-native-worklets-core/ts";
+import { RNTextSizePackage } from '@react-native-oh-tpl/react-native-text-size/ts';
 
-import type { RNPackageContext, RNOHPackage, RNPackage } from '@rnoh/react-native-openharmony';
+import type { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
 
 export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
@@ -91,5 +98,12 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new RNHttpBridgePackage(ctx),
     new AMapGeolocationPackage(ctx),
     new ToastPackage(ctx),
+    new ZipArchivePackage(ctx),
+    new RNCImageCapInsetsPackage(ctx),
+    new ClipPathPackage(ctx),
+    new ImageSequencePackage(ctx),
+    new SensorsPackage(ctx),
+    new WorkletsPackage(ctx),
+    new RNTextSizePackage(ctx),
   ]
 }

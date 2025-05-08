@@ -586,6 +586,9 @@ importers:
       '@react-native-oh-tpl/react-native-charts-wrapper':
         specifier: latest
         version: 0.6.0-0.0.7
+      '@react-native-oh-tpl/react-native-clippathview':
+        specifier: latest
+        version: 1.1.8-0.2.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-color-matrix-image-filters':
         specifier: latest
         version: 6.0.5-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -613,6 +616,9 @@ importers:
       '@react-native-oh-tpl/react-native-http-bridge':
         specifier: latest
         version: 0.6.1-0.0.4
+      '@react-native-oh-tpl/react-native-image-capinsets-next':
+        specifier: latest
+        version: 0.6.1-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-image-colors':
         specifier: latest
         version: 2.4.0-0.0.7(expo@52.0.46(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(encoding@0.1.13)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -664,6 +670,9 @@ importers:
       '@react-native-oh-tpl/react-native-system-setting':
         specifier: latest
         version: 1.7.6-0.0.1
+      '@react-native-oh-tpl/react-native-text-size':
+        specifier: latest
+        version: 4.0.0-0.0.11(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-textinput-maxlength-fixed':
         specifier: latest
         version: 0.1.2-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -682,6 +691,12 @@ importers:
       '@react-native-oh-tpl/react-native-view-pdf':
         specifier: latest
         version: 0.14.0-0.0.2(react-native-view-pdf@0.14.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      '@react-native-oh-tpl/react-native-worklets-core':
+        specifier: latest
+        version: 1.3.3-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      '@react-native-oh-tpl/react-native-zip-archive':
+        specifier: latest
+        version: 6.1.1-0.1.0-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh/react-native-harmony':
         specifier: workspace:*
         version: link:../react-native-harmony
@@ -694,9 +709,15 @@ importers:
       '@react-native-ohos/checkbox':
         specifier: latest
         version: 0.5.17-rc.4(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      '@react-native-ohos/react-native-image-sequence-2':
+        specifier: latest
+        version: 0.9.2-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-ohos/react-native-linear-gradient':
         specifier: latest
         version: 3.0.1-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      '@react-native-ohos/react-native-sensors':
+        specifier: latest
+        version: 7.2.2-rc.2
       '@react-native-ohos/toolbar-android':
         specifier: latest
         version: 0.2.2-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -2281,6 +2302,12 @@ packages:
   '@react-native-oh-tpl/react-native-charts-wrapper@0.6.0-0.0.7':
     resolution: {integrity: sha512-gaoZRWDLbBUqZsiDRzOWIDMvWACeaAsPvKDFEXUyxUYbMZJhSkudQcncF0epHVQI7liUl6Sz+6k5DSTxvfbNyQ==}
 
+  '@react-native-oh-tpl/react-native-clippathview@1.1.8-0.2.2':
+    resolution: {integrity: sha512-ZwIuT5ZmImA99M4KFjaCh2cWHhuGNlp7NpJ8T9TiEmomqevu2C2mBi9sXot+yHneKOri/2EZYipGjzyyTgmCjQ==}
+    peerDependencies:
+      react: '>=16.8.1'
+      react-native: '>=0.60.0-rc.0 <1.0.x'
+
   '@react-native-oh-tpl/react-native-color-matrix-image-filters@6.0.5-0.0.4':
     resolution: {integrity: sha512-11ufz8toP2Bvmhtyf0+xwGXl//wegSV4dYGYKC5ffyVcQ4MiOKMykewjlkzTj5e7gbMam4mUUPyioscAJCcYTw==}
     peerDependencies:
@@ -2335,6 +2362,12 @@ packages:
 
   '@react-native-oh-tpl/react-native-http-bridge@0.6.1-0.0.4':
     resolution: {integrity: sha512-Lhd2yvhUGcy4vMUmCZXEwdHim4D7HjevbyKm1VaqW4e8h6nKN5KXSd0sa6dJ4+hfaiwlDkJITaJH/QWnQOWOBg==}
+
+  '@react-native-oh-tpl/react-native-image-capinsets-next@0.6.1-0.0.4':
+    resolution: {integrity: sha512-uPaorU1HQwSkOOTTiQ6kqoSte2MxpvBfgbgewA8oTSdwdRz6zao6OWCDVXEnqZmtMex49S/BPODYWfxkfHlpGw==}
+    peerDependencies:
+      react: 18.2.0
+      react-native: 0.72.5
 
   '@react-native-oh-tpl/react-native-image-colors@2.4.0-0.0.7':
     resolution: {integrity: sha512-Yl6rJ7SOCidxaeLfQ2BfjG0+cKT2chKL8wXVZcXwT43ZHV4CmEPKfAyCnbX4JO10aaTKW7KfrWDF/4WeFrN6KQ==}
@@ -2429,6 +2462,13 @@ packages:
   '@react-native-oh-tpl/react-native-system-setting@1.7.6-0.0.1':
     resolution: {integrity: sha512-tZxvFmv+p5pmuUUrDTNYmhbjIJnUjnINLIb0cvMVUfMMrz8JUK9vHRQhBihsDp0sIyuBN5PDYLs7V6o0IPaltg==}
 
+  '@react-native-oh-tpl/react-native-text-size@4.0.0-0.0.11':
+    resolution: {integrity: sha512-YQYSKwjen4DTyham9G2vuYg+6/zofoY2NIb+PAFySzJsvVtzskPdz/MNSYcLF6Y3ILwcG0487eX0O9ZNjWoqow==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   '@react-native-oh-tpl/react-native-textinput-maxlength-fixed@0.1.2-0.0.1':
     resolution: {integrity: sha512-r0gk4+dYRG8m8WAIW/28rJbbvG3YpxCGYHx2ya31k1VFbp/rZ04DgJl46mASta7Ovq9ezrPRMozDnZqyeqrXVw==}
     engines: {node: '>= 16.0.0'}
@@ -2470,6 +2510,19 @@ packages:
       react-native: '>=0.60'
       react-native-view-pdf: 0.14.0
 
+  '@react-native-oh-tpl/react-native-worklets-core@1.3.3-0.0.4':
+    resolution: {integrity: sha512-AQuLyQJiwPcXZ6ohGwE2Bmv+6SVrIDNGNQcRMSZ/J03cWGV0xhQ8n5WapJLFAaFUyKEPj4fG4tdxdNcc8pNvAg==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
+  '@react-native-oh-tpl/react-native-zip-archive@6.1.1-0.1.0-rc.1':
+    resolution: {integrity: sha512-rD54NcBAjuCtjID1Je0KL2B6PP64TgzO993B2nFYr+yfpICstic3lGgGluZ51Ii0Qi0291xoaUXV1jHbTFGO5g==}
+    peerDependencies:
+      react: '>=16.8.6'
+      react-native: '>=0.60.0'
+
   '@react-native-oh/react-native-harmony-cli@file:packages/react-native-harmony-cli':
     resolution: {directory: packages/react-native-harmony-cli, type: directory}
     peerDependencies:
@@ -2488,11 +2541,20 @@ packages:
       react: '*'
       react-native: '*'
 
+  '@react-native-ohos/react-native-image-sequence-2@0.9.2-rc.1':
+    resolution: {integrity: sha512-m8LB8IVxU7Y8sZnVMIdEkpnwZRgrURol7DIfm3R7xDXZcsLqsCufPW/gFCvov9+cEHJjlz1zZsVbZn9zbhY1lA==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+
   '@react-native-ohos/react-native-linear-gradient@3.0.1-rc.1':
     resolution: {integrity: sha512-If06HxRBdyK3S4RNihAIl6rBeTaSTH1Moq0DluiW2xT+xiMktKJaaNr3qNaMW81L2r+of2NeyNGeAkbUl55sMA==}
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  '@react-native-ohos/react-native-sensors@7.2.2-rc.2':
+    resolution: {integrity: sha512-HWIY94lht1GPeSwJ2nAM0p6jobuADJBewC2DgVSJrvYXw+eNRN6YuyjnZCa8NGtWJQCJaz3XoPsDsqJXPJw+Nw==}
 
   '@react-native-ohos/toolbar-android@0.2.2-rc.1':
     resolution: {integrity: sha512-cqPdxsLPizxnaUIapilYjPsE9FQRq4a/sPSCcUT2leL0LNyIekmVALU8XVYH4MT4PZIh5NCB17pQobNL/fmN6Q==}
@@ -6658,6 +6720,12 @@ packages:
     peerDependencies:
       react-native: ^0.56.0
 
+  react-native-clippathview@1.1.8:
+    resolution: {integrity: sha512-CICCnR1sojtB+ciBg8I+AUva2z+qp1tVjncGKi5kmR7KTLw9x7txb8wZ6Jra7J0srT1UXHlz9dAierGbKekyJg==}
+    peerDependencies:
+      react: '>=16.8.1'
+      react-native: '>=0.60.0-rc.0 <1.0.x'
+
   react-native-color-matrix-image-filters@6.0.9:
     resolution: {integrity: sha512-XI/XNGRKWMDoVHRYspr9bepX7mH+0OJKmQ0zbaPTRkVQaS9AiKlb9o0nopwMkB+QPg4kiYqSs16BwKmLo8qhlg==}
     peerDependencies:
@@ -6697,6 +6765,9 @@ packages:
 
   react-native-http-bridge@0.6.1:
     resolution: {integrity: sha512-XnPVdaYkKIC8bRGmADVLhgDO0Evnya3rOExVEzxk6pBJjNUewWljkGHt//OTpb4t7Te6oDqQAwa+gfVtzhRU1A==}
+
+  react-native-image-capinsets-next@0.6.1:
+    resolution: {integrity: sha512-4QwzwqvOjumaBD5or+fbyYheBI0SLiuKto3SXpoP+m2PFAxEvhrE9lI4xd4ajcuNnj4TQPwp9XUs+HOpPtJR1w==}
 
   react-native-image-pan-zoom@2.1.12:
     resolution: {integrity: sha512-BF66XeP6dzuANsPmmFsJshM2Jyh/Mo1t8FsGc1L9Q9/sVP8MJULDabB1hms+eAoqgtyhMr5BuXV3E1hJ5U5H6Q==}
@@ -6750,6 +6821,9 @@ packages:
     peerDependencies:
       react-native: '>=0.8.0 || 0.8.0-rc || 0.8.0-rc.2 || 0.9.0-rc || 0.10.1'
       react-native-windows: '>=0.62'
+
+  react-native-prompt-android@1.1.0:
+    resolution: {integrity: sha512-4JoyEaT2ZnK9IH+tDFpbTiQBgva8UIFGQf4/Uw/tnEVWBERlVlzcs5B82T9BkeEhEqXhp89JaiSBnLWj30lciw==}
 
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
@@ -6814,6 +6888,13 @@ packages:
       '@types/react': ^19.0.0
       react: ^19.0.0
       react-native: ^0.78.0
+
+  react-native-worklets-core@1.3.3:
+    resolution: {integrity: sha512-wlkuhpUo4Wd9WBcnKuXWv775rYNYMfDxUySCZYxd3VDtwnF8PHPqAJllVIlHjamPNKpcitFvAgQa/C3YOsJwgQ==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native@0.74.7:
     resolution: {integrity: sha512-7emqS5CcwFoIBNAtcFPhmFRKkDl6TI/Oe10QjAYEj0JJcN/7hyCGwnDTtpjnO4Ai5LRt8xKXhrUt8cKIQ5BQlQ==}
@@ -7322,6 +7403,9 @@ packages:
     resolution: {integrity: sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==}
     engines: {node: '>=4'}
 
+  string-hash-64@1.0.3:
+    resolution: {integrity: sha512-D5OKWKvDhyVWWn2x5Y9b+37NUllks34q1dCDhk/vYcso9fmhs+Tl3KR/gE4v5UNj2UA35cnX4KdVVGkG1deKqw==}
+
   string-length@4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
     engines: {node: '>=10'}
@@ -7443,6 +7527,9 @@ packages:
 
   svg-arc-to-cubic-bezier@3.2.0:
     resolution: {integrity: sha512-djbJ/vZKZO+gPoSDThGNpKDO+o+bAeA4XQKovvkNCqnIS2t+S4qnLAGQhyyrulhCFRl1WWzAp0wUDV8PpTVU3g==}
+
+  svgpath@2.6.0:
+    resolution: {integrity: sha512-OIWR6bKzXvdXYyO4DK/UWa1VA1JeKq8E+0ug2DG98Y/vOmMpfZNj+TIG988HjfYSqtcy/hFOtZq/n/j5GSESNg==}
 
   synckit@0.9.2:
     resolution: {integrity: sha512-vrozgXDQwYO72vHjUb/HnFbQx1exDjoKzqx23aXEg2a9VIg2TSFZ8FmeZpTjUCFMYw7mpX4BE2SFu8wI7asYsw==}
@@ -10426,6 +10513,13 @@ snapshots:
       prop-types: 15.8.1
       react: 16.13.1
 
+  '@react-native-oh-tpl/react-native-clippathview@1.1.8-0.2.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      react-native-clippathview: 1.1.8(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      svgpath: 2.6.0
+
   '@react-native-oh-tpl/react-native-color-matrix-image-filters@6.0.5-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       clamp: 1.0.1
@@ -10480,6 +10574,12 @@ snapshots:
   '@react-native-oh-tpl/react-native-http-bridge@0.6.1-0.0.4':
     dependencies:
       react-native-http-bridge: 0.6.1
+
+  '@react-native-oh-tpl/react-native-image-capinsets-next@0.6.1-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      react-native-image-capinsets-next: 0.6.1
 
   '@react-native-oh-tpl/react-native-image-colors@2.4.0-0.0.7(expo@52.0.46(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(encoding@0.1.13)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -10584,6 +10684,12 @@ snapshots:
 
   '@react-native-oh-tpl/react-native-system-setting@1.7.6-0.0.1': {}
 
+  '@react-native-oh-tpl/react-native-text-size@4.0.0-0.0.11(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      react-native-prompt-android: 1.1.0
+
   '@react-native-oh-tpl/react-native-textinput-maxlength-fixed@0.1.2-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
@@ -10644,6 +10750,18 @@ snapshots:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-view-pdf: 0.14.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
 
+  '@react-native-oh-tpl/react-native-worklets-core@1.3.3-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      react-native-worklets-core: 1.3.3(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+      string-hash-64: 1.0.3
+
+  '@react-native-oh-tpl/react-native-zip-archive@6.1.1-0.1.0-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+
   '@react-native-oh/react-native-harmony-cli@file:packages/react-native-harmony-cli(@babel/preset-env@7.26.7(@babel/core@7.26.7))(encoding@0.1.13)(metro@0.81.1)':
     dependencies:
       '@react-native-community/cli-tools': 13.6.9(encoding@0.1.13)
@@ -10676,10 +10794,19 @@ snapshots:
     transitivePeerDependencies:
       - react-native-windows
 
+  '@react-native-ohos/react-native-image-sequence-2@0.9.2-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+
   '@react-native-ohos/react-native-linear-gradient@3.0.1-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+
+  '@react-native-ohos/react-native-sensors@7.2.2-rc.2':
+    dependencies:
+      rxjs: 7.8.1
 
   '@react-native-ohos/toolbar-android@0.2.2-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -16119,6 +16246,12 @@ snapshots:
       prop-types: 15.8.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 
+  react-native-clippathview@1.1.8(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      svgpath: 2.6.0
+
   react-native-color-matrix-image-filters@6.0.9(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
     dependencies:
       concat-color-matrices: 1.0.0
@@ -16156,6 +16289,8 @@ snapshots:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 
   react-native-http-bridge@0.6.1: {}
+
+  react-native-image-capinsets-next@0.6.1: {}
 
   react-native-image-pan-zoom@2.1.12(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -16205,6 +16340,8 @@ snapshots:
     dependencies:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-windows: 0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4)
+
+  react-native-prompt-android@1.1.0: {}
 
   react-native-randombytes@3.6.1:
     dependencies:
@@ -16349,6 +16486,12 @@ snapshots:
       - tslib
       - typescript
       - utf-8-validate
+
+  react-native-worklets-core@1.3.3(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+      string-hash-64: 1.0.3
 
   react-native@0.74.7(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@types/react@18.3.18)(encoding@0.1.13)(react@18.3.1):
     dependencies:
@@ -17089,6 +17232,8 @@ snapshots:
 
   strict-uri-encode@2.0.0: {}
 
+  string-hash-64@1.0.3: {}
+
   string-length@4.0.2:
     dependencies:
       char-regex: 1.0.2
@@ -17227,6 +17372,8 @@ snapshots:
   supports-preserve-symlinks-flag@1.0.0: {}
 
   svg-arc-to-cubic-bezier@3.2.0: {}
+
+  svgpath@2.6.0: {}
 
   synckit@0.9.2:
     dependencies:

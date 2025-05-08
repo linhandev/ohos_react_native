@@ -36,6 +36,12 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-incall-man
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-blurhash/src/main/cpp" ./blurhash)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-ui-lib/src/main/cpp" ./ui-lib)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-color-matrix-image-filters/src/main/cpp" ./color_matrix_image_filters)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-zip-archive/src/main/cpp" ./zipArchive-package)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-clippathview/src/main/cpp" ./clippath)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-image-sequence-2/src/main/cpp" ./image_sequence_2)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-sensors/src/main/cpp" ./sensors)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-worklets-core/src/main/cpp" ./worklets)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-text-size/src/main/cpp" ./text-size)
 # RNOH_END: manual_package_linking_1
 
 file(GLOB GENERATED_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp") # this line is needed by codegen v1
@@ -70,4 +76,10 @@ target_link_libraries(rnoh_app PUBLIC rnoh_in_call_manager)
 target_link_libraries(rnoh_app PUBLIC rnoh_blurhash)
 target_link_libraries(rnoh_app PUBLIC rnoh_ui_lib)
 target_link_libraries(rnoh_app PUBLIC rnoh_color_matrix_image_filters )
+target_link_libraries(rnoh_app PUBLIC nativi_minizip)
+target_link_libraries(rnoh_app PUBLIC rnoh_clip_path)
+target_link_libraries(rnoh_app PUBLIC rnoh_image_sequence_2)
+target_link_libraries(rnoh_app PUBLIC rnoh_sensors)
+target_link_libraries(rnoh_app PUBLIC rnoh_worklets)
+target_link_libraries(rnoh_app PUBLIC rnoh_text_size)
 # RNOH_END: manual_package_linking_2

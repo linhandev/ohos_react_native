@@ -34,71 +34,55 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-blurhash                   | ✅     |
 | @react-native-oh-tpl/react-native-bootsplash                 | ✅     |
 | @react-native-oh-tpl/react-native-camera-kit                 | ✅     |
-| @react-native-oh-tpl/react-native-drag-sort                  |        |
 | @react-native-oh-tpl/react-native-exception-handler          | ✅     |
 | @react-native-oh-tpl/react-native-email-link                 | ✅     |
 | @react-native-oh-tpl/react-native-fast-image                 |        |
-| @react-native-oh-tpl/react-native-fit-Image                  |        |
 | @react-native-oh-tpl/react-native-fs                         |        |
 | @react-native-oh-tpl/react-native-gesture-handler            |        |
 | @react-native-oh-tpl/react-native-hole-view                  | ❌     |
 | @react-native-oh-tpl/react-native-image-editor               |        |
 | @react-native-oh-tpl/react-native-image-picker               | ✅     |
 | react-native-image-viewer                                    | ✅     |
-| @react-native-oh-tpl/react-native-image-viewing              |        |
-| @react-native-oh-tpl/react-native-image-pan-zoom             |        |
-| @react-native-oh-tpl/react-native-intersection-observer      |        |
 | @react-native-oh-tpl/react-native-keyboard-aware-scroll-view | ✅     |
 | @react-native-oh-tpl/react-native-keyboard-controller        | ❌     |
 | @react-native-oh-tpl/react-native-linear-gradient            | ✅     |
 | @react-native-oh-tpl/react-native-maps                       |        |
-| @react-native-oh-tpl/react-native-markdown-display           |        |
-| @react-native-oh-tpl/react-native-marquee                    |        |
 | @react-native-oh-tpl/react-native-mjrefresh                  |        |
 | @react-native-oh-tpl/react-native-nfc-manager                | ✅     |
 | @react-native-oh-tpl/react-native-pager-view                 |        |
 | @react-native-oh-tpl/react-native-pdf                        |        |
 | @react-native-oh-tpl/react-native-permissions                |        |
-| @react-native-oh-tpl/react-native-popover-view               |        |
 | @react-native-oh-tpl/react-native-print                      | ✅     |
 | @react-native-oh-tpl/react-native-progress                   |        |
-| @react-native-oh-tpl/react-native-pull                       |        |
 | @react-native-oh-tpl/react-native-reanimated                 |        |
 | @react-native-oh-tpl/react-native-safe-area-context          |        |
 | @react-native-oh-tpl/react-native-scrollable-tab-view        |        |
-| @react-native-oh-tpl/react-native-SmartRefreshLayout         |        |
+| @react-native-oh-tpl/react-native-SmartRefreshLayout         | ❌     |
 | @react-native-oh-tpl/react-native-snap-carousel              |        |
 | @react-native-oh-tpl/react-native-sound                      |        |
-| @react-native-oh-tpl/react-native-stickyheader               |        |
 | @react-native-oh-tpl/react-native-svg                        | ❌     |
-| @react-native-oh-tpl/react-native-tab-view                   |        |
-| @react-native-oh-tpl/react-native-text-size                  |        |
+| @react-native-oh-tpl/react-native-text-size                  | ✅     |
 | @react-native-oh-tpl/react-native-track-player               | ✅     |
-| @react-native-oh-tpl/react-native-transitiongroup            |        |
-| @react-native-oh-tpl/react-native-translucent-modal          |        |
 | @react-native-oh-tpl/react-native-ui-lib                     | ✅     |
 | @react-native-oh-tpl/react-native-video                      |        |
 | @react-native-oh-tpl/react-native-view-shot                  |        |
 | @react-native-oh-tpl/react-native-view-pdf                   | ✅     |
 | @react-native-oh-tpl/react-native-webview                    |        |
-| @react-native-oh-tpl/react-native-worklets-core              |        |
-| @react-native-oh-tpl/react-native-sensors                    |        |
+| @react-native-oh-tpl/react-native-worklets-core              | ✅     |
+| @react-native-oh-tpl/react-native-sensors                    | ✅     |
 | @react-native-oh-tpl/react-native-shared-element             | ❌     |
 | @react-native-oh-tpl/react-native-sortable-list              |        |
-| @react-native-oh-tpl/react-native-image-sequence-2           |        |
-| @react-native-oh-tpl/native-stack                            |        |
-| @react-native-oh-tpl/react-native-clippath                   |        |
-| @react-native-oh-tpl/react-native-image-gallery              |        |
+| @react-native-oh-tpl/react-native-image-sequence-2           | ✅     |
+| @react-native-oh-tpl/react-native-clippath                   | ✅     |
 | @react-native-oh-tpl/react-native-image-crop-picker          |        |
-| @react-native-oh-tpl/react-native-image-capinsets-next       |        |
-| @react-native-oh-tpl/react-native-map-linking                |        |
+| @react-native-oh-tpl/react-native-image-capinsets-next       | ✅     |
 | @react-native-oh-tpl/react-native-vision-camera              |        |
-| @react-native-oh-tpl/react-native-zip-archive                |        |
+| @react-native-oh-tpl/react-native-zip-archive                | ✅     |
 | @react-native-oh-tpl/react-native-audio                      |        |
 | @react-native-oh-tpl/react-native-localize                   |        |
 | @react-native-oh-tpl/react-native-image-resizer              |        |
 | @react-native-oh-tpl/react-native-calendar-events            |        |
-| @react-native-oh-tpl/react-native-fileupload                 |        |
+| @react-native-oh-tpl/react-native-fileupload                 | ❌     |
 | @react-native-oh-tpl/react-native-code-push                  | ❌     |
 | @react-native-oh-tpl/react-native-sqlite-storage             |        |
 | @react-native-oh-tpl/react-native-text-gradient              | ❌     |

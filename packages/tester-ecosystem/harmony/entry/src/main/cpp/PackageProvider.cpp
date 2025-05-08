@@ -23,6 +23,11 @@
 #include "BlurhashPackage.h"
 #include "UiLibPackage.h"
 #include "ColorMatrixImageFiltersPackage.h"
+#include "ClipPathViewPackage.h"
+#include "ImageSequence2Package.h"
+#include "SensorsPackage.h"
+#include "WorkletsPackage.h"
+#include "RNTextSizePackage.h"
 
 using namespace rnoh;
 
@@ -51,6 +56,11 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<BlurhashPackage>(ctx));
   packages.push_back(std::make_shared<UiLibPackage>(ctx));
   packages.push_back(std::make_shared<ColorMatrixImageFiltersPackage>(ctx));
+  packages.push_back(std::make_shared<ClipPathViewPackage>(ctx));
+  packages.push_back(std::make_shared<ImageSequence2Package>(ctx));
+  packages.push_back(std::make_shared<SensorsPackage>(ctx));
+  packages.push_back(std::make_shared<WorkletsPackage>(ctx));
+  packages.push_back(std::make_shared<RNTextSizePackage>(ctx));
   // manual linking: END
   return packages;
 }
