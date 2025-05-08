@@ -6,7 +6,7 @@
     "postinstall": "node ./scripts/create-build-profile",
     "dev": "react-native start --port 8084",
     "build": "node ./scripts/build.js",
-    "test": "cd ../react-native-harmony && pnpm build:har && cd ../tester-ecosystem && pnpm build",
+    "test": "pnpm build",
     "harmony": "react-native run-harmony",
     "verify": "echo \"verify not supported\""
   },
@@ -65,7 +65,6 @@
     "@react-native-ohos/checkbox": "latest",
     "@react-native-ohos/react-native-linear-gradient": "latest",
     "@react-native-ohos/toolbar-android": "latest",
-    "@rnoh/react-native-harmony-gesture-handler": "latest",
     "chai": "4.3.7",
     "react": "18.3.1",
     "react-native-flipper-performance-plugin": "^0.4.0"
@@ -82,7 +81,6 @@
     "@react-native/eslint-config": "0.77.1",
     "@react-native/metro-config": "0.77.1",
     "@react-native/typescript-config": "0.77.1",
-    "@rnoh/testerino": "^0.0.10",
     "@types/node": "^22.7.5",
     "@types/react": "^18.2.6",
     "eslint": "^8.19.0",

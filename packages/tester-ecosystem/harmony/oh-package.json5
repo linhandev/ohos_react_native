@@ -57,9 +57,8 @@
     "@react-native-ohos/react-native-linear-gradient": "file:../../../node_modules/@react-native-ohos/react-native-linear-gradient/harmony/linear_gradient.har",
     "@react-native-ohos-community/auto-fill": "file:../../../node_modules/@react-native-ohos-community/auto-fill/harmony/auto_fill.har",
     "rnoh-toolbar-android": "file:../../../node_modules/@react-native-ohos/toolbar-android/harmony/toolbar_android.har",
-    "@rnoh/react-native-openharmony-gesture-handler": "file:../../../node_modules/@rnoh/react-native-harmony-gesture-handler/harmony/gesture_handler.har",
   },
   overrides: {
-    "@rnoh/react-native-openharmony": "file:../../react-native-harmony/harmony/react_native_openharmony.har",
+    "@rnoh/react-native-openharmony": "file:../../tester/harmony/react_native_openharmony/build/default/outputs/default/react_native_openharmony.har",
   },
 }

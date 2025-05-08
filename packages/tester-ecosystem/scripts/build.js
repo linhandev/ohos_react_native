@@ -19,6 +19,13 @@ async function findFirstFile(directory, filename) {
 
 (async () => {
   const DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
+  const RNOH_NATIVE_PROJECT_HOME = pathUtils.join(
+    __dirname,
+    '..',
+    '..',
+    'tester',
+    'harmony',
+  );
 
   if (!DEVECO_SDK_HOME) {
     console.error('DEVECO_SDK_HOME is undefined');
@@ -33,10 +40,20 @@ async function findFirstFile(directory, filename) {
   const hvigorwPath = await findFirstFile(basePath, 'hvigorw.js');
   const ohpmPath = await findFirstFile(basePath, 'ohpm');
 
-  const buildCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --daemon`;
+  const syncCommand = `"${nodePath}" "${hvigorwPath}" --sync -p product=default --analyze=false --parallel --incremental --no-daemon`;
+  const packHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=debug assembleHar --error --analyze=false --parallel --incremental --no-daemon`;
   const installCommand = `"${ohpmPath}" install`;
+  const buildCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --no-daemon`;
 
   try {
+    execSync(syncCommand, {
+      stdio: 'inherit',
+      cwd: RNOH_NATIVE_PROJECT_HOME,
+    });
+    execSync(packHarCommand, {
+      stdio: 'inherit',
+      cwd: RNOH_NATIVE_PROJECT_HOME,
+    });
     execSync(installCommand, {stdio: 'inherit', cwd: './harmony'});
     execSync(buildCommand, {stdio: 'inherit', cwd: './harmony'});
   } catch (error) {

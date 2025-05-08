@@ -3,10 +3,12 @@
 ## Prerequisites
 
 ### Access to Emulator or to a Device with OpenHarmony OS Installed on it
+
 The emulator is currently available for authorized users only. This project is tested on HarmonyOS NEXT.
 
 ### HUAWEI ID
-HUAWEI ID is needed to sign the app when running on a physical device. 
+
+HUAWEI ID is needed to sign the app when running on a physical device.
 
 ### DevEco Studio
 
@@ -22,38 +24,11 @@ NOTE: The SDK version expected by this project can be found in: `packages/tester
 DevEco Studio tools require global .npmrc configuration that changes target repository for packages prefixed with @ohos to the Huawei NPM repository.
 
 `~/.npmrc`
-```
+
+```txt
 registry=https://repo.huaweicloud.com/repository/npm/
 @ohos:registry=https://repo.harmonyos.com/npm/
 ```
-
-In order to download NPM dependencies from the SWM git repository, you will have to create the personal access token and save it as an environment variable.
-
-#### Creating the Access Token on GitLab
-
-1. Press the `Edit profile` button on GitLab (press on your avatar on the navbar and then on the button).
-1. Select `Access Tokens` tab in the menu on the left side.
-1. Fill the `Token name` field (e.g. it can be `rnoh`) and select the `api` scope in the `Select scopes` form.
-1. Press the `Create personal access token` button.
-1. Copy the token.
-
-#### Saving the Access Token in Environment Variables
-
-##### macOS
-1. Create a new password in Keychain Access app.
-1. Append `export RNOH_NPM_TOKEN="$(security find-generic-password -w -s 'YOUR_PASSWORD_NAME')"` to `~/.zshrc`.
-1. Save it and reload terminals.
-
-##### Windows
-
-1. Press `Win + R` to open the Windows Run prompt.
-1. Type in `sysdm.cpl` and click `Ok`.
-1. Go to the `Advanced` tab.
-1. Press on the `Environment Variables` button.
-1. Add the new user environment variable by pressing the `New` button under the User variables section.
-1. Set variable name to `RNOH_NPM_TOKEN` and paste your access token in the variable value field.
-
-You can find more details about GitLab access tokens in the [GitLab documentation](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)
 
 ### Install PNPM
 
