@@ -34,7 +34,7 @@ async function findFirstFile(directory, filename) {
   const hvigorwPath = await findFirstFile(basePath, "hvigorw.js");
 
   try {
-    const buildHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=release assembleHar --analyze=normal --parallel --incremental --daemon`;
+    const buildHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=debug assembleHar --analyze=false --parallel --incremental --no-daemon`;
     execSync(buildHarCommand, { stdio: "inherit", cwd: "../tester/harmony" });
     if (!fs.existsSync("./harmony")) {
       fs.mkdirSync("./harmony/");
