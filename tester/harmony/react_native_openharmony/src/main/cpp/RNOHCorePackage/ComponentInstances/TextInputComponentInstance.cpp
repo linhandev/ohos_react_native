@@ -196,6 +196,8 @@ void TextInputComponentInstance::onPropsChanged(
   if (!m_props) {
     m_textInputNode.setInputFilter(".*");
     m_textAreaNode.setInputFilter(".*");
+    /* Initialize m_content to accurately calculate the cursor position */
+    m_content = props->text;
   }
   if (!m_props ||
       props->traits.showSoftInputOnFocus != m_props->traits.showSoftInputOnFocus){
