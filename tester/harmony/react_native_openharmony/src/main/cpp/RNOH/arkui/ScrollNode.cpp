@@ -95,18 +95,17 @@ void ScrollNode::setScrollNodeDelegate(ScrollNodeDelegate* scrollNodeDelegate) {
   m_scrollNodeDelegate = scrollNodeDelegate;
 }
 
-void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode) {
-  bool alwaysBounce = false;
+void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode, bool isContentSmallerThanContainer) {
   ArkUI_EdgeEffect edgeEffect;
   if (overScrollMode == "never") {
     edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_NONE;
   } else if (overScrollMode == "auto") {
-    edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
+    edgeEffect = isContentSmallerThanContainer ? ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_NONE
+                                               : ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
   } else if (overScrollMode == "always") {
     edgeEffect = ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_SPRING;
-    alwaysBounce = true;
   }
-  ArkUI_NumberValue value[] = {{.i32 = edgeEffect}, {.i32 = alwaysBounce}};
+  ArkUI_NumberValue value[] = {{.i32 = edgeEffect}, {.i32 = 1}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));

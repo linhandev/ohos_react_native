@@ -21,6 +21,7 @@ export * from './NestedScrollingExample';
 export * from './PointerEventsExample';
 export * from './SafeAreaViewExample';
 export * from './ScrollToEndOnLayoutExample';
+export * from './ScrollViewExample';
 export * from './StickyHeadersExample';
 export * from './TabsAndScrollViewExample';
 export * from './TextScrollExample';

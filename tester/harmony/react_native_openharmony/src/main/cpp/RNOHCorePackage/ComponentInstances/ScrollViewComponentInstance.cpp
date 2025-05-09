@@ -99,6 +99,9 @@ void rnoh::ScrollViewComponentInstance::onStateChanged(
   if (m_contentSize != stateData.getContentSize()) {
     m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
+    if (m_rawProps.overScrollMode.has_value()) {
+      m_scrollNode.setScrollOverScrollMode(m_rawProps.overScrollMode.value(), isContentSmallerThanContainer(m_props));
+    }
   }
 }
 
@@ -157,7 +160,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   if (rawProps.overScrollMode.has_value()) {
     if (m_rawProps.overScrollMode != rawProps.overScrollMode) {
       m_rawProps.overScrollMode = rawProps.overScrollMode;
-      m_scrollNode.setScrollOverScrollMode(m_rawProps.overScrollMode.value());
+      m_scrollNode.setScrollOverScrollMode(m_rawProps.overScrollMode.value(), isContentSmallerThanContainer(props));
     }
   } else {
     if (!m_props || props->bounces != m_props->bounces ||
@@ -317,7 +320,7 @@ bool ScrollViewComponentInstance::isHandlingTouches() const {
 void ScrollViewComponentInstance::onScroll() {
   auto scrollViewMetrics = getScrollViewMetrics();
   sendEventForNativeAnimations(scrollViewMetrics);
-  if (!isContentSmallerThanContainer() && m_allowScrollPropagation &&
+  if (!isContentSmallerThanContainer(m_props) && m_allowScrollPropagation &&
       !isAtEnd(scrollViewMetrics.contentOffset)) {
     m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_ONLY);
     m_allowScrollPropagation = false;
@@ -363,7 +366,7 @@ void ScrollViewComponentInstance::onScrollStop() {
     emitOnScrollEndDragEvent();
   }
   m_scrollState = ScrollState::IDLE;
-  if (!isContentSmallerThanContainer() && !m_allowScrollPropagation &&
+  if (!isContentSmallerThanContainer(m_props) && !m_allowScrollPropagation &&
       isAtEnd(m_currentOffset)) {
     m_scrollNode.setNestedScroll(ARKUI_SCROLL_NESTED_MODE_SELF_FIRST);
     m_allowScrollPropagation = true;
@@ -610,8 +613,8 @@ void rnoh::ScrollViewComponentInstance::sendEventForNativeAnimations(
   }
 }
 
-bool ScrollViewComponentInstance::isContentSmallerThanContainer() {
-  return isHorizontal(m_props) ? m_contentSize.width <= m_containerSize.width
+bool ScrollViewComponentInstance::isContentSmallerThanContainer(SharedConcreteProps const& props) {
+  return isHorizontal(props) ? m_contentSize.width <= m_containerSize.width
                                : m_contentSize.height <= m_containerSize.height;
 }
 

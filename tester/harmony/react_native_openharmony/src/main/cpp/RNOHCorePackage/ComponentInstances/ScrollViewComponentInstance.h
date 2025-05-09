@@ -134,7 +134,7 @@ class ScrollViewComponentInstance
  private:
   void updateStateWithContentOffset(facebook::react::Point contentOffset);
   void updateOffsetAfterChildChange(facebook::react::Point offset);
-  bool isContentSmallerThanContainer();
+  bool isContentSmallerThanContainer(SharedConcreteProps const& props);
   bool isAtEnd(facebook::react::Point currentOffset);
   /**
    * When the `onEndReachedThreshold` of VirtualizedList is set to 0,
