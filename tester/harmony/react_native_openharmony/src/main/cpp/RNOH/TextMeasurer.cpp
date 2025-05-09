@@ -79,13 +79,6 @@ TextMeasurement TextMeasurer::measure(
       auto typography = typographyBuilder.build();
       auto height = typography.getHeight();
       auto longestLineWidth = typography.getLongestLineWidth();
-      if (longestLineWidth < layoutConstraints.maximumSize.width) {
-          layoutConstraints.maximumSize.width = longestLineWidth;
-          typographyBuilder = measureTypography(attributedString, paragraphAttributes, layoutConstraints);
-          typography = typographyBuilder.build();
-          height = typography.getHeight();
-          longestLineWidth = typography.getLongestLineWidth();
-      }
       auto attachments = typography.getAttachments();
       if (!attributedString.getFragments().empty()) {
         std::string key = std::to_string(m_rnInstanceId) + "_" + 
