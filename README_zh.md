@@ -40,27 +40,35 @@
 - React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
 - RNOH的使用问题可查阅[中文文档](./docs/zh-cn/README.md)或[英文文档](./docs/en/README.md)。
 
-## 版本说明
 
-1. 当前已基于上游社区RN 0.72.5版本进行鸿蒙化，有以下版本
-  - RN 0.72.5鸿蒙化最新发布的正式版本：
-    - [RNOH v5.0.0.813（2024-12-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
+**版本管理说明**
 
- - RN 0.72.5鸿蒙化历史发布的正式版本：
+**一、版本演进规划**
+1.**稳定版本发布体系**
+- 基于React Native 0.72.5的HarmonyOS适配版本(当前主干)
 
-    - [RNOH v5.0.0.812（2024-12-14）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
-    - [RNOH v5.0.0.715（2024-10-25）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
-    - [RNOH v5.0.0.601（2024-09-26）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
-    - [RNOH v5.0.0.500（2024-08-27）](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
+**最新稳定版本**:
+- [RNOH v5.0.0.813(2024-12-26)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
 
-2. 当前正在进行上游社区RN 0.77.1鸿蒙化适配开发，预计2025年Q3正式对外发布。
+**历史版本归档**:
+- [RNOH v5.0.0.812(2024-12-14)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
+- [RNOH v5.0.0.715(2024-10-25)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
+- [RNOH v5.0.0.601(2024-09-26)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
+- [RNOH v5.0.0.500(2024-08-27)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
 
-## 分支说明
+2.**开发中版本路线图**
+- React Native 0.77.1 HarmonyOS适配版本(开发代号)
+- 预计2025年第三季度发布生产环境可以版本
+- 当前处于架构适配阶段(技术预览分支开放)
 
-- 0.72.5-ohos-5.0-release分支：release分支，如需下载源码，请从此分支下载上述正式版本对应的tag点源码。
-- master分支：主分支，请勿从此分支拉取源码用于商用版本，不保证质量。
-- 0.77.1-rc.1-ohos：基于上游社区RN 0.77.1鸿蒙化的分支，目前正在适配中，未商用发布，不保证质量。
-- dev分支/partner-dev分支：开发分支，请勿从此分支拉取源码，不保证质量。
-- 其余分支(若存在)：项目内部运行过程分支，请勿从相关分支拉取源码，不保证质量。
+**二、代码分支策略**  
+|分支名称|生命周期状态|使用规范说明|  
+| ----------- | -------------|--------------|
+|0.72.5-ohos-5.0-release|生产维护分支|获取所有稳定版本源码的基准分支|  
+|master|主干开发分支|技术演进基线，非生产构建推荐源| 
+|0.77.1-rc.1-ohos|技术预览分支|新特性适配分支(开发测试专用)| 
+|dev/partner-dev|协作开发分支|功能开发沙箱环境| 
+|其他分支|临时工作分支|特定场景技术验证分支|
 
-**说明：** 0.72.5-ohos-5.0-release分支在2025/01/23进行了开源整改，整改后的CommitID与整改前不一致，请开发者重新拉取仓库最新代码。
+**重要通告**:  
+0.72.5-ohos-5.0-release分支已于2025年1月23日完成代码结构调整与合规性优化，历史CommitID已变更。请开发者通过'git fetch --all'更新仓库，确保获取最新代码基线。
