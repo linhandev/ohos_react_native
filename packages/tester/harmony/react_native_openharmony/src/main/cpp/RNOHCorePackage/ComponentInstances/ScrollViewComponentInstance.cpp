@@ -964,17 +964,13 @@ void ScrollViewComponentInstance::onAppear() {
 
   if (isContentOffsetZero) {
     m_scrollNode.scrollTo(
-        adjustOffsetToRTL(m_props->contentOffset.x),
-        m_props->contentOffset.y,
-        false);
+        m_props->contentOffset.x, m_props->contentOffset.y, false);
     updateStateWithContentOffset(m_props->contentOffset);
   }
 
   if (!isContentOffsetZero) {
     m_scrollNode.scrollTo(
-        adjustOffsetToRTL(stateData.contentOffset.x),
-        stateData.contentOffset.y,
-        false);
+        stateData.contentOffset.x, stateData.contentOffset.y, false);
   }
 }
 

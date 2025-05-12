@@ -28,6 +28,18 @@ export function MiscPropsTest() {
           </ScrollView>
         </View>
       </TestCase.Example>
+      <TestCase.Example itShould="display horizontal rtl scroll view" modal>
+        <View
+          style={{
+            width: '100%',
+            height: 150,
+            direction: 'rtl',
+          }}>
+          <ScrollView horizontal={true}>
+            {getScrollViewContentHorizontal({})}
+          </ScrollView>
+        </View>
+      </TestCase.Example>
       <TestCase.Example
         modal
         itShould="display ScrollView with the third view at the top (contentOffset)">
