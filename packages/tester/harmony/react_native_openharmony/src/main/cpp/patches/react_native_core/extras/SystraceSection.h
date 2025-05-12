@@ -26,10 +26,6 @@ struct CustomSystraceSection {
     OH_HiTrace_StartTrace(name);
   }
 
-  inline explicit CustomSystraceSection(const std::string& name) {
-    OH_HiTrace_StartTrace(name.c_str());
-  }
-
   ~CustomSystraceSection() {
     OH_HiTrace_FinishTrace();
   }

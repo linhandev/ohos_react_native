@@ -149,7 +149,7 @@ void SchedulerDelegate::performTransaction(
             performOnMainThread(
                 [mutations,
                  taskTrace](MountingManager::Shared const& mountingManager) {
-                  facebook::react::SystraceSection s(taskTrace);
+                  facebook::react::SystraceSection s(taskTrace.c_str());
                   mountingManager->didMount(mutations);
                 });
           }
@@ -157,13 +157,14 @@ void SchedulerDelegate::performTransaction(
         performOnMainThread(
             [otherMutations, this, taskTrace](
                 MountingManager::Shared const& mountingManager) {
-              facebook::react::SystraceSection s(taskTrace);
+              facebook::react::SystraceSection s(taskTrace.c_str());
               mountingManager->didMount(otherMutations);
               mountingManager->clearPreallocatedViews();
             });
         logTransactionTelemetryMarkers(transaction);
         facebook::react::SystraceSection s(
-            "#RNOH::TaskExecutor::runTask t" + std::to_string(taskId));
+            ("#RNOH::TaskExecutor::runTask t" + std::to_string(taskId))
+                .c_str());
       });
 }
 

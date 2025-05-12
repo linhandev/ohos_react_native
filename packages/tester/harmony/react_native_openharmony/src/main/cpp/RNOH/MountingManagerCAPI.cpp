@@ -55,7 +55,8 @@ void MountingManagerCAPI::doMount(MutationList const& mutations) {
 
 void MountingManagerCAPI::didMount(MutationList const& mutations) {
   facebook::react::SystraceSection s(
-      "#RNOH::MountingManager::didMount " + std::to_string(mutations.size()));
+      ("#RNOH::MountingManager::didMount " + std::to_string(mutations.size()))
+          .c_str());
   if (!m_featureFlagRegistry->isFeatureFlagOn(
           "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY")) {
     m_arkTSMountingManager->didMount(mutations);
