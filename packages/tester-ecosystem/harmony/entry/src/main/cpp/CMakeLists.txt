@@ -42,6 +42,11 @@ add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-image-sequen
 add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/react-native-sensors/src/main/cpp" ./sensors)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-worklets-core/src/main/cpp" ./worklets)
 add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-text-size/src/main/cpp" ./text-size)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-mjrefresh/src/main/cpp" ./mjrefresh)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-ohos/image-editor/src/main/cpp" ./image-editor)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-custom-keyboard/src/main/cpp" ./custom-keyboard)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/rn-bugly/src/main/cpp" ./bugly)
+add_subdirectory("${OH_MODULES_DIR}/@react-native-oh-tpl/react-native-text-input-mask/src/main/cpp" ./RNTextInputMask)
 # RNOH_END: manual_package_linking_1
 
 file(GLOB GENERATED_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp") # this line is needed by codegen v1
@@ -82,4 +87,9 @@ target_link_libraries(rnoh_app PUBLIC rnoh_image_sequence_2)
 target_link_libraries(rnoh_app PUBLIC rnoh_sensors)
 target_link_libraries(rnoh_app PUBLIC rnoh_worklets)
 target_link_libraries(rnoh_app PUBLIC rnoh_text_size)
+target_link_libraries(rnoh_app PUBLIC rnoh_mjrefresh)
+target_link_libraries(rnoh_app PUBLIC rnoh_image_editor)
+target_link_libraries(rnoh_app PUBLIC rnoh_custom_keyboard_package)
+target_link_libraries(rnoh_app PUBLIC rnoh_bugly)
+target_link_libraries(rnoh_app PUBLIC text_input_mask)
 # RNOH_END: manual_package_linking_2

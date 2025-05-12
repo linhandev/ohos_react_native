@@ -48,6 +48,17 @@ import { ImageSequencePackage } from "@react-native-ohos/react-native-image-sequ
 import { SensorsPackage } from '@react-native-ohos/react-native-sensors/ts';
 import { WorkletsPackage } from "@react-native-oh-tpl/react-native-worklets-core/ts";
 import { RNTextSizePackage } from '@react-native-oh-tpl/react-native-text-size/ts';
+import { ImageEditorPackage } from '@react-native-ohos/image-editor/ts';
+import { RNUserAgentPackage } from '@react-native-oh-tpl/react-native-user-agent/ts';
+import { RNImageRotatePackage } from '@react-native-oh-tpl/react-native-image-rotate/ts';
+import { DocViewPackage } from "@react-native-oh-tpl/react-native-doc-viewer/ts";
+import { RNThumbnailPackage } from '@react-native-oh-tpl/react-native-thumbnail/ts';
+import { RNCustomKeyboardPackage } from '@react-native-oh-tpl/react-native-custom-keyboard/ts';
+import { RNBuglyPackage } from '@react-native-oh-tpl/rn-bugly/ts';
+import { RNReactLocalizationPackage } from '@react-native-oh-tpl/react-native-localization';
+import { RNJPushPackage } from "@react-native-oh-tpl/jpush-react-native/ts";
+import { RNTextInputMaskPackage } from '@react-native-oh-tpl/react-native-text-input-mask/ts'
+import { RNConfigPackage } from '@react-native-oh-tpl/react-native-config/ts';
 
 import type { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
@@ -105,5 +116,16 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new SensorsPackage(ctx),
     new WorkletsPackage(ctx),
     new RNTextSizePackage(ctx),
+    new ImageEditorPackage(ctx),
+    new RNUserAgentPackage(ctx),
+    new RNImageRotatePackage(ctx),
+    new DocViewPackage(ctx),
+    new RNThumbnailPackage(ctx),
+    new RNCustomKeyboardPackage(ctx),
+    new RNBuglyPackage(ctx),
+    new RNReactLocalizationPackage(ctx),
+    new RNJPushPackage(ctx),
+    new RNTextInputMaskPackage(ctx),
+    new RNConfigPackage(ctx),
   ]
 }

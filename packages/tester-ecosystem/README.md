@@ -33,21 +33,27 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-blob-util                  |        |
 | @react-native-oh-tpl/react-native-blurhash                   | ✅     |
 | @react-native-oh-tpl/react-native-bootsplash                 | ✅     |
+| @react-native-oh-tpl/react-native-custom-keyboard            | ✅     |
 | @react-native-oh-tpl/react-native-camera-kit                 | ✅     |
+| @react-native-oh-tpl/react-native-config                     | ✅     |
 | @react-native-oh-tpl/react-native-exception-handler          | ✅     |
 | @react-native-oh-tpl/react-native-email-link                 | ✅     |
 | @react-native-oh-tpl/react-native-fast-image                 |        |
-| @react-native-oh-tpl/react-native-fs                         |        |
+| @react-native-oh-tpl/react-native-fs                         | ❌     |
 | @react-native-oh-tpl/react-native-gesture-handler            |        |
 | @react-native-oh-tpl/react-native-hole-view                  | ❌     |
-| @react-native-oh-tpl/react-native-image-editor               |        |
+| @react-native-oh-tpl/react-native-idfa-aaid                  | ❌     |
+| @react-native-oh-tpl/react-native-image-editor               | ✅     |
 | @react-native-oh-tpl/react-native-image-picker               | ✅     |
 | react-native-image-viewer                                    | ✅     |
+| @react-native-oh-tpl/react-native-image-rotate               | ✅     |
+| @react-native-oh-tpl/jpush-react-native                      | ✅     |
 | @react-native-oh-tpl/react-native-keyboard-aware-scroll-view | ✅     |
 | @react-native-oh-tpl/react-native-keyboard-controller        | ❌     |
 | @react-native-oh-tpl/react-native-linear-gradient            | ✅     |
+| @react-native-oh-tpl/react-native-localization               | ✅     |
 | @react-native-oh-tpl/react-native-maps                       |        |
-| @react-native-oh-tpl/react-native-mjrefresh                  |        |
+| @react-native-oh-tpl/react-native-mjrefresh                  | ✅     |
 | @react-native-oh-tpl/react-native-nfc-manager                | ✅     |
 | @react-native-oh-tpl/react-native-pager-view                 |        |
 | @react-native-oh-tpl/react-native-pdf                        |        |
@@ -62,8 +68,10 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/react-native-sound                      |        |
 | @react-native-oh-tpl/react-native-svg                        | ❌     |
 | @react-native-oh-tpl/react-native-text-size                  | ✅     |
+| @react-native-oh-tpl/react-native-text-input-mask            | ✅     |
 | @react-native-oh-tpl/react-native-track-player               | ✅     |
 | @react-native-oh-tpl/react-native-ui-lib                     | ✅     |
+| @react-native-oh-tpl/react-native-user-agent                 | ✅     |
 | @react-native-oh-tpl/react-native-video                      |        |
 | @react-native-oh-tpl/react-native-view-shot                  |        |
 | @react-native-oh-tpl/react-native-view-pdf                   | ✅     |
@@ -146,9 +154,9 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-library/react-native-video-cache            |        |
 | @react-native-oh-tpl/react-native-qrcode                     |        |
 | @react-native-oh-tpl/react-native-tab-navigator              |        |
-| @react-native-oh-tpl/react-native-doc-viewer                 |        |
+| @react-native-oh-tpl/react-native-doc-viewer                 | ✅     |
 | @react-native-ohos-community/auto-fill                       | ✅     |
 | @react-native-oh-tpl/react-native-textinput-maxlength-fixed  | ✅     |
-| @react-native-oh-library/react-native-config                 |        |
 | @react-native-oh-tpl/realm-js                                |        |
 | @react-native-oh-tpl/react-native-ssl-pinning                | ❌     |
+| @react-native-oh-tpl/rn-bugly                                | ✅     |

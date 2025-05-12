@@ -28,6 +28,11 @@
 #include "SensorsPackage.h"
 #include "WorkletsPackage.h"
 #include "RNTextSizePackage.h"
+#include "MJRefreshPackage.h"
+#include "ReactNativeOhosReactNativeImageEditorPackage.h"
+#include "CustomKeyboardPackage.h"
+#include "RNBuglyPackage.h"
+#include "RNTextInputMaskPackage.h"
 
 using namespace rnoh;
 
@@ -61,6 +66,11 @@ std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Cont
   packages.push_back(std::make_shared<SensorsPackage>(ctx));
   packages.push_back(std::make_shared<WorkletsPackage>(ctx));
   packages.push_back(std::make_shared<RNTextSizePackage>(ctx));
+  packages.push_back(std::make_shared<MJRefreshPackage>(ctx));
+  packages.push_back(std::make_shared<ImageEditorPackage>(ctx));
+  packages.push_back(std::make_shared<CustomKeyboardPackage>(ctx));
+  packages.push_back(std::make_shared<RNBuglyPackage>(ctx));
+  packages.push_back(std::make_shared<RNTextInputMaskPackage>(ctx));
   // manual linking: END
   return packages;
 }
