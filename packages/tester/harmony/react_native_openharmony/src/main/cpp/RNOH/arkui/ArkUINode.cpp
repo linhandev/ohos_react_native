@@ -44,9 +44,39 @@ const std::unordered_map<std::string, ArkUI_NodeType> NODE_TYPE_BY_ROLE_NAME = {
     {"table", ARKUI_NODE_GRID},
 };
 
+const std::unordered_map<facebook::react::Role, ArkUI_NodeType>
+    ROLE_BY_ROLE_TYPE = {
+        {facebook::react::Role::Button, ARKUI_NODE_BUTTON},
+        {facebook::react::Role::Cell, ARKUI_NODE_GRID_ITEM},
+        {facebook::react::Role::Checkbox, ARKUI_NODE_CHECKBOX},
+        {facebook::react::Role::Grid, ARKUI_NODE_GRID},
+        {facebook::react::Role::Img, ARKUI_NODE_IMAGE},
+        {facebook::react::Role::List, ARKUI_NODE_LIST},
+        {facebook::react::Role::Listitem, ARKUI_NODE_LIST_ITEM},
+        {facebook::react::Role::Marquee, ARKUI_NODE_IMAGE_ANIMATOR},
+        {facebook::react::Role::Meter, ARKUI_NODE_PROGRESS},
+        {facebook::react::Role::Option, ARKUI_NODE_LIST_ITEM},
+        {facebook::react::Role::Progressbar, ARKUI_NODE_PROGRESS},
+        {facebook::react::Role::Radio, ARKUI_NODE_RADIO},
+        {facebook::react::Role::Row, ARKUI_NODE_ROW},
+        {facebook::react::Role::Scrollbar, ARKUI_NODE_SCROLL},
+        {facebook::react::Role::Searchbox, ARKUI_NODE_TEXT_INPUT},
+        {facebook::react::Role::Slider, ARKUI_NODE_SLIDER},
+        {facebook::react::Role::Switch, ARKUI_NODE_TOGGLE},
+        {facebook::react::Role::Table, ARKUI_NODE_GRID},
+};
+
 std::optional<ArkUI_NodeType> roleNameToNodeType(const std::string& roleName) {
   auto it = NODE_TYPE_BY_ROLE_NAME.find(roleName);
   if (it != NODE_TYPE_BY_ROLE_NAME.end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
+std::optional<ArkUI_NodeType> roleNameToNodeType(facebook::react::Role role) {
+  auto it = ROLE_BY_ROLE_TYPE.find(role);
+  if (it != ROLE_BY_ROLE_TYPE.end()) {
     return it->second;
   }
   return std::nullopt;
@@ -428,6 +458,27 @@ ArkUINode& ArkUINode::setAccessibilityRole(std::string const& roleName) {
   std::optional<ArkUI_NodeType> maybeNodeType = roleNameToNodeType(roleName);
   if (!maybeNodeType.has_value()) {
     DLOG(WARNING) << "Unsupported accessibility role: " << roleName;
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    return *this;
+  }
+  auto nodeType = maybeNodeType.value();
+  ArkUI_NumberValue value[] = {{.u32 = nodeType}};
+  ArkUI_AttributeItem attr = {
+      .value = value, .size = sizeof(nodeType) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_ACCESSIBILITY_ROLE, &attr));
+  return *this;
+}
+
+ArkUINode& ArkUINode::setAccessibilityRole(facebook::react::Role roleName) {
+  if (roleName == facebook::react::Role::None) {
+    NativeNodeApi::getInstance()->resetAttribute(
+        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    return *this;
+  }
+  std::optional<ArkUI_NodeType> maybeNodeType = roleNameToNodeType(roleName);
+  if (!maybeNodeType.has_value()) {
     NativeNodeApi::getInstance()->resetAttribute(
         m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
     return *this;

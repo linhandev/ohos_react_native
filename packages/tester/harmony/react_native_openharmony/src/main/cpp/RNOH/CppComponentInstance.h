@@ -341,8 +341,13 @@ class CppComponentInstance : public ComponentInstance,
       }
     }
 
-    if (props->accessibilityRole != old->accessibilityHint) {
+    if (props->accessibilityRole != old->accessibilityRole &&
+        props->role == facebook::react::Role::None) {
       localRoot.setAccessibilityRole(props->accessibilityRole);
+    }
+
+    if (props->role != old->role) {
+      localRoot.setAccessibilityRole(props->role);
     }
 
     if (props->accessibilityHint != old->accessibilityHint) {
