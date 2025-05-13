@@ -15,7 +15,8 @@ const NavigationContext = React.createContext<
   | {
       currentPageName: string;
       navigateTo: (pageName: string) => void;
-      registerPageName: (pageName: string) => void;
+      registerPageName: (pageName: string, previousName?: string) => void;
+      unregisterPageName: (pageName: string) => void;
       registeredPageNames: string[];
     }
   | undefined
@@ -38,14 +39,31 @@ export function NavigationContainer({
       value={{
         currentPageName,
         navigateTo: setCurrentPageName,
-        registerPageName: (pageName: string) => {
+        registerPageName: (newName: string, previousName?: string) => {
           setRegisteredPageNames(pageNames => {
-            if (pageNames.includes(pageName)) {
-              return pageNames;
+            let updated = [...pageNames];
+
+            if (previousName && previousName !== newName) {
+              const index = updated.indexOf(previousName);
+              if (index !== -1) {
+                updated.splice(index, 1, newName);
+                return updated;
+              }
             }
-            return [...pageNames, pageName];
+
+            if (!updated.includes(newName)) {
+              updated.push(newName);
+            }
+
+            return updated;
           });
         },
+        unregisterPageName: (pageName: string) => {
+          setRegisteredPageNames(pageNames =>
+            pageNames.filter(name => name !== pageName),
+          );
+        },
+
         registeredPageNames,
       }}>
       <View style={{width: '100%', height: '100%', flexDirection: 'column'}}>
@@ -61,13 +79,21 @@ export function NavigationContainer({
 export function useNavigation() {
   return React.useContext(NavigationContext)!;
 }
-
 export function Page({name, children}: {name: string; children: any}) {
-  const {currentPageName, navigateTo, registerPageName} = useNavigation();
+  const {currentPageName, navigateTo, registerPageName, unregisterPageName} =
+    useNavigation();
+
+  const prevNameRef = React.useRef<string | undefined>(undefined); // 保存初始的name
 
   useEffect(() => {
     if (name !== 'INDEX') {
-      registerPageName(name);
+      const previousName = prevNameRef.current;
+      prevNameRef.current = name;
+      registerPageName(name, previousName);
+
+      if (previousName && previousName !== name) {
+        unregisterPageName?.(previousName);
+      }
     }
   }, [name]);
 
