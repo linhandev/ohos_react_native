@@ -10,7 +10,10 @@ cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different
 set(NATIVERENDER_ROOT_PATH "${RNOH_CPP_DIR}")
 set(third_party_dir "${RNOH_CPP_DIR}/third-party")
 set(patches_dir "${RNOH_CPP_DIR}/patches")
-option(USE_HERMES "Enabled or Disable the Hermes JS Engine" ON)
+if(NOT DEFINED USE_HERMES)
+  set(USE_HERMES ON)
+endif()
+message("USE_HERMES is set to: ${USE_HERMES}")
 
 add_compile_options("-Wno-error=unused-command-line-argument")
 
@@ -355,10 +358,14 @@ add_react_common_subdir(react/renderer/mapbuffer)
 add_react_common_subdir(react/nativemodule/core)
 target_include_directories(react_nativemodule_core PRIVATE "${REACT_COMMON_DIR}/callinvoker")
 
-add_subdirectory("${RNOH_CPP_DIR}/RNOH/executor")
+if(USE_JSVM_ONLY AND NOT USE_HERMES)
+  add_subdirectory("${RNOH_CPP_DIR}/RNOH/react-native-jsvm")
+else()
+  add_subdirectory("${RNOH_CPP_DIR}/RNOH/executor")
+endif()
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_library(rnoh SHARED
+set(RNOH_SOURCE
     "${RNOH_CPP_DIR}/RNOH/RNInstanceArkTS.cpp"
     "${RNOH_CPP_DIR}/RNOH/RNInstanceCAPI.cpp"
     "${RNOH_CPP_DIR}/RNOH/RNInstanceInternal.cpp"
@@ -471,9 +478,16 @@ add_library(rnoh SHARED
     "${RNOH_CPP_DIR}/RNOH/Performance/NativeTracing.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/HarmonyReactMarker.cpp"
     "${RNOH_CPP_DIR}/RNOH/Performance/OHReactMarkerListener.cpp"
-    "${RNOH_CPP_DIR}/RNOH/executor/hermesExecutor.cpp"
-    "${RNOH_CPP_DIR}/RNOH/executor/jsvmExecutor.cpp"
 )
+
+if(USE_JSVM_ONLY AND NOT USE_HERMES)
+  list(APPEND RNOH_SOURCE "${RNOH_CPP_DIR}/RNOH/executor/jsvmExecutor.cpp")
+else()
+  list(APPEND RNOH_SOURCE "${RNOH_CPP_DIR}/RNOH/executor/jsvmExecutor.cpp"
+                          "${RNOH_CPP_DIR}/RNOH/executor/hermesExecutor.cpp")
+endif()
+add_library(rnoh SHARED "${RNOH_SOURCE}")
+
 target_include_directories(rnoh PUBLIC
     "${RNOH_CPP_DIR}"
     "${REACT_COMMON_DIR}"
@@ -499,8 +513,6 @@ target_link_libraries(rnoh PUBLIC
     Boost::context
     reactnative
     react_render_scheduler
-    jsvm_executor_common
-    hermes_executor_common
     rrc_image
     rrc_text
     rrc_textinput
@@ -512,10 +524,16 @@ target_link_libraries(rnoh PUBLIC
     react_render_animations
 )
 
-if(USE_HERMES)
-    target_compile_definitions(rnoh PUBLIC USE_HERMES=1)
+if(USE_JSVM_ONLY AND NOT USE_HERMES)
+  target_link_libraries(rnoh PUBLIC jsvm_executor_common)
+  target_compile_definitions(rnoh PUBLIC USE_HERMES=0)
 else()
+  target_link_libraries(rnoh PUBLIC jsvm_executor_common hermes_executor_common)
+  if(USE_HERMES)
+    target_compile_definitions(rnoh PUBLIC USE_HERMES=1)
+  else()
     target_compile_definitions(rnoh PUBLIC USE_HERMES=0)
+  endif()
 endif()
 
 target_compile_options(rnoh PUBLIC

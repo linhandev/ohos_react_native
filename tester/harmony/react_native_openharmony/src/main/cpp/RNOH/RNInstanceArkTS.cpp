@@ -23,7 +23,6 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOH/SchedulerDelegate.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
 using namespace rnoh;

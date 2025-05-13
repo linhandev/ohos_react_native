@@ -33,7 +33,6 @@
 #include "RNOH/RNInstance.h"
 #include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TaskExecutor/TaskExecutor.h"
-#include "hermes/executor/HermesExecutorFactory.h"
 
 using namespace facebook;
 namespace rnoh {
