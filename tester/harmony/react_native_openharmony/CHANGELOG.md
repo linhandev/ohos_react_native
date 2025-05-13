@@ -1,6 +1,11 @@
 # Changelog
 
-## v0.72.68
+## v0.72.69
+- chore: update to version 6.0.0.202(0.72.69),([e8f4cf86](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8f4cf86e0472de72e3f258b6a9b3080d1047ee1))
+- fix: missing re-layout typography with 0 offset when adjustsFontSizeToFit is on,([875855a4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/875855a4a3bacc8be9448969102f5c52d96010ee))
+- fix：Fix triggering clicks when performing gestures in a ScrollView,([67cda84a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/67cda84a6322fb09fdca52360683d2953d353ba8))
+- fix: Initialize m_content to accurately calculate the cursor position.,([afb02e06](https://gitcode.com/openharmony-sig/ohos_react_native/commit/afb02e0657841431874dab14eda32823fd561e54))
+- chore: update to version 6.0.0.201(0.72.68),([a6d2927b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a6d2927b980862d6c67db8d355ca098caf3572e6))
 - feat: supports adjusting the spacing between characters of TextInput by letterspacing,([37796d18](https://gitcode.com/openharmony-sig/ohos_react_native/commit/37796d182fc549e033d0748017e152cd01c1cc92))
 - chore: update to version 5.1.0.404(0.72.67),([5eab013d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5eab013da208461d9c1dff51a7bf7f90d8d7f0a9))
 
