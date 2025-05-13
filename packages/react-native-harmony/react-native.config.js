@@ -3,7 +3,7 @@ const pathUtils = require('node:path');
 let commands = [];
 try {
   const harmony = require('@react-native-oh/react-native-harmony-cli');
-  commands = harmony?.config?.commands
+  commands = harmony?.config?.commands;
 } catch (err) {
   if (typeof err === 'object' && err?.code === 'MODULE_NOT_FOUND') {
     console.warn(
@@ -46,13 +46,16 @@ function deriveFullNpmPackageNameFromDirname(dirname) {
      * Production environment
      */
     const nodeModulesIndex = pathSegments.indexOf('node_modules');
-    const organizationNameAndPackageName = pathSegments.slice(
+    const organizationNameMaybeAndPackageName = pathSegments.slice(
       nodeModulesIndex + 1
     );
-    if (organizationNameAndPackageName.length !== 2) {
-      return null;
+    if (organizationNameMaybeAndPackageName.length === 1) {
+      return organizationNameMaybeAndPackageName[0]; // packageName
     }
-    return organizationNameAndPackageName.join('/');
+    if (organizationNameMaybeAndPackageName.length === 2) {
+      return organizationNameMaybeAndPackageName.join('/');
+    }
+    return null;
   } else {
     /**
      * RNOH development environment
