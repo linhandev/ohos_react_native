@@ -33,7 +33,13 @@ import font from "@ohos.font"
 import { RNOHMarker, RNOHMarkerEventPayload } from './RNOHMarker'
 import { JSEngineName } from './types'
 
+
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
+
+/**
+ * TouchEvent is globally available in *.ets files but can't be imported in *.ts.
+ */
+type TouchEvent = unknown
 
 type SurfaceContextCommon = {
   surfaceOffsetX: number;
@@ -915,9 +921,9 @@ export class RNInstanceImpl implements RNInstance {
       if (this.shouldEnableDebugger && isRemoteBundle) {
         this.maybeDisconnectDebugger = DevServerHelper.connectToDevServer(
           jsBundleProvider.getURL(),
-          this.getName(),
           this.logger,
           this.napiBridge,
+          this.getName(),
         );
       }
       this.bundleExecutionStatusByBundleURL.set(bundleURL, 'DONE');

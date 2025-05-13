@@ -37,8 +37,9 @@ export class DevServerHelper {
   static DEBUGGER_MSG_DISABLE = "{ \"id\":1,\"method\":\"Debugger.disable\" }";
   static connectionByInspectorUrl = new Map<string, InspectorPackagerConnection>();
 
-  public static connectToDevServer(bundleUrl: string, appName: string, logger: RNOHLogger,
-    napiBridge: NapiBridge) {
+  public static connectToDevServer(bundleUrl: string, logger: RNOHLogger,
+    napiBridge: NapiBridge, appName: string | undefined = undefined) {
+    appName = appName ?? ("undefinedAppName@" + new Date().toISOString())
     const _logger = logger.clone(`DevServerHelper::connectToDevServer (appName=${appName})`);
     const inspectorUrl = getInspectorDeviceUrl(bundleUrl);
     let connection = DevServerHelper.connectionByInspectorUrl.get(inspectorUrl);
@@ -52,6 +53,7 @@ export class DevServerHelper {
 
     return () => {
       connection.closeQuietly()
+      DevServerHelper.connectionByInspectorUrl.delete(inspectorUrl)
       _logger.debug("CLOSE")
     };
   }

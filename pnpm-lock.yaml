@@ -708,7 +708,7 @@ importers:
         version: 1.0.7-0.0.3(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@types/react@18.3.18)(encoding@0.1.13)(react@18.3.1)
       '@react-native-oh-tpl/react-native-track-player':
         specifier: latest
-        version: 4.1.1-0.0.1(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+        version: 4.1.2(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-tts':
         specifier: latest
         version: 4.1.1-0.0.3
@@ -2572,8 +2572,8 @@ packages:
   '@react-native-oh-tpl/react-native-toast@1.0.7-0.0.3':
     resolution: {integrity: sha512-dqGoLYK7W59s7C6z3TPpNZ0TU9PhvbPlOOmuqhSh7FGBNav5geFs+GENPTJZfYI821wYSCyLja3dprEs4D7jeg==}
 
-  '@react-native-oh-tpl/react-native-track-player@4.1.1-0.0.1':
-    resolution: {integrity: sha512-F5lvA0HAMp89s53RddSJB6lBnbM68d+TjeEBQsKM3OJH1ARFXSBrmCc8oaZoN+bUPeUE54FK24gAQ9HcUkA4vQ==}
+  '@react-native-oh-tpl/react-native-track-player@4.1.2':
+    resolution: {integrity: sha512-DQfVz+mFlMYryhqPxiO4AwHUnEFEvZ8QBQe4tJanrU+M0JN1XcVNvAcsboahvA2/LVHf1jFfXVxKgWKK86/EvQ==}
     peerDependencies:
       react: '>=16.8.6'
       react-native: '>=0.60.0-rc.2'
@@ -10915,7 +10915,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native-oh-tpl/react-native-track-player@4.1.1-0.0.1(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+  '@react-native-oh-tpl/react-native-track-player@4.1.2(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
