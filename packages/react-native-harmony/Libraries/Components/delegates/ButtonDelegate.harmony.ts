@@ -35,4 +35,8 @@ export default class ButtonDelegate extends BaseButtonDelegate {
       fontWeight: '500',
     };
   }
+
+  override getInnerViewFocusable(): boolean {
+    return false;
+  }
 }
