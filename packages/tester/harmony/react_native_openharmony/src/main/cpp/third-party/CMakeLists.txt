@@ -19,7 +19,6 @@ set(BOOST_INCLUDE_LIBRARIES
   intrusive
   stacktrace
   locale
-  numeric_conversion
 )
 add_subdirectory("${third_party_dir}/boost" EXCLUDE_FROM_ALL)
 
