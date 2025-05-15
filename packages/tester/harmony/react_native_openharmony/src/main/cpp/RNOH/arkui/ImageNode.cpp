@@ -179,7 +179,7 @@ ImageNode& ImageNode::setCapInsets(
     right = (capInsets.right < 1 ? 1 : capInsets.right) /
         (dpi * 2); // arkui need right >= 1 if wants capInsets works
     top = capInsets.top / (dpi * 2);
-    bottom = (capInsets.right < 1 ? 1 : capInsets.right) /
+    bottom = (capInsets.bottom < 1 ? 1 : capInsets.bottom) /
         (dpi * 2); // arkui need bottom >= 1 if wants capInsets works
   }
 
