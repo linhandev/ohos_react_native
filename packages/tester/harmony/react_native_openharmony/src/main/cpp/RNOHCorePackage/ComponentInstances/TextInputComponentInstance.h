@@ -62,6 +62,7 @@ class TextInputComponentInstance
       size_t selectionStart,
       size_t selectionEnd);
   void setTextContent(std::string const& content);
+  int32_t countUtf8Characters(std::string const& content);
 
  public:
   TextInputComponentInstance(Context context);

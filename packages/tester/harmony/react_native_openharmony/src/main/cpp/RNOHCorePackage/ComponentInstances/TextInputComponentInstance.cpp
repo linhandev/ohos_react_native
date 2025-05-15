@@ -462,6 +462,63 @@ void TextInputComponentInstance::onLayoutChanged(
       layoutMetrics.pointScaleFactor);
 }
 
+int32_t TextInputComponentInstance::countUtf8Characters(
+    std::string const& content) {
+  /**
+   * For TextInput component, when value is set and user tries to enter Chinese
+   * characters, the caret would not be kept at the end of TextInput value. The
+   * reason is that the under UTF-8 encoding, English and Chinese character
+   * length is calculated differently using m_content.size(). English char has
+   * length 1, while Chinese char has length 3, which would cause caret position
+   * calculation error.
+   */
+  int32_t length = 0;
+
+  // UTF-8 encoding constants in binary representation
+  constexpr uint8_t ONE_BYTE_MASK = 0b10000000;
+  constexpr uint8_t ONE_BYTE_FLAG = 0b00000000;
+  constexpr uint8_t TWO_BYTE_MASK = 0b11100000;
+  constexpr uint8_t TWO_BYTE_FLAG = 0b11000000;
+  constexpr uint8_t THREE_BYTE_MASK = 0b11110000;
+  constexpr uint8_t THREE_BYTE_FLAG = 0b11100000;
+  constexpr uint8_t FOUR_BYTE_MASK = 0b11111000;
+  constexpr uint8_t FOUR_BYTE_FLAG = 0b11110000;
+
+  // Character byte length constants
+  constexpr size_t SINGLE_BYTE_CHAR = 1;
+  constexpr size_t DOUBLE_BYTE_CHAR = 2;
+  constexpr size_t TRIPLE_BYTE_CHAR = 3;
+  constexpr size_t QUAD_BYTE_CHAR = 4;
+
+  for (size_t i = 0; i < content.size();) {
+    const uint8_t leadByte = static_cast<uint8_t>(content[i]);
+    size_t charBytes = SINGLE_BYTE_CHAR; // Default to 1 byte
+
+    if ((leadByte & ONE_BYTE_MASK) == ONE_BYTE_FLAG) {
+      charBytes = SINGLE_BYTE_CHAR;
+    } else if ((leadByte & TWO_BYTE_MASK) == TWO_BYTE_FLAG) {
+      charBytes = DOUBLE_BYTE_CHAR;
+    } else if ((leadByte & THREE_BYTE_MASK) == THREE_BYTE_FLAG) {
+      charBytes = TRIPLE_BYTE_CHAR;
+    } else if ((leadByte & FOUR_BYTE_MASK) == FOUR_BYTE_FLAG) {
+      charBytes = QUAD_BYTE_CHAR;
+    } else {
+      ++length;
+      continue;
+    }
+
+    // Verify we have enough bytes remaining
+    if (i + charBytes > content.size()) {
+      charBytes = content.size() - i;
+    }
+
+    i += charBytes;
+    ++length;
+  }
+
+  return length;
+}
+
 void TextInputComponentInstance::setTextContentAndSelection(
     std::string const& content,
     size_t selectionStart,
@@ -479,8 +536,8 @@ void TextInputComponentInstance::setTextContent(std::string const& content) {
   // NOTE: if selection isn't set explicitly by JS side, we want it to stay
   // roughly in the same place, rather than have it move to the end of the
   // input (which is the ArkUI default behaviour)
-  auto selectionFromEnd = m_content.size() - m_selectionLocation;
-  auto selectionStart = content.size() - selectionFromEnd;
+  auto selectionFromEnd = countUtf8Characters(m_content) - m_selectionLocation;
+  auto selectionStart = countUtf8Characters(content) - selectionFromEnd;
   auto selectionEnd = selectionStart + m_selectionLength;
   setTextContentAndSelection(content, selectionStart, selectionEnd);
 }
