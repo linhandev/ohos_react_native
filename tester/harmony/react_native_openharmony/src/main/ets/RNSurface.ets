@@ -253,7 +253,7 @@ struct ContentAdaptiveSurface {
     }
     const measuredSize = this.currentMeasuredSize;
     const newSize: Size =
-      { width: measuredSize?.width || selfLayoutInfo.width, height: measuredSize?.height || selfLayoutInfo.height }
+      { width: measuredSize?.width ?? selfLayoutInfo.width, height: measuredSize?.height ?? selfLayoutInfo.height }
     children.forEach((child) => {
       child.measure({
         minHeight: newSize.height,
