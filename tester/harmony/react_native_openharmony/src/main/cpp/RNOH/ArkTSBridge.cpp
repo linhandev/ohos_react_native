@@ -96,7 +96,7 @@ auto ArkTSBridge::getMetadata(std::string const& name) -> std::string {
   return m_arkJs.getString(napiResult);
 }
 
-auto ArkTSBridge::GetSDKApiVersion() -> float
+auto ArkTSBridge::getSDKApiVersion() -> float
 {
   auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
   auto methodImpl =
