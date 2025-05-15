@@ -50,6 +50,12 @@ export function ScrollViewTest() {
         itShould="fill the remaining space of scroll view with yellow color but the element inside scroll view remains transparent">
         <ScrollViewEndFillColorTest />
       </TestCase>
+      <TestCase
+        modal
+        skip
+        itShould="Fades out the edges of the the scroll content">
+        <ScrollViewFadingEdgeLengthTest />
+      </TestCase>
     </TestSuite>
   );
 }
@@ -188,5 +194,22 @@ function ScrollViewEndFillColorTest() {
         </ScrollView>
       </View>
     </View>
+  );
+}
+
+function ScrollViewFadingEdgeLengthTest() {
+  const data = Array.from({ length: 10 }, (_, i) => `Item ${i + 1}`);
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      fadingEdgeLength={32}
+    >
+      {data.map((item, index) => (
+        <View key={index} style={{ padding: 10, backgroundColor: 'yellow' }}>
+          <Text>{item}</Text>
+        </View>
+      ))}
+    </ScrollView>
   );
 }

@@ -39,6 +39,7 @@ class ScrollViewComponentJSIBinder : public ViewComponentJSIBinder {
     object.setProperty(rt, "nestedScrollEnabled", "boolean");
     object.setProperty(rt, "overScrollMode", "string");
     object.setProperty(rt, "endFillColor", "Color");
+    object.setProperty(rt, "fadingEdgeLength", "number");
     object.setProperty(rt, "centerContent", "boolean");
     object.setProperty(rt, "removeClippedSubviews", "boolean");
     object.setProperty(rt, "__keyboardAvoidingViewBottomHeight", true);

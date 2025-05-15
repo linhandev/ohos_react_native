@@ -238,6 +238,14 @@ ScrollNode& ScrollNode::setCenterContent(bool centerContent) {
   return *this;
 }
 
+ScrollNode& ScrollNode::setFadingEdge(float length) {
+  ArkUI_NumberValue value[] = {{.i32 = length > 0}, {.f32 = length}};
+  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
+  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      m_nodeHandle, NODE_SCROLL_FADING_EDGE, &item));
+  return *this;
+}
+
 ScrollNode& ScrollNode::resetScrollSnap() {
   maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
       m_nodeHandle, NODE_SCROLL_SNAP));

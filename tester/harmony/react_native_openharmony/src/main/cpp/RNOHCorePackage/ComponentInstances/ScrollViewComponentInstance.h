@@ -52,6 +52,7 @@ class ScrollViewComponentInstance
     std::optional<std::string> overScrollMode;
     std::optional<bool> nestedScrollEnabled;
     std::optional<uint32_t> endFillColor;
+    std::optional<float> fadingEdgeLength;
     static ScrollViewRawProps getFromDynamic(folly::dynamic value);
   };
   ScrollViewRawProps m_rawProps;

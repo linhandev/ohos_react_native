@@ -187,6 +187,13 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
       m_scrollNode.setEndFillColor(m_rawProps.endFillColor.value());
     }
   }
+  
+  if (m_rawProps.fadingEdgeLength != rawProps.fadingEdgeLength) {
+    m_rawProps.fadingEdgeLength = rawProps.fadingEdgeLength;
+    if (m_rawProps.fadingEdgeLength.has_value()) {
+      m_scrollNode.setFadingEdge(m_rawProps.fadingEdgeLength.value());
+    }
+  }
 
   if (!m_props || props->contentOffset != m_props->contentOffset ||
       props->scrollToOverflowEnabled != m_props->scrollToOverflowEnabled) {
@@ -713,8 +720,11 @@ ScrollViewComponentInstance::ScrollViewRawProps::getFromDynamic(folly::dynamic v
   auto endFillColor = (value.count("endFillColor") > 0)
       ? std::optional(value["endFillColor"].asInt())
       : std::nullopt;
+  auto fadingEdgeLength = (value.count("fadingEdgeLength") > 0)
+      ? std::optional(value["fadingEdgeLength"].asDouble())
+      : std::nullopt;
   
-  return {overScrollMode, nestedEnabled, endFillColor};
+  return {overScrollMode, nestedEnabled, endFillColor, fadingEdgeLength};
 }
 
 facebook::react::Point ScrollViewComponentInstance::getContentViewOffset()
