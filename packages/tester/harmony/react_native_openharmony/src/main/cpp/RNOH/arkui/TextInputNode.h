@@ -92,7 +92,7 @@ class TextInputNodeDelegate {
 class TextInputNode : public TextInputNodeBase {
  private:
   uint32_t m_caretColorValue;
-  bool m_setTextContent{false};
+  bool m_hasRNSetTextContext{false};
   std::string m_textContent;
   bool m_autoFocus{false};
 
