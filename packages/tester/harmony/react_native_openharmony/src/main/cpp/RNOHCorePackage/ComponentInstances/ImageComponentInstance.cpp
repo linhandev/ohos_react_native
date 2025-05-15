@@ -45,12 +45,7 @@ void ImageComponentInstance::setSources(
   auto newSource = m_deps->imageSourceResolver->resolveImageSource(
       *this, m_layoutMetrics, sources);
 
-  if (!newSource.has_value()) {
-    this->getLocalRootArkUINode().resetSource();
-    return;
-  }
-
-  auto imageSource = newSource.value().uri;
+  auto imageSource = newSource.uri;
   if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
     std::string assetsPrefix = this->getAssetsPrefix();
     imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());

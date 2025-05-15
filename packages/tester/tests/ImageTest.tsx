@@ -246,6 +246,44 @@ export const ImageTest = () => {
         />
       </TestCase.Example>
       <TestCase.Automated
+        itShould="display an image even if prefetch fails"
+        skip={noInternetSkipMsg}
+        initialState={{
+          uri: `${REMOTE_IMAGE_URL}&t=${new Date().getTime()}`,
+          wasOnErrorCalled: false,
+          wasOnLoadEndCalled: false,
+        }}
+        arrange={({state, setState, done}) => {
+          return (
+            <Image
+              source={{uri: state.uri}}
+              style={{width: 100, height: 100}}
+              onError={() => {
+                setState(prev => ({...prev, wasOnErrorCalled: true}));
+              }}
+              onLoadEnd={() => {
+                setState(prev => ({...prev, wasOnLoadEndCalled: true}));
+                done();
+              }}
+            />
+          );
+        }}
+        act={async ({state}) => {
+          await Image.prefetch(
+            state.uri,
+            // @ts-ignore
+            (requestId: number) => {
+              setTimeout(() => {
+                Image.abortPrefetch?.(requestId);
+              }, 10);
+            },
+          );
+        }}
+        assert={({expect, state}) => {
+          expect(state.wasOnErrorCalled).to.be.eq(false);
+        }}
+      />
+      <TestCase.Automated
         itShould="call onLoadStart"
         initialState={'not called'}
         arrange={({state, setState, done}) => {

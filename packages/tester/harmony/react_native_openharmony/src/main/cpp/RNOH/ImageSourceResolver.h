@@ -47,7 +47,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
     ImageSourceResolver::Shared const& m_imageSourceResolver;
   };
 
-  std::optional<facebook::react::ImageSource> resolveImageSource(
+  facebook::react::ImageSource resolveImageSource(
       ImageSourceUpdateListener& listener,
       facebook::react::LayoutMetrics const& layoutMetrics,
       facebook::react::ImageSources const& newSourcesCandidates) {
@@ -81,7 +81,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
     if (auto it = remoteImageSourceMap.find(imageCandidate.uri);
         it != remoteImageSourceMap.end()) {
       if (it->second == IMAGE_SOURCE_PENDING) {
-        return std::nullopt;
+        return imageCandidate;
       }
       imageCandidate.uri = it->second;
     }

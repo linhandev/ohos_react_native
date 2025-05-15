@@ -159,8 +159,10 @@ export class RemoteImageLoader {
     this.activePrefetchByUrl.set(uri, promise);
     promise.finally(() => {
       this.activePrefetchByUrl.delete(uri);
-      const fileUri = `file://${this.diskCache.getLocation(uri)}`;
-      this.onDiskCacheUpdate({remoteUri: uri, fileUri})
+      if (this.diskCache.has(uri)) {
+        const fileUri = `file://${this.diskCache.getLocation(uri)}`;
+        this.onDiskCacheUpdate({remoteUri: uri, fileUri});
+      }
     });
 
     return await promise;
