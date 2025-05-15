@@ -31,6 +31,7 @@ import {
 } from './TurboModule';
 import type {TurboModuleProvider} from "./TurboModuleProvider";
 import type {DisplayMetrics, InspectorInstance} from './types'
+import { deviceInfo } from '@kit.BasicServicesKit';
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "WORKER_THREAD_ENABLED"
 
@@ -60,6 +61,7 @@ export interface ArkTSBridgeHandler {
   getIsSplitScreenMode: () => boolean
   getFontSizeScale: () => number
   getMetadata: (name: string) => string
+  getSDKApiVersion: () => number,
 }
 
 export class NapiBridge {
@@ -115,6 +117,7 @@ export class NapiBridge {
       getIsSplitScreenMode: () => arkTSBridgeHandler.getIsSplitScreenMode(),
       getFontSizeScale: () => arkTSBridgeHandler.getFontSizeScale(),
       getMetadata: (name: string) => arkTSBridgeHandler.getMetadata(name),
+      getSDKApiVersion: () => deviceInfo.sdkApiVersion,
     } satisfies ArkTSBridgeHandler)
   }
 
@@ -370,7 +373,8 @@ export class NapiBridge {
       getFoldStatus: () => handler.getFoldStatus(),
       getIsSplitScreenMode: () => handler.getIsSplitScreenMode(),
       getFontSizeScale: () => handler.getFontSizeScale(),
-      getMetadata: (name: string) => handler.getMetadata(name)
+      getMetadata: (name: string) => handler.getMetadata(name),
+      getSDKApiVersion: () => deviceInfo.sdkApiVersion,
     });
   }
 

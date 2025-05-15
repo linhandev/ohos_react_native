@@ -96,6 +96,15 @@ auto ArkTSBridge::getMetadata(std::string const& name) -> std::string {
   return m_arkJs.getString(napiResult);
 }
 
+auto ArkTSBridge::GetSDKApiVersion() -> float
+{
+  auto napiBridgeObject = m_arkJs.getReferenceValue(m_arkTSBridgeRef);
+  auto methodImpl =
+      m_arkJs.getObjectProperty(napiBridgeObject, "getSDKApiVersion");
+  auto napiResult = m_arkJs.call<0>(methodImpl, {});
+  return m_arkJs.getInteger(napiResult);
+}
+
 auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJs(env);

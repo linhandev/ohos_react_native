@@ -29,6 +29,7 @@ import { bundleManager } from '@kit.AbilityKit';
 import { EventEmitter } from './EventEmitter';
 import { WorkerTaskRunner } from './WorkerTaskRunner';
 import { EtsUITurboModuleContext } from '.';
+import { deviceInfo } from '@kit.BasicServicesKit';
 
 /**
  * This interface allows providing dependencies in any order.
@@ -134,6 +135,7 @@ export class RNInstancesCoordinator {
           getFoldStatus: () => displayMetricsManager.getFoldStatus(),
           getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
           getMetadata,
+          getSDKApiVersion: () => deviceInfo.sdkApiVersion,
         });
 
     let devMenu: DevMenu = new NoopDevMenu()
@@ -167,7 +169,8 @@ export class RNInstancesCoordinator {
       getFoldStatus: () => displayMetricsManager.getFoldStatus(),
       getIsSplitScreenMode: () => displayMetricsManager.getIsSplitScreenMode(),
       getFontSizeScale: () => displayMetricsManager.getFontSizeScale(),
-      getMetadata
+      getMetadata,
+      getSDKApiVersion: () => deviceInfo.sdkApiVersion
     });
     return new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
