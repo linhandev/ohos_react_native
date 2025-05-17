@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.72.71
+- Include API version compatibility check.,([c567edb0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c567edb0e76e3897d3e3949bda597f4447832f22))
+- feat: Support ScrollView fadingEdgeLength,([fb2ea2e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fb2ea2e7c19fc8b577f5a4ffccd4cb3162931422))
+- Feat: Provide an interface for obtaining OH SDK API version,([28545cee](https://gitcode.com/openharmony-sig/ohos_react_native/commit/28545ceee12886e3506b59ddc3beeb12c4d7cb3c))
+- fix: Fix the flickering issue when RNSurface height is auto-adjusting.,([316cf864](https://gitcode.com/openharmony-sig/ohos_react_native/commit/316cf864b5d9de876425590794db2f30386a14ea))
+- fix: When using the JSVM engine, exclude Hermes-related shared object files (.so),([819404c0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/819404c0ddfdb337377557f94673f715cd79556d))
+
 ## v0.72.69
 - chore: update to version 6.0.0.202(0.72.69),([e8f4cf86](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8f4cf86e0472de72e3f258b6a9b3080d1047ee1))
 - fix: missing re-layout typography with 0 offset when adjustsFontSizeToFit is on,([875855a4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/875855a4a3bacc8be9448969102f5c52d96010ee))
