@@ -33,6 +33,11 @@ namespace rnoh {
 TextInputComponentInstance::TextInputComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
       ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {
+  m_textInputNode.setPadding(resolveEdges(
+      [this](auto edge) { return m_props->yogaStyle.padding(edge); }));
+  m_textAreaNode.setPadding(resolveEdges(
+      [this](auto edge) { return m_props->yogaStyle.padding(edge); }));
+
   m_textAreaNode.setBackgroundColor(facebook::react::clearColor());
   m_textInputNode.setBackgroundColor(facebook::react::clearColor());
 }
