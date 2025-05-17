@@ -35,8 +35,6 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
 
   ComponentInstance::Shared findByTag(facebook::react::Tag tag) const {
     assertMainThread();
-    facebook::react::SystraceSection s(
-        "#RNOH::ComponentInstanceRegistry::findByTag");
     auto it = m_componentInstanceByTag.find(tag);
     if (it != m_componentInstanceByTag.end()) {
       return it->second;

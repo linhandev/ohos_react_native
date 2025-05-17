@@ -55,8 +55,6 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
-    facebook::react::SystraceSection s(
-        "#RNOH::ComponentInstanceFactory::createArkTSComponent");
     m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,
@@ -84,8 +82,6 @@ class ComponentInstanceFactory {
       facebook::react::Tag tag,
       facebook::react::ComponentHandle componentHandle,
       std::string componentName) {
-    facebook::react::SystraceSection s(
-        "#RNOH::ComponentInstanceFactory::create");
     m_threadGuard.assertThread();
     ComponentInstance::Context ctx = {
         .tag = tag,
