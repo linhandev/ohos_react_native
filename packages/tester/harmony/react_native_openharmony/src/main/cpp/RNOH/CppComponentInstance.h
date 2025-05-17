@@ -30,7 +30,21 @@ inline facebook::react::Rect transformRectAroundPoint(
     const facebook::react::Transform& transform);
 
 /**
- * @api
+ * @brief Template class that implements core React Native component
+ * functionality for the OpenHarmony platform.
+ *
+ * CppComponentInstance serves as a bridge between React Native's shadow tree
+ * and ArkUI native components. It manages component lifecycle, handles
+ * property updates, state management, event handling, and touch interaction.
+ *
+ * Key features:
+ * - Manages component props, state, and event emitters
+ * - Handles layout updates and transformations
+ * - Processes touch events and hit testing
+ * - Manages accessibility properties
+ * - Handles component borders, opacity, and other visual properties
+ *
+ * @tparam ShadowNodeT The concrete shadow node type this instance represents
  */
 template <typename ShadowNodeT>
 class CppComponentInstance : public ComponentInstance,
@@ -54,6 +68,9 @@ class CppComponentInstance : public ComponentInstance,
   CppComponentInstance(Context context)
       : ComponentInstance(std::move(context)) {}
 
+  /**
+   * @brief Called when the component instance is created
+   */
   void onCreate() override {
     try {
       this->getLocalRootArkUINode().setArkUINodeDelegate(this);
@@ -62,30 +79,61 @@ class CppComponentInstance : public ComponentInstance,
     }
   }
 
+  /**
+   * @brief Returns the React tag (unique integer identifier) for this
+   * component instance.
+   * @return The tag associated with this component instance.
+   */
   facebook::react::Tag getTag() const {
     return m_tag;
   }
 
+  /**
+   * @brief Returns a component ID string, prioritizing testId, then
+   * nativeId, or generates a fallback ID if neither is set.
+   * @return The component's ID string.
+   */
   std::string getCompId() override {
     return this->getIdFromProps(m_props);
   }
 
+  /**
+   * @brief Gets the current React props for this component instance.
+   * @return Shared pointer to the current props object.
+   */
   facebook::react::Props::Shared getProps() const override {
     return m_props;
   }
 
+  /**
+   * @brief Gets the current state object for this component instance.
+   * @return Shared pointer to the current state object.
+   */
   SharedConcreteState const& getState() const {
     return m_state;
   }
 
+  /**
+   * @brief Gets the current event emitter for this component instance.
+   * @return Shared pointer to the current event emitter object.
+   */
   SharedConcreteEventEmitter const& getEventEmitter() const {
     return m_eventEmitter;
   }
 
+  /**
+   * @brief Returns the accessibility label for this component.
+   * @return The accessibility label string.
+   */
   const std::string& getAccessibilityLabel() const override {
     return m_accessibilityLabel;
   }
 
+  /**
+   * @brief Indicates if this component is in an accessibility group (i.e.,
+   * should be treated as a group by screen readers).
+   * @return True if this is an accessibility group, false otherwise.
+   */
   bool getAccessibilityGroup() const override {
     return m_accessibilityGroup;
   }
@@ -96,6 +144,12 @@ class CppComponentInstance : public ComponentInstance,
    * (latestRNOHVersion: 0.72.27)
    */
  public:
+  /**
+   * @deprecated
+   * @brief Sets the React props for this component instance. If the new props
+   * are different, triggers onPropsChanged and updates internal state.
+   * @param props Shared pointer to the new props object.
+   */
   void setProps(facebook::react::Props::Shared props) final {
     auto newProps = std::dynamic_pointer_cast<const ConcreteProps>(props);
     if (!newProps || m_props == newProps) {
@@ -105,6 +159,12 @@ class CppComponentInstance : public ComponentInstance,
     m_props = newProps;
   }
 
+  /**
+   * @deprecated
+   * @brief Sets the React state for this component instance. If the new state
+   * is different, triggers onStateChanged and updates internal state.
+   * @param state Shared pointer to the new state object.
+   */
   void setState(facebook::react::State::Shared state) final {
     auto newState = std::dynamic_pointer_cast<const ConcreteState>(state);
     if (!newState || m_state == newState) {
@@ -115,6 +175,13 @@ class CppComponentInstance : public ComponentInstance,
     m_state = newState;
   }
 
+  /**
+   * @deprecated
+   * @brief Sets the event emitter for this component instance. If the new
+   * event emitter is different, triggers onEventEmitterChanged and updates
+   * internal state.
+   * @param eventEmitter Shared pointer to the new event emitter object.
+   */
   void setEventEmitter(facebook::react::SharedEventEmitter eventEmitter) final {
     auto newEventEmitter =
         std::dynamic_pointer_cast<const ConcreteEventEmitter>(eventEmitter);
@@ -125,6 +192,12 @@ class CppComponentInstance : public ComponentInstance,
     m_eventEmitter = newEventEmitter;
   }
 
+  /**
+   * @deprecated
+   * @brief Sets the layout metrics (position, size, etc.) for this component.
+   * Triggers onLayoutChanged and updates internal layout state.
+   * @param layoutMetrics The new layout metrics.
+   */
   void setLayout(facebook::react::LayoutMetrics layoutMetrics) override {
     if (layoutMetrics == m_layoutMetrics) {
       return;
@@ -135,21 +208,45 @@ class CppComponentInstance : public ComponentInstance,
 
  public:
   // TouchTarget implementation
+  /**
+   * @brief Returns the current layout metrics (position, size, etc.) for this
+   * component instance.
+   * @return The current layout metrics.
+   */
   facebook::react::LayoutMetrics getLayoutMetrics() const override {
     return m_layoutMetrics;
   }
 
+  /**
+   * @brief Checks if a given point is within the hit rectangle of this
+   * component (used for touch handling).
+   * @param point The point to check (position is relative to upperleft corner
+   * of this component).
+   * @return True if the point is within the hit rect, false otherwise.
+   */
   bool containsPoint(facebook::react::Point const& point) const override {
     auto hitRect = getHitRect();
     return hitRect.containsPoint(point);
   }
 
+  /**
+   * @brief Checks if a given point is within the bounding box of this
+   * component (including children, if not clipped).
+   * @param point The point to check (position is relative to upperleft corner
+   * of this component).
+   * @return True if the point is within the bounding box, false otherwise.
+   */
   bool containsPointInBoundingBox(
       facebook::react::Point const& point) override {
     auto boundingBox = this->getBoundingBox();
     return boundingBox.containsPoint(point);
   }
 
+  /**
+   * @brief Determines if this component can handle touch events directly.
+   * Considers parent and pointerEvents prop.
+   * @return True if this component can handle touch, false otherwise.
+   */
   bool canHandleTouch() const override {
     auto parent = m_parent.lock();
     if (parent && !parent->canChildrenHandleTouch()) {
@@ -164,6 +261,11 @@ class CppComponentInstance : public ComponentInstance,
     return true;
   };
 
+  /**
+   * @brief Determines if this component's children can handle touch events.
+   * Considers parent and pointerEvents prop.
+   * @return True if children can handle touch, false otherwise.
+   */
   bool canChildrenHandleTouch() const override {
     auto parent = m_parent.lock();
     if (parent && !parent->canChildrenHandleTouch()) {
@@ -178,6 +280,13 @@ class CppComponentInstance : public ComponentInstance,
     return true;
   };
 
+  /**
+   * @brief Recursively checks if any child in the subtree can handle a touch
+   * event at the given point.
+   * @param point The point to check (position is relative to upperleft corner
+   * of this component).
+   * @return True if any child can handle the touch, false otherwise.
+   */
   bool canSubtreeHandleTouch(facebook::react::Point const& point) override {
     auto children = getTouchTargetChildren();
     for (auto const& child : children) {
@@ -202,28 +311,54 @@ class CppComponentInstance : public ComponentInstance,
     return false;
   };
 
+  /**
+   * @brief Returns the tag of the touch target for this component
+   * @return The tag of the touch target.
+   */
   facebook::react::Tag getTouchTargetTag() const override {
     return getTag();
   }
 
+  /**
+   * @brief Returns the parent component of this component, if any.
+   * @return Shared pointer to the parent touch target, or nullptr if none.
+   */
   TouchTarget::Shared getTouchTargetParent() const override {
     return getParent().lock();
   }
 
+  /**
+   * @brief Returns the touch event emitter for this component instance.
+   * @return Shared pointer to the touch event emitter.
+   */
   facebook::react::SharedTouchEventEmitter getTouchEventEmitter()
       const override {
     return m_eventEmitter;
   }
 
+  /**
+   * @brief Returns a vector of shared pointers to the touch target children
+   * of this component instance.
+   * @return Vector of shared pointers to child touch targets.
+   */
   std::vector<TouchTarget::Shared> getTouchTargetChildren() override {
     auto children = getChildren();
     return std::vector<TouchTarget::Shared>(children.begin(), children.end());
   }
 
+  /**
+   * @brief Returns the current transform matrix for this component instance.
+   * @return The transform matrix.
+   */
   facebook::react::Transform getTransform() const override {
     return m_transform;
   }
 
+  /**
+   * @brief Returns the bounding box of this component, including children if
+   * not clipped. Caches the result for efficiency.
+   * @return The bounding box rectangle.
+   */
   facebook::react::Rect getBoundingBox() override {
     if (!m_boundingBox.has_value()) {
       calculateBoundingBox();
@@ -231,10 +366,19 @@ class CppComponentInstance : public ComponentInstance,
     return m_boundingBox.value();
   };
 
+  /**
+   * @brief Indicates if this component clips its subviews (children) to its
+   * bounds.
+   * @return True if subviews are clipped, false otherwise.
+   */
   bool isClippingSubviews() const override {
     return m_isClipping;
   }
 
+  /**
+   * @brief Marks the cached bounding box as dirty, so it will be recalculated
+   * on next access. Propagates up the parent chain if not clipped.
+   */
   void markBoundingBoxAsDirty() override {
     if (m_boundingBox.has_value()) {
       m_boundingBox.reset();
@@ -247,6 +391,14 @@ class CppComponentInstance : public ComponentInstance,
   };
 
  protected:
+  /**
+   * @brief Called when the layout metrics for this component change.
+   *
+   * Updates the local root node's layout, transform, shadow, and direction as
+   * needed. Also marks the bounding box as dirty to trigger recalculation.
+   *
+   * @param layoutMetrics The new layout metrics for the component.
+   */
   virtual void onLayoutChanged(
       facebook::react::LayoutMetrics const& layoutMetrics) {
     auto maybeLocalRoot = maybeGetLocalRoot();
@@ -281,6 +433,14 @@ class CppComponentInstance : public ComponentInstance,
     markBoundingBoxAsDirty();
   }
 
+  /**
+   * @brief Called when the props for this component change.
+   *
+   * Updates the local root node's properties and triggers any necessary
+   * updates.
+   *
+   * @param concreteProps The new props for the component.
+   */
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
     facebook::react::SystraceSection s(std::string(
                                            "#RNOH::CppComponentInstance(" +
@@ -387,6 +547,13 @@ class CppComponentInstance : public ComponentInstance,
     localRoot.setId(getIdFromProps(props));
   };
 
+  /**
+   * @brief Called when the state for this component changes.
+   *
+   * Can be overridden to handle state changes.
+   *
+   * @param state The new state for the component.
+   */
   virtual void onStateChanged(SharedConcreteState const& /*state*/) {
     facebook::react::SystraceSection s(std::string(
                                            "#RNOH::CppComponentInstance(" +
@@ -395,9 +562,22 @@ class CppComponentInstance : public ComponentInstance,
                                            .c_str());
   };
 
+  /**
+   * @brief Called when the event emitter for this component changes.
+   *
+   * Can be overridden to handle event emitter changes.
+   *
+   * @param eventEmitter The new event emitter for the component.
+   */
   virtual void onEventEmitterChanged(
       SharedConcreteEventEmitter const& /*eventEmitter*/){};
 
+  /**
+   * @brief Calculates and updates the bounding box for this component.
+   *
+   * The bounding box includes this component and, if not clipping, all its
+   * children. The result is cached for efficiency.
+   */
   void calculateBoundingBox() {
     facebook::react::SystraceSection s(std::string(
                                            "#RNOH::CppComponentInstance(" +
@@ -421,6 +601,12 @@ class CppComponentInstance : public ComponentInstance,
     m_boundingBox = newBoundingBox;
   };
 
+  /**
+   * @brief Finalizes updates after all property and state changes.
+   *
+   * Applies any pending updates to the local root node, such as accessibility
+   * and border properties, after all changes have been processed.
+   */
   void onFinalizeUpdates() override {
     auto maybeLocalRoot = maybeGetLocalRoot();
     if (!maybeLocalRoot) {
@@ -483,6 +669,12 @@ class CppComponentInstance : public ComponentInstance,
     m_oldBorderMetrics = borderMetrics;
   }
 
+  /**
+   * @brief Returns the hit rectangle for this component, adjusted by the
+   *        hitSlop values from the props. This rectangle is used for touch
+   *        event detection.
+   * @return The adjusted hit rectangle.
+   */
   facebook::react::Rect getHitRect() const {
     facebook::react::Point origin = {0, 0};
     auto size = m_layoutMetrics.frame.size;
@@ -532,6 +724,12 @@ class CppComponentInstance : public ComponentInstance,
   }
 
  protected:
+  /**
+   * @brief Called when an accessibility action is triggered on the ArkUI node.
+   * Forwards the action to the event emitter if one exists.
+   * @param node Unused ArkUI node pointer
+   * @param actionName The name of the accessibility action that was triggered
+   */
   void onArkUINodeAccessibilityAction(ArkUINode*, const std::string& actionName)
       override {
     if (m_eventEmitter == nullptr) {
@@ -540,6 +738,12 @@ class CppComponentInstance : public ComponentInstance,
     m_eventEmitter->onAccessibilityAction(actionName);
   }
 
+  /**
+   * @brief Handles touch event interception for ArkUI nodes.
+   * Determines the hit test mode based on whether this component or its
+   * children can handle touch events at the given point.
+   * @param event The input event containing touch information
+   */
   void onArkUINodeTouchIntercept(const ArkUI_UIInputEvent* event) override {
     auto mode = HitTestMode::HTM_NONE;
     if (this->canHandleTouch()) {
@@ -554,6 +758,11 @@ class CppComponentInstance : public ComponentInstance,
     OH_ArkUI_PointerEvent_SetInterceptHitTestMode(event, mode);
   }
 
+  /**
+   * @brief Returns a component ID string, prioritizing testId, then
+   * nativeId, or generates a fallback ID if neither is set.
+   * @return The component's ID string.
+   */
   std::string getIdFromProps(
       facebook::react::SharedViewProps const& props) const {
     if (props->testId != "") {
@@ -568,6 +777,10 @@ class CppComponentInstance : public ComponentInstance,
     }
   }
 
+  /**
+   * Tries to get the local root ArkUI node
+   * @return Local root ArkUI node if found, null otherwise
+   */
   ArkUINode* maybeGetLocalRoot() {
     try {
       return &getLocalRootArkUINode();
@@ -596,6 +809,11 @@ class CppComponentInstance : public ComponentInstance,
   std::optional<facebook::react::Rect> m_boundingBox;
   bool m_isClipping = false;
 
+  /**
+   * Converts RN layout direction enum to ArkUI's enum
+   * @param layoutDirection
+   * @return
+   */
   static ArkUI_Direction convertLayoutDirection(
       facebook::react::LayoutDirection layoutDirection) {
     switch (layoutDirection) {
@@ -615,6 +833,16 @@ class CppComponentInstance : public ComponentInstance,
   bool m_accessibilityGroup;
 };
 
+/**
+ * @brief Transforms a rectangle around a given point using a transform matrix.
+ * Calculates the transformed positions of all four corners of the rectangle
+ * and returns the bounding rectangle.
+ *
+ * @param rect The rectangle to transform
+ * @param point The point to transform around (pivot point)
+ * @param transform The transform matrix to apply
+ * @return The bounding rectangle that contains all transformed corner points
+ */
 inline facebook::react::Rect transformRectAroundPoint(
     const facebook::react::Rect& rect,
     const facebook::react::Point& point,
