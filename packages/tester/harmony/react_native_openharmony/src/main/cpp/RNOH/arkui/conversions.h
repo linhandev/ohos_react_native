@@ -23,6 +23,11 @@
 namespace rnoh {
 /**
  * @api
+ * Converts a React Native BorderStyle enum value to the corresponding
+ * ArkUI_BorderStyle value.
+ *
+ * @param rnBorder The React Native BorderStyle value to convert.
+ * @return The corresponding ArkUI_BorderStyle value.
  */
 inline ArkUI_BorderStyle convertReactBorderStyleToArk(
     facebook::react::BorderStyle rnBorder) {
@@ -40,7 +45,7 @@ inline ArkUI_BorderStyle convertReactBorderStyleToArk(
 }
 
 /**
- * @api
+ * @internal
  * @deprecated: dead code. Deprecated when preparing the 0.77 branch for
  * release.
  */
@@ -54,6 +59,7 @@ inline uint32_t convertColorToTranslucent(
   auto colorValue = (alpha << 24) | (red << 16) | (green << 8) | blue;
   return colorValue;
 }
+
 /**
  * @internal
  * @deprecated This method is no longer part of the native API.
@@ -156,6 +162,7 @@ inline ArkUI_EnterKeyType convertTextAreaEnterKeyType(
       return ARKUI_ENTER_KEY_TYPE_DONE;
   }
 }
+
 /**
  * @internal
  * @deprecated This method is no longer part of the native API.
@@ -207,7 +214,6 @@ inline ArkUI_EnterKeyType convertTextAreaEnterKeyLabel(
  * @deprecated This method is no longer part of the native API.
  * Deprecated when preparing the 0.77 branch for release.
  */
-
 inline ArkUI_NumberValue convertContentType(
     std::string const& textContentType) {
   if (textContentType == "addressCity") {
@@ -301,6 +307,11 @@ inline ArkUI_NumberValue convertContentType(
 
 /**
  * @api
+ * Converts React Native text alignment to the corresponding
+ * ArkUI_TextAlignment value
+ *
+ * @param alignment The React Native TextAlignment value to convert.
+ * @return The corresponding ArkUI_TextAlignment value for ArkUI.
  */
 inline ArkUI_TextAlignment convertTextAlign(
     facebook::react::TextAlignment alignment) {
@@ -318,12 +329,12 @@ inline ArkUI_TextAlignment convertTextAlign(
       return ARKUI_TEXT_ALIGNMENT_START;
   }
 }
+
 /**
  * @internal
  * @deprecated This method is no longer part of the native API.
  * Deprecated when preparing the 0.77 branch for release.
  */
-
 inline ArkUI_TextAreaType convertTextAreaInputType(
     facebook::react::KeyboardType keyboardType) {
   switch (keyboardType) {
@@ -358,6 +369,11 @@ inline bool convertImportantForAutofill(std::string const& autoFill) {
 
 /**
  * @api
+ * Converts a font weight value from React Native to the corresponding
+ * ArkUI_FontWeight value.
+ *
+ * @param fontWeight The React Native FontWeight value to convert.
+ * @return The corresponding ArkUI_FontWeight value for ArkUI.
  */
 inline ArkUI_FontWeight convertFontWeight(
     facebook::react::FontWeight fontWeight) {
