@@ -13,14 +13,25 @@ export interface RNOHMarkerEventPayload {
 
 /**
  * @api
+ * Implement this interface to register callback when RNOH markers are logged
  */
 export interface RNOHMarkerListener {
+  /**
+   * This callback is triggered when an RNOH marker is logged
+   *
+   * @param markerId See RNOHMarkerId
+   * @param tag The tag provided to logMarker
+   * @param timestamp Only difference between two timestamps is meaningful.
+   * Unit is ms
+   */
   logMarker(markerId: RNOHMarkerId, tag: string, timestamp: number): void;
 }
 
 /**
  * @api
- * Keep this enum in sync with the one defined in RNOHMarker.h
+ * Key events happening throughout an RN app's lifecycle
+ * @note to framework developers. Keep this enum in sync with the one defined
+ * in RNOHMarker.h
  */
 export enum RNOHMarkerId {
   UNKNOWN_REACT_MARKER,
@@ -78,14 +89,23 @@ export enum RNOHMarkerId {
 
 /**
  * @api
+ * Registers listners to receive RNOH marker events
  */
 export class RNOHMarker {
   private static listeners: Set<RNOHMarkerListener> = new Set();
 
+  /**
+   * Registers a listener to receive RNOH marker events
+   * @param listener
+   */
   static addListener(listener: RNOHMarkerListener) {
     this.listeners.add(listener);
   }
 
+  /**
+   * Unregisters a listener to stop receiving RNOH marker events
+   * @param listener
+   */
   static removeListener(listener: RNOHMarkerListener) {
     this.listeners.delete(listener);
   }
