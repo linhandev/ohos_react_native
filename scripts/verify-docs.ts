@@ -3,7 +3,7 @@ import { glob } from "glob";
 
 async function runMarkdownLinkCheck(filePath: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    exec(`npx markdown-link-check ${filePath}`, (error, stdout, stderr) => {
+    exec(`npx markdown-link-check -c .markdown-link-check.json ${filePath}`, (error, stdout, stderr) => {
       if (error?.message.includes("ERROR")) {
         return reject(error);
       }
