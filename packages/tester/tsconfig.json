@@ -17,6 +17,7 @@
   },
   "exclude": [
     "harmony",
-    "scripts/**/tmp"
+    "scripts/**/tmp",
+    "__SampleProject__"
   ]
 }
