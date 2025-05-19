@@ -24,11 +24,21 @@ enum DialogButtonDirection {
 
 /**
  * @api
+ *
+ * The DevMenu interface provides a way to interact with the developer menu in an RN application.
+ * It allows adding custom menu items and displaying the menu.
  */
 export interface DevMenu {
-  addMenuItem(title: string): void
+  /**
+   * Adds a new custom item to the developer menu.
+   * @param title - The display text of the menu item.
+   */
+  addMenuItem(title: string): void;
 
-  show(): void
+  /**
+   * Displays the developer menu to the user.
+   */
+  show(): void;
 }
 
 /**

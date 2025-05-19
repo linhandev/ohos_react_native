@@ -13,23 +13,50 @@ interface PauseInDebuggerDialogPayload {
 
 /**
  * @api: RN_APP_DEVELOPER
+ *
+ * A custom dialog component shown when the debugger is paused.
+ * It listens to events from native C++ and displays a message dialog with a resume button.
  */
-
 @Component
 export struct RNPauseInDebuggerDialog {
-  @Require public ctx!:  RNOHContext
-  @State private message: string = '';
-  private controller!: CustomDialogController
-  private openCallback!: (() => void);
-  private closeCallback!: (() => void);
+  /**
+   * The RNOH execution context injected into the component.
+   * Provides access to runtime information such as safe area insets, RN instance, and event subscriptions.
+   */
+  @Require public ctx!: RNOHContext;
 
+  /**
+   * The message content displayed inside the pause dialog.
+   * This state is updated when "OPEN_DEBUGGER_PAUSED_DIALOG" is received.
+   */
+  @State private message: string = '';
+
+  /**
+   * Internal controller used to open or close the custom dialog.
+   */
+  private controller!: CustomDialogController;
+
+  /**
+   * Reference to the callback unsubscribing from the OPEN_DEBUGGER_PAUSED_DIALOG event.
+   */
+  private openCallback!: () => void;
+
+  /**
+   * Reference to the callback unsubscribing from the CLOSE_DEBUGGER_PAUSED_DIALOG event.
+   */
+  private closeCallback!: () => void;
+
+  /**
+   * Lifecycle method called before the component appears.
+   * Sets up the dialog controller and subscribes to C++ debugger events.
+   */
   aboutToAppear(): void {
     const insets = this.ctx.safeAreaInsetsProvider.safeAreaInsets;
     this.controller = new CustomDialogController({
       builder: PauseInDebuggerCustomDialog({
         message: this.message,
         onResume: () => {
-          this.ctx.rnInstance.postMessageToCpp("RNOH::RESUME_DEBUGGER", {})
+          this.ctx.rnInstance.postMessageToCpp("RNOH::RESUME_DEBUGGER", {});
         }
       }),
       autoCancel: false,
@@ -37,26 +64,37 @@ export struct RNPauseInDebuggerDialog {
       customStyle: true,
       width: '100%',
       height: '100%',
-      offset: {dx: 0, dy: insets ? insets.top : 0}
-    })
+      offset: { dx: 0, dy: insets ? insets.top : 0 }
+    });
 
-    this.openCallback = this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::OPEN_DEBUGGER_PAUSED_DIALOG",
+    this.openCallback = this.ctx.rnInstance.cppEventEmitter.subscribe(
+      "RNOH::OPEN_DEBUGGER_PAUSED_DIALOG",
       (payload: PauseInDebuggerDialogPayload): void => {
-        this.controller.open()
+        this.controller.open();
         this.message = payload.message;
-    })
+      }
+    );
 
-    this.closeCallback = this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::CLOSE_DEBUGGER_PAUSED_DIALOG",
-      (payload : object): void => {
-        this.controller.close()
-      })
+    this.closeCallback = this.ctx.rnInstance.cppEventEmitter.subscribe(
+      "RNOH::CLOSE_DEBUGGER_PAUSED_DIALOG",
+      (_: object): void => {
+        this.controller.close();
+      }
+    );
   }
 
+  /**
+   * Lifecycle method called when the component disappears.
+   * Unsubscribes from all debugger-related events to avoid memory leaks.
+   */
   aboutToDisappear() {
     this.openCallback();
     this.closeCallback();
   }
 
+  /**
+   * Empty render method since UI is fully managed by the controller.
+   */
   build() {}
 }
 

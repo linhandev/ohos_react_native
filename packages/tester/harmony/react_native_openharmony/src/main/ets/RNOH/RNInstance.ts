@@ -361,7 +361,10 @@ export interface RNInstance {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @api RN_APP_DEVELOPER
+ *
+ * Configuration options used to initialize and customize a React Native instance.
+ * This type defines lifecycle behavior, debugging options, architecture settings, and runtime behaviors.
  */
 export type RNInstanceOptions = {
   /**

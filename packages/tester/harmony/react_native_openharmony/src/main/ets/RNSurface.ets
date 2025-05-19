@@ -83,48 +83,106 @@ interface Constraints {
 
 /**
  * @api: RN_APP_DEVELOPER
- */
+ * RNSurface is a core bridge component that integrates a React Native surface into an ArkTS UI component.
+ *
+ * It is responsible for creating, attaching, and managing the lifecycle and layout of a React Native rendering surface.
+ * This component supports both managed and unmanaged surface configurations, and allows for custom layout constraints.
+ *
+ * Key responsibilities:
+ * - Embeds a React Native root component within ArkTS layout system.
+ * - Handles dynamic measurement and placement of React Native content.
+ * - Connects with RNInstancesCoordinator and manages surface start/stop behavior.
+ * - Enables passing of initial props and display mode control.
+ *
+ * Typical usage:
+ * - Used when you want to embed a mini RN app inside a larger ArkTS-based application.
+ * - Supports custom RNComponentContext for native-to-RN component registration.
+ *
+ * Requirements:
+ * - `ctx` must be of type `RNComponentContext` to support custom RN components.
+ * - Either `ManagedSurfaceConfig` or `UnmanagedSurfaceConfig` must be passed via `surfaceConfig`.
+ */ 
 @Component
 export struct RNSurface {
+  /** 
+   * Required context object. Should be of type RNComponentContext to support custom components.
+   */
   @Require public ctx!: RNOHContext | RNComponentContext;
 
-  @Require public surfaceConfig!: SurfaceConfig;
   /**
-   * If provided, those constraints will be used instead of those provided by ArkUI. Useful, if maxWidth or maxHeight
-   * must be different than the default values with .width(...) and .height(...).
-   *
-   * NOTE: you may need to remove "flex: 1" style from AppContainer in your JS bundle to adjust RNSurface to its content.
-   * In RN@0.72.5, this is not possible without patching RN code. RN@0.75.0 introduced a new method:
-   * AppRegistry.setRootViewStyleProvider which should allow removing that flex without creating the patch.
+   * Configuration object for the surface, containing either managed or unmanaged setup.
    */
-  public constraints: Constraints | undefined = undefined
+  @Require public surfaceConfig!: SurfaceConfig;
+
   /**
-   * Required if ctx isn't RNComponentContext
-   * @deprecated: provide RNComponentContext to RNSurface::ctx instead
+   * Custom constraints for the surface (e.g., maxWidth, maxHeight). 
+   * These override ArkUI-provided constraints.
+   */
+  public constraints: Constraints | undefined = undefined;
+
+  /**
+   * Optional builder callback for constructing custom native components.
+   * Required only if ctx is NOT an RNComponentContext.
+   * @deprecated: Use RNComponentContext with RNSurface::ctx instead.
    */
   @BuilderParam buildCustomComponent: (ctx: ComponentBuilderContext) => void;
+
   // -------------------------------------------------------------------------------------------------------------------
+  /** Horizontal offset of the surface relative to the root view. */
   private surfaceOffsetX: number = 0;
+
+  /** Vertical offset of the surface relative to the root view. */
   private surfaceOffsetY: number = 0;
+
+  /** Stores the dimensions of the root React Native component. */
   @State private rootComponentSize: Size | undefined = undefined;
+
+  /** Indicates if the surface should start rendering. */
   @State private shouldStartSurface: boolean = false;
+
+  /** Handle object for surface rendering and interaction. */
   private surfaceHandle!: SurfaceHandle;
+
+  /** Holds all cleanup functions to unsubscribe listeners, etc. */
   private cleanUpCallbacks: (() => void)[] = [];
+
+  /** Indicates whether the surface should be stopped and destroyed on disappear. */
   private shouldStopSurface: boolean = false;
+
+  /** Initial props passed to the React Native surface at creation time. */
   private initialProps!: SurfaceProps;
-  private logger!: RNOHLogger
+
+  /** Logger instance specific to RNSurface. */
+  private logger!: RNOHLogger;
+
+  /** Root view container used for rendering native content nodes. */
   private rootViewNodeContent: NodeContent = new NodeContent();
+
+  /** ID of the debounce timer (used for delaying layout updates). */
   private timerId: undefined | number = undefined;
+
+  /** Timestamp of the last layout or constraint update in milliseconds. */
   private lastChangeTimeInMs: number = 0;
+
+  /** Whether the user is actively dragging a window or surface. */
   private isWindowRectDrag: boolean = false;
+
+  /** Stores the size of the last measured layout. */
   private currentMeasuredSize: Size | undefined = undefined;
+
+  /** Flag indicating if the latest constraint update came from a timeout. */
   private isLatestConstraintsUpdateFromTimeout: boolean = false;
+
   /**
-  * Note: You may need to change this delay along with RNInstancesCoordinator's 
-  * onWindowSizeChange delay, as both have an effect on window changes. 
-  */
+   * Delay for applying layout constraint updates.
+   * NOTE: This should be synchronized with RNInstancesCoordinator's onWindowSizeChange delay.
+   */
   private readonly surfaceConstraintsDebounceTimeInMs: number = 100;
 
+  /**
+   * Lifecycle method triggered when the component is mounted.
+   * Initializes logger, sets up context and subscriptions, creates or attaches the surface.
+   */
   aboutToAppear() {
     this.logger = this.ctx.logger.clone("RNSurface")
     if (!(this.ctx instanceof RNComponentContext)) {
@@ -165,6 +223,10 @@ export struct RNSurface {
     stopTracing()
   }
 
+  /**
+   * Lifecycle method triggered before the component is destroyed.
+   * Cleans up event listeners, stops and destroys the surface if needed.
+   */
   aboutToDisappear() {
     const surfaceHandle = this.surfaceHandle;
     if (this.timerId) {
@@ -176,8 +238,7 @@ export struct RNSurface {
       this.cleanUpCallbacks.forEach(cb => cb())
       if (this.shouldStopSurface) {
         if (!surfaceHandle.isDestroyed()) {
-          // NOTE: when the app is stopping, it's possible the ability cleaned up the surface
-          // before us. This is fine.
+          // It's possible for the ability to clean up before us. This is acceptable.
           await surfaceHandle.stop();
           surfaceHandle.destroy();
         }
@@ -187,9 +248,14 @@ export struct RNSurface {
       this.surfaceHandle.detachRootView(this.ctx.rnInstance.getId(), this.surfaceHandle.getTag())
       stopTracing()
     })()
-
   }
 
+  /**
+   * Updates the surface constraints based on current layout bounds.
+   * Starts the surface if it hasn't already started.
+   * @param constraints Constraints from the layout system
+   * @returns Measured size of the root component
+   */
   updateSurfaceConstraints(constraints: Constraints): Size {
     const isRTL = this.ctx.rnInstance.getTurboModule<I18nManagerTurboModule>('I18nManager').getConstants()
       .isRTL;
@@ -213,6 +279,10 @@ export struct RNSurface {
     return this.surfaceHandle.measure(surfaceContext)
   }
 
+  /**
+   * Custom layout measuring logic for the surface and its child components.
+   * Applies debouncing logic during window drag events.
+   */
   override onMeasureSize(selfLayoutInfo: GeometryInfo, children: Array<Measurable>,
     constraint: ConstraintSizeOptions): SizeResult {
     if (this.surfaceHandle.isDestroyed()) {
@@ -228,7 +298,7 @@ export struct RNSurface {
       }
       this.currentMeasuredSize =
         this.updateSurfaceConstraints({
-          minWidth: constraint.maxWidth as number, // NOTE: width: 100% doesn't work on the root component hence maxWidth is used here
+          minWidth: constraint.maxWidth as number,
           minHeight: constraint.minHeight as number,
           maxWidth: constraint.maxWidth as number,
           maxHeight: constraint.maxHeight as number,
@@ -243,7 +313,7 @@ export struct RNSurface {
       this.timerId = setTimeout(() =>{
         this.currentMeasuredSize =
         this.updateSurfaceConstraints({
-          minWidth: constraint.maxWidth as number, // NOTE: width: 100% doesn't work on the root component hence maxWidth is used here
+          minWidth: constraint.maxWidth as number,
           minHeight: constraint.minHeight as number,
           maxWidth: constraint.maxWidth as number,
           maxHeight: constraint.maxHeight as number,
@@ -267,21 +337,25 @@ export struct RNSurface {
     return newSize
   }
 
+  /**
+   * Places child components inside the layout area.
+   * Required for children to be visible.
+   */
   override onPlaceChildren(selfLayoutInfo: GeometryInfo, children: Array<Layoutable>,
     constraint: ConstraintSizeOptions) {
-    // If this method is not overridden, child components aren't visible.
     children.forEach((child) => {
       child.layout({ x: 0, y: 0 })
     })
   }
 
+  /**
+   * Builds the layout and behavior of the component.
+   * The size is managed by layout methods, so width/height are only placeholders for triggering calculations.
+   */
   build() {
     Stack() {
       ContentSlot(this.rootViewNodeContent)
     }
-    /**
-     * width and height are used here only to trigger layout calculations. Actual values are set in onMeasureSize method.
-     */
     .width(this.rootComponentSize?.width)
     .height(this.rootComponentSize?.height)
     .onAreaChange((oldArea, newArea) => {
@@ -291,3 +365,4 @@ export struct RNSurface {
     .hitTestBehavior(HitTestMode.Transparent)
   }
 }
+
