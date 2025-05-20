@@ -11,6 +11,11 @@
 #include "jsi/jsi.h"
 
 namespace rnoh {
+/**
+ * @api: RN_LIBRARY_DEVELOPER
+ * This class is designed for global object creation on the JavaScript side.
+ * Use it for advanced use cases, when Turbo Modules are too restrictive.
+ */
 class GlobalJSIBinder {
  public:
   struct Context {};

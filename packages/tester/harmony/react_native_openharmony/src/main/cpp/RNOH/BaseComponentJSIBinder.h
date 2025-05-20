@@ -10,8 +10,8 @@
 
 namespace rnoh {
 /**
- * @internal
- * Used by codegen.
+ * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+ * Check ComponentJSIBinder comment.
  */
 class BaseComponentJSIBinder : public ComponentJSIBinder {
  public:

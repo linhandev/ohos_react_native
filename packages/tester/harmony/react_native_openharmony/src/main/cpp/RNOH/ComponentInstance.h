@@ -32,7 +32,14 @@ namespace rnoh {
 class MountingManagerCAPI;
 
 /**
- * @api
+ * @api: RN_LIBRARY_DEVELOPER
+ * @architecture: C-API
+ *
+ * ComponentInstance is an equivalent of RN Android's ViewManager. However,
+ * unlike ViewManagers, which are instantiated once per component type,
+ * ComponentInstances are created for each individual instance of a component.
+ *
+ * Consider extending CppComponentInstance, for components implements in C++.
  */
 class ComponentInstance
     : public TouchTarget,
