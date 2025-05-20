@@ -27,7 +27,7 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
   constructor(
     protected id: number,
     protected napiBridge: NapiBridge,
-    protected architecture: 'C_API',
+    protected architecture: 'ARK_TS' | 'C_API',
     protected assetsDest: string,
     protected getTurboModuleProvider: () =>
       | TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>
@@ -80,6 +80,16 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
 
   getInitialBundleUrl(): string | undefined {
     return this.initialBundleUrl
+  }
+
+  /**
+   * @internal
+   * @deprecated: This method was added and deprecated when preparing 0.77 version.
+   * Instead of using this method, you should use the `setBundleUrl` method in the
+   * `WorkerRNInstanceInternal` class.
+   */
+  setBunleUrl(bundleURL: string) {
+    this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
   }
 }
 
