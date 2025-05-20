@@ -480,3 +480,40 @@ it('should link by default only those packages that support autolinking', async 
   expect(combinedLogs).toContain('[link] autolinkable-package');
   expect(combinedLogs).toContain('[skip] not-autolinkable-package');
 });
+
+it('not delete packages with two hars', async () => {
+  const { runAutolinking, memFS } = createAutolinking({
+    fsStructure: {
+      ...baseFileStructure,
+      node_modules: {
+        '@rnoh': {
+          'multiple-har': {
+            harmony: {
+              'multiple_har.har': '',
+              'some_other_har.har': '',
+            },
+            'package.json': JSON.stringify({
+              name: '@rnoh/multiple-har',
+              harmony: {
+                autolinking: null,
+              },
+            }),
+          },
+        },
+      },
+      harmony: {
+        ...baseFileStructure.harmony,
+        'oh-package.json5': `{
+            "dependencies": {
+              "@rnoh/multiple-har": "file:../node_modules/@rnoh/multiple-har/harmony/multiple_har.har",
+            }
+          }`,
+      },
+    },
+  });
+
+  const output = await runAutolinking();
+
+  const ohPackageContent = memFS.readTextSync(output.ohPackagePath);
+  expect(ohPackageContent).toContain('@rnoh/multiple-har');
+});

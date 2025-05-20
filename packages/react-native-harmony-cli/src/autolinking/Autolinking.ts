@@ -121,7 +121,7 @@ export class Autolinking {
   constructor(
     private fs: FS,
     private logger: Logger
-  ) {}
+  ) { }
 
   async prepareInput(config: AutolinkingConfig): Promise<AutolinkingInput> {
     if (
@@ -148,11 +148,11 @@ export class Autolinking {
     const skippedLibraryNpmPackageNames: string[] = [];
     await new ProjectDependenciesManager(this.fs, projectRootPath).forEachAsync(
       (dependency) => {
-        const harFilePath = dependency.getHarFilePath();
-        if (!harFilePath) {
+        const harFilePaths = dependency.getHarFilePaths();
+        if (harFilePaths.length === 0) {
           return;
         }
-        nodeModuleHarPaths.push(harFilePath);
+        nodeModuleHarPaths.push(...harFilePaths);
         const packageJson = dependency.readPackageJSON();
         const providedAutolinkingConfig = packageJson.harmony?.autolinking;
         if (
@@ -161,7 +161,8 @@ export class Autolinking {
           (config.excludedNpmPackageNames.has(packageJson.name) &&
             config.excludedNpmPackageNames.size > 0) ||
           (!config.includedNpmPackageNames.has(packageJson.name) &&
-            config.includedNpmPackageNames.size > 0)
+            config.includedNpmPackageNames.size > 0) ||
+          harFilePaths.length !== 1
         ) {
           skippedLibraryNpmPackageNames.push(packageJson.name);
           return;
@@ -174,7 +175,7 @@ export class Autolinking {
           cppRNOHPackageClassName: autolinkingConfig?.cppPackageClassName,
           cmakeLibraryTargetName: autolinkingConfig?.cmakeLibraryTargetName,
           ohPackageName: autolinkingConfig?.ohPackageName,
-          harFilePathRelativeToHarmony: harFilePath
+          harFilePathRelativeToHarmony: harFilePaths[0]
             .relativeTo(harmonyProjectPath)
             .toString(),
         });

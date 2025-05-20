@@ -568,6 +568,9 @@ importers:
       '@react-native-oh-tpl/netinfo':
         specifier: latest
         version: 11.1.0-0.0.8(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+      '@react-native-oh-tpl/react-native-alipay':
+        specifier: latest
+        version: 5.0.2-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-amap-geolocation':
         specifier: latest
         version: 1.2.3-0.0.5
@@ -2316,6 +2319,12 @@ packages:
     resolution: {integrity: sha512-IKlob5NGERCbxkPwCTD+ODgUuu0Xj/DkwHK3LsBTzrXf5pMDwe26n5MonepF1R96Ke735sVrtAv0IVhFsBZ4eg==}
     peerDependencies:
       react-native: '>=0.59'
+
+  '@react-native-oh-tpl/react-native-alipay@5.0.2-0.0.1':
+    resolution: {integrity: sha512-bUc9G3e0YBIyYFllvfErhHyzmR8x7XZ24Jd1RF769XJZAgzksHlUQnPnFPho6uW7bGtIeQGushbh/ZpksW0g3w==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   '@react-native-oh-tpl/react-native-amap-geolocation@1.2.3-0.0.5':
     resolution: {integrity: sha512-ND1q6BQpcbBZE6WgtNWb5zKbOpY9v7RQ3oweEDg1idJHPFVDDi/D1h8f/jSanWTJGn6rlb296/DQysiIVNoHCA==}
@@ -10633,6 +10642,11 @@ snapshots:
   '@react-native-oh-tpl/netinfo@11.1.0-0.0.8(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
     dependencies:
       '@react-native-community/netinfo': 11.1.0(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+      react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
+
+  '@react-native-oh-tpl/react-native-alipay@5.0.2-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 
   '@react-native-oh-tpl/react-native-amap-geolocation@1.2.3-0.0.5':

@@ -59,6 +59,7 @@ import { RNReactLocalizationPackage } from '@react-native-oh-tpl/react-native-lo
 import { RNJPushPackage } from "@react-native-oh-tpl/jpush-react-native/ts";
 import { RNTextInputMaskPackage } from '@react-native-oh-tpl/react-native-text-input-mask/ts'
 import { RNConfigPackage } from '@react-native-oh-tpl/react-native-config/ts';
+import {RNAlipayPackage} from '@react-native-oh-tpl/react-native-alipay/ts';
 
 import type { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony';
 import { createRNOHPackages as createRNOHPackagesAutolinking } from "./RNOHPackagesFactory"
@@ -127,5 +128,6 @@ export function getRNOHPackages(ctx: RNPackageContext): RNPackage[] {
     new RNJPushPackage(ctx),
     new RNTextInputMaskPackage(ctx),
     new RNConfigPackage(ctx),
+    new RNAlipayPackage(ctx),
   ]
 }

@@ -29,6 +29,7 @@ NOTE: If you are a library maintainer and the status of your library in the tabl
 | @react-native-oh-tpl/flash-list                              | ✅     |
 | @react-native-oh-tpl/lottie-react-native                     | ✅     |
 | @react-native-oh-tpl/react-native-apple-authentication       | ✅     |
+| @react-native-oh-tpl/react-native-alipay                     | ✅     |
 | @react-native-oh-tpl/react-native-autoheight-webview         |        |
 | @react-native-oh-tpl/react-native-blob-util                  |        |
 | @react-native-oh-tpl/react-native-blurhash                   | ✅     |

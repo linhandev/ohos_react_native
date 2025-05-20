@@ -73,6 +73,7 @@
     "@react-native-oh-tpl/jpush-react-native": "file:../../../node_modules/@react-native-oh-tpl/jpush-react-native/harmony/jpush_react_native.har",
     "@react-native-oh-tpl/react-native-text-input-mask": "file:../../../node_modules/@react-native-oh-tpl/react-native-text-input-mask/harmony/text_input_mask.har",
     "@react-native-oh-tpl/react-native-config": "file:../../../node_modules/@react-native-oh-tpl/react-native-config/harmony/config.har",
+    "@react-native-oh-tpl/react-native-alipay": "file:../../../node_modules/@react-native-oh-tpl/react-native-alipay/harmony/alipay.har",
     "@react-native-ohos/checkbox": "file:../../../node_modules/@react-native-ohos/checkbox/harmony/checkbox.har",
     "@react-native-ohos/react-native-linear-gradient": "file:../../../node_modules/@react-native-ohos/react-native-linear-gradient/harmony/linear_gradient.har",
     "@react-native-ohos/react-native-sensors": "file:../../../node_modules/@react-native-ohos/react-native-sensors/harmony/sensors.har",

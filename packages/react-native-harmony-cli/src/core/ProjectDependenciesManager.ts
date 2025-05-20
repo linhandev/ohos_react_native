@@ -7,7 +7,7 @@ export class ProjectDependency {
     private fs: FS,
     private packageRootPath: AbsolutePath,
     private projectRootPath: AbsolutePath
-  ) {}
+  ) { }
 
   getRootPath() {
     return this.packageRootPath;
@@ -17,21 +17,18 @@ export class ProjectDependency {
     return this.readPackageJSON().getCodegenConfigs();
   }
 
-  getHarFilePath(): AbsolutePath | null {
+  getHarFilePaths(): AbsolutePath[] {
     const packageHarmonyPath =
       this.packageRootPath.copyWithNewSegment('harmony');
     if (!this.fs.existsSync(packageHarmonyPath)) {
-      return null;
+      return [];
     }
 
     const harFilePaths = this.fs.findFilePathsWithExtensions(
       packageHarmonyPath,
       ['har']
     );
-    if (harFilePaths.length !== 1) {
-      return null;
-    }
-    return harFilePaths[0];
+    return harFilePaths;
   }
 
   readPackageJSON() {
@@ -44,7 +41,7 @@ export class ProjectDependency {
 }
 
 export class ProjectDependenciesManager {
-  constructor(private fs: FS, private projectRootPath: AbsolutePath) {}
+  constructor(private fs: FS, private projectRootPath: AbsolutePath) { }
 
   async forEachAsync(
     cb: (dependency: ProjectDependency) => Promise<void> | void
