@@ -195,6 +195,9 @@ importers:
       metro-source-map:
         specifier: 0.80.12
         version: 0.80.12
+      pretty-format:
+        specifier: ^29.7.0
+        version: 29.7.0
       react-native:
         specifier: 0.77.1
         version: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
@@ -585,7 +588,7 @@ importers:
         version: 6.1.1-0.0.3(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-camera-kit':
         specifier: latest
-        version: 14.0.0-beta15-0.0.7(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+        version: 14.0.1-rc.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-cardview':
         specifier: latest
         version: 2.0.3-0.0.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
@@ -618,7 +621,7 @@ importers:
         version: 2.10.10-0.1.7(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-file-viewer':
         specifier: latest
-        version: 2.1.5-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
+        version: 2.1.6-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
       '@react-native-oh-tpl/react-native-fingerprint-scanner':
         specifier: latest
         version: 6.0.0-0.0.4(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
@@ -2345,8 +2348,8 @@ packages:
       react: '>=18.1.0'
       react-native: '>=0.70.0'
 
-  '@react-native-oh-tpl/react-native-camera-kit@14.0.0-beta15-0.0.7':
-    resolution: {integrity: sha512-yYUAHqQluCPP9694O7pub3Vs66X65VC5IT8DOjZ1m8vq40+4BXtnC2TP9QJBHJg2F2TPdysJIbbbel34AwTX+A==}
+  '@react-native-oh-tpl/react-native-camera-kit@14.0.1-rc.2':
+    resolution: {integrity: sha512-LjuuAazd1408kYcf+MDebAYSg1Afmj9aWFkpI0mSomTIEeIJx6QwS/4H0c5UZOY5J3q5w6AfddclchiZNJLNZg==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -2408,8 +2411,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  '@react-native-oh-tpl/react-native-file-viewer@2.1.5-0.0.1':
-    resolution: {integrity: sha512-Zk4MIHZ8ohqUuHG7LlVfsczySf9H0BsuyLRtTq1SEcE1AEtE+DIZBqqQhcZH43xE18zoV61SbHIV06A4T9pBaQ==}
+  '@react-native-oh-tpl/react-native-file-viewer@2.1.6-rc.1':
+    resolution: {integrity: sha512-Za2GSpsQ9NjT3F4xns0Za+G37bB1kx+jZd/kpbLRNeQNBuF8lvPOrXii0sHEmTJS+UKqFwZNdsrYmPwjlMB4gQ==}
     peerDependencies:
       react-native: '>=0.47'
 
@@ -10679,7 +10682,7 @@ snapshots:
       - bare-buffer
       - supports-color
 
-  '@react-native-oh-tpl/react-native-camera-kit@14.0.0-beta15-0.0.7(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+  '@react-native-oh-tpl/react-native-camera-kit@14.0.1-rc.2(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
@@ -10741,7 +10744,7 @@ snapshots:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
       react-native-exception-handler: 2.10.10(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
 
-  '@react-native-oh-tpl/react-native-file-viewer@2.1.5-0.0.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
+  '@react-native-oh-tpl/react-native-file-viewer@2.1.6-rc.1(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))':
     dependencies:
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
 

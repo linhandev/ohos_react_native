@@ -53,7 +53,8 @@
     "fs-extra": "^11.1.1",
     "invariant": "^2.2.4",
     "metro-runtime": "0.80.12",
-    "metro-source-map": "0.80.12"
+    "metro-source-map": "0.80.12",
+    "pretty-format": "^29.7.0"
   },
   "harmony": {
     "autolinking": null
