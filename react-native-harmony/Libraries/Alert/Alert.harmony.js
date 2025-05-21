@@ -42,9 +42,9 @@ class Alert {
 
     // At most three buttons. Ignore rest.
     const validButtons: Buttons = (buttons ?? [{text: "OK"}]).slice(0, 3)
-    const primaryButton = validButtons.pop();
+    const tertiaryButton = validButtons.pop();
     const secondaryButton = validButtons.pop();
-    const thirdaryButton = validButtons.pop();
+    const primaryButton = validButtons.pop();
 
     if (primaryButton) {
       alertOptions.primaryButton = primaryButton.text || "";
@@ -52,8 +52,8 @@ class Alert {
     if (secondaryButton) {
       alertOptions.secondaryButton = secondaryButton.text || "";
     }
-    if (thirdaryButton) {
-      alertOptions.thirdaryButton = thirdaryButton.text || "";
+    if (tertiaryButton) {
+      alertOptions.tertiaryButton = tertiaryButton.text || "";
     }
 
     const onAction = (action, buttonKey) => {
@@ -62,8 +62,8 @@ class Alert {
           primaryButton.onPress && primaryButton.onPress();
         } else if (buttonKey === constants.secondaryButton) {
           secondaryButton.onPress && secondaryButton.onPress();
-        } else if (buttonKey === constants.thirdaryButton) {
-          thirdaryButton.onPress && thirdaryButton.onPress();
+        } else if (buttonKey === constants.tertiaryButton) {
+          tertiaryButton.onPress && tertiaryButton.onPress();
         }
       } else if (action === constants.dismissed) {
         options && options.onDismiss && options.onDismiss();

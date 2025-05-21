@@ -14,7 +14,7 @@ type AlertOptions = {
   message?: string
   primaryButton?: string
   secondaryButton?: string
-  thirdaryButton?: string
+  tertiaryButton?: string
   cancelable: boolean
 }
 
@@ -31,7 +31,7 @@ export class AlertManagerTurboModule extends TurboModule {
     dismissed: 'dismissed',
     primaryButton: 1,
     secondaryButton: 2,
-    thirdaryButton: 3,
+    tertiaryButton: 3,
   }
 
   getConstants() {
@@ -59,21 +59,21 @@ export class AlertManagerTurboModule extends TurboModule {
             onAction = undefined;
           }
         } : undefined;
-        const thirdaryButton = 
-        options.thirdaryButton? {
-          value: options.thirdaryButton,
+        const tertiaryButton =
+        options.tertiaryButton? {
+          value: options.tertiaryButton,
           action: () => {
-            onAction?.(this.constants.buttonClicked, this.constants.thirdaryButton);
+            onAction?.(this.constants.buttonClicked, this.constants.tertiaryButton);
             onAction = undefined;
           }
         } : undefined;
-        const buttons = [primaryButton, secondaryButton, thirdaryButton];
+        const buttons = [primaryButton, secondaryButton, tertiaryButton];
 
         const alertParams = {
           title: options.title,
           message: options.message,
           autoCancel: options.cancelable,
-          buttons: buttons,
+          buttons: buttons.filter((button) => button !== undefined),
           cancel: () => {
             onAction?.(this.constants.dismissed);
             onAction = undefined;
