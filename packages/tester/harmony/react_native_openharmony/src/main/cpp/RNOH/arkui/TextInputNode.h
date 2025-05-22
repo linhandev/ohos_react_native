@@ -17,23 +17,64 @@ namespace rnoh {
  */
 class TextInputNodeDelegate {
  public:
+  /**
+   * @brief Destructor
+   */
   virtual ~TextInputNodeDelegate() = default;
 
+  /**
+   * @brief Callback that is called when the text input's text changes.
+   * @param node The text input's node.
+   * @param text The text input's text.
+   */
   virtual void onChange(ArkUINode* node, const std::string& text) {}
 
+  /**
+   * @brief Callback that is called when the text input is blurred.
+   * @param node The text input's node.
+   */
   virtual void onBlur(ArkUINode* node) {}
 
+  /**
+   * @brief Callback that is called when the text input is focused.
+   * @param node The text input's node.
+   */
   virtual void onFocus(ArkUINode* node) {}
 
+  /**
+   * @brief Callback that is called when the text input's submit
+   * button is pressed.
+   * @param node The text input's node.
+   */
   virtual void onSubmit(ArkUINode* node) {}
 
+  /**
+   * @brief Callback that is called when paste or cut the text.
+   * @param node The text input's node.
+   */
   virtual void onPasteOrCut(ArkUINode* node) {}
 
+  /**
+   * @brief Callback that is called when the text input's content scrolls.
+   * @param node The text input's node.
+   */
   virtual void onContentScroll(ArkUINode* node) {}
 
+  /**
+   * @brief Callback that is called when the text input's content size changes.
+   * @param node The text input's node.
+   * @param width The Text input content width.
+   * @param height The Text input content height.
+   */
   virtual void onContentSizeChange(ArkUINode* node, float width, float height) {
   }
 
+  /**
+   * @brief Callback that is called when the text selection changes.
+   * @param node The text input's node.
+   * @param location The text input's caret location.
+   * @param length The length of the selected text.
+   */
   virtual void
   onTextSelectionChange(ArkUINode* node, int32_t location, int32_t length) {}
 

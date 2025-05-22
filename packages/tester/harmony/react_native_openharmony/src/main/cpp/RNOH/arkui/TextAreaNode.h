@@ -19,15 +19,57 @@ namespace rnoh {
  */
 class TextAreaNodeDelegate {
  public:
+  /**
+   * @brief Destructor
+   */
   virtual ~TextAreaNodeDelegate() = default;
 
+  /**
+   * @brief Callback that is called when the text area's text changes.
+   * @param node The text area's node.
+   * @param text The text area's text.
+   */
   virtual void onChange(ArkUINode* node, const std::string& text) {}
+
+  /**
+   * @brief Callback that is called when the text area is blurred.
+   * @param node The text area's node.
+   */
   virtual void onBlur(ArkUINode* node) {}
+
+  /**
+   * @brief Callback that is called when the text area is focused.
+   * @param node The text area's node.
+   */
   virtual void onFocus(ArkUINode* node) {}
+
+  /**
+   * @brief Callback that is called when paste or cut the text.
+   * @param node The text area's node.
+   */
   virtual void onPasteOrCut(ArkUINode* node) {}
+
+  /**
+   * @brief Callback that is called when the text selection changes.
+   * @param node The text area's node.
+   * @param location The text area's caret location.
+   * @param length The length of the selected text.
+   */
   virtual void
   onTextSelectionChange(ArkUINode* node, int32_t location, int32_t length) {}
+
+  /**
+   * @brief Callback that is called when the text area's content scrolls.
+   * @param node The text area's node.
+   */
   virtual void onContentScroll(ArkUINode* node) {}
+
+  /**
+   * @brief Callback that is called when the text area's content size changes.
+   * @param node The text area's node.
+   * @param width The Text area content width.
+   * @param height The Text area content height.
+   */
   virtual void onContentSizeChange(ArkUINode* node, float width, float height) {
   }
 

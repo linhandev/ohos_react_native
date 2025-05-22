@@ -69,11 +69,22 @@ class TextInputNodeBase : public ArkUINode {
       facebook::react::TextAttributes const& textAttributes);
 
  public:
+  /**
+   * @brief Set padding for TextInput.
+   * @param padding The value of padding.
+   */
   void setPadding(
       facebook::react::RectangleEdges<facebook::react::Float> padding);
 
-  void setFocusable(bool const& focusable);
   /**
+   * @brief Set the focusability of the text input.
+   * @param focusable The focusability.
+   */
+  void setFocusable(bool const& focusable);
+
+  /**
+   * @brief Get the focus status of TextInput.
+   * @return Focus status: true-focused, false-unfocused.
    * @Deprecated: use isFocused.
    * Deprecated since the name is not matching behavior.
    * Status should normally be enum instead of bool.
@@ -82,44 +93,112 @@ class TextInputNodeBase : public ArkUINode {
     return this->isFocused();
   };
 
+  /**
+   * @brief Verify the focus status of the TextInput.
+   * @return Focus status: true-focused, false-unfocused.
+   */
   bool isFocused();
 
+  /**
+   * @brief Set the selection to all text in the TextInput.
+   * @param selectAll SelectAll flag.
+   */
   void setSelectAll(bool selectAll);
 
+  /**
+   * @brief Set the touchable area.
+   * @param position Touch area position.
+   * @param size Touch area size.
+   */
   void setResponseRegion(
       facebook::react::Point const& position,
       facebook::react::Size const& size);
 
+  /**
+   * @brief Set the content for text input.
+   * @param textContent Text content.
+   */
   void setTextContent(std::string const& textContent);
 
+  /**
+   * @brief Set the start and end of the text input's selection.
+   * @param start The start of the text input's selection.
+   * @param end The end of the text input's selection.
+   */
   void setTextSelection(int32_t start, int32_t end);
 
+  /**
+   * @brief Set the font color.
+   * @param color The font color.
+   */
   void setFontColor(facebook::react::SharedColor const& color);
 
+  /**
+   * @brief Set the font style for the text input.
+   * @param textAttributes TextAttributes object.
+   */
   virtual void setFont(
       facebook::react::TextAttributes const& textAttributes) = 0;
 
+  /**
+   * @brief Set the caret color.
+   * @param color The caret color.
+   */
   virtual void setCaretColor(facebook::react::SharedColor const& color) = 0;
 
+  /**
+   * @brief Limits the maximum number of characters that can be entered.
+   * @param  maxLength The max number of characters.
+   */
   virtual void setMaxLength(int32_t maxLength) = 0;
 
+  /**
+   * @brief Set the string that will be rendered before text input has
+   * been entered.
+   * @param placeholder The placeholder string.
+   */
   virtual void setPlaceholder(std::string const& placeholder) = 0;
 
+  /**
+   * @brief Set the text color of the placeholder string.
+   * @param color The text color of the placeholder string.
+   */
   virtual void setPlaceholderColor(
       facebook::react::SharedColor const& color) = 0;
 
   void setTextInputLineHeight(
       facebook::react::TextAttributes const& textAttributes);
 
+  /**
+   * @brief Set the text lineHeight for the text input.
+   * @param textAlign TextAlignment object.
+   */
   void setTextAlign(
       std::optional<facebook::react::TextAlignment> const& textAlign);
 
+  /**
+   * @brief Set the text alignment of the text input.
+   * @param textAlignment
+   */
   void setAlignment(ArkUI_Alignment const& textAlignment);
 
+  /**
+   * @brief Reset the maximum length of the text input.
+   */
   void resetMaxLength();
 
+  /**
+   * @brief Get the content in the text input.
+   * @return the content in the text input.
+   */
   std::string virtual getTextContent() = 0;
 
+  /**
+   * @brief Get the position of the edited text input relative to the
+   * component and its size.
+   * @return The position of the edited text input relative to the
+   * component and its size.
+   */
   virtual facebook::react::Rect getTextContentRect() const = 0;
   /**
    * @internal
