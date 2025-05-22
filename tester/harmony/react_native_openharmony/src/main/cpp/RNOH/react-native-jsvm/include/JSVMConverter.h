@@ -31,7 +31,7 @@ public:
     
     template<typename T>
     static Value JsiValueFromPointerValue(JSVM_Env env, const JSVM_Value value) {
-        return JSVMRuntime::make<T>(new JSVMPointerValue(env, value));
+        return JSVMRuntime::make<T>(JSVMPointerValue::New<false>(env, value));
     }
 
     template<typename T>
@@ -44,7 +44,7 @@ public:
       if (!value) {
         OH_JSVM_GetUndefined(env, &value);
       }
-      return JSVMRuntime::make<T>(new JSVMPointerValue(env, value));
+      return JSVMRuntime::make<T>(JSVMPointerValue::New<false>(env, value));
     }
 
     static JSVM_Value JsiToJSVM(JSVM_Env env, const Value& value);

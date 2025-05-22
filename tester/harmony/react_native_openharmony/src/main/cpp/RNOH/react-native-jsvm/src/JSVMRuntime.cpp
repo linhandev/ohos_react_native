@@ -169,34 +169,38 @@ bool JSVMRuntime::isInspectable()
     return false;
 }
 
+inline Runtime::PointerValue *JSVMRuntime::clone(const Runtime::PointerValue *pv) {
+    return reinterpret_cast<JSVMPointerValue *>(const_cast<Runtime::PointerValue *>(pv))->Ref();
+}
+
 Runtime::PointerValue* JSVMRuntime::cloneSymbol(
     const Runtime::PointerValue* pv) {
   DFX();
-  return new JSVMPointerValue(static_cast<const JSVMPointerValue*>(pv));
+  return clone(pv);
 }
 
 Runtime::PointerValue* JSVMRuntime::cloneBigInt(
     const Runtime::PointerValue* pv) {
   DFX();
-  return new JSVMPointerValue(static_cast<const JSVMPointerValue*>(pv));
+  return clone(pv);
 }
 
 Runtime::PointerValue* JSVMRuntime::cloneString(
     const Runtime::PointerValue* pv) {
   DFX();
-  return new JSVMPointerValue(static_cast<const JSVMPointerValue*>(pv));
+  return clone(pv);
 }
 
 Runtime::PointerValue* JSVMRuntime::cloneObject(
     const Runtime::PointerValue* pv) {
   DFX();
-  return new JSVMPointerValue(static_cast<const JSVMPointerValue*>(pv));
+  return clone(pv);
 }
 
 Runtime::PointerValue* JSVMRuntime::clonePropNameID(
     const Runtime::PointerValue* pv) {
   DFX();
-  return new JSVMPointerValue(static_cast<const JSVMPointerValue*>(pv));
+  return clone(pv);
 }
 
 PropNameID JSVMRuntime::createPropNameIDFromAscii(const char *str, size_t length)
@@ -737,13 +741,21 @@ WeakObject JSVMRuntime::createWeakObject(const Object& obj) {
     JSVMUtil::HandleScopeWrapper scope(env);
 
     JSVM_Value value = JSVMConverter::PointerValueToJSVM(env, obj);
-    return make<WeakObject>(JSVMPointerValue::CreateWeakRef(env, value));
+    return make<WeakObject>(JSVMPointerValue::New<true>(env, value));
 }
 
 Value JSVMRuntime::lockWeakObject(const WeakObject & weakObj)
 {
     DFX();
-    return make<Object>(cloneObject(JSVMRuntime::getPointerValue(weakObj)));
+    JSVMUtil::HandleScopeWrapper scope(env);
+    JSVM_Value val = static_cast<const JSVMPointerValue *>(JSVMRuntime::getPointerValue(weakObj))->GetValue();
+    bool isNull = true;
+    OH_JSVM_IsNull(env, val, &isNull);
+    if (isNull) {
+        return Value::undefined();
+    }
+
+    return make<Object>(JSVMPointerValue::New<false>(env, val));
 }
 
 Array JSVMRuntime::createArray(size_t length)

@@ -50,6 +50,7 @@ class JSVMRuntime : public Runtime {
   Runtime::PointerValue* cloneString(const Runtime::PointerValue* pv);
   Runtime::PointerValue* cloneObject(const Runtime::PointerValue* pv);
   Runtime::PointerValue* clonePropNameID(const Runtime::PointerValue* pv);
+  inline Runtime::PointerValue *clone(const Runtime::PointerValue *pv);
 
   virtual PropNameID createPropNameIDFromAscii(const char* str, size_t length);
   virtual PropNameID createPropNameIDFromUtf8(
@@ -175,39 +176,24 @@ class JSVMRuntime : public Runtime {
 
 class JSVMPointerValue : public JSVMRuntime::PointerValue {
  public:
-  JSVMPointerValue(JSVM_Env env, const JSVM_Value value, bool isWeak = false) : env(env), isWeak(isWeak), reference(nullptr) {
-    uint32_t initialRef = 1;
+  template <bool isWeak>
+  static JSVMPointerValue *New(JSVM_Env env, const JSVM_Value value) {
+    JSVMPointerValue *ptr = new JSVMPointerValue(env);
     if (isWeak) {
-      initialRef = 0;
-    }
-    OH_JSVM_CreateReference(env, value, initialRef, &reference);
-  }
-
-  JSVMPointerValue(const JSVMPointerValue* pointer)
-      : reference(pointer->reference), env(pointer->env), isWeak(false) {
-    if (unlikely(pointer->isWeak)) {
-      JSVMUtil::HandleScopeWrapper scope(env);
-      JSVM_Value value = nullptr;
-      auto status = OH_JSVM_GetReferenceValue(env, reference, &value);
-      if(status != JSVM_OK){
-         LOG(ERROR)<<"JSVM GetReferenceValue Failed";
-      }
-      OH_JSVM_CreateReference(env, value, 1, &reference);
+      OH_JSVM_CreateReference(env, value, 0, &(ptr->reference));
     } else {
-      OH_JSVM_ReferenceRef(env, reference, nullptr);
+      OH_JSVM_CreateReference(env, value, 1, &(ptr->reference));
     }
+
+    return ptr;
   }
+    JSVMPointerValue(JSVM_Env env) : env(env),
+                                     refcount(1),
+                                     reference(nullptr) {}
 
-  static JSVMPointerValue *CreateWeakRef(JSVM_Env env, const JSVM_Value value) {
-    auto *ref = new JSVMPointerValue(env, value, true);
-    return ref;
-  }
-
-  ~JSVMPointerValue() {}
-
-  void SetWeak() {
-    OH_JSVM_ReferenceUnref(env, reference, nullptr);
-    isWeak = true;
+  ~JSVMPointerValue() {
+     env = nullptr;
+     reference = nullptr;
   }
 
   JSVM_Value GetValue() const {
@@ -219,47 +205,38 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
     return value;
   }
 
+    JSVMPointerValue *Ref() {
+        ++refcount;
+        return this;
+    }
+
  private:
     enum {
         WEAK_REF_COUNT = 0,
         STRONG_REF_COUNT = 1,
         DUPLICATE_REF_COUNT = 2
     };
-    void UnRef() {
-        uint32_t refcount = 0;
-        if(isWeak){
-            OH_JSVM_DeleteReference(env, reference);
-            return;
-        }
-        OH_JSVM_ReferenceRef(env, reference, &refcount);
-        if (refcount == DUPLICATE_REF_COUNT || refcount == WEAK_REF_COUNT) {
-          OH_JSVM_DeleteReference(env, reference);
-        }else {
-          OH_JSVM_ReferenceUnref(env, reference, &refcount);
-          OH_JSVM_ReferenceUnref(env, reference, &refcount);
-        }
-    }
 
   void invalidate() {
-    if (unlikely(!isJsThread)) {
+    if (--refcount == 0) {
+      if (!unlikely(!isJsThread)) {
+        OH_JSVM_DeleteReference(env, reference);
+      } else {
       void *data = nullptr;
       OH_JSVM_GetInstanceData(env, &data);
       facebook::react::MessageQueueThread *jsQueue = static_cast<facebook::react::MessageQueueThread *>(data);
       jsQueue->runOnQueue(
-        [this]() {
-          this->UnRef();
-          delete this;
-        }
-      );
-    } else {
-      UnRef();
+        [env = this->env, reference = this->reference]() {
+          OH_JSVM_DeleteReference(env, reference);
+        });
+      }
       delete this;
     }
   }
 
   JSVM_Ref reference;
   JSVM_Env env;
-  bool isWeak;
+  uint64_t refcount;
 
  private:
   friend class JSVMRuntime;
