@@ -11,6 +11,7 @@ import {
   Descriptor,
   DisplayMode,
   RNComponentContext,
+  RNInstance,
   RNInstanceImpl,
   RNOHContext,
   RNOHError,
@@ -110,6 +111,12 @@ export struct RNSurface {
   @Require public ctx!: RNOHContext | RNComponentContext;
 
   /**
+   * Not Required,
+   * Used to return the corresponding RNInstance and root tag for this specific RNSurface. 
+   */
+  public updateViewRootTag: ((rnInstance:RNInstance, rootViewTag: number) => void) | undefined;
+  
+  /**
    * Configuration object for the surface, containing either managed or unmanaged setup.
    */
   @Require public surfaceConfig!: SurfaceConfig;
@@ -206,6 +213,8 @@ export struct RNSurface {
       this.shouldStartSurface = true;
       this.shouldStopSurface = true;
     }
+    const tag = this.surfaceHandle.getTag();
+    this.updateViewRootTag && this.updateViewRootTag(this.ctx.rnInstance, tag);
     this.cleanUpCallbacks.push(this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::ROOT_COMPONENT_DIMENSIONS_CHANGED",
       (payload: RootComponentDimensionsChangedPayload) => {
         if (payload.surfaceId === this.surfaceHandle.getTag()) {
