@@ -14,16 +14,31 @@
 
 namespace rnoh {
 /**
+ * TouchEventDispatcher handles the dispatching of touch events from root target
+ * components(e.g., RootViewComponentInstance, ModalHostViewComponentInstance)
+ * to the JavaScript layer.
  * @api
  */
 class TouchEventDispatcher {
  public:
   using TouchId = int;
 
+  /**
+   * @brief Dispatch the touch events to JS.
+   * @param ｛ArkUI_UIInputEvent*｝ event The UI input event.
+   * @param rootTarget The root target that listens to touch (NODE_TOUCH_EVENT)
+   * events.
+   */
   void dispatchTouchEvent(
       ArkUI_UIInputEvent* event,
       TouchTarget::Shared const& rootTarget);
 
+  /**
+   * @brief Dispatch the touch events to JS.
+   * @param ｛TouchEvent&｝ event The touch event.
+   * @param rootTarget The root target that listens to touch (NODE_TOUCH_EVENT)
+   * events.
+   */
   void dispatchTouchEvent(
       const TouchEvent& event,
       TouchTarget::Shared const& rootTarget);
