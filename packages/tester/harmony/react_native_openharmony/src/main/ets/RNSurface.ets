@@ -20,7 +20,7 @@ import {
 import { ViewBaseProps, ViewRawProps } from './RNOHCorePackage/components/RNViewBase';
 import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
-import type { SurfaceContextWithConstraints } from './RNOH/RNInstance';
+import type { SurfaceContext } from './RNOH/RNInstance';
 import { NodeContent } from '@ohos.arkui.node'
 
 interface RootViewState {}
@@ -268,7 +268,7 @@ export struct RNSurface {
   updateSurfaceConstraints(constraints: Constraints): Size {
     const isRTL = this.ctx.rnInstance.getTurboModule<I18nManagerTurboModule>('I18nManager').getConstants()
       .isRTL;
-    const surfaceContext: SurfaceContextWithConstraints = {
+    const surfaceContext: SurfaceContext = {
       minWidth: this.constraints?.minWidth ?? constraints?.minWidth ?? 0,
       minHeight: this.constraints?.minHeight ?? constraints?.minHeight ?? 0,
       maxWidth: this.constraints?.maxWidth ?? constraints?.maxWidth ?? 0,

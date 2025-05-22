@@ -41,26 +41,23 @@ export type Resource = Exclude<font.FontOptions['familySrc'], string>;
  */
 type TouchEvent = unknown
 
-type SurfaceContextCommon = {
-  surfaceOffsetX: number;
-  surfaceOffsetY: number;
-  pixelRatio: number;
-  isRTL: boolean;
-};
-
-export type SurfaceContextWithConstraints = {
-  minWidth: number;
-  minHeight: number;
-  maxWidth: number;
-  maxHeight: number;
-} & SurfaceContextCommon;
-
-export type SurfaceContextWithSize = {
-  width: number;
-  height: number;
-} & SurfaceContextCommon;
-
-export type SurfaceContext = SurfaceContextWithConstraints | SurfaceContextWithSize;
+export type SurfaceContext = {
+  width: number
+  height: number
+  surfaceOffsetX: number
+  surfaceOffsetY: number
+  pixelRatio: number
+  isRTL: boolean
+} | {
+  minWidth: number
+  minHeight: number
+  maxWidth: number
+  maxHeight: number
+  surfaceOffsetX: number
+  surfaceOffsetY: number
+  pixelRatio: number
+  isRTL: boolean
+}
 
 export enum LifecycleState {
   BEFORE_CREATE,

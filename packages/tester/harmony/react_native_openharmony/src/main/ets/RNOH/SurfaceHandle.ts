@@ -8,10 +8,28 @@
 import { DisplayMode } from './CppBridgeUtils';
 import type { Tag } from './DescriptorBase';
 import type { NapiBridge } from './NapiBridge';
-import type { RNInstance, SurfaceContext, SurfaceContextWithConstraints, SurfaceContextWithSize } from './RNInstance';
+import type { RNInstance, SurfaceContext} from './RNInstance';
 import { NodeContent } from '@ohos.arkui.node';
 
 export type SurfaceProps = Record<string, any>;
+
+function getConstraints(ctx: SurfaceContext): {
+  minWidth: number
+  minHeight: number
+  maxWidth: number
+  maxHeight: number
+} {
+  if ('width' in ctx) {
+    return {
+      minWidth: ctx.width,
+      minHeight: ctx.height,
+      maxWidth: ctx.width,
+      maxHeight: ctx.height,
+    }
+  } else {
+    return ctx
+  }
+}
 
 /**
  * @api: RN_APP_DEVELOPER
@@ -22,7 +40,7 @@ export class SurfaceHandle {
   private props: SurfaceProps
   private startingPromise: Promise<unknown> | undefined = undefined
   private running: boolean = false
-  private surfaceCtx: SurfaceContextWithConstraints = null;
+  private surfaceCtx: SurfaceContext = null;
 
   constructor(
     private rnInstance: RNInstance,
@@ -46,21 +64,21 @@ export class SurfaceHandle {
       throw new Error("start called on a destroyed surface");
     }
 
-    this.surfaceCtx = {
-      ...ctx,
-      maxWidth: (ctx as SurfaceContextWithConstraints).maxWidth ?? (ctx as SurfaceContextWithSize).height,
-      minWidth: (ctx as SurfaceContextWithConstraints).minWidth ?? (ctx as SurfaceContextWithSize).width,
-      minHeight: (ctx as SurfaceContextWithConstraints).minHeight ?? (ctx as SurfaceContextWithSize).height,
-      maxHeight: (ctx as SurfaceContextWithConstraints).maxHeight ?? (ctx as SurfaceContextWithSize).height,
-    };
+    this.surfaceCtx = ctx;
     this.props = { ...this.defaultProps, ...props };
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
     this.napiBridge.startSurface(
       this.rnInstance.getId(),
       this.tag,
-      this.surfaceCtx.minWidth,
-      this.surfaceCtx.minHeight,
-      this.surfaceCtx.maxWidth,
-      this.surfaceCtx.maxHeight,
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
       ctx.surfaceOffsetX,
       ctx.surfaceOffsetY,
       ctx.pixelRatio,
@@ -78,20 +96,23 @@ export class SurfaceHandle {
   }
 
   public updateConstraints(
-    {
-      minWidth,
-      minHeight,
-      maxWidth,
-      maxHeight,
-      surfaceOffsetX,
-      surfaceOffsetY,
-      pixelRatio,
-      isRTL,
-    }: SurfaceContextWithConstraints
+    ctx: SurfaceContext
   ) {
     if (this.destroyed) {
       throw new Error("updateConstraints called on a destroyed surface");
     }
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
+    const {
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL,
+    } = ctx;
     this.surfaceCtx = {
       minWidth,
       minHeight,
@@ -123,6 +144,8 @@ export class SurfaceHandle {
       minHeight,
       maxWidth,
       maxHeight,
+    } = getConstraints(this.surfaceCtx);
+    const {
       surfaceOffsetX,
       surfaceOffsetY,
       pixelRatio,
@@ -153,16 +176,19 @@ export class SurfaceHandle {
     );
   }
 
-  measure({
-    minWidth,
-    minHeight,
-    maxWidth,
-    maxHeight,
-    surfaceOffsetX,
-    surfaceOffsetY,
-    pixelRatio,
-    isRTL,
-  }: SurfaceContextWithConstraints) {
+  measure(ctx: SurfaceContext) {
+    const {
+      minWidth,
+      minHeight,
+      maxWidth,
+      maxHeight,
+    } = getConstraints(ctx);
+    const {
+      surfaceOffsetX,
+      surfaceOffsetY,
+      pixelRatio,
+      isRTL,
+    } = ctx
     return this.napiBridge.measureSurface(this.rnInstance.getId(), this.tag, minWidth, minHeight, maxWidth, maxHeight,
       surfaceOffsetX,
       surfaceOffsetY, pixelRatio, isRTL)
