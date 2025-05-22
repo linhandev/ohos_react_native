@@ -22,14 +22,26 @@ class RNInstance;
  */
 class ArkTSMessageHandler {
  public:
+  /**
+   * @brief Type alias for a shared pointer to ArkTSMessageHandler.
+   * @details This type alias is used to simplify typing.
+   */
   using Shared = std::shared_ptr<ArkTSMessageHandler>;
 
+  /**
+   * @brief Context structure that holds information about the ArkTS message.
+   */
   struct Context {
     std::string messageName;
     folly::dynamic messagePayload;
     std::weak_ptr<RNInstance> rnInstance;
   };
 
+  /**
+   * @brief Method to handle ArkTS messages.
+   * @param ctx The context of the message.
+   */
   virtual void handleArkTSMessage(const Context& ctx) = 0;
 };
+
 } // namespace rnoh

@@ -14,6 +14,8 @@ namespace rnoh {
 
 /**
  * @api
+ * Struct representing a message in ArkTS system, holding a name and a dynamic
+ * payload.
  */
 struct ArkTSMessage {
   std::string name;
@@ -22,11 +24,23 @@ struct ArkTSMessage {
 
 /**
  * @api
+ * ArkTSMessageHub class is responsible for handling and distributing
+ * ArkTSMessages. It inherits from ArkTSMessageHandler and Subject<ArkTSMessage>
+ * to manage and notify observers.
  */
 class ArkTSMessageHub final : public ArkTSMessageHandler,
                               public Subject<ArkTSMessage> {
  public:
+  /**
+   * @brief Type alias for a shared pointer to ArkTSMessageHub.
+   * @details This type alias is used to simplify typing.
+   */
   using Shared = std::shared_ptr<ArkTSMessageHub>;
+
+  /**
+   * @brief Type alias for a weak pointer to ArkTSMessageHub.
+   * @details This type alias is used to simplify typing.
+   */
   using Weak = std::weak_ptr<ArkTSMessageHub>;
 
   /**
@@ -39,9 +53,19 @@ class ArkTSMessageHub final : public ArkTSMessageHandler,
    */
   class Observer : private Subject::Observer {
    public:
+    /**
+     * Constructor: Initializes the Observer with a shared ArkTSMessageHub
+     * subject.
+     * @param subject Shared pointer to the ArkTSMessageHub.
+     */
     Observer(ArkTSMessageHub::Shared const& subject)
         : Subject::Observer(std::static_pointer_cast<Subject>(subject)) {}
 
+    /**
+     * This function is called when an ArkTSMessage is received and should be
+     * overridden to define how the message is handled.
+     * @param payload The received ArkTSMessage.
+     */
     virtual void onMessageReceived(ArkTSMessage const& payload) = 0;
 
    protected:
