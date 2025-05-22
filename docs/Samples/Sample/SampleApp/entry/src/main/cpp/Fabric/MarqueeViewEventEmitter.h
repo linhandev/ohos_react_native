@@ -7,21 +7,21 @@
 
 #pragma once
 
-#include <react/renderer/components/view/ViewEventEmitter.h>
 #include <jsi/jsi.h>
+#include <react/renderer/components/view/ViewEventEmitter.h>
 
 namespace facebook {
 namespace react {
 
 class JSI_EXPORT MarqueeViewEventEmitter : public ViewEventEmitter {
-  public:
-    using ViewEventEmitter::ViewEventEmitter;
-    struct OnStop {
-      bool isStop;
-      std::string type;
-    };
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+  struct OnStop {
+    bool isStop;
+    std::string type;
+  };
 
-    void onStop(OnStop value) const;
+  void onStop(OnStop value) const;
 };
 
 } // namespace react

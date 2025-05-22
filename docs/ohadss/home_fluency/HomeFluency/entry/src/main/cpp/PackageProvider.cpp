@@ -14,21 +14,21 @@
  */
 
 #include "RNOH/PackageProvider.h"
-#include "generated/RNOHGeneratedPackage.h"
-#include "RNCVideoPackage.h"
-#include "GestureHandlerPackage.h"
-#include "SafeAreaViewPackage.h"
 #include "FlashListPackage.h"
+#include "GestureHandlerPackage.h"
+#include "RNCVideoPackage.h"
+#include "SafeAreaViewPackage.h"
+#include "generated/RNOHGeneratedPackage.h"
 
 using namespace rnoh;
 
-std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Context ctx)
-{
-    return {
-        std::make_shared<RNOHGeneratedPackage>(ctx),
-        std::make_shared<RNCVideoPackage>(ctx),
-        std::make_shared<GestureHandlerPackage>(ctx),
-        std::make_shared<SafeAreaViewPackage>(ctx),
-        std::make_shared<FlashListPackage>(ctx),
-    };
+std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(
+    Package::Context ctx) {
+  return {
+      std::make_shared<RNOHGeneratedPackage>(ctx),
+      std::make_shared<RNCVideoPackage>(ctx),
+      std::make_shared<GestureHandlerPackage>(ctx),
+      std::make_shared<SafeAreaViewPackage>(ctx),
+      std::make_shared<FlashListPackage>(ctx),
+  };
 }

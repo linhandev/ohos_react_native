@@ -6,9 +6,9 @@
  */
 
 #pragma once
-#include "RNOH/CppComponentInstance.h"
 #include "ButtonNode.h"
 #include "ButtonViewComponentDescriptor.h"
+#include "RNOH/CppComponentInstance.h"
 
 namespace rnoh {
 
@@ -30,6 +30,7 @@ class ButtonViewComponentInstance
       ComponentInstance::Shared const& childComponentInstance) override;
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onButtonClick() override;
-  void handleCommand(std::string const &commandName, folly::dynamic const &args) override;
+  void handleCommand(std::string const& commandName, folly::dynamic const& args)
+      override;
 };
 } // namespace rnoh

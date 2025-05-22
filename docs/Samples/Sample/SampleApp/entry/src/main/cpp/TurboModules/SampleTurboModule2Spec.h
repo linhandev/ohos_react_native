@@ -14,12 +14,14 @@
 
 namespace rnoh {
 
-    class JSI_EXPORT NativeSampleTurboModule2SpecJSI : public ArkTSTurboModule, public std::enable_shared_from_this<NativeSampleTurboModule2SpecJSI> {
-    public:
-        NativeSampleTurboModule2SpecJSI(
-            const ArkTSTurboModule::Context ctx,
-            const std::string name);
-        void callJS();
-        };
+class JSI_EXPORT NativeSampleTurboModule2SpecJSI
+    : public ArkTSTurboModule,
+      public std::enable_shared_from_this<NativeSampleTurboModule2SpecJSI> {
+ public:
+  NativeSampleTurboModule2SpecJSI(
+      const ArkTSTurboModule::Context ctx,
+      const std::string name);
+  void callJS();
+};
 
 } // namespace rnoh

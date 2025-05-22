@@ -15,11 +15,14 @@
 
 namespace rnoh {
 
-    class JSI_EXPORT NativeSampleWorkerTurboModuleSpecJSI : public ArkTSTurboModule {
-    public:
-        NativeSampleWorkerTurboModuleSpecJSI(const ArkTSTurboModule::Context ctx, const std::string name);
-    };
+class JSI_EXPORT NativeSampleWorkerTurboModuleSpecJSI
+    : public ArkTSTurboModule {
+ public:
+  NativeSampleWorkerTurboModuleSpecJSI(
+      const ArkTSTurboModule::Context ctx,
+      const std::string name);
+};
 
 } // namespace rnoh
 
-#endif //SAMPLEAPP_SAMPLEWORKERTURBOMODULESPEC_H
+#endif // SAMPLEAPP_SAMPLEWORKERTURBOMODULESPEC_H

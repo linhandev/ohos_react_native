@@ -42,7 +42,7 @@ void ButtonNode::removeChild(ArkUINode& child) {
       m_nodeHandle, child.getArkUINodeHandle()));
 }
 
-ButtonNode& ButtonNode::setLabel(const std::string &src) {
+ButtonNode& ButtonNode::setLabel(const std::string& src) {
   ArkUI_AttributeItem labelItem = {.string = src.c_str()};
   maybeThrow(NativeNodeApi::getInstance()->setAttribute(
       m_nodeHandle, NODE_BUTTON_LABEL, &labelItem));

@@ -6,13 +6,12 @@
  */
 
 #include "ButtonViewComponentInstance.h"
-#include "Props.h"
 #include <folly/dynamic.h>
+#include "Props.h"
 
 using namespace rnoh;
 
-ButtonViewComponentInstance::ButtonViewComponentInstance(
-    Context context)
+ButtonViewComponentInstance::ButtonViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)) {
   m_buttonNode.setButtonNodeDelegate(this);
 }
@@ -50,8 +49,10 @@ void ButtonViewComponentInstance::onButtonClick() {
   m_eventEmitter->onButtonClick(m_onButtonClick);
 }
 
-void ButtonViewComponentInstance::handleCommand(std::string const &commandName, folly::dynamic const &args) {
-    if (commandName == "changeButtonText") {
-        m_buttonNode.setLabel(args[0].asString());
-    }
+void ButtonViewComponentInstance::handleCommand(
+    std::string const& commandName,
+    folly::dynamic const& args) {
+  if (commandName == "changeButtonText") {
+    m_buttonNode.setLabel(args[0].asString());
+  }
 }

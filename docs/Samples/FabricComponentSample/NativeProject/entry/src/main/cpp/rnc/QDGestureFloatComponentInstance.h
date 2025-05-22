@@ -7,16 +7,18 @@
 
 #pragma once
 
-#include "RNOH/arkui/StackNode.h"
-#include "RNOH/arkui/ScrollNode.h"
 #include "RNOH/arkui/ColumnNode.h"
+#include "RNOH/arkui/ScrollNode.h"
+#include "RNOH/arkui/StackNode.h"
 #include "RNOH/generated/components/BaseQDGestureFloatComponentInstance.h"
 
 namespace rnoh {
-class QDGestureFloatComponentInstance : public BaseQDGestureFloatComponentInstance, ScrollNodeDelegate {
+class QDGestureFloatComponentInstance
+    : public BaseQDGestureFloatComponentInstance,
+      ScrollNodeDelegate {
   using Super = BaseQDGestureFloatComponentInstance;
 
-private:
+ private:
   // 根容器
   StackNode m_scrollContainerNode;
   // scroll 组件
@@ -27,7 +29,7 @@ private:
   StackNode m_transparentNode;
   // 内容区域
   StackNode m_contentNode;
-  
+
   // 组件宽高
   float m_width;
   float m_height;
@@ -35,18 +37,22 @@ private:
   // 停止百分比、吸顶百分比
   float m_stopPercent = 0.75f;
   float m_stopPercentMax = 0.85f;
-public:
+
+ public:
   QDGestureFloatComponentInstance(Context context);
 
-  StackNode &getLocalRootArkUINode();
+  StackNode& getLocalRootArkUINode();
 
-  void onPropsChanged(SharedConcreteProps const &props);
+  void onPropsChanged(SharedConcreteProps const& props);
 
-  void onChildInserted(ComponentInstance::Shared const &childComponentInstance, std::size_t index) override;
-  void onChildRemoved(ComponentInstance::Shared const &childComponentInstance) override;
+  void onChildInserted(
+      ComponentInstance::Shared const& childComponentInstance,
+      std::size_t index) override;
+  void onChildRemoved(
+      ComponentInstance::Shared const& childComponentInstance) override;
 
   facebook::react::Point getCurrentOffset() const override;
-  
+
   void onScroll() override;
   void onScrollStop() override;
   void onScrollToCommand(float offsetY, bool animated) override;

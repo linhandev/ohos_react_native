@@ -9,7 +9,8 @@
 #include "RNOH/generated/BaseFabricComponentSamplePackagePackage.h"
 
 namespace rnoh {
-class FabricComponentSamplePackagePackage : public BaseFabricComponentSamplePackagePackage {
+class FabricComponentSamplePackagePackage
+    : public BaseFabricComponentSamplePackagePackage {
   using Super = BaseFabricComponentSamplePackagePackage;
 
  public:
