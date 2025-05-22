@@ -5,7 +5,7 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Animated,
   View,
@@ -14,6 +14,9 @@ import {
   StyleSheet,
   PanResponder,
   Text,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  ActivityIndicator,
 } from 'react-native';
 
 const handleClick = () => {
@@ -59,6 +62,95 @@ export const GesturesInScrollViewExample = () => {
   );
 };
 
+export const ScrollViewNestedInGesturesExample = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const scrollOffsetY = useRef(0);
+  const headerHeight = 80;
+  const pan = useRef(new Animated.Value(0)).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return scrollOffsetY.current <= 0 && gestureState.dy >= 0;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (!refreshing) {
+          const dy = Math.min(gestureState.dy * 0.5, headerHeight * 2.5);
+          pan.setValue(dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > headerHeight && !refreshing) {
+          handleRefresh();
+        }
+        resetAnimation();
+      },
+      onPanResponderTerminate: () => resetAnimation(),
+    })
+  ).current;
+
+  const handleRefresh = async (): Promise<void> => {
+    if (refreshing) return;
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  const resetAnimation = (): void => {
+    Animated.spring(pan, {
+      toValue: 0,
+      friction: 8,
+      useNativeDriver: true,
+    }).start(() => {
+      pan.setValue(0);
+    });
+  };
+
+  const rotate = pan.interpolate({
+    inputRange: [0, headerHeight * 2.5],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>): void => {
+    scrollOffsetY.current = event.nativeEvent.contentOffset.y;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            height: headerHeight,
+            transform: [{ translateY: pan }],
+          },
+        ]}>
+        <Animated.View
+          style={{ transform: [{ rotate }], backgroundColor: 'red' }}>
+          {refreshing ? (
+            <ActivityIndicator size="large" color="#000" />
+          ) : (
+            <Text>{`⬇️ Pull down to refresh`}</Text>)}
+        </Animated.View>
+      </Animated.View>
+      <Animated.View
+        pointerEvents={'box-none'}
+        style={{
+          transform: [{ translateY: pan }],
+          backgroundColor: 'yellow',
+        }}
+        {...panResponder.panHandlers}>
+          <Animated.ScrollView
+            onScroll={handleScroll}
+            overScrollMode={'never'}
+          >
+            <View style={{ backgroundColor: 'lightgreen', height: 1000 }}></View>
+          </Animated.ScrollView>
+      </Animated.View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   box: {
     height: 150,
@@ -71,6 +163,15 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 60,
     fontSize: 16,
+  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
 });
 

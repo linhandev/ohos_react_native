@@ -225,7 +225,15 @@ void TouchEventDispatcher::dispatchTouchEvent(
       auto hasCancelled = maybeCancelPreviousTouchEvent(
           timestampSeconds, touchTarget, rootTarget);
       if (hasCancelled) {
-        m_touchTargetByTouchId.erase(activeTouch.id);
+        // When the event is canceled by isParentHandlingTouches(),
+        // forward the event bubbling to the parent component for processing.
+        auto parentTouchTarget = touchTarget->getTouchTargetParent();
+        if (parentTouchTarget && parentTouchTarget != rootTarget) {
+          m_touchTargetByTouchId.insert_or_assign(activeTouch.id, parentTouchTarget);
+          parentTouchTarget->getTouchEventEmitter()->onTouchStart(m_previousEvent);
+        } else {
+          m_touchTargetByTouchId.erase(activeTouch.id);
+        }
         continue;
       }
     }
