@@ -82,7 +82,7 @@ void RNInstanceCAPI::start() {
           m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
               "textLayoutManagerDelegate");
     RNOH_ASSERT(textMeasurer != nullptr);
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics().screenPhysicalPixels;
+    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics().windowPhysicalPixels;
 
     float fontScale = displayMetrics.fontScale;
     float scale = displayMetrics.scale;
@@ -529,22 +529,23 @@ std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
 }
 
 void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
-  if(payload.isNull()){
+  if (payload.isNull()) {
     return;
   }
-  folly::dynamic screenPhysicalPixels = payload["screenPhysicalPixels"];
-  if(screenPhysicalPixels.isNull() || !screenPhysicalPixels["densityDpi"].isDouble()){
+  folly::dynamic windowPhysicalPixels = payload["windowPhysicalPixels"];
+  if (windowPhysicalPixels.isNull() ||
+    !windowPhysicalPixels["densityDpi"].isDouble()) {
     return;
   }
-  float densityDpi = screenPhysicalPixels["densityDpi"].asDouble();
-  if(densityDpi == m_densityDpi){
+  float densityDpi = windowPhysicalPixels["densityDpi"].asDouble();
+  if (densityDpi == m_densityDpi) {
     return;
   }
   m_densityDpi = densityDpi;
-  if(screenPhysicalPixels["scale"].isDouble() &&
-    screenPhysicalPixels["fontScale"].isDouble()){
-    float scale = screenPhysicalPixels["scale"].asDouble();
-    float fontScale = screenPhysicalPixels["fontScale"].asDouble();
+  if (windowPhysicalPixels["scale"].isDouble() &&
+    windowPhysicalPixels["fontScale"].isDouble()) {
+    float scale = windowPhysicalPixels["scale"].asDouble();
+    float fontScale = windowPhysicalPixels["fontScale"].asDouble();
     auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
     auto textMeasurer = m_contextContainer->
        at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");

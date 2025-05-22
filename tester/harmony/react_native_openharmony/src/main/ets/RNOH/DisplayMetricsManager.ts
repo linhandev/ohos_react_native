@@ -5,11 +5,12 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import { DisplayMetrics } from './types';
+import { DisplayMetrics, OH_API_LEVEL_15 } from './types';
 import window from '@ohos.window';
 import { RNOHLogger } from './RNOHLogger';
 import display from '@ohos.display';
 import { RNOHError } from "./RNOHError"
+import { deviceInfo } from '@kit.BasicServicesKit';
 import UIContext from '@ohos.arkui.UIContext';
 
 const defaultDisplayMetrics: DisplayMetrics = {
@@ -81,6 +82,17 @@ export class DisplayMetricsManager {
       } catch (err) {
         displayInstance = display.getDefaultDisplaySync();
       }
+      let customDensity = displayInstance.densityPixels;
+      let customDensityDpi = displayInstance.densityDPI;
+      if (deviceInfo.sdkApiVersion >= OH_API_LEVEL_15) {
+        customDensity = this.mainWindow.getWindowDensityInfo().customDensity;
+        customDensityDpi = customDensity * (displayInstance.densityDPI /
+           displayInstance.densityPixels);
+      } else {
+        this.logger.warn(`Current device API version
+          (${deviceInfo.sdkApiVersion}) is too low to use getWindowDensityInfo
+           interface`);
+      }
       this.displayMetrics = {
         screenPhysicalPixels: {
           width: displayInstance.width,
@@ -92,9 +104,9 @@ export class DisplayMetricsManager {
         windowPhysicalPixels: {
           width: this.displayMetrics.windowPhysicalPixels.width,
           height: this.displayMetrics.windowPhysicalPixels.height,
-          scale: displayInstance.densityPixels,
+          scale: customDensity,
           fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
-          densityDpi: displayInstance.densityDPI,
+          densityDpi: customDensityDpi,
         }
       };
     }

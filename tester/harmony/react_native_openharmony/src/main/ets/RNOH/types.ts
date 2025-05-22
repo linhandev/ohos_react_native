@@ -41,6 +41,9 @@ export type Corners<T> = {
   bottomRight: T,
 }
 
+// The minimum supported SDK API version for getWindowDensityInfo is 15
+export const OH_API_LEVEL_15 = 15;
+
 export type PointerEvents = "auto" | "none" | "box-none" | "box-only"
 
 export type DisplayMetrics = {
