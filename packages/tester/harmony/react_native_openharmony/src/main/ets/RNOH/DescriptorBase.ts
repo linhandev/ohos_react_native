@@ -93,6 +93,11 @@ export class PropsSelectorBase {
 /**
  * @api
  * (ComponentInstance)DescriptorWrapper. Decouples "what" is received from React Native from "how".
+ * @template TType - Type of ComponentInstance's type, string by default
+ * @template TProps - Type of ComponentInstance's props
+ * @template TState - Type of ComponentInstance's state
+ * @template TRawProps - Type of ComponentInstance's rawProps
+ * @template TPropsSelector - Type of ComponentInstance's propsSelector
  */
 export class DescriptorWrapper<TType = string,
 TProps extends PropsBase = PropsBase,
@@ -101,18 +106,36 @@ TRawProps extends RawPropsBase = RawPropsBase,
 TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
   private propsSelector: TPropsSelector
 
+  /**
+   * @param descriptor - wrapped descriptor
+   */
   constructor(protected descriptor: Descriptor<TType, TProps, TState, TRawProps>) {
     this.propsSelector = this.createPropsSelector()
   }
 
+  /**
+   * @returns {TType} ComponentInstance's type
+   */
   public get type_(): TType {
     return this.descriptor.type
   }
 
+  /**
+   * @returns {Tag} ComponentInstance's tag
+   */
   public get tag(): Tag {
     return this.descriptor.tag
   }
 
+  /**
+   * ID are flags passed in id/nativeId prop.
+   * @returns {NativeId} ACTUAL_ID if id/nativeId is defined like following example.
+   * @example
+   * ```tsx
+   * <View id="__harmony::hint1;hint2;...:ACTUAL_ID" />
+   * ```
+   * @returns {NativeId | undefined} whole id/nativeId if failed to parse the ACTUAL_ID
+   */
   public get id(): NativeId | undefined {
     const rawId = this.rawProps.nativeID
     if (rawId?.startsWith("__harmony::")) {
@@ -125,10 +148,12 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
 
   /**
    * Hints are harmony-specific flags passed in id/nativeId prop.
+   * @returns {string[]} array of hints if id/nativeId is defined like following example.
    * @example
    * ```tsx
    * <View id="__harmony::hint1;hint2;...:ACTUAL_ID" />
    * ```
+   * @returns {string[]} empty array if failed to parse the hints
    */
   public get hints(): string[] {
     const rawId = this.rawProps.nativeID
@@ -141,16 +166,22 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
   }
 
   /**
-   * A number which changes each time the component corresponding to this descriptor is updated.
+   * @returns {number} A number which changes each time the component corresponding to this descriptor is updated.
    */
   public get renderKey(): number {
     return this.descriptor.renderKey ?? 0
   }
 
+  /**
+   * @returns {TRawProps} rawProps
+   */
   protected get rawProps(): TRawProps {
     return this.descriptor.rawProps
   }
 
+  /**
+   * @returns {TProps | Object} props
+   */
   protected get cppProps(): TProps | Object {
     if (this.descriptor.isDynamicBinder) {
       return {}
@@ -158,34 +189,59 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
     return this.descriptor.props as TProps
   }
 
+  /**
+   * create PropsSelector
+   */
   protected createPropsSelector(): TPropsSelector {
     return new PropsSelectorBase() as TPropsSelector
   }
 
+  /**
+   * @returns {TPropsSelector} PropsSelector
+   */
   public get props(): TPropsSelector {
     return this.propsSelector
   }
 
+  /**
+   * @returns {Tag[]} array of children's tags
+   */
   public get childrenTags(): Tag[] {
     return this.descriptor.childrenTags
   }
 
+  /**
+   * @returns {Tag} parent's tag
+   * @returns {undefined} undefined if parent DNE
+   */
   public get parentTag(): Tag | undefined {
     return this.descriptor.parentTag
   }
 
+  /**
+   * @returns {number} layout width
+   */
   public get width(): number {
     return this.descriptor.layoutMetrics.frame.size.width
   }
 
+  /**
+   * @returns {number} layout height
+   */
   public get height(): number {
     return this.descriptor.layoutMetrics.frame.size.height
   }
 
+  /**
+   * @returns {boolean} layout horizontal direction
+   */
   public get isRTL(): boolean {
     return this.descriptor.layoutMetrics.layoutDirection === LayoutDirectionRN.RightToLeft
   }
 
+  /**
+   * @returns {Point} relative position between origins of current component and its parent
+   */
   public get positionRelativeToParent(): Point {
     return this.descriptor.layoutMetrics.frame.origin
   }
