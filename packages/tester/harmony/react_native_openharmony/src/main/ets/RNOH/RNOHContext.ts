@@ -285,6 +285,7 @@ export interface AnyThreadRNInstance extends Partial<RNInstance> {
 
 /**
  * @api
+ * shared TurboModule Context interface for Both UI thread and WORKER thread
  */
 export interface AnyThreadTurboModuleContext {
   logger: RNOHLogger;
@@ -296,6 +297,7 @@ export interface AnyThreadTurboModuleContext {
 
 /**
  * @api
+ * TurboModule Context for UI thread
  */
 export class UITurboModuleContext
   extends RNOHContext
@@ -328,6 +330,7 @@ export type WorkerTurboModuleContextDependencies = {
 
 /**
  * @api
+ * TurboModule Context for WORKER thread
  */
 export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {
   /**
@@ -338,22 +341,37 @@ export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {
   ) {
   }
 
+  /**
+   * @returns RNOHLogger
+   */
   get logger() {
     return this._workerTurboModuleContextDeps.logger;
   }
 
+  /**
+   * @returns The context of an ability. It allows access to ability-specific resources.
+   */
   get uiAbilityContext() {
     return this._workerTurboModuleContextDeps.uiAbilityContext;
   }
 
+  /**
+   * @returns WorkerRNInstance
+   */
   get rnInstance() {
     return this._workerTurboModuleContextDeps.rnInstance;
   }
 
+  /**
+   * @returns HttpClient
+   */
   get httpClient() {
     return this._workerTurboModuleContextDeps.httpClient;
   }
 
+  /**
+   * @returns SafeAreaInsetsProvider
+   */
   get safeAreaInsetsProvider() {
     return this._workerTurboModuleContextDeps.safeAreaInsetsProvider;
   }

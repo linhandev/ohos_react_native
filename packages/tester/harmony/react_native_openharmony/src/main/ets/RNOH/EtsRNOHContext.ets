@@ -24,6 +24,7 @@ export interface EtsUITurboModuleContextDependencies {
 
 /**
  * @api
+ * non-cpp TurboModule Context for UI thread
  */
 export class EtsUITurboModuleContext extends UITurboModuleContext {
   private deps: EtsUITurboModuleContextDependencies
@@ -36,6 +37,15 @@ export class EtsUITurboModuleContext extends UITurboModuleContext {
     this.deps = deps;
   }
 
+  /**
+   * @brief run the task on WORKER thread
+   * @template TParams - parameter type
+   * @template TResult - result type
+   * @template TRunnable - runnable Object type
+   * @param runnable - runnable Object
+   * @param params - user-defined params
+   * @returns user-defined result Promise
+   */
   public async runOnWorkerThread<TParams extends SupportedTaskParams, TResult extends lang.ISendable | void, TRunnable extends WorkerTaskRunnable<TParams, TResult>>(runnable: TRunnable,
     params: TParams): Promise<TResult> {
     const workerTaskRunner = this.erasedWorkerTaskRunner as WorkerTaskRunner;
@@ -54,6 +64,7 @@ export interface EtsWorkerTurboModuleContextDependencies {
 
 /**
  * @api
+ * non-cpp TurboModule Context for Worker thread
  */
 export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
   private deps: EtsWorkerTurboModuleContextDependencies
@@ -66,6 +77,15 @@ export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
     this.deps = deps
   }
 
+  /**
+   * @brief run the task on UI thread
+   * @template TParams - parameter type
+   * @template TResult - result type
+   * @template TRunnable - runnable Object type
+   * @param runnable - runnable Object
+   * @param params - user-defined params
+   * @returns user-defined result Promise
+   */
   async runOnUIThread<TParams extends SupportedTaskParams, TResult extends lang.ISendable | void, TRunnable extends UITaskRunnable<TParams, TResult>>(runnable: TRunnable,
     params: TParams): Promise<TResult> {
     const uiTaskRunner = this.deps.uiTaskRunner;
