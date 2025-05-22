@@ -21,7 +21,7 @@ export interface RNOHMarkerListener {
    *
    * @param markerId See RNOHMarkerId
    * @param tag The tag provided to logMarker
-   * @param timestamp Only difference between two timestamps is meaningful.
+   * @param timestamp Only the difference between two timestamps is meaningful.
    * Unit is ms
    */
   logMarker(markerId: RNOHMarkerId, tag: string, timestamp: number): void;
@@ -29,7 +29,7 @@ export interface RNOHMarkerListener {
 
 /**
  * @api
- * Key events happening throughout an RN app's lifecycle
+ * Important events happening throughout an RN app's lifecycle
  * @note to framework developers. Keep this enum in sync with the one defined
  * in RNOHMarker.h
  */
@@ -89,7 +89,7 @@ export enum RNOHMarkerId {
 
 /**
  * @api
- * Registers listners to receive RNOH marker events
+ * Registers listeners to receive RNOH marker events
  */
 export class RNOHMarker {
   private static listeners: Set<RNOHMarkerListener> = new Set();

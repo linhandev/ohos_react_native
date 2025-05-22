@@ -184,7 +184,12 @@ type RNOHContextDependencies = {
  */
 export class RNOHContext extends RNOHCoreContext {
   /**
+   * Creates an instance-specific RNOHContext from a shared core context.
    * @api: RN_APP_DEVELOPER
+   * @param rnohCoreContext The shared core context containing common dependencies
+   * @param rnInstance The RN instance to associate with the new context
+   * @returns A new RNOHContext that combines core dependencies with instance-specific
+   * state
    */
   static fromCoreContext(
     rnohCoreContext: RNOHCoreContext,

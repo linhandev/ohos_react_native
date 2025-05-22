@@ -10,10 +10,14 @@ import { RNOHCoreContext } from './RNOH/RNOHContext'
 import { DevToolsController } from './RNOH/DevToolsController'
 
 /**
+ * A dialog component that displays React Native OpenHarmony runtime errors.
+ * Shows error message, suggestions, stack trace and error details.
+ * Auto-opens on errors and can be dismissed or trigger app reload.
  * @api: RN_APP_DEVELOPER
  */
 @Component
 export struct RNOHErrorDialog {
+  /** shared RNOH context */
   @Require public ctx!: RNOHCoreContext
   private controller!: CustomDialogController
   private isOpened: boolean = false

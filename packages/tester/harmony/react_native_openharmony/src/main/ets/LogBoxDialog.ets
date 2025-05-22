@@ -9,6 +9,8 @@ import { RNInstance, RNComponentContext, CustomComponentBuilder } from "./RNOH"
 import { RNSurface, SurfaceConfig2 } from "./RNSurface"
 
 /**
+ * Dialog component that renders React Native's LogBox UI for displaying logs,
+ * warnings and errors. Creates a dedicated RN surface with "LogBox" app key.
  * @api: RN_APP_DEVELOPER
  */
 @CustomDialog

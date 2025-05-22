@@ -8,7 +8,11 @@
 import type { BorderMetrics, ColorSegments, ColorValue } from './DescriptorBase'
 
 /**
+ * Represents the visual state of a React Native surface. Controls how visual
+ * effects are handled.
+ * 
  * @api: RN_APP_DEVELOPER
+ * @enum {number}
  */
 export enum DisplayMode {
   /*
@@ -41,7 +45,12 @@ export enum DisplayMode {
 }
 
 /**
+ * Converts normalized color segments to RGBA string representation.
+ * @note Input values are expected to be in 0-1 range
+ * 
  * @api
+ * @param {ColorSegments} colorSegments - Array of [r,g,b,a] in [0.0, 1.0] range
+ * @returns {string|undefined} Format: "rgba(r,g,b,a)" or undefined if no input
  */
 export function convertColorSegmentsToString(colorSegments?: ColorSegments) {
   if (!colorSegments) {
@@ -54,7 +63,11 @@ export function convertColorSegmentsToString(colorSegments?: ColorSegments) {
 }
 
 /**
+ * Creates a color transformation matrix for applying tint effects.
+ * 
  * @api
+ * @param {ColorSegments} colorSegments - Array of [r,g,b,a] in 0-1 range
+ * @returns {number[]} 4x5 matrix for color transformation
  */
 export function getTintColorMatrix(colorSegments?: ColorSegments) {
   if (!colorSegments || colorSegments.every((element) => element === 0)) {
@@ -80,20 +93,34 @@ export function getTintColorMatrix(colorSegments?: ColorSegments) {
 type ColorChannel = number
 
 /**
+ * Manages color values and provides conversion between different formats.
+ * 
  * @api
  */
 export class Color {
+  /**
+   * Creates Color from numeric color value.
+   *
+   * @param {ColorValue} colorValue - ARGB color as number
+   * @returns {Color} New Color instance
+   */
   static fromColorValue(colorValue: ColorValue) {
     return Color.fromColorSegments(convertColorValueToColorSegments(colorValue))
   }
 
+  /**
+   * Creates Color from normalized color segments.
+   *
+   * @param {ColorSegments} [r,g,b,a] - Color values in 0-1 range
+   * @returns {Color} New Color instance
+   */
   static fromColorSegments([r, g, b, a]: ColorSegments) {
     return new Color({
       r: r * 255,
       g: g * 255,
       b: b * 255,
-      a: a * 255
-    })
+      a: a * 255,
+    });
   }
 
   constructor(private rgba: {
@@ -105,18 +132,36 @@ export class Color {
   }
 
   toRGBAString() {
-    return `rgba(${this.rgba.r}, ${this.rgba.g}, ${this.rgba.b}, ${this.rgba.a / 255})`
+    return `rgba(${this.rgba.r}, ${this.rgba.g}, ${this.rgba.b}, ${this.rgba.a / 255})`;
   }
 
+  /**
+   * Converts to normalized color segments.
+   *
+   * @returns {ColorSegments} Array of [r,g,b,a] values in 0-1 range
+   */
   toSegments(): ColorSegments {
-    return [this.rgba.r / 255, this.rgba.g / 255, this.rgba.b / 255, this.rgba.a / 255]
+    return [
+      this.rgba.r / 255,
+      this.rgba.g / 255,
+      this.rgba.b / 255,
+      this.rgba.a / 255,
+    ];
   }
 }
 
 /**
+ * Converts numeric ARGB color value to RGBA string format.
+ *
  * @api
+ * @param {ColorValue} colorValue - ARGB color as number
+ * @param {string} defaultColor - Color to use if input undefined
+ * @returns {string} Format: "rgba(r,g,b,a)" with rgb in 0-255, a in 0-1
  */
-export function convertColorValueToRGBA(colorValue: ColorValue | undefined, defaultColor: string = "rgba(0,0,0,0.0)") {
+export function convertColorValueToRGBA(
+  colorValue?: ColorValue,
+  defaultColor: string = 'rgba(0,0,0,0.0)',
+) {
   if (colorValue === undefined) {
     return defaultColor;
   }
@@ -124,15 +169,23 @@ export function convertColorValueToRGBA(colorValue: ColorValue | undefined, defa
     a: ((colorValue >> 24) & 0xff) / 255,
     r: (colorValue >> 16) & 0xff,
     g: (colorValue >> 8) & 0xff,
-    b: ((colorValue >> 0) & 0xff),
-  }
-  return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`
+    b: (colorValue >> 0) & 0xff,
+  };
+  return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
 }
 
 /**
+ * Converts numeric ARGB color value to 8-digit hex string.
+ *
  * @api
+ * @param {ColorValue} colorValue - ARGB color as number
+ * @param {string} defaultColor - Color to use if input undefined
+ * @returns {string} Format: "#AARRGGBB" where each component is 2 hex digits
  */
-export function convertColorValueToHex(colorValue: ColorValue | undefined, defaultColor: string = "#00000000") {
+export function convertColorValueToHex(
+  colorValue?: ColorValue,
+  defaultColor: string = '#00000000',
+) {
   if (colorValue === undefined) {
     return defaultColor;
   }
@@ -141,28 +194,36 @@ export function convertColorValueToHex(colorValue: ColorValue | undefined, defau
     a: (colorValue >> 24) & 0xff,
     r: (colorValue >> 16) & 0xff,
     g: (colorValue >> 8) & 0xff,
-    b: ((colorValue >> 0) & 0xff),
-  }
+    b: (colorValue >> 0) & 0xff,
+  };
   return `#${toHex(argb.a, 2)}${toHex(argb.r, 2)}${toHex(argb.g, 2)}${toHex(argb.b, 2)}`;
 }
 
 /**
+ * Converts numeric ARGB color value to normalized color segments.
+ *
  * @api
+ * @param {ColorValue} colorValue - ARGB color as number
+ * @returns {ColorSegments|undefined} Array of [r,g,b,a] in 0-1 range or undefined
  */
-export function convertColorValueToColorSegments(colorValue: ColorValue | undefined): ColorSegments | undefined {
+export function convertColorValueToColorSegments(colorValue?: ColorValue): ColorSegments | undefined {
   if (colorValue === undefined) {
-    return undefined
+    return undefined;
   }
   const rgba = {
     a: ((colorValue >> 24) & 0xff) / 255,
     r: ((colorValue >> 16) & 0xff) / 255,
     g: ((colorValue >> 8) & 0xff) / 255,
     b: ((colorValue >> 0) & 0xff) / 255,
-  }
-  return [rgba.r, rgba.g, rgba.b, rgba.a]
+  };
+  return [rgba.r, rgba.g, rgba.b, rgba.a];
 }
 
 /**
+ * A flattened array that represents a 4x4 3D geometric transformation matrix.
+ * Used for geometric transformations in 3D space.
+ * Matrix elements are stored in row-major order.
+ * 
  * @api
  */
 export type TransformMatrix = [
@@ -185,6 +246,9 @@ export type TransformMatrix = [
 ];
 
 /**
+ * Immutable version of TransformMatrix.
+ * Matrix elements are stored in row-major order.
+ * 
  * @api
  */
 export type ReadonlyTransformationMatrix = readonly [
@@ -274,7 +338,18 @@ export function resolveBorderEdgeProps(props: BorderMetrics, type: BorderEdgePro
 }
 
 /**
+ * Transform a 4D vector by a 4x4 transformation matrix.
+ * 
  * @api
+ * @param {ReadonlyTransformationMatrix} transformMatrix - 4x4 matrix in row-major order
+ * @param {Array<number>} vector - Input 4D vector [x, y, z, w], treated as a
+ * 4D column vector
+ * @returns {Array<number>} Transformed 4D vector [x', y', z', w']
+ * @example
+ * // Identity transform
+ * const matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+ * const vector = [1,2,3,1]
+ * getTransformedVector(matrix, vector) // Returns [1,2,3,1]
  */
 export function getTransformedVector(transformMatrix: ReadonlyTransformationMatrix,
   vector: Array<number>): Array<number> {

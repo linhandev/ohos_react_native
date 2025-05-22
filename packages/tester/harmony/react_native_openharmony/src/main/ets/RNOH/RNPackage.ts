@@ -17,8 +17,11 @@ import {AnyThreadTurboModuleContext} from './RNOHContext';
 
 /**
  * @internal
- * @deprecated This class no longer belongs to the native api. Use UITurboModuleFactory or WorkerTurboModuleFactory instead. (latestRNOHVersion: 0.72.31)
- * By default, the TTurboModule and TTurboModuleContext types are UITurboModule and UITurboModuleContext, respectively, for backward compatibility reasons.
+ * @deprecated This class no longer belongs to the native api. Use
+ * UITurboModuleFactory or WorkerTurboModuleFactory instead.
+ * (latestRNOHVersion: 0.72.31)
+ * By default, the TTurboModule and TTurboModuleContext types are UITurboModule
+ * and UITurboModuleContext, respectively, for backward compatibility reasons.
  */
 export abstract class TurboModulesFactory<
   TTurboModule = UITurboModule,
@@ -71,7 +74,8 @@ class TurboModulesFactoryFromPackageAdapter<
 
 /**
  * @api
- * This context provides a way to inject dependencies in the future without in non-breaking changes manner.
+ * This context provides a way to inject dependencies in the future without
+ * introducing breaking changes.
  */
 export type RNPackageContext = {};
 
@@ -112,9 +116,13 @@ type TurboModuleFactory<TTurboModule, TTurboModuleContext> = (
 
 /**
  * @internal
- * @deprecated: Use RNOHPackage instead, this class became internal. Initially, RNPackage was the default package class on the ETS side, meant to be used by library developers.
- * However, this class doesn't allow registering ArkTS components. Initially, registering ArkTS components in the package class wasn't possible due to language constraints,
- * but with the introduction of wrapped builders, it's now possible. Wrapped builders are, however, available only in ETS files. (latest RNOH version: 0.72.38)
+ * @deprecated: Use RNOHPackage instead, this class became internal. Initially,
+ * RNPackage was the default package class on the ETS side, meant to be used by
+ * library developers. However, this class doesn't allow registering ArkTS
+ * components. Initially, registering ArkTS components in the package class wasn't
+ * possible due to language constraints, but with the introduction of wrapped
+ * builders, it's now possible. Wrapped builders are, however, available only in
+ * ETS files. (latest RNOH version: 0.72.38)
  */
 export abstract class RNPackage {
   constructor(protected ctx: RNPackageContext) {}
@@ -129,7 +137,8 @@ export abstract class RNPackage {
 
   /**
    * @deprecated (latestRNOHVersion: 0.72.38)
-   * Use getUITurboModuleFactoryByNameMap and createEagerUITurboModuleByNameMap instead
+   * Use getUITurboModuleFactoryByNameMap and createEagerUITurboModuleByNameMap
+   * instead
    */
   createUITurboModuleFactory(ctx: UITurboModuleContext): UITurboModuleFactory {
     return new TurboModulesFactoryFromPackageAdapter(
@@ -141,7 +150,8 @@ export abstract class RNPackage {
 
   /**
    * @deprecated (latestRNOHVersion: 0.72.38)
-   * Use getAnyThreadTurboModuleFactoryByNameMap and createEagerAnyThreadTurboModuleByNameMap instead
+   * Use getAnyThreadTurboModuleFactoryByNameMap and
+   * createEagerAnyThreadTurboModuleByNameMap instead
    */
   createWorkerTurboModuleFactory(
     ctx: WorkerTurboModuleContext,
