@@ -29,15 +29,35 @@ namespace rnoh {
 class ArkUINode;
 
 /**
+ * Delegate interface for handling ArkUI node lifecycle and interaction events.
+ * Used by node implementations to notify their owners about node events without
+ * tight coupling.
+ *
  * @api
  */
 class ArkUINodeDelegate {
  public:
   virtual ~ArkUINodeDelegate() = default;
+
+  /**
+   * Called when an ArkUI node is about to be destroyed.
+   * @param node The node being destroyed
+   */
   virtual void onArkUINodeDestroy(ArkUINode* /*node*/){};
+
+  /**
+   * Called when an accessibility action is triggered on the node.
+   * @param node The node on which the action was triggered
+   * @param actionName The name of the accessibility action performed
+   */
   virtual void onArkUINodeAccessibilityAction(
       ArkUINode* /*node*/,
       const std::string& /*actionName*/){};
+
+  /**
+   * Called to handle intercepted touch events on the node.
+   * @param event The touch event data
+   */
   virtual void onArkUINodeTouchIntercept(const ArkUI_UIInputEvent* event){};
 };
 

@@ -30,15 +30,16 @@ import common from '@ohos.app.ability.common'
 
 /**
  * @api
+ * Config for a worker RN instance.
  */
 export interface WorkerRNInstanceConfig {
   thirdPartyPackagesFactory: (ctx: RNPackageContext) => RNPackage[]
   httpClient?: HttpClient
-
 }
 
 /**
  * @api: RN_APP_DEVELOPER
+ * Config for a RNOH worker.
  */
 interface RNOHWorkerConfig {
   createWorkerRNInstanceConfig: ((rnInstanceName: string) => WorkerRNInstanceConfig)
@@ -129,6 +130,16 @@ interface WorkerScheduleTaskResultPayload {
 }
 
 /**
+ * Sets up the React Native worker thread environment. Call from RNOHWorker.ets to
+ * initialize the thread. Example:
+ * ```
+ * setupRNOHWorker({
+ *   createWorkerRNInstanceConfig: name => ({
+ *     thirdPartyPackagesFactory: getRNOHPackages 
+ *   })
+ * })
+ * ```
+ * @param config Worker RN instance configuration factory
  * @api: RN_APP_DEVELOPER
  * @thread: WORKER
  */
