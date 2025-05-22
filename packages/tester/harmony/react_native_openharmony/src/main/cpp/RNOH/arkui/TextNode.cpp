@@ -155,16 +155,16 @@ TextNode& TextNode::setFontFamily(const std::string& fontFamily) {
   return *this;
 }
 
-TextNode& TextNode::setTextCopyOption(int32_t testCopyOption) {
-  if (!m_initFlag[FLAG_COPYOPTION] || testCopyOption != m_testCopyOption) {
+TextNode& TextNode::setTextCopyOption(int32_t textCopyOption) {
+  if (!m_initFlag[FLAG_COPYOPTION] || textCopyOption != m_textCopyOption) {
     VLOG(3) << "[text-debug] setTextCopyOption flag="
             << m_initFlag[FLAG_COPYOPTION];
-    ArkUI_NumberValue value[] = {{.i32 = testCopyOption}};
+    ArkUI_NumberValue value[] = {{.i32 = textCopyOption}};
     ArkUI_AttributeItem item = {.value = value, .size = 1};
     maybeThrow(NativeNodeApi::getInstance()->setAttribute(
         m_nodeHandle, NODE_TEXT_COPY_OPTION, &item));
     m_initFlag[FLAG_COPYOPTION] = true;
-    m_testCopyOption = testCopyOption;
+    m_textCopyOption = textCopyOption;
   }
   return *this;
 }
