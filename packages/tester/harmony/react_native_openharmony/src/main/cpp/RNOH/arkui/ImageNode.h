@@ -15,12 +15,41 @@
 namespace rnoh {
 /**
  * @api
+ * @brief This interface defines methods that can be overriden to react on
+ * ImageNode events.
  */
 class ImageNodeDelegate {
  public:
+  /**
+   * @brief Destructor for ImageNodeDelegate.
+   */
   virtual ~ImageNodeDelegate() = default;
+
+  /**
+   * @brief Called when the image loading is completed.
+   * @param width The width of the loaded image in vp units.
+   * @param height The height of the loaded image in vp units.
+   * This method can be overridden to perform actions after an image is
+   * successfully loaded.
+   */
   virtual void onComplete(float width, float height){};
+
+  /**
+   * @brief Called when there is an error during the image loading process.
+   * @param errorCode The error code indicating the type of failure.
+   * This method can be overridden to handle errors such as failed image
+   * loading or network issues.
+   */
   virtual void onError(int32_t errorCode){};
+
+  /**
+   * @brief Called periodically during the image loading process to
+   * provide progress updates.
+   * @param loaded The amount of data that has been loaded.
+   * @param total The total amount of data to be loaded.
+   * This method can be overridden to track and display progress while loading
+   * an image.
+   */
   virtual void onProgress(uint32_t loaded, uint32_t total){};
 };
 

@@ -10,13 +10,38 @@
 #include "ArkUINode.h"
 
 namespace rnoh {
+
 /**
  * @api
+ * A UI node class that represents a loading progress indicator. This class
+ * allows to create and configure a loading progress element within a user
+ * interface, allowing customization of properties like color and animation
+ * state.
  */
 class LoadingProgressNode : public ArkUINode {
  public:
+  /**
+   * @brief Initializes a new instance of the loading progress indicator node.
+   */
   LoadingProgressNode();
+
+  /**
+   * @brief Sets the foreground color of the loading progress bar.
+   *
+   * @param color The color to set for the loading progress bar.
+   * @return LoadingProgressNode& A reference to the current instance of the
+   * LoadingProgressNode, allowing for method chaining.
+   */
   LoadingProgressNode& setColor(facebook::react::SharedColor const& color);
+
+  /**
+   * @brief Enables or disables animation of the loading progress indicator.
+   *
+   * @param enable A boolean indicating whether the animation should be enabled
+   * (true) or disabled (false).
+   * @return LoadingProgressNode& A reference to the current instance of the
+   * LoadingProgressNode, allowing for method chaining.
+   */
   LoadingProgressNode& setAnimating(const bool& enable);
 };
 
