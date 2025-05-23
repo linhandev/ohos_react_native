@@ -136,6 +136,9 @@ export type RNComponentDataSourceFactory = (ctx: RNComponentDataSourceFactoryCon
 
 /**
  * @api
+ *
+ * @brief RNComponentContext Provides utilities, and dependencies useful for
+ * RNComponents.
  */
 export class RNComponentContext extends RNOHContext {
   /**
@@ -143,15 +146,32 @@ export class RNComponentContext extends RNOHContext {
    * This wrapped builder uses components registered in RNOHPackage.
    */
   public wrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder
+
   /**
    * @internal
    * WrappedCustomRNComponentBuilder provided by the application developer.
    */
   public customWrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder | undefined
+
+  /**
+   * @brief Builder used to construct RN children components.
+   */
   public wrappedRNChildrenBuilder: WrappedRNChildrenBuilder
+
+  /**
+   * @brief Builder for native RN components on the ArkTS side.
+   */
   public wrappedRNComponentBuilder: WrappedRNComponentBuilder
+
   private dataSourceFactoriesByType: Map<string, RNComponentDataSourceFactory>
 
+  /**
+   * Creates a data source for a component based on its tag.
+   * Falls back to default RNComponentDataSource if no factory is found.
+   *
+   * @param ctx - Context object containing tag and other metadata.
+   * @returns The instantiated RNComponentDataSource or a custom data source.
+   */
   public createComponentDataSource(ctx: RNComponentDataSourceFactoryContext) {
     const descriptorWrapper = this.descriptorRegistry.findDescriptorWrapperByTag(ctx.tag);
     const createComponentDataSource = descriptorWrapper && this.dataSourceFactoriesByType.get(descriptorWrapper.type_);
@@ -160,10 +180,25 @@ export class RNComponentContext extends RNOHContext {
 
   private contentByTag: Map<Tag, Content> = new Map()
 
+  /**
+   * @brief Retrieves the content instance associated with a specific tag.
+   *
+   * @param tag - Component instance identifier
+   * @returns The content object if available, otherwise undefined.
+   */
   public getContentForTag(tag: Tag): Content | undefined {
     return this.contentByTag.get(tag)
   }
 
+  /**
+   * @brief Runs a task on the WORKER thread and returns the result
+   * asynchronously.
+   * Requires the worker thread feature to be enabled.
+   *
+   * @param runnable - The task object implementing WorkerTaskRunnable interface.
+   * @param params - The parameters to be passed to the task.
+   * @returns Promise resolving to the result of the task.
+   */
   public async runOnWorkerThread<TParams extends SupportedTaskParams, TResult extends lang.ISendable | void, TRunnable extends WorkerTaskRunnable<TParams, TResult>>(runnable: TRunnable,
     params: TParams): Promise<TResult> {
     const workerTaskRunner = this.erasedWorkerTaskRunner as WorkerTaskRunner;
@@ -220,21 +255,40 @@ function buildRNChildren(ctx: RNComponentContext, parentTag: Tag) {
 
 /**
  * @api: RN_APP_DEVELOPER
+ *
+ * @brief Provides context information required when constructing a component.
  */
 export class ComponentBuilderContext {
+  /**
+   * @brief The current RNComponentContext instance associated with this
+   * component.
+   * Preferred over the deprecated `rnohContext`.
+   */
   public rnComponentContext: RNComponentContext
+
   /**
    * @deprecated Use `rnComponentContext` instead.
    * It was deprecated when preparing 0.77 branch for release.
    */
   public rnohContext: RNOHContext
+
+  /**
+   * @brief Unique identifier for this component instance, assigned by the
+   * React Native runtime.
+   */
   public tag: Tag
+
+  /**
+   * @brief Name of the component being constructed.
+   */
   public componentName: string
+
   /**
    * @deprecated: Use tag and componentName instead.
    * It was deprecated when preparing 0.77 branch for release.
    */
   public descriptor: DescriptorEssence
+  
   /**
    * @internal
    */
