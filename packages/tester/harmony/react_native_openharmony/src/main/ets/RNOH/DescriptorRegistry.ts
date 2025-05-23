@@ -67,11 +67,11 @@ export type DescriptorMutationListener = (args: DescriptorMutation) => void
 
 /**
  * @api
- * Stores (ComponentInstance)Descriptors. Check Descriptor doc comment for more info.
+ * Stores (ComponentInstance)Descriptors. When Descriptors change, send a
+ * notification.
  */
 export class DescriptorRegistry {
   static readonly ANIMATED_NON_RAW_PROP_KEYS = ['transform'];
-
   private descriptorByTag: Map<Tag, Descriptor> = new Map();
   private descriptorWrapperByTag: Map<Tag, DescriptorWrapper> = new Map();
   private descriptorTagById: Map<NativeId, Tag> = new Map();
@@ -132,6 +132,7 @@ export class DescriptorRegistry {
   }
 
   /**
+   * @brief Call it when destroying, and clear the callback function
    * @internal
    */
   public onDestroy() {
@@ -140,14 +141,29 @@ export class DescriptorRegistry {
     stopTracing()
   }
 
+  /**
+   * @brief Get descriptor based on the tag value
+   * @param { number } tag - Node tag
+   * @return descriptor It includes type, parentTag, props, state, and so
+   * on, which are all related to tags
+   */
   public getDescriptor<TDescriptor extends Descriptor>(tag: Tag): TDescriptor {
     return this.descriptorByTag.get(tag) as TDescriptor;
   }
 
+  /**
+   * @brief Get DescriptorWrapper according to the tag value
+   * @param { number } tag - Node tag
+   * @return descriptorWrapper
+   */
   public findDescriptorWrapperByTag<TDescriptorWrapper extends DescriptorWrapper>(tag: Tag): TDescriptorWrapper | null {
     return this.descriptorWrapperByTag.get(tag) as TDescriptorWrapper | null
   }
-
+  /**
+   * @brief Get Descriptor according to the id value
+   * @param { string } id - NativeId
+   * @return descriptor || null
+   */
   public findDescriptorById<TDescriptor extends Descriptor>(id: NativeId): TDescriptor | null {
     const tag = this.descriptorTagById.get(id)
     if (tag) {
@@ -157,8 +173,10 @@ export class DescriptorRegistry {
   }
 
   /**
-   * @returns [...ancestors, descriptor]
-   * Tree of descriptors represent data we have received from RN. To get representation of current state of UI use getComponentManagerLineage.
+   * @brief Tree of descriptors represent data we have received from RN. To get
+   * representation of current state of UI use getComponentManagerLineage
+   * @param { number } tag - Node tag
+   * @return [...ancestors, descriptor]
    */
   public getDescriptorLineage(tag: Tag): Descriptor[] {
     const results: Descriptor[] = []
@@ -187,7 +205,10 @@ export class DescriptorRegistry {
   }
 
   /**
-   * @internal: Called by NativeAnimatedTurboModule. This method needs to be encapsulated.
+   * @brief Called by NativeAnimatedTurboModule. This method needs to be
+   * encapsulated
+   * @param { number } tag - Node tag
+   * @param { TProps } newProps - The new properties of the animation
    */
   public setAnimatedRawProps<TProps extends Object>(tag: Tag, newProps: TProps): void {
     this.logger.clone('setAnimatedRawProps').debug("")
@@ -221,8 +242,11 @@ export class DescriptorRegistry {
     }
     this.callSubtreeListeners(new Set([tag]));
   }
-
-
+  /**
+   * @brief Call the native method to set the State value
+   * @param { number } tag - Node tag
+   * @param { TState } state - The state of the tag has changed
+   */
   public setState<TState extends Object>(tag: Tag, state: TState): void {
     const stopTracing = this.logger.clone("setState").startTracing()
     let descriptor = this.getDescriptor<Descriptor<string, TState>>(tag);
@@ -235,6 +259,8 @@ export class DescriptorRegistry {
   }
 
   /**
+   * @brief The changes of applying mutation
+   * @param { Array } mutations - Instructions for node changes
    * @internal
    */
   public applyMutations(mutations: Mutation[]) {
@@ -283,6 +309,12 @@ export class DescriptorRegistry {
     });
   }
 
+  /**
+   * @brief Subscribe to the changes of mutations
+   * @param { number } tag - Node tag
+   * @param { DescriptorMutationListener } listener - The function that listens to changes in mutations
+   * @internal
+   */
   public subscribeToDescriptorMutations(tag: Tag, listener: DescriptorMutationListener) {
     if (!this.descriptorMutationListenersByTag.has(tag)) {
       this.descriptorMutationListenersByTag.set(tag, new Set());
@@ -297,6 +329,11 @@ export class DescriptorRegistry {
     };
   }
 
+  /**
+   * @brief Subscribe to the changes of Descriptor
+   * @param { number } tag - Node tag
+   * @param { DescriptorChangeListener } listener - listener function for changes in Descriptor.
+   */
   public subscribeToDescriptorChanges(
     tag: Tag,
     listener: DescriptorChangeListener,
@@ -321,6 +358,11 @@ export class DescriptorRegistry {
     }
   }
 
+  /**
+   * @brief Subscribe to the changes of the Descriptor of the subtree
+   * @param { number } tag - Node tag
+   * @param { SubtreeListener } listener - The listener function of the subtree
+   */
   public subscribeToDescriptorSubtreeChanges(
     rootTag: Tag,
     listener: SubtreeListener,
@@ -435,6 +477,8 @@ export class DescriptorRegistry {
   }
 
   /**
+   * @brief Create Descriptor for the root node
+   * @param { number } tag - Node tag
    * @internal
    */
   public createRootDescriptor(tag: Tag) {
@@ -463,6 +507,8 @@ export class DescriptorRegistry {
   }
 
   /**
+   * @brief Delete Descriptor for the root node
+   * @param { number } tag - Node tag
    * @internal
    */
   public deleteRootDescriptor(tag: Tag) {
@@ -492,6 +538,11 @@ export class DescriptorRegistry {
     return this.descriptorByTag
   }
 
+  /**
+   * @brief Get the stats of Descriptor
+   * @return stats include Descriptor, the proportion of quantity, and so on
+   * @internal
+   */
   public getStats() {
     const stats = new DescriptorRegistryStats()
     for (const descriptor of this.descriptorByTag.values()) {
