@@ -30,6 +30,7 @@ void ComponentInstance::insertChild(
   childComponentInstance->setParent(shared_from_this());
   onChildInserted(childComponentInstance, index);
   childComponentInstance->setIndex(index);
+  childComponentInstance->finalizeUpdates();
   m_children.insert(it, std::move(childComponentInstance));
 }
 
