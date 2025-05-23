@@ -10,14 +10,18 @@ import { ViewStyle } from './RNTypes';
 
 /**
  * @api
- * 0-1
- * */
+ * @description Represents a normalized scalar value. A number typically
+ * between 0 and 1.
+ * This is often used for normalized values like color components or other
+ * scaled values.
+ */
 export type NormalizedScalar = number;
 
 /**
  * @api
- * RGBA
- * */
+ * @description Represents a color value in the RGBA format, where each of
+ * the four values is a normalized scalar ranging from 0 to 1.
+ */
 export type ColorSegments = [
   NormalizedScalar,
   NormalizedScalar,
@@ -27,14 +31,19 @@ export type ColorSegments = [
 
 /**
  * @api
+ * @description Represents a color value. This could be a single numeric
+ * value representing a color.
+ * In some cases, this could refer to a color identifier or an encoded color
+ * value, for example, a hexadecimal or an integer.
  */
 export type ColorValue = number;
 
 /**
  * @api
+ * @description Represents a tag as a number. Tags are typically used to
+ * label RN component.
  */
 export type Tag = number;
-
 /**
  * @api
  * @deprecated: Use Descriptor::layoutMetrics (latestRNOHVersion: 0.72.27)
@@ -256,6 +265,7 @@ export type NativeId = string
 
 /**
  * @api
+ * @description Interface representing the rawProps for a component.
  */
 export interface RawPropsBase {
   nativeID?: NativeId
@@ -263,11 +273,13 @@ export interface RawPropsBase {
 
 /**
  * @api
+ * @description Interface representing the props for a component.
  */
 export interface PropsBase {}
 
 /**
  * @api
+ * @description Interface representing the state for a component.
  */
 export interface StateBase {}
 
@@ -351,5 +363,6 @@ export type BorderMetrics = {
 
 /**
  * @api
+ * @description Type alias for the `borderStyle` property of a `ViewStyle`.
  */
 export type BorderStyle = ViewStyle["borderStyle"]
