@@ -49,22 +49,60 @@ class ComponentInstance
   std::unordered_set<std::string> m_nativeResponderBlockOrigins;
 
  protected:
+  /**
+   * @brief React Tag of the component instance.
+   */
   using Tag = facebook::react::Tag;
+
+  /**
+   * @brief React Handle of the component instance.
+   */
   using ComponentHandle = facebook::react::ComponentHandle;
 
  public:
+  /**
+   * @brief shared_ptr to the component instance.
+   */
   using Shared = std::shared_ptr<ComponentInstance>;
+
+  /**
+   * @brief weak_ptr to the component instance.
+   */
   using Weak = std::weak_ptr<ComponentInstance>;
 
+  /**
+   * @api
+   * Component instance registry.
+   */
   class Registry {
    public:
+    /**
+     * @brief weak_ptr to the component instance registry.
+     */
     using Weak = std::weak_ptr<Registry>;
+
+    /**
+     * @brief find a component instance by its id.
+     * @param id
+     * @return shared_ptr to the component instance
+     */
     virtual ComponentInstance::Shared findById(const std::string& id) const = 0;
   };
 
+  /**
+   * @brief set MountingManagerCAPI as a friend class to allow it to access
+   */
   friend MountingManagerCAPI;
 
+  /**
+   * @api
+   * allows ComponentInstances to interact with TurboModules.
+   * This is needed in react-native-harmony-gesture-handler.
+   */
   struct Dependencies {
+    /**
+     * @brief shared_ptr to the const Dependencies.
+     */
     using Shared = std::shared_ptr<const Dependencies>;
 
     /**
@@ -72,35 +110,99 @@ class ComponentInstance
      * (latestRNOHVersion: 0.72.28)
      */
     ArkTSChannel::Shared arkTSChannel;
+
     /**
      * @deprecated: use arkTSMessageHub instead (latestRNOHVersion: 0.72.29)
      */
     ArkTSMessageHub::Shared arkTsMessageHub;
+    /**
+     * @brief Shared pointer to the ArkTSMessageHub.
+     * This is used to communicate with the ArkTS side.
+     */
     ArkTSMessageHub::Shared arkTSMessageHub;
+
+    /**
+     * @brief weak_ptr to the RNInstance.
+     */
     RNInstance::Weak rnInstance;
+
+    /**
+     * @brief shared_ptr to the DisplayMetricsManager.
+     */
     DisplayMetricsManager::Shared displayMetricsManager;
+
+    /**
+     * @brief shared_ptr to the ImageSourceResolver.
+     */
     ImageSourceResolver::Shared imageSourceResolver;
+
+    /**
+     * @brief weak_ptr to the component instance registry.
+     */
     Registry::Weak componentInstanceRegistry;
+
+    /**
+     * @brief shared_ptr to the TaskExecutor.
+     */
     TaskExecutor::Shared taskExecutor;
   };
 
+  /**
+   * @api
+   * context of the component instance.
+   */
   struct Context {
+    /**
+     * @brief React tag
+     */
     Tag tag;
+
+    /**
+     * @brief React componentHandle
+     */
     ComponentHandle componentHandle;
+
+    /**
+     * @brief componentName
+     */
     std::string componentName;
+
+    /**
+     * @brief shared_ptr to the Dependencies.
+     */
     Dependencies::Shared dependencies;
   };
 
+  /**
+   * @api
+   * Some components (such as SVG elements in RNSVG) don't represent native
+   * nodes, but the `ComponentInstance` interface requires an `ArkUINode` to
+   * be returned from `getLocalRootArkUINode`. This introduces a
+   * `NullArkUINode` class for representing these non-existent nodes.
+   */
   class NoArkUINodeError final : public RNOHError {
    public:
+    /**
+     * @brief Construct a new NoArkUINodeError object
+     * @param whatHappened
+     * @param howCanItBeFixed
+     */
     NoArkUINodeError(
         std::string whatHappened =
             "Called `getLocalRootArkUINode` on a ComponentInstance with no `ArkUINode`s",
         std::vector<std::string> howCanItBeFixed = {});
   };
 
+  /**
+   * @brief Get the Local Root ArkUI Node object
+   * @return ArkUINode&
+   */
   virtual ArkUINode& getLocalRootArkUINode() = 0;
 
+  /**
+   * @brief Construct a new Component Instance object
+   * @param ctx context of the component instance
+   */
   ComponentInstance(Context ctx);
 
   virtual ~ComponentInstance() = default;
@@ -111,13 +213,18 @@ class ComponentInstance
    */
   virtual void onCreate() {}
 
+  /**
+   * @brief Get the  React Tag of the component instance.
+   * @return Tag
+   */
   Tag getTag() const {
     return m_tag;
   }
 
   /**
-    @return A string representing the nativeId if it exists; otherwise, an empty
-    string.
+   * @brief Get the Native component Id
+   * @return std::string A string representing the nativeId if it exists;
+   * otherwise, an empty string.
    */
   std::string getId() const {
     auto props = getProps();
@@ -132,10 +239,18 @@ class ComponentInstance
    */
   virtual std::string getCompId() = 0;
 
+  /**
+   * @brief Get the Component Name
+   * @return const std::string
+   */
   const std::string getComponentName() const {
     return m_componentName;
   }
 
+  /**
+   * @brief Get the React Component Handle
+   * @return ComponentHandle
+   */
   ComponentHandle getComponentHandle() const {
     return m_componentHandle;
   }
@@ -161,8 +276,17 @@ class ComponentInstance
    */
   void removeChild(ComponentInstance::Shared childComponentInstance);
 
+  /**
+   * @brief Get the Props of the component instance.
+   * @return facebook::react::Props::Shared
+   */
   virtual facebook::react::Props::Shared getProps() const = 0;
 
+  /**
+   * @brief Indicates if this component is in an accessibility group (i.e.,
+   * should be treated as a group by screen readers).
+   * @return True if this is an accessibility group, false otherwise.
+   */
   virtual bool getAccessibilityGroup() const = 0;
 
   /**
@@ -230,18 +354,27 @@ class ComponentInstance
 
  public:
   /**
-   * This method is necessary to support "aria-labelledby" and
+   * @brief This method is necessary to support "aria-labelledby" and
    * "accessibilityLabelledBy" props.
+   * @return The accessibility label string.
    */
   virtual const std::string& getAccessibilityLabel() const {
     static const std::string empty = "";
     return empty;
   }
 
+  /**
+   * @brief Get the Children
+   * @return std::vector<ComponentInstance::Shared> const&
+   */
   virtual std::vector<ComponentInstance::Shared> const& getChildren() const {
     return m_children;
   }
 
+  /**
+   * @brief Get the Parent
+   * @return ComponentInstance::Weak const
+   */
   virtual ComponentInstance::Weak const getParent() const {
     return m_parent;
   }
@@ -276,6 +409,11 @@ class ComponentInstance
      */
   }
 
+  /**
+   * @brief this method is used to block native responder for a component.
+   * @param blocked
+   * @param origin recorded origin of the block.
+   */
   void setNativeResponderBlocked(
       bool blocked,
       const std::string& origin = "REACT_NATIVE") {
@@ -289,20 +427,35 @@ class ComponentInstance
     onNativeResponderBlockChange(m_nativeResponderBlockOrigins.size() > 0);
   }
 
+  /**
+   * @brief get UIInputEventHandler
+   * @return std::weak_ptr<UIInputEventHandler>
+   */
   virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() {
     return {};
   }
 
-  // TouchTarget implementation
+  /**
+   * @brief Get the TouchTarget Tag
+   * @return Tag
+   */
   Tag getTouchTargetTag() const override {
     return getTag();
   }
 
+  /**
+   * @brief Get the Touch Event Emitter
+   * @return facebook::react::SharedTouchEventEmitter
+   */
   facebook::react::SharedTouchEventEmitter getTouchEventEmitter()
       const override {
     return nullptr;
   }
 
+  /**
+   * @brief Get the Touch Target Children
+   * @return std::vector<TouchTarget::Shared>
+   */
   virtual std::vector<TouchTarget::Shared> getTouchTargetChildren() override {
     auto children = getChildren();
     return std::vector<TouchTarget::Shared>(children.begin(), children.end());
@@ -332,15 +485,31 @@ class ComponentInstance
   }
 
  protected:
+  /**
+   * @brief insert a child component instance by index
+   * @param childComponentInstance
+   * @param index
+   */
   virtual void onChildInserted(
       ComponentInstance::Shared const& childComponentInstance,
       std::size_t index) {}
-
+  /**
+   * @brief remove a child component instance
+   * @param childComponentInstance
+   */
   virtual void onChildRemoved(
       ComponentInstance::Shared const& childComponentInstance) {}
 
+  /**
+   * @brief Called when the component instance is finished updating its props.
+   */
   virtual void onFinalizeUpdates() {}
 
+  /**
+   * @brief Called when a command is received from JS.
+   * @param commandName
+   * @param args
+   */
   virtual void onCommandReceived(
       std::string const& commandName,
       folly::dynamic const& args) {}
@@ -361,26 +530,32 @@ class ComponentInstance
   bool m_isRadiusSetValid = 0;
   /**
    * @api
+   * Identifier of the component instance in the React side.
    */
   Tag m_tag;
   /**
    * @api
+   * Handle of the component instance in the React side.
    */
   ComponentHandle m_componentHandle;
   /**
    * @api
+   * Vector container for storing child components.
    */
   std::vector<ComponentInstance::Shared> m_children;
   /**
    * @api
+   * Weak pointer to the parent component instance.
    */
   ComponentInstance::Weak m_parent;
   /**
    * @api
+   * Stores the LayoutMetrics data of the component.
    */
   facebook::react::LayoutMetrics m_layoutMetrics;
   /**
    * @api
+   * Stores the Dependencies data of the component.
    */
   Dependencies::Shared m_deps;
   /**
@@ -396,6 +571,7 @@ class ComponentInstance
   std::unordered_set<std::string> m_ignoredPropKeys;
   /**
    * @api
+   * RNInstance ID
    */
   int m_rnInstanceId = -1;
   /**

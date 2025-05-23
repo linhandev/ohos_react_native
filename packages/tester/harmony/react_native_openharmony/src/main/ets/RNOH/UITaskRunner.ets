@@ -40,8 +40,17 @@ export class UITaskRunner extends TaskRunner<UITurboModuleContext, UITask> {
 
 /**
  * @api
+ * @template TParams The type of the parameters to pass to the task.
+ * @template TResult The type of the result of the task.
  */
 export interface UITaskRunnable<TParams extends SupportedTaskParams = undefined, TResult extends ISendable | void = ISendable | void> extends TaskRunnable<UITurboModuleContext, TParams, TResult> {
+  
+  /**
+   * Runs the task on the WorkerTurboModule thread.
+   * @param uiTurboModuleContext The `EtsUITurboModuleContext` or `RNComponentContext` to run the task on.
+   * @param params The parameters to pass to the task.
+   * @returns The result of the task.
+   */
   run(uiTurboModuleContext: UITurboModuleContext, params: TParams): TResult;
 }
 

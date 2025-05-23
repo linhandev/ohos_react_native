@@ -23,18 +23,56 @@ class RNInstance;
  */
 class TurboModule : public facebook::react::TurboModule {
  public:
+  /**
+   * @brief Context struct which holds context data required by the
+   * TurboModule.
+   */
   struct Context {
+    /**
+     * @brief This is used to invoke JavaScript functions from C++.
+     */
     std::shared_ptr<facebook::react::CallInvoker> jsInvoker;
+
+    /**
+     * @brief Weak pointer to the RNInstance.
+     * This is used to set view properties.
+     */
     std::weak_ptr<RNInstance> instance;
+
+    /**
+     * @brief Shared pointer to the ArkTSMessageHub.
+     * This is used to receive messages from the ArkTS side.
+     */
     std::shared_ptr<ArkTSMessageHub> arkTSMessageHub;
   };
 
+  /**
+   * @brief Type alias for shared pointer of TurboModule.
+   */
   using Shared = std::shared_ptr<TurboModule>;
 
+  /**
+   * @brief Constructs a new TurboModule object.
+   * @param ctx Context data for the TurboModule, including JSInvoker,
+   * RNInstance, and ArkTSMessageHub.
+   * @param name The name of the TurboModule.
+   */
   TurboModule(Context ctx, std::string name)
       : facebook::react::TurboModule(name, ctx.jsInvoker) {}
+
+  /**
+   * @brief Destructor for TurboModule.
+   */
   virtual ~TurboModule();
 
+  /**
+   * @brief Sets a property on the TurboModule.
+   * Used to set a property with a given name on the js side,
+   * it will call this method.
+   * @param rt The JSI runtime.
+   * @param name The name of the property.
+   * @param value The value to set for the property.
+   */
   void set(
       facebook::jsi::Runtime& rt,
       const facebook::jsi::PropNameID& name,
