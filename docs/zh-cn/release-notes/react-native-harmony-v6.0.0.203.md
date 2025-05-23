@@ -13,8 +13,8 @@
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| DevEco Studio     | DevEcoService 6.0.2.104 |
+| DevEco Studio     | DevEco Studio 6.0.0.272 |
 | HarmonyOS SDK     | HarmonyOS SDK 6.0.0.32 |
 | 手机ROM           | ALN-AL00 206.0.0.32(SP30DEVC00E32R4P2) <br> ALN-AL80 206.0.0.32(SP30DEVC00E32R4P2) <br> BRA-AL00 206.0.0.32(SP30DEVC00E32R4P1) |
 
-> 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 14，相应配套版本可通过：链接https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/overview-502-release获取
+> 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 15，相应配套版本可通过：链接 https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/overview-502-release 获取

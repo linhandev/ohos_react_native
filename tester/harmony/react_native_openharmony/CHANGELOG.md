@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.72.72
+- feat: update version of RN,([fa8bd8f8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fa8bd8f8e18d02ffb55af6d554ea717a221e0829))
+- fix: ScrollView nested in the PanResponder fails to respond to gestures.,([2267f979](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2267f979fa4c7148ece51fc49c098314a786bf2a))
+- fix: The setDefaultDensityEnabled is invalid for the RN page,([bf0172af](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bf0172aff423acee924409f31c0d6db72ec7d42d))
+- fix: JSVMPointerValue crash,([01034d11](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01034d1129bbf07661a6a13f421bda2a603c1403))
+- fix: Alert button order is not consistant,([2eaf3522](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2eaf35227dfb586f357464ddfe795da9782aee20))
+- chore: update to version 6.0.0.203(0.72.71),([7f3d6e5d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7f3d6e5d17556bda8f4f6bc16c0a3447c9089608))
+
 ## v0.72.71
 - Include API version compatibility check.,([c567edb0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c567edb0e76e3897d3e3949bda597f4447832f22))
 - feat: Support ScrollView fadingEdgeLength,([fb2ea2e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fb2ea2e7c19fc8b577f5a4ffccd4cb3162931422))
