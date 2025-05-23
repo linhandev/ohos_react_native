@@ -33,6 +33,7 @@ function getConstraints(ctx: SurfaceContext): {
 
 /**
  * @api: RN_APP_DEVELOPER
+ * @brief Native wrapper for cpp (and JS) methods of a surface
  */
 export class SurfaceHandle {
   private destroyed: boolean = false;
@@ -42,6 +43,14 @@ export class SurfaceHandle {
   private running: boolean = false
   private surfaceCtx: SurfaceContext = null;
 
+  /**
+   * @param rnInstance - RNInstance Id
+   * @param tag - surface tag
+   * @param appKey - App name. Check react-native/Libraries/AppRegistry for more info.
+   * @param defaultProps - Default props. Check setSurfaceProps at react-native/Libraries/AppRegistry for more info.
+   * @param napiBridge - Native API Bridge
+   * @param onDestroyed - cleanup callback
+   */
   constructor(
     private rnInstance: RNInstance,
     private tag: Tag,
@@ -55,10 +64,20 @@ export class SurfaceHandle {
     this.props = defaultProps;
   }
 
+  /**
+   * @returns surface tag
+   */
   public getTag(): Tag {
     return this.tag;
   }
 
+  /**
+   * @brief Start surface.
+   * Check runApplication at react-native/Libraries/AppRegistry for more info.
+   * @param ctx - Surface Context
+   * @param props - initial props. Check setSurfaceProps for more info.
+   * @throws Error if surface has already been destroyed
+   */
   public start(ctx: SurfaceContext, props: SurfaceProps) {
     if (this.destroyed) {
       throw new Error("start called on a destroyed surface");
@@ -87,6 +106,11 @@ export class SurfaceHandle {
     this.running = true
   }
 
+  /**
+   * @brief Stop surface.
+   * Check RN$stopSurface at react-native/Libraries/Renderer/shims/ReactFabric for more info.
+   * @throws Error if surface has already been destroyed
+   */
   public async stop() {
     if (this.destroyed) {
       throw new Error("stop called on a destroyed surface");
@@ -95,6 +119,12 @@ export class SurfaceHandle {
     this.running = false
   }
 
+  /**
+   * @brief Update surface Constraints.
+   * Check SurfaceHandler::constraintLayout for more info.
+   * @param ctx - Surface Context
+   * @throws Error if surface has already been destroyed
+   */
   public updateConstraints(
     ctx: SurfaceContext
   ) {
@@ -138,6 +168,11 @@ export class SurfaceHandle {
     );
   }
 
+  /**
+   * @brief Update surface RTL.
+   * Check SurfaceHandler::constraintLayout for more info.
+   * @param isRTL - layout direction
+   */
   public updateRTL(isRTL: boolean) {
     const {
       minWidth,
@@ -176,6 +211,12 @@ export class SurfaceHandle {
     );
   }
 
+  /**
+   * @brief Measure surface.
+   * Check SurfaceHandler::measure for more info.
+   * @param ctx - Surface Context
+   * @returns surface size
+   */
   measure(ctx: SurfaceContext) {
     const {
       minWidth,
@@ -194,10 +235,18 @@ export class SurfaceHandle {
       surfaceOffsetY, pixelRatio, isRTL)
   }
 
+  /**
+   * @returns current DisplayMode
+   */
   public getDisplayMode(): DisplayMode {
     return this.displayMode;
   }
 
+  /**
+   * @brief Set DisplayMode.
+   * @param displayMode - new DisplayMode
+   * @throws Error if surface has already been destroyed
+   */
   public setDisplayMode(displayMode: DisplayMode) {
     if (this.destroyed) {
       throw new Error("setDisplayMode called on a destroyed surface");
@@ -205,15 +254,27 @@ export class SurfaceHandle {
     this.napiBridge.setSurfaceDisplayMode(this.rnInstance.getId(), this.tag, displayMode);
   }
 
+  /**
+   * @returns surface props.
+   */
   public getProps(): SurfaceProps {
     return this.props;
   }
 
+  /**
+   * @brief Set surface props.
+   * @param props - new props
+   */
   public setProps(props: SurfaceProps) {
     this.props = { ...this.defaultProps, ...props };
     this.napiBridge.setSurfaceProps(this.rnInstance.getId(), this.tag, this.props);
   }
 
+  /**
+   * @brief Destroy surface.
+   * Do nothing if surface has already been destroyed.
+   * @throws Error if surface has not yet been stoped
+   */
   public destroy() {
     if (this.destroyed) {
       return;
@@ -227,18 +288,37 @@ export class SurfaceHandle {
     this.onDestroyed(this);
   }
 
+  /**
+   * @returns if surface is running.
+   */
   public isRunning() {
     return this.running;
   }
 
+  /**
+   * @returns if surface is destroyed.
+   */
   public isDestroyed() {
     return this.destroyed;
   }
 
+  /**
+   * @param instanceId - RNInstance Id
+   * @param surfaceId - surface tag
+   * @param nodeContent - content of ContentSlot, also root node of surface
+   * @returns null
+   * @throws RNOHError on cpp side if failed to get the RNInstance
+   */
   public attachRootView(instanceId: number, surfaceId: number, nodeContent: NodeContent) {
     return this.napiBridge.attachRootView(instanceId, surfaceId, nodeContent);
   }
 
+  /**
+   * @param instanceId - RNInstance Id
+   * @param surfaceId - surface tag
+   * @returns null
+   * @throws RNOHError on cpp side if failed to get the RNInstance
+   */
   public detachRootView(instanceId: number, surfaceId: number) {
     return this.napiBridge.detachRootView(instanceId, surfaceId);
   }

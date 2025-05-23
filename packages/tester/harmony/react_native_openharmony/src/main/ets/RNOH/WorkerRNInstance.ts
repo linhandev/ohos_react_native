@@ -14,16 +14,34 @@ import type {AnyThreadRNInstance} from './RNOHContext';
 /**
  * @api
  * @thread: WORKER
+ * @brief asynchronous RNInstance to run on a WORKER thread
  */
 export class WorkerRNInstance implements AnyThreadRNInstance {
+  /**
+   * @brief Indicates if RNFunction can be called synchronously.
+   * Function calls are queued if false
+   */
   protected canCallRNFunction = false;
+  /**
+   * @brief queued Function calls
+   */
   protected rnFunctionCallsQueue: {
     moduleName: string;
     functionName: string;
     args: unknown[];
   }[] = [];
+  /**
+   * @brief initial Bundle Url
+   */
   protected initialBundleUrl: string | undefined = undefined;
 
+  /**
+   * @param id - RNInstance Id
+   * @param napiBridge - Native API Bridge
+   * @param architecture - fixed to 'C_API'
+   * @param assetsDest - the path for RN to locate assets
+   * @param getTurboModuleProvider - callback to get TurboModuleProvider
+   */
   constructor(
     protected id: number,
     protected napiBridge: NapiBridge,
@@ -34,10 +52,21 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
       | undefined,
   ) {}
 
+  /**
+   * @brief Calls RCTDeviceEventEmitter.emit to JavaScript
+   * @param eventName - event name
+   * @param payload - list of arguments
+   */
   emitDeviceEvent(eventName: string, payload: any): void {
     this.callRNFunction('RCTDeviceEventEmitter', 'emit', [eventName, payload]);
   }
 
+  /**
+   * @brief Calls module.function to JavaScript
+   * @param moduleName - module name
+   * @param functionName - function name
+   * @param args - list of arguments
+   */
   callRNFunction(
     moduleName: string,
     functionName: string,
@@ -50,18 +79,37 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
     this.napiBridge.callRNFunction(this.id, moduleName, functionName, args);
   }
 
+  /**
+   * @brief post message to Cpp
+   * @param name - message name
+   * @param payload - message centent
+   */
   postMessageToCpp(name: string, payload: any): void {
     this.napiBridge.postMessageToCpp(name, {rnInstanceId: this.id, payload});
   }
 
+  /**
+   * @returns current architecture, fixed to 'C_API'
+   */
   getArchitecture() {
     return this.architecture;
   }
 
+  /**
+   * @template T - turboModule type
+   * @param name - turboModule name
+   * @returns turboModule instance
+   */
   getTurboModule<T>(name: string): T {
     return this.getWorkerTurboModule(name) as T;
   }
 
+  /**
+   * @template T - WorkerTurboModule type
+   * @param name - WorkerTurboModule name
+   * @returns WorkerTurboModule instance
+   * @throws RNOHError if failed to get TurboModuleProvider
+   */
   getWorkerTurboModule<T extends WorkerTurboModule>(name: string): T {
     const tmProvider = this.getTurboModuleProvider();
     if (!tmProvider) {
@@ -74,10 +122,16 @@ export class WorkerRNInstance implements AnyThreadRNInstance {
     return tmProvider.getModule<T>(name);
   }
 
+  /**
+   * @returns the path for RN to locate assets
+   */
   getAssetsDest(): string {
     return this.assetsDest;
   }
 
+  /**
+   * @returns initial Bundle Url
+   */
   getInitialBundleUrl(): string | undefined {
     return this.initialBundleUrl
   }

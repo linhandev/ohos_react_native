@@ -20,8 +20,18 @@ export type SupportedTaskParams = ISendable | undefined
 
 /**
  * @api
+ * @brief interface that defines a task to run on main thread
+ * @template TContext - Context type
+ * @template TParams - parameter type
+ * @template TResult - result type
  */
 export interface TaskRunnable<TContext, TParams extends SupportedTaskParams = undefined, TResult extends ISendable | void = ISendable | void> extends ISendable {
+  /**
+   * @brief run the task
+   * @param context - context
+   * @param params - user-defined params
+   * @returns user-defined result
+   */
   run(context: TContext, params: TParams): TResult;
 }
 

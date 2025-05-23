@@ -20,8 +20,17 @@ interface WorkerScheduleTaskResultPayload {
 
 /**
  * @api
+ * @brief interface that defines a task to run on Worker thread
+ * @template TParams - parameter type
+ * @template TResult - result type
  */
 export interface WorkerTaskRunnable<TParams extends SupportedTaskParams = undefined, TResult extends ISendable | void = ISendable | void> extends TaskRunnable<AnyThreadRNInstance, TParams, TResult> {
+  /**
+   * @brief run the task
+   * @param turboModuleContext - turboModuleContext
+   * @param params - user-defined params
+   * @returns user-defined result
+   */
   run(turboModuleContext: AnyThreadRNInstance, params: TParams): TResult;
 }
 
