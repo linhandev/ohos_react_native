@@ -34,6 +34,10 @@
 namespace rnoh {
 using namespace facebook;
 
+/**
+ * @brief Gets TaskExecutor
+ * @return m_taskExecutor
+ */
 TaskExecutor::Shared RNInstanceInternal::getTaskExecutor() {
   return m_taskExecutor;
 }
@@ -44,6 +48,10 @@ rnoh::RNInstanceInternal::getContextContainer() const {
   return *m_contextContainer;
 }
 
+/**
+ * @brief Get turboModule instance
+ * @param name turboModuleName
+ */
 TurboModule::Shared RNInstanceInternal::getTurboModule(
     const std::string& name) {
   auto turboModule = m_turboModuleProvider->getTurboModule(name);
@@ -60,12 +68,20 @@ TurboModule::Shared RNInstanceInternal::getTurboModule(
   return nullptr;
 }
 
+/**
+ * @brief Send a message to the ArkTS side in C++
+ * @param name Message's name
+ * @param payload The parameters passed.
+ */
 void RNInstanceInternal::postMessageToArkTS(
     const std::string& name,
     folly::dynamic const& payload) {
   m_arkTSChannel->postMessage(name, payload);
 }
 
+/**
+ * @brief Initialize the runtime environment, scheduling, and context
+ */
 void RNInstanceInternal::start() {
   DLOG(INFO) << "RNInstanceInternal::start";
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_REACT_CONTEXT_START);
@@ -102,6 +118,9 @@ void RNInstanceInternal::start() {
 
 bool RNInstanceInternal::s_hasInitializedFeatureFlags = false;
 
+/**
+ * @brief Initialize runtime.
+ */
 void RNInstanceInternal::initialize() {
   DLOG(INFO) << "RNInstanceInternal::initialize";
   if (!RNInstanceInternal::s_hasInitializedFeatureFlags) {
@@ -177,6 +196,10 @@ void RNInstanceInternal::initialize() {
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
+/**
+ * @brief Initialize the scheduling information of turboModule
+ * @param turboModuleProvider
+ */
 void RNInstanceInternal::initializeScheduler(
     std::shared_ptr<TurboModuleProvider> turboModuleProvider) {
   DLOG(INFO) << "RNInstanceInternal::initializeScheduler";
@@ -225,6 +248,13 @@ void RNInstanceInternal::callJSFunction(
       std::move(module), std::move(method), std::move(params));
 }
 
+/**
+ * @brief Called when the component's state changes, updates the state.
+ * @param env Running environment
+ * @param componentName
+ * @param tag Component's tag
+ * @param newState The state that has changed.
+ */
 void RNInstanceInternal::updateState(
     napi_env env,
     std::string const& componentName,
@@ -246,6 +276,12 @@ void RNInstanceInternal::onUITick(
   }
 }
 
+/**
+ * @brief Load the bundle from the buffer.
+ * @param bundle
+ * @param sourceURL
+ * @param onFinish
+ */
 void RNInstanceInternal::loadScriptFromBuffer(
     std::vector<uint8_t> bundle,
     std::string const sourceURL,
@@ -254,6 +290,11 @@ void RNInstanceInternal::loadScriptFromBuffer(
       JSBigStringHelpers::fromBuffer(std::move(bundle)), sourceURL, onFinish);
 }
 
+/**
+ * @brief Loads a bundle from sandboxed path
+ * @param fileUrl
+ * @param onFinish
+ */
 void RNInstanceInternal::loadScriptFromFile(
     std::string const fileUrl,
     std::function<void(const std::string)> onFinish) {
@@ -264,6 +305,11 @@ void RNInstanceInternal::loadScriptFromFile(
   this->loadScript(std::move(jsBundle), fileUrl, onFinish);
 }
 
+/**
+ * @brief Loads a bundle from hap resource.
+ * @param rawFileUrl
+ * @param onFinish
+ */
 void RNInstanceInternal::loadScriptFromRawFile(
     std::string const rawFileUrl,
     std::function<void(const std::string)> onFinish) {
@@ -318,6 +364,13 @@ void RNInstanceInternal::loadScript(
   }
 }
 
+/**
+ * @brief Send an event to the component
+ * @param env Running environment
+ * @param tag Component's tag
+ * @param eventName
+ * @param payload The parameters passed.
+ */
 void RNInstanceInternal::emitComponentEvent(
     napi_env env,
     react::Tag tag,
@@ -343,6 +396,10 @@ void RNInstanceInternal::emitComponentEvent(
   }
 }
 
+/**
+ * @brief It is called by arkts to monitor memory changes.
+ * @param memoryLevel
+ */
 void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   // Android memory levels are 5, 10, 15, while Ark's are 0, 1, 2
   static const int memoryLevels[] = {5, 10, 15};
@@ -353,6 +410,11 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   }
 }
 
+/**
+ * @brief It is called when the screen size changes, and it is mainly used to
+ * handle fonts.
+ * @param payload screenPhysicalPixels
+ */
 void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
   if (payload.isNull()) {
     return;
@@ -391,6 +453,11 @@ void RNInstanceInternal::removeArkTSMessageHandler(
   }
 }
 
+/**
+ * @brief Handle the messages sent by arkts
+ * @param name Message‘s name
+ * @param payload The parameters passed.
+ */
 void RNInstanceInternal::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
@@ -412,6 +479,9 @@ void RNInstanceInternal::handleArkTSMessage(
   }
 }
 
+/**
+ * @brief Call it when the animation is start
+ */
 void RNInstanceInternal::onAnimationStarted() {
   facebook::react::SystraceSection s("RNInstanceInternal::onAnimationStarted");
   if (m_unsubscribeUITickListener != nullptr) {
@@ -430,6 +500,9 @@ void RNInstanceInternal::onAnimationStarted() {
       });
 }
 
+/**
+ * @brief Call it when the animation is finished
+ */
 void RNInstanceInternal::onAllAnimationsComplete() {
   facebook::react::SystraceSection s(
       "#RNOH::RNInstanceInternal::onAllAnimationsComplete");
@@ -440,6 +513,11 @@ void RNInstanceInternal::onAllAnimationsComplete() {
   m_unsubscribeUITickListener = nullptr;
 }
 
+/**
+ * @brief Called from the arkts side for the registration of fonts
+ * @param fontFamily
+ * @param fontFilePath
+ */
 void RNInstanceInternal::registerFont(
     std::string const& fontFamily,
     std::string const& fontFilePath) {
@@ -464,16 +542,49 @@ void RNInstanceInternal::RNInstanceRNOHMarkerListener::logMarker(
   arkTSChannel->postMessage("logRNOHMarker", payload);
 }
 
+/**
+ * @brief Get the path of the bundle
+ * @return m_bundlePath
+ */
 std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
 
+/**
+ * @brief Get the path of the bundle
+ * @return m_bundlePath
+ */
 NativeResourceManager const* RNInstanceInternal::getNativeResourceManager()
     const {
   RNOH_ASSERT(m_nativeResourceManager != nullptr);
   return m_nativeResourceManager.get();
 }
 
+/**
+ * @brief Mainly do operations related to RNInstace
+ * @param id rnInstanceId
+ * @param contextContainer Running context
+ * @param turboModuleFactory
+ * @param taskExecutor Task execution-related scheduling.
+ * @param componentDescriptorProviderRegistry The registration of the Descriptor
+ * of the component
+ * @param mutationsToNapiConverter Listen to the changes of mutations.
+ * @param eventEmitRequestHandlers Deal with event-related issues.
+ * @param globalJSIBinders Global JavaScript bridge.
+ * @param uiTicker Monitor changes in the UI and update accordingly.
+ * @param shadowViewRegistry View the registration of the shadow tree node.
+ * @param arkTSChannel Arkts scheduling and execution.
+ * @param mountingManager updating and destroying ComponentInstances
+ * @param arkTSMessageHandlers Handle ARKTS messages.
+ * @param componentInstancePreallocationRequestQueue Component processing queue
+ * @param nativeResourceManager the native implementation of the JavaScript
+ * resource manager
+ * @param shouldEnableDebugger Control whether you can debug.
+ * @param arkTSBridge
+ * @param fontRegistry Handle font-related issues
+ * @param jsEngineProvider hermes/jsvm
+ * @return descriptorWrapper
+ */
 RNInstanceInternal::RNInstanceInternal(
     int id,
     std::shared_ptr<facebook::react::ContextContainer> contextContainer,
@@ -521,6 +632,9 @@ RNInstanceInternal::RNInstanceInternal(
   m_fontRegistry = std::move(fontRegistry);
 }
 
+/**
+ * @brief The destructor of RNInstanceInternal.
+ */
 RNInstanceInternal::~RNInstanceInternal() noexcept {
   if (m_inspectorPageId.has_value()) {
     react::jsinspector_modern::getInspectorInstance().removePage(
