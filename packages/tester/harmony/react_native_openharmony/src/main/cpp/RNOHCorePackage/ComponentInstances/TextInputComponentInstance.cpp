@@ -113,25 +113,53 @@ void TextInputComponentInstance::onTextSelectionChange(
   if (m_textWasPastedOrCut) {
     m_textWasPastedOrCut = false;
   } else if (m_valueChanged) {
-    std::string key;
+    std::u16string newCharUtf16;
     bool noPreviousSelection = m_selectionLength == 0;
-    bool cursorDidNotMove = location == m_selectionLocation;
+    int32_t newCursorPosition = location;
+    int32_t previousCursorPosition = m_selectionLocation;
+    bool cursorDidNotMove = newCursorPosition == previousCursorPosition;
     bool cursorMovedBackwardsOrAtBeginningOfInput =
-        (location < m_selectionLocation) || location <= 0;
+        (newCursorPosition < m_selectionLocation) || newCursorPosition <= 0;
+    /**
+     * Following part is to Check if cursor moved forward (not backward) and is
+     * not at the start of input AND one of the following is true:
+     * 1. There was no previous text selection (new input)
+     * 2. Cursor position didn't change (possible input at same position)
+     */
     if (!cursorMovedBackwardsOrAtBeginningOfInput &&
         (noPreviousSelection || !cursorDidNotMove)) {
-      auto wideContent = boost::locale::conv::utf_to_utf<char16_t>(m_content);
-      auto wideKey = wideContent.substr(
-          m_selectionLocation, location - m_selectionLocation);
-      key = boost::locale::conv::utf_to_utf<char>(wideKey);
+      // Convert content to UTF-16 string to properly handle multi-byte
+      // characters (emoji, Chinese characters, etc.)
+      auto utfContent = boost::locale::conv::utf_to_utf<char16_t>(m_content);
+
+      // Validate cursor position is within bounds
+      if (newCursorPosition > 0 && newCursorPosition <= utfContent.size()) {
+        // Calculate length of newly entered content:
+        // Difference between current and previous cursor positions, minimum 1
+        // char
+        int onlyNewContentLength =
+            std::max(newCursorPosition - previousCursorPosition, 1);
+
+        // Ensure we don't exceed current position (bounds checking)
+        onlyNewContentLength =
+            std::min(onlyNewContentLength, newCursorPosition);
+
+        // Extract the newly entered characters:
+        // Takes substring from [location - length] to [location]
+        // represents the most recently typed characters
+        newCharUtf16 = utfContent.substr(
+            newCursorPosition - onlyNewContentLength, onlyNewContentLength);
+      }
     }
     auto keyPressMetrics =
         facebook::react::TextInputEventEmitter::KeyPressMetrics();
-    keyPressMetrics.text = key;
+    keyPressMetrics.text = boost::locale::conv::utf_to_utf<char>(newCharUtf16);
     keyPressMetrics.eventCount = m_nativeEventCount;
     if (m_eventEmitter) {
       m_eventEmitter->onKeyPress(keyPressMetrics);
     }
+  }
+  if (m_valueChanged) {
     m_valueChanged = false;
   }
 

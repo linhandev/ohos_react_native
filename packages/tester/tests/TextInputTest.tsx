@@ -400,6 +400,23 @@ export function TextInputTest() {
       />
       <TestCase.Manual
         modal
+        itShould="trigger onKeyPress event after pressing key with Chinese Character (press 'ha' and select '哈' to pass)"
+        initialState={''}
+        arrange={({setState}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            autoFocus
+            onKeyPress={event => {
+              setState(event.nativeEvent.key);
+            }}
+          />
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.be.eq('哈');
+        }}
+      />
+      <TestCase.Manual
+        modal
         skip={{android: false, harmony: {arkTs: true, cAPI: false}}}
         //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/736
         itShould="trigger onKeyPress event after pressing backspace"

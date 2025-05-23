@@ -118,7 +118,12 @@ static jsi::Value keyPressMetricsPayload(
     } else if (keyPressMetrics.text.front() == '\t') {
       key = "Tab";
     } else {
-      key = keyPressMetrics.text.front();
+      /**
+       * RNOH patch
+       * In order to properly handle key press events for non-ASCII characters,
+       * we need to account for the possibility of multi-byte UTF-8 sequences.
+       */
+      key = keyPressMetrics.text;
     }
   }
   payload.setProperty(
