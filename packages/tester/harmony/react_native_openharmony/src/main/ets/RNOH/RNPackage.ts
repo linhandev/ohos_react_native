@@ -74,8 +74,9 @@ class TurboModulesFactoryFromPackageAdapter<
 
 /**
  * @api
- * This context provides a way to inject dependencies in the future without
- * introducing breaking changes.
+ * 
+ * @brief This context provides a way to inject dependencies in the future
+ * without introducing breaking changes.
  */
 export type RNPackageContext = {};
 

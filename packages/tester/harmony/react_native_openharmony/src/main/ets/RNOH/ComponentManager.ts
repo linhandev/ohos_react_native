@@ -9,10 +9,28 @@ import { Tag } from "./DescriptorBase";
 
 /**
  * @api
- * Component(Instance)Manager. Unlike (ComponentInstance)Descriptor, exposes behavior and encapsulates data.
+ * 
+ * @brief Component(Instance)Manager. Unlike (ComponentInstance)Descriptor,
+ * exposes behavior and encapsulates data.
+ * Abstract base class representing a Component Manager.
+ * A ComponentManager is responsible for managing the lifecycle, behavior,
+ * and hierarchical relationships of a component instance at runtime.
  */
 export abstract class ComponentManager {
+  /**
+   * @brief Lifecycle hook called when the component is destroyed.
+   * Subclasses may override this method to release resources, unsubscribe
+   * listeners, or perform other cleanup logic.
+   */
   onDestroy() {}
+
+  /**
+   * @brief Returns the tag (ID) of the parent component.
+   */
   abstract getParentTag(): Tag
+
+  /**
+   * @brief Returns the tag (ID) associated with this component.
+   */
   abstract getTag(): Tag
 }

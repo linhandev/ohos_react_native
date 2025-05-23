@@ -16,7 +16,9 @@ interface ComponentManagerRegistryEntry {
 
 /**
  * @api
- * Stores ComponentManagers. Check ComponentManager documentation for more information.
+ * 
+ * @brief Stores ComponentManagers. Check ComponentManager documentation for
+ * more information.
  */
 export class ComponentManagerRegistry {
   private componentManagersByTag: Map<Tag, ComponentManager[]>;
@@ -28,6 +30,17 @@ export class ComponentManagerRegistry {
     this.logger = logger.clone("ComponentManagerRegistry")
   }
 
+  /**
+   * @brief Retrieves the ComponentManager associated with the specified tag.
+   * First checks the reference-counted `entryByTag`.
+   * If not found, falls back to the legacy `componentManagersByTag` list.
+   * If multiple managers are associated with the same tag, a warning is
+   * logged, and the last one in the list is returned.
+   * 
+   * @param tag Unique identifier for the component.
+   * @returns The corresponding ComponentManager instance, or undefined if
+   * not registered.
+   */
   public getComponentManager(tag: Tag): ComponentManager | undefined {
     const entry = this.entryByTag.get(tag);
     if (entry) {
@@ -45,9 +58,20 @@ export class ComponentManagerRegistry {
   }
 
   /**
-   * @deprecated Use findOrCreateComponentManager, and releaseComponentManager instead. (latestRNOHVersion: 0.72.40).
+   * @brief Registers a new ComponentManager for the specified tag.
+   * Registers a ComponentManager for the specified tag.
+   * This approach allows multiple managers for the same tag, which may
+   * cause ambiguity and potential memory leaks.
+   * @deprecated Use findOrCreateComponentManager, and
+   * releaseComponentManager instead. (latestRNOHVersion: 0.72.40).
    *
-   * NOTE: This method was actually deprecated in 0.72.27, but the removal is postponed.
+   * NOTE: This method was actually deprecated in 0.72.27, but the removal
+   * is postponed.
+   * 
+   * @param tag Tag to register
+   * @param manager The ComponentManager to bind
+   * @returns A cleanup function to unregister the ComponentManager (calls
+   * manager.onDestroy)
    */
   public registerComponentManager(tag: Tag, manager: ComponentManager) {
     const componentManagers = this.componentManagersByTag.get(tag)
@@ -70,10 +94,16 @@ export class ComponentManagerRegistry {
   }
 
   /**
-   * Returns the existing `ComponentManager` or creates a new one for the given tag.
+   * @brief Returns the existing `ComponentManager` or creates a new one for
+   * the given tag.
    *
    * Each call to `findOrCreateComponentManager` must be matched 1:1
    * with a call to `releaseComponentManager` for the same `tag`
+   * 
+   * @param tag Unique tag identifying the component
+   * @param createComponentManager Factory method to create a new
+   * ComponentManager if needed
+   * @returns An existing or newly created ComponentManager instance.
    */
   public findOrCreateComponentManager<TComponentManager extends ComponentManager>(
     tag: Tag,
@@ -90,11 +120,16 @@ export class ComponentManagerRegistry {
   }
 
   /**
-   * Releases a ComponentManager previously obtained from findOrCreateComponentManager.
+   * @brief Releases a ComponentManager previously obtained from
+   * findOrCreateComponentManager.
    *
-   * This method must be called to properly release resources associated with a ComponentManager.
-   * It's crucial to maintain a 1:1 relationship between findOrCreateComponentManager and
-   * releaseComponentManager calls for the same tag.
+   * This method must be called to properly release resources associated
+   * with a ComponentManager.
+   * It's crucial to maintain a 1:1 relationship between
+   * findOrCreateComponentManager and releaseComponentManager calls for the
+   * same tag.
+   * 
+   * @param tag The tag associated with the ComponentManager to release.
    */
   public releaseComponentManager(tag: Tag) {
     const entry = this.entryByTag.get(tag);
@@ -109,7 +144,13 @@ export class ComponentManagerRegistry {
       this.entryByTag.delete(tag);
     }
   }
-
+  
+  /**
+   * @brief Returns all nodes, from root the component to the one with given tag.
+   * 
+   * @param tag The starting component tag
+   * @returns An array of ComponentManagers, ordered from root to current.
+   */
   public getComponentManagerLineage(tag: Tag): ComponentManager[] {
     const results: ComponentManager[] = []
     let currentTag: Tag | undefined = tag
