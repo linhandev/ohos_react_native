@@ -377,6 +377,32 @@ export function TextMeasuringTest() {
         <TestCase itShould="not be pressable anywhere in the white area below the text">
           <SmallLineHeightPressableTest />
         </TestCase>
+        <TestCase itShould="be aligned at center">
+          <View
+            style={{
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+              }}>
+              Center
+            </Text>
+          </View>
+        </TestCase>
+        <TestCase itShould="be aligned at right">
+          <View
+            style={{
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                textAlign: 'right',
+              }}>
+              Right
+            </Text>
+          </View>
+        </TestCase>
       </TestSuite>
     </TestSuite>
   );

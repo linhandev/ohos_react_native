@@ -23,7 +23,7 @@ class TextComponentInstance
   TextNode m_textNode{};
   FragmentTouchTargetByTag m_fragmentTouchTargetByTag{};
   bool m_touchTargetChildrenNeedUpdate = false;
-  std::optional<TextMeasurer::TextStorage> m_textStorage = std::nullopt;
+  TextMeasurer::TextStorage::Shared m_textStorage = nullptr;
   std::string m_textContent = "";
 
  public:

@@ -8,6 +8,7 @@
 #include "TextMeasurer.h"
 #include <cxxreact/SystraceSection.h>
 #include <native_drawing/drawing_register_font.h>
+#include <react/renderer/graphics/rounding.h>
 #include <memory>
 #include "RNOH/ArkUITypography.h"
 #include "RNOH/StyledStringWrapper.h"
@@ -79,15 +80,18 @@ facebook::react::TextMeasurement TextMeasurer::measure(
     const facebook::react::TextLayoutContext& layoutContext,
     facebook::react::LayoutConstraints layoutConstraints) {
   facebook::react::SystraceSection s("#RNOH::TextMeasurer::measure");
-  return createTextStorage(
-             std::move(attributedStringBox.getValue()),
-             std::move(paragraphAttributes),
-             std::move(layoutConstraints))
-      .arkUITypography.getMeasurement();
+  auto textStorage = createTextStorage(
+      std::move(attributedStringBox.getValue()),
+      std::move(paragraphAttributes),
+      std::move(layoutContext),
+      std::move(layoutConstraints));
+  setTextStorage(textStorage);
+  return textStorage->arkUITypography.getMeasurement();
 }
-TextMeasurer::TextStorage TextMeasurer::createTextStorage(
+TextMeasurer::TextStorage::Shared TextMeasurer::createTextStorage(
     facebook::react::AttributedString attributedString,
     facebook::react::ParagraphAttributes paragraphAttributes,
+    facebook::react::TextLayoutContext layoutContext,
     facebook::react::LayoutConstraints layoutConstraints) const {
   if (paragraphAttributes.adjustsFontSizeToFit) {
     int maxFontSize = 0;
@@ -96,7 +100,11 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
           std::max(maxFontSize, (int)fragment.textAttributes.fontSize);
     }
     return findFitFontSize(
-        maxFontSize, attributedString, paragraphAttributes, layoutConstraints);
+        maxFontSize,
+        attributedString,
+        paragraphAttributes,
+        layoutContext,
+        layoutConstraints);
   }
 
   auto styledString = createStyledString(attributedString, paragraphAttributes);
@@ -106,12 +114,13 @@ TextMeasurer::TextStorage TextMeasurer::createTextStorage(
       styledString.m_fragmentLengths,
       layoutConstraints,
       m_scale);
-  return TextStorage{
+  return std::make_shared<TextStorage>(
       styledString,
       std::move(typography),
       attributedString,
       paragraphAttributes,
-      layoutConstraints};
+      layoutContext,
+      layoutConstraints);
 }
 
 StyledStringWrapper TextMeasurer::createStyledString(
@@ -189,8 +198,9 @@ auto TextMeasurer::findFitFontSize(
     int maxFontSize,
     facebook::react::AttributedString const& attributedString,
     facebook::react::ParagraphAttributes const& paragraphAttributes,
+    facebook::react::TextLayoutContext const& layoutContext,
     facebook::react::LayoutConstraints const& layoutConstraints) const
-    -> TextStorage {
+    -> TextStorage::Shared {
   // check if already fit
   auto finalStyledString =
       createStyledString(attributedString, paragraphAttributes);
@@ -204,12 +214,13 @@ auto TextMeasurer::findFitFontSize(
   if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
       (paragraphAttributes.maximumNumberOfLines == 0 ||
        !finalTypography.didExceedMaxLines())) {
-    return {
+    return std::make_shared<TextStorage>(
         finalStyledString,
         std::move(finalTypography),
         attributedString,
         paragraphAttributes,
-        layoutConstraints};
+        layoutContext,
+        layoutConstraints);
   }
 
   auto fittedAttributedString = attributedString;
@@ -251,18 +262,51 @@ auto TextMeasurer::findFitFontSize(
       maxFontSize = curFontSize - 1;
     }
   }
-  return {
+  return std::make_shared<TextStorage>(
       finalStyledString,
       std::move(finalTypography),
       attributedString,
       paragraphAttributes,
-      layoutConstraints};
+      layoutContext,
+      layoutConstraints);
 }
 
 void TextMeasurer::setTextMeasureParams(float fontScale, float scale) {
   m_fontScale = fontScale;
   m_scale = scale;
   m_fontRegistry->updateThemeFont();
+}
+
+void TextMeasurer::setTextStorage(const TextStorage::Shared textStorage) {
+  std::lock_guard<std::mutex> lock(m_mutex);
+  m_textStorageCache.set(
+      {textStorage->attributedString,
+       textStorage->paragraphAttributes,
+       textStorage->layoutContext,
+       static_cast<int>(ceil(
+           textStorage->arkUITypography.getMeasurement().size.width *
+           textStorage->layoutContext.pointScaleFactor))},
+      textStorage);
+}
+
+TextMeasurer::TextStorage::Shared TextMeasurer::getTextStorage(
+    const CacheKey& key) {
+  std::lock_guard<std::mutex> lock(m_mutex);
+  // right/left may be ceil/floor to integer, make width = right - left have
+  // error of 2 at most
+  // errors ordered by frequency
+  static constexpr std::array<px, 4> errors = {-1, 0, +1, -2};
+  for (auto error : errors) {
+    auto it = m_textStorageCache.find(
+        {key.attributedString,
+         key.paragraphAttributes,
+         key.layoutContext,
+         key.ceiledWidth + error});
+    if (it != m_textStorageCache.end()) {
+      return it->second;
+    }
+  }
+  return nullptr;
 }
 
 } // namespace rnoh

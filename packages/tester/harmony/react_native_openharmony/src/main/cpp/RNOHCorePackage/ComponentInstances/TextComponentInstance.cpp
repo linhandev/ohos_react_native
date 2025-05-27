@@ -168,26 +168,31 @@ void TextComponentInstance::onStateChanged(
     return;
   }
   auto const& paragraphLayoutManager = stateData.layoutManager.lock();
-  facebook::react::LayoutConstraints layoutConstraints = {
-      m_layoutMetrics.frame.size, m_layoutMetrics.frame.size};
 
-  auto textMeasurer = static_cast<const TextMeasurer*>(
+  auto textMeasurer = static_cast<TextMeasurer*>(
       paragraphLayoutManager->getNativeTextLayoutManager());
   RNOH_ASSERT(textMeasurer);
 
   this->disposeTextStorage();
-  /**
-   * TODO: reuse measurer's TextStorage
-   * https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1482
-   */
-  m_textStorage = textMeasurer->createTextStorage(
-      stateData.attributedString,
-      stateData.paragraphAttributes,
-      layoutConstraints);
 
-  RNOH_ASSERT(m_textStorage.has_value());
-  m_textNode.setTextContentWithStyledString(
-      m_textStorage.value().styledString.get());
+  m_textStorage = textMeasurer->getTextStorage(
+      {stateData.attributedString,
+       stateData.paragraphAttributes,
+       {m_layoutMetrics.pointScaleFactor},
+       static_cast<int>(ceil(
+           m_layoutMetrics.getContentFrame().size.width *
+           m_layoutMetrics.pointScaleFactor))});
+  if (m_textStorage == nullptr) {
+    m_textStorage = textMeasurer->createTextStorage(
+        stateData.attributedString,
+        stateData.paragraphAttributes,
+        {m_layoutMetrics.pointScaleFactor},
+        {m_layoutMetrics.getContentFrame().size,
+         m_layoutMetrics.getContentFrame().size});
+  }
+
+  RNOH_ASSERT(m_textStorage);
+  m_textNode.setTextContentWithStyledString(m_textStorage->styledString.get());
   std::stringstream ss;
   for (auto const& fragment : fragments) {
     ss << fragment.string;
@@ -334,7 +339,7 @@ TextComponentInstance::getTouchTargetChildren() {
 void TextComponentInstance::updateFragmentTouchTargets(
     facebook::react::ParagraphState const& newState) {
   auto const& fragments = newState.attributedString.getFragments();
-  if (!m_textStorage.has_value() || fragments.empty()) {
+  if (!m_textStorage || fragments.empty()) {
     m_fragmentTouchTargetByTag.clear();
     return;
   }
@@ -413,6 +418,6 @@ void TextComponentInstance::disposeTextStorage() {
          */
       },
       1000);
-  m_textStorage = std::nullopt;
+  m_textStorage = nullptr;
 }
 } // namespace rnoh

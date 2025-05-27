@@ -133,6 +133,12 @@ class ArkUITypography final {
       scaledWidth = std::numeric_limits<decltype(scaledWidth)>::max();
     }
     OH_Drawing_TypographyLayout(m_typography.get(), scaledWidth);
+    // When TextComponentInstance reuses TextStorage from TextMeasurer, the text
+    // has incorrect position (platform bug?) if text alignement is different
+    // from 'left'.
+    OH_Drawing_TypographyLayout(
+        m_typography.get(),
+        OH_Drawing_TypographyGetLongestLine(m_typography.get()));
   }
 
   std::shared_ptr<OH_Drawing_Typography> m_typography;
