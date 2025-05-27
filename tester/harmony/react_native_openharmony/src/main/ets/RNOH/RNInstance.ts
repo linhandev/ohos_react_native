@@ -411,7 +411,7 @@ export interface FrameNodeFactory {
 
 export class RNInstanceImpl implements RNInstance {
   private turboModuleProvider: TurboModuleProvider<UITurboModule | AnyThreadTurboModule>;
-  private surfaceCounter = 0;
+  private static surfaceCounter = 0;
   private lifecycleState: LifecycleState = LifecycleState.BEFORE_CREATE
   private bundleExecutionStatusByBundleURL: Map<string, BundleExecutionStatus> = new Map()
   private rnInstanceErrorEventEmitter: RNInstanceErrorEventEmitter = new EventEmitter();
@@ -919,7 +919,7 @@ export class RNInstanceImpl implements RNInstance {
   private getNextSurfaceTag(): Tag {
     // NOTE: this is done to mirror the iOS implementation.
     // For details, see `RCTAllocateRootViewTag` in iOS implementation.
-    return (this.surfaceCounter++ * 10) + 1;
+    return (RNInstanceImpl.surfaceCounter++ * 10) + 1;
   }
 
   public shouldUIBeUpdated(): boolean {
