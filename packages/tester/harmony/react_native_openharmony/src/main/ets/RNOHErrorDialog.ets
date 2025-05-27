@@ -18,12 +18,20 @@ import { DevToolsController } from './RNOH/DevToolsController'
 @Component
 export struct RNOHErrorDialog {
   /** shared RNOH context */
-  @Require public ctx!: RNOHCoreContext
-  private controller!: CustomDialogController
+  public ctx: RNOHCoreContext | undefined
+  /**
+   * @deprecated: This prop was deprecated when preparing 0.77 version.
+   * Don't use this prop because anything passed will be overwritten
+   * in aboutToAppear method.
+   */
+  public controller!: CustomDialogController
   private isOpened: boolean = false
   private cleanUpListeners: (() => void)[] = []
 
   aboutToAppear(): void {
+    if (!this.ctx) {
+      this.ctx = AppStorage.get('RNOHCoreContext')
+    }
     this.controller = new CustomDialogController({
       cornerRadius: 0,
       customStyle: true,
@@ -33,14 +41,14 @@ export struct RNOHErrorDialog {
       alignment: DialogAlignment.TopStart,
       backgroundColor: Color.Transparent,
       builder: RNOHErrorCustomDialog({
-        devToolsController: this.ctx.devToolsController,
-        safeAreaInsetsProvider: this.ctx.safeAreaInsetsProvider,
+        devToolsController: this.ctx!.devToolsController,
+        safeAreaInsetsProvider: this.ctx!.safeAreaInsetsProvider,
         onClose: () => {
           this.isOpened = false
         }
       })
     })
-    this.cleanUpListeners.push(this.ctx.devToolsController.eventEmitter.subscribe(
+    this.cleanUpListeners.push(this.ctx!.devToolsController.eventEmitter.subscribe(
       "NEW_ERROR",
       (_err) => {
         if (!this.isOpened) {
@@ -48,7 +56,7 @@ export struct RNOHErrorDialog {
           this.isOpened = true
         }
       }))
-    this.cleanUpListeners.push(this.ctx.devToolsController.eventEmitter.subscribe(
+    this.cleanUpListeners.push(this.ctx!.devToolsController.eventEmitter.subscribe(
       "DISMISS_RNOH_ERROR_DIALOG",
       () => {
         this.controller.close()
