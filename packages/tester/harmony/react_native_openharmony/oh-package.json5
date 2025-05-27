@@ -8,7 +8,7 @@
     org: '',
   },
   type: 'module',
-  version: '0.77.5',
+  version: '0.77.6',
   dependencies: {},
   main: 'index.ets',
 }
