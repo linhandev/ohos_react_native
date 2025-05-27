@@ -20,7 +20,8 @@ PullToRefreshViewComponentInstance::PullToRefreshViewComponentInstance(
       m_refreshIndicatorBackgroundNode, 0);
   m_refreshIndicatorBackgroundNode.insertChild(
       m_refreshIndicatorSpinnerNode, 0);
-  m_refreshIndicatorBackgroundNode.setBorderRadius({500, 500, 500, 500})
+  m_refreshIndicatorBackgroundNode
+      .setBorderRadius({500, 500, 500, 500, 500, 500, 500, 500})
       .setBackgroundColor(*facebook::react::clearColor())
       .setSize({REFRESH_INDICATOR_SIZE, REFRESH_INDICATOR_SIZE});
 
