@@ -123,6 +123,13 @@ static TextInputTraits convertRawProp(
       "returnKeyType",
       sourceTraits.returnKeyType,
       defaultTraits.returnKeyType);
+  // RNOH patch
+  traits.returnKeyLabel = convertRawProp(
+      context,
+      rawProps,
+      "returnKeyLabel",
+      sourceTraits.returnKeyLabel,
+      defaultTraits.returnKeyLabel);
   traits.selectTextOnFocus = convertRawProp(
       context,
       rawProps,

@@ -375,6 +375,19 @@ export function TextInputTest() {
       <TestCase.Example modal itShould="toggle between different return keys">
         <ReturnKeyTypeView />
       </TestCase.Example>
+      <TestSuite name="returnKeyLabel">
+        <TestCase.Example itShould="display a proper label for the keyboard 'submit' button">
+          <TextInput
+            value="<default>: 完成 (en: complete)"
+            style={{padding: 16, borderWidth: StyleSheet.hairlineWidth}}
+          />
+          <TextInput
+            returnKeyLabel="search"
+            value="'search': 搜索 (en: search)"
+            style={{padding: 16, borderWidth: StyleSheet.hairlineWidth}}
+          />
+        </TestCase.Example>
+      </TestSuite>
       <TestCase.Example modal itShould="toggle between different enter keys">
         <EnterKeyHintExample />
       </TestCase.Example>
