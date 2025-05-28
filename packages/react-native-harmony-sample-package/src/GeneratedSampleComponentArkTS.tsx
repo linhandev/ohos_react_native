@@ -58,6 +58,7 @@ export const GeneratedSampleComponentArkTS = React.forwardRef<
         children={children}
         {...otherTestProps}
         colorTest={processColor(colorTest)!}
+        onMount={() => {}}
         onBubblingEvent={(e) => {
           onBubblingEvent?.(e.nativeEvent);
         }}

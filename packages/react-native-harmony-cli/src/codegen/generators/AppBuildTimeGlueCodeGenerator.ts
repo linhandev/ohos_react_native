@@ -55,6 +55,7 @@ export class AppBuildTimeGlueCodeGenerator
       generatedPackageH_v1.addComponent({
         name,
         supportedEventNames: eventNames,
+        isArkTSComponent: true,
       });
     });
 
@@ -69,7 +70,10 @@ export class AppBuildTimeGlueCodeGenerator
         this.codegenNoticeLines
       );
       components.forEach((component) => {
-        generatedPackageH_v2.addComponent(component);
+        generatedPackageH_v2.addComponent({
+          ...component,
+          isArkTSComponent: false,
+        });
       });
       turboModules.forEach((turboModule) => {
         turboModules_indexTS.addReexport({ from: `./${turboModule.name}` });
