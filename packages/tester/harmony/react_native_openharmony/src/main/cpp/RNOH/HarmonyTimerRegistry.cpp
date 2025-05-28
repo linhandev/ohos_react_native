@@ -22,13 +22,6 @@ HarmonyTimerRegistry::HarmonyTimerRegistry(TaskExecutor::Shared taskExecutor)
 void HarmonyTimerRegistry::createTimer(uint32_t timerId, double delayMs) {
   assertJSThread();
 
-  // for short-lived, one-off timers, schedule them immediately after they are
-  // created
-  if (delayMs == 0) {
-    triggerTimers({timerId});
-    return;
-  }
-
   auto now = getMillisSinceEpoch();
   auto deadline = now + delayMs;
   m_activeTimerById.emplace(timerId, Timer{timerId, deadline, delayMs, false});

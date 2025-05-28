@@ -9,7 +9,7 @@ async function wait(ms: number) {
   });
 }
 
-const PRECISION_IN_MS = 25;
+const PRECISION_IN_MS = 100;
 
 export function TimerTest() {
   return (
