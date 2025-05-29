@@ -134,6 +134,8 @@ napi_value ArkJS::createFromDynamic(folly::dynamic const& dyn) {
     return this->createArray(n_values);
   } else if (dyn.isInt()) {
     return this->createDouble(dyn.asInt());
+  } else if (dyn.isNull()) {
+    return this->getNull();
   } else {
     return this->getUndefined();
   }
@@ -609,7 +611,6 @@ napi_value RNOHNapiObjectBuilder::build() {
       properties.push_back(napi_property_descriptor{
           key.c_str(), // UTF-8 encoded property name
           nullptr, // name string as napi_value
-
           nullptr, // method implementation
           nullptr, // getter
           nullptr, // setter
