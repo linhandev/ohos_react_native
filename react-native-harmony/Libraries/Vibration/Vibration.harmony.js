@@ -41,7 +41,7 @@ function vibrateScheduler(
     if (repeat) {
       // $FlowFixMe[reassign-const]
       nextIndex = 0;
-      shouldVibrate = true;
+      shouldVibrate = false;
     } else {
       _vibrating = false;
       return;
