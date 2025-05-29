@@ -156,7 +156,7 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
       m_eventEmitter->onScroll(scrollViewMetrics);
     }
     m_currentOffset = scrollViewMetrics.contentOffset;
-    m_currentOffset.x = adjustOffsetToRTL(m_currentOffset.x);
+    m_currentOffset.x = adjustOffsetIfRTL(m_currentOffset.x);
     updateContentClippedSubviews();
   }
   sendEventForNativeAnimations(scrollViewMetrics);
@@ -438,7 +438,7 @@ void rnoh::ScrollViewComponentInstance::onPropsChanged(
   if (!m_props || props->contentOffset != m_props->contentOffset ||
       props->scrollToOverflowEnabled != m_props->scrollToOverflowEnabled) {
     m_scrollNode.scrollTo(
-        adjustOffsetToRTL(props->contentOffset.x),
+        adjustOffsetIfRTL(props->contentOffset.x),
         props->contentOffset.y,
         false,
         m_scrollToOverflowEnabled);
@@ -473,7 +473,7 @@ void ScrollViewComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
     facebook::react::Float x = args[0].asDouble();
-    x = adjustOffsetToRTL(x);
+    x = adjustOffsetIfRTL(x);
     facebook::react::Float y = args[1].asDouble();
     m_targetOffsetOfScrollToCommand = {x, y};
     m_scrollNode.scrollTo(x, y, args[2].asBool(), m_scrollToOverflowEnabled);
@@ -586,6 +586,7 @@ void ScrollViewComponentInstance::scrollToEnd(bool animated) {
   }
   auto x = horizontal ? m_contentSize.width : 0.0;
   auto y = horizontal ? 0.0 : m_contentSize.height;
+  x = adjustOffsetIfRTL(x);
   m_scrollNode.scrollTo(x, y, animated);
 }
 
@@ -982,7 +983,7 @@ bool ScrollViewComponentInstance::setKeyboardAvoider(
 
 // NOTE: ArkUI ScrollNode's offset is calculated relative to top-right if
 // RTL is enabled, while RN expects it to always be counted from top-left
-facebook::react::Float ScrollViewComponentInstance::adjustOffsetToRTL(
+facebook::react::Float ScrollViewComponentInstance::adjustOffsetIfRTL(
     facebook::react::Float x) const {
   auto isRTL = m_layoutMetrics.layoutDirection ==
       facebook::react::LayoutDirection::RightToLeft;
@@ -994,7 +995,7 @@ facebook::react::Float ScrollViewComponentInstance::adjustOffsetToRTL(
 
 facebook::react::Point ScrollViewComponentInstance::getScrollOffset() const {
   auto scrollOffset = m_scrollNode.getScrollOffset();
-  scrollOffset.x = adjustOffsetToRTL(scrollOffset.x);
+  scrollOffset.x = adjustOffsetIfRTL(scrollOffset.x);
   return scrollOffset;
 }
 

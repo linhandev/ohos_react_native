@@ -298,7 +298,7 @@ class ScrollViewComponentInstance
   bool isCloseToTargetOffset(facebook::react::Point currentOffset);
   bool isNestedScroll();
   void onContentSizeChanged();
-  facebook::react::Float adjustOffsetToRTL(facebook::react::Float x) const;
+  facebook::react::Float adjustOffsetIfRTL(facebook::react::Float x) const;
   facebook::react::Point getScrollOffset() const;
   facebook::react::Point getContentViewOffset() const;
   ComponentInstance::Weak m_keyboardAvoider;

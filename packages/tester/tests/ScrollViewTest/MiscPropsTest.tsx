@@ -10,6 +10,7 @@ import {useEffect, useRef, useState} from 'react';
 import {Button, ObjectDisplayer, TestCase} from '../../components';
 
 export function MiscPropsTest() {
+  const rtlScrollViewRef = useRef<ScrollView>(null);
   return (
     <TestSuite name="misc props">
       <TestCase.Example itShould="scroll should be disabled" modal>
@@ -38,6 +39,35 @@ export function MiscPropsTest() {
           <ScrollView horizontal={true}>
             {getScrollViewContentHorizontal({})}
           </ScrollView>
+        </View>
+      </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="scroll to end in horizontal rtl scroll view (scrollToEnd)">
+        <View
+          style={{
+            width: '100%',
+            height: 150,
+            direction: 'rtl',
+          }}>
+          <ScrollView
+            horizontal={true}
+            ref={rtlScrollViewRef}
+            style={{width: '100%', height: 150}}>
+            {getScrollViewContentHorizontal({})}
+          </ScrollView>
+          <Button
+            label="scroll to start"
+            onPress={() => {
+              rtlScrollViewRef.current?.scrollTo({x: 0, y: 0, animated: true});
+            }}
+          />
+          <Button
+            label="scroll to end"
+            onPress={() => {
+              rtlScrollViewRef.current?.scrollToEnd({animated: true});
+            }}
+          />
         </View>
       </TestCase.Example>
       <TestCase.Example
