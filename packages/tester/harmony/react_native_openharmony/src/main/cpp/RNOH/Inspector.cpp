@@ -7,7 +7,9 @@
 
 #include "Inspector.h"
 
+#include <deviceinfo.h>
 #include <glog/logging.h>
+#include <jsinspector-modern/InspectorFlags.h>
 #include <jsinspector-modern/InspectorPackagerConnection.h>
 #include <chrono>
 #include <memory>
@@ -198,14 +200,19 @@ napi_value getInspectorPackagerConnection(
   auto delegate =
       std::make_unique<ArkTSConnectionDelegate>(env, std::move(delegateRef));
 
-  // TODO: use actual device name
-  // (https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1476)
-  auto deviceName = "HarmonyDevice";
+  auto deviceName = OH_GetMarketName();
   auto packagerConnection =
       std::make_shared<jsinspector_modern::InspectorPackagerConnection>(
           url, deviceName, app, std::move(delegate));
 
   return wrapInspectorPackagerConnection(env, packagerConnection);
+}
+
+napi_value getInspectorFlagIsFuseboxEnabled(
+    napi_env env,
+    napi_callback_info info) {
+  auto& inspectorFlags = jsinspector_modern::InspectorFlags::getInstance();
+  return ArkJS(env).createBoolean(inspectorFlags.getFuseboxEnabled());
 }
 
 } // namespace rnoh

@@ -16,4 +16,8 @@ napi_value getInspectorPackagerConnection(
     napi_env env,
     napi_callback_info info);
 
+napi_value getInspectorFlagIsFuseboxEnabled(
+    napi_env env,
+    napi_callback_info info);
+
 } // namespace rnoh

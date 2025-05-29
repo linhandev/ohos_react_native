@@ -334,6 +334,10 @@ export class NapiBridge {
     return this.libRNOHApp!.getInspectorPackagerConnection(url, app, delegate);
   }
 
+  getInspectorFlagIsFuseboxEnabled() {
+    return this.libRNOHApp!.getInspectorFlagIsFuseboxEnabled();
+  }
+
   postMessageToCpp(name: string, payload: any) {
     const result = this.libRNOHApp?.onArkTSMessage(name, payload)
     return this.unwrapResult(result)

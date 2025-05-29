@@ -5,12 +5,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import url from '@ohos.url'
+import url from '@ohos.url';
 import http from '@ohos.net.http';
 import { getInspectorPackagerConnection } from './InspectorPackagerConnection';
 import { RNOHLogger } from './RNOHLogger';
 import { InspectorPackagerConnection, } from './types';
 import { NapiBridge } from './NapiBridge';
+import { bundleManager } from '@kit.AbilityKit';
+import { deviceInfo } from '@kit.BasicServicesKit';
+import { hash } from '@kit.CoreFileKit';
+import { buffer } from '@kit.ArkTS';
 
 function getServerHost(bundleUrlString: string): string {
   const bundleUrl = url.URL.parseURL(bundleUrlString);
@@ -19,13 +23,51 @@ function getServerHost(bundleUrlString: string): string {
   return `${host}:${port}`;
 }
 
-// returns the inspector url for current device and application
-function getInspectorDeviceUrl(bundleUrl: string) {
-  // TODO: get real deviceName and appName instead of hardcoded values
-  // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/1476
-  const deviceName = "HarmonyDevice";
-  const appName = "com.rnoh.tester";
-  return `http://${getServerHost(bundleUrl)}/inspector/device?name=${deviceName}&app=${appName}`;
+/**
+ * @internal
+ * SHA-256 hashing implementation.
+ * Based on the implementation from ReactAndroid: src/main/java/com/facebook/react/devsupport/DevServerHelper.java.
+ * Only the first 20 bytes of the hash are used to identify the device,
+ * which is why only the first 40 hexadecimal characters are utilized.
+ */
+function getSHA256(data: string): string {
+  const hs = hash.createHash('sha256');
+  const dataBuffer = new Uint8Array(buffer.from(data, 'utf-8').buffer);
+  hs.update(dataBuffer.buffer);
+  return hs.digest().substring(0, 40);
+}
+
+/**
+ * @internal
+ * Returns an opaque ID which is stable for the current combination of device and app it is stable across installs,
+ * and identifies a device.
+ */
+function getInspectorDeviceId(
+  appName: string,
+  isFuseboxEnabled: boolean,
+): string {
+  // ODID is an alphanumeric string used to identify a device.
+  // It is not guaranteed to be unique but does not require special permissions.
+  const openDeviceIdentifier = deviceInfo.ODID;
+  return getSHA256(
+    `huawei-${appName}-${openDeviceIdentifier}-${isFuseboxEnabled ? 'fusebox' : 'legacy'}`,
+  );
+}
+
+function getInspectorUrl(
+  bundleUrl: string,
+  isFuseboxEnabled: boolean,
+): string {
+  const bundleInfo = bundleManager.getBundleInfoForSelfSync(
+    bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT,
+  );
+  const appName = bundleInfo.name;
+  const deviceName = deviceInfo.marketName;
+  const deviceId = getInspectorDeviceId(appName, isFuseboxEnabled);
+  const params = new url.URLParams(
+    `name=${deviceName}&app=${appName}&device=${deviceId}`,
+  );
+  return `http://${getServerHost(bundleUrl)}/inspector/device?${params}`;
 }
 
 /**
@@ -41,7 +83,8 @@ export class DevServerHelper {
     napiBridge: NapiBridge, appName: string | undefined = undefined) {
     appName = appName ?? ("undefinedAppName@" + new Date().toISOString())
     const _logger = logger.clone(`DevServerHelper::connectToDevServer (appName=${appName})`);
-    const inspectorUrl = getInspectorDeviceUrl(bundleUrl);
+    const isFuseboxEnabled = napiBridge.getInspectorFlagIsFuseboxEnabled();
+    const inspectorUrl = getInspectorUrl(bundleUrl, isFuseboxEnabled);
     let connection = DevServerHelper.connectionByInspectorUrl.get(inspectorUrl);
 
     if (!connection || !connection.isConnected()) {
