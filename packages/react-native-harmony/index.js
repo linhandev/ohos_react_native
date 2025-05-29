@@ -139,7 +139,7 @@ module.exports = {
     return require('./Libraries/Components/ToastAndroid/ToastAndroid.android');
   },
   get Touchable() {
-    return require('./Libraries/Components/Touchable/Touchable');
+    return require('./Libraries/Components/Touchable/Touchable').default;
   },
   get TouchableHighlight() {
     return require('./Libraries/Components/Touchable/TouchableHighlight');
