@@ -142,6 +142,8 @@ napi_value ArkJS::createFromDynamic(folly::dynamic const& dyn) {
     return this->createArray(n_values);
   } else if (dyn.isInt()) {
     return this->createDouble(dyn.asInt());
+  } else if (dyn.isNull()) {
+    return this->getNull();
   } else {
     return this->getUndefined();
   }
@@ -314,18 +316,15 @@ RNOHNapiObject ArkJS::getObject(napi_ref objectRef) {
   return getObject(getReferenceValue(objectRef));
 }
 
-bool ArkJS::hasProperty(napi_value object, std::string const &key)
-{
-    return hasProperty(object, this->createString(key));
+bool ArkJS::hasProperty(napi_value object, std::string const& key) {
+  return hasProperty(object, this->createString(key));
 }
 
-bool ArkJS::hasProperty(napi_value object, napi_value key)
-{
-    bool result;
-    auto status = napi_has_property(m_env, object, key, &result);
-    this->maybeThrowFromStatus(
-        status, "Failed to check if object has property");
-    return result;
+bool ArkJS::hasProperty(napi_value object, napi_value key) {
+  bool result;
+  auto status = napi_has_property(m_env, object, key, &result);
+  this->maybeThrowFromStatus(status, "Failed to check if object has property");
+  return result;
 }
 
 napi_value ArkJS::getObjectProperty(napi_value object, std::string const& key) {
@@ -640,18 +639,19 @@ napi_value RNOHNapiObjectBuilder::build() {
     std::vector<napi_property_descriptor> properties;
 
     for (auto const& [key, value] : m_properties) {
-      properties.push_back(napi_property_descriptor{
-          key.c_str(), // UTF-8 encoded property name
-          nullptr, // name string as napi_value
+      properties.push_back(
+          napi_property_descriptor{
+              key.c_str(), // UTF-8 encoded property name
+              nullptr, // name string as napi_value
 
-          nullptr, // method implementation
-          nullptr, // getter
-          nullptr, // setter
-          value, // property value as napi_value
+              nullptr, // method implementation
+              nullptr, // getter
+              nullptr, // setter
+              value, // property value as napi_value
 
-          napi_default_jsproperty, // attributes
-          nullptr // data
-      });
+              napi_default_jsproperty, // attributes
+              nullptr // data
+          });
     }
     auto status = napi_define_properties(
         m_env, m_object, properties.size(), properties.data());
@@ -703,10 +703,10 @@ Promise& Promise::catch_(
   return *this;
 }
 
-bool ArkJS::isArrayBuffer(napi_value value)
-{
-    bool result = false;
-    maybeThrowFromStatus(napi_is_arraybuffer(m_env, value, &result),
-        "Failed to check if value is an ArrayBuffer");
-    return result;
+bool ArkJS::isArrayBuffer(napi_value value) {
+  bool result = false;
+  maybeThrowFromStatus(
+      napi_is_arraybuffer(m_env, value, &result),
+      "Failed to check if value is an ArrayBuffer");
+  return result;
 }
