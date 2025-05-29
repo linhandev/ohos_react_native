@@ -50,8 +50,7 @@ void TextInputComponentInstance::onChange(
   if (m_eventEmitter) {
     m_eventEmitter->onChange(getTextInputMetrics());
   }
-  auto content = getTextContentFromState(m_state);
-  m_valueChanged = content != m_content;
+  m_valueChanged = true;
 }
 
 void TextInputComponentInstance::onSubmit(ArkUINode* node) {
