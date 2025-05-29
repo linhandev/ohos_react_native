@@ -148,8 +148,6 @@ void MountingManagerCAPI::updateView(
 void MountingManagerCAPI::updateComponentWithShadowView(
     ComponentInstance::Shared const& componentInstance,
     facebook::react::ShadowView const& shadowView) {
-  facebook::react::SystraceSection s(
-      "RNOH::MountingManagerCAPI::updateComponentWithShadowView");
   // NOTE: updating tag by id must happen before updating props
   m_componentInstanceRegistry->updateTagById(
       shadowView.tag, shadowView.props->nativeId, componentInstance->getId());

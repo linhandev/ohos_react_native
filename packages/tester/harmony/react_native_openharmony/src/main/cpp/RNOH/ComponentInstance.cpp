@@ -25,7 +25,6 @@ ComponentInstance::ComponentInstance(Context ctx)
 void ComponentInstance::insertChild(
     ComponentInstance::Shared childComponentInstance,
     std::size_t index) {
-  facebook::react::SystraceSection s("#RNOH::ComponentInstance::insertChild");
   auto it = m_children.begin() + index;
   childComponentInstance->setParent(shared_from_this());
   onChildInserted(childComponentInstance, index);

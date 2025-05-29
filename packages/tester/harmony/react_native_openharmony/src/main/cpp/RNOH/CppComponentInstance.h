@@ -442,11 +442,6 @@ class CppComponentInstance : public ComponentInstance,
    * @param concreteProps The new props for the component.
    */
   virtual void onPropsChanged(SharedConcreteProps const& concreteProps) {
-    facebook::react::SystraceSection s(std::string(
-                                           "#RNOH::CppComponentInstance(" +
-                                           this->getComponentName() +
-                                           ")::onPropsChanged")
-                                           .c_str());
     auto maybeLocalRoot = maybeGetLocalRoot();
     if (!maybeLocalRoot) {
       return;
