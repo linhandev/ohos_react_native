@@ -1,7 +1,16 @@
 # Changelog
 
+## 6.0.0.301
+- fix: The relativePath uses '/' to concatenate paths and, and the code needs to be reverted.,([90b53943](https://gitcode.com/openharmony-sig/ohos_react_native/commit/90b53943f357cdfbc5124a59a19ab7abb7d0c39d))
+- fix: Windows system packaging failure,([8ed4f378](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8ed4f3787a873fb9a1cda008759ca36c1be00b02))
+- fix: Inconsistent with Android in repeated vibration mode,([4eeebae5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4eeebae5778dd63c06511e11ebdf48b6d037ec64))
+- fix: When processing RN side packaging, pictures of different resolutions are not all packaged into the product,([bdc15b34](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bdc15b34415a6ef5c590af35b700d43d523cacc1))
+- chore: Add the project binary asset path to the paths of exclusion of the OAT.xml,([4fdc9ff9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4fdc9ff92735edfb04e95abd7a7541ddf89ff4f1))
+- fix: Resolve the issue of turbomodule object passing null and the native side receiving and printing as undefined,([f7e09804](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e098048c9fcf9b0370a80e862bb639fcb5a075))
+- fix: Fix duplicate rootViewTag issues between different RNInstances,([99561dd7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/99561dd756a1bc82361ff26fc986753e4ac7bb8e))
+
 ## 6.0.0.300
-- feat: update version of RN,([fa8bd8f8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fa8bd8f8e18d02ffb55af6d554ea717a221e0829))
+- chore: update to version 6.0.0.300(0.72.72),([4fbfe40f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4fbfe40f0919ed0efcdad11b461ec27993380cc2))
 - fix: ScrollView nested in the PanResponder fails to respond to gestures.,([2267f979](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2267f979fa4c7148ece51fc49c098314a786bf2a))
 - fix: The setDefaultDensityEnabled is invalid for the RN page,([bf0172af](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bf0172aff423acee924409f31c0d6db72ec7d42d))
 - fix: JSVMPointerValue crash,([01034d11](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01034d1129bbf07661a6a13f421bda2a603c1403))
