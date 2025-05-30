@@ -8,6 +8,10 @@
 | 库开发者 / Library Developer               | —                                   | —                                |
 | 维护者或贡献者 / Maintainer or Contributor | [启动开发](#启动开发)               | —                                |
 
+
+## RNOH版本演进规划和分支策略
+您可以在[RNOH版本演进规划和分支策略](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH%E7%89%88%E6%9C%AC%E6%BC%94%E8%BF%9B%E8%A7%84%E5%88%92%E5%92%8C%E5%88%86%E6%94%AF%E7%AD%96%E7%95%A5.md)中了解更多关于我们对React Native的OpenHarmony适配版本的说明。
+
 ## 启动开发
 
 ### 前置条件
@@ -40,35 +44,3 @@
 - React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
 - RNOH的使用问题可查阅[中文文档](./docs/zh-cn/README.md)或[英文文档](./docs/en/README.md)。
 
-## 版本管理说明
-
-### 一、版本演进规划
-1.**稳定版本**
-- 基于React Native 0.72.5的HarmonyOS适配版本(当前主干)
-
-**最新稳定版本**:
-- [RNOH v5.0.0.813(2024-12-26)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.813.md)
-
-**历史版本归档**:
-- [RNOH v5.0.0.812(2024-12-14)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.812.md)
-- [RNOH v5.0.0.715(2024-10-25)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.715.md)
-- [RNOH v5.0.0.601(2024-09-26)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.601.md)
-- [RNOH v5.0.0.500(2024-08-27)](./docs/zh-cn/release-notes/react-native-harmony-v5.0.0.500.md)
-
-2.**开发中版本**
-- React Native 0.77.1 HarmonyOS适配版本(开发代号)
-- 预计2025年第三季度发布生产环境可用版本
-- 当前处于架构适配阶段(在技术预览分支开放)
-
-### 二、代码分支策略
-
-| 分支名称                | 生命周期状态 | 使用规范说明                   |
-| ----------------------- | ------------ | ------------------------------ |
-| 0.72.5-ohos-5.0-release | 生产维护分支 | 获取所有稳定版本源码的基准分支 |
-| master                  | 主干开发分支 | 技术演进基线，非生产构建推荐源 |
-| 0.77.1-rc.1-ohos        | 技术预览分支 | 新特性适配分支(开发测试专用)   |
-| dev/partner-dev         | 协作开发分支 | 功能开发沙箱环境               |
-| 其他分支                | 临时工作分支 | 特定场景技术验证分支           |
-
-**重要通告**:  
-0.72.5-ohos-5.0-release分支于2025年1月23日进行了代码结构调整与合规性优化，历史CommitID已变更。请开发者通过'git fetch --all'更新仓库，确保获取最新代码基线。
