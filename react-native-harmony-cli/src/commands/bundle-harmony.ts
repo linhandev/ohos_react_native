@@ -149,12 +149,12 @@ async function copyAssets(
     } else {
       // Handle the packaging of multi-resolution images.
       fileNames.forEach((fileName) => {
-        let lastIndex = asset.files[idx].lastIndexOf('/');
+        let lastIndex = asset.files[idx].lastIndexOf(pathUtils.sep);
         let pathPart = asset.files[idx].slice(0, lastIndex + 1);
         let newPath = pathPart + fileName;
         let relativePath = getAssetDestRelativePath(asset);
-        let filePath = relativePath.substring(0, relativePath.lastIndexOf("/")) + '/' + fileName;
-        fileDestBySrc[newPath] = assetsDest + '/' + filePath;
+        let filePath = relativePath.substring(0, relativePath.lastIndexOf(pathUtils.sep)) + pathUtils.sep + fileName;
+        fileDestBySrc[newPath] = assetsDest + pathUtils.sep + filePath;
       });
     }
   }
