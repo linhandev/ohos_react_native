@@ -153,7 +153,7 @@ async function copyAssets(
         let pathPart = asset.files[idx].slice(0, lastIndex + 1);
         let newPath = pathPart + fileName;
         let relativePath = getAssetDestRelativePath(asset);
-        let filePath = relativePath.substring(0, relativePath.lastIndexOf(pathUtils.sep)) + pathUtils.sep + fileName;
+        let filePath = relativePath.substring(0, relativePath.lastIndexOf('/')) + pathUtils.sep + fileName;
         fileDestBySrc[newPath] = assetsDest + pathUtils.sep + filePath;
       });
     }
