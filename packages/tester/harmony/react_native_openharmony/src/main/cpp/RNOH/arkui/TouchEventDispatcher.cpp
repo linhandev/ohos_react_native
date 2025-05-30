@@ -170,10 +170,18 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
       if (touchTarget == nullptr) {
         continue;
       }
-      auto hasCancelled = maybeCancelPreviousTouchEvent(
-          timestampSeconds, touchTarget, rootTarget);
-      if (hasCancelled) {
-        m_touchTargetByTouchId.erase(activeTouch.id);
+      if (isParentHandlingTouches(touchTarget, rootTarget)) {
+        cancelPreviousTouchEvent(timestampSeconds, touchTarget);
+        auto parentTouchTarget = touchTarget->getTouchTargetParent();
+        if (parentTouchTarget && parentTouchTarget != rootTarget) {
+          m_touchTargetByTouchId.insert_or_assign(
+              activeTouch.id, parentTouchTarget);
+          DLOG(INFO) << "TOUCH::DOWN";
+          parentTouchTarget->getTouchEventEmitter()->onTouchStart(
+              m_previousEvent);
+        } else {
+          m_touchTargetByTouchId.erase(activeTouch.id);
+        }
         continue;
       }
     }
@@ -274,14 +282,9 @@ TouchTarget::Shared TouchEventDispatcher::registerTargetForTouch(
   return nullptr;
 }
 
-bool TouchEventDispatcher::maybeCancelPreviousTouchEvent(
+void TouchEventDispatcher::cancelPreviousTouchEvent(
     double timestampInSecs,
-    TouchTarget::Shared touchTarget,
-    TouchTarget::Shared const& rootTarget) {
-  if (!isParentHandlingTouches(touchTarget, rootTarget)) {
-    return false;
-  }
-
+    TouchTarget::Shared touchTarget) {
   // create new touch event based on the previously emitted event
   auto touchCancelEvent = m_previousEvent;
   touchCancelEvent.targetTouches = {};
@@ -301,7 +304,6 @@ bool TouchEventDispatcher::maybeCancelPreviousTouchEvent(
   // emit cancel event
   DLOG(INFO) << "TOUCH::CANCEL";
   touchTarget->getTouchEventEmitter()->onTouchCancel(touchCancelEvent);
-  return true;
 }
 
 void TouchEventDispatcher::sendEvent(
