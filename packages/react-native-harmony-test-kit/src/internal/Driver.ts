@@ -35,6 +35,14 @@ export class DriverError extends Error {}
 
 export type UIDirection = 'LEFT' | 'RIGHT' | 'DOWN' | 'UP';
 
+// https://developer.huawei.com/consumer/cn/doc/harmonyos-references/js-apis-keycode
+const HARMONY_KEY_IDS = {
+  Backspace: 2055,
+  Enter: 2054,
+} as const;
+
+type SupportedKey = keyof typeof HARMONY_KEY_IDS;
+
 export class Driver {
   private hdcClient: HdcClient;
 
@@ -126,6 +134,10 @@ export class Driver {
       },
       power: () => {
         keyEventInstance.power();
+        return keyEventChain;
+      },
+      key: (key: SupportedKey) => {
+        keyEventInstance.keyId(HARMONY_KEY_IDS[key]);
         return keyEventChain;
       },
       send: async () => {

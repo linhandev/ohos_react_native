@@ -28,6 +28,38 @@ const KEYBOARD_TYPES: KeyboardTypeOptions[] = [
   'url',
 ];
 
+const expectKeyboardToAppear = (timeout = 500): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    let keyboardListener: EmitterSubscription | undefined;
+    const timeoutId = setTimeout(() => {
+      keyboardListener?.remove();
+      reject(new Error(`Keyboard did not show within ${timeout}ms`));
+    }, timeout);
+
+    keyboardListener = Keyboard.addListener('keyboardDidShow', () => {
+      keyboardListener?.remove();
+      clearTimeout(timeoutId);
+      resolve();
+    });
+  });
+};
+
+const expectKeyboardToRemainHidden = (timeout = 500): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    let keyboardListener: EmitterSubscription | undefined;
+    const timeoutId = setTimeout(() => {
+      keyboardListener?.remove();
+      resolve();
+    }, timeout);
+
+    keyboardListener = Keyboard.addListener('keyboardDidShow', () => {
+      keyboardListener?.remove();
+      clearTimeout(timeoutId);
+      reject(new Error('Keyboard showed unexpectedly'));
+    });
+  });
+};
+
 export function TextInputTest() {
   const {
     env: {driver},
@@ -73,35 +105,15 @@ export function TextInputTest() {
         )}
         act={async ({state, setState, done}) => {
           if (state.ref?.current) {
-            let keyboardListener: EmitterSubscription | undefined;
             try {
-              // Focus the input to open the keyboard
               state.ref.current.focus();
-              // Ensure keyboard is opened or reject after 2s
-              await Promise.race([
-                new Promise<void>(resolve => {
-                  keyboardListener = Keyboard.addListener(
-                    'keyboardDidShow',
-                    () => {
-                      resolve();
-                    },
-                  );
-                }),
-                new Promise<void>((_, reject) => {
-                  setTimeout(
-                    () =>
-                      reject(new Error('Keyboard did not show within timeout')),
-                    2000,
-                  );
-                }),
-              ]);
+
+              await expectKeyboardToAppear();
+
               setState(prev => ({...prev, keyboardOpened: true}));
             } catch (error) {
               console.error(error);
             } finally {
-              if (keyboardListener) {
-                keyboardListener.remove();
-              }
               Keyboard.dismiss();
               done();
             }
@@ -114,13 +126,36 @@ export function TextInputTest() {
       <TestCase.Example itShould="render textinput with set content">
         <TextInputWithTextContent style={styles.textInput} />
       </TestCase.Example>
-      <TestCase.Example itShould="render non-editable textInput">
-        <TextInputWithText
-          defaultValue="test"
-          style={styles.textInput}
-          editable={false}
-        />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="render non-editable textInput"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({state}) => (
+          <TextInputWithText
+            defaultValue="test"
+            style={styles.textInput}
+            editable={false}
+            ref={state.ref}
+          />
+        )}
+        act={async ({state, done}) => {
+          if (state.ref?.current) {
+            try {
+              state.ref.current.focus();
+              await expectKeyboardToRemainHidden();
+            } catch (error) {
+              console.error(error);
+            } finally {
+              done();
+            }
+          }
+        }}
+        assert={({expect}) => {
+          expect(Keyboard.isVisible()).to.be.equal(false);
+        }}
+      />
       <TestCase.Example
         modal
         itShould="should log only once, after pressing space">
@@ -143,93 +178,171 @@ export function TextInputTest() {
       <TestCase.Example itShould="render textInput with red caret">
         <TextInputWithText style={styles.textInput} cursorColor={'red'} />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="report content size changes (onContentSizeChange)"
-        initialState={false}
-        skip={{android: false, harmony: true}}
-        arrange={({setState}) => {
-          return (
-            <TextInputWithText
-              style={styles.textInput}
-              multiline
-              onContentSizeChange={() => setState(true)}
-            />
-          );
+        tags={['sequential']}
+        initialState={{
+          contentSizeChanged: false,
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({state, setState}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            multiline
+            ref={state.ref}
+            onContentSizeChange={() => {
+              setState(prev => ({...prev, contentSizeChanged: true}));
+            }}
+          />
+        )}
+        act={async ({state, done}) => {
+          await driver?.inputText(state.ref, 'abc');
+          done();
         }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.contentSizeChanged).to.be.true;
         }}
       />
       <TestSuite name="focus/blur">
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="blur text on submit (singleline)"
-          initialState={false}
-          arrange={({setState}) => {
-            return (
-              <>
-                <TextInputWithText
-                  style={styles.textInput}
-                  blurOnSubmit
-                  onBlur={() => setState(true)}
-                />
-              </>
-            );
+          tags={['sequential']}
+          initialState={{
+            ref: createRef<TextInput>(),
+            blurred: false,
+          }}
+          arrange={({state, setState}) => (
+            <TextInputWithText
+              style={styles.textInput}
+              submitBehavior="blurAndSubmit"
+              ref={state.ref}
+              onBlur={() => {
+                setState(prev => ({...prev, blurred: true}));
+              }}
+            />
+          )}
+          act={async ({done, state}) => {
+            await driver?.inputText(state.ref, 'abc');
+            await driver?.keyEvent().key('Enter').send();
+            done();
           }}
           assert={({expect, state}) => {
-            expect(state).to.be.true;
+            expect(state.blurred).to.be.equal(true);
           }}
         />
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="blur text on submit (multiline)"
-          initialState={false}
-          arrange={({setState}) => {
-            return (
-              <>
-                <TextInputWithText
-                  style={styles.textInput}
-                  blurOnSubmit
-                  multiline
-                  onBlur={() => setState(true)}
-                />
-              </>
-            );
+          tags={['sequential']}
+          initialState={{
+            ref: createRef<TextInput>(),
+            blurred: false,
+          }}
+          arrange={({state, setState}) => (
+            <TextInputWithText
+              style={styles.textInput}
+              submitBehavior="blurAndSubmit"
+              multiline
+              ref={state.ref}
+              onBlur={() => {
+                setState(prev => ({...prev, blurred: true}));
+              }}
+            />
+          )}
+          act={async ({state, done}) => {
+            await driver?.inputText(state.ref, 'abc');
+            await driver?.keyEvent().key('Enter').send();
+            done();
           }}
           assert={({expect, state}) => {
-            expect(state).to.be.true;
+            expect(state.blurred).to.be.equal(true);
           }}
         />
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="blur text after switching to another textinput"
-          initialState={false}
-          arrange={({setState}) => {
-            return (
-              <>
-                <TextInputWithText
-                  style={styles.textInput}
-                  onBlur={() => setState(true)}
-                />
-                <TextInputWithText
-                  style={styles.textInput}
-                  onBlur={() => setState(true)}
-                />
-              </>
-            );
+          tags={['sequential']}
+          initialState={{
+            firstTextInputRef: createRef<TextInput>(),
+            secondTextInputRef: createRef<TextInput>(),
+            blurredFirstRef: false,
+          }}
+          arrange={({state, setState}) => (
+            <>
+              <TextInputWithText
+                style={styles.textInput}
+                ref={state.firstTextInputRef}
+                onBlur={() => {
+                  setState(prev => ({...prev, blurredFirstRef: true}));
+                }}
+              />
+              <TextInputWithText
+                style={styles.textInput}
+                ref={state.secondTextInputRef}
+              />
+            </>
+          )}
+          act={async ({state, done}) => {
+            await driver?.inputText(state.firstTextInputRef, 'abc');
+            await driver?.inputText(state.secondTextInputRef, 'abc');
+
+            done();
           }}
           assert={({expect, state}) => {
-            expect(state).to.be.true;
+            expect(state.blurredFirstRef).to.be.equal(true);
           }}
         />
-        <TestCase.Example itShould="not blur text on submit (singleline)">
-          <TextInputWithText style={styles.textInput} blurOnSubmit={false} />
-        </TestCase.Example>
-        <TestCase.Example itShould="not blur text on submit (multiline)">
-          <TextInputWithText
-            style={styles.textInput}
-            blurOnSubmit={false}
-            multiline
-          />
-        </TestCase.Example>
-
+        <TestCase.Automated
+          itShould="not blur text on submit (singleline)"
+          tags={['sequential']}
+          initialState={{
+            ref: createRef<TextInput>(),
+            blurred: false,
+          }}
+          arrange={({state, setState}) => (
+            <TextInputWithText
+              style={styles.textInput}
+              submitBehavior="submit"
+              ref={state.ref}
+              onBlur={() => {
+                setState(prev => ({...prev, blurred: true}));
+              }}
+            />
+          )}
+          act={async ({state, done}) => {
+            await driver?.inputText(state.ref, 'abc');
+            await driver?.keyEvent().key('Enter').send();
+            done();
+          }}
+          assert={({expect, state}) => {
+            expect(state.blurred).to.be.equal(false);
+          }}
+        />
+        <TestCase.Automated
+          itShould="not blur text on submit (multiline)"
+          tags={['sequential']}
+          initialState={{
+            ref: createRef<TextInput>(),
+            blurred: false,
+          }}
+          arrange={({state, setState}) => (
+            <TextInputWithText
+              style={styles.textInput}
+              submitBehavior="submit"
+              multiline
+              ref={state.ref}
+              onBlur={() => {
+                setState(prev => ({...prev, blurred: true}));
+              }}
+            />
+          )}
+          act={async ({state, done}) => {
+            await driver?.inputText(state.ref, 'abc');
+            await driver?.keyEvent().key('Enter').send();
+            done();
+          }}
+          assert={({expect, state}) => {
+            expect(state.blurred).to.be.equal(false);
+          }}
+        />
         <TestCase.Manual
           modal
           itShould="automatically focus textInput when displayed"
@@ -261,26 +374,61 @@ export function TextInputTest() {
             expect(state).to.be.true;
           }}
         />
-        <TestCase.Manual
+        <TestCase.Automated
           itShould="focus textInput on click"
-          initialState={false}
-          arrange={({setState}) => (
+          tags={['sequential']}
+          initialState={{
+            ref: createRef<TextInput>(),
+            focused: false,
+          }}
+          arrange={({state, setState}) => (
             <TextInput
               style={styles.textInput}
-              onFocus={() => setState(true)}
+              ref={state.ref}
+              onFocus={() => {
+                setState(prev => ({...prev, focused: true}));
+              }}
             />
           )}
+          act={async ({done, state}) => {
+            await driver?.click({ref: state.ref});
+            try {
+              await expectKeyboardToAppear();
+            } catch (error) {
+              console.error(error);
+            } finally {
+              done();
+            }
+          }}
           assert={({expect, state}) => {
-            expect(state).to.be.true;
+            expect(state.focused).to.be.true;
           }}
         />
-        <TestCase.Manual
-          modal
+        <TestCase.Automated
           itShould="focus textInput when pressing the button"
-          initialState={false}
-          arrange={({setState}) => <FocusTextInputTest setState={setState} />}
-          assert={({state, expect}) => {
-            expect(state).to.be.true;
+          tags={['sequential']}
+          initialState={{
+            buttonRef: createRef<View>(),
+            focused: false,
+          }}
+          arrange={({state, setState}) => (
+            <FocusTextInputTest
+              setFocused={() => setState(prev => ({...prev, focused: true}))}
+              ref={state.buttonRef}
+            />
+          )}
+          act={async ({done, state}) => {
+            await driver?.click({ref: state.buttonRef});
+            try {
+              await expectKeyboardToAppear();
+            } catch (error) {
+              console.error(error);
+            } finally {
+              done();
+            }
+          }}
+          assert={({expect, state}) => {
+            expect(state.focused).to.be.true;
           }}
         />
       </TestSuite>
@@ -303,12 +451,33 @@ export function TextInputTest() {
           underlineColorAndroid={'blue'}
         />
       </TestCase.Example>
-      <TestCase.Example itShould="not open the keyboard after focusing">
-        <TextInputWithText
-          style={styles.textInput}
-          showSoftInputOnFocus={false}
-        />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="not open the keyboard after focusing"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({state}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            ref={state.ref}
+            showSoftInputOnFocus={false}
+          />
+        )}
+        act={async ({done, state}) => {
+          await driver?.click({ref: state.ref});
+          try {
+            await expectKeyboardToRemainHidden();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            done();
+          }
+        }}
+        assert={({expect}) => {
+          expect(Keyboard.isVisible()).to.be.false;
+        }}
+      />
       <TestCase.Example itShould="render multiline text input">
         <TextInputWithText style={styles.textInputBigger} multiline />
       </TestCase.Example>
@@ -321,9 +490,31 @@ export function TextInputTest() {
           multiline
         />
       </TestCase.Example>
-      <TestCase.Example itShould="render text input with maximally 10 characters">
-        <TextInputWithText style={styles.textInput} maxLength={10} />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="render text input with maximally 10 characters"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          text: '',
+        }}
+        arrange={({state, setState}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            ref={state.ref}
+            maxLength={10}
+            onChangeText={text => {
+              setState(prev => ({...prev, text}));
+            }}
+          />
+        )}
+        act={async ({done, state}) => {
+          await driver?.inputText(state.ref, '01234567891011');
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.text).to.be.equal('0123456789');
+        }}
+      />
       <TestCase.Example
         modal
         itShould="toggle between rendering 10 and 5 characters">
@@ -343,7 +534,7 @@ export function TextInputTest() {
                 <TextInputWithText
                   style={styles.textInput}
                   maxLength={maxLength}
-                  value="1234567890"
+                  defaultValue="1234567890"
                 />
               </Effect>
             );
@@ -358,18 +549,29 @@ export function TextInputTest() {
       >
         <AutoCapitalize />
       </TestCase.Example>
-      <TestCase.Manual
-        modal
+      <TestCase.Automated
         itShould="trigger onSubmitEditing event after submiting"
-        initialState={false}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          submitted: false,
+        }}
+        arrange={({state, setState}) => (
           <TextInputWithText
             style={styles.textInput}
-            onSubmitEditing={() => setState(true)}
+            ref={state.ref}
+            onSubmitEditing={() =>
+              setState(prev => ({...prev, submitted: true}))
+            }
           />
         )}
+        act={async ({done, state}) => {
+          await driver?.inputText(state.ref, 'abc');
+          await driver?.keyEvent().key('Enter').send();
+          done();
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.submitted).to.be.true;
         }}
       />
       <TestCase.Example modal itShould="toggle between different return keys">
@@ -394,21 +596,29 @@ export function TextInputTest() {
       <TestCase.Example itShould="render secure text input (text obscured)">
         <TextInputWithText style={styles.textInput} secureTextEntry />
       </TestCase.Example>
-      <TestCase.Manual
-        modal
+      <TestCase.Automated
         itShould="trigger onKeyPress event after pressing key (press 'A' to pass)"
-        initialState={''}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          key: '',
+        }}
+        arrange={({state, setState}) => (
           <TextInputWithText
             style={styles.textInput}
-            autoFocus
+            ref={state.ref}
             onKeyPress={event => {
-              setState(event.nativeEvent.key);
+              const key = event.nativeEvent.key;
+              setState(prev => ({...prev, key}));
             }}
           />
         )}
+        act={async ({done, state}) => {
+          await driver?.inputText(state.ref, 'a');
+          done();
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.eq('A');
+          expect(state.key).to.be.eq('a');
         }}
       />
       <TestCase.Manual
@@ -428,31 +638,55 @@ export function TextInputTest() {
           expect(state).to.be.eq('哈');
         }}
       />
-      <TestCase.Manual
-        modal
-        skip={{android: false, harmony: {arkTs: true, cAPI: false}}}
-        //https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/736
+      <TestCase.Automated
         itShould="trigger onKeyPress event after pressing backspace"
-        initialState={''}
-        arrange={({setState}) => (
+        tags={['sequential']}
+        initialState={{
+          firstTextInputKey: '',
+          secondTextInputKey: '',
+          firstTextInputRef: createRef<TextInput>(),
+          secondTextInputRef: createRef<TextInput>(),
+        }}
+        arrange={({state, setState}) => (
           <>
             <TextInputWithText
               style={styles.textInput}
               autoFocus
               defaultValue="a"
-              onKeyPress={event => setState(event.nativeEvent.key)}
+              ref={state.firstTextInputRef}
+              onKeyPress={event => {
+                const firstTextInputKey = event.nativeEvent.key;
+                setState(prev => ({
+                  ...prev,
+                  firstTextInputKey,
+                }));
+              }}
             />
             <TextInputWithText
               style={styles.textInputBigger}
-              autoFocus
               multiline
               defaultValue="a"
-              onKeyPress={event => setState(event.nativeEvent.key)}
+              ref={state.secondTextInputRef}
+              onKeyPress={event => {
+                const secondTextInputKey = event.nativeEvent.key;
+                setState(prev => ({
+                  ...prev,
+                  secondTextInputKey,
+                }));
+              }}
             />
           </>
         )}
+        act={async ({done, state}) => {
+          state.firstTextInputRef.current?.focus();
+          await driver?.keyEvent().key('Backspace').send();
+          state.secondTextInputRef.current?.focus();
+          await driver?.keyEvent().key('Backspace').send();
+          done();
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.eq('Backspace');
+          expect(state.firstTextInputKey).to.be.eq('Backspace');
+          expect(state.secondTextInputKey).to.be.eq('Backspace');
         }}
       />
       <TestCase.Manual
@@ -473,18 +707,63 @@ export function TextInputTest() {
           expect(state).to.be.eq('a');
         }}
       />
-      <TestCase.Example
-        modal
-        itShould="show text input with default value (defaultProps)">
-        <DefaultProps />
-      </TestCase.Example>
-      <TestCase.Example itShould="show text input with default value (defaultValue)">
-        <TextInput style={styles.textInput} defaultValue="defaultText" />
-      </TestCase.Example>
-      <TestCase.Manual
-        modal
+      <TestCase.Automated
+        itShould="show text input with default value (defaultProps)"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          text: '',
+        }}
+        arrange={({state, setState}) => (
+          <DefaultProps
+            ref={state.ref}
+            defaultValue="defaultText"
+            onSubmitEditing={e => {
+              const text = e.nativeEvent.text;
+              setState(prev => ({...prev, text}));
+            }}
+          />
+        )}
+        act={async ({done, state}) => {
+          state.ref.current?.focus();
+          await driver?.keyEvent().key('Enter').send();
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.text).to.be.eq('defaultText');
+        }}
+      />
+      <TestCase.Automated
+        itShould="show text input with default value (defaultValue)"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          text: '',
+        }}
+        arrange={({state, setState}) => (
+          <TextInput
+            style={styles.textInput}
+            defaultValue="defaultText"
+            ref={state.ref}
+            onSubmitEditing={e => {
+              const text = e.nativeEvent.text;
+              setState(prev => ({...prev, text}));
+            }}
+          />
+        )}
+        act={async ({done, state}) => {
+          state.ref.current?.focus();
+          await driver?.keyEvent().key('Enter').send();
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.text).to.be.eq('defaultText');
+        }}
+      />
+      <TestCase.Automated
         itShould="trigger onLayout event on mount"
         initialState={{}}
+        tags={['sequential']}
         arrange={({setState, state}) => {
           return (
             <>
@@ -497,6 +776,11 @@ export function TextInputTest() {
               />
             </>
           );
+        }}
+        act={async ({done}) => {
+          // Event was received after done()
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          done();
         }}
         assert={({expect, state}) => {
           expect(state).to.include.all.keys('width', 'height', 'x', 'y');
@@ -604,14 +888,36 @@ export function TextInputTest() {
           />
         </View>
       </TestCase.Example>
-      <TestCase.Example modal itShould="render textinput with readonly">
-        <TextInputWithText
-          style={styles.textInput}
-          defaultValue="readOnly"
-          // @ts-ignore
-          readOnly
-        />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="render textinput with readonly"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+        }}
+        arrange={({state}) => (
+          <TextInputWithText
+            defaultValue="readOnly"
+            style={styles.textInput}
+            readOnly={true}
+            ref={state.ref}
+          />
+        )}
+        act={async ({state, done}) => {
+          if (state.ref?.current) {
+            try {
+              state.ref.current.focus();
+              await expectKeyboardToRemainHidden();
+            } catch (error) {
+              console.error(error);
+            } finally {
+              done();
+            }
+          }
+        }}
+        assert={({expect}) => {
+          expect(Keyboard.isVisible()).to.be.equal(false);
+        }}
+      />
       <TestCase.Example
         modal
         itShould="display bold, italic, large placeholder with a custom font">
@@ -628,14 +934,41 @@ export function TextInputTest() {
       <TestCase.Example modal itShould="render textinput with red text color">
         <TextInputWithText style={[styles.textInput, {color: 'red'}]} />
       </TestCase.Example>
-      <TestCase.Example modal itShould="clear text on focus">
-        {/* iOS only */}
-        <TextInputWithText
-          style={styles.textInput}
-          defaultValue="Hello, World!"
-          clearTextOnFocus
-        />
-      </TestCase.Example>
+      <TestCase.Automated
+        skip={{android: true, harmony: false}}
+        itShould="clear text on focus"
+        tags={['sequential']}
+        initialState={{
+          ref: createRef<TextInput>(),
+          text: '',
+        }}
+        arrange={({state, setState}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            ref={state.ref}
+            defaultValue=""
+            selectTextOnFocus
+            onChange={event => {
+              const text = event.nativeEvent.text;
+              setState(prev => ({...prev, text}));
+            }}
+            clearTextOnFocus
+          />
+        )}
+        act={async ({done, state}) => {
+          state.ref.current?.focus();
+          try {
+            await expectKeyboardToAppear();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            done();
+          }
+        }}
+        assert={({expect, state}) => {
+          expect(state.text).to.be.equal('');
+        }}
+      />
       <TestCase.Example
         // Only "unless-editing" mode doesn't work on C_API
         modal
@@ -924,17 +1257,26 @@ const TextSelectionChangeTest = () => {
   );
 };
 
-const FocusTextInputTest = (props: {
-  setState: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const ref = useRef<TextInput>(null);
+const FocusTextInputTest = forwardRef<
+  View,
+  {setFocused: (value: boolean) => void}
+>((props, buttonRef) => {
+  const textInputRef = useRef<TextInput>(null);
   return (
     <View>
-      <Button label="focus text input" onPress={() => ref.current?.focus()} />
-      <TextInput onFocus={() => props.setState(true)} ref={ref} />
+      <Button
+        label="focus text input"
+        onPress={() => textInputRef.current?.focus()}
+        ref={buttonRef}
+      />
+      <TextInput
+        onFocus={() => props.setFocused(true)}
+        ref={textInputRef}
+        style={styles.textInput}
+      />
     </View>
   );
-};
+});
 
 const TextInputKeyboardType = (props: TextInputProps) => {
   return (
@@ -1064,14 +1406,14 @@ const EnterKeyHintExample = () => {
   );
 };
 
-const DefaultProps = () => {
+const DefaultProps = forwardRef<TextInput, TextInputProps>((props, ref) => {
   // @ts-ignore
   TextInput.defaultProps = {
-    value: 'defaultText',
+    value: props.defaultValue,
   };
 
-  return <TextInput style={styles.textInput} />;
-};
+  return <TextInput style={styles.textInput} ref={ref} {...props} />;
+});
 
 const TextInputValueSetProgrammatically = () => {
   const [value, setValue] = useState('Default Text Input Value');

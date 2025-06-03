@@ -122,6 +122,7 @@ export class HdcClient {
               back: () => typeof keyEventChain;
               home: () => typeof keyEventChain;
               power: () => typeof keyEventChain;
+              keyId: (keyId: number) => typeof keyEventChain;
               send: () => Promise<void>;
             } = {
               back: (): typeof keyEventChain => {
@@ -149,6 +150,15 @@ export class HdcClient {
                   );
                 }
                 keyChain.push('Power');
+                return keyEventChain;
+              },
+              keyId: (keyId: number): typeof keyEventChain => {
+                if (keyChain.length >= 3) {
+                  throw new HdcClientError(
+                    'Cannot send more than 3 key events at once.',
+                  );
+                }
+                keyChain.push(keyId);
                 return keyEventChain;
               },
               send: async (): Promise<void> => {
