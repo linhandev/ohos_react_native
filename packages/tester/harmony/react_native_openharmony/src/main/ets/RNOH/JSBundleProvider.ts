@@ -13,9 +13,11 @@ import urlUtils from '@ohos.url';
 import { fetchDataFromUrl } from './HttpRequestHelper';
 import fs from '@ohos.file.fs';
 import { preferences } from '@kit.ArkData';
-import { common } from '@kit.AbilityKit';
 import { RNOHCoreContext } from './RNOHContext';
 
+/**
+ * @api
+ */
 export interface HotReloadConfig {
   bundleEntry: string,
   host: string,
@@ -23,30 +25,63 @@ export interface HotReloadConfig {
   scheme?: string,
 }
 
+/**
+ * @api
+ */
 export interface FileJSBundle {
   filePath: string,
 }
 
+/**
+ * @api
+ */
 export interface RawFileJSBundle {
   rawFilePath: string,
 }
 
+
+/**
+ * @api
+ */
 export type JsBundle = ArrayBuffer | FileJSBundle | RawFileJSBundle;
 
+/**
+ * @api
+ *
+ * Provides JSBundle code and related information. Decouples RNOH core logic from how a bundle is loaded, allowing
+ * RN_APP_DEVELOPERS to decide which concrete bundle should be used and when.
+ */
 export abstract class JSBundleProvider {
   abstract getURL(): string
 
   abstract getBundle(
     onProgress?: (progress: number) => void,
+    /**
+     * A design mistake. This callback is specific to AnyJSBundleProvider.
+     */
     onProviderSwitch?: (currentProvider: JSBundleProvider) => void
   ): Promise<JsBundle>
 
+  /**
+   * @returns AppKeys supported by provided JSBundle.
+   *
+   * Used by RNApp component, when a RN_APP_DEVELOPER takes the responsibility for loading a bundle to show RNSurface after
+   * bundle was loaded.
+   */
   abstract getAppKeys(): string[]
 
+  /**
+   * @returns A configuration needed to setup hot reloading if supported.
+   *
+   * In practice, implemented only by MetroJSBundleProvider.
+   */
   getHotReloadConfig(): HotReloadConfig | null {
     return null
   }
 
+  /**
+   * @returns A text to be displayed by `RNDevLoadingView` when loading a bundle.
+   */
   getHumanFriendlyURL(): string {
     return this.getURL()
   }
@@ -159,9 +194,12 @@ export class MetroJSBundleProvider extends JSBundleProvider {
     const defaultBundleUrl: string = "http://localhost:8081/index.bundle?platform=harmony&dev=true&minify=false";
     const rnohCoreContext: RNOHCoreContext = AppStorage.get('RNOHCoreContext');
     if (rnohCoreContext?.isDebugModeEnabled) {
-      const dataPreferences: preferences.Preferences = preferences.getPreferencesSync(rnohCoreContext.uiAbilityContext, { name: 'devSettings' });
+      const dataPreferences: preferences.Preferences =
+        preferences.getPreferencesSync(rnohCoreContext.uiAbilityContext, { name: 'devSettings' });
       const address: preferences.ValueType = dataPreferences.getSync('devHostAndPortAddress', '');
-      this.bundleUrl = address.toString() ? `http://${address.toString()}/index.bundle?platform=harmony&dev=true&minify=false` : defaultBundleUrl;
+      this.bundleUrl =
+        address.toString() ? `http://${address.toString()}/index.bundle?platform=harmony&dev=true&minify=false` :
+          defaultBundleUrl;
     } else {
       console.warn('#RNOH_ARK: rnohCoreContext is unavailable or the app is not running in Debug mode; unable to connect to the Metro server specified in Settings.');
       this.bundleUrl = defaultBundleUrl;
@@ -258,17 +296,20 @@ export class MetroJSBundleProvider extends JSBundleProvider {
   /**
    * @deprecated: do not use it.
    */
-  setUIAbilityContext() {}
+  setUIAbilityContext() {
+  }
 
   /**
    * @deprecated: do not use it.
    */
-  setBundleUrl() {}
+  setBundleUrl() {
+  }
 }
 
 export class AnyJSBundleProvider extends JSBundleProvider {
   private pickedJSBundleProvider: JSBundleProvider | undefined = undefined
   private currentProvider?: JSBundleProvider;
+
   constructor(private jsBundleProviders: JSBundleProvider[]) {
     super()
     if (jsBundleProviders.length === 0) {
@@ -278,9 +319,11 @@ export class AnyJSBundleProvider extends JSBundleProvider {
       })
     }
   }
+
   getCurrentProviderURL(): string | undefined {
     return this.currentProvider?.getURL();
   }
+
   getURL() {
     const jsBundleProvider = this.pickedJSBundleProvider ?? this.jsBundleProviders[0]
     return jsBundleProvider?.getURL() ?? "?"

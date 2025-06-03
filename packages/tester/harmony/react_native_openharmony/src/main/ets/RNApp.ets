@@ -13,7 +13,6 @@ import {
   RNInstance,
   RNInstanceOptions,
   RNOHLogger,
-  CustomComponentBuilder,
   RNDevLoadingView,
   RNComponentContext,
   WrappedCustomRNComponentBuilder,
@@ -26,23 +25,24 @@ import { LogBoxDialog } from "./LogBoxDialog"
 import { RNPauseInDebuggerDialog } from "./RNOH/RNPauseInDebuggerDialog"
 
 /**
- * @api: RN_APP_DEVELOPER
- * RN_APP_DEVELOPER is responsible for creating and deleting an RNInstance.
+ * Represents the configuration of RNInstance unmanaged by RNOH / managed by RN_APP_DEVELOPER.
+ * (RN_APP_DEVELOPER is responsible for creating and destroying RNInstance.)
+ *
+ * @api RN_APP_DEVELOPER
  */
 interface UnmanagedRNInstanceConfig {
   rnInstance: RNInstance
 }
 
 /**
- * @api: RN_APP_DEVELOPER
- * RNOH is responsible for creating and deleting an RNInstance.
+ * Represents the configuration of RNInstance managed by RNOH.
+ *
+ * @api RN_APP_DEVELOPER
  */
 type ManagedRNInstanceConfig = RNInstanceOptions
 
 /**
- * @api RN_APP_DEVELOPER
- *
- * Represents the configuration for a React Native instance.
+ * Represents the configuration of RNInstance to be used by RNApp.
  * This type is a union of two modes:
  *
  * - `UnmanagedRNInstanceConfig`: The RN_APP_DEVELOPER is responsible for creating
@@ -51,7 +51,7 @@ type ManagedRNInstanceConfig = RNInstanceOptions
  * - `ManagedRNInstanceConfig`: The RNInstance is managed by RNOH, which handles the
  *   creation and deletion internally. This simplifies usage for most scenarios.
  *
- * Use this type when you need to configure how the RNInstance is initialized and managed.
+ * @api RN_APP_DEVELOPER
  */
 export type RNInstanceConfig = UnmanagedRNInstanceConfig | ManagedRNInstanceConfig
 
@@ -74,93 +74,102 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)
 
 
 /**
- * @api: RN_APP_DEVELOPER
- * RNApp is a high-level component for embedding a single React Native application surface into an ArkTS-based app.
+ * RNApp is a high-level component for embedding a React Native (RN) application in pure RN application projects.
+ * In hybrid native-RN projects with multiple RN surfaces/roots, consider using the `RNSurface` component. By using
+ * `RNSurface`, RN_APP_DEVELOPER takes over RNApp responsibilities.
  *
- * This component handles the creation, lifecycle management, and rendering of a React Native instance (`RNInstance`)
- * and its corresponding surface (`RNSurface`). It is intended for apps that only require a single surface.
- * For multiple embedded RN surfaces, consider using `RNSurface` directly.
+ * ### Responsibilities
+ * - Displays `RNSurface` after loading a JS bundle.
+ * - Integrates features that improve DevEx:
+ *   - displaying logs and errors in `LogBoxDialog`,
+ *   - reloading the RN application and displaying bundle loading progress in `RNDevLoadingView`,
+ *   - displaying `RNPauseInDebuggerDialog` on a request by the debugger.
+ * - Creates and destroys `RNInstance`, if `ManagedRNInstanceConfig` is provided.
  *
- * Key responsibilities:
- * - Initializes and manages RNInstance lifecycle (either from options or external instance).
- * - Loads and executes the JS bundle, if provided.
- * - Automatically instantiates an `RNSurface` and passes the app key and props.
- * - Handles debugging dialogs and developer tool integration.
- * - Supports automatic reloading through dev events.
+ * ### Performance Considerations
+ * To improve startup performance, consider:
+ *  - Providing an initialized RNInstance (see `UnmanagedRNInstanceConfig`)
+ *  - Preloading the JS bundle, if the Hermes JS engine and HBC bundle aren't used
  *
- * Typical usage:
- * - Use this component to launch a full React Native app inside a HarmonyOS-based UI.
- * - Suitable for scenarios where only one React Native root is needed.
+ * ### Requirements
+ * This component implicitly requires `RNOHCoreContext` to be set in the `AppStorage`.
+ * If `RNAbility` isn't used, RN_APP_DEVELOPER must register `RNOHCoreContext` in `AppStorage`.
  *
- * Requirements:
- * - `rnInstanceConfig` must be provided, either as an RNInstance or RNInstanceOptions.
- * - `appKey` should match the one registered in the JS bundle via `AppRegistry.registerComponent`.
- * - Optionally provide a `jsBundleProvider` to trigger bundle execution.
+ * @api RN_APP_DEVELOPER
  */
 @Component
 @Preview
 export struct RNApp {
   /**
    * Configuration object for the RNInstance.
-   * Can be either an existing RNInstance (unmanaged) or options to create one (managed).
+   * @see RNInstanceConfig
    */
   @Require public rnInstanceConfig!: RNInstanceConfig;
-
   /**
    * The app key registered in React Native via `AppRegistry.registerComponent`.
    */
   @Require public appKey: string = '';
-
-  /**
-   * JS bundle provider to load and execute the JavaScript bundle for the RN app.
-   * If omitted, assumes the bundle is already loaded.
-   */
-  public jsBundleProvider: JSBundleProvider | undefined = undefined;
-
   /**
    * Initial props to pass to the root React Native component on surface creation.
+   * They can be retrieved in RN application from appParams provided to the wrapper component provider callback
+   * `AppRegistry.setWrapperComponentProvider`.
    */
   public initialProps: Record<string, string> = {};
-
   /**
-   * @deprecated Use `RNOHPackage` to register custom components instead (from RNOH version 0.75.1).
-   *
-   * Builder for manually injecting custom native-to-RN fabric components.
-   * Should only be used if `RNOHPackage`-based registration is not available.
+   * @see JSBundleProvider
+   * If omitted, the RN_APP_DEVELOPER take the responsibility for loading a bundle into an RNInstance.
+   * Some RN_APP_DEVELOPERS may prefer to control bundle loading without managing `RNInstance`.
+   * In those situations, the bundle should be loaded in the `onSetUp` hook, as this is called during reloads.
    */
-  public wrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder | undefined = undefined;
-
+  public jsBundleProvider: JSBundleProvider | undefined = undefined;
   /**
-   * Optional hook called once the RNInstance is created but before the surface is rendered.
-   * Useful for configuring the instance or registering callbacks.
+   * Optional hook called once the RNInstance is created (or recreated after reloading) but before the surface is
+   * rendered. Useful for configuring the instance or registering callbacks.
    */
   public onSetUp: (rnInstance: RNInstance) => Promise<void> | void = () => Promise.resolve();
-
+  /**
+   * Builder for injecting custom RN components defined on the ArkTS side.
+   * Should only be used if a library has not migrated to `RNOHPackage` and provides ArkTS RN components.
+   * Libraries should use `RNOHPackage` to register their ArkTS RN components.
+   *
+   * ### Context
+   * Initially, in the RNOH ArkTS architecture, custom RN components were ArkUI components,
+   * and RNApp accepted a `buildCustomComponent` builder (the name of this builder type was `CustomComponentBuilder`).
+   * However, ArkTS RN components turned out to be too slow, and builders were faster. But at that time,
+   * builders could not be injected into other builders. Hence, ArkTS introduced the `WrappedBuilder` concept.
+   * However, `WrappedBuilder` wraps only `Builders` (not `BuilderParams`), so `buildCustomComponent`
+   * had to be replaced with something new: `wrappedCustomRNComponentBuilder`.
+   *
+   * Builders were still not fast enough, so a new architecture (C-API) was introduced. However, ArkTS components still
+   * had to be supported.
+   *
+   * Once performance was no longer the critical issue, autolinking support was introduced.
+   * Autolinking introduced the `RNOHPackage.ets` class in favor of `RNPackage.ts`,
+   * because `wrapBuilder` is only available in ETS files.
+   *
+   * As of the writing of this comment, many libraries have not yet migrated to RNOHPackage (and autolinking)
+   * and RN_APP_DEVELOPERS need to manually link ArkTS RN components by using this property.
+   *
+   * @deprecated `RNOHPackage` should be used for registering custom components (from RNOH version 0.75.1).
+   */
+  public wrappedCustomRNComponentBuilder: WrappedCustomRNComponentBuilder | undefined = undefined;
   // -------------------------------------------------------------------------------------------------------------------
   /** Core RNOH context object from ArkTS runtime. */
   @StorageLink('RNOHCoreContext') private rnohCoreContext: RNOHCoreContext | undefined = undefined;
-
   /** Internal RNInstance used to manage the RN surface lifecycle. */
   private rnInstance!: RNInstance;
-
   /** Whether to show the rendered surface or not. */
   @State private shouldShow: boolean = false;
-
   /** Debug log box controller for showing RN warnings and errors. */
   private logBoxDialogController!: CustomDialogController;
-
   /** Controller for debugger pause dialog (only in debug mode). */
   private pauseDebuggerDialogController!: CustomDialogController;
-
   /** Indicates whether this component should clean up the RNInstance on unmount. */
   private shouldDestroyRNInstance: boolean = false;
-
   /** Stores teardown callbacks for event listeners and resource cleanup. */
   private cleanUpCallbacks: (() => void)[] = [];
-
   /** Logger instance specific to RNApp. */
   private logger!: RNOHLogger;
-
   /** Internal RNComponentContext used by RNSurface. */
   private ctx!: RNComponentContext;
 
@@ -204,7 +213,7 @@ export struct RNApp {
           wrappedCustomRNComponentBuilder,
           wrapBuilder(buildRNComponentForTag),
           new Map(),
-          this.wrappedCustomRNComponentBuilder // backward compatibility
+          this.wrappedCustomRNComponentBuilder// backward compatibility
         )
 
         // Initialize log box dialog for RN error/warning messages
