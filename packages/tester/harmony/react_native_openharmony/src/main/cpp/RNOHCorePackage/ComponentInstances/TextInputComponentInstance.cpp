@@ -79,6 +79,9 @@ void TextInputComponentInstance::onBlur(ArkUINode* node) {
 
 void TextInputComponentInstance::onFocus(ArkUINode* node) {
   this->m_focused = true;
+  if (m_isControlledTextInput) {
+    m_caretPositionForControlledInput = m_selectionStart.value();
+  }
   if (this->m_clearTextOnFocus) {
     m_textAreaNode.setTextContent("");
     m_textInputNode.setTextContent("");
@@ -109,6 +112,9 @@ void TextInputComponentInstance::onTextSelectionChange(
     ArkUINode* node,
     int32_t location,
     int32_t length) {
+  if (m_isControlledTextInput) {
+    m_caretPositionForControlledInput = m_selectionStart.value();
+  }
   if (m_textWasPastedOrCut) {
     m_textWasPastedOrCut = false;
   } else if (m_valueChanged) {
@@ -238,6 +244,7 @@ TextInputComponentInstance::getOnContentSizeChangeMetrics() {
 void TextInputComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   m_multiline = props->traits.multiline;
+  m_isControlledTextInput = !props->text.empty();
   if (m_multiline) {
     m_textInputNode.setTextInputNodeDelegate(nullptr);
     m_textAreaNode.setTextAreaNodeDelegate(this);
@@ -586,6 +593,9 @@ void TextInputComponentInstance::onCommandReceived(
       m_textAreaNode.setTextSelection(
           m_selectionStart.value(), m_selectionEnd.value());
     }
+    if (m_isControlledTextInput) {
+      m_caretPositionForControlledInput = m_selectionStart.value();
+    }
   } else if (commandName == "blur") {
     if (m_multiline) {
       if (m_textAreaNode.isFocused()) {
@@ -604,7 +614,14 @@ void TextInputComponentInstance::onCommandReceived(
     auto selectionEnd = args[3].asInt();
 
     if (selectionStart < 0) {
-      setTextContent(textContent);
+      if (m_isControlledTextInput) {
+        setTextContentAndSelection(
+            textContent,
+            m_caretPositionForControlledInput,
+            m_caretPositionForControlledInput);
+      } else {
+        setTextContent(textContent);
+      }
     } else {
       setTextContentAndSelection(textContent, selectionStart, selectionEnd);
     }
