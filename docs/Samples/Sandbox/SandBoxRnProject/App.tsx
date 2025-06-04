@@ -20,7 +20,7 @@ const App = (): React.Node => {
             Hello World~
           </Text>
           <Text style={styles.content}>
-            在 VSCode 的控制台上输入d，便可看到手机上弹出了React Nactive Dev Menu对话框。
+            在 VSCode 的控制台上输入d，便可看到手机上弹出了React Native Dev Menu对话框。
             开发者可通过Element Inspector查看RN元素的盒子模型及样式。
           </Text>
         </View>
