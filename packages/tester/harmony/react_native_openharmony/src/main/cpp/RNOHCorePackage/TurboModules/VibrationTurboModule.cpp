@@ -17,6 +17,7 @@ VibrationTurboModule::VibrationTurboModule(
   methodMap_ = {
       ARK_METHOD_METADATA(vibrate, 1),
       ARK_METHOD_METADATA(cancel, 0),
+      ARK_METHOD_METADATA(vibrateByPattern, 2),
   };
 }
 } // namespace rnoh

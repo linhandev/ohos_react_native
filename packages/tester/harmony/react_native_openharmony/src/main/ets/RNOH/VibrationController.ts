@@ -9,7 +9,13 @@ import vibrator from '@ohos.vibrator'
 import { RNOHLogger } from "./RNOHLogger"
 
 export class VibrationController {
-  private logger: RNOHLogger
+  private static isVibrating: boolean = false;
+
+  private static currentTimerId: number = 0;
+
+  private static vibrationRequestId: number = 0; // vibrationRequestId is necessary to prevent race condition.
+
+  private logger: RNOHLogger;
 
   constructor(logger: RNOHLogger) {
     this.logger = logger.clone("Vibration")
@@ -33,7 +39,52 @@ export class VibrationController {
     });
   }
 
+  public vibrateByPattern(pattern: Array<number>, repeat: number): void{
+    if (VibrationController.isVibrating) {
+      return;
+    }
+    VibrationController.isVibrating = true;
+    if (pattern.length === 0) {
+      VibrationController.isVibrating = false;
+      return;
+    }
+    this.vibrateScheduler(++VibrationController.vibrationRequestId, pattern, repeat, 0);
+  }
+
+  public vibrateScheduler(
+    id: number,
+    pattern: Array<number>,
+    repeat: number,
+    nextIndex: number,
+    shouldVibrate: boolean = false, // first value in pattern is delay
+  ): void{
+    if (!VibrationController.isVibrating || id !== VibrationController.vibrationRequestId) {
+      return;
+    }
+    if (shouldVibrate && nextIndex < pattern.length) {
+      this.vibrate(pattern[nextIndex]);
+    }
+    if (nextIndex >= pattern.length) {
+      if (repeat + 1) {
+        nextIndex = 0;
+        shouldVibrate = false;
+      } else {
+        VibrationController.isVibrating = false;
+        return;
+      }
+    }
+    VibrationController.currentTimerId = setTimeout(
+      () => this.vibrateScheduler(id, pattern, repeat, nextIndex + 1, !shouldVibrate),
+      pattern[nextIndex],
+    )
+  }
+
   public cancel() {
+    VibrationController.isVibrating = false;
     vibrator.stopVibration();
+  }
+
+  public onDestroy() {
+    clearTimeout(VibrationController.currentTimerId);
   }
 }

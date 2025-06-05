@@ -5,18 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { TurboModuleContext } from '../../RNOH/TurboModule';
-import { TurboModule } from '../../RNOH/TurboModule';
+import type { UITurboModuleContext } from "../../RNOH/TurboModule";
+import { UITurboModule } from "../../RNOH/TurboModule";
 import { RNOHLogger } from '../../RNOH/RNOHLogger';
 import { VibrationController } from '../../RNOH/VibrationController';
 
-export class VibrationTurboModule extends TurboModule {
+export class VibrationTurboModule extends UITurboModule {
   public static readonly NAME = 'Vibration';
 
   private logger: RNOHLogger;
   private vibrationController: VibrationController
 
-  constructor(protected ctx: TurboModuleContext) {
+  constructor(protected ctx: UITurboModuleContext) {
     super(ctx);
     this.logger = this.ctx.logger.clone("VibrationTurboModule")
     this.vibrationController = new VibrationController(this.logger)
@@ -26,12 +26,15 @@ export class VibrationTurboModule extends TurboModule {
     this.vibrationController.vibrate(pattern);
   };
 
-  // Android only
   public vibrateByPattern(pattern: Array<number>, repeat: number) {
-    this.logger.warn("Vibration::vibrateByPattern is not supported");
+    this.vibrationController.vibrateByPattern(pattern, repeat);
   };
 
   public cancel() {
     this.vibrationController.cancel();
+  }
+
+  __onDestroy__() {
+    this.vibrationController.onDestroy();
   }
 }

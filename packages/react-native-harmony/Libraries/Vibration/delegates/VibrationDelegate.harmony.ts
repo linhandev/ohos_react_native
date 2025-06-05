@@ -9,6 +9,6 @@ import { BaseVibrationDelegate } from './BaseVibrationDelegate';
 
 export default class VibrationDelegate extends BaseVibrationDelegate {
   override shouldUseAndroidImplementation(): boolean {
-    return false;
+    return true;
   }
 }
