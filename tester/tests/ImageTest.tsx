@@ -5,16 +5,15 @@
  * LICENSE-MIT file in the root directory of this source tree.
  */
 
-import {Image, ImageSourcePropType, ScrollView, Text, View, Dimensions} from 'react-native';
+import {Image, ImageSourcePropType, ScrollView, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import React, { useState, useEffect, useMemo} from 'react';
+import React from 'react';
 import {Button, TestCase} from '../components';
 import {getScrollViewContentHorizontal} from './ScrollViewTest/fixtures';
 
 const WRONG_IMAGE_SRC = 'not_image';
 const LOCAL_IMAGE_ASSET_ID = require('../assets/pravatar-131.jpg');
 const REMOTE_IMAGE_URL = 'https://i.pravatar.cc/100?img=31';
-const INVALID_IMAGE_URL = '';
 const BASE64_IMAGE_STRING =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC';
 const LARGE_REMOTE_IMAGE_URL =
@@ -61,7 +60,7 @@ export const ImageTest = () => {
         </View>
       </TestCase.Example>
       <TestCase.Logical
-        skip={{android: false, harmony: {arkTS: false, cAPI: 'NOT SUPPORTED'}}}
+        skip={{android: false, harmony: {arkTs: false, cAPI: 'NOT SUPPORTED'}}}
         itShould="retrieve remote image size"
         fn={({expect}) => {
           return new Promise((resolve, reject) => {
@@ -138,7 +137,7 @@ export const ImageTest = () => {
       <TestCase.Logical
         skip={{
           android: false,
-          harmony: {arkTS: false, cAPI: 'NOT SUPPORTED'},
+          harmony: {arkTs: false, cAPI: 'NOT SUPPORTED'},
         }}
         itShould="retrieve remote image size (with custom headers provided)"
         fn={({expect}) => {
@@ -551,17 +550,6 @@ export const ImageTest = () => {
           style={{width: '100%', height: 200, marginVertical: 16}}
         />
       </TestCase.Example>
-      <TestCase.Example modal itShould="Prefetch large number of images">
-        <ImagePrefetchTest />
-      </TestCase.Example>
-      <TestCase.Example
-        modal
-        itShould="Load proper image source for different container dimensions">
-        <MultipleSourceImage />
-      </TestCase.Example>
-      <TestCase.Example modal itShould="Use higher resolution image">
-        <ImageSuffixesTest />
-      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -606,7 +594,7 @@ const ImageExampleCase = ({
     <Image
       style={{borderRadius: 8, borderWidth: 1, height: 150}}
       source={source}
-      onError={e => console.error(e.nativeEvent.error, source)}
+      onError={e => console.error(e.nativeEvent.error)}
       // resizeMode="contain"
     />
   </TestCase.Example>
@@ -708,158 +696,3 @@ const LoadLocalImagesFromDifferentFolders = () => {
     </View>
   );
 };
-
-const IMAGE_ID_OFFSET = new Date().getTime();
-const NUMBER_OF_IMAGES = 45;
-
-const ImagePrefetchTest = () => {
-  const [renderImageList, setRenderImageList] = useState(false);
-
-  useEffect(() => {
-    // Delay the rendering of the images to allow the prefetch to start
-    setTimeout(() => {
-      setRenderImageList(true);
-    }, 500);
-
-    const promisesArray: Promise<boolean>[] = [];
-    for (let i = 0; i < NUMBER_OF_IMAGES; i++) {
-      const promise = Image.prefetch(
-        REMOTE_IMAGE_URL + '&v=' + (i + IMAGE_ID_OFFSET),
-      );
-      promisesArray.push(promise);
-    }
-    Promise.all(promisesArray)
-      .then(res => console.log('Successfully loaded all images', res))
-      .catch(err => console.log('Failed to load all images', err));
-  }, []);
-
-  return (
-    <>
-      {renderImageList && (
-        <ScrollView style={{height: '70%'}}>
-          <Button
-            label="Reload Images"
-            onPress={() => {
-              setRenderImageList(false);
-
-              setTimeout(() => {
-                setRenderImageList(true);
-              }, 500);
-            }}
-          />
-          <View
-            style={{
-              width: '100%',
-              flexWrap: 'wrap',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
-            {new Array(NUMBER_OF_IMAGES).fill(0).map((_, idx) => {
-              return (
-                <Image
-                  key={idx}
-                  source={{
-                    uri: REMOTE_IMAGE_URL + '&v=' + (idx + IMAGE_ID_OFFSET),
-                  }}
-                  style={{
-                    width: 60,
-                    height: 60,
-                    aspectRatio: 1,
-                    backgroundColor: 'blue',
-                  }}
-                />
-              );
-            })}
-          </View>
-        </ScrollView>
-      )}
-    </>
-  );
-};
-
-const MultipleSourceImage = () => {
-  const {containerSizes, imageSources} = useMemo(() => {
-    const imageContainerSizes = [
-      [100, 100],
-      [200, 200],
-      [300, 300],
-    ];
-    const imageSourcesArr = [
-      {
-        uri: 'https://images.pexels.com/photos/5370674/pexels-photo-5370674.jpeg?cs=tinysrgb&w=100&h=100',
-        width: 100,
-        height: 100,
-      },
-      {
-        uri: 'https://images.pexels.com/photos/5475178/pexels-photo-5475178.jpeg?w=200&h=200',
-        width: 200,
-        height: 200,
-      },
-      {
-        uri: 'https://images.pexels.com/photos/27849695/pexels-photo-27849695/free-photo-of-a-man-riding-a-motorcycle-down-a-narrow-street.jpeg?cs=tinysrgb&w=300&h=300',
-        width: 300,
-        height: 300,
-      },
-    ];
-    const pointScaleFactor = Dimensions.get('screen').scale;
-    imageContainerSizes.map(el => [
-      el[0] * pointScaleFactor,
-      el[1] * pointScaleFactor,
-    ]);
-    imageSourcesArr.map(el => {
-      el.width = el.width * pointScaleFactor;
-      el.height = el.height * pointScaleFactor;
-    });
-
-    return {
-      containerSizes: imageContainerSizes,
-      imageSources: imageSourcesArr,
-    };
-  }, []);
-
-  const [containerSizeIndex, setContainerSizeIndex] = useState(0);
-  const [mountImageComponent, setMountImageComponent] = useState(true);
-
-  return (
-    <View>
-      <Button
-        label="Change container size"
-        onPress={() => {
-          setContainerSizeIndex(
-            (containerSizeIndex + 1) % containerSizes.length,
-          );
-          // Make sure that component is re-mounted to apply new size
-          setMountImageComponent(false);
-          setTimeout(() => {
-            setMountImageComponent(true);
-          }, 50);
-        }}
-      />
-      <View
-        style={{
-          padding: 16,
-          backgroundColor: 'red',
-          width: '100%',
-          height: 325,
-        }}>
-        {mountImageComponent && (
-          <Image
-            source={imageSources}
-            style={{
-              width: containerSizes[containerSizeIndex][0],
-              height: containerSizes[containerSizeIndex][1],
-            }}
-          />
-        )}
-      </View>
-    </View>
-  );
-};
-
-function ImageSuffixesTest() {
-  return (
-    <View>
-      <Image source={require('../assets/fig-without-poppy.jpeg')} />
-    </View>
-  );
-}

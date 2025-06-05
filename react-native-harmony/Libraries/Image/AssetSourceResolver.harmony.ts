@@ -1,17 +1,11 @@
 import {
   getAssetDestRelativePath,
   Asset,
-} from "@rnoh/react-native-harmony-cli/src/assetResolver";
-import { getBasePath } from "@react-native/assets-registry/path-support";
-import { Dimensions, Platform } from "react-native";
-import { pickScale } from "react-native/Libraries/Image/AssetUtils.js";
-
-function getScaledAssetPath(asset: Asset): string {
-  const scale = pickScale(asset.scales);
-  const scaleSuffix = scale === 1 ? "" : "@" + scale + "x";
-  const assetDir = getBasePath(asset);
-  return assetDir + "/" + asset.name + scaleSuffix + "." + asset.type;
-}
+} from '@rnoh/react-native-harmony-cli/src/assetResolver';
+import {
+  getBasePath,
+} from '@react-native/assets-registry/path-support';
+import { Platform } from 'react-native';
 
 type ResolvedAssetSource = {
   readonly __packager_asset: boolean;
@@ -20,6 +14,11 @@ type ResolvedAssetSource = {
   readonly uri: string;
   readonly scale: number;
 };
+
+function getAssetPath(asset: Asset): string {
+  const assetDir = getBasePath(asset);
+  return assetDir + '/' + asset.name + '.' + asset.type;
+}
 
 class AssetSourceResolver {
   constructor(
@@ -58,16 +57,16 @@ class AssetSourceResolver {
    */
   assetServerURL(): ResolvedAssetSource {
     if (!this.serverUrl) {
-      throw new Error("need server to load from");
+      throw new Error('need server to load from');
     }
 
     return this.fromSource(
       this.serverUrl +
-        getScaledAssetPath(this.asset) +
-        "?platform=" +
+      getAssetPath(this.asset) +
+        '?platform=' +
         Platform.OS +
-        "&hash=" +
-        this.asset.hash
+        '&hash=' +
+        this.asset.hash,
     );
   }
 

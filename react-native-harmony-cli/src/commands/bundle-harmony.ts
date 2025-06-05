@@ -143,20 +143,10 @@ async function copyAssets(
   const fileDestBySrc: Record<Path, Path> = {};
   for (const asset of assetsData) {
     const idx = getHighestQualityFileIdx(asset);
-    const fileNames = asset.files.map(filePath => pathUtils.basename(filePath));
-    if (asset.files.length === 0) {
-      fileDestBySrc[asset.files[idx]] = pathUtils.join(assetsDest, getAssetDestRelativePath(asset));
-    } else {
-      // Handle the packaging of multi-resolution images.
-      fileNames.forEach((fileName) => {
-        let lastIndex = asset.files[idx].lastIndexOf(pathUtils.sep);
-        let pathPart = asset.files[idx].slice(0, lastIndex + 1);
-        let newPath = pathPart + fileName;
-        let relativePath = getAssetDestRelativePath(asset);
-        let filePath = relativePath.substring(0, relativePath.lastIndexOf('/')) + pathUtils.sep + fileName;
-        fileDestBySrc[newPath] = assetsDest + pathUtils.sep + filePath;
-      });
-    }
+    fileDestBySrc[asset.files[idx]] = pathUtils.join(
+      assetsDest,
+      getAssetDestRelativePath(asset)
+    );
   }
   return copyFiles(fileDestBySrc);
 }
