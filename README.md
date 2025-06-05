@@ -19,23 +19,25 @@
 1. HarmonyOS NEXT 模拟器或真机：本项目需要在HarmonyOS NEXT上进行测试
 2. 华为开发者账号：运行应用程序时，需要用到[华为开发者账号](https://developer.huawei.com/consumer/cn/personalcenter/overview)对应用进行签名
 3. DevEco Studio：从[官网](https://developer.huawei.com/consumer/cn/deveco-studio/)下载并安装最新版本 DevEco Studio
+4. 参考[官网指导](https://nodejs.org/en/download)安装 Node.js >= 18的版本
 
 ### 框架开发
 
-> 您可以连接测试机或模拟器后在bash中执行如下命令，之后直接从第7步开始
+> 您可以连接测试机或模拟器后在bash中执行如下命令，之后直接从第8步开始
 > 
-> `git clone https://gitcode.com/openharmony-sig/ohos_react_native.git && cd ohos_react_native && git switch 0.77.1-rc.1-ohos && pnpm init-ws && pnpm dev`
+> `git clone https://gitcode.com/openharmony-sig/ohos_react_native.git && cd ohos_react_native && git switch 0.77.1-rc.1-ohos && npm install -g pnpm@latest-10 && pnpm init-ws && pnpm dev`
 
 1. 拉取本项目代码 `git clone https://gitcode.com/openharmony-sig/ohos_react_native.git`
 2. 进入项目目录 `cd ohos_react_native`
 3. 对 React Native 0.77 版本的适配当前在特性分支上进行，切换到该分支 `git switch 0.77.1-rc.1-ohos`
-4. 进行项目初始化 `pnpm init-ws` （过程中会拉取一批submodule和安装npm依赖，受网速影响可能耗时较长）
-5. 连接设备并开启usb调试功能，或启动模拟器
-6. 启动 metro 和测试工具 `pnpm dev`
-7. 在 DevEco Studio 中打开 `packages/tester/harmony` 项目并等待后台同步完成
-8. 点击 File > Project Structure > Signing Configs，登录并完成签名
-9. 在右上角选择项目配置下拉中选中 `entry`
-10. 点击右上角绿色三角箭头【Run 'entry'】按钮，运行项目
+4. 安装pnpm `npm install -g pnpm@latest-10`
+5. 进行项目初始化 `pnpm init-ws` （过程中会拉取一批submodule和安装npm依赖，受网速影响可能耗时较长）
+6. 连接设备并开启usb调试功能，或启动模拟器
+7. 启动 metro 和测试工具 `pnpm dev`
+8. 在 DevEco Studio 中打开 `packages/tester/harmony` 项目并等待后台同步完成
+9. 点击 File > Project Structure > Signing Configs，登录并完成签名
+10. 在右上角选择项目配置下拉中选中 `entry`
+11. 点击右上角绿色三角箭头【Run 'entry'】按钮，运行项目
 
 **说明：** tester项目主要在开发过程中用于自测试，如在运行tester中的用例时遇到问题，请提[issue](https://gitcode.com/openharmony-sig/ohos_react_native/issues)咨询。
 
@@ -43,4 +45,3 @@
 
 - React Native的使用问题可查阅[React Native 官网](https://reactnative.dev/)或[React Native 中文网](https://reactnative.cn/)。
 - RNOH的使用问题可查阅[中文文档](./docs/zh-cn/README.md)或[英文文档](./docs/en/README.md)。
-
