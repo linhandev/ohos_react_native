@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.72.73
+- chore: update to version 6.0.0.301(0.72.73),([c65b0800](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c65b080085513af4367be41061bcdcd5cd193a58))
 - fix: Resolve the issue of turbomodule object passing null and the native side receiving and printing as undefined,([f7e09804](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e098048c9fcf9b0370a80e862bb639fcb5a075))
 - fix: Fix duplicate rootViewTag issues between different RNInstances,([99561dd7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/99561dd756a1bc82361ff26fc986753e4ac7bb8e))
 

@@ -1,6 +1,11 @@
 # Changelog
 
 ## 6.0.0.301
+- Revert 多分辨率图片的处理,([a7864d13](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7864d131588ebba4f3560bd1ff59d22bab5a7a5))
+- chore: update to version 5.1.1.503(0.72.73),([bbacb09d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bbacb09dfebacc1113a4dd91c47b7b982687a8aa))
+- chore: Fix typo: Correct "React Nactive" to "React Native",([0762a544](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0762a544b78957d3443b4884b1a4e798645effeb))
+- chore: Modify version and branch strategy,([416fdbe1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/416fdbe169d46c4c7f954a55dc58a017f04cbe3b))
+- chore: update to version 6.0.0.301(0.72.73),([c65b0800](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c65b080085513af4367be41061bcdcd5cd193a58))
 - fix: The relativePath uses '/' to concatenate paths and, and the code needs to be reverted.,([90b53943](https://gitcode.com/openharmony-sig/ohos_react_native/commit/90b53943f357cdfbc5124a59a19ab7abb7d0c39d))
 - fix: Windows system packaging failure,([8ed4f378](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8ed4f3787a873fb9a1cda008759ca36c1be00b02))
 - fix: Inconsistent with Android in repeated vibration mode,([4eeebae5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4eeebae5778dd63c06511e11ebdf48b6d037ec64))

@@ -13,8 +13,8 @@
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| DevEco Studio     | Deveco Studio 5.1.1.407 |
-| HarmonyOS SDK     | HarmonyOS SDK 5.1.1.66 |
-| 手机ROM           | ALN-AL00 205.1.0.199(SP30DEVC00E199R4P6) <br> ALN-AL80 205.1.0.199(SP30DEVC00E199R4P6) <br> BRA-AL00 205.1.0.199(SP30DEVC00E199R4P5) |
+| DevEco Studio     | Deveco Studio 5.1.1.408 |
+| HarmonyOS SDK     | HarmonyOS SDK 5.1.1.66(SP31) |
+| 手机ROM           | ALN-AL00 205.1.0.199(SP32DEVC00E199R4P6) <br> ALN-AL80 205.1.0.199(SP32DEVC00E199R4P6) <br> BRA-AL00 205.1.0.199(SP32DEVC00E199R4P5) |
 
 > 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 15，相应配套版本可通过：链接 https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/deveco-studio-new-features-503-release 获取
