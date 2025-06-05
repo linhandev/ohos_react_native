@@ -154,7 +154,8 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
     auto arkTSBridgeHandler = arkJS.createNapiRef(args[1]);
     ARK_TS_BRIDGE_BY_ENV_ID.emplace(
         nextEnvId,
-        std::make_shared<ArkTSBridge>(env, std::move(arkTSBridgeHandler)));
+        std::make_shared<ArkTSBridge>(
+            env, std::move(arkTSBridgeHandler), isDebugModeEnabled));
     return arkJS.createObjectBuilder()
         .addProperty("isDebugModeEnabled", isDebugModeEnabled)
         .addProperty("jsEngineName", jsEngineName)

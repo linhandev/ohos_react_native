@@ -184,6 +184,30 @@ napi_value ArkJS::createFromRNOHError(rnoh::RNOHError const& e) {
   return this->createFromDynamic(errData);
 }
 
+napi_value ArkJS::createFromParsedError(
+    const facebook::react::JsErrorHandler::ParsedError& e) {
+  folly::dynamic errData = folly::dynamic::object;
+  errData["message"] = e.message;
+
+  folly::dynamic dynStackTraces = folly::dynamic::array;
+  for (const auto& stack : e.stack) {
+    folly::dynamic dynStackTrace = folly::dynamic::object;
+    if (stack.file.has_value()) {
+      dynStackTrace["file"] = stack.file.value();
+    }
+    dynStackTrace["methodName"] = stack.methodName;
+    if (stack.lineNumber.has_value()) {
+      dynStackTrace["lineNumber"] = stack.lineNumber.value();
+    }
+    if (stack.column.has_value())
+      dynStackTrace["column"] = stack.column.value();
+    dynStackTraces.push_back(dynStackTrace);
+  }
+  errData["stackFrames"] = dynStackTraces;
+
+  return this->createFromDynamic(errData);
+}
+
 napi_value ArkJS::createResult(const rnoh::Result<napi_value>& result) {
   if (!result.isOk()) {
     auto resultBuilder =

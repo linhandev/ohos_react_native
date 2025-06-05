@@ -5,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { StackFrame } from '../RNOHCorePackage/turboModules';
-import { EventEmitter } from './EventEmitter'
-import { RNInstance } from './RNInstance'
+import url from '@ohos.url';
+import http from '@ohos.net.http';
+
+import {EventEmitter} from './EventEmitter';
 
 export interface ErrorData {
   whatHappened: string,
@@ -154,8 +155,45 @@ export class WorkerRNOHError extends RNOHError {
 }
 
 export class RNOHErrorStack {
-  constructor(private frames: StackFrame[]) {
-  };
+  constructor(private frames: StackFrame[]) {}
+
+  static async fromBundledStackFrames(
+    stackFrames: StackFrame[],
+    shouldTryToSymbolicate: boolean = false,
+  ): Promise<RNOHErrorStack> {
+    if (!shouldTryToSymbolicate || stackFrames?.length === 0) {
+      return Promise.resolve(new RNOHErrorStack(stackFrames));
+    }
+
+    // in our best effort, resolve the dev server url from bundle name
+    let bundleUrl: url.URL;
+    try {
+      bundleUrl = url.URL.parseURL(stackFrames[0].file);
+    } catch (ignored) {
+      return Promise.resolve(new RNOHErrorStack(stackFrames));
+    }
+
+    // try to symbolicate with dev server
+    try {
+      return http
+        .createHttp()
+        .request(`${bundleUrl.origin}/symbolicate`, {
+          method: http.RequestMethod.POST,
+          readTimeout: 3000,
+          connectTimeout: 3000,
+          extraData: JSON.stringify({stack: stackFrames}),
+        })
+        .then((resp: http.HttpResponse) => {
+          return new RNOHErrorStack(
+            resp.responseCode === 200
+              ? JSON.parse(resp.result.toString()).stack
+              : stackFrames,
+          );
+        });
+    } catch (ignored) {}
+
+    return Promise.resolve(new RNOHErrorStack(stackFrames));
+  }
 
   getFrames() {
     return this.frames;
@@ -197,3 +235,11 @@ export type RNOHErrorEventEmitter = EventEmitter<{
 export type RNInstanceErrorEventEmitter = EventEmitter<{
   'NEW_ERROR': [RNInstanceError];
 }>;
+
+export type StackFrame = {
+  file?: string,
+  methodName: string,
+  lineNumber?: number,
+  column?: number,
+  collapse?: boolean,
+};

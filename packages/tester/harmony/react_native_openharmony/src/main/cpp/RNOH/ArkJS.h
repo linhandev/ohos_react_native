@@ -12,6 +12,7 @@
 #include <folly/dynamic.h>
 #include <js_native_api.h>
 #include <js_native_api_types.h>
+#include <jserrorhandler/JsErrorHandler.h>
 #include <jsi/jsi.h>
 #include <react/renderer/graphics/Color.h>
 #include <react/renderer/graphics/Float.h>
@@ -418,6 +419,19 @@ class ArkJS {
    * @return The corresponding `napi_value` representing the RNOH error.
    */
   napi_value createFromRNOHError(rnoh::RNOHError const&);
+
+  /**
+   * @internal
+   * @brief Creates NAPI value from ParsedError
+   * @note Returned object structure is different depending on whether debug
+   * mode is enabled. When the `stackFrames` attribute is present in the object,
+   * created ets error object would attempt to symbolicate the stack trace.
+   *
+   * @param e The ParsedError to be converted
+   * @return Corresponding `napi_value` for the ParsedError
+   */
+  napi_value createFromParsedError(
+      const facebook::react::JsErrorHandler::ParsedError&);
 
   /**
    * @brief Creates a NAPI value from a `rnoh::Result<napi_value>`.

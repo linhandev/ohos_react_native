@@ -5,15 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { TurboModule, FatalRNOHError, RNOHError, RNOHErrorStack } from "../../RNOH/ts";
-
-export type StackFrame = {
-  column?: number,
-  file?: string,
-  lineNumber?: number,
-  methodName: string,
-  collapse?: boolean,
-};
+import { TurboModule, FatalRNOHError, RNOHError, RNOHErrorStack, StackFrame } from "../../RNOH/ts";
 
 export type ExceptionData = {
   message: string,

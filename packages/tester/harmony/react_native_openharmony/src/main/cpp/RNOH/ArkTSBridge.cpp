@@ -11,6 +11,7 @@
 #include <cxxreact/SystraceSection.h>
 #include <glog/logging.h>
 #include <jsi/jsi.h>
+#include <react/debug/flags.h>
 #include "RNOH/Assert.h"
 #include "RNOH/RNOHError.h"
 
@@ -44,8 +45,13 @@ auto displayMetricsFromNapiValue(napi_env env, napi_value value)
   };
 }
 
-ArkTSBridge::ArkTSBridge(napi_env env, NapiRef napiBridgeRef)
-    : m_arkJS(ArkJS(env)), m_arkTSBridgeRef(std::move(napiBridgeRef)) {
+ArkTSBridge::ArkTSBridge(
+    napi_env env,
+    NapiRef napiBridgeRef,
+    bool isDebugModeEnabled)
+    : m_arkJS(ArkJS(env)),
+      m_arkTSBridgeRef(std::move(napiBridgeRef)),
+      m_isDebugModeEnabled(isDebugModeEnabled) {
   LOG(INFO) << "ArkTSBridge::ArkTSBridge";
 }
 
@@ -69,6 +75,16 @@ void ArkTSBridge::handleError(std::exception_ptr ex) {
     m_arkJS.getObject(m_arkTSBridgeRef)
         .call("handleError", {m_arkJS.createFromException(e)});
   }
+}
+
+void ArkTSBridge::handleError(
+    const facebook::react::JsErrorHandler::ParsedError& error) {
+  m_threadGuard.assertThread();
+  m_arkJS.getObject(m_arkTSBridgeRef)
+      .call(
+          "handleError",
+          {m_arkJS.createFromParsedError(error),
+           m_arkJS.createBoolean(m_isDebugModeEnabled)});
 }
 
 auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {

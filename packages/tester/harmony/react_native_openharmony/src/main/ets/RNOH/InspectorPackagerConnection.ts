@@ -8,8 +8,7 @@
 import webSocket from '@ohos.net.webSocket';
 import { RNOHLogger } from './RNOHLogger';
 import { BusinessError } from '@ohos.base';
-import {
-  NapiBridge } from './NapiBridge';
+import { NapiBridge } from './NapiBridge';
 import {
   InspectorPackagerConnection,
   InspectorWebsocket,

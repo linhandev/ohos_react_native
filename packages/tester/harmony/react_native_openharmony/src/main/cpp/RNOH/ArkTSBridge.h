@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <jserrorhandler/JsErrorHandler.h>
 #include "ArkJS.h"
 #include "DisplayMetricsManager.h"
 #include "ThreadGuard.h"
@@ -16,6 +17,9 @@ namespace rnoh {
 class ArkTSErrorHandler {
  public:
   virtual void handleError(std::exception_ptr ex) = 0;
+
+  virtual void handleError(
+      const facebook::react::JsErrorHandler::ParsedError&) = 0;
 };
 
 /**
@@ -27,7 +31,7 @@ class ArkTSBridge final : public DisplayMetricsManager,
  public:
   using Shared = std::shared_ptr<ArkTSBridge>;
 
-  ArkTSBridge(napi_env env, NapiRef napiBridgeRef);
+  ArkTSBridge(napi_env env, NapiRef napiBridgeRef, bool isDebugModeEnabled);
 
   ArkTSBridge(ArkTSBridge const&) = delete;
   ArkTSBridge& operator=(ArkTSBridge const&) = delete;
@@ -35,6 +39,10 @@ class ArkTSBridge final : public DisplayMetricsManager,
   ~ArkTSBridge() noexcept;
 
   void handleError(std::exception_ptr ex) override;
+
+  void handleError(
+      const facebook::react::JsErrorHandler::ParsedError&) override;
+
   DisplayMetrics getDisplayMetrics() override;
 
   std::string getMetadata(std::string const& name);
@@ -43,5 +51,8 @@ class ArkTSBridge final : public DisplayMetricsManager,
   ArkJS m_arkJS;
   NapiRef m_arkTSBridgeRef;
   ThreadGuard m_threadGuard;
+
+ private:
+  bool m_isDebugModeEnabled;
 };
 } // namespace rnoh

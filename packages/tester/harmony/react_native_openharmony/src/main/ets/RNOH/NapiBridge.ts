@@ -8,6 +8,7 @@
 // @ts-ignore
 import libRNOHApp from 'librnoh_app.so';
 import type { TurboModuleProvider } from "./TurboModuleProvider";
+import type { StackFrame } from "./RNOHError";
 import type { Mutation } from "./Mutation";
 import type { Tag } from "./DescriptorBase";
 import type { DisplayMode } from './CppBridgeUtils'
@@ -24,6 +25,7 @@ import {
 } from './TurboModule';
 import { NodeContent } from '@ohos.arkui.node';
 import { JsBundle } from './JSBundleProvider';
+import { RNOHErrorStack } from './RNOHError';
 
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -31,7 +33,8 @@ export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THR
 type RawRNOHError = {
   message: string,
   stacktrace?: string[],
-  suggestions?: string[]
+  suggestions?: string[],
+  stackFrames?: StackFrame[],
 }
 
 type Result<TOK = null> = {
@@ -46,6 +49,10 @@ export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
   handleError: (rnohError: RNOHError) => void
   getMetadata: (name: string) => string;
+}
+
+export interface NapiBridgeHandler extends  ArkTSBridgeHandler {
+  handleError: (rnohError: RNOHError, isDebugModeEnabled?: boolean) => void
 }
 
 export class NapiBridge {
@@ -78,7 +85,8 @@ export class NapiBridge {
     })
   }
 
-  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) {
+  onInit(shouldCleanUpRNInstances: boolean,
+    arkTSBridgeHandler: ArkTSBridgeHandler) {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -92,16 +100,19 @@ export class NapiBridge {
       jsEngineName: JSEngineName,
       envId: number
     }>(this.libRNOHApp?.onInit(shouldCleanUpRNInstances, {
-      handleError: (err: RawRNOHError) => {
+      handleError: async (err: RawRNOHError, isDebugModeEnabled?: boolean) => {
         arkTSBridgeHandler.handleError(new RNOHError({
           whatHappened: err.message,
           howCanItBeFixed: (err.suggestions ?? []),
-          customStack: (err.stacktrace ?? []).join("\n"),
+          customStack: err.stackFrames ?
+            await RNOHErrorStack.fromBundledStackFrames(err.stackFrames,
+              isDebugModeEnabled) :
+          (err.stacktrace ?? []).join("\n"),
         }))
       },
       getDisplayMetrics: () => arkTSBridgeHandler.getDisplayMetrics(),
       getMetadata: (name: string) => arkTSBridgeHandler.getMetadata(name),
-    } satisfies ArkTSBridgeHandler))
+    } satisfies NapiBridgeHandler))
   }
 
   registerWorkerTurboModuleProvider(turboModuleProvider: TurboModuleProvider<WorkerTurboModule | AnyThreadTurboModule>,

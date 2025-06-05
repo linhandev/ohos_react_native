@@ -135,8 +135,9 @@ void RNInstanceInternal::initialize() {
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_BRIDGE_LOADING_START);
   auto onJSError =
       [this](jsi::Runtime& runtime, const JsErrorHandler::ParsedError& error) {
-        // TODO: implement `ArkTSBridge::handleError(ParsedError)` and call it
-        // here
+        m_taskExecutor->runSyncTask(TaskThread::MAIN, [&error, this]() {
+          m_arkTSBridge->handleError(error);
+        });
         std::ostringstream msg;
         msg << error.message;
         for (auto stackFrame : error.stack) {
