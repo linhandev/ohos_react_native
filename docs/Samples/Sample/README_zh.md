@@ -4,44 +4,37 @@
 
 ​本Demo包含一个鸿蒙工程目录 `SampleApp`和一个ReactNative工程目录`SampleProject`，接下来需要使用`SampleProject`生成bundle包，并将bundle包加载到`SampleApp`中运行鸿蒙工程。
 
-**环境变量配置：**
-
-​ SampleApp默认为CAPI版本，该版本需要设置`RNOH_C_API_ARCH`环境变量的值为`1`。如何设置环境变量，您可以参考[配置CAPI版本环境变量](..//../zh-cn/环境搭建.md#set_capi_path)。
-
-**React Native工程配置：**
-1. 在 `SampleProject/MainProject` 目录下执行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖；
-
-2. 运行 **npm run dev:all** 生成本地bundle。执行此命令后会在`SampleApp/entry/src/main/resources/rawfile`目录下生成一个名为`bundle`和`assets`的文件夹；
-
-3. 使用Metro生成bundle。如果您想使用Metro服务实时更新bundle，请连接真机，分别执行以下命令：
+### React Native工程操作
+1. 在 `SampleProject/MainProject` 目录下执行 **npm i** 安装依赖；
+2. 运行 **npm run dev:all** 生成本地bundle。执行此命令后会在`SampleApp/entry/src/main/resources/rawfile`目录下生成名为`bundle`和`assets`文件夹；
+3. 如果您想使用Metro服务进行热更新调试，请连接真机，执行以下命令：
   
   ```bash
   hdc rport tcp:8081 tcp:8081
   npm run start
   ```
 
-**鸿蒙工程配置：**
+### 鸿蒙工程操作
 
-1. 在 `entry/oh-package.json5` 和根目录下的 `oh-package.json5` 中指定 `react-native-openharmony` 的版本。
-2. 用 DevEco Studio 打开 `SampleApp` 执行 **Sync and Refresh Project**。
-3. 点击右上角的 **run** 启动项目。
+1. 用 DevEco Studio 打开 `SampleApp` 执行 **Sync and Refresh Project**。
+2. 点击右上角的 **run** 启动项目。
 
 ## 工程内容介绍
 
-​ 空工程的业务内容包括首页HomePage、商品Goods、测试用例test、商品详情Detail四个模块，由React Native侧实现。在鸿蒙侧，通过加载四个业务模块的bundle包创建对应的RNSurface，最后将RNSurface嵌入ArkUI的页面组件中完成鸿蒙侧的页面构建。
+​工程的业务内容包括首页HomePage、商品Goods、测试用例test、商品详情Detail四个模块，由React Native侧实现。在鸿蒙侧，通过加载四个业务模块的bundle包创建对应的RNSurface，最后将RNSurface嵌入ArkUI的页面组件中完成鸿蒙侧的页面构建。
 
 - 首页：使用了三方库react-native-pager-view，实现了tabs分栏效果；
 - 商品：顶部的滚动条组件由ArkUI实现自定义组件，在RN侧导入并渲染；底部提供了多个TurboModule方法的使用示例；
 - 测试用例：提供了多个常用的代码示例页面；
 - 商品详情：同时使用了ArkUI组件和RN组件混合渲染，并在RN组件中使用了鸿蒙侧传递过来的数据进行样式和内容的渲染。(通过商品页面中的接口跳转到对应的商品详情中)
   
-| 首页 | 商品 | 测试用例 | 商品详情 |
-| --- | --- | --- | ---|
-| ![首页](./figures/环境搭建-首页.png)| ![商品](./figures/环境搭建-商品.png) | ![测试用例](./figures/环境搭建-测试用例.png) | ![商品详情](./figures/环境搭建-商品详情.png) |
+| 首页                                 | 商品                                 | 测试用例                                     | 商品详情                                     |
+| ------------------------------------ | ------------------------------------ | -------------------------------------------- | -------------------------------------------- |
+| ![首页](./figures/环境搭建-首页.png) | ![商品](./figures/环境搭建-商品.png) | ![测试用例](./figures/环境搭建-测试用例.png) | ![商品详情](./figures/环境搭建-商品详情.png) |
 
 ### React Native工程内容结构
 
-​ 空工程的React Native业务代码在`SampleProject/MainProject/src/bundles`目录下，包含`HomePage`、`Goods`、`Detail`、`basic`、`test`目录。
+​工程的React Native业务代码在`SampleProject/MainProject/src/bundles`目录下，包含`HomePage`、`Goods`、`Detail`、`basic`、`test`目录。
 
 - **React Native组件代码：**
   

@@ -9,8 +9,16 @@ const pathSep = require('path').sep;
 const fs = require('fs');
 const SHA256 = require('crypto-js/sha256');
 
-const basicNameArray = require('./map/basicNameMap.json');
-const homepageArray = require('./map/pageNameMap.json');
+function requireWithDefault(path, defaultValue = []) {
+  try {
+    return require(path);
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+const basicNameArray = requireWithDefault('./map/basicNameMap.json');
+const homepageArray = requireWithDefault('./map/pageNameMap.json');
 
 function getModuleId(projectRootPath, modulePath, ...bundles) {
   let startIndex = modulePath.indexOf(projectRootPath);
