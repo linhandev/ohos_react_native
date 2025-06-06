@@ -35,7 +35,6 @@ export const Tester: FC<{
   const [currentChildIndex, setCurrentChildIndex] = useState(0);
   const [displaySummaryPage, setDisplaySummaryPage] = useState(false);
   const childArray = Children.toArray(children);
-
   const registerTestCase = useCallback((testCaseId: string) => {
     setTestCaseResultTypeByTestCaseId(prev => {
       if (testCaseId in prev) {
@@ -50,10 +49,24 @@ export const Tester: FC<{
 
   const reportTestCaseResult = useCallback(
     (testCaseId: string, result: TestCaseResultType) => {
-      setTestCaseResultTypeByTestCaseId(prev => ({
-        ...prev,
-        [testCaseId]: result,
-      }));
+      /**
+       * delay reporting test case result to avoid race with registerTestCase
+       */
+      setTimeout(() => {
+        setTestCaseResultTypeByTestCaseId(
+          currentTestCaseResultTypeByTestCaseId => {
+            if (!(testCaseId in currentTestCaseResultTypeByTestCaseId)) {
+              console.warn(
+                `Reported test case result but test case wasn't registered: ${testCaseId}`,
+              );
+            }
+            return {
+              ...currentTestCaseResultTypeByTestCaseId,
+              [testCaseId]: result,
+            };
+          },
+        );
+      }, 0);
     },
     [],
   );
@@ -72,9 +85,17 @@ export const Tester: FC<{
   }, [testCaseResultTypeByTestCaseId]);
 
   const changeRenderedTestsIfSequential = () => {
-    if (sequential && currentChildIndex !== childArray.length - 1) {
-      setCurrentChildIndex(currentChildIndex + 1);
-    } else if (sequential) {
+    if (!sequential) {
+      return;
+    }
+    if (currentChildIndex !== childArray.length - 1) {
+      /**
+       * setTimeout is needed here to bypass React Native infinite loop detector
+       */
+      setTimeout(() => {
+        setCurrentChildIndex(currentChildIndex + 1);
+      }, 0);
+    } else {
       setDisplaySummaryPage(true);
     }
   };
