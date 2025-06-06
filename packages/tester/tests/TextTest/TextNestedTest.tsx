@@ -2,10 +2,14 @@ import {StyleSheet, Text, View} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {TestCase} from '../../components';
 import {Button} from '../../components';
-import {useState} from 'react';
+import {createRef, useState} from 'react';
 import {SAMPLE_PARAGRAPH_TEXT} from './fixtures';
+import {useEnvironment} from '../../contexts';
 
 export function TextNestedTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
   return (
     <TestSuite name="nested texts">
       <TestCase.Example itShould="show INNER and OUTER texts on the same height (various lineHeights)">
@@ -299,47 +303,66 @@ export function TextNestedTest() {
         itShould="increase the counter when 'press me' is pressed (handling gestures in text fragments)">
         <TextPressNestedTest />
       </TestCase.Example>
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass after pressing the highlighted word (nested text touch handling)"
-        initialState={false}
-        arrange={({setState, reset}) => {
-          return (
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text>
-                In a long text you can
-                <Text style={{color: 'red'}} onPress={() => setState(true)}>
-                  {' '}
-                  Press me{' '}
-                </Text>
-                to pass
+        tags={['sequential']}
+        initialState={{
+          wasPressed: false,
+          ref: createRef<Text>(),
+        }}
+        arrange={({state, setState}) => (
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text ref={state.ref}>
+              In a long text you can
+              <Text
+                style={{color: 'red'}}
+                onPress={() => setState(prev => ({...prev, wasPressed: true}))}>
+                {' '}
+                Press me{' '}
               </Text>
-              <Button label="Reset" onPress={reset} />
-            </View>
-          );
+              to pass
+            </Text>
+          </View>
+        )}
+        act={async ({state, done}) => {
+          await driver?.click({ref: state.ref, offset: {x: 50, y: 0}});
+          done();
         }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.wasPressed).to.be.true;
         }}
       />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould="pass after pressing the button embedded in text (nested text touch handling)"
-        initialState={false}
-        arrange={({setState, reset}) => {
+        tags={['sequential']}
+        initialState={{
+          wasPressed: false,
+          ref: createRef<View>(),
+        }}
+        arrange={({state, setState}) => {
           return (
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <Text>
                 {'In a long text you can '}
-                <Button label="Press me" onPress={() => setState(true)} />
+                <Button
+                  label="Press me"
+                  ref={state.ref}
+                  onPress={() =>
+                    setState(prev => ({...prev, wasPressed: true}))
+                  }
+                />
                 {' to pass'}
               </Text>
-              <Button label="Reset" onPress={reset} />
             </View>
           );
         }}
+        act={async ({state, done}) => {
+          await driver?.click({ref: state.ref});
+          done();
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.wasPressed).to.be.true;
         }}
       />
     </TestSuite>

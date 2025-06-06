@@ -20,26 +20,39 @@ export function TextTest() {
       <TextPaddingTest />
       <TextAccessibilityTest />
       <TextNestedTest />
-      <TestCase.Manual
+      <TestCase.Automated
         itShould='pass after pressing "Press me!"'
-        initialState={false}
-        arrange={({setState}) => (
-          <Text onPress={() => setState(false)}>
+        tags={['sequential']}
+        initialState={{
+          wasPressed: false,
+          ref: createRef<Text>(),
+        }}
+        arrange={({state, setState}) => (
+          <Text
+            ref={state.ref}
+            onPress={() => {
+              setState(prev => ({...prev, wasPressed: false}));
+            }}>
             <Text>中中文中中文中中文</Text>
             <Text
               style={{
                 color: 'red',
               }}
               onPress={() => {
-                setState(true);
+                setState(prev => ({...prev, wasPressed: true}));
               }}>
               Press Me!!
             </Text>
             <Text>rest of the text that's not pressable</Text>
           </Text>
         )}
+        act={async ({state, done}) => {
+          await driver?.click({ref: state.ref, offset: {x: -100, y: -5}});
+          await driver?.click({ref: state.ref, offset: {x: -5, y: -5}});
+          done();
+        }}
         assert={({expect, state}) => {
-          expect(state).to.be.true;
+          expect(state.wasPressed).to.be.true;
         }}
       />
       <TestCase.Example itShould="show selectable text">
