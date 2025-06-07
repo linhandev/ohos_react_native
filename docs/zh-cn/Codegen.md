@@ -1,6 +1,6 @@
 # Codegen
 
-如[react native 官网](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md)所介绍，在创建 ` Turbo Native Module` 和 `Fabric Native Component`  时我们通常使用 `Codegen` 来生成胶水代码。
+如[React Native新架构的Codegen文档](https://github.com/reactwg/react-native-new-architecture/blob/main/docs/codegen.md)所介绍，在创建 ` Turbo Native Module` 和 `Fabric Native Component`  时我们通常使用 `Codegen` 来生成胶水代码。
 
 在**RNOH** 中我们也创建了鸿蒙化的 Codegen 工具，下面是详细的介绍。
 
@@ -10,8 +10,8 @@
 
 `Codegen` 的使用 demo 可参考下面两个工程：
 
-* [TuboModule的demo工程](../Samples/using_turboModule/README.md)
-* [自定义Fabric组件](../Samples/FabricComponentSample/README.md)
+* [TurboModule的demo工程](../Samples/using_turboModule/README_zh.md)
+* [自定义Fabric组件](../Samples/FabricComponentSample/README_zh.md)
 
 ## 使用说明
 
@@ -25,7 +25,7 @@
 2. 声明 JavaScript 接口；
 3. 配置 Codegen；
 4. 执行 Codegen；
-5. 编写原生代码以实现TurboModule或Fabric组件的功能；
+5. 编写原生代码以实现 TurboModule 或 Fabric 组件的功能；
 6. 在 JavaScript 侧调用
 
 详细的流程可参考下面几篇文档的介绍：
@@ -67,7 +67,7 @@
 其中：
 
 - **version**：表示版本，需要强调一下，这里的版本并没有新旧之说，它们只是使用场景不同而已。  
-  `"version": 1` 适用于创建 Turbomodule 或者是 ArkTS 组件的场景；  
+  `"version": 1` 适用于创建 TurboModule 或者是 ArkTS 组件的场景；  
   `"version": 2` 则适用于创建 **CAPI** 组件的场景。
 
 - **specPaths**：表示声明文件的路径
@@ -176,7 +176,7 @@
 
 - **--npm-package-name \<string\>**：三方库的包名，生成 C++ 代码时，会创建一个跟该包名同名的目录然后再将 C++ 文件放进去；
 
-- **--turbo-modules-spec-paths [path...]**: turboModule 的声明文件路径，可以是某个目录或者声明文件的相对路径，可以支持传入多个，用空格分隔；
+- **--turbo-modules-spec-paths [path...]**: TurboModule 的声明文件路径，可以是某个目录或者声明文件的相对路径，可以支持传入多个，用空格分隔；
 
 - **--arkts-components-spec-paths [path...]**: ArkTS 组件的声明文件路径，可以是某个目录或者声明文件的相对路径，可以支持传入多个，用空格分隔；
 
@@ -188,4 +188,4 @@
 
 - **--no-safety-check [boolean]**：是否跳过文件操作安全检查，同 `codegen-harmony`。
 
-以上是 `codegen-lib-harmony` 命令支持所有参数，原生端 turboModule 和自定义组件的功能实现逻辑跟 `codegen-harmony` 类似，这里不多讲。
+以上是 `codegen-lib-harmony` 命令支持所有参数，原生端 TurboModule 和自定义组件的功能实现逻辑跟 `codegen-harmony` 类似，这里不多讲。
