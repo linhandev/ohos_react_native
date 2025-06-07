@@ -678,7 +678,7 @@ importers:
         version: 3.15.0-0.0.4
       '@react-native-oh-tpl/react-native-orientation-locker':
         specifier: latest
-        version: 1.7.0-0.0.6(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
+        version: 1.7.0-0.0.7-rc.0(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
       '@react-native-oh-tpl/react-native-print':
         specifier: latest
         version: 0.11.0-0.0.3(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))
@@ -2517,8 +2517,8 @@ packages:
   '@react-native-oh-tpl/react-native-nfc-manager@3.15.0-0.0.4':
     resolution: {integrity: sha512-sut/Ot7ULewvYHHGVKDeDHkSX2VLqxeGA0muWWVCcR1j/KGP+yU0CduDbUBlw/ib2yls95GuPdljiFmHtYn1rA==}
 
-  '@react-native-oh-tpl/react-native-orientation-locker@1.7.0-0.0.6':
-    resolution: {integrity: sha512-9RQ3uhgXlPBFIHvGEUYORDYX+Qk8nxu8/HfC/cVq5ZQTTX520Fbxz8Mdleenr+U3aFFTrQtaiE+kvPxHimxFgA==}
+  '@react-native-oh-tpl/react-native-orientation-locker@1.7.0-0.0.7-rc.0':
+    resolution: {integrity: sha512-KKWeTp+5I9b7Ew/SRcvhbOsAOSnTQFmkY5FwqqLidTd/V48qg6WEP6PVIv8HBdxnr0MAQwtow/EK9WcoYWaOUQ==}
     peerDependencies:
       react: '>=16.13.1'
       react-native: '>=0.63.2'
@@ -10856,7 +10856,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native-oh-tpl/react-native-orientation-locker@1.7.0-0.0.6(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
+  '@react-native-oh-tpl/react-native-orientation-locker@1.7.0-0.0.7-rc.0(react-native-windows@0.78.4(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)(tslib@2.8.1)(typescript@5.5.4))(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-native: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1)
