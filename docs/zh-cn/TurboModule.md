@@ -20,7 +20,7 @@ This documentation is based on React Native documentation licensed under the [CC
 
 ### 声明 JavaScript 接口
 
-在 `RTNCalculator` 目录下新建 `index.ts`，并导出接口声明文件。接口声明文件 NativeCalculator.ts 根据您的需要，放置在 `v1` 或 `v2` 目录下，本示例放在了 `V2` 路径下。接口声明文件可以使用[Flow](https://flow.org/) 或 [TypeScript](https://www.typescriptlang.org/)语言编写。
+在 `RTNCalculator` 目录下新建 `index.ts`，并导出接口声明文件。接口声明文件 NativeCalculator.ts 根据您的需要，放置在 `v1` 或 `v2` 目录下，本示例放在了 `V2` 路径下。接口声明文件可以使用 [Flow](https://flow.org/) 或 [TypeScript](https://www.typescriptlang.org/) 语言编写。
 
 ```typescript
 // index.ts
@@ -111,7 +111,7 @@ export default TurboModuleRegistry.get<Spec>(
 
 Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
 
-1. 原工程添加命令
+1. 原工程添加命令。
    
     需要在 `MyApp` 的 `package.json` 中，添加 Codegen 相关 Script：
     ```diff
@@ -136,6 +136,7 @@ Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
     npm i file:../RTNCalculator/rtn-calculator-1.0.0.tgz
     npm run codegen
     ```
+
     ![执行结果](./figures/TurboModule-Codegen执行结果.png)  
    执行成功后，将生成的胶水代码拷贝到您的harmony工程中即可。
 
@@ -205,7 +206,7 @@ Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
     - 文件中应该 export 一个继承了 `RNPackage` 的类，里面实现 `createTurboModulesFactory`，用于创建 TurboModule 的工厂类；
     - 工程类中应该实现两个方法：
       - `createTurboModule`：用于根据 name 创建对应的 TurboModule 类；
-      - `hasTurboModule`：用于判断改 name 对应的 TurboModule 是否存在；
+      - `hasTurboModule`：用于判断该 name 对应的 TurboModule 是否存在；
     - 需要在 `entry/src/main/ets/RNPackagesFactory.ets` 中添加创建该 Package 的方法：
     ```diff
     import { RNPackageContext, RNPackage } from '@rnoh/react-native-openharmony/ts';
@@ -221,7 +222,7 @@ Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
     ```
 3. 如果是 CxxTurboModule，需要一些额外步骤：
 
-   什么是：CxxTurbomodule，请参考[React Native 中文网](https://reactnative.cn/docs/0.72/the-new-architecture/cxx-cxxturbomodules)。
+   什么是：CxxTurboModule，请参考[React Native 中文网](https://reactnative.cn/docs/0.72/the-new-architecture/cxx-cxxturbomodules)。
 
    以 CalculatorModule 为例，展开胶水代码文件 `RTNCalculator.cpp` 中的宏 ARK_ASYNC_METHOD_METADATA：
 
@@ -386,9 +387,9 @@ Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
     }
     ```
 
-#### 设置自定义Turbomodule运行在worker线程
+#### 设置自定义TurboModule运行在worker线程
 
-1. 创建运行在 woker 线程的 Turbomodule，需要采用下列方式修改：
+1. 创建运行在 woker 线程的 TurboModule，需要采用下列方式修改：
 
     ```typescript
     // entry/src/main/ets/GeneratedPackage.ets
@@ -452,9 +453,11 @@ Codegen 的详细使用方法，可以参考[Codegen](Codegen.md)文档。
     ...
     }
     ```
-   在ets路径下右击，选择 `New` 选项，右侧展开菜单选择 `Woker` 选项：  
+   在ets路径下右击，选择 `New` 选项，右侧展开菜单选择 `Woker` 选项：
+
    ![create_worker](./figures/create-worker.png)  
-   选择后在弹出的窗口中取名 `RNOHWorker.ets`： 
+   选择后在弹出的窗口中取名 `RNOHWorker.ets`：
+
    ![christen_RNOHWorker](./figures/christen-RNOHWorker.png)   
    此时目录结构为:
     ```
