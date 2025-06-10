@@ -4,13 +4,13 @@
 
 1. **RN** 新架构中的 `NativeModules` 改为 `TurboModule`，其他调用地方统一改为调用 RNBridge 中封装的该方法。
 
-2. **RN** 中 `Dimensions`，`DeviceEventEmitter`，`Appstate`，`Appearance`，`Keyboard`， `AccessibilityInfo`，`NativeEventEmitter`，`Linking` 等 `removeEventListener` 或  `removeListener` 在新版本已经废弃，更改为 `remove()`。
+2. **RN** 中 `Dimensions`，`DeviceEventEmitter`，`AppState`，`Appearance`，`Keyboard`， `AccessibilityInfo`，`NativeEventEmitter`，`Linking` 等 `removeEventListener` 或  `removeListener` 在新版本已经废弃，更改为 `remove()`。
 
-3. 增加 OpenHarmony 判断方法 `PlatformUtils.isHarmony()`，`PlatformUtils.isAPP()` 已经包含OpenHarmony 判断，如果要写单独的 OpenHarmony RN 文件，文件后缀改为 `index.harmony.tsx`。
+3. 增加 OpenHarmony 判断方法 `PlatformUtils.isHarmony()`，`PlatformUtils.isAPP()` 已经包含 OpenHarmony 判断，如果要写单独的 OpenHarmony RN 文件，文件后缀改为 `index.harmony.tsx`。
 
 4. 由于 **RN** 新架构上 native 和 js 通讯效率提高，`setnativeprops` 方法在新架构上已废弃，迁移到 `state` 上实现。
 
-5. **RN** 新架构上用的 `hermes` 引擎，`new Date('2023/08/08 00:00:00').getTime()` 报错 `NaN`，改为 `new Date('2023-08-08 00:00:00').getTime()`。
+5. **RN** 新架构上用的 `Hermes` 引擎，`new Date('2023/08/08 00:00:00').getTime()` 报错 `NaN`，改为 `new Date('2023-08-08 00:00:00').getTime()`。
 
 ### v0.59.0
 
@@ -27,7 +27,7 @@
 
 1. Auto-linking for Native Modules: 自动链接原生模块，简化了原生模块的配置。
 2. Android X 支持: React Native 完全迁移到 Android X，开发者需要更新依赖。
-3. 新的useWindowDimensions Hook: 更简便的方式来监听窗口尺寸的变化。
+3. 新的 useWindowDimensions Hook: 更简便的方式来监听窗口尺寸的变化。
 4. CocoaPods 成为默认管理方式: iOS 项目使用 CocoaPods 作为默认的依赖管理工具。
 
 ### v0.61.0
@@ -52,17 +52,17 @@
 
     ![v0.62.0-删除弃用函数](./figures/RN-alter-scrollWithoutAnimationTo.png)
 
-5. **RN 团队修改了 `accessibilityState` 属性，作为组件向可访问性服务描述有关其状态的信息的语义更丰富的方式。
+5. RN 团队修改了 `accessibilityState` 属性，作为组件向可访问性服务描述有关其状态的信息的语义更丰富的方式。
 
     ![v0.62.0-修改accessibilityState](./figures/RN-alter-accessibilityState.png)
 
 6. `AnimatedEvent.js` 中设置 `useNativeDriver` 为必填项。
 
-    - **RN** 团队发现存在许多 callsites 可以使用本机驱动程序，但没有。为了帮助人们在适当的时候使用它，并最终切换默认值，**RN** 团队要求 `useNativeDriver` 是显式的，即使设置为 `false`。
+    - **RN** 团队发现开发者的许多代码调用点（callsites）本可以使用原生驱动（Native Driver）却未启用。为了引导开发者在适合的场景下主动启用该选项，并为将来将默认值切换为 true 做准备，团队现在要求必须显式声明 `useNativeDriver`，即使设置为 `false`。
 
-    - 如果未指定 `useNativeDriver`，此更改会添加运行时警告，希望能提供一些轻松的反馈，以便在可以的时候记住使用本机驱动程序。如果没有它是明确的，很容易忘记设置它。
+    - 如果开发者未指定 `useNativeDriver`，此更改会触发运行时警告。这种轻量级的提醒机制，能帮助开发者在适合使用原生驱动的场景中及时启用它。如果允许隐式忽略，开发者很容易忘记设置这一关键选项。
 
-        ![v0.62.0-useNativeDriver](./figures/RN-alter-useNativeDriver.png)
+    ![v0.62.0-useNativeDriver](./figures/RN-alter-useNativeDriver.png)
 
 7. 删除 `IncrementalPresenter` 组件。
 
@@ -73,7 +73,7 @@
     ![v0.62.0-TouchableWithoutFeedback](./figures/RN-alter-export.png)
     ![v0.62.0-React.ElementConfig](./figures/RN-alter-TouchableWithoutFeedback.png)
 
-9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的，因此React Native将它们删除了。
+9. 删除 `Sample` 和 `CrashyCrash`，这些 NativeModules 不是必需的，因此 React Native 将它们删除了。
 
 ### v0.63.0
 
@@ -97,7 +97,8 @@
 
     ![v0.64.0-BackHandler返回类型](./figures/RN-alter-flowtype.png)
 
-4. `Text.viewConfig` 不再导出，因为 `viewConfig` 早就不再是其他核心组件（例如 `View`）上的导出道具了。
+4. `Text.viewConfig` 不再被导出，因为 `viewConfig` 早已不再作为其他核心组件（例如 `View`）的导出属性存在。
+
 5. 为了简化和清理 React Native 中的 “EventEmitter” 抽象，从 `DeviceEventEmitter` 和 `NativeEventEmitter` 中移除 `once()` 和 `removeCurrentListener()`。
 
 ### v0.64.2
@@ -112,7 +113,7 @@
 
     ![v0.65.0-renderApplication](./figures/RN-alter-debugName.png)
 
-2. 废弃 `EventEmitter#removeSubscription` 用 `__removeSubscription` 代替。
+2. 废弃 `EventEmitter` 的 `removeSubscription`，用 `__removeSubscription` 代替。
 
     ![v0.65.0-__removeSubscription](./figures/RN-alter-removeSubscription.png)
 
@@ -122,7 +123,7 @@
 
 4. `AccessibilityInfo.removeEventListener` 标注废弃，但当前版本未删除该方法。
 
-5. 已从 animated 组件引用中删除 `getNode()`，在 0.62 中，`createAnimatedComponent` 被改为使用 `forwardRef`，而不是要求调用者使用 `ref.getNode()`。为了保持向后兼容性，`ref.getnode()` 被 monkey-patched 到返回的 `ref` 上。
+5. 已从 Animated API 引用中删除 `getNode()`，在 0.62 中，`createAnimatedComponent` 被改为使用 `forwardRef`，而不是要求调用者使用 `ref.getNode()`。为了保持向后兼容性，`ref.getnode()` 被 monkey-patched 到返回的 `ref` 上。
 
     ![v0.65.0-animated](./figures/RN-alter-getNode().png)
 
@@ -130,7 +131,7 @@
 
     ![v0.65.0-简化EventEmitter](./figures/RN-alter-EventEmitter.png)
 
-7. 将 `ScrollResponder.Mixin` 方法移动到 ScrollView 中，以删除 `ScrollResponder.js`。
+7. 将 `ScrollResponder.Mixin` 方法移动到 ScrollView 中，已删除 `ScrollResponder.js`。
 
     ![v0.65.0-删除ScrollResponder.js](./figures/RN-alter-ScrollResponder.png)
 
@@ -160,7 +161,8 @@
 
 ### v0.69.0
 
-1. 将 `Animated.interpolate` 的参数键入为只读。
+1. 将 `Animated.interpolate` 类型导出为 `$ReadOnly` 类型。
+
 2. React 18 支持: 完全支持 React 18，包括 Concurrent Mode 和 Suspense 的功能。
 
 ![v0.69.0](./figures/RN-alter-interpolate.png)
