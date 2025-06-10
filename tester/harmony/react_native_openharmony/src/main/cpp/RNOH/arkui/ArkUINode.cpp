@@ -264,8 +264,10 @@ ArkUINode& ArkUINode::setWidth(float width) {
   ArkUI_AttributeItem widthItem = {
       widthValue, sizeof(widthValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_WIDTH, &widthItem));
+  maybeThrow(
+      NativeNodeApi::getInstance()->setAttribute(
+          m_nodeHandle, NODE_WIDTH, &widthItem));
+  return *this;
 }
 
 ArkUINode& ArkUINode::setBorderWidth(
