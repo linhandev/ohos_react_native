@@ -1,6 +1,5 @@
 # RN-JS打包
 
-​
 在 React Native 中，应用的 JavaScript 代码和资源需要在设备上运行。为了提高应用的加载速度和性能，以及减少网络请求，React Native 应用通常会在发布前进行打包处理，将所有的代码和资源打包成一个或多个文件。
 
 ​ 本章节主要介绍 React Native OpenHarmony 化后，如何在 ReactJs 工程中打包 bundle 文件。OpenHarmony 打包 Bundle 的过程涉及 `react-native-harmony.tgz`、`react-native-harmony-cli.tgz` 和 `metro.config.js`，请参考[环境搭建](./环境搭建.md)文档，初步构建基本 ReactJs OpenHarmony 化环境。
@@ -158,7 +157,7 @@ module.exports = {
 ![image](./figures/RN-JS-serializer.png)
 
 - `createModuleIdFactory` ：Metro 支持了通过此方法配置自定义模块 ID，同样支持字符串类型 ID，用于生成 `require` 语句的模块 ID，其类型为 `() => (path: string) => number`，其中`path` 为各个 module 的完整路径。此方法的另一个用途就是多次打包时，对于同一个模块生成相同的 ID，下次更新发版时，不会因 ID 不同找不到 Module。
-- `processModuleFilter`：根据给出的条件，对 Module 进行过滤，将不需要的模块过滤掉。其类型为 `(module: Array<Module>) => boolean`，其中 `module` 为输出的模块，里面带着相应的参数，根据返回的波尔值判断是否过滤当前模块。返回 `false` 为过滤，不打入 bundle。
+- `processModuleFilter`：根据给出的条件，对 Module 进行过滤，将不需要的模块过滤掉。其类型为 `(module: Array<Module>) => boolean`，其中 `module` 为输出的模块，里面带着相应的参数，根据返回的布尔值判断是否过滤当前模块。返回 `false` 为过滤，不打入 bundle。
 
 ​ 下面参考配套的 Demo 工程 `SampleProject` 来具体说明一下该如何配置和使用 `createModuleIdFactory` 与 `processModuleFilter`。
 
@@ -269,7 +268,7 @@ module.exports = {
 2. 通过 `Basic` 模块和 `HomePage` 模块举例说明，基础包为 `Basic` 模块，业务包为 `HomePage` 模块。
 
    - 首先需要创建两个模块各自的 `metro.config.js` 文件：`basic.config.js` 和 `homepage.config.js`。在执行打包命令的时候需要配置到 `--config` 配置选项中。
-   - `basic.config.js` 中的 `config` 对象需要配置 `serializer` 属性的 `createModuleIdFactory` 为上一步自定义的 `createModuleIdFactoryWrap` 方法，传入project根目录和模块名，最后在使用 `mergeConfig` 方式时将 `config` 对象作为入参传进去。
+   - `basic.config.js` 中的 `config` 对象需要配置 `serializer` 属性的 `createModuleIdFactory` 为上一步自定义的 `createModuleIdFactoryWrap` 方法，传入 project 根目录和模块名，最后在使用 `mergeConfig` 方式时将 `config` 对象作为入参传进去。
 
      ```javascript
      // SampleProject/MainProject/basic.config.js
