@@ -37,7 +37,7 @@ protected async onPrepareRNInstance(rnohCoreContext: RNOHCoreContext): void
 
 | 参数名          | 类型                                | 说明                |
 | --------------- | ----------------------------------- | ------------------ |
-| rnohCoreContext | [RNOHCoreContext](#RNOHCoreContext) |                    |
+| rnohCoreContext | [RNOHCoreContext](#rnohcorecontext) |                    |
 
 #### onWindowSetup
 
@@ -81,7 +81,7 @@ protected abstract getPagePath(): string
 protected defaultBackPressHandler(): void
 ```
 
-当React应用程序不处理设备返回事件时调用该方法。
+当 React 应用程序不处理设备返回事件时调用该方法。
 
 #### onCreate
 
@@ -89,7 +89,7 @@ protected defaultBackPressHandler(): void
 onCreate(want: Want): void
 ```
 
-Create 状态为在应用加载过程中，`UIAbility` 实例创建完成时触发，系统会调用[onCreate()](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-app-ability-uiability-V5#uiabilityoncreate)回调。可以在该回调中进行页面初始化操作，例如变量定义资源加载等，用于后续的UI展示。
+Create 状态为在应用加载过程中，`UIAbility` 实例创建完成时触发，系统会调用[onCreate()](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-app-ability-uiability-V5#uiabilityoncreate)回调。可以在该回调中进行页面初始化操作，例如变量定义资源加载等，用于后续的 UI 展示。
 
 此处实现为创建 `RNInstancesCoordinator`、`RNOHCoreContext` 实例，并通过调用[`AppStorage.setOrCreate()`](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/ts-state-management-V5#setorcreate10)将 `RNOHCoreContext` 存储到应用全局。
 
@@ -207,7 +207,7 @@ onBackground(): void
 onSetUp: (rnInstance: RNInstance) => Promise<void> | void = () => Promise.resolve()
 ```
 
-在Surface可见且 `RNInstance` 可用之前，调用 `RNInstance` 中想要执行的方法。
+在 Surface 可见且 `RNInstance` 可用之前，调用 `RNInstance` 中想要执行的方法。
 
 ##### 参数
 
@@ -262,7 +262,7 @@ RNApp({
 
 ### 基本介绍
 
-`RNSurface` 是 React Native 的根容器，它是一个 Native View，用于将 React Native 组件渲染到Native UI 中。`RNSurface` 主要负责将组件树渲染到屏幕上。在基于 ArkUI C-API 的适配方案中，rootView 是一个 `NodeContent`，用于占位，并挂载 C-API 的组件。本节主要介绍了 `RNSurface` 的接口类型以及使用方式。
+`RNSurface` 是 React Native 的根容器，它是一个 Native View，用于将 React Native 组件渲染到 Native UI 中。`RNSurface` 主要负责将组件树渲染到屏幕上。在基于 ArkUI C-API 的适配方案中，rootView 是一个 `NodeContent`，用于占位，并挂载 C-API 的组件。本节主要介绍了 `RNSurface` 的接口类型以及使用方式。
 
 其中，Surface 的创建需要调用 `RNInstance` 的[createSurface](#createsurface)，并且会在 `RNInstance` 触发 `onDestory` 的时候销毁。Surface 会在 `RNSurface` 的 `onAreaChange` 中启动（执行 start ），需要注意的是，startSurface 需要在 loadJSbundle 完成后执行，否则会导致页面白屏。您可以通过 `RNInstance` 的[getBundleExecutionStatus](#getbundleexecutionstatus)获取 bundle 加载状态，确保时序的正确性。
 
@@ -587,7 +587,7 @@ isFeatureFlagEnabled(featureFlagName: FeatureFlagName): boolean
 runJSBundle(jsBundleProvider: JSBundleProvider): Promise<void>;
 ```
 
-读取JS Bundle并执行加载流程。
+读取 JS Bundle 并执行加载流程。
 
 ##### 参数
 
@@ -828,14 +828,14 @@ dispatchBackPress: () => void
 
 | 泛型类型     | 继承父类型       | 必填 | 说明                 |
 | ---------- | ---------- | ---- | -------------------- |
-| TParams | SupportedTaskParams | 是   | 参数类型, 受**WORKER** 线程通信机制限制, 必须为可序列化类型 |
-| TResult | lang.ISendable \| void | 是   | 返回值类型, 受**WORKER** 线程通信机制限制, 必须为可序列化类型 |
-| TRunnable | WorkerTaskRunnable<TParams, TResult> | 是   | 可执行任务对象类型 |
+| TParams | SupportedTaskParams | 是  | 参数类型, 受 **WORKER** 线程通信机制限制，必须为可序列化类型。 |
+| TResult | lang.ISendable \| void | 是 | 返回值类型, 受 **WORKER** 线程通信机制限制，必须为可序列化类型。 |
+| TRunnable | WorkerTaskRunnable<TParams, TResult> | 是 | 可执行任务对象类型。 |
 
 | 参数名     | 类型       | 必填 | 说明                 |
 | ---------- | ---------- | ---- | -------------------- |
-| runnable | TRunnable | 是   | 可执行任务对象 |
-| params  | TParams | 是   | 可执行任务参数 |
+| runnable | TRunnable | 是 | 可执行任务对象。 |
+| params  | TParams | 是 | 可执行任务参数。 |
 
 以`params`作为参数，在**WORKER** 线程并行执行`runnable.run()`，返回一个`Promise<TResult>`对象，可用于读取`runnable.run()`的返回值。
 
@@ -1035,4 +1035,4 @@ rnInstancesCoordinator?.onNewWant(want: Want, launchParam: AbilityConstant.Launc
 | launchURI | string | 否 | `Linking.getInitialURL()`获取到的初始URL。 |
 | onGetPackagerClientConfig | (buildMode: BuildMode) => JSPackagerClientConfig \| undefined | 否 | 返回Metro配置的函数。 | 
 | defaultHttpClient | [HttpClient](https://developer.huawei.com/consumer/cn/doc/system-References/network-httpclient-0000001073658008) | 否 | 用于在 **RN** 与原生混合的应用中，重用 Cookies 或打印日志。 |
-| disableCleaningRNInstances | boolean | 否 | 是否启用 CleanUP 线程，清理 **RN** 实例。 | 
+| disableCleaningRNInstances | boolean | 否 | 是否启用 CleanUP 线程，清理 **RN** 实例。 |
