@@ -39,7 +39,7 @@ this.ctx.rnInstance.postMessageToCpp("SAMPLE_MESSAGE", payload);
           }
         }
         ```
-- 方式二：使用handleArkTSMessage接收消息
+- 方式二：使用 handleArkTSMessage 接收消息
 
   1. 在 `Package` 中创建并实现 `ArkTSMessageHandler` 类，并实现 `handleArkTSMessage` 方法，方法中实现对 `message` 的处理：
       ```cpp
@@ -60,16 +60,16 @@ this.ctx.rnInstance.postMessageToCpp("SAMPLE_MESSAGE", payload);
 
 ### 使用postMessageToArkTS发送消息
 
-1. CPP侧发送消息  
-在 CPP 侧通过 `rnInstance` 对象上得方法 `postMessageToArkTS` 发送事件到ArkTS侧。该方法有两个参数：
+1. CPP 侧发送消息  
+在 CPP 侧通过 `rnInstance` 对象上的方法 `postMessageToArkTS` 发送事件到 ArkTS 侧。该方法有两个参数：
     - name：string，是发送的message的名字
     - payload：folly::dynamic，是发送的信息数据
     ```cpp
     m_deps->rnInstance.lock()->postMessageToArkTS(messageName, messagePayload);
     ```
 
-2. ArkTS侧接收消息  
-在 ArkTS 侧可以通过 `rnInstance` 上得 `cppEventEmitter` 订阅 CPP 侧传过来的消息，并进行处理：
+2. ArkTS 侧接收消息  
+在 ArkTS 侧可以通过 `rnInstance` 上的 `cppEventEmitter` 订阅 CPP 侧传过来的消息，并进行处理：
     ```typescript
     const unsubscribe = rnInstance.cppEventEmitter.subscribe("SAMPLE_MESSAGE", (value: object) => {
       ···
@@ -81,7 +81,7 @@ this.ctx.rnInstance.postMessageToCpp("SAMPLE_MESSAGE", payload);
 
 1. 在 ArkTS 侧创建 `TurboModule`，并实现对应的接口。
 2. CPP 侧获取 `TurboModule` 对象：
-在 CPP 侧可以通过 `rnInstance` 对象上得方法 `getTurboModule` 获取到 `TurboModule` 对象，并转换为 `ArkTSTurboModule`：
+在 CPP 侧可以通过 `rnInstance` 对象上的方法 `getTurboModule` 获取到 `TurboModule` 对象，并转换为 `ArkTSTurboModule`：
     ```cpp
     auto TurboModule = m_deps->rnInstance.lock()->getTurboModule<xxxTurboModule>("moduleName");
     auto arkTsTurboModule = std::dynamic_pointer_cast<rnoh::ArkTSTurboModule>(turboModule);
