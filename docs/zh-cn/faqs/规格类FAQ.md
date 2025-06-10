@@ -74,3 +74,11 @@ const styles = StyleSheet.create({
 
 export default App;
 ```
+
+### zIndex 问题说明
+
+1. **需要设置非 static 的 position 才能使 zIndex 生效**  
+   在启用 Fabric 渲染器的情况下，`zIndex` 必须与 `position` 一起使用（如 `relative` 或 `absolute`），否则设置了 `zIndex` 也不会生效。这一点与 Web 行为一致，是 Fabric 渲染机制的规范化体现。
+
+2. **元素的层级排列顺序发生了变化，zIndex 越大越靠上**  
+   与旧架构（非 Fabric）不同，Fabric 启用后，`zIndex` 的作用更加明确且优先级更高。元素的层级不再依赖组件声明顺序，而是严格按照 `zIndex` 数值来决定显示的上下关系，`zIndex` 数值越大，元素越靠上。
