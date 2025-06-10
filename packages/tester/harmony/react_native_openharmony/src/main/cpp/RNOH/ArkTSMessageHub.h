@@ -13,7 +13,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Struct representing a message in ArkTS system, holding a name and a dynamic
  * payload.
  */
@@ -23,7 +23,7 @@ struct ArkTSMessage {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * ArkTSMessageHub class is responsible for handling and distributing
  * ArkTSMessages. It inherits from ArkTSMessageHandler and Subject<ArkTSMessage>
  * to manage and notify observers.
@@ -44,7 +44,7 @@ class ArkTSMessageHub final : public ArkTSMessageHandler,
   using Weak = std::weak_ptr<ArkTSMessageHub>;
 
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * @thread: MAIN
    * Inherit this class and override `onMessageReceived` if a
    * CppComponentInstance or TurboModule should handle a message ArkTSMessage.

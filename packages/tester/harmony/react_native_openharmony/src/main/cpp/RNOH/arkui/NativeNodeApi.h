@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A singleton class that provides access to the native API for handling Node
  * operations.
  * This class acts as an interface to the native system for performing

@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A UI node class that represents a loading progress indicator. This class
  * allows to create and configure a loading progress element within a user
  * interface, allowing customization of properties like color and animation

@@ -99,7 +99,7 @@ const CMAKE_AUTOLINKING_TEMPLATE = `
 # DO NOT modify it manually, your changes WILL be overwritten.
 cmake_minimum_required(VERSION 3.5)
 
-# @api
+# @actor RNOH_APP
 function(autolink_libraries target)
 {{#libraries}}
     add_subdirectory("\${OH_MODULES_DIR}/{{{ohPackageName}}}/src/main/cpp" ./{{cmakeLibraryTargetName}})

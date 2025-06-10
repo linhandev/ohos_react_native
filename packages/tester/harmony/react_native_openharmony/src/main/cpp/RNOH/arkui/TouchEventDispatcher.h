@@ -17,7 +17,7 @@ namespace rnoh {
  * TouchEventDispatcher handles the dispatching of touch events from root target
  * components(e.g., RootViewComponentInstance, ModalHostViewComponentInstance)
  * to the JavaScript layer.
- * @api
+ * @actor RNOH_LIBRARY
  */
 class TouchEventDispatcher {
  public:

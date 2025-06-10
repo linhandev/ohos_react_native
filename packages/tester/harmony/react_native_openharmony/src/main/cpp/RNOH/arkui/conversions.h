@@ -22,7 +22,7 @@
 
 namespace rnoh {
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Converts a React Native BorderStyle enum value to the corresponding
  * ArkUI_BorderStyle value.
  *
@@ -306,7 +306,7 @@ inline ArkUI_NumberValue convertContentType(
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Converts React Native text alignment to the corresponding
  * ArkUI_TextAlignment value
  *
@@ -351,7 +351,7 @@ inline ArkUI_TextAreaType convertTextAreaInputType(
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated: This method is no longer part of the native API. Deprecated
  * when preparing 0.77 branch for release.
  */
@@ -368,7 +368,7 @@ inline bool convertImportantForAutofill(std::string const& autoFill) {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Converts a font weight value from React Native to the corresponding
  * ArkUI_FontWeight value.
  *

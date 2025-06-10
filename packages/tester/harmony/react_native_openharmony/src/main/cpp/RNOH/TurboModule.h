@@ -17,7 +17,7 @@ namespace rnoh {
 class RNInstance;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Extend this class if your TurboModule is intended to be a C++ only
  * TurboModule.
  */

@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A singleton class that provides access to the native dialog API.
  * This class acts as a wrapper for dialog-related operations, providing a
  * unified interface for creating, showing, and managing native dialogs.

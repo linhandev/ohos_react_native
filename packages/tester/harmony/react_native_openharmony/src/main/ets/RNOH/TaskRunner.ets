@@ -14,12 +14,12 @@ import { RNOHError } from "./RNOHError"
 type ISendable = lang.ISendable
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type SupportedTaskParams = ISendable | undefined
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief interface that defines a task to run on main thread
  * @template TContext - Context type
  * @template TParams - parameter type

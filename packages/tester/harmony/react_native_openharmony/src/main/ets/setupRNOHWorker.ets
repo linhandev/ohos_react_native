@@ -29,7 +29,7 @@ import common from '@ohos.app.ability.common'
 
 
 /**
- * @api
+ * @actor RNOH_APP
  * Config for a worker RN instance.
  */
 export interface WorkerRNInstanceConfig {
@@ -38,7 +38,7 @@ export interface WorkerRNInstanceConfig {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * Config for a RNOH worker.
  */
 interface RNOHWorkerConfig {
@@ -140,7 +140,7 @@ interface WorkerScheduleTaskResultPayload {
  * })
  * ```
  * @param config Worker RN instance configuration factory
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * @thread: WORKER
  */
 export async function setupRNOHWorker(config: RNOHWorkerConfig) {

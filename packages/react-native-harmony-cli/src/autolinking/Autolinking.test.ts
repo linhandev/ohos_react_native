@@ -156,7 +156,7 @@ std::vector<rnoh::Package::Shared> createRNOHPackages(const rnoh::Package::Conte
 # DO NOT modify it manually, your changes WILL be overwritten.
 cmake_minimum_required(VERSION 3.5)
 
-# @api
+# @actor RNOH_APP
 function(autolink_libraries target)
     add_subdirectory("\${OH_MODULES_DIR}/@rnoh/rnoh--link-scoped/src/main/cpp" ./rnoh__rnoh__link_scoped)
 

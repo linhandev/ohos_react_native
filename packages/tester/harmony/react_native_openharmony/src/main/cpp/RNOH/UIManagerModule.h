@@ -11,7 +11,7 @@
 
 namespace rnoh {
 /**
- * @api: RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY
  * To understand what this class does, one needs to understand ViewConfig.
  * ViewConfig is an RN concept. It specifies data that can be sent between JS
  * and NATIVE sides. This class actually creates "ViewConfigs" on the JS side.
@@ -26,7 +26,7 @@ class ComponentJSIBinder {
 };
 
 /**
- * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY, CODEGEN
  * Type used by Package.h.
  */
 using ComponentJSIBinderByString =

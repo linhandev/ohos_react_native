@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * ToggleNodeDelegate class is an abstract base class for handling value
  * changes in a ToggleNode.
  * This class provides a virtual method `onValueChange` that must be
@@ -36,7 +36,7 @@ class ToggleNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * ToggleNode class represents a toggle component node, inheriting from
  * ArkUINode.
  * This class is used to manage the state and behavior of a toggle component,

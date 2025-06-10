@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * This interface defines methods that can be overriden to react on StackNode
  * events
  */
@@ -46,7 +46,7 @@ class StackNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A class that represents a StackNode, a specific UI component in a stack
  * structure. This class allows stacking of child components, and it responds
  * to events.

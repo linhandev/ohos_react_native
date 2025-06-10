@@ -15,7 +15,7 @@ interface ComponentManagerRegistryEntry {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * 
  * @brief Stores ComponentManagers. Check ComponentManager documentation for
  * more information.

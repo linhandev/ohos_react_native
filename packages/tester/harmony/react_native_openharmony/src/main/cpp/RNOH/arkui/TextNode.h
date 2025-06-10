@@ -19,7 +19,7 @@ class TextNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * TextNode is the wrapper of a ARKUI_NODE_TEXT.
  */

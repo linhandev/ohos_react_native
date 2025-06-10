@@ -48,7 +48,7 @@ class RefreshNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 namespace rnoh {
 

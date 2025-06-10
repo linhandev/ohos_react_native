@@ -9,7 +9,7 @@ import { Point } from './types';
 import { ViewStyle } from './RNTypes';
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Represents a normalized scalar value. A number typically
  * between 0 and 1.
  * This is often used for normalized values like color components or other
@@ -18,7 +18,7 @@ import { ViewStyle } from './RNTypes';
 export type NormalizedScalar = number;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Represents a color value in the RGBA format, where each of
  * the four values is a normalized scalar ranging from 0 to 1.
  */
@@ -30,7 +30,7 @@ export type ColorSegments = [
 ];
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Represents a color value. This could be a single numeric
  * value representing a color.
  * In some cases, this could refer to a color identifier or an encoded color
@@ -39,13 +39,13 @@ export type ColorSegments = [
 export type ColorValue = number;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Represents a tag as a number. Tags are typically used to
  * label RN component.
  */
 export type Tag = number;
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated: Use Descriptor::layoutMetrics (latestRNOHVersion: 0.72.27)
  */
 export interface LayoutProps {
@@ -56,7 +56,7 @@ export interface LayoutProps {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export enum LayoutDirectionRN {
   Undefined = 0,
@@ -65,7 +65,7 @@ export enum LayoutDirectionRN {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type LayoutMetrics = {
   frame: {
@@ -82,7 +82,7 @@ export type LayoutMetrics = {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use ViewDescriptorWrapperBase::isClipping instead. Alternatively ViewRawProps::overflow. (latestRNOHVersion: 0.72.27)
  */
 export enum OverflowMode {
@@ -92,7 +92,7 @@ export enum OverflowMode {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * The purpose of this class is to retrieve props from raw props data sent over NAPI.
  * This concept was introduced with codegen support to avoid collisions when generating code.
  */
@@ -100,7 +100,7 @@ export class PropsSelectorBase {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * (ComponentInstance)DescriptorWrapper. Decouples "what" is received from React Native from "how".
  * @template TType - Type of ComponentInstance's type, string by default
  * @template TProps - Type of ComponentInstance's props
@@ -257,14 +257,14 @@ TPropsSelector extends PropsSelectorBase = PropsSelectorBase,> {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * `Value provided as `id` or `nativeId` prop. `nativeId` will be deprecated in the future.
  * https://github.com/react-native-community/discussions-and-proposals/pull/496
  */
 export type NativeId = string
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Interface representing the rawProps for a component.
  */
 export interface RawPropsBase {
@@ -272,19 +272,19 @@ export interface RawPropsBase {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Interface representing the props for a component.
  */
 export interface PropsBase {}
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Interface representing the state for a component.
  */
 export interface StateBase {}
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated This interface will be removed together with ComponentBuilderContext::descriptor. (latestRNOHVersion: 0.72.27)
  * */
 export interface DescriptorEssence<TType = string> {
@@ -293,7 +293,7 @@ export interface DescriptorEssence<TType = string> {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * (ComponentInstance)Descriptor. Data structure - exposes data and provides no behavior.
  * If you want to expose a behavior use Component(Instance)Manager instead.
  */
@@ -330,7 +330,7 @@ TRawProps extends Object = Object> extends DescriptorEssence<TType> {
 ;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated: Use "ViewStyle" instead.
  * It was deprecated when preparing 0.77 branch for release.
  */
@@ -362,7 +362,7 @@ export type BorderMetrics = {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @description Type alias for the `borderStyle` property of a `ViewStyle`.
  */
 export type BorderStyle = ViewStyle["borderStyle"]

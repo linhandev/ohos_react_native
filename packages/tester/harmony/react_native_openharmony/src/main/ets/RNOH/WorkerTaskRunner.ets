@@ -19,7 +19,7 @@ interface WorkerScheduleTaskResultPayload {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief interface that defines a task to run on Worker thread
  * @template TParams - parameter type
  * @template TResult - result type

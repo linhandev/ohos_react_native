@@ -11,14 +11,14 @@
 #include "glog/logging.h"
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief Assert macro for Boost.
  * @param expr The expression to be evaluated.
  */
 #define RNOH_ASSERT(expr) BOOST_ASSERT(expr)
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief Assert macro for Boost with message.
  * @param expr The expression to be evaluated.
  * @param msg The message to be displayed if the assertion fails.

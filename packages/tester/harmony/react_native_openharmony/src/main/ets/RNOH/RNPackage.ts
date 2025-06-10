@@ -73,7 +73,7 @@ class TurboModulesFactoryFromPackageAdapter<
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * 
  * @brief This context provides a way to inject dependencies in the future
  * without introducing breaking changes.

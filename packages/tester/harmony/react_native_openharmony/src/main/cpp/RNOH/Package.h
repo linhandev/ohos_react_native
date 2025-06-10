@@ -19,7 +19,7 @@
 
 namespace rnoh {
 /**
- * @api: RN_LIBRARY_DEVELOPER, CODEGEN
+ * @actor RNOH_LIBRARY, CODEGEN
  *
  * An abstract factory. Use it to register custom Components, Turbo Modules or
  * other unusual elements.
@@ -34,7 +34,7 @@ class Package {
   using Shared = std::shared_ptr<Package>;
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * RNOH heavily utilizes contexts to inject new dependencies in
    * a non-breaking manner.
    */
@@ -44,13 +44,13 @@ class Package {
 
  protected:
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    */
   Context m_ctx;
 
  public:
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * RNOH libraries should preserve this constructor interface to make a
    * library auto-linkable.
    */
@@ -61,7 +61,7 @@ class Package {
   // COMPONENTS ————————————————————————————————————————————————————————————————
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * @architecture: C-API
    * Override this method to register RNOH-specific implementation of custom
    * components.
@@ -76,7 +76,7 @@ class Package {
   };
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * @architecture: C-API
    * @deprecated: Override `createComponentInstance` instead (latestRNOHVersion:
    * 0.72.27).
@@ -85,7 +85,7 @@ class Package {
   createComponentInstanceFactoryDelegate();
 
   /**
-   * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY, CODEGEN
    * ComponentDescriptor provides platform-agnostic information
    * about custom components to RN.
    */
@@ -93,7 +93,7 @@ class Package {
   createComponentDescriptorProviders();
 
   /**
-   * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY, CODEGEN
    * ComponentJSIBinders create ViewConfigs.
    * ViewConfig describe component data that can be sent between JS and Native
    * sides. RN requires ViewConfigs. Check the doc comment in
@@ -115,7 +115,7 @@ class Package {
   virtual ComponentNapiBinderByString createComponentNapiBinderByName();
 
   /**
-   * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY, CODEGEN
    * @architecture: ArkTS & ArkTS components in C-API architecture
    *
    * Receives events from the ArkTS side and invokes the
@@ -135,7 +135,7 @@ class Package {
   // TURBO MODULES —————————————————————————————————————————————————————————————
 
   /**
-   * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY, CODEGEN
    * Creates a factory that instantiates Turbo Modules.
    * Turbo Modules are usually implemented on the ArkTS side, so these
    * TurboModuleFactoryDelegates usually act as a glue layer between JS and
@@ -152,7 +152,7 @@ class Package {
   // MISC ——————————————————————————————————————————————————————————————————————
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * @architecture: C-API
    * Override this class if you want to process a component-agnostic message,
    * sent for example, by a Turbo Module on ArkTS side.
@@ -163,7 +163,7 @@ class Package {
   };
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * Provide GlobalJSIBinders, when Turbo Modules are too limiting for your use
    * case.
    */
@@ -171,7 +171,7 @@ class Package {
       const GlobalJSIBinder::Context& ctx);
 
   /**
-   * @api: RN_LIBRARY_DEVELOPER
+   * @actor RNOH_LIBRARY
    * @deprecated: Override
    * `createGlobalJSIBinders(const GlobalJSIBinder::Context& ctx)` instead
    * (latestRNOHVersion: 0.77.1)

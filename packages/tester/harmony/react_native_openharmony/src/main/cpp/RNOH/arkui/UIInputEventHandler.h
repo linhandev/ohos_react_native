@@ -15,7 +15,7 @@
 namespace rnoh {
 
 /**
- * @api: RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY
  *
  * @brief Allows the given ArkUINode to handle touch events.
  * This is intended to be used by ArkUINodes that are "Roots" of the React

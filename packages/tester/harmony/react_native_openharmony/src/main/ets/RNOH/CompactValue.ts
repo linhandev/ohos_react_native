@@ -8,7 +8,7 @@
 import { DimensionValue } from "./RNTypes"
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export class CompactValue {
   constructor(private rawValue: DimensionValue, private parentLength: number) {

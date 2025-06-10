@@ -32,7 +32,7 @@ namespace rnoh {
 class MountingManagerCAPI;
 
 /**
- * @api: RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY
  * @architecture: C-API
  *
  * ComponentInstance is an equivalent of RN Android's ViewManager. However,
@@ -71,7 +71,7 @@ class ComponentInstance
   using Weak = std::weak_ptr<ComponentInstance>;
 
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Component instance registry.
    */
   class Registry {
@@ -95,7 +95,7 @@ class ComponentInstance
   friend MountingManagerCAPI;
 
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * allows ComponentInstances to interact with TurboModules.
    * This is needed in react-native-harmony-gesture-handler.
    */
@@ -148,7 +148,7 @@ class ComponentInstance
   };
 
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * context of the component instance.
    */
   struct Context {
@@ -174,7 +174,7 @@ class ComponentInstance
   };
 
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Some components (such as SVG elements in RNSVG) don't represent native
    * nodes, but the `ComponentInstance` interface requires an `ArkUINode` to
    * be returned from `getLocalRootArkUINode`. This introduces a
@@ -529,32 +529,32 @@ class ComponentInstance
    */
   bool m_isRadiusSetValid = 0;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Identifier of the component instance in the React side.
    */
   Tag m_tag;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Handle of the component instance in the React side.
    */
   ComponentHandle m_componentHandle;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Vector container for storing child components.
    */
   std::vector<ComponentInstance::Shared> m_children;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Weak pointer to the parent component instance.
    */
   ComponentInstance::Weak m_parent;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Stores the LayoutMetrics data of the component.
    */
   facebook::react::LayoutMetrics m_layoutMetrics;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * Stores the Dependencies data of the component.
    */
   Dependencies::Shared m_deps;
@@ -570,7 +570,7 @@ class ComponentInstance
    */
   std::unordered_set<std::string> m_ignoredPropKeys;
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    * RNInstance ID
    */
   int m_rnInstanceId = -1;

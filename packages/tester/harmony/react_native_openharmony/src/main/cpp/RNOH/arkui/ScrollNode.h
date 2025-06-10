@@ -12,7 +12,7 @@
 
 namespace rnoh {
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * @brief ScrollNodeDelegate class for handling scroll events. Provides
  * callback interfaces for scroll start, stop, and frame begin.
@@ -68,7 +68,7 @@ class ScrollNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * @brief ScrollNode class provides more convenient to use interface to be used
  * from ComponentInstances.

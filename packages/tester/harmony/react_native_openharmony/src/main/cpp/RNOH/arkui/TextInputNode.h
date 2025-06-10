@@ -13,7 +13,7 @@
 
 namespace rnoh {
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 class TextInputNodeDelegate {
  public:
@@ -128,7 +128,7 @@ class TextInputNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 class TextInputNode : public TextInputNodeBase {
  private:

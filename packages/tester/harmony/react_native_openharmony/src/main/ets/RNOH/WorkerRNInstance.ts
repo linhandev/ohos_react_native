@@ -12,7 +12,7 @@ import type {TurboModuleProvider} from './TurboModuleProvider';
 import type {AnyThreadRNInstance} from './RNOHContext';
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @thread: WORKER
  * @brief asynchronous RNInstance to run on a WORKER thread
  */

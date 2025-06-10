@@ -60,7 +60,7 @@ typedef enum {
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 class TextInputNodeBase : public ArkUINode {
  protected:

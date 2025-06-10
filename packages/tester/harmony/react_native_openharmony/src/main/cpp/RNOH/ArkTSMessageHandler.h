@@ -13,7 +13,7 @@ namespace rnoh {
 class RNInstance;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @thread: MAIN
  * Handles messages sent from the ArkTS side within the context of an
  * RNInstance. If a message needs to be handled by a specific component

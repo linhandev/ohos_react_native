@@ -15,7 +15,7 @@ interface DevMenuItem {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  *
  * @brief DevToolsController manages developer tool functionalities for RNOH,
  * including error dialogs, element inspector, dev menu interactions,

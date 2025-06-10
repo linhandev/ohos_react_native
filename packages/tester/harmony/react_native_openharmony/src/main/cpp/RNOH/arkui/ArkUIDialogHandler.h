@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A delegate interface for handling dialog-related events, such as showing or
  * requesting to close the dialog.
  * This interface can be implemented by other classes to define custom
@@ -40,7 +40,7 @@ class ArkUIDialogDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A class for managing dialog interactions.
  * This class is responsible for showing, closing, and managing the content
  * of the dialog.

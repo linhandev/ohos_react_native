@@ -12,7 +12,7 @@
 namespace rnoh {
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * A delegate interface for handling column node events, such as click events.
  */
 class ColumnNodeDelegate {
@@ -30,7 +30,7 @@ class ColumnNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Represents a column node in the UI hierarchy, inheriting from ArkUINode.
  * This class can manage child nodes and respond to events like click actions.
  */

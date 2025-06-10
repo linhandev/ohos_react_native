@@ -16,7 +16,7 @@ import { preferences } from '@kit.ArkData';
 import { RNOHCoreContext } from './RNOHContext';
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export interface HotReloadConfig {
   bundleEntry: string,
@@ -26,14 +26,14 @@ export interface HotReloadConfig {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export interface FileJSBundle {
   filePath: string,
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export interface RawFileJSBundle {
   rawFilePath: string,
@@ -41,12 +41,12 @@ export interface RawFileJSBundle {
 
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type JsBundle = ArrayBuffer | FileJSBundle | RawFileJSBundle;
 
 /**
- * @api
+ * @actor RNOH_APP
  *
  * Provides JSBundle code and related information. Decouples RNOH core logic from how a bundle is loaded, allowing
  * RN_APP_DEVELOPERS to decide which concrete bundle should be used and when.

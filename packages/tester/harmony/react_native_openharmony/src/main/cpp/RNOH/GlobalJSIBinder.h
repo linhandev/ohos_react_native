@@ -12,7 +12,7 @@
 
 namespace rnoh {
 /**
- * @api: RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY
  * This class is designed for global object creation on the JavaScript side.
  * Use it for advanced use cases, when Turbo Modules are too restrictive.
  */

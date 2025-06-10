@@ -10,7 +10,7 @@
 
 namespace rnoh {
 /**
- * @api: CODEGEN, RN_LIBRARY_DEVELOPER
+ * @actor RNOH_LIBRARY, CODEGEN
  * Check ComponentJSIBinder comment.
  */
 class BaseComponentJSIBinder : public ComponentJSIBinder {

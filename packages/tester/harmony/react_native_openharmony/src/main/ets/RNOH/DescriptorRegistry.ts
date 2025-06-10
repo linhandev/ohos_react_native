@@ -13,23 +13,23 @@ import type { RNOHLogger } from './RNOHLogger';
 type RootDescriptor = Descriptor<"RootView", any>
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 type SubtreeListener = () => void;
 type SetNativeStateFn = (componentName: string, tag: Tag, state: unknown) => void
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type DescriptorWrapperFactory = (ctx: { descriptor: Descriptor }) => DescriptorWrapper
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 type DescriptorChangeListener = (descriptor: Descriptor, descriptorWrapper: DescriptorWrapper | null) => void
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 type InsertMutation = {
   descriptorMutationType: "INSERT_CHILD",
@@ -38,7 +38,7 @@ type InsertMutation = {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 type UpdateMutation = {
   descriptorMutationType: "UPDATE_CHILD",
@@ -47,7 +47,7 @@ type UpdateMutation = {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 type RemoveMutation = {
   descriptorMutationType: "REMOVE_CHILD",
@@ -56,17 +56,17 @@ type RemoveMutation = {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type DescriptorMutation = InsertMutation | UpdateMutation | RemoveMutation
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type DescriptorMutationListener = (args: DescriptorMutation) => void
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Stores (ComponentInstance)Descriptors. When Descriptors change, send a
  * notification.
  */
@@ -557,7 +557,7 @@ export class DescriptorRegistry {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  */
 export class DescriptorRegistryStats {
   countByDescriptorType = new Map<string, number>()

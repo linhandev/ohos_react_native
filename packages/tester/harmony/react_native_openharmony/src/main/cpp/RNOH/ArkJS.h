@@ -32,7 +32,7 @@ class RNOHNapiObject;
 class NapiRef;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * ArkJS provides utility functions for interacting with ArkTS objects
  * environment through NAPI. this class provides a more convenient way
  * to interact with ArkJS (in the docs that was the name used to describe JS

@@ -9,7 +9,7 @@ import { RNPackage } from "./RNPackage"
 import { ComponentBuilderContext } from "./EtsRNOHContext"
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Base class of packages, which provide custom native components
  */
 export class RNOHPackage extends RNPackage {

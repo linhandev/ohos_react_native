@@ -11,7 +11,7 @@
 
 namespace rnoh {
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * @brief Used to react on CustomNode events. Usually implemented by concrete
  * ComponentInstance classes and activated by calling
@@ -38,7 +38,7 @@ class CustomNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * @brief Custom ArkUI node component class, used to create components that
  * support layout measurement, custom event response, and child node management.

@@ -11,7 +11,7 @@ import type { BorderMetrics, ColorSegments, ColorValue } from './DescriptorBase'
  * Represents the visual state of a React Native surface. Controls how visual
  * effects are handled.
  * 
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * @enum {number}
  */
 export enum DisplayMode {
@@ -48,7 +48,7 @@ export enum DisplayMode {
  * Converts normalized color segments to RGBA string representation.
  * @note Input values are expected to be in 0-1 range
  * 
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ColorSegments} colorSegments - Array of [r,g,b,a] in [0.0, 1.0] range
  * @returns {string|undefined} Format: "rgba(r,g,b,a)" or undefined if no input
  */
@@ -65,7 +65,7 @@ export function convertColorSegmentsToString(colorSegments?: ColorSegments) {
 /**
  * Creates a color transformation matrix for applying tint effects.
  * 
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ColorSegments} colorSegments - Array of [r,g,b,a] in 0-1 range
  * @returns {number[]} 4x5 matrix for color transformation
  */
@@ -95,7 +95,7 @@ type ColorChannel = number
 /**
  * Manages color values and provides conversion between different formats.
  * 
- * @api
+ * @actor RNOH_LIBRARY
  */
 export class Color {
   /**
@@ -153,7 +153,7 @@ export class Color {
 /**
  * Converts numeric ARGB color value to RGBA string format.
  *
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ColorValue} colorValue - ARGB color as number
  * @param {string} defaultColor - Color to use if input undefined
  * @returns {string} Format: "rgba(r,g,b,a)" with rgb in 0-255, a in 0-1
@@ -177,7 +177,7 @@ export function convertColorValueToRGBA(
 /**
  * Converts numeric ARGB color value to 8-digit hex string.
  *
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ColorValue} colorValue - ARGB color as number
  * @param {string} defaultColor - Color to use if input undefined
  * @returns {string} Format: "#AARRGGBB" where each component is 2 hex digits
@@ -202,7 +202,7 @@ export function convertColorValueToHex(
 /**
  * Converts numeric ARGB color value to normalized color segments.
  *
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ColorValue} colorValue - ARGB color as number
  * @returns {ColorSegments|undefined} Array of [r,g,b,a] in 0-1 range or undefined
  */
@@ -224,7 +224,7 @@ export function convertColorValueToColorSegments(colorValue?: ColorValue): Color
  * Used for geometric transformations in 3D space.
  * Matrix elements are stored in row-major order.
  * 
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type TransformMatrix = [
   number,
@@ -249,7 +249,7 @@ export type TransformMatrix = [
  * Immutable version of TransformMatrix.
  * Matrix elements are stored in row-major order.
  * 
- * @api
+ * @actor RNOH_LIBRARY
  */
 export type ReadonlyTransformationMatrix = readonly [
   number,
@@ -271,7 +271,7 @@ export type ReadonlyTransformationMatrix = readonly [
 ]
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead.
  * It was deprecated when preparing 0.77 branch for release.
  */
@@ -281,7 +281,7 @@ export enum BorderEdgePropsType {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use ViewDescriptorWrapperBase::resolveEdges and ViewDescriptorWrapperBase::resolveCorners instead.
  * It was deprecated when preparing 0.77 branch for release.
  */
@@ -293,7 +293,7 @@ export function resolveBorderMetrics(props: BorderMetrics, isRTL: boolean): Bord
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use ViewDescriptorWrapperBase::resolveCorners instead.
  * It was deprecated when preparing 0.77 branch for release.
  */
@@ -313,7 +313,7 @@ export function resolveBorderRadius(props: BorderMetrics): BorderMetrics {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use ViewDescriptorWrapperBase::resolveEdges instead.
  * It was deprecated when preparing 0.77 branch for release.
  */
@@ -340,7 +340,7 @@ export function resolveBorderEdgeProps(props: BorderMetrics, type: BorderEdgePro
 /**
  * Transform a 4D vector by a 4x4 transformation matrix.
  * 
- * @api
+ * @actor RNOH_LIBRARY
  * @param {ReadonlyTransformationMatrix} transformMatrix - 4x4 matrix in row-major order
  * @param {Array<number>} vector - Input 4D vector [x, y, z, w], treated as a
  * 4D column vector

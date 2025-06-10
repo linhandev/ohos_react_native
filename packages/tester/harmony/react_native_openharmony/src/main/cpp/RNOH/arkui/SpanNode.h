@@ -24,7 +24,7 @@ class ImageSpanNode : public ArkUINode {
  * SpanNode allows rich styling attributes such as font size, color, shadow,
  * decoration, and case transformations to be applied to a segment of text.
 
- * @api
+ * @actor RNOH_LIBRARY
  */
 class SpanNode : public ArkUINode {
  public:

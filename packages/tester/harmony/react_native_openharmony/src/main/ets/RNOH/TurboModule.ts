@@ -19,7 +19,7 @@ import {
 
 /**
  * @thread: MAIN
- * @api
+ * @actor RNOH_LIBRARY
  */
 export class UITurboModule {
   public static readonly NAME: string;
@@ -30,7 +30,7 @@ export class UITurboModule {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use UITurboModule or AnyThreadTurboModule instead (latestRNOHVersion: 0.72.30)
  */
 export class TurboModule extends UITurboModule {}
@@ -49,7 +49,7 @@ export class WorkerTurboModule {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @thread: MAIN | WORKER
  * A TurboModule which can run on either UI or WorkerThread eTS context.
  * Application developers can optionally enable WorkerThread to execute these TurboModules

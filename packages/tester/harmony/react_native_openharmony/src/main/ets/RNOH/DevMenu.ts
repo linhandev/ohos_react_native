@@ -23,7 +23,7 @@ enum DialogButtonDirection {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  *
  * The DevMenu interface provides a way to interact with the developer menu in an RN application.
  * It allows adding custom menu items and displaying the menu.

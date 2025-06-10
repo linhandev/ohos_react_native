@@ -32,7 +32,7 @@ function getConstraints(ctx: SurfaceContext): {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * @brief Native wrapper for cpp (and JS) methods of a surface
  */
 export class SurfaceHandle {

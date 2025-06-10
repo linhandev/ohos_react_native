@@ -14,7 +14,7 @@
 
 namespace rnoh {
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief This interface defines methods that can be overriden to react on
  * ImageNode events.
  */
@@ -54,7 +54,7 @@ class ImageNodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @brief Represents an ArkUI Image component node.
  *
  * This class allows configuration of image source, resize mode, tint color,

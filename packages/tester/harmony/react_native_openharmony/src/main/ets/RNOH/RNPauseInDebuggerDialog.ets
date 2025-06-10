@@ -12,7 +12,7 @@ interface PauseInDebuggerDialogPayload {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  *
  * A custom dialog component shown when the debugger is paused.
  * It listens to events from native C++ and displays a message dialog with a resume button.

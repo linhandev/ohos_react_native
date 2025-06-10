@@ -12,7 +12,7 @@ export interface RNOHMarkerEventPayload {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Implement this interface to register callback when RNOH markers are logged
  */
 export interface RNOHMarkerListener {
@@ -28,7 +28,7 @@ export interface RNOHMarkerListener {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Important events happening throughout an RN app's lifecycle
  * @note to framework developers. Keep this enum in sync with the one defined
  * in RNOHMarker.h
@@ -88,7 +88,7 @@ export enum RNOHMarkerId {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * Registers listeners to receive RNOH marker events
  */
 export class RNOHMarker {

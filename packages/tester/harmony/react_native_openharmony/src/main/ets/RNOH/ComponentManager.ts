@@ -8,7 +8,7 @@
 import { Tag } from "./DescriptorBase";
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * 
  * @brief Component(Instance)Manager. Unlike (ComponentInstance)Descriptor,
  * exposes behavior and encapsulates data.

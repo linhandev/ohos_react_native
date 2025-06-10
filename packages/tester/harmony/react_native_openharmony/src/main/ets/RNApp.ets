@@ -28,7 +28,7 @@ import { RNPauseInDebuggerDialog } from "./RNOH/RNPauseInDebuggerDialog"
  * Represents the configuration of RNInstance unmanaged by RNOH / managed by RN_APP_DEVELOPER.
  * (RN_APP_DEVELOPER is responsible for creating and destroying RNInstance.)
  *
- * @api RN_APP_DEVELOPER
+ * @actor RNOH_APP
  */
 interface UnmanagedRNInstanceConfig {
   rnInstance: RNInstance
@@ -37,7 +37,7 @@ interface UnmanagedRNInstanceConfig {
 /**
  * Represents the configuration of RNInstance managed by RNOH.
  *
- * @api RN_APP_DEVELOPER
+ * @actor RNOH_APP
  */
 type ManagedRNInstanceConfig = RNInstanceOptions
 
@@ -51,7 +51,7 @@ type ManagedRNInstanceConfig = RNInstanceOptions
  * - `ManagedRNInstanceConfig`: The RNInstance is managed by RNOH, which handles the
  *   creation and deletion internally. This simplifies usage for most scenarios.
  *
- * @api RN_APP_DEVELOPER
+ * @actor RNOH_APP
  */
 export type RNInstanceConfig = UnmanagedRNInstanceConfig | ManagedRNInstanceConfig
 
@@ -95,7 +95,7 @@ const wrappedCustomRNComponentBuilder = wrapBuilder(buildCustomRNComponent)
  * This component implicitly requires `RNOHCoreContext` to be set in the `AppStorage`.
  * If `RNAbility` isn't used, RN_APP_DEVELOPER must register `RNOHCoreContext` in `AppStorage`.
  *
- * @api RN_APP_DEVELOPER
+ * @actor RNOH_APP
  */
 @Component
 @Preview

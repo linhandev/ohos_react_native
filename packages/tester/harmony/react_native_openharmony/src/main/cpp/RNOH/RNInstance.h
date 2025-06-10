@@ -32,13 +32,13 @@ using MutationsListener = std::function<void(
     facebook::react::ShadowViewMutationList const& mutations)>;
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @thread: MAIN
  */
 class Surface {
  public:
   /**
-   * @api
+   * @actor RNOH_LIBRARY
    */
   struct LayoutContext {
     /**
@@ -58,7 +58,7 @@ class Surface {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @thread: MAIN
  * @brief Represents an instance of the JavaScript runtime environment with UI
  * integration capabilities. including JS execution and bridge interactions.

@@ -33,7 +33,7 @@ class ArkUINode;
  * Used by node implementations to notify their owners about node events without
  * tight coupling.
  *
- * @api
+ * @actor RNOH_LIBRARY
  */
 class ArkUINodeDelegate {
  public:
@@ -62,7 +62,7 @@ class ArkUINodeDelegate {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * rnoh::ArkUINode is the adaption layer between rnoh::ComponentInstance and
  * the ArkUI_Node that ArkUI system component provides. This class exposes

@@ -1,7 +1,7 @@
 import { IFs } from 'memfs';
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type BundlerConfig = {
   enabled?: boolean;
@@ -17,7 +17,7 @@ export type BundlerConfig = {
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type RNOHProjectPluginOptions = {
   nodeModulesPath?: string;
@@ -25,12 +25,12 @@ export type RNOHProjectPluginOptions = {
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export class RNOHProjectPluginError extends Error {}
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type CodegenConfig = {
   rnohModulePath: string;
@@ -41,14 +41,14 @@ export type CodegenConfig = {
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type MetroConfig = {
   port?: number;
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type AutolinkingConfig = {
   ohPackagePath?: string;
@@ -60,7 +60,7 @@ export type AutolinkingConfig = {
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type RNOHModulePluginOptions = {
   nodeModulesPath?: string;
@@ -70,7 +70,7 @@ export type RNOHModulePluginOptions = {
 };
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export class RNOHModulePluginError extends Error {}
 

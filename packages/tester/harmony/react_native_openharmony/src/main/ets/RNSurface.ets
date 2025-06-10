@@ -28,7 +28,7 @@ interface RootViewState {}
 export type RootDescriptor = Descriptor<"RootView", ViewBaseProps, RootViewState, ViewRawProps>;
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * RN_APP_DEVELOPER is responsible for creating and deleting a SurfaceHandle.
  */
 export interface UnmanagedSurfaceConfig {
@@ -36,13 +36,13 @@ export interface UnmanagedSurfaceConfig {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * @deprecated: use UnmanagedSurfaceConfig instead (latestRNOHVersion: 0.72.39)
  */
 export type SurfaceConfig1 = UnmanagedSurfaceConfig
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * RNOH is responsible for creating and deleting a SurfaceHandle.
  */
 export interface ManagedSurfaceConfig {
@@ -51,13 +51,13 @@ export interface ManagedSurfaceConfig {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * @deprecated: use ManagedSurfaceConfig instead (latestRNOHVersion: 0.72.39)
  */
 export type SurfaceConfig2 = ManagedSurfaceConfig
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  */
 export type SurfaceConfig = UnmanagedSurfaceConfig | ManagedSurfaceConfig
 
@@ -73,7 +73,7 @@ interface Size {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 interface Constraints {
   minWidth?: number
@@ -83,7 +83,7 @@ interface Constraints {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  * RNSurface is a core bridge component that integrates a React Native surface into an ArkTS UI component.
  *
  * It is responsible for creating, attaching, and managing the lifecycle and layout of a React Native rendering surface.

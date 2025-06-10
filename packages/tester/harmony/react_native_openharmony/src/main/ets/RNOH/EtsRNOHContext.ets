@@ -23,7 +23,7 @@ export interface EtsUITurboModuleContextDependencies {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * non-cpp TurboModule Context for UI thread
  */
 export class EtsUITurboModuleContext extends UITurboModuleContext {
@@ -63,7 +63,7 @@ export interface EtsWorkerTurboModuleContextDependencies {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * non-cpp TurboModule Context for Worker thread
  */
 export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
@@ -94,7 +94,7 @@ export class EtsWorkerTurboModuleContext extends WorkerTurboModuleContext {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  * @deprecated It was deprecated when preparing 0.77 branch for release.
  */
 interface DescriptorEssence {
@@ -103,39 +103,39 @@ interface DescriptorEssence {
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type CustomComponentBuilder = (ctx: ComponentBuilderContext) => void
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type WrappedCustomRNComponentBuilder = WrappedBuilder<[ComponentBuilderContext]>
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type WrappedRNChildrenBuilder = WrappedBuilder<[RNComponentContext, Tag]>
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type WrappedRNComponentBuilder = WrappedBuilder<[RNComponentContext, Tag]>
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export interface RNComponentDataSourceFactoryContext {
   tag: Tag
 }
 
 /**
- * @api
+ * @actor RNOH_APP
  */
 export type RNComponentDataSourceFactory = (ctx: RNComponentDataSourceFactoryContext) => RNComponentDataSource
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  *
  * @brief RNComponentContext Provides utilities, and dependencies useful for
  * RNComponents.
@@ -221,7 +221,7 @@ export class RNComponentContext extends RNOHContext {
   }
 
   /**
-   * @internal
+   * @actor RNOH_APP
    */
   constructor(
     rnohContext: RNOHContext,
@@ -254,7 +254,7 @@ function buildRNChildren(ctx: RNComponentContext, parentTag: Tag) {
 }
 
 /**
- * @api: RN_APP_DEVELOPER
+ * @actor RNOH_APP
  *
  * @brief Provides context information required when constructing a component.
  */

@@ -185,7 +185,7 @@ type RNOHContextDependencies = {
 export class RNOHContext extends RNOHCoreContext {
   /**
    * Creates an instance-specific RNOHContext from a shared core context.
-   * @api: RN_APP_DEVELOPER
+   * @actor RNOH_APP
    * @param rnohCoreContext The shared core context containing common dependencies
    * @param rnInstance The RN instance to associate with the new context
    * @returns A new RNOHContext that combines core dependencies with instance-specific
@@ -289,7 +289,7 @@ export interface AnyThreadRNInstance extends Partial<RNInstance> {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * shared TurboModule Context interface for Both UI thread and WORKER thread
  */
 export interface AnyThreadTurboModuleContext {
@@ -301,7 +301,7 @@ export interface AnyThreadTurboModuleContext {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * TurboModule Context for UI thread
  */
 export class UITurboModuleContext
@@ -317,7 +317,7 @@ implements AnyThreadTurboModuleContext {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
  */
 export class TurboModuleContext extends UITurboModuleContext {}
@@ -334,7 +334,7 @@ export type WorkerTurboModuleContextDependencies = {
 };
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * TurboModule Context for WORKER thread
  */
 export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {

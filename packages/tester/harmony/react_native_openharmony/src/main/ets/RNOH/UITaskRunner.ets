@@ -12,7 +12,7 @@ import { SupportedTaskParams, Task, TaskRunnable, TaskRunner } from './TaskRunne
 type ISendable = lang.ISendable
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @deprecated Use `SupportedTaskParams` instead (latestRNOHVersion: 0.72.40)
  */
 export type SupportedUITaskParams = SupportedTaskParams
@@ -39,7 +39,7 @@ export class UITaskRunner extends TaskRunner<UITurboModuleContext, UITask> {
 }
 
 /**
- * @api
+ * @actor RNOH_LIBRARY
  * @template TParams The type of the parameters to pass to the task.
  * @template TResult The type of the result of the task.
  */
