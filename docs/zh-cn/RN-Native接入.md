@@ -34,7 +34,7 @@
 1. 修改 EntryAbility 类，让其继承了 RNAbility 类，用于指定入口页面路径。
 
    ```typescript
-   // MyApplicationReplace/entry/src/main/ets/entryability/EntryAbility.ts
+   // MyApplicationReplace/entry/src/main/ets/entryability/EntryAbility.ets
 
    import { RNAbility } from '@rnoh/react-native-openharmony';
 
@@ -148,7 +148,7 @@
 
 1. 若要实现该场景，首先需要进行拆包打包流程，将单 bundle 拆成多 bundle 进行打包，详细流程请见[RN JS打包 > 多Bundle打包](RN-JS打包.md#多bundle打包)。完成这一步生成多个 bundle 文件后，需要按顺序分别加载这些 bundle 文件，下面用 `SampleApp` 工程的 `HomePage` 模块举例说明。
 
-   对 `HomePage` 模块拆包打包后会生成两个Bundle文件：`SampleApp/entry/src/main/resources/rawfile/bundle/basic/basic.harmony.bundle`和`SampleApp/entry/src/main/resources/rawfile/bundle/cp/homepage.harmony.bundle`。
+   对 `HomePage` 模块拆包打包后会生成两个 Bundle 文件：`SampleApp/entry/src/main/resources/rawfile/bundle/basic/basic.harmony.bundle`和`SampleApp/entry/src/main/resources/rawfile/bundle/cp/homepage.harmony.bundle`。
 
    ![image](./figures/Native-bundle.png)
 
@@ -239,7 +239,7 @@
    
    -  `moduleName`：模块名 `HomePage`。
 
-   -  `bundlePath`：`HomePage` 模块的Bundle文件路径。
+   -  `bundlePath`：`HomePage` 模块的 Bundle 文件路径。
 
    `BaseRN` 的业务代码如下，使用 `LoadManager.loadBundle` 方法加载业务包 bundle，将业务模块对应的 `RNInstance` 实例、本地 bundle 路径作为参数传进去，使用 `RNInstance` 实例暴露的接口 `runJSBundle` 加载 bundle 文件。
 
@@ -333,13 +333,13 @@
 
 3. `Detail` 模块是会渲染在 `Goods` 模块中，通过 `Navigation` 路由进行跳转。
 
-   在 `Details.ets` 中，依然是使用 `BaseRN` 类加载 `Detail` 模块的业务包Bundle，传入的参数与 `HomePage` 模块不同：
+   在 `Details.ets` 中，依然是使用 `BaseRN` 类加载 `Detail` 模块的业务包 Bundle，传入的参数与 `HomePage` 模块不同：
 
    -  `rnInstance`：之前创建的 `RNInstance`，即 `bpInstance`。
 
    -  `moduleName`：模块名 `Details`。
 
-   -  `bundlePath`：`Details` 模块的Bundle文件路径。
+   -  `bundlePath`：`Details` 模块的 Bundle 文件路径。
 
    ```typescript
    // SampleApp/entry/src/main/ets/pages/Details.ets
