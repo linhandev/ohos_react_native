@@ -8,6 +8,7 @@
 #pragma once
 #include <react/renderer/graphics/Size.h>
 #include <react/renderer/textlayoutmanager/TextLayoutManager.h>
+#include <codecvt>
 #include <mutex>
 #include <string>
 #include "ArkUITypography.h"
@@ -129,6 +130,11 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
       const facebook::react::TextLayoutContext& layoutContext,
       facebook::react::LayoutConstraints layoutConstraints) override;
 
+  facebook::react::LinesMeasurements measureLines(
+      const facebook::react::AttributedStringBox& attributedStringBox,
+      const facebook::react::ParagraphAttributes& paragraphAttributes,
+      const facebook::react::Size& size) override;
+
   TextStorage::Shared createTextStorage(
       facebook::react::AttributedString attributedString,
       facebook::react::ParagraphAttributes paragraphAttributes,
@@ -153,6 +159,11 @@ class TextMeasurer final : public facebook::react::TextLayoutManagerDelegate {
   StyledStringWrapper createStyledString(
       facebook::react::AttributedString const& attributedString,
       facebook::react::ParagraphAttributes const& paragraphAttributes) const;
+
+  facebook::react::LinesMeasurements getLinesMeasurements(
+      ArkUITypography& typography,
+      std::u16string& u16Text,
+      bool hasAttachmentCharacter);
 
   /**
    * @threadSafe

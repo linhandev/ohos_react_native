@@ -88,6 +88,71 @@ facebook::react::TextMeasurement TextMeasurer::measure(
   setTextStorage(textStorage);
   return textStorage->arkUITypography.getMeasurement();
 }
+facebook::react::LinesMeasurements TextMeasurer::measureLines(
+    const facebook::react::AttributedStringBox& attributedStringBox,
+    const facebook::react::ParagraphAttributes& paragraphAttributes,
+    const facebook::react::Size& size) {
+  auto& attributedString = attributedStringBox.getValue();
+  auto textStorage = getTextStorage(
+      {attributedString,
+       paragraphAttributes,
+       {m_scale},
+       static_cast<int>(ceil(size.width * m_scale))});
+  if (!textStorage) {
+    textStorage = createTextStorage(
+        attributedString, paragraphAttributes, {m_scale}, {size, size});
+  }
+  auto& typography = textStorage->arkUITypography;
+  std::stringstream ss;
+  bool hasAttachmentCharacter = false;
+  for (auto const& fragment : attributedString.getFragments()) {
+    if (fragment.isAttachment()) {
+      hasAttachmentCharacter = true;
+    }
+    ss << fragment.string;
+  }
+  std::u16string u16Text =
+      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}
+          .from_bytes(ss.str());
+  return getLinesMeasurements(typography, u16Text, hasAttachmentCharacter);
+};
+facebook::react::LinesMeasurements TextMeasurer::getLinesMeasurements(
+    ArkUITypography& typography,
+    std::u16string& u16Text,
+    bool hasAttachmentCharacter) {
+  auto metrics =
+      OH_Drawing_TypographyGetLineMetrics(typography.m_typography.get());
+  auto metricsSize = OH_Drawing_LineMetricsGetSize(metrics);
+  facebook::react::LinesMeasurements lineMetrics;
+  lineMetrics.reserve(metricsSize);
+  for (int i = 0; i < metricsSize; i++) {
+    OH_Drawing_TypographyGetLineMetricsAt(
+        typography.m_typography.get(), i, metrics);
+    auto u16LineText = u16Text.substr(
+        metrics->startIndex, metrics->endIndex - metrics->startIndex);
+    if (hasAttachmentCharacter) {
+      // NOTE: Use std::remove and erase to remove the placeholder character
+      // `\uFFFC` in the UTF-16 string (corresponding to `0xFFFC` in UTF-16)
+      u16LineText.erase(
+          std::remove(u16LineText.begin(), u16LineText.end(), 0xFFFC),
+          u16LineText.end());
+    }
+    std::string lineText =
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}
+            .to_bytes(u16LineText);
+    facebook::react::LineMeasurement measurement(
+        lineText,
+        {{metrics->x / m_scale, metrics->y / m_scale},
+         {metrics->width / m_scale, metrics->height / m_scale}},
+        metrics->descender / m_scale,
+        metrics->capHeight / m_scale,
+        metrics->ascender / m_scale,
+        metrics->xHeight / m_scale);
+    lineMetrics.push_back(std::move(measurement));
+  }
+  OH_Drawing_DestroyLineMetrics(metrics);
+  return lineMetrics;
+}
 TextMeasurer::TextStorage::Shared TextMeasurer::createTextStorage(
     facebook::react::AttributedString attributedString,
     facebook::react::ParagraphAttributes paragraphAttributes,

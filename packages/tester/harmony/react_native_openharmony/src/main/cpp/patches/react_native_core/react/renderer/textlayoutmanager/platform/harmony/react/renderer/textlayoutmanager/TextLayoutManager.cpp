@@ -37,8 +37,9 @@ LinesMeasurements TextLayoutManager::measureLines(
     const AttributedStringBox& attributedStringBox,
     const ParagraphAttributes& paragraphAttributes,
     const Size& size) const {
-  return {};
-};
+  return m_textLayoutManagerDelegate->measureLines(
+      attributedStringBox, paragraphAttributes, size);
+}
 
 Float TextLayoutManager::baseline(
     const AttributedStringBox& /*attributedStringBox*/,

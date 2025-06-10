@@ -31,6 +31,11 @@ class TextLayoutManagerDelegate {
       const ParagraphAttributes& paragraphAttributes,
       const TextLayoutContext& layoutContext,
       LayoutConstraints layoutConstraints) = 0;
+
+  virtual LinesMeasurements measureLines(
+      const AttributedStringBox& attributedStringBox,
+      const ParagraphAttributes& paragraphAttributes,
+      const Size& size) = 0;
 };
 
 /*
