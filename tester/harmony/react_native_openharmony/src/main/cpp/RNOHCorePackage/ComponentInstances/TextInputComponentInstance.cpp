@@ -60,6 +60,9 @@ void TextInputComponentInstance::onSubmit() {
 
 void TextInputComponentInstance::onBlur() {
   this->m_focused = false;
+  if (m_isControlledTextInput) {
+    m_caretPositionForControlledInput = m_selectionStart;
+  }
   if (m_props->traits.clearButtonMode ==
       facebook::react::TextInputAccessoryVisibilityMode::WhileEditing) {
     m_textInputNode.setCancelButtonMode(
@@ -89,10 +92,6 @@ void TextInputComponentInstance::onFocus() {
     m_textInputNode.setCancelButtonMode(
         facebook::react::TextInputAccessoryVisibilityMode::Never);
   }
-  if (m_selectionStart >= 0 && m_selectionEnd >= m_selectionStart) {
-    m_textInputNode.setTextSelection(m_selectionStart, m_selectionEnd);
-    m_textAreaNode.setTextSelection(m_selectionStart, m_selectionEnd);
-  }
   m_eventEmitter->onFocus(getTextInputMetrics());
 }
 
@@ -103,6 +102,9 @@ void TextInputComponentInstance::onPasteOrCut() {
 void TextInputComponentInstance::onTextSelectionChange(
     int32_t location,
     int32_t length) {
+  if (m_isControlledTextInput) {
+    m_caretPositionForControlledInput = m_selectionStart;
+  }
   if (m_textWasPastedOrCut) {
     m_textWasPastedOrCut = false;
   } else if (m_valueChanged) {
@@ -131,6 +133,8 @@ void TextInputComponentInstance::onTextSelectionChange(
 
   m_selectionLocation = location;
   m_selectionLength = length;
+  m_selectionStart = location;
+  m_selectionEnd = location + length;
   if (m_eventEmitter != NULL) {
     m_eventEmitter->onSelectionChange(getTextInputMetrics());
   }
@@ -184,6 +188,7 @@ TextInputComponentInstance::getOnContentSizeChangeMetrics() {
 void TextInputComponentInstance::onPropsChanged(
     SharedConcreteProps const& props) {
   m_multiline = props->traits.multiline;
+  m_isControlledTextInput = !props->text.empty();
   if (m_multiline) {
     m_textInputNode.setTextInputNodeDelegate(nullptr);
     m_textAreaNode.setTextAreaNodeDelegate(this);
@@ -468,6 +473,8 @@ void TextInputComponentInstance::setTextContentAndSelection(std::string const &c
     m_textAreaNode.setTextContent(content);
     m_textInputNode.setTextSelection(selectionStart, selectionEnd);
     m_textAreaNode.setTextSelection(selectionStart, selectionEnd);
+    m_selectionStart = selectionStart;
+    m_selectionEnd = selectionEnd;
 }
 
 void TextInputComponentInstance::setTextContent(std::string const& content) {
@@ -487,6 +494,16 @@ void TextInputComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "focus") {
     focus();
+    if (m_selectionStart != -1 && m_selectionEnd != -1 &&
+        !m_props->traits.selectTextOnFocus) {
+      m_textInputNode.setTextSelection(
+          m_selectionStart, m_selectionEnd);
+      m_textAreaNode.setTextSelection(
+          m_selectionStart, m_selectionEnd);
+    }
+    if (m_isControlledTextInput) {
+      m_caretPositionForControlledInput = m_selectionStart;
+    }
   } else if (commandName == "blur") {
     if (m_multiline == true){
       if(m_textAreaNode.getTextFocusStatus() == true) {
@@ -501,12 +518,19 @@ void TextInputComponentInstance::onCommandReceived(
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
     auto textContent = args[1].asString();
-    m_selectionStart = args[2].asInt();
-    m_selectionEnd = args[3].asInt();
-    if (m_selectionStart < 0) {
-      setTextContent(textContent);
+    auto selectionStart = args[2].asInt();
+    auto selectionEnd = args[3].asInt();
+    if (selectionStart < 0) {
+      if (m_isControlledTextInput) {
+        setTextContentAndSelection(
+            textContent,
+            m_caretPositionForControlledInput,
+            m_caretPositionForControlledInput);
+      } else {
+        setTextContent(textContent);
+      }
     } else {
-      setTextContentAndSelection(textContent, m_selectionStart, m_selectionEnd);
+      setTextContentAndSelection(textContent, selectionStart, selectionEnd);
     }
   }
 }

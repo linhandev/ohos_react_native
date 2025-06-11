@@ -57,6 +57,20 @@ class TextInputComponentInstance
   int32_t m_selectionStart = -1;
   int32_t m_selectionEnd = -1;
 
+  /**
+   * we want to record the focusing caret position when default value is set,
+   * so that when user input something we could restore the caret
+   * to the right position.
+   */
+  bool m_isControlledTextInput = false;
+  /**
+   * A desired caret position for controlled TextInput.
+   * When TextInput is controlled, and props->value wasn't updated on JS side
+   * after a key was pressed, ArkUI moves caret forward but caret position
+   * shouldn't change.
+   */
+  int32_t m_caretPositionForControlledInput = 0;
+
   void focus();
   void blur();
 
