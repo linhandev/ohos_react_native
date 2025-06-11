@@ -129,7 +129,7 @@ void TextInputProps::setProp(
 
 TextAttributes TextInputProps::getEffectiveTextAttributes(
     Float fontSizeMultiplier) const {
-  auto result = TextAttributes::defaultTextAttributes();
+  auto result = TextInputProps::defaultTextAttributes();
   result.fontSizeMultiplier = fontSizeMultiplier;
   result.apply(textAttributes);
 
@@ -141,6 +141,18 @@ TextAttributes TextInputProps::getEffectiveTextAttributes(
   result.opacity = 1;
 
   return result;
+}
+
+TextAttributes TextInputProps::defaultTextAttributes() const {
+  static auto textAttributes = [] {
+    auto textAttributes = TextAttributes{};
+    textAttributes.foregroundColor = blackColor();
+    textAttributes.backgroundColor = clearColor();
+    textAttributes.fontSize = 16.0;
+    textAttributes.fontSizeMultiplier = 1.0;
+    return textAttributes;
+  }();
+  return textAttributes;
 }
 
 ParagraphAttributes TextInputProps::getEffectiveParagraphAttributes() const {

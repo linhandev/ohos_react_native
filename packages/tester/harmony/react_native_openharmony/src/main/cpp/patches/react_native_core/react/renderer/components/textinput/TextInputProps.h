@@ -78,6 +78,7 @@ class TextInputProps final : public ViewProps, public BaseTextProps {
    */
   TextAttributes getEffectiveTextAttributes(Float fontSizeMultiplier) const;
   ParagraphAttributes getEffectiveParagraphAttributes() const;
+  TextAttributes defaultTextAttributes() const;
 };
 
 } // namespace react
