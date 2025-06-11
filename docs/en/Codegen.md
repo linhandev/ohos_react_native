@@ -10,7 +10,7 @@ The `Codegen` function of RNOH is supported since `rnoh-react-native-harmony-0.7
 
 The following two demo projects describe how to use the `Codegen`:
 
-* [Demo Project of TuboModule](../Samples/using_TurboModule/README.md)
+* [Demo Project of TuboModule](../Samples/using_turboModule/README.md)
 * [Custom Fabric Component](../Samples/FabricComponentSample/README.md)
 
 ## Usage
@@ -29,7 +29,7 @@ For Android and iOS, the procedure of using Codegen to create Turbo Native Modul
 For details, see the following documents:
 
 * [Implementation of a Custom TurboModule](./TurboModule.md)
-* [Custom Component Development Guide](./custom-component.md)
+* [Custom Component Development Guide](./custom-components.md)
 * [Usage of the C-API Component Hybrid Solution](./usage-of-c-api-component-hybrid-solution.md)
 
 ### Codegen Configuration

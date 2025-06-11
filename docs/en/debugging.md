@@ -1,5 +1,7 @@
 # Debugging
 
+> WARNING: This document hasn't been updated for RNOH 0.77.
+
 ## Metro Hot Reloading
 
 `React Native` uses [`Metro`](https://metrobundler.dev/) to build your `JavaScript` code and assets. This section describes how to configure and use Metro.
@@ -167,7 +169,7 @@ When Metro is used to load a bundle, application update can be triggered in the 
 2. Open the app on your phone.
 3. Enter `d` in the command line tool. The `React Native Dev Menu` dialog box is displayed on the mobile phone.
 
-    ![Debugging-Open-DevMenu](figures/debugging-open-DevMenu.png)
+    ![Debugging-Open-DevMenu](figures/debugging-open-DevMenu.PNG)
 
 ### Element Inspector
 
@@ -184,7 +186,7 @@ You can use `Element Inspector` to view the box model and style of the RN elemen
 
 ### React DevTools
 
-`React DevTools` can be used to debug the React component hierarchy within your application. The standalone version of `React DevTools` allows connecting to `React Native` applications. To use it, [install or run the react-devtools package](https://reactnative.dev/docs/next/react-devtools). Do the following:
+`React DevTools` can be used to debug the React component hierarchy within your application. The standalone version of `React DevTools` allows connecting to `React Native` applications. To use it, [install or run the react-devtools package](https://reactnative.dev/docs/0.77/react-native-devtools). Do the following:
 
 1. Create a command line tool and run it.
 
@@ -218,26 +220,6 @@ RNApp({
 ```
 
 Use either of the following methods to set a breakpoint and debug your code.
-
-#### Flipper
-
-Flipper is a mobile application debugger. You can download and install it from the [official website](https://fbflipper.com/) or [github](https://github.com/facebook/flipper/releases).
-
-1. (Optional) After the installation is complete, add `Flipper.exe` to the environment variable.
-2. Load a bundle by using Metro and open the `React Native Dev Menu` dialog box on the mobile phone application page.
-3. Choose `Open Debugger`. The debugger page is displayed, as shown in the following figure.
-
-    ![Debugging-Open-flipper](figures/debugging-open-flipper.png)
-
-    If the environment variable is not configured, Flipper may fail to be opened. In this case, you can manually open Flipper and select `React Native` in the area marked with 1 to achieve the preceding effect.
-
-4. Choose `Hermes Debugger (RN)` > `Sources`, press `Ctrl+P (or Command+P on macOS)`, enter the name of the file to be debugged, and select the file to open the source code. Click the line number to add a breakpoint. The code automatically stops when it reaches this line, as shown in the following figure.
-
-    ![Debugging-flipper_debug](figures/debugging-flipper_debug.png)
-
-5. You can also write the statement `debugger` in the code to connect to Flipper. When the code running reaches `debugger`, Flipper automatically opens the source code and locates `debugger` for debugging, as shown in the following figure.
-
-    ![Debugging-flipper_debugger](figures/debugging-flipper_debugger.png)
 
 #### Chrome DevTools
 

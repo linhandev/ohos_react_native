@@ -1,4 +1,4 @@
-# Framework
+# About React Native
 React Native is an open-source framework based on JavaScript and React frameworks. It is used to build native mobile applications. It allows you to use React's component model and declarative programming style to build cross-platform mobile applications.
 
 Main features and detailed introduction:

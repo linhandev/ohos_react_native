@@ -1,5 +1,7 @@
 ## Common Development Scenarios
 
+> WARNING: This document hasn't been updated for RNOH 0.77.
+
 ### How Do I Use onForeGround and onBackGround?
 
 `onForeground` and `onBackground` are used to solve the problem that `AppState.addEventListener('change', this.handleAppStateChange)` is not called back when the page redirects or returns. The following describes the usage:
@@ -209,7 +211,7 @@ The procedure for loading multiple bundles is as follows:
 2. During project initialization, create the required `RNInstance` instance and call the `runJSBundle` API to load the basic bundle.
 3. When loading the corresponding service module, call the `runJSBundle` API to load the service bundle.
 
-For details, see [RN Native Access > Single-Instance Single-Surface Multi-Bundle](../en/rn-native-access.md).
+For details, see [MultiBundleSample](../Samples/MutilBundleSample/README.md).
 
 ### How Do I Use Components Based on the ArkUI Declarative Paradigm in the C-API Version?
 
@@ -549,7 +551,7 @@ A large OpenHarmony Ability Package (HAP) may occupy more resources during appli
 
 ### How Do I Adapt to Foldable Screens?
 
-For details, see [Multi-Screen Adaptation Guide](multi-screen-adaptation-guide.md).
+T.B.D.
 
 ### How Do I Enable Secure Compilation by Using a .so File?
 

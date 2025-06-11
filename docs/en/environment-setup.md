@@ -1,5 +1,7 @@
 # Environment Setup
 
+> WARNING: This document has not been updated for RNOH 0.77. Some instructions could be incorrect or outdated.
+
 - Environment setup
 
   1. Install DevEco Studio. For details, see [Downloading Software](https://developer.huawei.com/consumer/en/doc/harmonyos-guides-V5/ide-software-download-V5) and [Installing Software](https://developer.huawei.com/consumer/en/doc/harmonyos-guides-V5/ide-software-install-V5).

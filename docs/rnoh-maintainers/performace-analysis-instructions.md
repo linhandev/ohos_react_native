@@ -5,7 +5,7 @@ Performance of ArkUI applications can be analysed using SmartPerf-Host tool, whi
 To run trace on an tester application do the following
 - download and unpack SmartPerf from the link above
 - open the app
-- run `npm run hiprofiler` to start tracing in the tester directory - the trace log will be saved in `hiprofiler_data.htrace` in the tester
+- run `pnpm hiprofiler` to start tracing in the tester directory - the trace log will be saved in `hiprofiler_data.htrace` in the tester
 - launch `./main_darwin` from the unpacked SmartPerf directory
 - open https://localhost:9000/application/ in your web browser to launch SmartPerf tool - ignore warnings about the page being not secure <!-- markdown-link-check-disable-line -->
 - open the trace file using the tool
@@ -18,7 +18,7 @@ Systrace.beginTrace('Some event I want to trace');
 // do some expensive calculations
 Systrace.endTrace();
 ```
-2. You can add custom `systrace` sections to the cpp files by creating `facebook::react::SystraceSection` in the method that you want to analyse - it's trace will be then visible in the `SmartPerf` tool under the `com.rnoh.tester` tab
+2. You can add custom `systrace` sections to the cpp files by creating `facebook::react::SystraceSection` in the method that you want to analyze - it's trace will be then visible in the `SmartPerf` tool under the `com.rnoh.tester` tab
 ```cpp
 //systrace example
 void Component::onUpdate() {
@@ -28,7 +28,7 @@ void Component::onUpdate() {
 ```
 
 ## hiprofiler config
-To analyse ArkUI builtin functionalites (for example rendering and layouting) you can use the more detailed profiler configuration visible below. To use this config paste it into `scripts/hiprofiler-config.txt` in the tester dir.
+To analyze ArkUI builtin functionalities (for example rendering and layouting) you can use the more detailed profiler configuration visible below. To use this config paste it into `scripts/hiprofiler-config.txt` in the tester dir.
 
 ```
 request_id: 1

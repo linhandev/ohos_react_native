@@ -1,5 +1,8 @@
 # API Description
 
+> WARNING: This document may become outdated. Documentation comments directly in the code are more likely to be up-to-date
+
+
 ## RNAbility
 
 ### Introduction
@@ -37,7 +40,7 @@ Creates an `RNInstance` and loads a package in the ability. `RNAbility` waits fo
 
 | Parameter         | Type                               | Description               |
 | --------------- | ----------------------------------- | ------------------ |
-| rnohCoreContext | [RNOHCoreContext](#RNOHCoreContext) |                    |
+| rnohCoreContext | [RNOHCoreContext](#rnohcorecontext) |                    |
 
 #### onWindowSetup
 
@@ -927,7 +930,7 @@ Starts a new UIAbility instance after it has been started and running in the for
 | --- | --- | --- | --- |
 | fontSizeScale | number \| undefined | Yes| Font size scaling ratio.|
 | logger | RNOHLogger | Yes| Log printing.|
-| uiAbilityContext | [UIAbilityContext]([UIAbilityContext](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-inner-application-uiabilitycontext-V5)) | Yes| Context of the ability that uses React Native.|
+| uiAbilityContext | [UIAbilityContext](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-inner-application-uiabilitycontext-V5) | Yes| Context of the ability that uses React Native.|
 | rnohWorkerScriptUrl | string | No| Attribute to enable the worker thread of RNInstance with the corresponding name. Some TurboModules can be enabled only after the worker thread is started.|
 | defaultBackPressHandler | Function | Yes| Native implementation of `exitApp` on the React side.|
 
