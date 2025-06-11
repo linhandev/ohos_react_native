@@ -290,6 +290,8 @@ void TextInputNodeBase::setCommonFontAttributes(
     float fontSize = static_cast<float>(textAttributes.fontSize);
     if (!allowFontScaling) {
       fontSize /= fontSizeScale;
+      maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+          m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_VP));
     } else {
       float clampedFontSizeScale = fontSizeScale;
       if (textAttributes.maxFontSizeMultiplier) { // if it's 0, we should ignore
@@ -299,6 +301,8 @@ void TextInputNodeBase::setCommonFontAttributes(
       fontSize = fontSize / fontSizeScale *
           clampedFontSizeScale; // ArkUI will scale the font, we divide it by
                                 // the scale to cancel that out
+      maybeThrow(NativeNodeApi::getInstance()->setLengthMetricUnit(
+          m_nodeHandle, ArkUI_LengthMetricUnit::ARKUI_LENGTH_METRIC_UNIT_FP));
     }
     std::array<ArkUI_NumberValue, 1> value = {{{.f32 = fontSize}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
