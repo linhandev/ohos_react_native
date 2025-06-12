@@ -473,7 +473,6 @@ void ScrollViewComponentInstance::onCommandReceived(
     folly::dynamic const& args) {
   if (commandName == "scrollTo") {
     facebook::react::Float x = args[0].asDouble();
-    x = adjustOffsetIfRTL(x);
     facebook::react::Float y = args[1].asDouble();
     m_targetOffsetOfScrollToCommand = {x, y};
     m_scrollNode.scrollTo(x, y, args[2].asBool(), m_scrollToOverflowEnabled);
@@ -586,7 +585,6 @@ void ScrollViewComponentInstance::scrollToEnd(bool animated) {
   }
   auto x = horizontal ? m_contentSize.width : 0.0;
   auto y = horizontal ? 0.0 : m_contentSize.height;
-  x = adjustOffsetIfRTL(x);
   m_scrollNode.scrollTo(x, y, animated);
 }
 
