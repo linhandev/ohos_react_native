@@ -11,17 +11,20 @@ async function runMarkdownLinkCheck(
       resolve({ error: `${filePath} doesn't exist` });
       return;
     }
-    exec(`npx markdown-link-check ${filePath}`, (error, stdout, stderr) => {
-      if (error?.message.includes('ERROR')) {
-        resolve({ error: filePath + ': ' + error.message + '\n' + stdout });
-        return;
+    exec(
+      `npx markdown-link-check -c .markdown-link-check.json ${filePath}`,
+      (error, stdout, stderr) => {
+        if (error?.message.includes("ERROR")) {
+          resolve({ error: filePath + ": " + error.message + "\n" + stdout });
+          return;
+        }
+        if (stderr.includes("ERROR")) {
+          resolve({ error: filePath + ": " + stderr + "\n" + stdout });
+          return;
+        }
+        resolve({ ok: true });
       }
-      if (stderr.includes('ERROR')) {
-        resolve({ error: filePath + ': ' + stderr + '\n' + stdout });
-        return;
-      }
-      resolve({ ok: true });
-    });
+    );
   });
 }
 
