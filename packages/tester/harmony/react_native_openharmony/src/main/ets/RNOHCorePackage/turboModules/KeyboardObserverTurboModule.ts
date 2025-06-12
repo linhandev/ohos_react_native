@@ -13,21 +13,49 @@ declare function px2vp(px: number): number;
 
 export class KeyboardObserverTurboModule extends TurboModule {
   public static readonly NAME = 'KeyboardObserver';
+  private keyboardHeight: number;
 
   constructor(protected ctx: TurboModuleContext) {
     super(ctx);
     this.subscribeListeners();
   }
 
-  private createKeyboardEvent(screenX: number, screenY: number, width: number, height: number) {
+  private createKeyboardEvent({
+    screenX,
+    startScreenY,
+    endScreenY,
+    startHeight,
+    endHeight,
+    width,
+  }: {
+    screenX: number;
+    startScreenY: number;
+    endScreenY: number;
+    startHeight: number;
+    endHeight: number;
+    width: number;
+  }) {
+    /*
+    * KeyboardAvoidingView calculates the relativeKeyboardHeight based on the height of the component received
+    * from onLayout, which in some cases can be the whole screen. Yoga uses floats for layout, which leads to
+    * rounding errors. Passing the below numbers without any rounding (JS numbers are double precision)
+    * can lead to relativeKeyboardHeight being calculated as non-zero when the keyboard is hidden,
+    * leading to an infinite loop of re-renders and jittering.
+    */
     return {
       easing: 'keyboard',
       duration: 0,
       endCoordinates: {
-        screenX: px2vp(screenX),
-        screenY: px2vp(screenY),
-        height: px2vp(height),
-        width: px2vp(width),
+        screenX: Math.fround(px2vp(screenX)),
+        screenY: Math.fround(px2vp(endScreenY)),
+        height: Math.fround(px2vp(endHeight)),
+        width: Math.fround(px2vp(width)),
+      },
+      startCoordinates: {
+        screenX: Math.fround(px2vp(screenX)),
+        screenY: Math.fround(px2vp(startScreenY)),
+        height: Math.fround(px2vp(startHeight)),
+        width: Math.fround(px2vp(width)),
       }
     }
   }
@@ -37,15 +65,35 @@ export class KeyboardObserverTurboModule extends TurboModule {
     // using inputMethodEngine.on('keyboardShow') and .on('keyboardHide') would be preferable, but it doesn't work at the time of writing.
     windowInstance.on('keyboardHeightChange', async (keyboardHeight) => {
       if (keyboardHeight > 0) {
+        const windowRect = windowInstance.getWindowProperties().windowRect;
         const keyboardAvoidArea = windowInstance.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD).bottomRect;
-        this.ctx.rnInstance.emitDeviceEvent('keyboardDidShow', this.createKeyboardEvent(keyboardAvoidArea.left, keyboardAvoidArea.top, keyboardAvoidArea.width, keyboardAvoidArea.height));
-        this.ctx.rnInstance.postMessageToCpp("KEYBOARD_VISIBLE", {keyboardHeight: px2vp(keyboardAvoidArea.height)});
+        this.keyboardHeight = keyboardAvoidArea.height;
+        this.ctx.rnInstance.emitDeviceEvent('keyboardDidShow',
+          this.createKeyboardEvent({
+            screenX: keyboardAvoidArea.left,
+            startScreenY: windowRect.height,
+            endScreenY: keyboardAvoidArea.top,
+            startHeight: 0,
+            endHeight: keyboardHeight,
+            width: windowRect.width,
+          }));
+        this.ctx.rnInstance.postMessageToCpp("KEYBOARD_VISIBLE", { keyboardHeight: px2vp(keyboardAvoidArea.height) });
       } else {
         const windowRect = windowInstance.getWindowProperties().windowRect;
-        this.ctx.rnInstance.emitDeviceEvent('keyboardDidHide', this.createKeyboardEvent(0, windowRect.height, windowRect.width, 0))
+        const keyboardAvoidArea = windowInstance.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD).bottomRect;
+        this.ctx.rnInstance.emitDeviceEvent('keyboardDidHide',
+          this.createKeyboardEvent({
+            screenX: keyboardAvoidArea.left,
+            startScreenY: windowRect.height - this.keyboardHeight,
+            endScreenY: windowRect.height,
+            startHeight: this.keyboardHeight,
+            endHeight: 0,
+            width: windowRect.width,
+          }));
       }
-    })
+    }
 
+    )
   }
 }
 
