@@ -162,7 +162,7 @@ RNSurface({
 
 ### 3. Write C++ code of Codegen
 
-You can use [Codegen](codegen.md) to generate the glue code for C++ or manually implement the code. However, Codegen is recommended. This section describes how to manually implement the code.
+You can use [Codegen](Codegen.md) to generate the glue code for C++ or manually implement the code. However, Codegen is recommended. This section describes how to manually implement the code.
 
 1. Create a C++ class for `Props` and `Emitter`, and bind the C++ class to `Descriptor`.
 2. Implement the `handleEvent` method of `MarqueeViewEventEmitRequestHandler`, and call `eventEmitter` to send an event message to the RN component based on the event name of native message.
@@ -687,7 +687,7 @@ void ButtonNode::onNodeEvent(
 
 ### 3. Write C++ code of Codegen
 
-You can use [Codegen](codegen.md) to generate the glue code for C++ or manually implement the code. However, Codegen is recommended. This section describes how to manually implement the code.
+You can use [Codegen](Codegen.md) to generate the glue code for C++ or manually implement the code. However, Codegen is recommended. This section describes how to manually implement the code.
 
 1. Create a C++ class for `Props` and `Emitter`, bind the class to `Descriptor`, and register the `Node` type.
 2. Implement the `ButtonViewJSIBinder` class for **Props** and **Emitter** binding.

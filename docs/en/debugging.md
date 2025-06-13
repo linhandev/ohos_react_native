@@ -167,7 +167,7 @@ When Metro is used to load a bundle, application update can be triggered in the 
 2. Open the app on your phone.
 3. Enter `d` in the command line tool. The `React Native Dev Menu` dialog box is displayed on the mobile phone.
 
-    ![Debugging-Open-DevMenu](figures/debugging-open-DevMenu.png)
+    ![Debugging-Open-DevMenu](figures/debugging-open-DevMenu.PNG)
 
 ### Element Inspector
 
