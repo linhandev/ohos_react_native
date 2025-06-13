@@ -148,7 +148,7 @@
 
 1. 若要实现该场景，首先需要进行拆包打包流程，将单 bundle 拆成多 bundle 进行打包，详细流程请见[RN JS打包 > 多Bundle打包](RN-JS打包.md#多bundle打包)。完成这一步生成多个 bundle 文件后，需要按顺序分别加载这些 bundle 文件，下面用 `SampleApp` 工程的 `HomePage` 模块举例说明。
 
-   对 `HomePage` 模块拆包打包后会生成两个 Bundle 文件：`SampleApp/entry/src/main/resources/rawfile/bundle/basic/basic.harmony.bundle`和`SampleApp/entry/src/main/resources/rawfile/bundle/cp/homepage.harmony.bundle`。
+   对 `HomePage` 模块拆包打包后会生成两个 Bundle 文件：`SampleApp/entry/src/main/resources/rawfile/bundle/basic/basic.harmony.bundle` 和 `SampleApp/entry/src/main/resources/rawfile/bundle/cp/homepage.harmony.bundle`。
 
    ![image](./figures/Native-bundle.png)
 

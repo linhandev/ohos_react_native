@@ -48,11 +48,11 @@
 
 3. `TextInput.js` 删除 `selectionState`，用 `onBlur`，`onFocus`，`onUpdate` 代替。
 
-4. ScrollView 中删除 `scrollWithoutAnimationTo()`，此函数在 2016 年 12 月被弃用。
+4. `ScrollView` 中删除 `scrollWithoutAnimationTo()`，此函数在 2016 年 12 月被弃用。
 
     ![v0.62.0-删除弃用函数](./figures/RN-alter-scrollWithoutAnimationTo.png)
 
-5. RN 团队修改了 `accessibilityState` 属性，作为组件向可访问性服务描述有关其状态的信息的语义更丰富的方式。
+5. **RN** 团队修改了 `accessibilityState` 属性，作为组件向可访问性服务描述有关其状态的信息的语义更丰富的方式。
 
     ![v0.62.0-修改accessibilityState](./figures/RN-alter-accessibilityState.png)
 
