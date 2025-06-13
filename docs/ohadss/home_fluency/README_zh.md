@@ -38,8 +38,8 @@ home_fluency
 ```
 
 # 安装教程
-1. 替换 RNHomeFluency/package.json 中的 @react-native-oh/react-native-harmony 版本 以及 HomeFluency/oh-package.json5 和 HomeFluency/entry/oh-package.json5 中的 @rnoh/react-native-openharmony 版本 （可选：升级版本）。
-2. 在 RNHomeFluency 中，运行 npm i --force 安装依赖，然后运行 npm run dev 生成打包文件，运行 npm start 启动 Metro 服务；
+1. 替换 RNHomeFluency/package.json 中的 @react-native-oh/react-native-harmony 版本 以及 HomeFluency/oh-package.json5 和 HomeFluency/entry/oh-package.json5 中的 @rnoh/react-native-openharmony 版本 （可选：升级版本）；
+2. 在 RNHomeFluency 中，运行 npm i --force 安装依赖，然后运行 npm run dev 生成打包文件；
 3. 在 DevEco Studio 中打开 HomeFluency，执行 同步并刷新项目，然后将 RNHomeFluency/HomeFluency/entry 复制并替换到 HomeFluency/entry；
-4. 返回 DevEco Studio，点击右上角的 运行 按钮启动项目；
-5. 如果 Metro 服务正在运行，还需要执行 hdc rport tcp:8081 tcp:8081 来转发 8081 端口，然后重新打开设备上的应用。
+4. 返回 DevEco Studio，删除 HomeFluency/entry下的 .cxx 和 build 目录，点击右上角的 运行 按钮启动项目；
+5. 如果使用 Metro 服务运行，需要在 RNHomeFluency 中执行 npm run start，然后重新打开设备上的应用。
