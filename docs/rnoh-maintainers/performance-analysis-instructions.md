@@ -12,7 +12,7 @@ To run trace on an tester application do the following
 - the trace decomposition should now be visible in the browser
 
 ## Adding custom trace sections
-1. You can use Systrace Turbomodule to trace some actions from ArkTS side:
+1. You can use Systrace TurboModule to trace some actions from ArkTS side:
 ```ts
 Systrace.beginTrace('Some event I want to trace');
 // do some expensive calculations
@@ -92,7 +92,7 @@ To trace some variable changes you may use:
 ```
 Systrace.counterEvent('SOME_VARIABLE', 1000)
 ```
-To later get those changes simply open htrace data in SmartPerf tool (but search tool will not show you correct results, simply use cmd + f in browser to find right row).
+To later get those changes simply open htrace data in SmartPerf tool (but search tool will not show you correct results, simply use `Ctrl + F (Windows/Linux)` or `Cmd + F (Mac)` in browser to find right row).
 However you can also use more primitive tool (which will give you text output):
 ```sh
 hdc shell
