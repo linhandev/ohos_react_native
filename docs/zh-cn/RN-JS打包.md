@@ -156,7 +156,7 @@ module.exports = {
 
 ![image](./figures/RN-JS-serializer.png)
 
-- `createModuleIdFactory` ：Metro 支持了通过此方法配置自定义模块 ID，同样支持字符串类型 ID，用于生成 `require` 语句的模块 ID，其类型为 `() => (path: string) => number`，其中`path` 为各个 module 的完整路径。此方法的另一个用途就是多次打包时，对于同一个模块生成相同的 ID，下次更新发版时，不会因 ID 不同找不到 Module。
+- `createModuleIdFactory` ：Metro 支持了通过此方法配置自定义模块 ID，同样支持字符串类型 ID，用于生成 `require` 语句的模块 ID，其类型为 `() => (path: string) => number`，其中 `path` 为各个 module 的完整路径。此方法的另一个用途就是多次打包时，对于同一个模块生成相同的 ID，下次更新发版时，不会因 ID 不同找不到 Module。
 - `processModuleFilter`：根据给出的条件，对 Module 进行过滤，将不需要的模块过滤掉。其类型为 `(module: Array<Module>) => boolean`，其中 `module` 为输出的模块，里面带着相应的参数，根据返回的布尔值判断是否过滤当前模块。返回 `false` 为过滤，不打入 bundle。
 
 ​ 下面参考配套的 Demo 工程 `SampleProject` 来具体说明一下该如何配置和使用 `createModuleIdFactory` 与 `processModuleFilter`。
@@ -329,7 +329,7 @@ module.exports = {
 
 - 基础包 `basic`：
   
-  将需要的第三方依赖包与 React Native 的包、JS 文件等，可以通过 `import` 方式引入到一个 JS 文件内，如 `SampleProject/MainProject/src/bundles/basic/basic.js`，再使用先前写好的`basics.config.js` 当做参数传入到 `--config` 后。使用终端切换到项目根目录，执行命令：
+  将需要的第三方依赖包与 React Native 的包、JS 文件等，可以通过 `import` 方式引入到一个 JS 文件内，如 `SampleProject/MainProject/src/bundles/basic/basic.js`，再使用先前写好的 `basics.config.js` 当做参数传入到 `--config` 后。使用终端切换到项目根目录，执行命令：
   
   ```powershell
   react-native bundle-harmony --dev false --entry-file ./src/bundles/basic/basic.js  --bundle-output ../../SampleApp/entry/src/main/resources/rawfile/bundle/basic/basic.harmony.bundle  --config ./basic.config.js
