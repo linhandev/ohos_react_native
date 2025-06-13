@@ -24,7 +24,8 @@
 
 1. 在 `entry/oh-package.json5` 和根目录下的 `oh-package.json5` 中指定 `react-native-openharmony` 的版本。
 2. 用 DevEco Studio 打开 `SampleApp` 执行 **Sync and Refresh Project**。
-3. 点击右上角的 **run** 启动项目。
+3. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+4. 点击右上角的 **run** 启动项目。
 
 ## 工程内容介绍
 

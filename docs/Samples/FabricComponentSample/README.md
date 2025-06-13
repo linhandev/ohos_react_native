@@ -22,5 +22,6 @@ FabricComponentSample
 4. Save `react_native_openharmony-xxx.har` to the `NativeProject/libs` folder and modify the dependency paths of `NativeProject/oh-package.json5` and `NativeProject/entry/oh-package.json5`.
 5. Open `NativeProject` in DevEco Studio and run **Sync and Refresh Project**.
 6. Run **npm i** in `ReactProject` to install the dependency, run **npm run dev** to generate the bundle file, and run **npm start** to start Metro.
-7. Go back to DevEco Studio and click **run** in the upper right corner to start the project.
-8. If Metro is started, run `hdc rport tcp:8081 tcp:8081` to forward port 8081, and then restart the application on the mobile phone.
+7. Go back to DevEco Studio and click File > Project Structure > Signing Configs, log in and complete the signing.
+8. Click **run** in the upper right corner to start the project.
+9. If Metro is started, run `hdc rport tcp:8081 tcp:8081` to forward port 8081, and then restart the application on the mobile phone.

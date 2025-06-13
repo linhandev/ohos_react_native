@@ -12,8 +12,9 @@ NativeProject -- 原生工程
 2. 执行完成后，检查是否在 `NativeProject`、`entry`、`library` 目录下生成 `oh-modules` 文件夹；
 3. 在 `RNProject/MainProject` 中执行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖；
 4. 在 `RNProject/MainProject` 中执行 **npm run dev** 命令打包；
-4. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
-5. 点击右上角的 **run** 启动项目。
+5. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
+6. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+7. 点击右上角的 **run** 启动项目。
    
 
 # 效果预览

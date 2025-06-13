@@ -19,4 +19,5 @@ MutilBundleSample
 3. In the `entry` directory, run **ohpm i @rnoh/react-native-openharmony@x.x.x** to install the dependency.
 4. Check whether the `oh-modules` folder is generated in the `NativeProject` and `entry` directories.
 5. Open `NativeProject` in DevEco Studio and run **Sync and Refresh Project**.
-6. Click **run** in the upper right corner to start the project.
+6. Click File > Project Structure > Signing Configs, log in and complete the signing.
+7. Click **run** in the upper right corner to start the project.

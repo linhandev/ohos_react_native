@@ -12,5 +12,6 @@ NativeProject -- Native project
 2. Check whether the `oh-modules` folder is generated in the `NativeProject`, `entry`, and `library` directories.
 3. Run **npm i @react-native-oh/react-native-harmony@x.x.x** in `RNProject/MainProject` to install the dependency.
 4. Run **npm run dev** in `RNProject/MainProject` to generate the bundle.
-4. Open `NativeProject` in DevEco Studio and run **Sync and Refresh Project**.
-5. Click **run** in the upper right corner to start the project.
+5. Open `NativeProject` in DevEco Studio and run **Sync and Refresh Project**.
+6. Click File > Project Structure > Signing Configs, log in and complete the signing.
+7. Click **run** in the upper right corner to start the project.
