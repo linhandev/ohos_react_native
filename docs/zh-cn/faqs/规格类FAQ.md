@@ -19,7 +19,7 @@ RN本身并不直接规定日期字符串的格式，而是依赖于JavaScript�
 - Date.parse("2024-11-20 14:00:00");//ISO 8601 格式
 - Date.parse('Mon, 20 Mar 2023 14:00:00 GMT');//RFC 2822 / IETF 标准
 
-`2024/10/24`是非标准的日期格式，可以考虑依赖[三方库Moment](https://gitee.com/react-native-oh-library/usage-docs/blob/master/zh-cn/moment.md)进行处理。比如：
+`2024/10/24`是非标准的日期格式，可以考虑依赖[三方库Moment](https://gitee.com/react-native-oh-library/usage-docs/blob/master/zh-cn/js/moment.md)进行处理。比如：
 - const date = moment('2024/10/24', 'YYYY/MM/DD').format('YYYY-MM-DD');
 
 ### RN setNativeProps只能生效一次问题

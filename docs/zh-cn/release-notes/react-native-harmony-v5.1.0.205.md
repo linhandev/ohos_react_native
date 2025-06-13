@@ -54,10 +54,10 @@ textContentType属性增加支持类型：
 
 ### View组件支持focusable属性
 
-RNOH 5.1.0.205及以上版本，增加对于View组件的focusable属性的支持，在手机外接键盘使用Tab进行走焦时，若设置focusable属性为false的时候，对应的View组件将无法获取焦点。具体使用请参看[RN官网](https://reactnative.dev/docs/0.72/view#focusable-android)对于focusable属性的说明：Focusable属性。
+RNOH 5.1.0.205及以上版本，增加对于View组件的focusable属性的支持，在手机外接键盘使用Tab进行走焦时，若设置focusable属性为false的时候，对应的View组件将无法获取焦点。具体使用请参看[RN官网](https://reactnative.dev/docs/0.72/view#focusable-android)对于focusable属性的说明：focusable属性。
 
-### 支持javascript多虚拟机切换
+### 支持JavaScript多虚拟机切换
 
-RNOH 5.1.0.205及以上版本，支持javascript多虚拟机（Hermes、JSVM）切换。
+RNOH 5.1.0.205及以上版本，支持JavaScript多虚拟机（Hermes、JSVM）切换。
 
 具体详细请参考[常见开发场景.md#由Hermes 引擎切换成 JSVM 引擎](../常见开发场景.md#由hermes-引擎切换成-jsvm-引擎)。
