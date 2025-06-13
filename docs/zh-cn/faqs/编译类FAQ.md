@@ -38,7 +38,7 @@ Tid:xxxx, Name:RNOH_BACKGROUND
 当打包或者运行 Metro 服务的时候，报 `None of these files exist` ，报错截图如下：
 ![faq-DrawerLayoutAndroid](./figures/faq-DrawerLayoutAndroid.png)
 - 原因  
-该问题是没有配置 OpenHarmony 打包参数导致的，请参考[如何配置OpenHarmony打包参数](常见开发场景.md#如何配置OpenHarmony打包参数)，配置完成后重新打包。
+该问题是没有配置 OpenHarmony 打包参数导致的，请参考[如何配置OpenHarmony打包参数](../常见开发场景.md#如何配置openharmony打包参数)，配置完成后重新打包。
 
 ## 找不到HiTrace编译选项
 - 错误截图  
