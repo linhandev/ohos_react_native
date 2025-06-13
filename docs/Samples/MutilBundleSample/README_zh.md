@@ -19,7 +19,8 @@ MutilBundleSample
 3. 在 `entry` 目录下执行 **ohpm i @rnoh/react-native-openharmony@x.x.x** 安装依赖；
 4. 检查 `NativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
 5. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
-6. 点击右上角的 **run** 启动项目。
+6. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+7. 点击右上角的 **run** 启动项目。
 
 ## 效果预览
 启动后页面效果如下：

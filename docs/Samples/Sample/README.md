@@ -24,7 +24,8 @@
 
 1. Specify the version of `react-native-openharmony` in `entry/oh-package.json5` and `oh-package.json5`in the root.
 2. Open `SampleApp` in DevEco Studio and run **Sync and Refresh Project**.
-3. Click **run** in the upper right corner to start the project.
+3. Click File > Project Structure > Signing Configs, log in and complete the signing.
+4. Click **run** in the upper right corner to start the project.
 
 ## Project Introduction
 

@@ -22,8 +22,9 @@ FabricComponentSample
 4. 回到 `ReactProject` 目录执行 **npm run dev** 生成 bundle，运行 **npm start** 启动metro服务；
 5. 检查 `NativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
 6. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
-7. 点击右上角的 **run** 启动项目；
-8. 如果启动的是metro服务，还需要运行 `hdc rport tcp:8081 tcp:8081` 来转发8081端口，然后再在手机上重新打开应用。
+7. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+8. 点击右上角的 **run** 启动项目；
+9. 如果启动的是metro服务，还需要运行 `hdc rport tcp:8081 tcp:8081` 来转发8081端口，然后再在手机上重新打开应用。
 
 ## 效果预览
 启动后页面效果如下：

@@ -29,9 +29,10 @@ This project includes two demos. One demonstrates how to push raw files to the s
 2. In the `entry` directory, run **ohpm i @rnoh/react-native-openharmony@x.x.x** to install the dependency.
 3. Check whether the `oh-modules` folder is generated in the `SandBoxNativeProject` and `entry` directories.
 4. Open `SandBoxNativeProject` in DevEco Studio and run **Sync and Refresh Project**.
-5. Click **run** in the upper right corner to start the project.
-6. Ensure that the dependency downloaded on the Harmony and RN sides is complete and the version mapping is normal.
-7. Open the generated app and check whether the file is correctly loaded.
+5. Click File > Project Structure > Signing Configs, log in and complete the signing.
+6. Click **run** in the upper right corner to start the project.
+7. Ensure that the dependency downloaded on the Harmony and RN sides is complete and the version mapping is normal.
+8. Open the generated app and check whether the file is correctly loaded.
 
 #### Notes
 

@@ -38,5 +38,6 @@ home-fluency
 1. Replace the @reaction-native-oh/reaction-native-harmony version in RNHomeFluency/packagejson, as well as @rnoh/reaction-native-openharmony in HomeFluency/oh-package.json5 and HomeFluency/entry/oh-package.json5 (optional: upgrade version).
 2. In `RNHomeFluency`, run **npm i --force** to install dependencies, then run **npm run dev** to generate the bundle file, and **npm start** to start the Metro service;
 3. Open `HomeFluency` in DevEco Studio, execute **Sync and Refresh Project**, and copy and replace `RNHomeFluency/HomeFluency/entry` into `HomeFluency/entry`;
-4. Return to DevEco Studio, click the **run** button on the top right to start the project;
-5. If the Metro service is running, you will also need to execute `hdc rport tcp:8081 tcp:8081` to forward port 8081, and then reopen the app on the device.
+4. Return to DevEco Studio, click File > Project Structure > Signing Configs, log in and complete the signing;
+5. Click the **run** button on the top right to start the project;
+6. If the Metro service is running, you will also need to execute `hdc rport tcp:8081 tcp:8081` to forward port 8081, and then reopen the app on the device.

@@ -17,7 +17,8 @@
 ### 鸿蒙工程操作
 
 1. 用 DevEco Studio 打开 `SampleApp` 执行 **Sync and Refresh Project**。
-2. 点击右上角的 **run** 启动项目。
+2. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+3. 点击右上角的 **run** 启动项目。
 
 ## 工程内容介绍
 
