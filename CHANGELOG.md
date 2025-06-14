@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.0.0.303
+- fix: TextInput caret move forward when value is set,([c823d2c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c823d2c5d996213f2d6394507b6b30e81cb7e08b))
+- fix: fix crash when using ArkUINode::setWidth,([6caf76b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6caf76b840022d86e9a63bfd348a774956b0585d))
+- [doc]: Fixed a file path error and multiple formatting errors.,([a4d0367c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a4d0367c19dd9052867979de0ada3d309da33a86))
+- [doc]: Added several Chinese periods and fixed multiple formatting errors.,([ee318cc5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee318cc510268bf8071cb4f8fce1ed206fa7bd6d))
+- [doc]: Correct three typos and several formatting errors,([34a382f0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/34a382f0a8d40a259df12b8e5b68e1dd54300bcf))
+- [doc]: Correct a typo and multiple formatting errors,([8de3f60a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8de3f60ae0ed01b86e432ceba1c7a4ae2d25e073))
+- [doc]: Fix a number of document formatting errors and polish some description statements.,([c6300bd8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c6300bd8cfcb82c4aa6ac2705e237a6a7ca1638e))
+- [doc]: Fixed anchor link navigation issues,([01bf51da](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01bf51dac53b8bd4ff3c2cedb1d9e97e7d2ca95a))
+- doc: Correct errors in the document TurboModule.md,([db808eb3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/db808eb3bac86e5ab53b7d04e9a57ecb60a55f78))
+- docs: 补充如何启用Metro服务场景描述,([348ad883](https://gitcode.com/openharmony-sig/ohos_react_native/commit/348ad8838621d7fa89601aca5f8c34fe5ffd1860))
+- docx: 补充fabric开启时zIndex的变化,([896fe4ac](https://gitcode.com/openharmony-sig/ohos_react_native/commit/896fe4ac945b7babe8947815afe0d52aa3204ff9))
+- doc: Correct errors in the document Codegen.md,([bc1d2c55](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bc1d2c5553028a8b6ff9eb9d42277acc2fa48625))
+- [chore] Sort versions by version number,([eb3350cf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/eb3350cfd7b0fa615caff5a17933a7d1de284cd8))
+- [chore] Update the suite version and CHANGELOG.md,([ee3440da](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee3440da3581696afd2a4512fbe158f08714349c))
+
 ## 6.0.0.301
 - Revert 多分辨率图片的处理,([a7864d13](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7864d131588ebba4f3560bd1ff59d22bab5a7a5))
 - chore: update to version 5.1.1.503(0.72.73),([bbacb09d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bbacb09dfebacc1113a4dd91c47b7b982687a8aa))

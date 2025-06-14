@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.72.74
+- fix: TextInput caret move forward when value is set,([c823d2c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c823d2c5d996213f2d6394507b6b30e81cb7e08b))
+- fix: fix crash when using ArkUINode::setWidth,([6caf76b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6caf76b840022d86e9a63bfd348a774956b0585d))
+- [chore] Update the suite version and CHANGELOG.md,([ee3440da](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee3440da3581696afd2a4512fbe158f08714349c))
+
 ## 0.72.73
 - chore: update to version 6.0.0.301(0.72.73),([c65b0800](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c65b080085513af4367be41061bcdcd5cd193a58))
 - fix: Resolve the issue of turbomodule object passing null and the native side receiving and printing as undefined,([f7e09804](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7e098048c9fcf9b0370a80e862bb639fcb5a075))
