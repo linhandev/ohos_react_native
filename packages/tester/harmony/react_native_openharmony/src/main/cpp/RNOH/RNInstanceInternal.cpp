@@ -153,7 +153,8 @@ void RNInstanceInternal::initialize() {
 
   // start the inspector
   auto& inspectorFlags = jsinspector_modern::InspectorFlags::getInstance();
-  if (inspectorFlags.getFuseboxEnabled() && !m_inspectorPageId.has_value()) {
+  if (inspectorFlags.getFuseboxEnabled() && !m_inspectorPageId.has_value() &&
+      m_shouldEnableDebugger) {
     m_inspectorHostTarget = react::jsinspector_modern::HostTarget::create(
         *m_inspectorHostDelegate, [taskExecutor = m_taskExecutor](auto fn) {
           taskExecutor->runTask(TaskThread::MAIN, std::move(fn));
