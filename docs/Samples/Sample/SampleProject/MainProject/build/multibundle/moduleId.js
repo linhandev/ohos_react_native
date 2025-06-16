@@ -9,6 +9,11 @@ const pathSep = require('path').sep;
 const fs = require('fs');
 const SHA256 = require('crypto-js/sha256');
 
+const mapDir = __dirname + pathSep + 'map';
+if (!fs.existsSync(mapDir)) {
+  fs.mkdirSync(mapDir, { recursive: true });
+}
+
 function requireWithDefault(path, defaultValue = []) {
   try {
     return require(path);
@@ -36,7 +41,7 @@ function createModuleIdFactoryWrap(projectRootPath, ...bundles) {
         if (!basicNameArray.includes(jsItem)) {
           basicNameArray.push(jsItem);
           fs.writeFileSync(
-            __dirname + pathSep + 'map' + pathSep + 'basicNameMap.json',
+            mapDir + pathSep + 'basicNameMap.json',
             JSON.stringify(basicNameArray),
           );
         }
@@ -44,7 +49,7 @@ function createModuleIdFactoryWrap(projectRootPath, ...bundles) {
         if (!homepageArray.includes(jsItem)) {
           homepageArray.push(jsItem);
           fs.writeFileSync(
-            __dirname + pathSep + 'map' + pathSep + 'pageNameMap.json',
+            mapDir + pathSep + 'pageNameMap.json',
             JSON.stringify(homepageArray),
           );
         }
