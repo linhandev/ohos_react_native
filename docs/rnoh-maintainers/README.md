@@ -6,4 +6,4 @@ RNOH maintainers and contributors.
 
 - [Project Setup](./project-setup.md)
 - [Style Guide](./style-guide.md)
-- [Performance Analysis Instructions](./performace-analysis-instructions.md)
+- [Performance Analysis Instructions](./performance-analysis-instructions.md)
