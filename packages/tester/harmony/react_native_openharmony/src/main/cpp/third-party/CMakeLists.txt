@@ -39,25 +39,40 @@ set(folly_FLAGS
     -Wno-documentation
     -faligned-new)
 target_compile_options(folly PUBLIC ${folly_FLAGS})
+
+# react-native/ReactAndroid/src/main/jni/third-party/folly/CMakeLists.txt
 target_sources(
   folly
-  PRIVATE "${folly_src_dir}/SharedMutex.cpp"
-          "${folly_src_dir}/concurrency/CacheLocality.cpp"
-          "${folly_src_dir}/detail/Futex.cpp"
-          "${folly_src_dir}/portability/Malloc.cpp"
-          "${folly_src_dir}/synchronization/ParkingLot.cpp"
-          "${folly_src_dir}/system/ThreadId.cpp"
-          "${folly_src_dir}/lang/SafeAssert.cpp"
-          "${folly_src_dir}/lang/ToAscii.cpp"
-          "${folly_src_dir}/json/dynamic.cpp"
-          "${folly_src_dir}/json/json_pointer.cpp"
-          "${folly_src_dir}/json/json.cpp"
-          "${folly_src_dir}/hash/SpookyHashV2.cpp"
-          "${folly_src_dir}/Conv.cpp"
-          "${folly_src_dir}/Format.cpp"
-          "${folly_src_dir}/memory/detail/MallocImpl.cpp"
-          "${folly_src_dir}/Unicode.cpp"
-          "${folly_src_dir}/ScopeGuard.cpp")
+  PRIVATE   "${folly_src_dir}/Conv.cpp"
+#            "${folly_src_dir}/Demangle.cpp"
+            "${folly_src_dir}/FileUtil.cpp"
+            "${folly_src_dir}/Format.cpp"
+            "${folly_src_dir}/ScopeGuard.cpp"
+            "${folly_src_dir}/SharedMutex.cpp"
+            "${folly_src_dir}/String.cpp"
+            "${folly_src_dir}/Unicode.cpp"
+            "${folly_src_dir}/concurrency/CacheLocality.cpp"
+            "${folly_src_dir}/container/detail/F14Table.cpp"
+            "${folly_src_dir}/detail/FileUtilDetail.cpp"
+            "${folly_src_dir}/detail/Futex.cpp"
+            "${folly_src_dir}/detail/SplitStringSimd.cpp"
+            "${folly_src_dir}/detail/UniqueInstance.cpp"
+            "${folly_src_dir}/hash/SpookyHashV2.cpp"
+            "${folly_src_dir}/json/dynamic.cpp"
+            "${folly_src_dir}/json/json_pointer.cpp"
+            "${folly_src_dir}/json/json.cpp"
+            "${folly_src_dir}/lang/CString.cpp"
+            "${folly_src_dir}/lang/SafeAssert.cpp"
+            "${folly_src_dir}/lang/ToAscii.cpp"
+            "${folly_src_dir}/memory/detail/MallocImpl.cpp"
+            "${folly_src_dir}/net/NetOps.cpp"
+            "${folly_src_dir}/portability/SysUio.cpp"
+            "${folly_src_dir}/synchronization/SanitizeThread.cpp"
+            "${folly_src_dir}/synchronization/ParkingLot.cpp"
+            "${folly_src_dir}/system/AtFork.cpp"
+            "${folly_src_dir}/system/ThreadId.cpp"
+ )
+
 target_link_libraries(folly PUBLIC Boost::context Boost::algorithm
                                    Boost::intrusive fmt::fmt glog double-conversion fast_float)
 
