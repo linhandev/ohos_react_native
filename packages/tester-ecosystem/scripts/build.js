@@ -41,9 +41,9 @@ async function findFirstFile(directory, filename) {
   const ohpmPath = await findFirstFile(basePath, 'ohpm');
 
   const syncCommand = `"${nodePath}" "${hvigorwPath}" --sync -p product=default --analyze=false --parallel --incremental --no-daemon`;
-  const packHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=debug assembleHar --error --analyze=false --parallel --incremental --no-daemon`;
+  const packHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=release assembleHar --error --analyze=false --parallel --incremental --no-daemon`;
   const installCommand = `"${ohpmPath}" install`;
-  const buildCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p module=entry@default -p product=default -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --no-daemon`;
+  const buildCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p module=entry@default -p product=default -p buildMode=release -p requiredDeviceType=phone assembleHap --analyze=normal --parallel --incremental --no-daemon --debug`;
 
   try {
     execSync(syncCommand, {

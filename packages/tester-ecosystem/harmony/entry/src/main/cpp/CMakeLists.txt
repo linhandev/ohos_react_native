@@ -9,6 +9,8 @@ set(CMAKE_ASM_FLAGS "-Wno-error=unused-command-line-argument -Qunused-arguments"
 set(WITH_HITRACE_SYSTRACE ON)
 set(WITH_HITRACE_REACT_MARKER ON)
 set(OH_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../oh_modules") # required by 'autolink_libraries'
+add_compile_options(-flto)
+add_link_options(-flto)
 
 add_subdirectory("${RNOH_CPP_DIR}" ./rn)
 
