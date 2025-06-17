@@ -64,3 +64,4 @@ export * from './UseWindowDimensionsTest';
 export * from './VibrationTest';
 export * from './ViewTest';
 export * from './VirtualizedListTest';
+export * from './Accessible/ScrollViewExample';
