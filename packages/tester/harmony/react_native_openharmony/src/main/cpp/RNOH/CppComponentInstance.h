@@ -22,6 +22,8 @@
 #include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
 
+using facebook::react::isZero;
+
 namespace rnoh {
 
 inline facebook::react::Rect transformRectAroundPoint(
@@ -485,10 +487,20 @@ class CppComponentInstance : public ComponentInstance,
        * height is 0, which happens during the preallocation phase.
        */
       auto transform = props->resolveTransform(m_layoutMetrics);
-      if (transform != m_transform ||
+      /**
+       * NOTE: rn and arkui uses different measure units but that only affects
+       * the translation component in transform, not scale etc.
+       */
+      bool pointScaleFactorChanged =
           abs(m_oldPointScaleFactor - m_layoutMetrics.pointScaleFactor) >
-              0.001f) {
+          0.001f;
+      bool hasTranslationInTransform = !isZero(transform.matrix[12]) ||
+          !isZero(transform.matrix[13]) || !isZero(transform.matrix[14]);
+      if (pointScaleFactorChanged) {
         m_oldPointScaleFactor = m_layoutMetrics.pointScaleFactor;
+      }
+      if (transform != m_transform ||
+          (pointScaleFactorChanged && hasTranslationInTransform)) {
         m_transform = transform;
         this->getLocalRootArkUINode().setTransform(
             transform, m_layoutMetrics.pointScaleFactor);
