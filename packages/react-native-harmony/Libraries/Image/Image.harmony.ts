@@ -6,5 +6,12 @@
  */
 
 // @ts-ignore
-import Image from './Image.android';
+import Image from './Image.ios';
+// @ts-ignore
+import ImageAndroid from './Image.android';
+
+Image.getSize = ImageAndroid.getSize
+Image.prefetch = ImageAndroid.prefetch
+Image.abortPrefetch = ImageAndroid.abortPrefetch
+
 export default Image;
