@@ -24,5 +24,9 @@ function getBasePath(asset: Asset): string {
   if (basePath[0] === '/') {
     basePath = basePath.substr(1);
   }
+  // Assets can have relative paths outside of the project root.
+  // Replace `../` with `_` to make sure they don't end up outside of
+  // the expected assets directory.
+  basePath = basePath.replace(/\.\.\//g, '_');
   return basePath;
 }
