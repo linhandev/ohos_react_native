@@ -46,21 +46,21 @@ export class DisplayMetricsManager {
     this.mainWindow = mainWindow;
   }
 
-  public getFoldStatus():display.FoldStatus{
+  public getFoldStatus(): display.FoldStatus {
     return display.getFoldStatus()
   }
 
-  public getIsSplitScreenMode():boolean{
+  public getIsSplitScreenMode(): boolean {
     return AppStorage.get("isSplitScreenMode") ?? false
   }
 
-  public setFontSizeScale(fontSizeScale: number){
+  public setFontSizeScale(fontSizeScale: number) {
     this.displayMetrics.screenPhysicalPixels.fontScale = fontSizeScale;
     this.displayMetrics.windowPhysicalPixels.fontScale = fontSizeScale;
     this.updateDisplayMetrics()
   }
 
-  public getFontSizeScale():number{
+  public getFontSizeScale(): number {
     return this.displayMetrics.windowPhysicalPixels.fontScale
   }
 
@@ -82,16 +82,24 @@ export class DisplayMetricsManager {
       } catch (err) {
         displayInstance = display.getDefaultDisplaySync();
       }
-      let customDensity = displayInstance.densityPixels;
-      let customDensityDpi = displayInstance.densityDPI;
-      if (deviceInfo.sdkApiVersion >= OH_API_LEVEL_15) {
-        customDensity = this.mainWindow.getWindowDensityInfo().customDensity;
-        customDensityDpi = customDensity * (displayInstance.densityDPI /
-           displayInstance.densityPixels);
-      } else {
-        this.logger.warn(`Current device API version
-          (${deviceInfo.sdkApiVersion}) is too low to use getWindowDensityInfo
+      let customDensity: number;
+      let customDensityDpi: number;
+      try {
+        if (deviceInfo.sdkApiVersion >= OH_API_LEVEL_15) {
+          customDensity = this.mainWindow.getWindowDensityInfo().customDensity;
+          customDensityDpi = customDensity * (displayInstance.densityDPI /
+          displayInstance.densityPixels);
+        } else {
+          customDensity = displayInstance.densityPixels;
+          customDensityDpi = displayInstance.densityDPI;
+          this.logger.warn(`Current device API version
+            (${deviceInfo.sdkApiVersion}) is too low to use getWindowDensityInfo
            interface`);
+        }
+      } catch (err) {
+        customDensity = displayInstance.densityPixels;
+        customDensityDpi = displayInstance.densityDPI;
+        this.logger.error(`Failed to get customDensity: ${JSON.stringify(err)}`);
       }
       this.displayMetrics = {
         screenPhysicalPixels: {
@@ -109,8 +117,7 @@ export class DisplayMetricsManager {
           densityDpi: customDensityDpi,
         }
       };
-    }
-    catch (err) {
+    } catch (err) {
       this.logger.error('Failed to update display size ' + JSON.stringify(err));
     }
   }
