@@ -8,8 +8,19 @@
 const path = require('path');
 const fs = require('fs');
 const MD5 = require('crypto-js/md5');
-const basicModuleIds = require('./map/basicModuleIds.json');
-const businessModuleIds = require('./map/businessModuleIds.json');
+
+fs.mkdirSync(path.join(path.dirname(__filename), 'map'), { recursive: true });
+
+function getBundleIds(idFilePath) {
+  idFilePath = path.resolve(__dirname, idFilePath);
+  if (!fs.existsSync(idFilePath)) {
+    return [];
+  } else {
+    return require(idFilePath);
+  }
+}
+const basicModuleIds = getBundleIds('./map/basicModuleIds.json');
+const businessModuleIds = getBundleIds('./map/businessModuleIds.json');
 
 function getModuleId(projectRootPath, modulePath, bundleName) {
   const pathRelative = modulePath.substr(projectRootPath.length + 1);
