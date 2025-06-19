@@ -934,10 +934,15 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
        it++) {
     auto childComponentInstance =
         std::static_pointer_cast<ComponentInstance>(*it);
-    auto position = isHorizontal(m_props)
-        ? childComponentInstance->getLayoutMetrics().frame.origin.x
-        : childComponentInstance->getLayoutMetrics().frame.origin.y;
-    if (position >= currentScrollPosition) {
+    auto childLayoutMetrics = childComponentInstance->getLayoutMetrics();
+    auto position = isHorizontal(m_props) ? childLayoutMetrics.frame.origin.x
+                                          : childLayoutMetrics.frame.origin.y;
+
+    bool isViewVisible = isHorizontal(m_props)
+        ? position + childLayoutMetrics.frame.size.width > currentScrollPosition
+        : position + childLayoutMetrics.frame.size.height >
+            currentScrollPosition;
+    if (isViewVisible) {
       return std::optional<ScrollViewComponentInstance::ChildTagWithOffset>(
           {childComponentInstance->getTag(), position});
     }

@@ -39,6 +39,11 @@ export function ScrollViewTest() {
       </TestCase>
       <TestCase
         modal
+        itShould="pick partially visible element as scroll anchor when growing the content size">
+        <ScrollAnchorsTest />
+      </TestCase>
+      <TestCase
+        modal
         skip // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/498
         itShould="fill the remaining space of scroll view with yellow color but the element inside scroll view remains transparent">
         <ScrollViewEndFillColorTest />
@@ -150,6 +155,53 @@ const AppendingList = () => {
           }}
         />
       </View>
+    </View>
+  );
+};
+
+const ScrollAnchorsTest = () => {
+  const [height, setHeight] = useState(400);
+  const grow = () => {
+    setHeight(prev => prev + 50);
+  };
+
+  return (
+    <View
+      style={{
+        height: 500,
+      }}>
+      <Button onPress={grow} label="Grow" />
+      <Button
+        onPress={() => {
+          setHeight(400);
+        }}
+        label="Reset"
+      />
+      <ScrollView
+        style={{borderColor: 'black', borderWidth: 3}}
+        contentContainerStyle={{alignItems: 'center'}}
+        maintainVisibleContentPosition={{minIndexForVisible: 0}}>
+        <View
+          style={{
+            height: height,
+            width: '80%',
+            backgroundColor: 'green',
+            borderColor: 'black',
+            borderWidth: 3,
+          }}
+          key="green"
+        />
+        <View
+          style={{
+            height: height,
+            width: '80%',
+            backgroundColor: 'blue',
+            borderColor: 'black',
+            borderWidth: 3,
+          }}
+          key="blue"
+        />
+      </ScrollView>
     </View>
   );
 };
