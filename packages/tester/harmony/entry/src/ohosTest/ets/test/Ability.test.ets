@@ -1,8 +1,5 @@
 import { describe, it, expect } from '@ohos/hypium';
-import { abilityDelegatorRegistry, Driver,
-  MatchPattern,
-  ON } from '@kit.TestKit';
-
+import { abilityDelegatorRegistry, Driver, ON } from '@kit.TestKit';
 const delegator: abilityDelegatorRegistry.AbilityDelegator =
   abilityDelegatorRegistry.getAbilityDelegator()
 const bundleName = abilityDelegatorRegistry.getArguments().bundleName;
@@ -31,7 +28,8 @@ function getTest(test_suite_name: string) {
     let passTestsCount = 0;
     while (passTestsCount === 0) {
       passTestsCount =
-        parseInt(await (await driver.waitForComponent(ON.id("TESTERINO_PASS_VALUE"), 10000)).getText())
+        parseInt(await (await driver.waitForComponent(ON.id("TESTERINO_PASS_VALUE"),
+          10000)).getText())
       await sleep(500);
     }
 
@@ -65,8 +63,8 @@ function getTest(test_suite_name: string) {
     expect(brokenTestsCount).assertEqual(0)
     expect(passTestsCount > 0).assertEqual(true)
 
-    const back = await driver.waitForComponent(ON.text("Back", MatchPattern.CONTAINS), 0)
-    back.click()
+    let backButton = await driver.findComponent(ON.id("TOP_BACK_BUTTON"));
+    backButton.click();
 
     done();
   };
