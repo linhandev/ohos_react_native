@@ -72,9 +72,9 @@ function openTesterinoPage(pageName: string) {
 
 export default function abilityTest() {
   describe('tester', () => {
-    it('run concurrent tester with no broken or failed test',
+    it('runs concurrent tester with no broken or failed test',
       0, openTesterinoPage("CONCURRENT TESTER"));
-    it('run sequential tester with no broken or failed test',
+    it('runs sequential tester with no broken or failed test',
       0, openTesterinoPage("SEQUENTIAL TESTER [driver required]"))
   })
 }
