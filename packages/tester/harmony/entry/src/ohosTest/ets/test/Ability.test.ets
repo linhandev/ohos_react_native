@@ -9,7 +9,7 @@ function sleep(time: number) {
 }
 
 
-function getTest(test_suite_name: string) {
+function openTesterinoPage(pageName: string) {
   return async (done: Function) => {
     await delegator.startAbility({
       bundleName: bundleName,
@@ -21,7 +21,7 @@ function getTest(test_suite_name: string) {
 
     const driver = Driver.create();
     const button =
-      await driver.waitForComponent(ON.text(test_suite_name), 10000)
+      await driver.waitForComponent(ON.text(pageName), 10000)
     await button.click();
 
     // wait for at least 1 test pass
@@ -73,8 +73,8 @@ function getTest(test_suite_name: string) {
 export default function abilityTest() {
   describe('tester', () => {
     it('run concurrent tester with no broken or failed test',
-      0, getTest("CONCURRENT TESTER"));
+      0, openTesterinoPage("CONCURRENT TESTER"));
     it('run sequential tester with no broken or failed test',
-      0, getTest("SEQUENTIAL TESTER [driver required]"))
+      0, openTesterinoPage("SEQUENTIAL TESTER [driver required]"))
   })
 }
