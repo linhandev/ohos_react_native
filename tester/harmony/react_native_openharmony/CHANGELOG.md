@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.72.75
+- fix：the uncaught exception of the getWindowDensityInfo interface call,([019dcf28](https://gitcode.com/openharmony-sig/ohos_react_native/commit/019dcf286a821514cfc87ff94aaa27cd9e7da72a))
+- chore: update to version 6.0.0.303(0.72.74),([9bc03448](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9bc03448641a9ba9f0ed8a47a74edc78bca2cc18))
+
 ## 0.72.74
 - fix: TextInput caret move forward when value is set,([c823d2c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c823d2c5d996213f2d6394507b6b30e81cb7e08b))
 - fix: fix crash when using ArkUINode::setWidth,([6caf76b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6caf76b840022d86e9a63bfd348a774956b0585d))

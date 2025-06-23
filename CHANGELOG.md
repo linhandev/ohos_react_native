@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.1.1.600
+- fix：the uncaught exception of the getWindowDensityInfo interface call,([019dcf28](https://gitcode.com/openharmony-sig/ohos_react_native/commit/019dcf286a821514cfc87ff94aaa27cd9e7da72a))
+- fix: the issue where static resources placed outside the root directory are not bundled into the assets directory after packaging.,([01675fec](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01675fec180b178c49633ed6fc03427ae8687615))
+- [add TestCase] Add test cases for the accessible scrollView.,([51293959](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5129395932605cd6d51af821bb7ec6a8e016200c))
+- chore: update to version 6.0.0.303(0.72.74),([9bc03448](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9bc03448641a9ba9f0ed8a47a74edc78bca2cc18))
+- Co-authored-by: alvancf<742997447@qq.com>,([ea4becd3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ea4becd3700176aa246e426d0b7ae03d22250d9f))
+- docs: 版本升级指导文案优化,([78014e07](https://gitcode.com/openharmony-sig/ohos_react_native/commit/78014e07b424bb143160c4f267e48e89f167a303))
+- fix home_fluency readme,([cea43739](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cea4373919f3feb747498d4d5cf4aeb8f17228e5))
+- doc: Change name capitalization, third-party library Moment link 404 issue,([2904047e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2904047e96d710e5e3b03de8783b37ee29d31710))
+- [doc]: Fix a broken link.,([914af05b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/914af05be2d677169811668a444e0e1af7367240))
+- [doc]: Fixed several formatting errors in the documents.,([319f952f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/319f952fe3a3bb6ae0d7b958b9178bccb78b56a0))
+- [doc]: Add the step of obtaining the signature before executing run.,([cea7f6d7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cea7f6d732011d201434183be98ba72889e6797a))
+- doc: refine docs/en/README.md; chore: fix link checker,([2159b67f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2159b67f6bbd953ce1837d0bebe095dfebf3e704))
+
 ## 6.0.0.303
 - fix: TextInput caret move forward when value is set,([c823d2c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c823d2c5d996213f2d6394507b6b30e81cb7e08b))
 - fix: fix crash when using ArkUINode::setWidth,([6caf76b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6caf76b840022d86e9a63bfd348a774956b0585d))
