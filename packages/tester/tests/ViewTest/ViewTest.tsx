@@ -448,6 +448,56 @@ export function ViewTest() {
           itShould="Trigger onPointerLeave when the mouse pointer is moved away from the component."
         />
       </TestSuite>
+      <TestSuite name="transform">
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{translateX: 100}, {translateY: 10}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{scaleX: 0.5}, {scaleY: 0.8}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{rotateX: '45deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{rotateY: '45deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{rotateZ: '45deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{skewX: '45deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{skewY: '45deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+        <ToggleStyleTest
+          propName="transform"
+          propInitialValue={[]}
+          propNewValue={[{skewX: '30deg'}, {skewY: '30deg'}]}
+          style={{backgroundColor: 'yellow'}}
+        />
+      </TestSuite>
       <TestSuite name="pointerEvents">
         <TestCase.Automated
           tags={['sequential']}
@@ -1258,6 +1308,40 @@ function SetNativePropsTestProp({
         <Text>Press Me to change the {propName} value of the View</Text>
       </View>
     </TouchableWithoutFeedback>
+  );
+}
+
+function ToggleStyleTest({
+  propName,
+  propInitialValue,
+  propNewValue,
+  style,
+}: any) {
+  const [propValue, setPropValue] = useState(propInitialValue);
+  const viewRef = useRef<View>(null);
+  const onPress = () => {
+    setPropValue(
+      propValue === propInitialValue ? propNewValue : propInitialValue,
+    );
+  };
+  return (
+    <TestCase.Example
+      itShould={`set ${propName} to ${JSON.stringify(propValue)}`}>
+      <TouchableWithoutFeedback onPress={onPress}>
+        <View
+          ref={viewRef}
+          style={{
+            ...style,
+            width: '30%',
+            minHeight: 50,
+            [propName]: propValue,
+            alignSelf: 'center',
+            alignContent: 'center',
+          }}>
+          <Text>Click me</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    </TestCase.Example>
   );
 }
 
