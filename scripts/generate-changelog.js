@@ -2,7 +2,7 @@
 const { exec } = require('child_process');
 
 /** @const {string} */
-const REPO_URL = 'https://gl.swmansion.com/rnoh/react-native-harmony/-';
+const REPO_URL = 'https://gitcode.com/openharmony-sig/ohos_react_native/commit';
 
 /**
  * @typedef {("breaking"|"addition"|"fix"|"removal"|"other"|"change"|"depreciation")} ChangeType
@@ -40,7 +40,7 @@ async function main() {
  */
 function findLatestVersionTag() {
   return new Promise((resolve, reject) => {
-    exec("git tag --list 'v*' --sort=-v:refname", (error, stdout, stderr) => {
+    exec("git tag --list '6.*-0.77.*' --sort=-v:refname", (error, stdout, stderr) => {
       if (error) {
         console.error('Error fetching tags:', stderr);
         reject(stderr);
@@ -61,7 +61,7 @@ function findLatestVersionTag() {
  * @returns {Array<Change>}
  */
 function extractChangesFromLog(gitLogOutput) {
-  const commits = gitLogOutput.split(/See merge request .*\n/);
+  const commits = gitLogOutput.split(/See merge request.*!.*$/m);
   return commits.flatMap((commit) => extractChangesFromCommit(commit));
 }
 
@@ -85,7 +85,7 @@ function extractChangesFromCommit(commit) {
  * @returns {Array<Change>}
  */
 function extractChangesFromCommitBody(body, hash) {
-  const sectionIdentifier = '# Changelog';
+  const sectionIdentifier = '# Change';
   const changesIndex = body.indexOf(sectionIdentifier);
   if (changesIndex === -1) return [];
   const changesEndIndex = body.indexOf(
@@ -150,7 +150,7 @@ function printChanges(changes) {
       `- ${change.text} ([${change.commitHash.substring(
         0,
         10
-      )}](${REPO_URL}/commit/${change.commitHash}))`
+      )}](${REPO_URL}/${change.commitHash}))`
     );
   });
 }

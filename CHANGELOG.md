@@ -1,5 +1,13 @@
 # Changelog
 
+## Internal: v0.77.10
+
+- fixed RNInstance now respects enableDebugger while deciding whether to connect to host inspector ([f9a691f1f2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f9a691f1f25d57ab0117b7563760dc4f554310b9))
+- fixed folly setup failing when used with flash list in some scenario ([f038fcfe09](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f038fcfe094017b3666d977b0ffe83f7d85972dc))
+- changed behavior of `maintainVisibleContentPosition` to select the first partially visible view as the anchor ([c3a74025e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c3a74025e7dc1f3a53e1c4745bcdadeffb330821))
+- optimized skip native transform update when though pointscalefactor changed, there's no translation component in the transform ([b83bffcd12](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b83bffcd12779a8fd23434204a2fe74619781ab7))
+- fixed Switch the Image implementation back to iOS and supplement the already implemented features. ([2f2e96b8d2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f2e96b8d240f3eb08b3fecec4af8b3fbb2a53c3))
+
 ## Internal: v0.77.3
 - [breaking] modified RNOHMarkerListener interface to have RNOHMarkerId enum as an argument ([456d71fc1f](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/456d71fc1fdbb6f6a43d2c7ee9183bf9373bf4e3))
 - update and react-native to 0.77.1 ([dc13728a65](https://gl.swmansion.com/rnoh/react-native-harmony/-/commit/dc13728a651bdb777ec1c913730a0ded30ed7c52))
