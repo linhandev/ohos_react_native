@@ -31,10 +31,10 @@ export const RTNCalculator = NativeCalculator;
 
 > npm 不会打包空文件夹，需要通过在 v1 中实现 `.gitkeep` 的方式保留该目录。
 
-需要注意的是，文件必须满足以下两点要求，更详细的说明可以参考[React Native 中文网](https://reactnative.cn/docs/0.72/the-new-architecture/pillars-turbomodules#2-%E5%A3%B0%E6%98%8E-javascript-%E6%8E%A5%E5%8F%A3)：
+对文件的建议和要求如下：
 
-- 文件必须使用 `Native<MODULE_NAME>` 命名。Codegen 只会找到匹配这些命名规则的文件；
-- 代码中必须要输出 `TurboModuleRegistrySpec` 对象。
+- 建议文件命名为 `Native<MODULE_NAME>`；
+- 代码中必须输出 `TurboModuleRegistrySpec` 对象。
 
 ```javascript
 // NativeCalculator.ts
