@@ -76,14 +76,16 @@ TransformAnimatedNode::TransformAnimatedNode(
     std::string property = transformConfig["property"].getString();
     std::string type = transformConfig["type"].getString();
     if (type == "animated") {
-      m_transforms.push_back(AnimatedTransformConfig{
-          .property = std::move(property),
-          .nodeTag =
-              static_cast<NodeTag>(transformConfig["nodeTag"].getDouble())});
+      m_transforms.push_back(
+          AnimatedTransformConfig{
+              .property = std::move(property),
+              .nodeTag = static_cast<NodeTag>(
+                  transformConfig["nodeTag"].getDouble())});
     } else {
-      m_transforms.push_back(StaticTransformConfig{
-          .property = std::move(property),
-          .value = transformConfig["value"].getDouble()});
+      m_transforms.push_back(
+          StaticTransformConfig{
+              .property = std::move(property),
+              .value = transformConfig["value"].getDouble()});
     }
   }
 }
@@ -102,6 +104,12 @@ folly::dynamic TransformAnimatedNode::getTransform() const {
       auto& node = m_nodesManager.getValueNodeByTag(animatedConfig.nodeTag);
       value = node.getOutputAsDouble();
       property = animatedConfig.property;
+      float scaleRatioDpi;
+      if (property == "translateX" || property == "translateY") {
+        bool isAxisX = (property == "translateX");
+        scaleRatioDpi = m_nodesManager.getScaleRatioDpi(isAxisX);
+        node.recalculateMinAcceptableFrameRate(scaleRatioDpi);
+      }
     }
 
     transform = applyTransformOperation(transform, property, value);

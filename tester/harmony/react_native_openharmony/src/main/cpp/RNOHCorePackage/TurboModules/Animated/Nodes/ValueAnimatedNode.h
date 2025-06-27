@@ -17,6 +17,11 @@ namespace rnoh {
 class ValueAnimatedNode : public AnimatedNode {
  public:
   using AnimatedNodeValueListener = std::function<void(double)>;
+  using VirtualPixelsPerSecond = double;
+
+  static constexpr int32_t FRAME_RATE_30 = 30.0;
+  static constexpr int32_t FRAME_RATE_60 = 60.0;
+  static constexpr double SPEED_THRESHOLD = 10.0;
 
   ValueAnimatedNode() {}
 
@@ -49,6 +54,30 @@ class ValueAnimatedNode : public AnimatedNode {
 
   void setOffset(double offset) {
     m_offset = offset;
+  }
+
+  void setVelocity(VirtualPixelsPerSecond velocity) {
+    m_velocity = velocity;
+  }
+
+  int32_t getFrameRate() const {
+    return m_frameRate;
+  }
+
+  void recalculateMinAcceptableFrameRate(float scaleRatioDpi) {
+    /**
+     * Note:
+     * - `m_velocity`: Velocity in virtual pixels units per second (vp/s).
+     * - `25.4`: Converts inches to millimeters (1 inch = 25.4 mm).
+     * - `scaleRatioDpi`: `1px = (25.4 / Dpi) mm`, where `Dpi` is the display's
+     * dots per inch. `1vp = scale * px`, so `scaleRatioDpi` is `scale / Dpi`.
+     *
+     * This formula converts velocity from vp/s to mm/s, giving a real-world
+     * measurement of animation speed.
+     */
+    double animationSpeed = m_velocity * 25.4 * scaleRatioDpi;
+    m_frameRate =
+        animationSpeed <= SPEED_THRESHOLD ? FRAME_RATE_30 : FRAME_RATE_60;
   }
 
   void flattenOffset() {
@@ -96,6 +125,8 @@ class ValueAnimatedNode : public AnimatedNode {
 
  protected:
   folly::dynamic m_value;
+  VirtualPixelsPerSecond m_velocity = 0.0;
+  int32_t m_frameRate = 60;
   double m_offset = 0.0;
   std::optional<AnimatedNodeValueListener> m_valueListener;
 };

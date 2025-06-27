@@ -9,15 +9,13 @@
 
 #include <RNOH/ArkTSTurboModule.h>
 #include <folly/dynamic.h>
-#include <native_vsync/native_vsync.h>
+#include <native_display_soloist/native_display_soloist.h>
 #include <react/renderer/core/EventListener.h>
 #include <react/renderer/core/ReactPrimitives.h>
 #include <mutex>
 
 #include "AnimatedNodesManager.h"
 #include "RNOH/EventEmitRequestHandler.h"
-#include "RNOH/NativeVsyncHandle.h"
-#include "RNOH/VSyncListener.h"
 
 namespace rnoh {
 
@@ -103,7 +101,7 @@ class NativeAnimatedTurboModule
 
   void removeListeners(double count);
 
-  void runUpdates();
+  void runUpdates(long long frameTimeNanos);
 
   void setNativeProps(facebook::react::Tag tag, folly::dynamic const& props);
   void setNativeProps(PropUpdatesList const& propUpdatesList);
@@ -126,13 +124,23 @@ class NativeAnimatedTurboModule
     return std::unique_lock(m_nodesManagerLock);
   }
 
+  void setDisplaySoloistFrameRate(int32_t frameRate);
+
+  void stopDisplaySoloist();
+
+  void startDisplaySoloist();
+
+  bool isDisplaySoloistRegistered() const;
+
   // `shared_from_this` cannot be used in constructor,
   // so we defer the initialization of the event listener
   // until the first animated event is registered.
   void initializeEventListener();
 
-  std::shared_ptr<VSyncListener> m_vsyncListener =
-      std::make_shared<VSyncListener>();
+  int32_t m_currentFrameRate = 0;
+  std::unique_ptr<OH_DisplaySoloist, decltype(&OH_DisplaySoloist_Destroy)>
+      m_nativeDisplaySoloist;
+  std::atomic<bool> m_isDisplaySoloistRegistered{false};
   AnimatedNodesManager m_animatedNodesManager;
   std::mutex m_nodesManagerLock;
   bool m_initializedEventListener = false;

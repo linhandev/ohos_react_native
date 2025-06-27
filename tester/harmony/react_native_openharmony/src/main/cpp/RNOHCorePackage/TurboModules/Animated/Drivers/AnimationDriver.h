@@ -31,7 +31,7 @@ class AnimationDriver {
     }
   };
 
-  virtual void runAnimationStep(uint64_t frameTimeNanos) = 0;
+  virtual void runAnimationStep(long long frameTimeNanos) = 0;
   virtual void resetConfig(folly::dynamic const& config);
 
   facebook::react::Tag getId() const;

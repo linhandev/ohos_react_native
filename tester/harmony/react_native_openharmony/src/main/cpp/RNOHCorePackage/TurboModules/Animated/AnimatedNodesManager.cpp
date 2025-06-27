@@ -10,6 +10,7 @@
 #include <glog/logging.h>
 #include <functional>
 #include <queue>
+#include <thread>
 
 #include "Nodes/AssociativeOperationNode.h"
 #include "Nodes/DiffClampAnimatedNode.h"
@@ -25,21 +26,25 @@
 #include "Drivers/EventAnimationDriver.h"
 #include "Drivers/FrameBasedAnimationDriver.h"
 #include "Drivers/SpringAnimationDriver.h"
+#include "RNOH/ArkTSBridge.h"
 
 using namespace facebook;
 
 namespace rnoh {
 
 AnimatedNodesManager::AnimatedNodesManager(
-    std::function<void()>&& scheduleUpdateFn)
-    : m_scheduleUpdateFn(std::move(scheduleUpdateFn)) {}
+    const std::function<void(int)>& scheduleUpdateFn,
+    const std::function<void()>& scheduleStopFn,
+    const std::function<void()>& scheduleStartFn)
+    : m_scheduleUpdateFn(scheduleUpdateFn),
+      m_scheduleStopFn(scheduleStopFn),
+      m_scheduleStartFn(scheduleStartFn) {}
 
 void AnimatedNodesManager::createNode(
     facebook::react::Tag tag,
     folly::dynamic const& config) {
   auto type = config["type"].asString();
   std::unique_ptr<AnimatedNode> node;
-
   if (type == "props") {
     node = std::make_unique<PropsAnimatedNode>(config, *this);
   } else if (type == "style") {
@@ -126,23 +131,27 @@ void AnimatedNodesManager::addAnimatedEventToView(
   for (auto& key : dynamicNativeEventPath) {
     nativeEventPath.push_back(key.asString());
   }
-  m_eventDrivers.push_back(std::make_unique<EventAnimationDriver>(
-      eventName, viewTag, std::move(nativeEventPath), nodeTag, *this));
+  m_eventDrivers.push_back(
+      std::make_unique<EventAnimationDriver>(
+          eventName, viewTag, std::move(nativeEventPath), nodeTag, *this));
 }
 
 void AnimatedNodesManager::removeAnimatedEventFromView(
     facebook::react::Tag viewTag,
     std::string const& eventName,
     facebook::react::Tag animatedValueTag) {
-    if(!m_eventDrivers.empty()){
-         m_eventDrivers.erase(std::remove_if(
-      m_eventDrivers.begin(), m_eventDrivers.end(), [&](auto& driver) {
-        return driver->getViewTag() == viewTag &&
-            driver->getEventName() == eventName &&
-            driver->getNodeTag() == animatedValueTag;}), 
-            m_eventDrivers.end());
-    }
- 
+  if (!m_eventDrivers.empty()) {
+    m_eventDrivers.erase(
+        std::remove_if(
+            m_eventDrivers.begin(),
+            m_eventDrivers.end(),
+            [&](auto& driver) {
+              return driver->getViewTag() == viewTag &&
+                  driver->getEventName() == eventName &&
+                  driver->getNodeTag() == animatedValueTag;
+            }),
+        m_eventDrivers.end());
+  }
 }
 
 void AnimatedNodesManager::startListeningToAnimatedNodeValue(
@@ -192,6 +201,11 @@ void AnimatedNodesManager::setOffset(facebook::react::Tag tag, double offset) {
   m_nodeTagsToUpdate.insert(tag);
   node.setOffset(offset);
   maybeStartAnimations();
+}
+
+float AnimatedNodesManager::getScaleRatioDpi(bool isAxisX) const {
+  return isAxisX ? ArkTSBridge::getInstance()->getScaleRatioDpiX()
+                 : ArkTSBridge::getInstance()->getScaleRatioDpiY();
 }
 
 void AnimatedNodesManager::flattenOffset(facebook::react::Tag tag) {
@@ -250,33 +264,36 @@ void AnimatedNodesManager::stopAnimation(facebook::react::Tag animationId) {
   }
 }
 
-PropUpdatesList AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
+PropUpdatesList AnimatedNodesManager::runUpdates(long long frameTimeNanos) {
   // we don't want to enter this while updating nodes (which can happen if a
   // tracking node starts a new animation)
   m_isRunningAnimations = true;
   std::vector<facebook::react::Tag> finishedAnimations;
-
+  std::vector<facebook::react::Tag> valueNodeTags;
   for (auto& [animationId, driver] : m_animationById) {
     driver->runAnimationStep(frameTimeNanos);
-    m_nodeTagsToUpdate.insert(driver->getAnimatedValueTag());
+    auto nodeTag = driver->getAnimatedValueTag();
+    valueNodeTags.push_back(nodeTag);
+    m_nodeTagsToUpdate.insert(nodeTag);
     if (driver->hasFinished()) {
       finishedAnimations.push_back(animationId);
     }
   }
 
   auto propUpdatesList = updateNodes();
+  auto finalFrameRate = getMinAcceptableFrameRate(valueNodeTags);
 
   for (auto animationId : finishedAnimations) {
     m_animationById.at(animationId)->endCallback_(true);
     m_animationById.at(animationId)->endCallback_ = nullptr;
     m_animationById.erase(animationId);
   }
-
   if (m_animationById.empty()) {
+    m_scheduleStopFn();
     m_isRunningAnimations = false;
   } else {
     m_isRunningAnimations = true;
-    m_scheduleUpdateFn();
+    m_scheduleUpdateFn(finalFrameRate);
   }
   return propUpdatesList;
 }
@@ -372,7 +389,6 @@ PropUpdatesList AnimatedNodesManager::updateNodes() {
       continue;
     }
   }
-
   if (activeNodesCount != updatedNodesCount) {
     // if not all active nodes were updated, it means there's a cycle in the
     // graph
@@ -399,16 +415,29 @@ void AnimatedNodesManager::stopAnimationsForNode(facebook::react::Tag tag) {
 
 void AnimatedNodesManager::maybeStartAnimations() {
   if (!m_isRunningAnimations) {
-    m_scheduleUpdateFn();
+    m_scheduleStartFn();
   }
+}
+
+int32_t AnimatedNodesManager::getMinAcceptableFrameRate(
+    const std::vector<facebook::react::Tag>& valueNodeTags) {
+  int32_t finalFrameRate = 30;
+  for (const auto& tag : valueNodeTags) {
+    auto& node = getValueNodeByTag(tag);
+    int32_t currentFrameRate = node.getFrameRate();
+    finalFrameRate = std::max(finalFrameRate, currentFrameRate);
+  }
+  return finalFrameRate;
 }
 
 AnimatedNode& AnimatedNodesManager::getNodeByTag(facebook::react::Tag tag) {
   try {
     return *m_nodeByTag.at(tag);
   } catch (std::out_of_range& e) {
-    std::throw_with_nested(std::out_of_range(
-        "Animated node with tag " + std::to_string(tag) + " does not exist"));
+    std::throw_with_nested(
+        std::out_of_range(
+            "Animated node with tag " + std::to_string(tag) +
+            " does not exist"));
   }
 }
 
@@ -419,9 +448,10 @@ ValueAnimatedNode& AnimatedNodesManager::getValueNodeByTag(
   try {
     return dynamic_cast<ValueAnimatedNode&>(node);
   } catch (std::bad_cast& e) {
-    std::throw_with_nested(std::out_of_range(
-        "Animated node with tag " + std::to_string(tag) +
-        " is not a value node"));
+    std::throw_with_nested(
+        std::out_of_range(
+            "Animated node with tag " + std::to_string(tag) +
+            " is not a value node"));
   }
 }
 

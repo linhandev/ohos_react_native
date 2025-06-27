@@ -28,7 +28,10 @@ class EventAnimationDriver;
 
 class AnimatedNodesManager {
  public:
-  AnimatedNodesManager(std::function<void()>&& scheduleUpdateFn);
+  AnimatedNodesManager(
+      const std::function<void(int)>& scheduleUpdateFn,
+      const std::function<void()>& scheduleStopFn,
+      const std::function<void()>& scheduleStartFn);
 
   void createNode(facebook::react::Tag tag, folly::dynamic const& config);
   void dropNode(facebook::react::Tag tag);
@@ -65,6 +68,7 @@ class AnimatedNodesManager {
   void setOffset(facebook::react::Tag tag, double offset);
   void flattenOffset(facebook::react::Tag tag);
   void extractOffset(facebook::react::Tag tag);
+  float getScaleRatioDpi(bool isAxisX) const;
 
   folly::dynamic getNodeOutput(facebook::react::Tag tag);
 
@@ -75,7 +79,7 @@ class AnimatedNodesManager {
       std::function<void(bool)>&& endCallback);
   void stopAnimation(facebook::react::Tag animationId);
 
-  PropUpdatesList runUpdates(uint64_t frameTimeNanos);
+  PropUpdatesList runUpdates(long long frameTimeNanos);
 
   void setNeedsUpdate(facebook::react::Tag nodeTag);
 
@@ -91,8 +95,12 @@ class AnimatedNodesManager {
   PropUpdatesList updateNodes();
   void stopAnimationsForNode(facebook::react::Tag tag);
   void maybeStartAnimations();
+  int32_t getMinAcceptableFrameRate(
+      const std::vector<facebook::react::Tag>& valueNodeTags);
 
-  std::function<void()> m_scheduleUpdateFn;
+  const std::function<void(int32_t)> m_scheduleUpdateFn;
+  const std::function<void()> m_scheduleStopFn;
+  const std::function<void()> m_scheduleStartFn;
   std::unordered_map<facebook::react::Tag, std::unique_ptr<AnimatedNode>>
       m_nodeByTag;
   std::unordered_map<facebook::react::Tag, std::unique_ptr<AnimationDriver>>

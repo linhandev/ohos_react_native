@@ -57,6 +57,8 @@ export type PhysicalPixels = {
   scale: number,
   fontScale: number,
   densityDpi: number,
+  xDpi: number,
+  yDpi: number
 }
 
 export type InspectorPageId = number

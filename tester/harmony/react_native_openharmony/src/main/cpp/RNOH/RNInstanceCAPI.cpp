@@ -29,9 +29,6 @@
 #include "RNOH/TurboModuleFactory.h"
 #include "RNOH/TurboModuleProvider.h"
 #include "RNOHCorePackage/TurboModules/DeviceInfoTurboModule.h"
-#include "RNOH/SchedulerDelegate.h"
-#include "RNOH/RNInstance.h"
-#include "RNOH/Performance/HarmonyReactMarker.h"
 #include "TaskExecutor/TaskExecutor.h"
 
 using namespace facebook;
@@ -49,15 +46,14 @@ rnoh::RNInstanceCAPI::~RNInstanceCAPI() {
   taskExecutor->runSyncTask(
       TaskThread::MAIN,
       [mountingManager = std::move(m_mountingManager),
-        componentInstanceRegistry = std::move(m_componentInstanceRegistry),
-        componentInstanceFactory = std::move(m_componentInstanceFactory),
+       componentInstanceRegistry = std::move(m_componentInstanceRegistry),
+       componentInstanceFactory = std::move(m_componentInstanceFactory),
        // NOTE: `ArkUISurface` is not copyable, but `std::function` is, so
        // we need to move the map into a shared_ptr first in order to capture it
        surfaces = std::make_shared<decltype(m_surfaceById)>(
            std::move(m_surfaceById))] {});
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
-
 
 TaskExecutor::Shared RNInstanceCAPI::getTaskExecutor() {
   return taskExecutor;
@@ -78,18 +74,22 @@ void RNInstanceCAPI::start() {
           binder->createBindings(rt, turboModuleProvider);
         }
       });
-    auto textMeasurer =
-          m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
-              "textLayoutManagerDelegate");
-    RNOH_ASSERT(textMeasurer != nullptr);
-    auto displayMetrics = ArkTSBridge::getInstance()->getDisplayMetrics().windowPhysicalPixels;
+  auto textMeasurer =
+      m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
+          "textLayoutManagerDelegate");
+  RNOH_ASSERT(textMeasurer != nullptr);
+  auto displayMetrics =
+      ArkTSBridge::getInstance()->getDisplayMetrics().windowPhysicalPixels;
 
-    float fontScale = displayMetrics.fontScale;
-    float scale = displayMetrics.scale;
-    m_densityDpi = displayMetrics.densityDpi;
+  float fontScale = displayMetrics.fontScale;
+  float scale = displayMetrics.scale;
 
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
-    textMeasurer->setTextMeasureParams(fontScale, scale, m_densityDpi, halfLeading);
+  m_densityDpi = displayMetrics.densityDpi;
+
+  auto halfLeading =
+      ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
+  textMeasurer->setTextMeasureParams(
+      fontScale, scale, m_densityDpi, halfLeading);
 }
 
 void RNInstanceCAPI::setJavaScriptExecutorFactory(
@@ -107,14 +107,14 @@ void RNInstanceCAPI::initialize() {
   m_jsQueue = std::make_shared<MessageQueueThread>(this->taskExecutor);
   auto moduleRegistry =
       std::make_shared<react::ModuleRegistry>(std::move(modules));
-      HarmonyReactMarker::logMarker(
+  HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_START);
   this->instance->initializeBridge(
       std::move(instanceCallback),
       std::move(m_jsExecutorFactory),
       m_jsQueue,
       std::move(moduleRegistry));
-      HarmonyReactMarker::logMarker(
+  HarmonyReactMarker::logMarker(
       HarmonyReactMarker::HarmonyReactMarkerId::REACT_BRIDGE_LOADING_END);
 }
 
@@ -306,10 +306,12 @@ void RNInstanceCAPI::onAnimationStarted() {
   this->unsubscribeUITickListener =
       m_uiTicker->subscribe([this](auto recentVSyncTimestamp) {
         this->taskExecutor->runTask(
-            TaskThread::MAIN, [weakSelf = weak_from_this(), recentVSyncTimestamp]() {
-                if (auto instance = std::dynamic_pointer_cast<RNInstanceCAPI>(weakSelf.lock())) {
-                    instance->onUITick(recentVSyncTimestamp);
-                }
+            TaskThread::MAIN,
+            [weakSelf = weak_from_this(), recentVSyncTimestamp]() {
+              if (auto instance = std::dynamic_pointer_cast<RNInstanceCAPI>(
+                      weakSelf.lock())) {
+                instance->onUITick(recentVSyncTimestamp);
+              }
             });
       });
 }
@@ -324,8 +326,7 @@ void RNInstanceCAPI::onAllAnimationsComplete() {
   this->unsubscribeUITickListener = nullptr;
 }
 
-void RNInstanceCAPI::onUITick(
-    UITicker::Timestamp /*recentVSyncTimestamp*/) {
+void RNInstanceCAPI::onUITick(UITicker::Timestamp /*recentVSyncTimestamp*/) {
   facebook::react::SystraceSection s("#RNOH::RNInstanceCAPI::onUITick");
   if (this->scheduler != nullptr) {
     this->scheduler->animationTick();
@@ -362,7 +363,7 @@ TurboModule::Shared RNInstanceCAPI::getTurboModule(const std::string& name) {
       return rnohTurboModule;
     } else {
       LOG(ERROR) << "TurboModule '" << name
-                  << "' should extend rnoh::TurboModule";
+                 << "' should extend rnoh::TurboModule";
       return nullptr;
     }
   }
@@ -528,13 +529,13 @@ std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
   return componentInstance->getLocalRootArkUINode().getId();
 }
 
-void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
+void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload) {
   if (payload.isNull()) {
     return;
   }
   folly::dynamic windowPhysicalPixels = payload["windowPhysicalPixels"];
   if (windowPhysicalPixels.isNull() ||
-    !windowPhysicalPixels["densityDpi"].isDouble()) {
+      !windowPhysicalPixels["densityDpi"].isDouble()) {
     return;
   }
   float densityDpi = windowPhysicalPixels["densityDpi"].asDouble();
@@ -543,15 +544,27 @@ void RNInstanceCAPI::onConfigurationChange(folly::dynamic const& payload){
   }
   m_densityDpi = densityDpi;
   if (windowPhysicalPixels["scale"].isDouble() &&
-    windowPhysicalPixels["fontScale"].isDouble()) {
+      windowPhysicalPixels["fontScale"].isDouble()) {
     float scale = windowPhysicalPixels["scale"].asDouble();
     float fontScale = windowPhysicalPixels["fontScale"].asDouble();
-    auto halfLeading = ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
-    auto textMeasurer = m_contextContainer->
-       at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate");
+    auto halfLeading =
+        ArkTSBridge::getInstance()->getMetadata("half_leading") == "true";
+    auto textMeasurer =
+        m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>(
+            "textLayoutManagerDelegate");
     if (textMeasurer) {
-        textMeasurer->setTextMeasureParams(fontScale, scale, densityDpi, halfLeading);
+      textMeasurer->setTextMeasureParams(
+          fontScale, scale, densityDpi, halfLeading);
     }
+    float xDpi = windowPhysicalPixels["xDpi"].asDouble();
+    float yDpi = windowPhysicalPixels["yDpi"].asDouble();
+    if (xDpi == 0.0f || yDpi == 0.0f) {
+      return;
+    }
+    float scaleRatioDpiX = scale / xDpi;
+    float scaleRatioDpiY = scale / yDpi;
+    ArkTSBridge::getInstance()->setScaleRatioDpi(
+        scaleRatioDpiX, scaleRatioDpiY);
   }
 }
 
@@ -559,7 +572,7 @@ void RNInstanceCAPI::handleArkTSMessage(
     const std::string& name,
     folly::dynamic const& payload) {
   facebook::react::SystraceSection s("RNInstanceCAPI::handleArkTSMessage");
-  if( name == "CONFIGURATION_UPDATE"){
+  if (name == "CONFIGURATION_UPDATE") {
     onConfigurationChange(payload);
   }
   for (auto& arkTSMessageHandler : m_arkTSMessageHandlers) {
@@ -570,12 +583,16 @@ void RNInstanceCAPI::handleArkTSMessage(
   }
 }
 
-void RNInstanceCAPI::addArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
+void RNInstanceCAPI::addArkTSMessageHandler(
+    ArkTSMessageHandler::Shared handler) {
   m_arkTSMessageHandlers.push_back(handler);
 }
 
-void RNInstanceCAPI::removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler) {
-  for (auto it = m_arkTSMessageHandlers.begin(); it != m_arkTSMessageHandlers.end();it++) {
+void RNInstanceCAPI::removeArkTSMessageHandler(
+    ArkTSMessageHandler::Shared handler) {
+  for (auto it = m_arkTSMessageHandlers.begin();
+       it != m_arkTSMessageHandlers.end();
+       it++) {
     if (*it == handler) {
       m_arkTSMessageHandlers.erase(it);
     }
@@ -591,7 +608,9 @@ void RNInstanceCAPI::postMessageToArkTS(
 void RNInstanceCAPI::registerFont(
     std::string const& fontFamily,
     std::string const& fontFilePath) {
-  m_contextContainer->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate")
-    ->registerFont(m_nativeResourceManager, fontFamily, fontFilePath);
+  m_contextContainer
+      ->at<std::shared_ptr<rnoh::TextMeasurer>>("textLayoutManagerDelegate")
+      ->registerFont(m_nativeResourceManager, fontFamily, fontFilePath);
 }
+
 } // namespace rnoh

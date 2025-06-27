@@ -35,7 +35,7 @@ void DecayAnimationDriver::resetConfig(folly::dynamic const& config) {
   m_lastValue = 0;
 }
 
-void DecayAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
+void DecayAnimationDriver::runAnimationStep(long long frameTimeNanos) {
   int64_t frameTimeMillis = frameTimeNanos / 1e6;
   try {
     auto& animatedValue = m_nodesManager.getValueNodeByTag(m_animatedNodeTag);
@@ -56,12 +56,12 @@ void DecayAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
       m_hasStarted = true;
     }
 
+    auto timeFromStartMillis = frameTimeMillis - m_startTimeMillis;
     double value = m_fromValue +
         (m_velocity / (1 - m_deceleration)) *
-            (1 -
-             std::exp(
-                 -(1 - m_deceleration) *
-                 (frameTimeMillis - m_startTimeMillis)));
+            (1 - std::exp(-(1 - m_deceleration) * timeFromStartMillis));
+    double velocity = m_velocity *
+        std::exp(-(1 - m_deceleration) * timeFromStartMillis) * 1e3;
 
     if (std::abs(m_lastValue - value) < 0.1) {
       if (m_iterations == -1 || m_currentLoop < m_iterations) {
@@ -76,6 +76,7 @@ void DecayAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
 
     m_lastValue = value;
     animatedValue.setValue(value);
+    animatedValue.setVelocity(std::abs(velocity));
   } catch (std::out_of_range& _e) {
     // if a node is not found we skip over it and proceed with the
     // animation to maintain consistency with other platforms

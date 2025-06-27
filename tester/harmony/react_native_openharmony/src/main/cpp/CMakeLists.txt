@@ -509,6 +509,7 @@ target_link_libraries(rnoh PUBLIC
     librawfile.z.so
     libnative_vsync.so
     libnative_drawing.so
+    libnative_display_soloist.so
     uv
     Boost::context
     reactnative

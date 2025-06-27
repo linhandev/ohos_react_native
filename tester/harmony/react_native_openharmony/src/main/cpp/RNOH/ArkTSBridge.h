@@ -17,6 +17,8 @@ struct PhysicalPixels {
   float scale;
   float fontScale;
   float densityDpi;
+  float xDpi;
+  float yDpi;
 
   static PhysicalPixels fromNapiValue(napi_env env, napi_value value);
 };
@@ -47,14 +49,22 @@ class ArkTSBridge final {
 
   void handleError(std::exception_ptr ex);
   DisplayMetrics getDisplayMetrics();
+  float getScaleRatioDpiX() const;
+  float getScaleRatioDpiY() const;
+  void setScaleRatioDpi(float scaleRatioDpiX, float scaleRatioDpiY);
   uint32_t getFoldStatus();
   bool getIsSplitScreenMode();
-  float getFontSizeScale();  
+  float getFontSizeScale();
   std::string getMetadata(std::string const& name);
   float getSDKApiVersion();
 
  protected:
   ArkJS m_arkJs;
   napi_ref m_arkTSBridgeRef;
+
+ private:
+  mutable std::mutex m_mutex;
+  float m_scaleRatioDpiX = 1.0f;
+  float m_scaleRatioDpiY = 1.0f;
 };
 } // namespace rnoh

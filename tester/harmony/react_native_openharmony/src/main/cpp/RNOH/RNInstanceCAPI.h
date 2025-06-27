@@ -98,10 +98,9 @@ class RNInstanceCAPI : public RNInstanceInternal,
         m_arkTSChannel(std::move(arkTSChannel)),
         m_arkTSMessageHandlers(std::move(arkTSMessageHandlers)),
         m_componentInstancePreallocationRequestQueue(
-            std::move(componentInstancePreallocationRequestQueue)) {
-        }
+            std::move(componentInstancePreallocationRequestQueue)) {}
 
- ~RNInstanceCAPI() noexcept override;
+  ~RNInstanceCAPI() noexcept override;
 
   TaskExecutor::Shared getTaskExecutor() override;
 
@@ -194,17 +193,20 @@ class RNInstanceCAPI : public RNInstanceInternal,
   void postMessageToArkTS(
       const std::string& name,
       folly::dynamic const& payload) override;
-    void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
-    void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
-  int getId() override { return m_id; }
-    std::optional<Surface::Weak> getSurfaceByRootTag(
-        facebook::react::Tag rootTag) override;
+  void addArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  int getId() override {
+    return m_id;
+  }
+  std::optional<Surface::Weak> getSurfaceByRootTag(
+      facebook::react::Tag rootTag) override;
   void registerFont(
       std::string const& fontFamily,
       std::string const& fontFilePath) override;
   void setJavaScriptExecutorFactory(
-      std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory) override;
-    
+      std::shared_ptr<facebook::react::JSExecutorFactory> jsExecutorFactory)
+      override;
+
  protected:
   std::map<
       facebook::react::Tag,
@@ -237,7 +239,8 @@ class RNInstanceCAPI : public RNInstanceInternal,
   std::vector<ArkTSMessageHandler::Shared> m_arkTSMessageHandlers;
   ArkTSChannel::Shared m_arkTSChannel;
   ArkTSMessageHub::Shared m_arkTSMessageHub;
-  std::shared_ptr<facebook::react::JSExecutorFactory> m_jsExecutorFactory = nullptr;
+  std::shared_ptr<facebook::react::JSExecutorFactory> m_jsExecutorFactory =
+      nullptr;
 
   void initialize();
   void initializeScheduler(

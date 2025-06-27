@@ -24,11 +24,12 @@ class FrameBasedAnimationDriver : public AnimationDriver {
 
   void resetConfig(folly::dynamic const& config) override;
 
-  void runAnimationStep(uint64_t frameTimeNanos) override;
+  void runAnimationStep(long long frameTimeNanos) override;
 
  private:
-  int64_t m_startTimeNanos;
+  long long m_startTimeNanos;
   std::vector<double> m_frames;
+  std::vector<double> m_speeds;
   double m_toValue;
   double m_fromValue;
   int64_t m_iterations;

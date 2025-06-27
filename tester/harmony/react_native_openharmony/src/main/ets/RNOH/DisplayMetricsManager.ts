@@ -20,13 +20,17 @@ const defaultDisplayMetrics: DisplayMetrics = {
     scale: 1,
     fontScale: 1,
     densityDpi: 480,
+    xDpi: 440,
+    yDpi: 440
   },
   screenPhysicalPixels: {
     width: 0,
     height: 0,
     scale: 1,
     fontScale: 1,
-    densityDpi: 480
+    densityDpi: 480,
+    xDpi: 440,
+    yDpi: 440
   },
 } as const;
 
@@ -108,6 +112,8 @@ export class DisplayMetricsManager {
           scale: displayInstance.densityPixels,
           fontScale: this.displayMetrics.screenPhysicalPixels.fontScale,
           densityDpi: displayInstance.densityDPI,
+          xDpi: displayInstance.xDPI,
+          yDpi: displayInstance.yDPI
         },
         windowPhysicalPixels: {
           width: this.displayMetrics.windowPhysicalPixels.width,
@@ -115,6 +121,8 @@ export class DisplayMetricsManager {
           scale: customDensity,
           fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
           densityDpi: customDensityDpi,
+          xDpi: displayInstance.xDPI,
+          yDpi: displayInstance.yDPI
         }
       };
     } catch (err) {
