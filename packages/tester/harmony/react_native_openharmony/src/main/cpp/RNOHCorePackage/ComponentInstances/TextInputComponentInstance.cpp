@@ -108,6 +108,21 @@ void TextInputComponentInstance::onPasteOrCut(ArkUINode* node) {
   m_textWasPastedOrCut = true;
 }
 
+void TextInputComponentInstance::onWillDelete(
+    ArkUINode* node,
+    int position,
+    int direction) {
+  // onTextSelectionChange doesn't get triggered when backspace is pressed and
+  // the TextInput is empty, so we cover that case here.
+  if (m_eventEmitter && position == 0 && direction == 0) {
+    auto keyPressMetrics =
+        facebook::react::TextInputEventEmitter::KeyPressMetrics();
+    keyPressMetrics.text = "";
+    keyPressMetrics.eventCount = m_nativeEventCount;
+    m_eventEmitter->onKeyPress(keyPressMetrics);
+  }
+}
+
 void TextInputComponentInstance::onTextSelectionChange(
     ArkUINode* node,
     int32_t location,

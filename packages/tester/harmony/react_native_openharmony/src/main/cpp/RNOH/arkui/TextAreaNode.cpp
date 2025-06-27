@@ -19,6 +19,7 @@ static constexpr std::array TEXT_AREA_NODE_EVENT_TYPES = {
     NODE_TEXT_AREA_ON_TEXT_SELECTION_CHANGE,
     NODE_TEXT_AREA_ON_CONTENT_SCROLL,
     NODE_TEXT_AREA_ON_CONTENT_SIZE_CHANGE,
+    NODE_TEXT_AREA_ON_WILL_DELETE,
     NODE_EVENT_ON_APPEAR,
     NODE_EVENT_ON_DISAPPEAR};
 
@@ -177,6 +178,39 @@ void TextAreaNode::onNodeEvent(
     }
   }
   // NODE_TEXT_AREA_ON_CUT missing
+}
+
+void TextAreaNode::onNodeEvent(
+    ArkUI_NodeEventType eventType,
+    ArkUI_NodeEvent* event) {
+  if (eventType == ArkUI_NodeEventType::NODE_TEXT_AREA_ON_WILL_DELETE) {
+    ArkUI_NumberValue arkUiValues[2];
+    maybeThrow(OH_ArkUI_NodeEvent_GetNumberValue(event, 0, arkUiValues));
+    maybeThrow(OH_ArkUI_NodeEvent_GetNumberValue(event, 1, arkUiValues));
+
+    ArkUI_NumberValue returnValue[] = {
+        ArkUI_NumberValue{1},
+    };
+    // OH_ArkUI_NodeEvent_SetReturnNumberValue copies the value, so passing this
+    // as a pointer to a variable on the stack should be safe.  (check the
+    // arkui_ace_engine repository).
+    // We need to set this or else the TextArea won't delete the character.
+    maybeThrow(OH_ArkUI_NodeEvent_SetReturnNumberValue(event, returnValue, 1));
+
+    // Contrary to its documentation, and no matter the actual type of data
+    // OH_ArkUI_NodeEvent_GetNumberValue copies the numbers at indexes lower or
+    // equal than 1 to .f32. Because both float and i32 is 4 byte we can still
+    // read arkUiValues[1] as i32. arkUIValues[1] is originally set (when the
+    // event is created) as int32_t, so we get the correct value here.
+    // In c++ using unions for type punning like this is undefined behaviour,
+    // but OH_ArkUI_NodeEvent_GetNumberValue is already doing it, so we either
+    // can use OH_ArkUI_NodeEvent_GetNumberValue according to the docs and just
+    // read the i32, or read the f32 and convert it to i32 using memcpy, but
+    // that would break the contract set up by the documentation of
+    // OH_ArkUI_NodeEvent_GetNumberValue.
+    m_textAreaNodeDelegate->onWillDelete(
+        this, static_cast<int>(round(arkUiValues[0].f32)), arkUiValues[1].i32);
+  }
 }
 
 void TextAreaNode::setTextAreaNodeDelegate(

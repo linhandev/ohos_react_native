@@ -689,6 +689,57 @@ export function TextInputTest() {
           expect(state.secondTextInputKey).to.be.eq('Backspace');
         }}
       />
+      <TestCase.Automated
+        itShould="trigger onKeyPress event after pressing backspace when the text input is empty"
+        tags={['sequential']}
+        initialState={{
+          firstTextInputKey: '',
+          secondTextInputKey: '',
+          firstTextInputRef: createRef<TextInput>(),
+          secondTextInputRef: createRef<TextInput>(),
+        }}
+        arrange={({state, setState}) => (
+          <>
+            <TextInputWithText
+              style={styles.textInput}
+              autoFocus
+              defaultValue=""
+              ref={state.firstTextInputRef}
+              onKeyPress={event => {
+                const firstTextInputKey = event.nativeEvent.key;
+                setState(prev => ({
+                  ...prev,
+                  firstTextInputKey,
+                }));
+              }}
+            />
+            <TextInputWithText
+              style={styles.textInputBigger}
+              multiline
+              defaultValue=""
+              ref={state.secondTextInputRef}
+              onKeyPress={event => {
+                const secondTextInputKey = event.nativeEvent.key;
+                setState(prev => ({
+                  ...prev,
+                  secondTextInputKey,
+                }));
+              }}
+            />
+          </>
+        )}
+        act={async ({done, state}) => {
+          state.firstTextInputRef.current?.focus();
+          await driver?.keyEvent().key('Backspace').send();
+          state.secondTextInputRef.current?.focus();
+          await driver?.keyEvent().key('Backspace').send();
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.firstTextInputKey).to.be.eq('Backspace');
+          expect(state.secondTextInputKey).to.be.eq('Backspace');
+        }}
+      />
       <TestCase.Manual
         modal
         itShould="trigger onKeyPress for a non-ASCII input (press 'a' to pass)"

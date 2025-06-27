@@ -149,7 +149,7 @@ static void receiveEvent(ArkUI_NodeEvent* event) {
       target->onNodeEvent(eventType, std::string_view(eventString->pStr));
       return;
     }
-
+    target->onNodeEvent(eventType, event);
   } catch (std::exception& e) {
     LOG(ERROR) << e.what();
   }
@@ -835,6 +835,10 @@ void ArkUINode::onNodeEvent(
 void ArkUINode::onNodeEvent(
     ArkUI_NodeEventType eventType,
     std::string_view eventString) {}
+
+void ArkUINode::onNodeEvent(
+    ArkUI_NodeEventType eventType,
+    ArkUI_NodeEvent* event) {}
 
 ArkUINode& ArkUINode::setFocusStatus(int32_t focus) {
   std::array<ArkUI_NumberValue, 1> value = {{{.i32 = focus}}};

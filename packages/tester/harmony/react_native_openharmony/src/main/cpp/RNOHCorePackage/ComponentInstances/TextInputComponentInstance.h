@@ -108,6 +108,8 @@ class TextInputComponentInstance
 
   void onContentScroll(ArkUINode* node) override;
 
+  void onWillDelete(ArkUINode* node, int position, int direction) override;
+
   ArkUINode& getLocalRootArkUINode() override;
 
   void onMessageReceived(ArkTSMessage const& message) override;
