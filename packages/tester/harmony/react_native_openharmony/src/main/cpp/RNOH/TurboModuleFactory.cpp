@@ -22,13 +22,15 @@ TurboModuleFactory::TurboModuleFactory(
     FeatureFlagRegistry::Shared featureFlagRegistry,
     TaskExecutor::Shared taskExecutor,
     std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> delegates,
-    std::shared_ptr<ArkTSMessageHub> arkTSMessageHub)
+    std::shared_ptr<ArkTSMessageHub> arkTSMessageHub,
+    DisplayMetricsManager::Shared displayMetricsManager)
     : m_arkTSTurboModuleEnvironmentByTaskThread(
           std::move(arkTSTurboModuleEnvironmentByTaskThread)),
       m_featureFlagRegistry(std::move(featureFlagRegistry)),
       m_taskExecutor(taskExecutor),
       m_delegates(delegates),
-      m_arkTSMessageHub(arkTSMessageHub) {}
+      m_arkTSMessageHub(arkTSMessageHub),
+      m_displayMetricsManager(displayMetricsManager) {}
 
 rnoh::TurboModuleFactory::~TurboModuleFactory() noexcept {
   for (auto&& [thread, turboModuleEnv] :
@@ -66,7 +68,8 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       .taskExecutor = m_taskExecutor,
       .eventDispatcher = eventDispatcher,
       .jsQueue = jsQueue,
-      .scheduler = scheduler};
+      .scheduler = scheduler,
+      .displayMetricsManager = m_displayMetricsManager};
 
   RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_START);
   auto result = this->delegateCreatingTurboModule(ctx, name);
@@ -82,9 +85,8 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
       }
       RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
       throw FatalRNOHError(
-          std::string("Couldn't find Turbo Module '")
-              .append(name)
-              .append("' on the ArkTS side."),
+          std::string("Couldn't find Turbo Module on the ArkTs side, name: '")
+              .append(name),
           suggestions);
     }
     RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
@@ -101,9 +103,8 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
         "Have you linked a package that provides this turbo module on the CPP side?"};
     RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::CREATE_MODULE_END);
     throw FatalRNOHError(
-        std::string("Couldn't find Turbo Module '")
-            .append(name)
-            .append("' on the CPP side."),
+        std::string("Couldn't find Turbo Module on the ArkTs side, name: '")
+            .append(name),
         suggestions);
   }
 

@@ -13,6 +13,7 @@
 #include "TaskExecutor/TaskExecutor.h"
 
 #include "ArkJS.h"
+#include "RNOH/DisplayMetricsManager.h"
 #include "RNOH/EventDispatcher.h"
 #include "RNOH/MessageQueueThread.h"
 #include "RNOH/TaskExecutor/TaskExecutor.h"
@@ -101,6 +102,7 @@ class ArkTSTurboModule : public TurboModule {
     std::shared_ptr<EventDispatcher> eventDispatcher;
     std::shared_ptr<MessageQueueThread> jsQueue;
     std::shared_ptr<facebook::react::Scheduler> scheduler;
+    DisplayMetricsManager::Shared displayMetricsManager;
   };
 
   ArkTSTurboModule(Context ctx, std::string name);

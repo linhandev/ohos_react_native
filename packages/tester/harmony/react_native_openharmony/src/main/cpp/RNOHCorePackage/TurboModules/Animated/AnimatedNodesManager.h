@@ -16,6 +16,7 @@
 #include "Drivers/AnimationDriver.h"
 #include "Drivers/EventAnimationDriver.h"
 #include "Nodes/AnimatedNode.h"
+#include "RNOH/DisplayMetricsManager.h"
 
 namespace rnoh {
 using PropUpdate = std::pair<facebook::react::Tag, folly::dynamic>;
@@ -30,7 +31,11 @@ class AnimatedNodesManager {
  public:
   using EndCallback = AnimationDriver::AnimationEndCallback;
 
-  AnimatedNodesManager(std::function<void()>&& scheduleUpdateFn);
+  AnimatedNodesManager(
+      const std::function<void(int)>& scheduleUpdateFn,
+      const std::function<void()>& scheduleStartFn,
+      const std::function<void()>& scheduleStopFn,
+      DisplayMetricsManager::Shared displayMetricsManager);
 
   void createNode(facebook::react::Tag tag, folly::dynamic const& config);
   void dropNode(facebook::react::Tag tag);
@@ -67,6 +72,7 @@ class AnimatedNodesManager {
   void setOffset(facebook::react::Tag tag, double offset);
   void flattenOffset(facebook::react::Tag tag);
   void extractOffset(facebook::react::Tag tag);
+  float getScaleRatioDpi(bool isAxisX) const;
 
   folly::dynamic getNodeOutput(facebook::react::Tag tag);
 
@@ -77,7 +83,7 @@ class AnimatedNodesManager {
       EndCallback&& endCallback);
   void stopAnimation(facebook::react::Tag animationId);
 
-  PropUpdatesList runUpdates(uint64_t frameTimeNanos);
+  PropUpdatesList runUpdates(long long frameTimeNanos);
 
   void setNeedsUpdate(facebook::react::Tag nodeTag);
 
@@ -93,8 +99,12 @@ class AnimatedNodesManager {
   PropUpdatesList updateNodes();
   void stopAnimationsForNode(facebook::react::Tag tag);
   void maybeStartAnimations();
+  int32_t getMinAcceptableFrameRate(
+      const std::vector<facebook::react::Tag>& valueNodeTags);
 
-  std::function<void()> m_scheduleUpdateFn;
+  const std::function<void(int32_t)> m_scheduleUpdateFn;
+  const std::function<void()> m_scheduleStartFn;
+  const std::function<void()> m_scheduleStopFn;
   std::unordered_map<facebook::react::Tag, std::unique_ptr<AnimatedNode>>
       m_nodeByTag;
   std::unordered_map<facebook::react::Tag, std::unique_ptr<AnimationDriver>>
@@ -102,6 +112,7 @@ class AnimatedNodesManager {
   std::vector<std::unique_ptr<EventAnimationDriver>> m_eventDrivers;
   std::unordered_set<facebook::react::Tag> m_nodeTagsToUpdate;
   bool m_isRunningAnimations = false;
+  DisplayMetricsManager::Shared m_displayMetricsManager;
 };
 
 } // namespace rnoh

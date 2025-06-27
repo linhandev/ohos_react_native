@@ -24,7 +24,7 @@ class DecayAnimationDriver : public AnimationDriver {
 
   void resetConfig(folly::dynamic const& config) override;
 
-  void runAnimationStep(uint64_t frameTimeNanos) override;
+  void runAnimationStep(long long frameTimeNanos) override;
 
  private:
   int64_t m_startTimeMillis;

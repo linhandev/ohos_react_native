@@ -46,7 +46,7 @@ void SpringAnimationDriver::resetConfig(folly::dynamic const& config) {
   m_hasFinished = m_iterations == 0;
 }
 
-void SpringAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
+void SpringAnimationDriver::runAnimationStep(long long frameTimeNanos) {
   int64_t frameTimeMillis = frameTimeNanos / 1e6;
   try {
     auto& animatedValue = m_nodesManager.getValueNodeByTag(m_animatedNodeTag);
@@ -63,6 +63,7 @@ void SpringAnimationDriver::runAnimationStep(uint64_t frameTimeNanos) {
     advance((frameTimeMillis - m_lastTime) / 1000.0);
     m_lastTime = frameTimeMillis;
     animatedValue.setValue(m_position);
+    animatedValue.setVelocity(std::abs(m_velocity));
     if (isAtRest()) {
       if (m_iterations == -1 || m_currentLoop < m_iterations) {
         // reset animation for the next loop

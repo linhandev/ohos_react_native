@@ -18,6 +18,7 @@ target_link_libraries(
          librawfile.z.so
          libnative_vsync.so
          libnative_drawing.so
+         libnative_display_soloist.so
          libqos.so
          Boost::context
          Boost::stacktrace_addr2line

@@ -6,11 +6,12 @@
  */
 
 #include "NativeAnimatedTurboModule.h"
+#include "RNOH/ArkTSBridge.h"
 
 #include <jsi/jsi/JSIDynamic.h>
-#include <chrono>
 #include "AnimatedNodesManager.h"
 #include "RNOH/RNInstance.h"
+#include "RNOH/RNInstanceCAPI.h"
 
 using namespace facebook;
 
@@ -270,6 +271,63 @@ jsi::Value removeAnimatedEventFromView(
   return facebook::jsi::Value::undefined();
 }
 
+bool NativeAnimatedTurboModule::isDisplaySoloistRegistered() const {
+  return m_isDisplaySoloistRegistered.load();
+}
+
+void NativeAnimatedTurboModule::setDisplaySoloistFrameRate(int32_t frameRate) {
+  if (frameRate != m_currentFrameRate) {
+    DisplaySoloist_ExpectedRateRange range = {0, 120, frameRate};
+    int setStatus = OH_DisplaySoloist_SetExpectedFrameRateRange(
+        m_nativeDisplaySoloist.get(), &range);
+    if (setStatus != 0) {
+      LOG(ERROR)
+          << "[DisplaySoloist] Failed to set expected frame rate range. Error code: "
+          << setStatus;
+      return;
+    }
+    m_currentFrameRate = frameRate;
+  }
+}
+
+void NativeAnimatedTurboModule::stopDisplaySoloist() {
+  if (isDisplaySoloistRegistered()) {
+    int stopStatus = OH_DisplaySoloist_Stop(m_nativeDisplaySoloist.get());
+    if (stopStatus != 0) {
+      LOG(ERROR)
+          << "[DisplaySoloist] Failed to stop DisplaySoloist. Error code: "
+          << stopStatus;
+      return;
+    }
+    m_isDisplaySoloistRegistered.store(false);
+  }
+}
+
+void NativeAnimatedTurboModule::startDisplaySoloist() {
+  if (isDisplaySoloistRegistered()) {
+    return;
+  }
+  int startStatus = OH_DisplaySoloist_Start(
+      m_nativeDisplaySoloist.get(),
+      [](long long timestamp, long long targetTimestamp, void* data) {
+        auto* nativeAnimatedTM = static_cast<NativeAnimatedTurboModule*>(data);
+        if (!nativeAnimatedTM) {
+          LOG(ERROR)
+              << "[DisplaySoloist] Start: Failed to get NativeAnimatedTurboModule.";
+          return;
+        }
+        nativeAnimatedTM->runUpdates(timestamp);
+      },
+      this);
+  if (startStatus != 0) {
+    LOG(ERROR)
+        << "[DisplaySoloist] Failed to start DisplaySoloist. Error code: "
+        << startStatus;
+    return;
+  }
+  m_isDisplaySoloistRegistered.store(true);
+}
+
 jsi::Value queueAndExecuteBatchedOperations(
     facebook::jsi::Runtime& rt,
     react::TurboModule& turboModule,
@@ -410,14 +468,18 @@ jsi::Value queueAndExecuteBatchedOperations(
 NativeAnimatedTurboModule::NativeAnimatedTurboModule(
     const ArkTSTurboModule::Context ctx,
     const std::string name)
-    : rnoh::ArkTSTurboModule(ctx, name), m_animatedNodesManager([this] {
-        m_vsyncListener->requestFrame(
-            [weakSelf = weak_from_this()](long long _timestamp) {
-              if (auto self = weakSelf.lock()) {
-                self->runUpdates();
-              }
-            });
-      }) {
+    : rnoh::ArkTSTurboModule(ctx, name),
+      m_nativeDisplaySoloist(
+          OH_DisplaySoloist_Create(false),
+          &OH_DisplaySoloist_Destroy),
+      m_isDisplaySoloistRegistered(false),
+      m_animatedNodesManager(
+          [this](int frameRate) {
+            this->setDisplaySoloistFrameRate(frameRate);
+          },
+          [this]() { this->startDisplaySoloist(); },
+          [this]() { this->stopDisplaySoloist(); },
+          m_ctx.displayMetricsManager) {
   methodMap_ = {
       {"startOperationBatch", {0, rnoh::startOperationBatch}},
       {"finishOperationBatch", {0, rnoh::finishOperationBatch}},
@@ -448,6 +510,7 @@ NativeAnimatedTurboModule::NativeAnimatedTurboModule(
 }
 
 NativeAnimatedTurboModule::~NativeAnimatedTurboModule() {
+  stopDisplaySoloist();
   if (m_initializedEventListener) {
     m_ctx.eventDispatcher->unregisterExpiredListeners();
   }
@@ -596,41 +659,28 @@ void NativeAnimatedTurboModule::addListener(const std::string& eventName) {}
 
 void NativeAnimatedTurboModule::removeListeners(double count) {}
 
-void NativeAnimatedTurboModule::runUpdates() {
+void NativeAnimatedTurboModule::runUpdates(long long frameTimeNanos) {
   ArkJS arkJS(m_ctx.env);
   auto lock = this->acquireLock();
   try {
-    auto now = std::chrono::high_resolution_clock::now();
-    auto frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(
-        now.time_since_epoch());
-    auto tagsToUpdate =
-        this->m_animatedNodesManager.runUpdates(frameTime.count());
+    auto tagsToUpdate = this->m_animatedNodesManager.runUpdates(frameTimeNanos);
 
     if (m_ctx.taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
       this->setNativeProps(tagsToUpdate);
-    } else {
-      m_ctx.taskExecutor->runTask(
-          TaskThread::MAIN,
-          [weakSelf = weak_from_this(),
-           tagsToUpdate = std::move(tagsToUpdate)] {
-            auto self = weakSelf.lock();
-            if (!self) {
-              return;
-            }
-            self->setNativeProps(tagsToUpdate);
-          });
+      return;
     }
+
+    m_ctx.taskExecutor->runTask(
+        TaskThread::MAIN,
+        [weakSelf = weak_from_this(), tagsToUpdate = std::move(tagsToUpdate)] {
+          auto self = weakSelf.lock();
+          if (!self) {
+            return;
+          }
+          self->setNativeProps(tagsToUpdate);
+        });
   } catch (std::exception& e) {
     LOG(ERROR) << "Error in animation update: " << e.what();
-
-    m_vsyncListener->requestFrame(
-        [weakSelf = weak_from_this()](long long _timestamp) {
-          if (auto self = weakSelf.lock()) {
-            facebook::react::SystraceSection s(
-                "NativeAnimatedTurboModule::runUpdates");
-            self->runUpdates();
-          }
-        });
   }
 }
 

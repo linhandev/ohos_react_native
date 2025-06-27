@@ -24,7 +24,7 @@ class SpringAnimationDriver : public AnimationDriver {
 
   void resetConfig(folly::dynamic const& config) override;
 
-  void runAnimationStep(uint64_t frameTimeNanos) override;
+  void runAnimationStep(long long frameTimeNanos) override;
 
  private:
   static constexpr double MAX_DELTA_TIME_SEC = 0.064;

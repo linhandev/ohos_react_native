@@ -54,6 +54,8 @@ export type PhysicalPixels = {
   scale: number,
   fontScale: number,
   densityDpi: number,
+  xDpi: number,
+  yDpi: number
 }
 
 // interfaces defined in "jsinspector-modern/WebSocketInterfaces.h"

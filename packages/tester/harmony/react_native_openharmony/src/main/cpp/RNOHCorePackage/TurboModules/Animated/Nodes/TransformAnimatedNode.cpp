@@ -102,6 +102,11 @@ folly::dynamic TransformAnimatedNode::getTransform() const {
       auto& node = m_nodesManager.getValueNodeByTag(animatedConfig.nodeTag);
       value = node.getOutputAsDouble();
       property = animatedConfig.property;
+      if (property == "translateX" || property == "translateY") {
+        bool isAxisX = (property == "translateX");
+        float scaleRatioDpi = m_nodesManager.getScaleRatioDpi(isAxisX);
+        node.recalculateMinAcceptableFrameRate(scaleRatioDpi);
+      }
     }
 
     transform = applyTransformOperation(transform, property, value);

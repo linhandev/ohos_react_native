@@ -42,7 +42,8 @@ class TurboModuleFactory final {
       FeatureFlagRegistry::Shared featureFlagRegistry,
       TaskExecutor::Shared,
       std::vector<std::shared_ptr<TurboModuleFactoryDelegate>>,
-      std::shared_ptr<ArkTSMessageHub> arkTSMessageHub);
+      std::shared_ptr<ArkTSMessageHub> arkTSMessageHub,
+      DisplayMetricsManager::Shared displayMetricsManager);
 
   ~TurboModuleFactory() noexcept;
 
@@ -86,6 +87,7 @@ class TurboModuleFactory final {
   std::vector<std::shared_ptr<TurboModuleFactoryDelegate>> m_delegates;
   std::shared_ptr<ArkTSMessageHub> m_arkTSMessageHub;
   FeatureFlagRegistry::Shared m_featureFlagRegistry;
+  DisplayMetricsManager::Shared m_displayMetricsManager;
 };
 
 } // namespace rnoh

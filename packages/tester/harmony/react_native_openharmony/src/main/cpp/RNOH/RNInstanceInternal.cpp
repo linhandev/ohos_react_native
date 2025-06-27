@@ -412,6 +412,18 @@ void RNInstanceInternal::onMemoryLevel(size_t memoryLevel) {
   }
 }
 
+PhysicalPixels parsePhysicalPixels(const folly::dynamic& payload) {
+  PhysicalPixels physicalPixels{};
+  physicalPixels.width = payload["width"].asDouble();
+  physicalPixels.height = payload["height"].asDouble();
+  physicalPixels.scale = payload["scale"].asDouble();
+  physicalPixels.fontScale = payload["fontScale"].asDouble();
+  physicalPixels.densityDpi = payload["densityDpi"].asDouble();
+  physicalPixels.xDpi = payload["xDpi"].asDouble();
+  physicalPixels.yDpi = payload["yDpi"].asDouble();
+  return physicalPixels;
+}
+
 /**
  * @brief It is called when the screen size changes, and it is mainly used to
  * handle fonts.
@@ -421,10 +433,12 @@ void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
   if (payload.isNull()) {
     return;
   }
-  auto screenPhysicalPixels = payload["screenPhysicalPixels"];
-  if (screenPhysicalPixels.isNull()) {
+
+  if (!payload.count("windowPhysicalPixels") ||
+      !payload.count("screenPhysicalPixels")) {
     return;
   }
+  auto screenPhysicalPixels = payload["screenPhysicalPixels"];
   auto scale = screenPhysicalPixels["scale"];
   auto fontScale = screenPhysicalPixels["fontScale"];
   if (!scale.isDouble() || !fontScale.isDouble()) {
@@ -437,6 +451,13 @@ void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
     return;
   }
   textMeasurer->setTextMeasureParams(fontScale.asDouble(), scale.asDouble());
+
+  auto windowPhysicalPixels =
+      parsePhysicalPixels(payload["windowPhysicalPixels"]);
+  auto scaleRatioDpiX = windowPhysicalPixels.scale / windowPhysicalPixels.xDpi;
+  auto scaleRatioDpiY = windowPhysicalPixels.scale / windowPhysicalPixels.yDpi;
+
+  m_arkTSBridge->setScaleRatioDpi(scaleRatioDpiX, scaleRatioDpiY);
 }
 
 void RNInstanceInternal::addArkTSMessageHandler(

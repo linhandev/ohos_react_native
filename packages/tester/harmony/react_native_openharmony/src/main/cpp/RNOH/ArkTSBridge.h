@@ -45,6 +45,12 @@ class ArkTSBridge final : public DisplayMetricsManager,
 
   DisplayMetrics getDisplayMetrics() override;
 
+  float getScaleRatioDpiX() const override;
+
+  float getScaleRatioDpiY() const override;
+
+  void setScaleRatioDpi(float scaleRatioDpiX, float scaleRatioDpiY);
+
   std::string getMetadata(std::string const& name);
 
  protected:

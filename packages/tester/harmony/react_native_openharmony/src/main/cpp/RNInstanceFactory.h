@@ -188,7 +188,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       featureFlagRegistry,
       taskExecutor,
       std::move(turboModuleFactoryDelegates),
-      arkTSMessageHub);
+      arkTSMessageHub,
+      arkTSBridge);
   auto mutationsToNapiConverter = std::make_shared<MutationsToNapiConverter>(
       std::move(componentNapiBinderByName));
   auto mountingManager = std::make_shared<MountingManagerArkTS>(

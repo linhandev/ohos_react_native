@@ -30,8 +30,14 @@ using namespace facebook;
 namespace rnoh {
 
 AnimatedNodesManager::AnimatedNodesManager(
-    std::function<void()>&& scheduleUpdateFn)
-    : m_scheduleUpdateFn(std::move(scheduleUpdateFn)) {}
+    const std::function<void(int)>& scheduleUpdateFn,
+    const std::function<void()>& scheduleStartFn,
+    const std::function<void()>& scheduleStopFn,
+    DisplayMetricsManager::Shared displayMetricsManager)
+    : m_scheduleUpdateFn(scheduleUpdateFn),
+      m_scheduleStartFn(scheduleStartFn),
+      m_scheduleStopFn(scheduleStopFn),
+      m_displayMetricsManager(displayMetricsManager) {}
 
 void AnimatedNodesManager::createNode(
     facebook::react::Tag tag,
@@ -194,6 +200,11 @@ void AnimatedNodesManager::setOffset(facebook::react::Tag tag, double offset) {
   maybeStartAnimations();
 }
 
+float AnimatedNodesManager::getScaleRatioDpi(bool isAxisX) const {
+  return isAxisX ? m_displayMetricsManager->getScaleRatioDpiX()
+                 : m_displayMetricsManager->getScaleRatioDpiY();
+}
+
 void AnimatedNodesManager::flattenOffset(facebook::react::Tag tag) {
   auto& node = getValueNodeByTag(tag);
   node.flattenOffset();
@@ -250,21 +261,25 @@ void AnimatedNodesManager::stopAnimation(facebook::react::Tag animationId) {
   }
 }
 
-PropUpdatesList AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
+PropUpdatesList AnimatedNodesManager::runUpdates(long long frameTimeNanos) {
   // we don't want to enter this while updating nodes (which can happen if a
   // tracking node starts a new animation)
   m_isRunningAnimations = true;
   std::vector<facebook::react::Tag> finishedAnimations;
 
+  std::vector<facebook::react::Tag> valueNodeTags;
   for (auto& [animationId, driver] : m_animationById) {
     driver->runAnimationStep(frameTimeNanos);
-    m_nodeTagsToUpdate.insert(driver->getAnimatedValueTag());
+    auto nodeTag = driver->getAnimatedValueTag();
+    valueNodeTags.push_back(nodeTag);
+    m_nodeTagsToUpdate.insert(nodeTag);
     if (driver->hasFinished()) {
       finishedAnimations.push_back(animationId);
     }
   }
 
   auto propUpdatesList = updateNodes();
+  auto finalFrameRate = getMinAcceptableFrameRate(valueNodeTags);
 
   for (auto animationId : finishedAnimations) {
     auto const& animation = m_animationById.at(animationId);
@@ -275,10 +290,11 @@ PropUpdatesList AnimatedNodesManager::runUpdates(uint64_t frameTimeNanos) {
   }
 
   if (m_animationById.empty()) {
+    m_scheduleStopFn();
     m_isRunningAnimations = false;
   } else {
     m_isRunningAnimations = true;
-    m_scheduleUpdateFn();
+    m_scheduleUpdateFn(finalFrameRate);
   }
   return propUpdatesList;
 }
@@ -401,8 +417,19 @@ void AnimatedNodesManager::stopAnimationsForNode(facebook::react::Tag tag) {
 
 void AnimatedNodesManager::maybeStartAnimations() {
   if (!m_isRunningAnimations) {
-    m_scheduleUpdateFn();
+    m_scheduleStartFn();
   }
+}
+
+int32_t AnimatedNodesManager::getMinAcceptableFrameRate(
+    const std::vector<facebook::react::Tag>& valueNodeTags) {
+  int32_t finalFrameRate = 30;
+  for (const auto& tag : valueNodeTags) {
+    auto& node = getValueNodeByTag(tag);
+    int32_t currentFrameRate = node.getFrameRate();
+    finalFrameRate = std::max(finalFrameRate, currentFrameRate);
+  }
+  return finalFrameRate;
 }
 
 AnimatedNode& AnimatedNodesManager::getNodeByTag(facebook::react::Tag tag) {

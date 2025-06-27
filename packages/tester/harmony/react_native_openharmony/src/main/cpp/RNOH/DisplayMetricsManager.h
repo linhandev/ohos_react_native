@@ -7,6 +7,7 @@
 
 #pragma once
 #include <memory>
+#include <mutex>
 
 namespace rnoh {
 struct PhysicalPixels {
@@ -15,6 +16,8 @@ struct PhysicalPixels {
   float scale;
   float fontScale;
   float densityDpi;
+  float xDpi;
+  float yDpi;
 };
 
 struct DisplayMetrics {
@@ -27,5 +30,14 @@ class DisplayMetricsManager {
   using Shared = std::shared_ptr<DisplayMetricsManager>;
 
   virtual DisplayMetrics getDisplayMetrics() = 0;
+
+  virtual float getScaleRatioDpiX() const = 0;
+
+  virtual float getScaleRatioDpiY() const = 0;
+
+ protected:
+  mutable std::mutex m_mutex;
+  float m_scaleRatioDpiX = 1.0f;
+  float m_scaleRatioDpiY = 1.0f;
 };
 } // namespace rnoh

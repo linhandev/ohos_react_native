@@ -31,6 +31,10 @@ auto physicalPixelsFromNapiValue(napi_env env, napi_value value)
           arkJS.getDouble(arkJS.getObjectProperty(value, "fontScale"))),
       static_cast<float>(
           arkJS.getDouble(arkJS.getObjectProperty(value, "densityDpi"))),
+      static_cast<float>(
+          arkJS.getDouble(arkJS.getObjectProperty(value, "xDpi"))),
+      static_cast<float>(
+          arkJS.getDouble(arkJS.getObjectProperty(value, "yDpi"))),
   };
 }
 
@@ -94,7 +98,30 @@ auto ArkTSBridge::getDisplayMetrics() -> DisplayMetrics {
   auto methodImpl =
       m_arkJS.getObjectProperty(napiBridgeObject, "getDisplayMetrics");
   auto napiResult = m_arkJS.call<0>(methodImpl, {});
-  return displayMetricsFromNapiValue(m_arkJS.getEnv(), napiResult);
+  DisplayMetrics displayMetrics =
+      displayMetricsFromNapiValue(m_arkJS.getEnv(), napiResult);
+  auto scaleRatioDpiX = displayMetrics.windowPhysicalPixels.scale /
+      displayMetrics.windowPhysicalPixels.xDpi;
+  auto scaleRatioDpiY = displayMetrics.windowPhysicalPixels.scale /
+      displayMetrics.windowPhysicalPixels.xDpi;
+  setScaleRatioDpi(scaleRatioDpiX, scaleRatioDpiY);
+  return displayMetrics;
+}
+
+auto ArkTSBridge::getScaleRatioDpiX() const -> float {
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_scaleRatioDpiX;
+}
+
+auto ArkTSBridge::getScaleRatioDpiY() const -> float {
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_scaleRatioDpiY;
+}
+
+void ArkTSBridge::setScaleRatioDpi(float scaleRatioDpiX, float scaleRatioDpiY) {
+  std::lock_guard<std::mutex> lock(m_mutex);
+  m_scaleRatioDpiX = scaleRatioDpiX;
+  m_scaleRatioDpiY = scaleRatioDpiY;
 }
 
 auto ArkTSBridge::getMetadata(std::string const& name) -> std::string {
