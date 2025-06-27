@@ -70,6 +70,9 @@ export class ArkTSComponentCodeGeneratorCAPI
           });
         });
         shape.commands.forEach((command) => {
+          componentJSIBinderHTemplate.addCommand({
+            name: command.name,
+          });
           componentUtilsTSTemplate.addCommand({
             name: command.name,
             argsTSType:
