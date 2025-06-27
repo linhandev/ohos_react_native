@@ -120,7 +120,7 @@ bool TouchEventDispatcher::canIgnoreMoveEvent(
   if (m_previousEvent.touches.empty()) {
     return false;
   }
-  for (auto touch : currentEvent.changedTouches) {
+  for (const auto& touch : currentEvent.changedTouches) {
     auto previousTouch = m_previousEvent.touches.find(touch);
     if (previousTouch != m_previousEvent.touches.end()) {
       auto dx = previousTouch->pagePoint.x - touch.pagePoint.x;
@@ -149,7 +149,7 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
   facebook::react::Touches changedTouches;
   facebook::react::Touches cancelTouches;
 
-  for (auto activeTouch : touchEvent.activeTouchPoints) {
+  for (const auto& activeTouch : touchEvent.activeTouchPoints) {
     if (touchEvent.action == UI_TOUCH_EVENT_ACTION_DOWN) {
       auto [touchTarget, touchPoint] = findTargetForTouchPoint(
           Point{
@@ -238,7 +238,7 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
   if (touchEvent.action == UI_TOUCH_EVENT_ACTION_MOVE) {
     touches = changedTouches;
   } else {
-    auto touch = *(changedTouches.begin());
+    const auto& touch = *(changedTouches.begin());
     if (touchEvent.action == UI_TOUCH_EVENT_ACTION_UP) {
       touches.erase(touch);
     } else {
@@ -388,7 +388,7 @@ void TouchEventDispatcher::sendEvent(
 }
 
 void TouchEventDispatcher::cancelActiveTouches() {
-  for (auto touch : m_previousEvent.changedTouches) {
+  for (const auto& touch : m_previousEvent.changedTouches) {
     if (m_touchTargetByTouchId.find(touch.identifier) ==
         m_touchTargetByTouchId.end()) {
       continue;

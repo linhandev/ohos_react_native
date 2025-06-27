@@ -20,29 +20,25 @@ void MountingManagerArkTS::doMount(MutationList const& mutations) {
   for (auto& mutation : mutations) {
     switch (mutation.type) {
       case react::ShadowViewMutation::Create: {
-        auto newChild = mutation.newChildShadowView;
+        const auto& newChild = mutation.newChildShadowView;
 
         shadowViewRegistry->setShadowView(newChild.tag, newChild);
         break;
       }
       case react::ShadowViewMutation::Delete: {
-        auto oldChild = mutation.oldChildShadowView;
+        const auto& oldChild = mutation.oldChildShadowView;
 
         shadowViewRegistry->clearShadowView(oldChild.tag);
         break;
       }
       case react::ShadowViewMutation::Insert: {
-        auto newChild = mutation.newChildShadowView;
-        auto parent = mutation.parentShadowView;
         break;
       }
       case react::ShadowViewMutation::Remove: {
-        auto oldChild = mutation.oldChildShadowView;
-        auto parent = mutation.parentShadowView;
         break;
       }
       case react::ShadowViewMutation::Update: {
-        auto newChild = mutation.newChildShadowView;
+        const auto& newChild = mutation.newChildShadowView;
 
         shadowViewRegistry->setShadowView(newChild.tag, newChild);
         break;

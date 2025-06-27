@@ -26,7 +26,7 @@ AttributedStringBox TextInputShadowNode::attributedStringBoxToMeasure(
       getState() && getState()->getRevision() != State::initialRevisionValue;
 
   if (hasMeaningfulState) {
-    auto attributedStringBox = getStateData().attributedStringBox;
+    const auto& attributedStringBox = getStateData().attributedStringBox;
     if (attributedStringBox.getMode() ==
             AttributedStringBox::Mode::OpaquePointer ||
         !attributedStringBox.getValue().isEmpty()) {
@@ -39,7 +39,7 @@ AttributedStringBox TextInputShadowNode::attributedStringBoxToMeasure(
       : getAttributedString(layoutContext);
 
   if (attributedString.isEmpty()) {
-    auto placeholder = getConcreteProps().placeholder;
+    const auto& placeholder = getConcreteProps().placeholder;
     // Note: `zero-width space` is insufficient in some cases (e.g. when we need
     // to measure the "hight" of the font).
     // TODO T67606511: We will redefine the measurement of empty strings as part

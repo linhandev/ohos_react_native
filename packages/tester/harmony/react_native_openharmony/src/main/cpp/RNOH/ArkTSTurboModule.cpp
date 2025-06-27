@@ -300,7 +300,7 @@ const std::vector<jsi::Value> convertDynamicsToJSIValues(
     jsi::Runtime& rt,
     const std::vector<folly::dynamic>& dynamics) {
   std::vector<jsi::Value> values;
-  for (auto dynamic : dynamics) {
+  for (const auto& dynamic : dynamics) {
     values.push_back(jsi::valueFromDynamic(rt, dynamic));
   }
   return values;

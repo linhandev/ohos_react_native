@@ -638,7 +638,7 @@ class CppComponentInstance : public ComponentInstance,
             if (m_props->accessibilityLabel != "") {
               newAccessibilityLabel += m_props->accessibilityLabel;
             }
-            auto targetAccessibilityLabel =
+            const auto& targetAccessibilityLabel =
                 componentInstance->getAccessibilityLabel();
             if (!targetAccessibilityLabel.empty()) {
               newAccessibilityLabel += " " + targetAccessibilityLabel;

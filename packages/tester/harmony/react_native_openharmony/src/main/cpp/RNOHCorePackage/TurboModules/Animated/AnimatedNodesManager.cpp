@@ -126,7 +126,7 @@ void AnimatedNodesManager::addAnimatedEventToView(
     const std::string& eventName,
     const folly::dynamic& eventMapping) {
   auto nodeTag = eventMapping["animatedValueTag"].asInt();
-  auto dynamicNativeEventPath = eventMapping["nativeEventPath"];
+  const auto& dynamicNativeEventPath = eventMapping["nativeEventPath"];
   std::vector<std::string> nativeEventPath;
   for (auto& key : dynamicNativeEventPath) {
     nativeEventPath.push_back(key.asString());

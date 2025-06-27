@@ -135,15 +135,15 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       turboModuleFactoryDelegates.push_back(
           std::move(turboModuleFactoryDelegate));
     }
-    for (auto componentDescriptorProvider :
+    for (const auto& componentDescriptorProvider :
          package->createComponentDescriptorProviders()) {
       componentDescriptorProviderRegistry->add(componentDescriptorProvider);
     }
-    for (auto [name, componentJSIBinder] :
+    for (const auto& [name, componentJSIBinder] :
          package->createComponentJSIBinderByName()) {
       componentJSIBinderByName.insert({name, componentJSIBinder});
     };
-    for (auto [name, componentNapiBinder] :
+    for (const auto& [name, componentNapiBinder] :
          package->createComponentNapiBinderByName()) {
       componentNapiBinderByName.insert({name, componentNapiBinder});
     };

@@ -123,7 +123,7 @@ void TextComponentInstance::onPropsChanged(
 
     // dataDetectorType
     if (textProps->rawProps.count("dataDetectorType") != 0) {
-      auto dataDetectorType = textProps->rawProps["dataDetectorType"];
+      const auto& dataDetectorType = textProps->rawProps["dataDetectorType"];
       VLOG(3) << "[text-debug] dataDetectorType: "
               << dataDetectorType.asString();
       auto dataDetectorEnable =

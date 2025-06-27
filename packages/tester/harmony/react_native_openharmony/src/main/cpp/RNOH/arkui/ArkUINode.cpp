@@ -552,7 +552,7 @@ ArkUINode& ArkUINode::setAccessibilityState(
         m_nodeHandle, NODE_ACCESSIBILITY_STATE));
     return *this;
   }
-  auto a11yState = maybeA11yState.value();
+  const auto& a11yState = maybeA11yState.value();
   std::unique_ptr<
       ArkUI_AccessibilityState,
       decltype(&OH_ArkUI_AccessibilityState_Dispose)>
@@ -821,7 +821,7 @@ void ArkUINode::onNodeEvent(
         DLOG(WARNING) << "Unsupported action type: " << eventArgs[0].u32;
         return;
       }
-      auto actionName = maybeActionName.value();
+      const auto& actionName = maybeActionName.value();
       if (m_arkUINodeDelegate == nullptr) {
         DLOG(WARNING) << "Cancelled " << actionName << " — delegate is nullptr";
         return;

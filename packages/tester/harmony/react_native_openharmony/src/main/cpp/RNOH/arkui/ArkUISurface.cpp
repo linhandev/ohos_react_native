@@ -254,7 +254,9 @@ void ArkUISurface::stop(std::function<void()> onStop) {
       TaskThread::JS,
       [weakSelf = weak_from_this(),
        taskExecutor = m_taskExecutor,
-       onStop = std::move(onStop)]() {
+       onStop = std::move(onStop)]() mutable {
+        // mark as mutable, so that params are not treated as const, otherwise
+        // subsequent std::move(onStop) will call copy ctor
         auto self = weakSelf.lock();
         if (self != nullptr &&
             self->m_surfaceHandler.getStatus() ==

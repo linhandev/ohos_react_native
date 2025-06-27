@@ -30,7 +30,7 @@ std::vector<double> parseNumericValues(const std::string& str) {
   auto end = std::sregex_iterator();
 
   for (auto it = begin; it != end; ++it) {
-    auto match = *it;
+    const auto& match = *it;
     values.push_back(std::stod(match.str()));
   }
 
@@ -51,7 +51,7 @@ std::string interpolateString(
 
   int index = 0;
   for (std::sregex_iterator it = begin; it != endIter; ++it) {
-    std::smatch match = *it;
+    const std::smatch& match = *it;
     double interpolatedValue =
         startValues[index] + ratio * (endValues[index] - startValues[index]);
     result.replace(

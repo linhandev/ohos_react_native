@@ -15,8 +15,7 @@ namespace rnoh {
 BlobCollector::BlobCollector(
     std::weak_ptr<BlobTurboModule> weakBlobTurboModule,
     const std::string& blobId)
-    : m_weakBlobTurboModule(std::move(weakBlobTurboModule)),
-      m_blobId(std::move(blobId)){};
+    : m_weakBlobTurboModule(std::move(weakBlobTurboModule)), m_blobId(blobId){};
 
 void BlobCollector::install(
     facebook::jsi::Runtime& rt,

@@ -438,7 +438,8 @@ folly::dynamic ArkJS::getDynamic(napi_value value) {
         return result;
       } else {
         folly::dynamic result = folly::dynamic::object();
-        for (auto [key, val] : this->getObject(value).getKeyValuePairs()) {
+        for (const auto& [key, val] :
+             this->getObject(value).getKeyValuePairs()) {
           result[this->getString(key)] = this->getDynamic(val);
         }
         return result;

@@ -93,7 +93,7 @@ class ArkTSConnectionDelegate
                   if (!delegate) {
                     return ArkJS(env).getUndefined();
                   }
-                  auto error = args[0].getString();
+                  const auto& error = args[0].getString();
 
                   delegate->didReceiveMessage(error);
                   return ArkJS(env).getUndefined();

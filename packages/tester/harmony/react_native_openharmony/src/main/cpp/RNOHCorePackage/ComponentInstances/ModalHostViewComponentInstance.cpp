@@ -42,7 +42,7 @@ class ModalHostTouchHandler : public UIInputEventHandler {
 void ModalHostViewComponentInstance::updateDisplaySize(
     DisplayMetrics const& displayMetrics,
     SharedConcreteState const& state) {
-  auto windowMetrics = displayMetrics.windowPhysicalPixels;
+  const auto& windowMetrics = displayMetrics.windowPhysicalPixels;
   auto screenOrientation = (displayMetrics.windowPhysicalPixels.height >=
                             displayMetrics.windowPhysicalPixels.width)
       ? ScreenOrientation::Portrait
@@ -66,7 +66,7 @@ void ModalHostViewComponentInstance::updateDisplaySize(
 
 void ModalHostViewComponentInstance::updateSlideTransition(
     DisplayMetrics const& displayMetrics) {
-  auto screenSize = displayMetrics.windowPhysicalPixels;
+  const auto& screenSize = displayMetrics.windowPhysicalPixels;
   m_rootCustomNode.setTranslateTransition(
       0, float(screenSize.height / screenSize.scale), ANIMATION_DURATION);
 }

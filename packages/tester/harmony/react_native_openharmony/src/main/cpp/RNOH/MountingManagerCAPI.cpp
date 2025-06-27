@@ -170,7 +170,7 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
 
   switch (mutation.type) {
     case facebook::react::ShadowViewMutation::Create: {
-      auto newChild = mutation.newChildShadowView;
+      const auto& newChild = mutation.newChildShadowView;
       auto componentInstance =
           m_componentInstanceProvider->getComponentInstance(
               newChild.tag, newChild.componentHandle, newChild.componentName);
@@ -190,15 +190,16 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       break;
     }
     case facebook::react::ShadowViewMutation::Delete: {
-      auto oldChild = mutation.oldChildShadowView;
+      const auto& oldChild = mutation.oldChildShadowView;
       m_componentInstanceRegistry->deleteByTag(oldChild.tag);
       break;
     }
     case facebook::react::ShadowViewMutation::Insert: {
-      auto parentComponentInstance =
+      const auto& parentComponentInstance =
           m_componentInstanceRegistry->findByTag(mutation.parentShadowView.tag);
-      auto newChildComponentInstance = m_componentInstanceRegistry->findByTag(
-          mutation.newChildShadowView.tag);
+      const auto& newChildComponentInstance =
+          m_componentInstanceRegistry->findByTag(
+              mutation.newChildShadowView.tag);
 
       if (parentComponentInstance != nullptr &&
           newChildComponentInstance != nullptr) {
@@ -208,18 +209,19 @@ void MountingManagerCAPI::handleMutation(Mutation const& mutation) {
       break;
     }
     case facebook::react::ShadowViewMutation::Remove: {
-      auto parentComponentInstance =
+      const auto& parentComponentInstance =
           m_componentInstanceRegistry->findByTag(mutation.parentShadowView.tag);
       if (parentComponentInstance) {
-        auto childComponentInstance = m_componentInstanceRegistry->findByTag(
-            mutation.oldChildShadowView.tag);
+        const auto& childComponentInstance =
+            m_componentInstanceRegistry->findByTag(
+                mutation.oldChildShadowView.tag);
         parentComponentInstance->removeChild(childComponentInstance);
       }
 
       break;
     }
     case facebook::react::ShadowViewMutation::Update: {
-      auto componentInstance = m_componentInstanceRegistry->findByTag(
+      const auto& componentInstance = m_componentInstanceRegistry->findByTag(
           mutation.newChildShadowView.tag);
       if (componentInstance != nullptr) {
         this->updateComponentWithShadowView(

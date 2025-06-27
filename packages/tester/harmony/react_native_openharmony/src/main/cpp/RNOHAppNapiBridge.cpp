@@ -204,7 +204,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto eventDispatcherRef = arkJS.createNapiRef(args[4]);
     auto shouldEnableDebugger = arkJS.getBoolean(args[5]);
     auto featureFlagRegistry = std::make_shared<FeatureFlagRegistry>();
-    for (auto featureFlagNameAndStatus : arkJS.getObjectProperties(args[6])) {
+    for (const auto& featureFlagNameAndStatus :
+         arkJS.getObjectProperties(args[6])) {
       featureFlagRegistry->setFeatureFlagStatus(
           arkJS.getString(featureFlagNameAndStatus.first),
           arkJS.getBoolean(featureFlagNameAndStatus.second));
@@ -635,7 +636,7 @@ static napi_value onArkTSMessage(napi_env env, napi_callback_info info) {
     auto messageName = arkJS.getString(args[0]);
     auto wrappedPayload = arkJS.getDynamic(args[1]);
     auto rnInstanceId = wrappedPayload["rnInstanceId"].getDouble();
-    auto messagePayload = wrappedPayload["payload"];
+    const auto& messagePayload = wrappedPayload["payload"];
     auto rnInstance = maybeGetInstanceById(rnInstanceId);
     if (!rnInstance) {
       return arkJS.getUndefined();

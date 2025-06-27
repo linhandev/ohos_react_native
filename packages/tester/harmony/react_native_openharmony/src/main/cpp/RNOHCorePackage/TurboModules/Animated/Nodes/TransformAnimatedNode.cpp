@@ -71,10 +71,10 @@ TransformAnimatedNode::TransformAnimatedNode(
     folly::dynamic const& config,
     AnimatedNodesManager& nodesManager)
     : m_nodesManager(nodesManager) {
-  auto transforms = config["transforms"];
-  for (auto transformConfig : transforms) {
+  const auto& transforms = config["transforms"];
+  for (const auto& transformConfig : transforms) {
     std::string property = transformConfig["property"].getString();
-    std::string type = transformConfig["type"].getString();
+    const std::string& type = transformConfig["type"].getString();
     if (type == "animated") {
       m_transforms.push_back(AnimatedTransformConfig{
           .property = std::move(property),
@@ -94,11 +94,11 @@ folly::dynamic TransformAnimatedNode::getTransform() const {
     double value;
     std::string property;
     if (std::holds_alternative<StaticTransformConfig>(config)) {
-      auto staticConfig = std::get<StaticTransformConfig>(config);
+      const auto& staticConfig = std::get<StaticTransformConfig>(config);
       value = staticConfig.value;
       property = staticConfig.property;
     } else {
-      auto animatedConfig = std::get<AnimatedTransformConfig>(config);
+      const auto& animatedConfig = std::get<AnimatedTransformConfig>(config);
       auto& node = m_nodesManager.getValueNodeByTag(animatedConfig.nodeTag);
       value = node.getOutputAsDouble();
       property = animatedConfig.property;

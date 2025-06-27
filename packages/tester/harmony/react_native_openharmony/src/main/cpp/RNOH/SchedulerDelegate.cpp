@@ -23,7 +23,7 @@ void SchedulerDelegate::schedulerDidFinishTransaction(
 void logTransactionTelemetryMarkers(MountingTransaction const& transaction) {
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::FABRIC_FINISH_TRANSACTION_END);
-  auto telemetry = transaction.getTelemetry();
+  const auto& telemetry = transaction.getTelemetry();
   auto commitStartTime =
       telemetryTimePointToMilliseconds(telemetry.getCommitStartTime());
   auto commitEndTime =

@@ -140,7 +140,7 @@ void RNInstanceInternal::initialize() {
         });
         std::ostringstream msg;
         msg << error.message;
-        for (auto stackFrame : error.stack) {
+        for (const auto& stackFrame : error.stack) {
           msg << "\n"
               << stackFrame.file.value_or("UNKNOWN_FILE") << " "
               << stackFrame.lineNumber.value_or(-1) << " ("
@@ -438,9 +438,9 @@ void RNInstanceInternal::onConfigurationChange(folly::dynamic const& payload) {
       !payload.count("screenPhysicalPixels")) {
     return;
   }
-  auto screenPhysicalPixels = payload["screenPhysicalPixels"];
-  auto scale = screenPhysicalPixels["scale"];
-  auto fontScale = screenPhysicalPixels["fontScale"];
+  const auto& screenPhysicalPixels = payload["screenPhysicalPixels"];
+  const auto& scale = screenPhysicalPixels["scale"];
+  const auto& fontScale = screenPhysicalPixels["fontScale"];
   if (!scale.isDouble() || !fontScale.isDouble()) {
     return;
   }

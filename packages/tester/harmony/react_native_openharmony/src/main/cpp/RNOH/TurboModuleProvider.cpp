@@ -54,7 +54,9 @@ void TurboModuleProvider::installJSBindings(
         return turboModule;
       };
   runtimeExecutor([turboModuleProvider = std::move(turboModuleProvider)](
-                      facebook::jsi::Runtime& runtime) {
+                      facebook::jsi::Runtime& runtime) mutable {
+    // mark as mutable, so that turboModuleProvider is not treated as const,
+    // otherwise subsequent std::move(turboModuleProvider) will call copy ctor
     react::TurboModuleBinding::install(
         runtime, std::move(turboModuleProvider), nullptr, nullptr);
   });

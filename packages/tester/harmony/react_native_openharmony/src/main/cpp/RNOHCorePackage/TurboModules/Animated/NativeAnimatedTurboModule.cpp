@@ -741,7 +741,7 @@ void NativeAnimatedTurboModule::handleEvent(
   ArkJS arkJS(ctx.env);
   folly::dynamic payload = arkJS.getDynamic(ctx.payload);
   react::Tag tag = ctx.tag;
-  auto eventName = ctx.eventName;
+  const auto& eventName = ctx.eventName;
 
   handleComponentEvent(tag, eventName, payload);
 }

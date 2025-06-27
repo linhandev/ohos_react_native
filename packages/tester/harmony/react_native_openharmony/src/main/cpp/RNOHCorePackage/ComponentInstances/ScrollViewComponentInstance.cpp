@@ -336,7 +336,7 @@ void rnoh::ScrollViewComponentInstance::updateOffsetAfterChildChange(
 void rnoh::ScrollViewComponentInstance::onStateChanged(
     SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
-  auto stateData = state->getData();
+  const auto& stateData = state->getData();
   if (m_contentSize != stateData.getContentSize()) {
     m_contentContainerNode.setSize(stateData.getContentSize());
     m_contentSize = stateData.getContentSize();
@@ -874,7 +874,7 @@ void ScrollViewComponentInstance::adjustVisibleContentPosition(
     return;
   }
 
-  auto firstVisibleView = m_firstVisibleView.value();
+  const auto& firstVisibleView = m_firstVisibleView.value();
   ComponentInstance::Shared firstVisibleChild = nullptr;
   for (const auto& child : m_children[0]->getChildren()) {
     auto childComponentInstance =
@@ -965,7 +965,7 @@ void ScrollViewComponentInstance::onAppear() {
     return;
   }
 
-  auto stateData = m_state->getData();
+  const auto& stateData = m_state->getData();
   bool isContentOffsetZero =
       stateData.contentOffset == facebook::react::Point{0, 0};
 

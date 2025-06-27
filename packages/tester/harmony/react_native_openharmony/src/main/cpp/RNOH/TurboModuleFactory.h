@@ -46,6 +46,11 @@ class TurboModuleFactory final {
       DisplayMetricsManager::Shared displayMetricsManager);
 
   ~TurboModuleFactory() noexcept;
+  // rule of five, otherwise std::move() will call copy ctor
+  TurboModuleFactory(TurboModuleFactory&&) = default;
+  TurboModuleFactory(const TurboModuleFactory&) = default;
+  TurboModuleFactory& operator=(const TurboModuleFactory&) = default;
+  TurboModuleFactory& operator=(TurboModuleFactory&&) = default;
 
   virtual SharedTurboModule create(
       std::shared_ptr<facebook::react::CallInvoker> jsInvoker,

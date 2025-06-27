@@ -81,9 +81,9 @@ facebook::react::TextMeasurement TextMeasurer::measure(
     facebook::react::LayoutConstraints layoutConstraints) {
   facebook::react::SystraceSection s("#RNOH::TextMeasurer::measure");
   auto textStorage = createTextStorage(
-      std::move(attributedStringBox.getValue()),
-      std::move(paragraphAttributes),
-      std::move(layoutContext),
+      attributedStringBox.getValue(),
+      paragraphAttributes,
+      layoutContext,
       std::move(layoutConstraints));
   setTextStorage(textStorage);
   return textStorage->arkUITypography.getMeasurement();
@@ -233,7 +233,7 @@ StyledStringWrapper TextMeasurer::createStyledString(
   }
 
   if (!attributedString.getFragments().empty()) {
-    auto fragment = attributedString.getFragments()[0];
+    const auto& fragment = attributedString.getFragments()[0];
     auto textAlign = fragment.textAttributes.alignment;
     if (textAlign.has_value()) {
       OH_Drawing_SetTypographyTextAlign(

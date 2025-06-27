@@ -72,7 +72,7 @@ jsi::Value napiToJsi(napi_env env, jsi::Runtime& rt, napi_value value) {
     case napi_object: {
       jsi::Object result(rt);
       auto properties = arkJS.getObjectProperties(value);
-      for (auto [key, value] : properties) {
+      for (const auto& [key, value] : properties) {
         auto stringKey = arkJS.getString(key);
         auto jsiValue = napiToJsi(env, rt, value);
         result.setProperty(rt, stringKey.c_str(), jsiValue);

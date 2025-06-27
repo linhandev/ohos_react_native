@@ -91,7 +91,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   };
 
   if (props->rawProps.count("progressBackgroundColor") > 0) {
-    auto progressBgColor = props->rawProps["progressBackgroundColor"];
+    const auto& progressBgColor = props->rawProps["progressBackgroundColor"];
     if (progressBgColor != nullptr &&
         facebook::react::isColorMeaningful(progressBgColor.asInt())) {
       m_refreshIndicatorBackgroundNode.setBackgroundColor(
@@ -103,7 +103,7 @@ void PullToRefreshViewComponentInstance::onPropsChanged(
   };
 
   if (props->rawProps.count("size") > 0) {
-    auto size = props->rawProps["size"];
+    const auto& size = props->rawProps["size"];
     if (size != nullptr && size.asString() == "large") {
       m_refreshIndicatorBackgroundNode.setSize(
           {REFRESH_INDICATOR_SIZE * 1.5, REFRESH_INDICATOR_SIZE * 1.5});
