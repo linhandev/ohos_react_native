@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <cxxreact/MessageQueueThread.h>
 #include "JSVMUtil.h"
+#include "folly/dynamic.h"
 
 namespace rnjsvm {
 
@@ -21,8 +22,10 @@ class JSVMConverter;
 
 class JSVMRuntime : public Runtime {
  public:
-  JSVMRuntime();
-  JSVMRuntime(std::shared_ptr<facebook::react::MessageQueueThread> jsQueue);
+  explicit JSVMRuntime(folly::dynamic initOptions);
+  JSVMRuntime(
+      std::shared_ptr<facebook::react::MessageQueueThread> jsQueue,
+      folly::dynamic initOptions);
   ~JSVMRuntime();
 
   virtual Value evaluateJavaScript(

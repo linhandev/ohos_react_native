@@ -123,6 +123,7 @@ export class RNInstanceRegistry {
       this.httpClientProvider,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,
+      options.jsvmInitOptions,
     );
     const packages = options.createRNPackages({})
     packages.unshift(new RNOHCorePackage({}));

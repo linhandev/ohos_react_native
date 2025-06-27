@@ -14,9 +14,11 @@ namespace rnjsvm {
 class JSVMExecutorFactory : public facebook::react::JSExecutorFactory {
  public:
   explicit JSVMExecutorFactory(
-      facebook::react::JSIExecutor::RuntimeInstaller runtimeInstaller)
+      facebook::react::JSIExecutor::RuntimeInstaller runtimeInstaller,
+      folly::dynamic initOptions)
       : runtimeInstaller_(runtimeInstaller),
-        timeoutInvoker_(facebook::react::JSIExecutor::defaultTimeoutInvoker) {}
+        timeoutInvoker_(facebook::react::JSIExecutor::defaultTimeoutInvoker),
+        m_initOptions(initOptions) {}
 
   std::unique_ptr<facebook::react::JSExecutor> createJSExecutor(
       std::shared_ptr<facebook::react::ExecutorDelegate> delegate,
@@ -25,6 +27,7 @@ class JSVMExecutorFactory : public facebook::react::JSExecutorFactory {
  private:
   facebook::react::JSIExecutor::RuntimeInstaller runtimeInstaller_;
   facebook::react::JSIScopedTimeoutInvoker timeoutInvoker_;
+  folly::dynamic m_initOptions;
 };
 
 class JSVMExecutor : public facebook::react::JSIExecutor {

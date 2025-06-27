@@ -15,7 +15,7 @@ JSVMExecutorFactory::createJSExecutor(
     std::shared_ptr<facebook::react::ExecutorDelegate> delegate,
     std::shared_ptr<facebook::react::MessageQueueThread> jsQueue) {
   std::unique_ptr<facebook::jsi::Runtime> runtime =
-      std::make_unique<JSVMRuntime>(jsQueue);
+      std::make_unique<JSVMRuntime>(jsQueue, m_initOptions);
 
   // Add js engine information to Error.prototype so in error reporting we
   // can send this information.

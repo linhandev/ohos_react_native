@@ -15,7 +15,8 @@ import {
   RNOHErrorDialog,
   RNOHLogger,
   TraceJSBundleProviderDecorator,
-  RNOHCoreContext
+  RNOHCoreContext,
+  JSVM_INIT_OPTIONS_PRESET,
 } from '@rnoh/react-native-openharmony';
 import { PropsDisplayer, SampleView, GeneratedSampleView, CodegenLibSampleArkTSComponent, ContainerView } from '@rnoh/sample-package';
 import { getRNOHPackages } from '../PackageProvider';
@@ -57,7 +58,7 @@ export function buildCustomRNComponent(ctx: ComponentBuilderContext) {
       })
     }
   }
-  .position({x:0, y: 0})
+  .position({ x: 0, y: 0 })
 
 }
 

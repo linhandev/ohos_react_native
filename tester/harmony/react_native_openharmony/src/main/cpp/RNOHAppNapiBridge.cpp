@@ -61,13 +61,14 @@ auto extractOrDefault(Map& map, K&& key, V&& defaultValue)
 }
 
 std::shared_ptr<facebook::react::JSExecutorFactory> getDefaultJSExecutorFactory(
-    bool shouldEnableDebugger) {
+    bool shouldEnableDebugger,
+    folly::dynamic initOptions) {
   #if USE_HERMES
     DLOG(INFO) << "Using HermesExecutorFactory";
     return createHermesExecutorFactory(shouldEnableDebugger);
   #else
     DLOG(INFO) << "Using JSVMExecutorFactory";
-    return createJSVMExecutorFactory();
+    return createJSVMExecutorFactory(initOptions);
   #endif
 }
 
@@ -208,7 +209,7 @@ static napi_value onCreateRNInstance(
     DLOG(INFO) << "createReactNativeInstance";
     HarmonyReactMarker::setAppStartTime(
         facebook::react::JSExecutor::performanceNow());
-    auto args = arkJs.getCallbackArgs(info, 14);
+    auto args = arkJs.getCallbackArgs(info, 15);
     size_t instanceId = arkJs.getDouble(args[0]);
     auto mainArkTSTurboModuleProviderRef = arkJs.createReference(args[1]);
     auto arkTsTurboModuleProviderRef = arkJs.createReference(args[1]);
@@ -318,7 +319,7 @@ static napi_value onCreateRNInstance(
     auto [it, _inserted] =
         RN_INSTANCE_BY_ID.emplace(instanceId, std::move(rnInstance));
     it->second->setJavaScriptExecutorFactory(
-        getDefaultJSExecutorFactory(shouldEnableDebugger));
+        getDefaultJSExecutorFactory(shouldEnableDebugger, arkJs.getDynamic(args[14])));
     it->second->start();
   } catch (...) {
     ArkTSBridge::getInstance()->handleError(std::current_exception());

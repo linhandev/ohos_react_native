@@ -6,31 +6,32 @@
  */
 
 // @ts-ignore
-import {NodeContent} from '@ohos.arkui.node';
+import { NodeContent } from '@ohos.arkui.node';
 import display from '@ohos.display';
 import ohosResourceManager from '@ohos.resourceManager';
 import libRNOHApp from 'librnoh_app.so';
 
-import type {DisplayMode} from './CppBridgeUtils'
-import type {Tag} from "./DescriptorBase";
-import {JsBundle} from './JSBundleProvider';
-import type {Mutation} from "./Mutation";
-import type {FrameNodeFactory} from "./RNInstance"
-import {FatalRNOHError, RNOHError} from "./RNOHError"
-import {RNOHLogger} from "./RNOHLogger"
+import type { DisplayMode } from './CppBridgeUtils'
+import type { Tag } from "./DescriptorBase";
+import { JsBundle } from './JSBundleProvider';
+import type { Mutation } from "./Mutation";
+import type { FrameNodeFactory, JSVMInitOption } from "./RNInstance"
+import { FatalRNOHError, RNOHError } from "./RNOHError"
+import { RNOHLogger } from "./RNOHLogger"
 import type {
-    AttributedString, LayoutConstrains, ParagraphAttributes} from
-    "./TextLayoutManager";
-import {measureParagraph} from "./TextLayoutManager"
+  AttributedString, LayoutConstrains, ParagraphAttributes
+} from
+  "./TextLayoutManager";
+import { measureParagraph } from "./TextLayoutManager"
 import {
-    AnyThreadTurboModule,
-    UITurboModule,
-    UITurboModuleContext,
-    WorkerTurboModule,
-    WorkerTurboModuleContext
+  AnyThreadTurboModule,
+  UITurboModule,
+  UITurboModuleContext,
+  WorkerTurboModule,
+  WorkerTurboModuleContext
 } from './TurboModule';
-import type {TurboModuleProvider} from "./TurboModuleProvider";
-import type {DisplayMetrics, InspectorInstance} from './types'
+import type { TurboModuleProvider } from "./TurboModuleProvider";
+import type { DisplayMetrics, InspectorInstance } from './types'
 import { deviceInfo } from '@kit.BasicServicesKit';
 
 export type CppFeatureFlag = "ENABLE_NDK_TEXT_MEASURING" | "C_API_ARCH" | "WORKER_THREAD_ENABLED"
@@ -95,7 +96,7 @@ export class NapiBridge {
   }
 
 
-  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler) : envINFO {
+  onInit(shouldCleanUpRNInstances: boolean, arkTSBridgeHandler: ArkTSBridgeHandler): envINFO {
     if (!this.libRNOHApp) {
       const err = new FatalRNOHError({
         whatHappened: "Couldn't create bindings between ETS and CPP. libRNOHApp is undefined.",
@@ -149,7 +150,8 @@ export class NapiBridge {
     cppFeatureFlags: CppFeatureFlag[],
     resourceManager: ohosResourceManager.ResourceManager,
     arkTsComponentNames: Array<string>,
-    fontPathByFontFamily: Record<string, string>
+    fontPathByFontFamily: Record<string, string>,
+    jsvmInitOptions: ReadonlyArray<JSVMInitOption>,
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -162,7 +164,7 @@ export class NapiBridge {
       componentCommandsListener,
       onCppMessage,
       (attributedString: AttributedString, paragraphAttributes: ParagraphAttributes,
-       layoutConstraints: LayoutConstrains) => {
+        layoutConstraints: LayoutConstrains) => {
         try {
           const stopTracing = this.logger.clone("measureParagraph").startTracing()
           const result = measureParagraph(attributedString, paragraphAttributes, layoutConstraints)
@@ -180,7 +182,8 @@ export class NapiBridge {
       resourceManager,
       arkTsComponentNames,
       fontPathByFontFamily,
-      envId
+      envId,
+      jsvmInitOptions,
     );
   }
 
@@ -194,14 +197,16 @@ export class NapiBridge {
   }
 
   loadScript(
-      instanceId: number,
-      bundle: JsBundle,
-      sourceURL:
-          string): Promise<void>{return new Promise((resolve, reject) => {
-      this.libRNOHApp?.loadScript(instanceId, bundle, sourceURL, (errorMsg: string) => {
-        errorMsg ? reject(new Error(errorMsg)) : resolve()
-      });
-  })}
+    instanceId: number,
+    bundle: JsBundle,
+    sourceURL:
+      string): Promise<void> {
+        return new Promise((resolve, reject) => {
+          this.libRNOHApp?.loadScript(instanceId, bundle, sourceURL, (errorMsg: string) => {
+            errorMsg ? reject(new Error(errorMsg)) : resolve()
+          });
+        })
+  }
 
   startSurface(
     instanceId: number,

@@ -10,5 +10,5 @@
 #include <cxxreact/JSExecutor.h>
 
 namespace rnoh {
-    std::shared_ptr<facebook::react::JSExecutorFactory> createJSVMExecutorFactory();
+    std::shared_ptr<facebook::react::JSExecutorFactory> createJSVMExecutorFactory(folly::dynamic initOptions);
 } // namespace rnoh

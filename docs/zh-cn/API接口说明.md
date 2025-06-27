@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
 | backPressHandler         | () => void  | 否   | 当RN JS端不处理侧滑返回事件时的自定义处理逻辑。   |
 | httpClient               | [HttpClient](https://developer.huawei.com/consumer/cn/doc/system-References/network-httpclient-0000001073658008)  | 否  | 指定Http客户端处理类。    |
 | fontResourceByFontFamily | Record<string, Resource>  | 否   | 注册自定义字体。 |
+| jsvmInitOptions | ReadonlyArray<JSVMInitOption>  | 否   | JSVM启动项 |
 
 #### 销毁
 

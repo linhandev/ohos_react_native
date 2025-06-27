@@ -16,7 +16,7 @@ export { RNOHCoreContext, RNOHContext, AnyThreadRNInstance, AnyThreadTurboModule
 export * from "./RNPackage"
 export * from "./TurboModule"
 export * from "./TurboModuleProvider"
-export { RNInstance, RNInstanceImpl, LifecycleState, RNInstanceOptions } from "./RNInstance"
+export { RNInstance, RNInstanceImpl, LifecycleState, RNInstanceOptions, JSVM_INIT_OPTIONS_PRESET } from "./RNInstance"
 export * from "./JSBundleProvider"
 export * from "./TextLayoutManager"
 export * from "./SurfaceHandle"

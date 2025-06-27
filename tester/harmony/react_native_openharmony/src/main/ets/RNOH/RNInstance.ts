@@ -143,7 +143,7 @@ export interface RNInstance {
   /**
    * Allows subscribing to various events. Check LifecycleEventArgsByEventName type for more information.
    */
-  subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName,>(
+  subscribeToLifecycleEvents: <TEventName extends keyof LifecycleEventArgsByEventName, >(
     eventName: TEventName,
     listener: (...args: LifecycleEventArgsByEventName[TEventName]) => void
   ) => () => void;
@@ -151,7 +151,7 @@ export interface RNInstance {
   /**
    * Similar to subscribeToLifecycleEvents but handles different set of events. It may be removed to unify subscribing to events.
    */
-  subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName,>(
+  subscribeToStageChangeEvents: <TEventName extends keyof StageChangeEventArgsByEventName, >(
     eventName: TEventName,
     listener: (...args: StageChangeEventArgsByEventName[TEventName]) => void
   ) => () => void;
@@ -302,15 +302,15 @@ export interface RNInstance {
    */
   cancelTouches(): void
 
-   /**
+  /**
    * @architecture: C-API
    * Retrieves the native ArkUI node's `id` attribute for the React component with given tag.
    */
-   getNativeNodeIdByTag(tag: Tag): string | undefined
+  getNativeNodeIdByTag(tag: Tag): string | undefined
 
-   /**
-    * @returns UIContext
-   */
+  /**
+   * @returns UIContext
+  */
 
   getUIContext(): UIContext
 
@@ -330,6 +330,24 @@ export interface RNInstance {
    */
   registerFont(fontFamily: string, fontResource: Resource | string)
 }
+
+/**
+ * @actor RNOH_APP
+ *
+ * Format --name=value
+ * Supported options depends on the version of V8 JavaScript engine
+ * Call OH_JSVM_GetVMInfo to check the current version
+ */
+export type JSVMInitOption = string;
+
+/**
+ * @actor RNOH_APP
+ */
+export const JSVM_INIT_OPTIONS_PRESET = {
+  DEFAULT: [],
+  LOW_MEMORY: ["--incremental-marking-hard-trigger=40", "--min-semi-space-size=1", "--max-semi-space-size=4"],
+  HIGH_PERFORMANCE: ["--incremental-marking-hard-trigger=80", "--min-semi-space-size=16", "--max-semi-space-size=16"]
+} as const satisfies Record<string, ReadonlyArray<JSVMInitOption>>;
 
 export type RNInstanceOptions = {
   /**
@@ -399,6 +417,11 @@ export type RNInstanceOptions = {
    * }
    */
   fontResourceByFontFamily?: Record<string, Resource | string>
+  /**
+   * @default: JSVM_INIT_OPTIONS_PRESET.DEFAULT
+   * Specifies custom init options used by JSVM. The options has no effect if using Hermes.
+   */
+  jsvmInitOptions?: ReadonlyArray<JSVMInitOption>;
 }
 
 /**
@@ -470,6 +493,7 @@ export class RNInstanceImpl implements RNInstance {
     httpClientProvider: HttpClientProvider,
     httpClient: HttpClient | undefined, // TODO: remove "undefined" when HttpClientProvider is removed
     backPressHandler?: () => void,
+    private jsvmInitOptions?: ReadonlyArray<JSVMInitOption>,
   ) {
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.httpClient = httpClient ?? httpClientProvider.getInstance(this);
@@ -602,6 +626,7 @@ export class RNInstanceImpl implements RNInstance {
       this.resourceManager,
       this.arkTsComponentNames,
       this.fontPathByFontFamily,
+      this.jsvmInitOptions ?? JSVM_INIT_OPTIONS_PRESET.DEFAULT,
     )
     stopTracing()
   }
@@ -754,17 +779,17 @@ export class RNInstanceImpl implements RNInstance {
   public getBundleExecutionStatus(bundleURL: string): BundleExecutionStatus | undefined {
     return this.bundleExecutionStatusByBundleURL.get(bundleURL)
   }
-  public async runJSBundle(jsBundleProvider: JSBundleProvider, info?:string | null) {
+  public async runJSBundle(jsBundleProvider: JSBundleProvider, info?: string | null) {
     let bundleURL: string = "";
     const bundleURLPre = jsBundleProvider.getURL();
     const bundleURLPreList: string[] = [];
     const stopTracing = this.logger.clone("runJSBundle").startTracing()
     const isMetroServer = jsBundleProvider.getHotReloadConfig() !== null
     try {
-      if(info === undefined) {
+      if (info === undefined) {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()}...`)
-      }else if(info) {
+      } else if (info) {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `${info.slice(0, 255)}`)
       }
@@ -778,7 +803,7 @@ export class RNInstanceImpl implements RNInstance {
       const jsBundle = await jsBundleProvider.getBundle((progress) => {
         this.devToolsController.eventEmitter.emit("SHOW_DEV_LOADING_VIEW", this.id,
           `Loading from ${jsBundleProvider.getHumanFriendlyURL()} (${Math.round(progress * 100)}%)`)
-      },(currentProvider) => {
+      }, (currentProvider) => {
         const currentURL = currentProvider.getURL();
         if (currentURL) {
           bundleURL = currentURL; // 记录当前的 URL
@@ -788,12 +813,12 @@ export class RNInstanceImpl implements RNInstance {
       })
       this.logMarker("DOWNLOAD_END");
       const bundleURLCur = jsBundleProvider.getURL()
-      if(bundleURLCur !== bundleURLPre && bundleURLPreList.length){
-        for(const url of bundleURLPreList){
+      if (bundleURLCur !== bundleURLPre && bundleURLPreList.length) {
+        for (const url of bundleURLPreList) {
           this.bundleExecutionStatusByBundleURL.delete(url)
         }
         this.bundleExecutionStatusByBundleURL.set(bundleURL, "RUNNING")
-      }else {
+      } else {
         bundleURL = bundleURLCur
       }
       this.initialBundleUrl = this.initialBundleUrl ?? bundleURL
@@ -945,13 +970,13 @@ export class RNInstanceImpl implements RNInstance {
   private subscribeToDevTools() {
     const emitter = this.devToolsController.eventEmitter;
     emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
-    this.emitDeviceEvent('toggleElementInspector', {}),
+      this.emitDeviceEvent('toggleElementInspector', {}),
     );
     emitter.subscribe('DEV_MENU_SHOWN', () =>
-    this.emitDeviceEvent('RCTDevMenuShown', {}),
+      this.emitDeviceEvent('RCTDevMenuShown', {}),
     );
     emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
-    this.emitDeviceEvent('didPressMenuItem', item),
+      this.emitDeviceEvent('didPressMenuItem', item),
     );
     emitter.subscribe('OPEN_URL', (url, onError) => {
       DevServerHelper.openUrl(url, this.getInitialBundleUrl(), onError);
@@ -1002,13 +1027,13 @@ export class RNInstanceImpl implements RNInstance {
         if (!fontResource.startsWith("/")) {
           throw new RNOHError({
             whatHappened:
-            'Font path must be an absolute path or a $rawfile Resource',
+              'Font path must be an absolute path or a $rawfile Resource',
             howCanItBeFixed: [
               'Provide an absolute path to the font (starting with a "/")',
             ],
           });
         }
-        font.registerFont({familyName: fontFamily, familySrc: `file://${fontResource}`})
+        font.registerFont({ familyName: fontFamily, familySrc: `file://${fontResource}` })
         return fontResource;
       } else {
         font.registerFont({ familyName: fontFamily, familySrc: fontResource });

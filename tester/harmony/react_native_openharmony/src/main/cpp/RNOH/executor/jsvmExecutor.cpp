@@ -12,12 +12,13 @@
 
 namespace rnoh {
 
-std::shared_ptr<facebook::react::JSExecutorFactory> createJSVMExecutorFactory() {
+std::shared_ptr<facebook::react::JSExecutorFactory> createJSVMExecutorFactory(folly::dynamic initOptions) {
     return std::make_shared<rnjsvm::JSVMExecutorFactory>(
         [](facebook::jsi::Runtime& rt) {
             facebook::react::bindNativeLogger(rt, nativeLogger);
             rnoh::setupTracing(rt);
-        }
+        },
+        initOptions
     );
 }
 
