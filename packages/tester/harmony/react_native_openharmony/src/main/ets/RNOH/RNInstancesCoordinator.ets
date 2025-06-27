@@ -13,7 +13,7 @@ import { RNInstanceRegistry } from "./RNInstanceRegistry"
 import { RNOHContext, RNOHCoreContext, InternalRNOHCoreContext } from "./RNOHContext"
 import { DisplayMetricsManager } from './DisplayMetricsManager';
 import { JSPackagerClient } from "./JSPackagerClient"
-import { DevToolsController } from "./DevToolsController"
+import { InternalDevToolsController } from "./DevToolsController"
 import { DevMenu, InternalDevMenu, NoopDevMenu } from "./DevMenu"
 import { JSPackagerClientConfig } from "./JSPackagerClient"
 import { RNOHError, RNOHErrorEventEmitter } from "./RNOHError"
@@ -110,7 +110,7 @@ export class RNInstancesCoordinator {
     RNInstancesCoordinator.isInitialized = true
     dependencies.logger.info(RNOH_BANNER)
     const onDestroyCallbacks: Function[] = []
-    const devToolsController = new DevToolsController(dependencies.logger);
+    const devToolsController = new InternalDevToolsController(dependencies.logger);
     const napiBridge = new NapiBridge(dependencies.logger);
     const displayMetricsManager = new DisplayMetricsManager(dependencies.logger);
     displayMetricsManager.updateConfiguration(dependencies.uiAbilityContext.config);
@@ -177,7 +177,7 @@ export class RNInstancesCoordinator {
   private isDebugModeEnabled: boolean
   private jsEngineName: JSEngineName
   private uiAbilityContext: common.UIAbilityContext
-  private devToolsController: DevToolsController
+  private devToolsController: InternalDevToolsController
   private devMenu: DevMenu
   private jsPackagerClient: JSPackagerClient
   private options: RNInstancesCoordinatorOptions | undefined
@@ -195,7 +195,7 @@ export class RNInstancesCoordinator {
     jsEngineName: JSEngineName,
     envId: number,
     uiAbilityContext: common.UIAbilityContext,
-    devToolsController: DevToolsController,
+    devToolsController: InternalDevToolsController,
     devMenu: DevMenu,
     jsPackagerClient: JSPackagerClient,
     defaultBackPressHandler: () => void,
@@ -258,7 +258,8 @@ export class RNInstancesCoordinator {
       devToolsController: this.devToolsController,
       devMenu: this.devMenu,
       rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter,
-      erasedWorkerTaskRunner: this.workerTaskRunner
+      erasedWorkerTaskRunner: this.workerTaskRunner,
+      napiBridge: napiBridge
     });
     this.onDestroyCallbacks = onDestoryCallbacks ?? []
   }

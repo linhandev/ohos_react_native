@@ -123,11 +123,6 @@ bool RNInstanceInternal::s_hasInitializedFeatureFlags = false;
  */
 void RNInstanceInternal::initialize() {
   DLOG(INFO) << "RNInstanceInternal::initialize";
-  if (!RNInstanceInternal::s_hasInitializedFeatureFlags) {
-    facebook::react::ReactNativeFeatureFlags::override(
-        std::make_unique<RNFeatureFlags>());
-    RNInstanceInternal::s_hasInitializedFeatureFlags = true;
-  }
 
   // create a new event dispatcher every time RN is initialized
   m_eventDispatcher = std::make_shared<EventDispatcher>();
@@ -150,32 +145,6 @@ void RNInstanceInternal::initialize() {
       };
 
   auto jsRuntime = m_jsEngineProvider->createJSRuntime(m_jsQueue);
-
-  // start the inspector
-  auto& inspectorFlags = jsinspector_modern::InspectorFlags::getInstance();
-  if (inspectorFlags.getFuseboxEnabled() && !m_inspectorPageId.has_value() &&
-      m_shouldEnableDebugger) {
-    m_inspectorHostTarget = react::jsinspector_modern::HostTarget::create(
-        *m_inspectorHostDelegate, [taskExecutor = m_taskExecutor](auto fn) {
-          taskExecutor->runTask(TaskThread::MAIN, std::move(fn));
-        });
-    m_inspectorPageId =
-        react::jsinspector_modern::getInspectorInstance().addPage(
-            "React Native Bridgeless (Experimental)",
-            "",
-            [weakSelf = weak_from_this()](auto remote)
-                -> std::unique_ptr<
-                    react::jsinspector_modern::ILocalConnection> {
-              auto self = std::dynamic_pointer_cast<RNInstanceInternal>(
-                  weakSelf.lock());
-              if (!self) {
-                return nullptr;
-              }
-              return self->m_inspectorHostTarget->connect(std::move(remote));
-            },
-            {.nativePageReloads = true, .prefersFuseboxFrontend = true});
-  }
-
   auto timerRegistry = std::make_unique<HarmonyTimerRegistry>(m_taskExecutor);
   auto rawTimerRegistry = timerRegistry.get();
   auto timerManager =
@@ -186,7 +155,7 @@ void RNInstanceInternal::initialize() {
       m_jsQueue,
       timerManager,
       onJSError,
-      m_inspectorHostTarget.get());
+      m_inspectorHostTarget->getHostTarget().get());
   m_reactInstance->initializeRuntime(
       {},
       // runtime installer, which is run when the runtime
@@ -488,11 +457,6 @@ void RNInstanceInternal::handleArkTSMessage(
   if (name == "CONFIGURATION_UPDATE") {
     onConfigurationChange(payload);
   }
-  if (m_shouldEnableDebugger && name == "RNOH::RESUME_DEBUGGER" &&
-      m_inspectorHostTarget) {
-    m_inspectorHostTarget->sendCommand(
-        jsinspector_modern::HostCommand::DebuggerResume);
-  }
 
   for (auto const& arkTSMessageHandler : m_arkTSMessageHandlers) {
     arkTSMessageHandler->handleArkTSMessage(
@@ -629,7 +593,8 @@ RNInstanceInternal::RNInstanceInternal(
     bool shouldEnableDebugger,
     ArkTSBridge::Shared arkTSBridge,
     FontRegistry::Shared fontRegistry,
-    std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider)
+    std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
+    std::shared_ptr<InspectorHostTarget> inspectorHostTarget)
     : m_id(id),
       m_taskExecutor(std::move(taskExecutor)),
       m_contextContainer(std::move(contextContainer)),
@@ -651,7 +616,8 @@ RNInstanceInternal::RNInstanceInternal(
           std::move(componentInstancePreallocationRequestQueue)),
       m_inspectorHostDelegate(
           std::make_unique<JSInspectorHostTargetDelegate>(m_arkTSChannel)),
-      m_jsEngineProvider(std::move(jsEngineProvider)) {
+      m_jsEngineProvider(std::move(jsEngineProvider)),
+      m_inspectorHostTarget(std::move(inspectorHostTarget)) {
   m_fontRegistry = std::move(fontRegistry);
 }
 
@@ -659,11 +625,7 @@ RNInstanceInternal::RNInstanceInternal(
  * @brief The destructor of RNInstanceInternal.
  */
 RNInstanceInternal::~RNInstanceInternal() noexcept {
-  if (m_inspectorPageId.has_value()) {
-    react::jsinspector_modern::getInspectorInstance().removePage(
-        m_inspectorPageId.value());
-    m_inspectorPageId.reset();
-  }
+  m_reactInstance->unregisterFromInspector();
 };
 
 } // namespace rnoh

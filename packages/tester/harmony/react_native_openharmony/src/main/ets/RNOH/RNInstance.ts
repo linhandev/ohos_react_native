@@ -567,7 +567,7 @@ export class RNInstanceImpl implements RNInstance {
     this.registerRNOHMarker();
   }
 
-  public async onDestroy() {
+  public async onDestroy(shouldTryDisconnectingDebugger: boolean = true) {
     const stopTracing = this.logger.clone('onDestroy').startTracing();
     this.unregisterWorkerMessageListener();
     for (const surfaceHandle of this.surfaceHandleByAppKey.values()) {
@@ -582,7 +582,9 @@ export class RNInstanceImpl implements RNInstance {
     }
     this.napiBridge.onDestroyRNInstance(this.id);
     this.turboModuleProvider.onDestroy();
-    this.maybeDisconnectDebugger?.();
+    if (shouldTryDisconnectingDebugger) {
+      this.maybeDisconnectDebugger?.();
+    }
     stopTracing();
   }
 

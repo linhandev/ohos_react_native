@@ -8,6 +8,7 @@
 #include <cxxreact/JSExecutor.h>
 #include <js_native_api.h>
 #include <js_native_api_types.h>
+#include <jsinspector-modern/InspectorFlags.h>
 #include <array>
 #include <memory>
 #include <mutex>
@@ -18,10 +19,13 @@
 #include "RNOH/ArkJS.h"
 #include "RNOH/ArkTSBridge.h"
 #include "RNOH/Inspector.h"
+#include "RNOH/InspectorHostTarget.h"
 #include "RNOH/JSEngineProvider.h"
+#include "RNOH/JSInspectorHostTargetDelegate.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HiTraceRNOHMarkerListener.h"
 #include "RNOH/Performance/RNOHMarker.h"
+#include "RNOH/RNFeatureFlags.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
 #include "RNOH/RNInstanceInternal.h"
@@ -74,6 +78,9 @@ std::shared_ptr<RNInstanceInternal> maybeGetInstanceById(size_t instanceId) {
   }
   return it->second;
 }
+
+std::unordered_map<size_t, std::shared_ptr<InspectorHostTarget>>
+    INSPECTOR_HOST_TARGET_BY_INSTANCE_ID;
 
 std::unordered_map<int, ArkTSBridge::Shared> ARK_TS_BRIDGE_BY_ENV_ID;
 
@@ -143,6 +150,10 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
         nextEnvId,
         std::make_shared<ArkTSBridge>(
             env, std::move(arkTSBridgeHandler), isDebugModeEnabled));
+
+    facebook::react::ReactNativeFeatureFlags::override(
+        std::make_unique<RNFeatureFlags>());
+
     return arkJS.createObjectBuilder()
         .addProperty("isDebugModeEnabled", isDebugModeEnabled)
         .addProperty("jsEngineName", jsEngineName)
@@ -191,6 +202,72 @@ static napi_value getNextRNInstanceId(
   });
 }
 
+static napi_value createInspectorHostTarget(
+    napi_env env,
+    napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto& inspectorFlags =
+        facebook::react::jsinspector_modern::InspectorFlags::getInstance();
+    if (!inspectorFlags.getFuseboxEnabled()) {
+      return arkJS.getNull();
+    }
+
+    auto args = arkJS.getCallbackArgs(info, 2);
+    auto inspectorTaskRunner =
+        std::make_shared<NapiTaskRunner>("RNOH_INSPECTOR", env);
+
+    auto rnInstanceId = arkJS.getInteger(args[0]);
+    auto eventDispatcherRef = arkJS.createNapiRef(args[1]);
+    auto arkTSChannel = std::make_shared<ArkTSChannel>(
+        inspectorTaskRunner, ArkJS(env), eventDispatcherRef);
+    auto inspectorHostTarget = std::make_shared<InspectorHostTarget>(
+        arkTSChannel, inspectorTaskRunner);
+
+    if (INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.find(rnInstanceId) !=
+        INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.end()) {
+      LOG(ERROR) << "InspectorHostTarget for RNInstance with id "
+                 << std::to_string(rnInstanceId) << " has been already created";
+      return arkJS.getNull();
+    }
+    INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.emplace(
+        rnInstanceId, inspectorHostTarget);
+    return arkJS.getNull();
+  });
+}
+
+static napi_value releaseInspectorHostTarget(
+    napi_env env,
+    napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    auto rnInstanceId = arkJS.getInteger(args[0]);
+
+    if (INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.find(rnInstanceId) !=
+        INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.end()) {
+      INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.erase(rnInstanceId);
+    }
+
+    return arkJS.getNull();
+  });
+}
+
+static napi_value resumeDebugger(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    auto instanceId = arkJS.getInteger(args[0]);
+
+    if (INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.find(instanceId) !=
+        INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.end()) {
+      auto inspector = INSPECTOR_HOST_TARGET_BY_INSTANCE_ID.at(instanceId);
+      inspector->resumeDebugger();
+    }
+    return arkJS.getNull();
+  });
+}
+
 static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
@@ -236,8 +313,16 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         std::make_pair(NapiRef{}, nullptr));
     auto taskExecutor =
         std::make_shared<TaskExecutor>(env, std::move(workerTaskRunner));
+
+    auto instanceArkTSChannelTaskRunner =
+        std::make_shared<NapiTaskRunner>("INSTANCE_ARK_TS_CHANNEL", env);
+
     auto arkTSChannel = std::make_shared<ArkTSChannel>(
-        taskExecutor, ArkJS(env), eventDispatcherRef);
+        instanceArkTSChannelTaskRunner, ArkJS(env), eventDispatcherRef);
+
+    auto inspectorHostTarget = getOrDefault(
+        INSPECTOR_HOST_TARGET_BY_INSTANCE_ID, rnInstanceId, nullptr);
+
     auto markerListener =
         std::make_unique<RNInstanceInternal::RNInstanceRNOHMarkerListener>(
             arkTSChannel);
@@ -313,7 +398,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         jsResourceManager,
         shouldEnableDebugger,
         std::move(fontPathByFontFamily),
-        std::move(jsEngineProvider));
+        std::move(jsEngineProvider),
+        inspectorHostTarget);
 
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {
@@ -342,6 +428,7 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
       auto taskExecutor = instance->getTaskExecutor();
       taskExecutor->runTask(
           TaskThread::JS, [instance = std::move(instance)] {});
+      // try to not destory but reload
     }
     return arkJS.getNull();
   });
@@ -761,6 +848,30 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"getNextRNInstanceId",
        nullptr,
        getNextRNInstanceId,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"createInspectorHostTarget",
+       nullptr,
+       createInspectorHostTarget,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"releaseInspectorHostTarget",
+       nullptr,
+       releaseInspectorHostTarget,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"resumeDebugger",
+       nullptr,
+       resumeDebugger,
        nullptr,
        nullptr,
        nullptr,

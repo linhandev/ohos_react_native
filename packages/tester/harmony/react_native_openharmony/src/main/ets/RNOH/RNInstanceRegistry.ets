@@ -11,15 +11,16 @@ import { RNInstanceImpl } from './RNInstance';
 import type { NapiBridge } from './NapiBridge';
 import type { UITurboModuleContext } from './TurboModule'
 import type { RNOHLogger } from './RNOHLogger';
-import type { DevToolsController } from './DevToolsController';
+import { DevToolsController, InternalDevToolsController } from './DevToolsController';
 import { HttpClient, DefaultHttpClient } from '../HttpClient';
 import { DisplayMetricsManager } from "./DisplayMetricsManager"
 import resourceManager from '@ohos.resourceManager';
 import { WorkerThread } from "./WorkerThread"
 import common from '@ohos.app.ability.common'
 import { RNOHCorePackage } from '../RNOHCorePackage/Package'
-import { RNOHErrorEventEmitter } from './RNOHError';
+import { RNOHError, RNOHErrorEventEmitter } from './RNOHError';
 import { JSEngineName } from './types';
+import { DevServerHelper } from './DevServerHelper';
 
 const DEFAULT_ASSETS_DEST: string = "assets/"; // assets destination path "assets/subpath/"
 
@@ -41,11 +42,12 @@ export class RNInstanceRegistry {
   private logger: RNOHLogger
   private globalRNOHErrorEventEmitter: RNOHErrorEventEmitter;
   private napiBridge: NapiBridge
-  private devToolsController: DevToolsController
+  private devToolsController: InternalDevToolsController
   private createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext
   private defaultHttpClient: HttpClient
   private resourceManager: resourceManager.ResourceManager
   private workerThreadPromise: Promise<WorkerThread> | undefined
+  private instanceOptionsMap: Map<number, RNInstanceOptions> = new Map();
 
   constructor(
     uiAbilityContext: common.UIAbilityContext,
@@ -55,7 +57,7 @@ export class RNInstanceRegistry {
     logger: RNOHLogger,
     rnohErrorEventEmitter: RNOHErrorEventEmitter,
     napiBridge: NapiBridge,
-    devToolsController: DevToolsController,
+    devToolsController: InternalDevToolsController,
     createUITurboModuleContext: (rnInstance: RNInstanceImpl) => UITurboModuleContext,
     defaultHttpClient: HttpClient,
     resourceManager: resourceManager.ResourceManager,
@@ -75,11 +77,10 @@ export class RNInstanceRegistry {
     this.workerThreadPromise = workerThreadPromise
   }
 
-  public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
-    const id = this.napiBridge.getNextRNInstanceId();
+  private async createAndInitRNInstanceImpl(instanceId: number, options: RNInstanceOptions) : Promise<RNInstance> {
     const workerThread = await this.workerThreadPromise
     if (workerThread !== undefined) {
-      await this.createRNInstanceEnvOnWorker(workerThread, id, options)
+      await this.createRNInstanceEnvOnWorker(workerThread, instanceId, options)
     }
     const fontPathByFontFamily: Record<string, string> = {}
     for (const fontFamilyAndResource of Object.entries(options.fontResourceByFontFamily ?? {})) {
@@ -97,7 +98,7 @@ export class RNInstanceRegistry {
       this.envId,
       this.isDebugModeEnabled,
       this.jsEngineName,
-      id,
+      instanceId,
       options?.name,
       this.logger,
       this.globalRNOHErrorEventEmitter,
@@ -118,8 +119,45 @@ export class RNInstanceRegistry {
     const packages = options.createRNPackages({})
     packages.unshift(new RNOHCorePackage({}));
     await rnInstance.initialize(packages);
-    this.instanceMap.set(id, rnInstance);
+    this.instanceMap.set(instanceId, rnInstance);
     return rnInstance;
+  }
+
+  public async reloadInstance(rnInstance: RNInstance): Promise<RNInstance> {
+    const id = rnInstance.getId();
+
+    const isFuseboxEnabled = this.napiBridge.getInspectorFlagIsFuseboxEnabled();
+    if (!isFuseboxEnabled) {
+      // Disable debugger to resume the JsVM & avoid thread locks while reloading
+      DevServerHelper.disableDebugger();
+    }
+
+    if (rnInstance instanceof RNInstanceImpl) {
+      await rnInstance.onDestroy(false);
+    }
+    this.instanceMap.delete(id);
+    await this.destroyRNInstanceWorker(id);
+    const options = this.instanceOptionsMap.get(id);
+
+    if (!options) {
+      throw new RNOHError({
+        whatHappened: "Attempted to reload RNInstance, but no RNInstanceOptions were found for the given ID.",
+        howCanItBeFixed: []
+      });
+    }
+
+    const newRNInstance = await this.createAndInitRNInstanceImpl(id, options);
+    return newRNInstance;
+  }
+
+  public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
+    const id = this.napiBridge.getNextRNInstanceId();
+    await this.napiBridge.createInspectorHostTarget(id,
+      (type: string, payload: string) => {
+        this.devToolsController.processInspectorMessage(type, payload)
+    });
+    this.instanceOptionsMap.set(id, options);
+    return this.createAndInitRNInstanceImpl(id, options);
   }
 
   private async createRNInstanceEnvOnWorker(workerThread: WorkerThread, rnInstanceId: number,
@@ -146,17 +184,22 @@ export class RNInstanceRegistry {
   public async deleteInstance(id: number): Promise<boolean> {
     if (this.instanceMap.has(id)) {
       this.instanceMap.delete(id);
-      if (this.workerThreadPromise !== undefined) {
-        const worker = await this.workerThreadPromise;
-        const ack =
-          worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
-            (payload: DestroyWorkerRNInstanceAckPayload) => payload.rnInstanceId === id)
-        worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
-        await ack;
-      }
+      this.instanceOptionsMap.delete(id);
+      this.destroyRNInstanceWorker(id);
       return true;
     }
     return false;
+  }
+
+  async destroyRNInstanceWorker(id: number) {
+    if (this.workerThreadPromise !== undefined) {
+      const worker = await this.workerThreadPromise;
+      const ack =
+        worker.waitForMessage("RNOH_DESTROY_WORKER_RN_INSTANCE_ACK",
+          (payload: DestroyWorkerRNInstanceAckPayload) => payload.rnInstanceId === id)
+      worker.postMessage("RNOH_DESTROY_WORKER_RN_INSTANCE", { rnInstanceId: id })
+      await ack;
+    }
   }
 
   public forEach(cb: (rnInstance: RNInstanceImpl) => void) {

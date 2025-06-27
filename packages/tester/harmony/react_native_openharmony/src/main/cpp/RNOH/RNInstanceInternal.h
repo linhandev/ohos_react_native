@@ -15,6 +15,7 @@
 #include "RNOH/ComponentInstancePreallocationRequestQueue.h"
 #include "RNOH/FontRegistry.h"
 #include "RNOH/GlobalJSIBinder.h"
+#include "RNOH/InspectorHostTarget.h"
 #include "RNOH/MountingManager.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
@@ -73,7 +74,8 @@ class RNInstanceInternal
       bool shouldEnableDebugger,
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared fontRegistry,
-      std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider);
+      std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
+      std::shared_ptr<InspectorHostTarget> inspectorHostTarget);
 
   virtual ~RNInstanceInternal() noexcept;
 
@@ -246,9 +248,7 @@ class RNInstanceInternal
   std::string m_bundlePath;
   std::unique_ptr<facebook::react::jsinspector_modern::HostTargetDelegate>
       m_inspectorHostDelegate;
-  std::shared_ptr<facebook::react::jsinspector_modern::HostTarget>
-      m_inspectorHostTarget;
-  std::optional<size_t> m_inspectorPageId;
+  std::shared_ptr<InspectorHostTarget> m_inspectorHostTarget;
   std::shared_ptr<facebook::react::JSRuntimeFactory> m_jsEngineProvider;
 };
 } // namespace rnoh

@@ -5,11 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { InternalDevToolsController } from './DevToolsController';
 import { RNOHContext } from './RNOHContext'
-
-interface PauseInDebuggerDialogPayload {
-  message: string
-}
 
 /**
  * @actor RNOH_APP
@@ -56,7 +53,7 @@ export struct RNPauseInDebuggerDialog {
       builder: PauseInDebuggerCustomDialog({
         message: this.message,
         onResume: () => {
-          this.ctx.rnInstance.postMessageToCpp("RNOH::RESUME_DEBUGGER", {});
+          this.ctx._rnohCoreContextDeps.napiBridge.resumeDebugger(this.ctx.rnInstance.getId());
         }
       }),
       autoCancel: false,
@@ -67,20 +64,17 @@ export struct RNPauseInDebuggerDialog {
       offset: { dx: 0, dy: insets ? insets.top : 0 }
     });
 
-    this.openCallback = this.ctx.rnInstance.cppEventEmitter.subscribe(
-      "RNOH::OPEN_DEBUGGER_PAUSED_DIALOG",
-      (payload: PauseInDebuggerDialogPayload): void => {
-        this.controller.open();
-        this.message = payload.message;
-      }
-    );
+    const internalDevToolsController = this.ctx.devToolsController as InternalDevToolsController;
+    this.openCallback = internalDevToolsController.inspectorEventEmitter.subscribe(
+      "OPEN_DEBUGGER_PAUSED_DIALOG", payload => {
+      this.controller.open();
+      this.message = payload.message;
+    });
 
-    this.closeCallback = this.ctx.rnInstance.cppEventEmitter.subscribe(
-      "RNOH::CLOSE_DEBUGGER_PAUSED_DIALOG",
-      (_: object): void => {
-        this.controller.close();
-      }
-    );
+    this.closeCallback = internalDevToolsController.inspectorEventEmitter.subscribe(
+      "CLOSE_DEBUGGER_PAUSED_DIALOG", () => {
+      this.controller.close();
+    });
   }
 
   /**

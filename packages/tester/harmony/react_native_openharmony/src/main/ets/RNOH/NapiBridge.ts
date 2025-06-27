@@ -125,6 +125,18 @@ export class NapiBridge {
     return this.unwrapResult<number>(this.libRNOHApp?.getNextRNInstanceId());
   }
 
+  createInspectorHostTarget(instanceId: number, onCppMessage: (type: string, payload: any) => void) {
+    this.libRNOHApp?.createInspectorHostTarget(instanceId, onCppMessage)
+  }
+
+  releaseInspectorHostTarget(instanceId: number) {
+    this.libRNOHApp?.releaseInspectorHostTarget(instanceId)
+  }
+
+  resumeDebugger(instanceId: number) {
+    this.libRNOHApp?.resumeDebugger(instanceId)
+  }
+
   onCreateRNInstance(
     envId: number,
     instanceId: number,
@@ -347,7 +359,7 @@ export class NapiBridge {
     return this.libRNOHApp!.getInspectorPackagerConnection(url, app, delegate);
   }
 
-  getInspectorFlagIsFuseboxEnabled() {
+  getInspectorFlagIsFuseboxEnabled() : boolean{
     return this.libRNOHApp!.getInspectorFlagIsFuseboxEnabled();
   }
 

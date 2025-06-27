@@ -165,7 +165,8 @@ export struct RNApp {
   /** Controller for debugger pause dialog (only in debug mode). */
   private pauseDebuggerDialogController!: CustomDialogController;
   /** Indicates whether this component should clean up the RNInstance on unmount. */
-  private shouldDestroyRNInstance: boolean = false;
+  private isManagingRNInstance: boolean = false;
+
   /** Stores teardown callbacks for event listeners and resource cleanup. */
   private cleanUpCallbacks: (() => void)[] = [];
   /** Logger instance specific to RNApp. */
@@ -194,8 +195,81 @@ export struct RNApp {
    * Used for development tooling like "Reload JS".
    */
   async reloadApp() {
-    await this.cleanUp();
-    this.init();
+    try {
+      this.shouldShow = false
+      if (this.isManagingRNInstance) {
+        this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
+        const options = this.rnInstanceConfig
+        this.rnInstance = await this.rnohCoreContext!.reloadRNInstance(this.rnInstance);
+        await this.setUpSurfaceAndContext();
+      }
+    }
+    catch (err) {
+      if (err instanceof RNOHError) {
+        this.rnohCoreContext!.reportRNOHError(err)
+      } else if (typeof err === "string") {
+        this.rnohCoreContext!.logger.error(err)
+      } else if (err instanceof Error) {
+        this.rnohCoreContext!.logger.error(err.message)
+      } else {
+        this.rnohCoreContext!.logger.error("Fatal exception")
+      }
+    }
+  }
+
+  private async setUpSurfaceAndContext() {
+    this.ctx = new RNComponentContext(
+      RNOHContext.fromCoreContext(this.rnohCoreContext, this.rnInstance),
+      wrappedCustomRNComponentBuilder,
+      wrapBuilder(buildRNComponentForTag),
+      new Map(),
+      this.wrappedCustomRNComponentBuilder // backward compatibility
+    )
+
+    // Initialize log box dialog for RN error/warning messages
+    this.logBoxDialogController = new CustomDialogController({
+      cornerRadius: 0,
+      customStyle: true,
+      alignment: DialogAlignment.TopStart,
+      backgroundColor: Color.Transparent,
+      builder: LogBoxDialog({
+        ctx: this.ctx,
+        rnInstance: this.rnInstance,
+        initialProps: this.initialProps
+      })
+    })
+
+    // Subscribe to log box and reload events
+    this.cleanUpCallbacks.push(this.rnInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("SHOW",
+      () => this.logBoxDialogController.open()))
+    this.cleanUpCallbacks.push(this.rnInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("HIDE",
+      () => this.logBoxDialogController.close()))
+    this.cleanUpCallbacks.push(this.ctx.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
+      await this.reloadApp();
+    }))
+
+    // Call user-defined setup logic
+    await this.onSetUp(this.rnInstance)
+
+    // Run bundle if needed
+    const jsBundleExecutionStatus = this.rnInstance.getBundleExecutionStatus(this.jsBundleProvider?.getURL())
+    if (this.jsBundleProvider && jsBundleExecutionStatus === undefined) {
+      await this.rnInstance.runJSBundle(this.jsBundleProvider)
+      this.shouldShow = true
+      return;
+    }
+
+    // Wait until bundle execution completes
+    if (jsBundleExecutionStatus !== "DONE") {
+      this.cleanUpCallbacks.push(this.rnInstance.subscribeToLifecycleEvents("JS_BUNDLE_EXECUTION_FINISH",
+        (args) => {
+          if (args.appKeys.includes(this.appKey)) {
+            this.shouldShow = true
+          }
+        }))
+    } else {
+      this.shouldShow = true
+    }
   }
 
   /**
@@ -208,61 +282,7 @@ export struct RNApp {
     try {
       await (async () => {
         this.rnInstance = await this.getOrCreateRNInstance()
-        this.ctx = new RNComponentContext(
-          RNOHContext.fromCoreContext(this.rnohCoreContext, this.rnInstance),
-          wrappedCustomRNComponentBuilder,
-          wrapBuilder(buildRNComponentForTag),
-          new Map(),
-          this.wrappedCustomRNComponentBuilder// backward compatibility
-        )
-
-        // Initialize log box dialog for RN error/warning messages
-        this.logBoxDialogController = new CustomDialogController({
-          cornerRadius: 0,
-          customStyle: true,
-          alignment: DialogAlignment.TopStart,
-          backgroundColor: Color.Transparent,
-          builder: LogBoxDialog({
-            ctx: this.ctx,
-            rnInstance: this.rnInstance,
-            initialProps: this.initialProps
-          })
-        })
-
-        // Subscribe to log box and reload events
-        this.cleanUpCallbacks.push(this.rnInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("SHOW",
-          () => this.logBoxDialogController.open()))
-        this.cleanUpCallbacks.push(this.rnInstance.getTurboModule<LogBoxTurboModule>(LogBoxTurboModule.NAME).eventEmitter.subscribe("HIDE",
-          () => this.logBoxDialogController.close()))
-        this.cleanUpCallbacks.push(this.ctx.devToolsController.eventEmitter.subscribe("RELOAD", async () => {
-          await this.reloadApp();
-        }))
-        this.cleanUpCallbacks.push(this.ctx.rnInstance.cppEventEmitter.subscribe("RNOH::ON_RELOAD", async () => {
-          await this.reloadApp();
-        }))
-
-        // Call user-defined setup logic
-        await this.onSetUp(this.rnInstance)
-
-        // Run bundle if needed
-        const jsBundleExecutionStatus = this.rnInstance.getBundleExecutionStatus(this.jsBundleProvider?.getURL())
-        if (this.jsBundleProvider && jsBundleExecutionStatus === undefined) {
-          await this.rnInstance.runJSBundle(this.jsBundleProvider)
-          this.shouldShow = true
-          return;
-        }
-
-        // Wait until bundle execution completes
-        if (jsBundleExecutionStatus !== "DONE") {
-          this.cleanUpCallbacks.push(this.rnInstance.subscribeToLifecycleEvents("JS_BUNDLE_EXECUTION_FINISH",
-            (args) => {
-              if (args.appKeys.includes(this.appKey)) {
-                this.shouldShow = true
-              }
-            }))
-        } else {
-          this.shouldShow = true
-        }
+        this.setUpSurfaceAndContext()
       })()
       stopTracing()
     } catch (err) {
@@ -285,7 +305,7 @@ export struct RNApp {
   private async cleanUp() {
     const stopTracing = this.logger.clone("cleanUp").startTracing()
     this.shouldShow = false
-    if (this.shouldDestroyRNInstance) {
+    if (this.isManagingRNInstance) {
       await this.rnohCoreContext!.destroyAndUnregisterRNInstance(this.rnInstance)
     }
     this.cleanUpCallbacks.forEach(cleanUp => cleanUp())
@@ -300,7 +320,7 @@ export struct RNApp {
       return Promise.resolve((this.rnInstanceConfig as UnmanagedRNInstanceConfig).rnInstance)
     } else {
       const options = this.rnInstanceConfig
-      this.shouldDestroyRNInstance = true
+      this.isManagingRNInstance = true
       return this.rnohCoreContext!.createAndRegisterRNInstance(options as ManagedRNInstanceConfig)
     }
   }

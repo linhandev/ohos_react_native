@@ -6,12 +6,16 @@
  */
 
 import { EventEmitter } from './EventEmitter'
-import { DevServerHelper } from './DevServerHelper'
 import { RNOHLogger } from './RNOHLogger'
 import { RNOHError } from './RNOHError'
+import { DevServerHelper } from './DevServerHelper'
 
 interface DevMenuItem {
   title: string
+}
+
+interface PauseInDebuggerDialogPayload {
+  message: string
 }
 
 /**
@@ -64,11 +68,9 @@ export class DevToolsController {
 
   /**
    * @brief Triggers reload of the current RNInstance.
-   * Disables the debugger before reload to avoid lock issues.
    * @param reason - Optional reason for the reload.
    */
   reload(reason: string | undefined = undefined): void {
-    DevServerHelper.disableDebugger();
     this.eventEmitter.emit("RELOAD", { reason });
   }
 
@@ -141,5 +143,25 @@ export class DevToolsController {
    */
   setLastError(error: RNOHError): void {
     this.lastError = error;
+  }
+
+}
+
+export class InternalDevToolsController extends DevToolsController {
+  public inspectorEventEmitter = new EventEmitter<{
+    "OPEN_DEBUGGER_PAUSED_DIALOG": [payload: PauseInDebuggerDialogPayload],
+    "CLOSE_DEBUGGER_PAUSED_DIALOG"
+  }>();
+
+  public processInspectorMessage(type: string, payload: any): void {
+    if (type === "RNOH::ON_RELOAD") {
+      this.reload();
+    }
+    else if (type === "RNOH::OPEN_DEBUGGER_PAUSED_DIALOG") {
+      this.inspectorEventEmitter.emit("OPEN_DEBUGGER_PAUSED_DIALOG", payload)
+    }
+    else if (type === "RNOH::CLOSE_DEBUGGER_PAUSED_DIALOG") {
+      this.inspectorEventEmitter.emit("CLOSE_DEBUGGER_PAUSED_DIALOG")
+    }
   }
 }

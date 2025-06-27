@@ -87,7 +87,7 @@ export class DevServerHelper {
     const inspectorUrl = getInspectorUrl(bundleUrl, isFuseboxEnabled);
     let connection = DevServerHelper.connectionByInspectorUrl.get(inspectorUrl);
 
-    if (!connection || !connection.isConnected()) {
+    if (!connection) {
       connection = getInspectorPackagerConnection(napiBridge, inspectorUrl, appName, logger);
       DevServerHelper.connectionByInspectorUrl.set(inspectorUrl, connection);
       connection.connect();

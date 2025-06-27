@@ -21,6 +21,7 @@ import type { DevToolsController } from './DevToolsController';
 import type { DisplayMetrics, JSEngineName } from './types';
 import type { RNInstanceOptions } from './RNInstance';
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
+import { NapiBridge } from './NapiBridge';
 
 export type UIAbilityState = 'FOREGROUND' | 'BACKGROUND';
 
@@ -29,6 +30,7 @@ type RNOHCoreContextDependencies = {
   rnInstanceRegistry: {
     createInstance(options: RNInstanceOptions): Promise<RNInstance>;
     deleteInstance(id: number): Promise<boolean>;
+    reloadInstance(rnInstance: RNInstance);
     forEach(cb: (rnInstance: RNInstanceImpl) => void);
   };
   displayMetricsProvider: () => DisplayMetrics;
@@ -44,6 +46,7 @@ type RNOHCoreContextDependencies = {
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
   launchUri?: string;
   erasedWorkerTaskRunner: unknown;
+  napiBridge: NapiBridge;
 };
 
 /**
@@ -95,7 +98,20 @@ export class RNOHCoreContext {
     await this._rnohCoreContextDeps.rnInstanceRegistry.deleteInstance(
       rnInstance.getId(),
     );
+    await this._rnohCoreContextDeps.napiBridge.releaseInspectorHostTarget(
+      rnInstance.getId()
+    );
     stopTracing();
+  }
+
+  /**
+   * Reloads the given RNInstance by destroying it and creating a new one.
+   * The new instance maintains the existing DevTools connections.
+   * The original instance is deleted after the reload and must not be used.
+   * Only the returned (new) instance should be used after this call.
+   */
+  async reloadRNInstance(rnInstance: RNInstance): Promise<RNInstance> {
+    return this._rnohCoreContextDeps.rnInstanceRegistry.reloadInstance(rnInstance);
   }
 
   getDisplayMetrics(): DisplayMetrics {
