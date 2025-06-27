@@ -802,6 +802,9 @@ ScrollViewComponentInstance::getFirstVisibleView(int32_t minIndexForVisible) {
   auto currentScrollPosition =
       isHorizontal(m_props) ? m_currentOffset.x : m_currentOffset.y;
   auto const& scrollViewChildren = m_children[0]->getChildren();
+  if (scrollViewChildren.empty()) {
+    return std::nullopt;
+  }
 
   minIndexForVisible = std::max(minIndexForVisible, 0);
   for (auto it = scrollViewChildren.begin() + minIndexForVisible;
