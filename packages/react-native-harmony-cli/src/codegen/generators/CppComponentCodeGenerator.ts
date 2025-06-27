@@ -56,6 +56,9 @@ export class CppComponentCodeGenerator implements CodeGenerator<LibraryData> {
             });
           });
           shape.commands.forEach((command) => {
+            componentJSIBinderHTemplate.addCommand({
+              name: command.name,
+            });
             componentInstanceSpecHTemplate.addCommand({
               name: command.name,
               args: command.typeAnnotation.params.map((param) => ({

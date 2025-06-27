@@ -21,6 +21,14 @@ class {{name}}JSIBinder : public ViewComponentJSIBinder {
         return object;
     }
 
+    facebook::jsi::Object createCommands(facebook::jsi::Runtime &rt) override {
+        auto commands = ViewComponentJSIBinder::createCommands(rt);
+        {{#commands}}
+        commands.setProperty(rt, "{{name}}", "{{name}}");
+        {{/commands}}
+        return commands;
+    }
+
     facebook::jsi::Object createBubblingEventTypes(facebook::jsi::Runtime &rt) override {
         facebook::jsi::Object events(rt);
         {{#bubblingEvents}}
@@ -45,6 +53,10 @@ type ComponentJSIBinderHProp = {
   isObject: boolean;
 };
 
+type ComponentJSIBinderHCommand = {
+  name: string;
+};
+
 type ComponentJSIBinderHEvent = {
   type: 'direct' | 'bubble';
   eventHandlerName: string;
@@ -52,12 +64,20 @@ type ComponentJSIBinderHEvent = {
 
 export class ComponentJSIBinderHTemplate {
   private props: ComponentJSIBinderHProp[] = [];
+  private commands: ComponentJSIBinderHCommand[] = [];
   private events: ComponentJSIBinderHEvent[] = [];
 
-  constructor(private name: string, private codegenNoticeLines: string[]) {}
+  constructor(
+    private name: string,
+    private codegenNoticeLines: string[]
+  ) {}
 
   addProp(prop: ComponentJSIBinderHProp) {
     this.props.push(prop);
+  }
+
+  addCommand(command: ComponentJSIBinderHCommand) {
+    this.commands.push(command);
   }
 
   addEvent(event: ComponentJSIBinderHEvent) {
@@ -73,6 +93,9 @@ export class ComponentJSIBinderHTemplate {
       props: this.props.map((prop) => ({
         name: prop.name,
         type: prop.isObject ? '"Object"' : 'true',
+      })),
+      commands: this.commands.map((command) => ({
+        name: command.name,
       })),
       bubblingEvents: this.events
         .filter((event) => event.type === 'bubble')

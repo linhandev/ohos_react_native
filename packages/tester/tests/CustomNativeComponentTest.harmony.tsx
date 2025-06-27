@@ -19,7 +19,7 @@ import {
   IncomingData as GeneratedSampleNativeComponentCAPICustomProps,
   SupportedCommandArgs as GeneratedSampleNativeComponentCAPICommandArgs,
 } from 'react-native-harmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
-import {Text, TextInput, View} from 'react-native';
+import {Text, TextInput, View, UIManager} from 'react-native';
 
 export function CustomNativeComponentTest() {
   return (
@@ -138,9 +138,25 @@ function Blinker({children}: any) {
   );
 }
 
+function VerifyNativeCommandExists() {
+  return (
+    <TestSuite name="verify native commands">
+      <TestCase.Logical
+        itShould="verify that native command emitNativeEvent exists"
+        fn={({expect}) => {
+          const command = UIManager.getViewManagerConfig('GeneratedSampleView')
+            ?.Commands?.emitNativeEvent;
+          expect(command).to.be.eq('emitNativeEvent');
+        }}
+      />
+    </TestSuite>
+  );
+}
+
 function GeneratedCustomComponentTest() {
   return (
     <TestSuite name="generated custom component">
+      <VerifyNativeCommandExists />
       <TestSuite name="ArkTS">
         <TestCase.Automated<
           GeneratedSampleNativeComponentArkTSCustomProps | undefined

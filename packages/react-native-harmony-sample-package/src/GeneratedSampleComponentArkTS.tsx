@@ -3,7 +3,8 @@ import GeneratedSampleNativeComponent, {
   OutgoingData,
   IncomingData,
 } from './specs/v1/GeneratedSampleNativeComponent';
-import { UIManager, findNodeHandle, processColor } from 'react-native';
+import { processColor } from 'react-native';
+import { Commands } from './specs/v2/GeneratedSampleNativeComponent';
 
 export type GeneratedSampleComponentArkTSRef = {
   emitNativeEvent: (eventType: 'directEvent' | 'bubblingEvent') => void;
@@ -34,11 +35,7 @@ export const GeneratedSampleComponentArkTS = React.forwardRef<
       () => ({
         emitNativeEvent(eventType) {
           if (nativeRef?.current) {
-            UIManager.dispatchViewManagerCommand(
-              findNodeHandle(nativeRef.current),
-              'emitNativeEvent',
-              [eventType, false]
-            );
+            Commands.emitNativeEvent(nativeRef.current, eventType)
           }
         },
       }),

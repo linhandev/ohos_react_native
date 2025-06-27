@@ -4,8 +4,9 @@ import GeneratedSampleNativeComponent, {
   IncomingData,
   ArgsOfEmitCommandArgs,
   SupportedCommandArgs,
+  Commands,
 } from './specs/v2/GeneratedSampleNativeComponent';
-import { UIManager, findNodeHandle, processColor } from 'react-native';
+import { processColor } from 'react-native';
 
 export type GeneratedSampleComponentCAPIRef = {
   emitNativeEvent: (eventType: 'directEvent' | 'bubblingEvent') => void;
@@ -41,20 +42,12 @@ export const GeneratedSampleComponentCAPI = React.forwardRef<
       () => ({
         emitNativeEvent(eventType) {
           if (nativeRef?.current) {
-            UIManager.dispatchViewManagerCommand(
-              findNodeHandle(nativeRef.current),
-              'emitNativeEvent',
-              [eventType]
-            );
+            Commands.emitNativeEvent(nativeRef.current, eventType);
           }
         },
         emitCommandArgs(...args: ArgsOfEmitCommandArgs) {
           if (nativeRef?.current) {
-            UIManager.dispatchViewManagerCommand(
-              findNodeHandle(nativeRef.current),
-              'emitCommandArgs',
-              args
-            );
+            Commands.emitCommandArgs(nativeRef.current, ...args);
           }
         },
       }),
