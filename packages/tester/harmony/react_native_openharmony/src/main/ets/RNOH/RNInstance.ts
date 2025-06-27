@@ -360,6 +360,24 @@ export interface RNInstance {
 /**
  * @actor RNOH_APP
  *
+ * Format --name=value
+ * Supported options depends on the version of V8 JavaScript engine
+ * Call OH_JSVM_GetVMInfo to check the current version
+ */
+export type JSVMInitOption = string;
+
+/**
+ * @actor RNOH_APP
+ */
+export const JSVM_INIT_OPTIONS_PRESET = {
+  DEFAULT: [],
+  LOW_MEMORY: ["--incremental-marking-hard-trigger=40", "--min-semi-space-size=1", "--max-semi-space-size=4"],
+  HIGH_PERFORMANCE: ["--incremental-marking-hard-trigger=80", "--min-semi-space-size=16", "--max-semi-space-size=16"]
+} as const satisfies Record<string, ReadonlyArray<JSVMInitOption>>;
+
+/**
+ * @actor RNOH_APP
+ *
  * Configuration options used to initialize and customize a React Native instance.
  * This type defines lifecycle behavior, debugging options, architecture settings, and runtime behaviors.
  */
@@ -415,6 +433,11 @@ export type RNInstanceOptions = {
    * }
    */
   fontResourceByFontFamily?: Record<string, Resource | string>;
+  /**
+   * @default: JSVM_INIT_OPTIONS_PRESET.DEFAULT
+   * Specifies custom init options used by JSVM. The options has no effect if using Hermes.
+   */
+  jsvmInitOptions?: ReadonlyArray<JSVMInitOption>;
   /**
    * @architecture: ArkTS
    * Enables text measurement using NDK (C++) interface.
@@ -509,6 +532,7 @@ export class RNInstanceImpl implements RNInstance {
     private fontPathByFontFamily: Record<string, string>,
     private _httpClient: HttpClient,
     backPressHandler?: () => void,
+    private jsvmInitOptions?: ReadonlyArray<JSVMInitOption>,
   ) {
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.logger = injectedLogger.clone('RNInstance');
@@ -640,6 +664,7 @@ export class RNInstanceImpl implements RNInstance {
       cppFeatureFlags,
       this.resourceManager,
       this.fontPathByFontFamily,
+      this.jsvmInitOptions ?? JSVM_INIT_OPTIONS_PRESET.DEFAULT,
     );
     stopTracing();
   }

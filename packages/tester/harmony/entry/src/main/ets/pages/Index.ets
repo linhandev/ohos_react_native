@@ -8,7 +8,8 @@ import {
   RNOHErrorDialog,
   RNOHLogger,
   TraceJSBundleProviderDecorator,
-  RNOHCoreContext
+  RNOHCoreContext,
+  JSVM_INIT_OPTIONS_PRESET,
 } from '@rnoh/react-native-openharmony';
 import { GeneratedSampleView } from '@rnoh/react-native-harmony-sample-package';
 import { getRNOHPackages } from '../PackageProvider';

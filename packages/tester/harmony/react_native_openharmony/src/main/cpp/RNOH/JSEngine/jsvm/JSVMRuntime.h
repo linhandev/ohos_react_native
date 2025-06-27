@@ -13,6 +13,7 @@
 #include "JSVMUtil.h"
 #include "ark_runtime/jsvm.h"
 #include "common.h"
+#include "folly/dynamic.h"
 
 namespace jsvm {
 
@@ -22,8 +23,10 @@ class JSVMConverter;
 
 class JSVMRuntime : public Runtime {
  public:
-  JSVMRuntime();
-  JSVMRuntime(std::shared_ptr<facebook::react::MessageQueueThread> jsQueue);
+  explicit JSVMRuntime(folly::dynamic initOptions);
+  JSVMRuntime(
+      std::shared_ptr<facebook::react::MessageQueueThread> jsQueue,
+      folly::dynamic initOptions);
   ~JSVMRuntime();
 
   virtual Value evaluateJavaScript(

@@ -16,7 +16,7 @@ import { RNOHLogger } from "./RNOHLogger"
 import type { DisplayMetrics, InspectorPackagerConnection, InspectorPackagerConnectionDelegate,
   JSEngineName } from './types'
 import { FatalRNOHError, RNOHError } from "./RNOHError"
-import type { FrameNodeFactory } from "./RNInstance"
+import type { FrameNodeFactory, JSVMInitOption } from "./RNInstance"
 import ohosResourceManager from '@ohos.resourceManager';
 import {
   AnyThreadTurboModule,
@@ -138,7 +138,8 @@ export class NapiBridge {
     shouldEnableDebugger: boolean,
     cppFeatureFlags: CppFeatureFlag[],
     resourceManager: ohosResourceManager.ResourceManager,
-    fontPathByFontFamily: Record<string, string>
+    fontPathByFontFamily: Record<string, string>,
+    jsvmInitOptions: ReadonlyArray<JSVMInitOption>,
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -155,7 +156,8 @@ export class NapiBridge {
       frameNodeFactoryRef,
       resourceManager,
       envId,
-      fontPathByFontFamily
+      fontPathByFontFamily,
+      jsvmInitOptions,
     );
     return this.unwrapResult(result)
   }

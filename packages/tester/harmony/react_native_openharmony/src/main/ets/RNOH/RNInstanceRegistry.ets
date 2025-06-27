@@ -113,6 +113,7 @@ export class RNInstanceRegistry {
       fontPathByFontFamily,
       options?.httpClient ?? this.defaultHttpClient,
       options.backPressHandler,
+      options.jsvmInitOptions,
     );
     const packages = options.createRNPackages({})
     packages.unshift(new RNOHCorePackage({}));

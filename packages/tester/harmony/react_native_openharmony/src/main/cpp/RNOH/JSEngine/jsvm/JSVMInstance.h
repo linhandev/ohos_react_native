@@ -23,7 +23,8 @@ class JSVMInstance {
       std::shared_ptr<const ReactNativeConfig> reactNativeConfig,
       std::shared_ptr<CrashManager> crashManager,
       std::shared_ptr<facebook::react::MessageQueueThread> msgQueueThread,
-      bool allocInOldGenBeforeTTI) noexcept;
+      bool allocInOldGenBeforeTTI,
+      folly::dynamic initOptions) noexcept;
 };
 
 } // namespace jsvm

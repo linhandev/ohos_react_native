@@ -62,20 +62,6 @@ auto extractOrDefault(Map& map, K&& key, V&& defaultValue)
   return std::forward<V>(defaultValue);
 }
 
-std::shared_ptr<facebook::react::JSRuntimeFactory> createJSRuntimeFactory() {
-  auto reactConfig =
-      std::make_shared<facebook::react::EmptyReactNativeConfig>();
-#if USE_HERMES
-  DLOG(INFO) << "Using HermesInstance";
-  return std::make_shared<JSEngineProvider<facebook::react::HermesInstance>>(
-      std::move(reactConfig));
-#else
-  DLOG(INFO) << "Using JSVMInstance";
-  return std::make_shared<JSEngineProvider<jsvm::JSVMInstance>>(
-      std::move(reactConfig));
-#endif
-}
-
 std::mutex RN_INSTANCE_BY_ID_MTX;
 std::unordered_map<size_t, std::shared_ptr<RNInstanceInternal>>
     RN_INSTANCE_BY_ID;
@@ -147,9 +133,10 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
 #ifdef REACT_NATIVE_DEBUG
     isDebugModeEnabled = true;
 #endif
+#if USE_HERMES
+    auto jsEngineName = "hermes";
+#else
     auto jsEngineName = "jsvm";
-#ifdef USE_HERMES
-    jsEngineName = "hermes";
 #endif
     auto arkTSBridgeHandler = arkJS.createNapiRef(args[1]);
     ARK_TS_BRIDGE_BY_ENV_ID.emplace(
@@ -254,7 +241,18 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         std::make_unique<RNInstanceInternal::RNInstanceRNOHMarkerListener>(
             arkTSChannel);
     RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::APP_STARTUP_START);
-    auto jsEngineProvider = createJSRuntimeFactory();
+#if USE_HERMES
+    DLOG(INFO) << "Using HermesInstance";
+    auto jsEngineProvider =
+        std::make_shared<JSEngineProvider<facebook::react::HermesInstance>>(
+            std::make_shared<facebook::react::EmptyReactNativeConfig>());
+#else
+    DLOG(INFO) << "Using JSVMInstance";
+    auto jsEngineProvider =
+        std::make_shared<JSEngineProvider<jsvm::JSVMInstance>>(
+            std::make_shared<facebook::react::EmptyReactNativeConfig>(),
+            arkJS.getDynamic(args[11]));
+#endif
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,

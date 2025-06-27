@@ -29,13 +29,28 @@ std::unordered_map<std::string, std::vector<uint8_t>> JSVMRuntime::codeCacheL2 =
     {};
 thread_local bool JSVMPointerValue::isJsThread = false;
 
-JSVMRuntime::JSVMRuntime() : hostObjectClass(nullptr) {
+JSVMRuntime::JSVMRuntime(folly::dynamic initOptions)
+    : hostObjectClass(nullptr) {
   DFX();
   static std::mutex lockInit;
   {
     const std::lock_guard<std::mutex> lock(lockInit);
     if (!initialized) {
-      OH_JSVM_Init(nullptr);
+      auto len = initOptions.size();
+      if (len > 0) {
+        int argc = len + 1;
+        std::vector<std::string> temp(len);
+        std::vector<const char*> args(argc);
+        for (size_t i = 0; i < len; i++) {
+          temp.push_back(initOptions[i].asString());
+          args[i + 1] = temp.back().c_str();
+        }
+        JSVM_InitOptions init_options{
+            nullptr, &argc, (char**)args.data(), true};
+        OH_JSVM_Init(&init_options);
+      } else {
+        OH_JSVM_Init(nullptr);
+      }
       initialized = true;
     }
   }
@@ -49,8 +64,9 @@ JSVMRuntime::JSVMRuntime() : hostObjectClass(nullptr) {
 }
 
 JSVMRuntime::JSVMRuntime(
-    std::shared_ptr<facebook::react::MessageQueueThread> jsQueue)
-    : JSVMRuntime() {
+    std::shared_ptr<facebook::react::MessageQueueThread> jsQueue,
+    folly::dynamic initOptions)
+    : JSVMRuntime(initOptions) {
   this->jsQueue = jsQueue;
   OH_JSVM_SetInstanceData(
       env,
