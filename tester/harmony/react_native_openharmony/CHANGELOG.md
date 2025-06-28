@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.72.76
+- feat：Support Native Animation LTPO,([1350262e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1350262e4cff41bb8c52a4af8b270ebedd1b8665))
+- feat: JSVM Init Options,([6dbb7840](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6dbb784092b40f8d2940e4ff18becdfb106777a7))
+- fix: handle empty child components in get FirstVisibleView to prevent crash,([1781384e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1781384e545c44abe0f75f08fb47528c4aef21ad))
+- chore: updated to version 5.1.1.600(0.72.75),([ddec887b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ddec887b42208ed5d88ba6cc4ccd66e0f8030a4a))
+
 ## 0.72.75
 - fix：the uncaught exception of the getWindowDensityInfo interface call,([019dcf28](https://gitcode.com/openharmony-sig/ohos_react_native/commit/019dcf286a821514cfc87ff94aaa27cd9e7da72a))
 - chore: update to version 6.0.0.303(0.72.74),([9bc03448](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9bc03448641a9ba9f0ed8a47a74edc78bca2cc18))
