@@ -1,6 +1,6 @@
 {
   "name": "@react-native-oh/react-native-harmony",
-  "version": "0.77.10",
+  "version": "0.77.11",
   "description": "",
   "scripts": {
     "prepack": "cd .. && pnpm _integrate-upstream-code && cd react-native-harmony && pnpm build:har",

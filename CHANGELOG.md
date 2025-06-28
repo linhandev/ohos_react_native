@@ -1,7 +1,23 @@
 # Changelog
 
-## Internal: v0.77.10
+## Internal: v0.77.11
+- fix: debugger disconnecting after reload,([e9093633](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e9093633706a1354e48805b08841787f1367f4dc))
+- Fix: TextInput::onKeyPress doesn't get triggered when backspace is pressed in an empty TextInput,([61066d4f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/61066d4f6d39824ff24b66a16f029ea0a68ac245))
+- optimize copy to move or reference,([5e9bf065](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5e9bf0653f883bf9a6c12a726ef81ab68c6c4c9c))
+- feat: add command handling to ArkTS and C++ component generators.,([dd023ebc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dd023ebc4cac0c02077d21c5c0c50a581c2990f3))
+- feat: Support Native Animation LTPO feature,([d4cf3562](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d4cf3562fa24faf955436acb841cafe316306b2a))
+- feat: JSVM Init Options,([6a642065](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6a6420650bbfcf2c5a2c76e191293d980625a4b1))
+- fix: The Scrollview component is configured with the mainVisibleContentPosition property, and after deleting all items, a crash occurs,([1b82ab22](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1b82ab22ed85b665f0fcdecdb7ad5667c9e90892))
+- chore: internal release 0.77.10 6.0.0.400,([b8ec1f8a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b8ec1f8ac71aa443ebf95b83331350d3597ea76d))
+- [doc]: Revise the documentation to remove the mandatory naming conventions for code files imposed by Codegen.,([f7ddc50b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7ddc50b6283a99f53631db8227f2afb18020aac))
+- chore: Add test for transform,([33703216](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3370321661fc0d55be8486d7b7d25800a44e9795))
+- feat: upgrade multibundle sample to 77,([6360bbc6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6360bbc656bef57ebb6a6611645fd9e836f90bf6))
+- feat: select first partially visible view as anchor for maintainVisibleContentPosition,([ca1e0a98](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ca1e0a980915be29a98fd53d64affdb5673280a1))
+- doc: pgo instructions without needing rooted device,([2ce61ef3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2ce61ef3eb04aea33e7b201583374bb7acac7361))
+- optimized: skip transform update when though pointscalefactor changed, there's no translation component in the transform,([b83bffcd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b83bffcd12779a8fd23434204a2fe74619781ab7))
+- fix: Switch the Image implementation back to iOS and supplement the already implemented features.,([2f2e96b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f2e96b8d240f3eb08b3fecec4af8b3fbb2a53c3))
 
+## Internal: v0.77.10
 - fixed RNInstance now respects enableDebugger while deciding whether to connect to host inspector ([f9a691f1f2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f9a691f1f25d57ab0117b7563760dc4f554310b9))
 - fixed folly setup failing when used with flash list in some scenario ([f038fcfe09](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f038fcfe094017b3666d977b0ffe83f7d85972dc))
 - changed behavior of `maintainVisibleContentPosition` to select the first partially visible view as the anchor ([c3a74025e7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c3a74025e7dc1f3a53e1c4745bcdadeffb330821))
