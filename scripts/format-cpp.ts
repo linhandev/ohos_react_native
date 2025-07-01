@@ -83,20 +83,25 @@ export async function findChangedFiles(): Promise<Set<string>> {
       'Can\'t get current branch nor changed files. Don\'t know what to format.'
     );
   }
-  const revList = execSync(
-    `git rev-list --exclude ${currentBranch} --branches -1`
-  )
-    .toString()
-    .trim();
-  const diffFromBranchCmd = `git diff --name-only --diff-filter=d ${revList} HEAD`;
-  const diffUnstagedCmd = 'git diff --name-only --diff-filter=d';
-  const diffStagedCmd = 'git diff --name-only --diff-filter=d --cached';
-  const result = await Promise.all([
-    execGitDiffCommand(diffFromBranchCmd),
-    execGitDiffCommand(diffUnstagedCmd),
-    execGitDiffCommand(diffStagedCmd),
-  ]);
-  return new Set(result.flat());
+  try {
+    const upstreamDiffCmd = 'git diff --name-only @{u} HEAD';
+    return new Set(await execGitDiffCommand(upstreamDiffCmd));
+  } catch {
+    const revList = execSync(
+      `git rev-list --exclude ${currentBranch} --branches -1`
+    )
+      .toString()
+      .trim();
+    const diffFromBranchCmd = `git diff --name-only --diff-filter=d ${revList} HEAD`;
+    const diffUnstagedCmd = 'git diff --name-only --diff-filter=d';
+    const diffStagedCmd = 'git diff --name-only --diff-filter=d --cached';
+    const result = await Promise.all([
+      execGitDiffCommand(diffFromBranchCmd),
+      execGitDiffCommand(diffUnstagedCmd),
+      execGitDiffCommand(diffStagedCmd),
+    ]);
+    return new Set(result.flat());
+  }
 }
 
 async function execGitDiffCommand(command: string): Promise<string[]> {
