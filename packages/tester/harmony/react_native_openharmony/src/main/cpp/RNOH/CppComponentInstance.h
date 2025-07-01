@@ -68,7 +68,10 @@ class CppComponentInstance : public ComponentInstance,
   using Shared = std::shared_ptr<CppComponentInstance>;
 
   CppComponentInstance(Context context)
-      : ComponentInstance(std::move(context)) {}
+      : ComponentInstance(std::move(context)) {
+    m_oldPointScaleFactor = m_deps->displayMetricsManager->getDisplayMetrics()
+                                .screenPhysicalPixels.scale;
+  }
 
   /**
    * @brief Called when the component instance is created
