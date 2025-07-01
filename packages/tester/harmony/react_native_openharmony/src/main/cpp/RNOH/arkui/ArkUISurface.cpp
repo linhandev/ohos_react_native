@@ -85,13 +85,15 @@ ArkUISurface::ArkUISurface(
     ComponentInstanceRegistry::Shared componentInstanceRegistry,
     ComponentInstanceFactory::Shared const& componentInstanceFactory,
     ArkTSMessageHub::Shared arkTSMessageHub,
+    DisplayMetricsManager::Shared displayMetricsManager,
     SurfaceId surfaceId,
     int rnInstanceId,
     std::string const& appKey)
     : m_surfaceId(surfaceId),
       m_scheduler(std::move(scheduler)),
       m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
-      m_surfaceHandler(SurfaceHandler(appKey, surfaceId)) {
+      m_surfaceHandler(SurfaceHandler(appKey, surfaceId)),
+      m_displayMetricsManager(std::move(displayMetricsManager)) {
   m_scheduler->registerSurface(m_surfaceHandler);
   m_taskExecutor = taskExecutor;
   m_rootView = componentInstanceFactory->create(
@@ -281,6 +283,15 @@ void ArkUISurface::setDisplayMode(facebook::react::DisplayMode displayMode) {
 Surface::LayoutContext ArkUISurface::getLayoutContext() {
   m_threadGuard.assertThread();
   return Surface::LayoutContext::from(m_surfaceHandler.getLayoutContext());
+}
+
+DisplayMetrics ArkUISurface::getDisplayMetrics() {
+  DisplayMetrics result;
+
+  m_taskExecutor->runSyncTask(TaskThread::MAIN, [this, &result] {
+    result = m_displayMetricsManager->getDisplayMetrics();
+  });
+  return result;
 }
 
 std::weak_ptr<UIInputEventHandler> ArkUISurface::getUIInputEventHandler() {

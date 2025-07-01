@@ -120,6 +120,7 @@ void RNInstanceCAPI::createSurface(
           m_componentInstanceRegistry,
           m_componentInstanceFactory,
           m_arkTSMessageHub,
+          m_arkTSBridge,
           surfaceId,
           m_id,
           moduleName));

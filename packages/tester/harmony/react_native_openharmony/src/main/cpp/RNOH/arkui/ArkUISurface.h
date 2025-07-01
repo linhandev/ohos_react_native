@@ -36,6 +36,7 @@ class ArkUISurface : public Surface,
       ComponentInstanceRegistry::Shared componentInstanceRegistry,
       ComponentInstanceFactory::Shared const& componentInstanceFactory,
       ArkTSMessageHub::Shared arkTSMessageHub,
+      DisplayMetricsManager::Shared displayMetricsManager,
       facebook::react::SurfaceId surfaceId,
       int rnInstanceId,
       std::string const& appKey);
@@ -86,6 +87,7 @@ class ArkUISurface : public Surface,
   void stop(std::function<void()> onStop);
   void setDisplayMode(facebook::react::DisplayMode displayMode);
   Surface::LayoutContext getLayoutContext() override;
+  DisplayMetrics getDisplayMetrics() override;
   std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() override;
 
  private:
@@ -98,6 +100,7 @@ class ArkUISurface : public Surface,
   ThreadGuard m_threadGuard{};
   std::shared_ptr<UIInputEventHandler> m_touchEventHandler;
   TaskExecutor::Shared m_taskExecutor;
+  DisplayMetricsManager::Shared m_displayMetricsManager;
 };
 
 } // namespace rnoh

@@ -90,6 +90,8 @@ void RNInstanceInternal::start() {
   m_runtimeScheduler = m_reactInstance->getRuntimeScheduler();
   m_contextContainer->insert<std::weak_ptr<react::RuntimeScheduler>>(
       "RuntimeScheduler", m_runtimeScheduler);
+  m_contextContainer->insert<std::weak_ptr<RNInstance>>(
+      "RNOH::RNInstance", weak_from_this());
 
   m_turboModuleProvider = createTurboModuleProvider();
   initializeScheduler(m_turboModuleProvider);

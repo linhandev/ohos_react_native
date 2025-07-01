@@ -26,6 +26,7 @@
 #include "RNOHCorePackage/ComponentBinders/TextComponentJSIBinder.h"
 #include "RNOHCorePackage/ComponentBinders/TextInputComponentJSIBinder.h"
 #include "RNOHCorePackage/ComponentBinders/ViewComponentJSIBinder.h"
+#include "RNOHCorePackage/ComponentDescriptors/ModalHostViewComponentDescriptorProvider.h"
 #include "RNOHCorePackage/ComponentInstances/ActivityIndicatorComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ImageComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ModalHostViewComponentInstance.h"
@@ -203,8 +204,7 @@ class RNOHCorePackage : public Package {
             facebook::react::ScrollViewComponentDescriptor>(),
         facebook::react::concreteComponentDescriptorProvider<
             facebook::react::PullToRefreshViewComponentDescriptor>(),
-        facebook::react::concreteComponentDescriptorProvider<
-            facebook::react::ModalHostViewComponentDescriptor>(),
+        createModalHostViewComponentDescriptorProvider(),
         facebook::react::concreteComponentDescriptorProvider<
             facebook::react::SwitchComponentDescriptor>(),
         facebook::react::concreteComponentDescriptorProvider<

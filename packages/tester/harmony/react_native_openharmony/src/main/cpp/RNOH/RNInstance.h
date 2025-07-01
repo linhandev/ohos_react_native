@@ -21,6 +21,7 @@
 #include <react/renderer/animations/LayoutAnimationDriver.h>
 #include <react/renderer/scheduler/Scheduler.h>
 
+#include "RNOH/DisplayMetricsManager.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/TouchTarget.h"
 #include "RNOH/TurboModule.h"
@@ -54,6 +55,7 @@ class Surface {
   using Weak = std::weak_ptr<Surface>;
 
   virtual LayoutContext getLayoutContext() = 0;
+  virtual DisplayMetrics getDisplayMetrics() = 0;
   virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() = 0;
 };
 

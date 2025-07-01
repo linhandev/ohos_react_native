@@ -50,6 +50,16 @@
                     desc="hvigor plugin for autolinking, code generation, etc." />
                 <filteritem type="filename" name="*.jpg|*.png|*.ttf" desc="desc files" />
             </filefilter>
+            <filefilter name="copyrightPolicyFilter" desc="">
+                <filteritem 
+                    type="filepath"
+                    name="packages/tester/harmony/react_native_openharmony/src/main/cpp/RNOHCorePackage/ComponentDescriptors/ModalHostViewComponentDescriptor.h"
+                    desc="Upstream code with modifications using the original license header" />
+                <filteritem 
+                    type="filepath"
+                    name="packages/tester/harmony/react_native_openharmony/src/main/cpp/RNOHCorePackage/ComponentDescriptors/ModalHostViewComponentDescriptorProvider.h"
+                    desc="Upstream code with modifications using the original license header" />
+            </filefilter>
         </filefilterlist>
     </oatconfig>
 </configuration>
