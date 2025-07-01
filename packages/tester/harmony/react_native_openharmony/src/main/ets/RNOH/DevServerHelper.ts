@@ -101,22 +101,26 @@ export class DevServerHelper {
     };
   }
 
-  public static openUrl(url: string, bundleUrl: string, onErrorCallback: () => void) {
-    const openUrlEndpoint = `http://${getServerHost(bundleUrl)}/open-url`;
-    const body = JSON.stringify({ url });
+  public static openDebugger(bundleUrl: string, napiBridge: NapiBridge, onError: () => void) {
+    const bundleInfo = bundleManager.getBundleInfoForSelfSync(
+      bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT,
+    );
+    const appName = bundleInfo.name;
+    const isFuseboxEnabled = napiBridge.getInspectorFlagIsFuseboxEnabled();
+    const deviceId = getInspectorDeviceId(appName, isFuseboxEnabled);
+    const openDebuggerUrl = `http://${getServerHost(bundleUrl)}/open-debugger?device=${deviceId}`;
 
     const httpRequest = http.createHttp();
     httpRequest.request(
-      openUrlEndpoint,
+      openDebuggerUrl,
       {
-        extraData: body,
         method: http.RequestMethod.POST
       },
       (err) => {
         if (err) {
-          onErrorCallback();
+          onError();
         }
-      });
+      });    
   }
 
   public static disableDebugger() {

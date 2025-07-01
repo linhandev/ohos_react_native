@@ -508,6 +508,7 @@ export class RNInstanceImpl implements RNInstance {
   private defaultProps: Record<string, any>;
   private packages: RNPackage[] = [];
   private maybeDisconnectDebugger?: (() => void) | undefined = undefined;
+  private unregisterDevToolsMessageListeners: (() => void)[] = [];
 
 
   constructor(
@@ -585,6 +586,7 @@ export class RNInstanceImpl implements RNInstance {
     if (shouldTryDisconnectingDebugger) {
       this.maybeDisconnectDebugger?.();
     }
+    this.unregisterDevToolsMessageListeners.forEach(cleanUp => cleanUp());
     stopTracing();
   }
 
@@ -1104,18 +1106,21 @@ export class RNInstanceImpl implements RNInstance {
 
   private subscribeToDevTools() {
     const emitter = this.devToolsController.eventEmitter;
-    emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
+    this.unregisterDevToolsMessageListeners.push(emitter.subscribe('TOGGLE_ELEMENT_INSPECTOR', () =>
       this.emitDeviceEvent('toggleElementInspector', {}),
-    );
-    emitter.subscribe('DEV_MENU_SHOWN', () =>
+    ));
+
+    this.unregisterDevToolsMessageListeners.push(emitter.subscribe('DEV_MENU_SHOWN', () =>
       this.emitDeviceEvent('RCTDevMenuShown', {}),
-    );
-    emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
+    ));
+
+    this.unregisterDevToolsMessageListeners.push(emitter.subscribe('DID_PRESS_MENU_ITEM', item =>
       this.emitDeviceEvent('didPressMenuItem', item),
-    );
-    emitter.subscribe('OPEN_URL', (url, onError) => {
-      DevServerHelper.openUrl(url, this.getInitialBundleUrl(), onError);
-    });
+    ));
+
+    this.unregisterDevToolsMessageListeners.push(emitter.subscribe('OPEN_DEBUGGER', (onError) => {
+      DevServerHelper.openDebugger(this.initialBundleUrl, this.napiBridge, onError);
+    }));
   }
 
   public postMessageToCpp(name: string, payload: any): void {

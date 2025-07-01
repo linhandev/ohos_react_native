@@ -45,7 +45,7 @@ export class DevToolsController {
     "TOGGLE_ELEMENT_INSPECTOR",
     "DEV_MENU_SHOWN",
     "DID_PRESS_MENU_ITEM": [item: DevMenuItem],
-    "OPEN_URL": [url: string, onError: () => void],
+    "OPEN_DEBUGGER": [onError: () => void],
   }>();
 
   /**
@@ -104,26 +104,13 @@ export class DevToolsController {
   }
 
   /**
-   * @brief Opens the Hermes debugger via Flipper.
+   * @brief Opens React Native DevTools.
    * Logs an error if it fails to open.
    */
   openDebugger(): void {
     this.eventEmitter.emit(
-      "OPEN_URL",
-      "flipper://null/Hermesdebuggerrn?device=React%20Native",
-      () => this.logger.error("Failed to open Flipper. Please check that Metro is running.")
-    );
-  }
-
-  /**
-   * @brief Opens the React DevTools via Flipper.
-   * Logs an error if it fails to open.
-   */
-  openDevTools(): void {
-    this.eventEmitter.emit(
-      "OPEN_URL",
-      "flipper://null/React?device=React%20Native",
-      () => this.logger.error("Failed to open Flipper. Please check that Metro is running.")
+      "OPEN_DEBUGGER",
+      () => this.logger.error("Failed to open DevTools. Please check that the dev server is running and reload the app.")
     );
   }
 

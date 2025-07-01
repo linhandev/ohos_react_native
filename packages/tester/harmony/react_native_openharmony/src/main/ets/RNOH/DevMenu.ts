@@ -112,16 +112,9 @@ export class InternalDevMenu implements DevMenu {
       },
     });
     this.devMenuButtons.push({
-      value: "Open Debugger",
+      value: "Open DevTools",
       action: () => {
         this.devToolsController.openDebugger();
-        this.hideDevMenuDialog();
-      }
-    });
-    this.devMenuButtons.push({
-      value: "Open React DevTools",
-      action: () => {
-        this.devToolsController.openDevTools();
         this.hideDevMenuDialog();
       }
     });
