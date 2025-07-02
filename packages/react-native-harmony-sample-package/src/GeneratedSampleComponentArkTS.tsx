@@ -2,9 +2,9 @@ import React from 'react';
 import GeneratedSampleNativeComponent, {
   OutgoingData,
   IncomingData,
+  Commands,
 } from './specs/v1/GeneratedSampleNativeComponent';
 import { processColor } from 'react-native';
-import { Commands } from './specs/v2/GeneratedSampleNativeComponent';
 
 export type GeneratedSampleComponentArkTSRef = {
   emitNativeEvent: (eventType: 'directEvent' | 'bubblingEvent') => void;
