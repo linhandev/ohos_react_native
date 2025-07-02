@@ -25,6 +25,15 @@ class TextAreaNodeDelegate {
   virtual void onTextSelectionChange(int32_t location, int32_t length) {};
   virtual void onContentScroll() {};
   virtual void onContentSizeChange(float width, float height, bool multiline) {};
+  /**
+   * @brief Callback that is called when the NODE_TEXT_AREA_ON_WILL_DELETE event
+   * is fired, eg. when text is about to be deleted.
+   * @param node The text area's node.
+   * @param position Index of the text to be deleted.
+   * @param direction The direction for deleting the text, with 0 indicating
+   * backward-delete and 1 indicating forward-delete.
+   */
+  virtual void onWillDelete(ArkUINode* node, int position, int direction) {}
 };
 
 class TextAreaNode : public TextInputNodeBase {
@@ -47,6 +56,9 @@ class TextAreaNode : public TextInputNodeBase {
       override;
 
   void onNodeEvent(ArkUI_NodeEventType eventType, std::string_view eventString)
+      override;
+
+  void onNodeEvent(ArkUI_NodeEventType eventType, ArkUI_NodeEvent* event)
       override;
 
   void setTextAreaNodeDelegate(TextAreaNodeDelegate* textAreaNodeDelegate);

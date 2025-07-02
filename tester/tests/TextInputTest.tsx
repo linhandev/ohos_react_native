@@ -283,6 +283,23 @@ export function TextInputTest() {
       </TestCase.Example>
       <TestCase.Manual
         modal
+        itShould="trigger onKeyPress event after pressing delete key (press 'Backspace' to pass)"
+        initialState={''}
+        arrange={({setState}) => (
+          <TextInputWithText
+            style={styles.textInput}
+            autoFocus
+            onKeyPress={event => {
+              setState(event.nativeEvent.key);
+            }}
+          />
+        )}
+        assert={({expect, state}) => {
+          expect(state).to.be.eq('Backspace');
+        }}
+      />
+      <TestCase.Manual
+        modal
         itShould="trigger onKeyPress event after pressing key (press 'A' to pass)"
         initialState={''}
         arrange={({setState}) => (

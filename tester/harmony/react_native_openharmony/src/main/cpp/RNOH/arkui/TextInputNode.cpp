@@ -20,6 +20,7 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_TEXT_SELECTION_CHANGE,
     NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
     NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE,
+    NODE_TEXT_INPUT_ON_WILL_DELETE,
     NODE_EVENT_ON_APPEAR,
     NODE_EVENT_ON_DISAPPEAR};
 
@@ -117,6 +118,27 @@ void TextInputNode::onNodeEvent(
     if (m_textInputNodeDelegate != nullptr) {
       m_textInputNodeDelegate->onPasteOrCut();
     }
+  }
+}
+
+void TextInputNode::onNodeEvent(
+    ArkUI_NodeEventType eventType,
+    ArkUI_NodeEvent* event) {
+  if (eventType == ArkUI_NodeEventType::NODE_TEXT_INPUT_ON_WILL_DELETE) {
+    ArkUI_NumberValue arkUiValues[2];
+    maybeThrow(OH_ArkUI_NodeEvent_GetNumberValue(event, 0, arkUiValues));
+    maybeThrow(OH_ArkUI_NodeEvent_GetNumberValue(event, 1, arkUiValues));
+
+    ArkUI_NumberValue ret[] = {
+        ArkUI_NumberValue{1},
+    };
+    // OH_ArkUI_NodeEvent_SetReturnNumberValue copies the value, so passing this
+    // as a pointer to a variable on the stack should be safe.  (check the
+    // arkui_ace_engine repository).
+    // We need to set this or else the TextInput won't delete the character.
+    maybeThrow(OH_ArkUI_NodeEvent_SetReturnNumberValue(event, ret, 1));
+    m_textInputNodeDelegate->onWillDelete(
+        this, static_cast<int>(round(arkUiValues[0].f32)), arkUiValues[1].i32);
   }
 }
 

@@ -110,6 +110,8 @@ class TextInputComponentInstance
 
   void onContentSizeChange(float width, float height, bool multiline) override;
 
+  void onWillDelete(ArkUINode* node, int position, int direction) override;
+
   ArkUINode& getLocalRootArkUINode() override;
 
   void onMessageReceived(ArkTSMessage const& message) override;

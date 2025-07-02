@@ -158,6 +158,14 @@ class ArkUINode {
   virtual void onNodeEvent(
       ArkUI_NodeEventType eventType,
       std::string_view eventString);
+  /**
+   * @brief Method for handling node events without a specific type
+   * @param eventType Event type identifier
+   * @param ArkUI_NodeEvent* pointer to the event
+   */
+  virtual void onNodeEvent(
+      ArkUI_NodeEventType eventType,
+      ArkUI_NodeEvent* event);
   virtual void onTouchIntercept(const ArkUI_UIInputEvent* event);
 
   virtual ~ArkUINode() noexcept;
