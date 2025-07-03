@@ -15,6 +15,7 @@
 #include <memory>
 #include <vector>
 #include "ArkJS.h"
+#include "RNOH/ThreadGuard.h"
 #include "TaskExecutor/NapiTaskRunner.h"
 #include "jsinspector-modern/WebSocketInterfaces.h"
 
@@ -36,8 +37,7 @@ class ArkTSWebsocket : public jsinspector_modern::IWebSocket {
   ArkTSWebsocket(napi_env env, NapiRef ref) : m_env(env), m_thisRef(ref) {}
 
   void send(std::string_view message) override {
-    RNOH_ASSERT(
-        mainThreadTaskRunner && mainThreadTaskRunner->isOnCurrentThread());
+    m_threadGuard.assertThread();
     ArkJS arkJS(m_env);
     auto websocketObject = arkJS.getObject(m_thisRef);
     auto sendImpl = websocketObject.getProperty("send");
@@ -45,9 +45,18 @@ class ArkTSWebsocket : public jsinspector_modern::IWebSocket {
     arkJS.call(sendImpl, args, arkJS.getReferenceValue(m_thisRef));
   }
 
+  ~ArkTSWebsocket() {
+    m_threadGuard.assertThread();
+    ArkJS arkJS(m_env);
+    auto websocketObject = arkJS.getObject(m_thisRef);
+    auto closeImpl = websocketObject.getProperty("close");
+    arkJS.call(closeImpl, {}, arkJS.getReferenceValue(m_thisRef));
+  }
+
  private:
   napi_env m_env;
   NapiRef m_thisRef;
+  ThreadGuard m_threadGuard{};
 };
 
 // wraps the InspectorPackagerConnectionDelegate received from ArkTS and

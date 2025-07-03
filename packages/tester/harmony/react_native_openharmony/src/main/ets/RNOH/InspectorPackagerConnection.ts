@@ -90,6 +90,10 @@ class ArkTSWebsocket implements InspectorWebsocket {
       }
     });
   }
+
+  close(): void {
+    this.socket.close();
+  }
 }
 
 class ArkTSConnectionDelegate implements InspectorPackagerConnectionDelegate {

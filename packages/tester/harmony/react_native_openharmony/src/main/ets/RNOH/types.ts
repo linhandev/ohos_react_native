@@ -69,6 +69,7 @@ export interface InspectorWebsocketDelegate {
 
 export interface InspectorWebsocket {
   send(message: string): void
+  close(): void
 }
 
 // interfaces defined in "jsinspector-modern/InspectorPackagerConnection.h"
