@@ -130,7 +130,15 @@ auto ArkTSBridge::getSDKApiVersion() -> float {
 auto PhysicalPixels::fromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJs(env);
+  auto top = arkJs.hasProperty(value, "top") ?
+      static_cast<float>(arkJs.getDouble(arkJs.getObjectProperty(value, "top"))) :
+      0.0f;
+  auto left = arkJs.hasProperty(value, "left") ?
+      static_cast<float>(arkJs.getDouble(arkJs.getObjectProperty(value, "left"))) :
+      0.0f;
   return {
+      top,
+      left,
       static_cast<float>(
           arkJs.getDouble(arkJs.getObjectProperty(value, "width"))),
       static_cast<float>(

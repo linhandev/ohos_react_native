@@ -12,6 +12,8 @@
 namespace rnoh {
 
 struct PhysicalPixels {
+  float top;
+  float left;
   float width;
   float height;
   float scale;

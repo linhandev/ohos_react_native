@@ -52,6 +52,8 @@ export type DisplayMetrics = {
 };
 
 export type PhysicalPixels = {
+  top?: number,
+  left?: number,
   width: number,
   height: number,
   scale: number,

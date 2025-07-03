@@ -352,7 +352,7 @@ export class RNInstancesCoordinator {
     }
   }
 
-  public onWindowSizeChange(windowSize: window.Size) {
+  public onWindowSizeChange(windowSize: window.Size | window.Rect) {
     const currentTime = Date.now(); 
     if (currentTime - this.lastChangeTime > this.delayTime) {
       this.displayMetricsManager.updateWindowSize(windowSize);

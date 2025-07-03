@@ -75,7 +75,9 @@ void ModalHostViewComponentInstance::resetModalPosition(
     m_rootStackNode.setPosition(
         {displayMetrics.screenPhysicalPixels.width / windowMetrics.scale, 0});
     } else {
-        m_rootStackNode.setPosition({0, 0});
+        auto x = windowMetrics.left / windowMetrics.scale;
+        auto y = windowMetrics.top / windowMetrics.scale;
+        m_rootStackNode.setPosition({x, y});
     }
 }
 
@@ -98,7 +100,9 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
     if (foldStatus == FOLD_STATUS_EXPANDED && isSplitScreenMode) {
         m_rootStackNode.setPosition({displayMetrics.screenPhysicalPixels.width / displayMetrics.windowPhysicalPixels.scale, 0});
     } else {
-        m_rootStackNode.setPosition({0, 0});
+        auto x = displayMetrics.windowPhysicalPixels.left / displayMetrics.windowPhysicalPixels.scale;
+        auto y = displayMetrics.windowPhysicalPixels.top / displayMetrics.windowPhysicalPixels.scale;
+        m_rootStackNode.setPosition({x, y});
     }
 }
 

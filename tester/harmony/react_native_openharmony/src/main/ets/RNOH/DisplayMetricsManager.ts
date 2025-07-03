@@ -15,6 +15,8 @@ import UIContext from '@ohos.arkui.UIContext';
 
 const defaultDisplayMetrics: DisplayMetrics = {
   windowPhysicalPixels: {
+    top: 0,
+    left: 0,
     width: 0,
     height: 0,
     scale: 1,
@@ -71,6 +73,8 @@ export class DisplayMetricsManager {
   public updateWindowSize(windowSize: window.Size | window.Rect) {
     this.displayMetrics.windowPhysicalPixels.height = windowSize.height;
     this.displayMetrics.windowPhysicalPixels.width = windowSize.width;
+    this.displayMetrics.windowPhysicalPixels.top = (windowSize as window.Rect).top || 0;
+    this.displayMetrics.windowPhysicalPixels.left = (windowSize as window.Rect).left || 0;
     this.updateDisplayMetrics()
   }
 
@@ -116,6 +120,8 @@ export class DisplayMetricsManager {
           yDpi: displayInstance.yDPI
         },
         windowPhysicalPixels: {
+          top: this.displayMetrics.windowPhysicalPixels.top,
+          left: this.displayMetrics.windowPhysicalPixels.left,
           width: this.displayMetrics.windowPhysicalPixels.width,
           height: this.displayMetrics.windowPhysicalPixels.height,
           scale: customDensity,
