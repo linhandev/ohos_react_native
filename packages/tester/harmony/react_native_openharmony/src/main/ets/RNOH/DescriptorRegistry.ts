@@ -14,17 +14,31 @@ type RootDescriptor = Descriptor<"RootView", any>
 
 /**
  * @actor RNOH_LIBRARY
+ * @brief Monitor structural changes under a specified node in the component tree,
+ * including operations such as insertion, deletion, and update of child nodes.
  */
 type SubtreeListener = () => void;
+
+/**
+ * @brief Set the state of a specific JS-side component to the native component.
+ * @param componentName - The name of the native component to operate on.
+ * @param tag - The unique identifier of the component.
+ * @param state - The state object to be updated to the native side.
+ */
 type SetNativeStateFn = (componentName: string, tag: Tag, state: unknown) => void
 
 /**
  * @actor RNOH_LIBRARY
+ * @brief A factory class used to uniformly create descriptorWrapper objects.
+ * @param ctx - Descriptor object.
  */
 export type DescriptorWrapperFactory = (ctx: { descriptor: Descriptor }) => DescriptorWrapper
 
 /**
  * @actor RNOH_LIBRARY
+ * @brief Listening to component tree structure changes.
+ * @param descriptor - Describes and manages the properties, structure, and behavior of component elements.
+ * @param descriptorWrapper - Encapsulates and manages the lifecycle and access logic of descriptor objects.
  */
 type DescriptorChangeListener = (descriptor: Descriptor, descriptorWrapper: DescriptorWrapper | null) => void
 
@@ -62,6 +76,8 @@ export type DescriptorMutation = InsertMutation | UpdateMutation | RemoveMutatio
 
 /**
  * @actor RNOH_LIBRARY
+ * @brief Listening to mutation events such as node insertion, update, and 
+ * removal in the component tree.
  */
 export type DescriptorMutationListener = (args: DescriptorMutation) => void
 
@@ -558,14 +574,22 @@ export class DescriptorRegistry {
 
 /**
  * @actor RNOH_LIBRARY
+ * @brief Count and manage the quantity and proportion of different types of descriptors
+ * in the component tree.
  */
 export class DescriptorRegistryStats {
   countByDescriptorType = new Map<string, number>()
 
+  /**
+   * @brief Returns the total number of all descriptors.
+   */
   get totalDescriptorsCount() {
     return Array.from(this.countByDescriptorType.values()).reduce((acc, val) => (acc + val), 0)
   }
 
+  /**
+   * @brief Calculates the percentage share of each descriptor type in the total count.
+   */
   get shareInPctByDescriptorType() {
     const result = new Map<string, number>()
     this.countByDescriptorType.forEach((count, descriptorType) => {
@@ -574,6 +598,9 @@ export class DescriptorRegistryStats {
     return result
   }
 
+  /**
+   * @brief Generates a string for debugging purposes.
+   */
   toDebugString() {
     const lines: string[] = []
     lines.push(`TOTAL ${this.totalDescriptorsCount}`)
