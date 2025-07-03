@@ -186,6 +186,7 @@ class RNInstanceInternal
    * is expected to be instantiated in Package::createArkTSMessageHandlers.
    */
   void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
+  void unregisterFromInspector();
 
  protected:
   void initialize();

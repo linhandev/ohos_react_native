@@ -426,9 +426,13 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
     }
     if (instance != nullptr) {
       auto taskExecutor = instance->getTaskExecutor();
+      // Unregister the instance from the inspector synchronously to avoid
+      // relying on the instance destructor, which is scheduled on the JS thread
+      // and may cause crash when registering a new instance before the
+      // destructor was executed.
+      instance->unregisterFromInspector();
       taskExecutor->runTask(
           TaskThread::JS, [instance = std::move(instance)] {});
-      // try to not destory but reload
     }
     return arkJS.getNull();
   });

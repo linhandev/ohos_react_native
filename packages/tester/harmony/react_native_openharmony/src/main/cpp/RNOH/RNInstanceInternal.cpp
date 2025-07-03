@@ -548,6 +548,13 @@ NativeResourceManager const* RNInstanceInternal::getNativeResourceManager()
 }
 
 /**
+ * @brief Unregister instance from inspector
+ */
+void RNInstanceInternal::unregisterFromInspector() {
+  m_reactInstance->unregisterFromInspector();
+}
+
+/**
  * @brief Mainly do operations related to RNInstace
  * @param id rnInstanceId
  * @param contextContainer Running context
