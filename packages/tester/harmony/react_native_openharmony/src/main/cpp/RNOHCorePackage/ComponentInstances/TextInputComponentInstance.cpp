@@ -117,6 +117,7 @@ void TextInputComponentInstance::onWillDelete(
   if (m_eventEmitter && position == 0 && direction == 0) {
     auto keyPressMetrics =
         facebook::react::TextInputEventEmitter::KeyPressMetrics();
+    m_nativeEventCount++;
     keyPressMetrics.text = "";
     keyPressMetrics.eventCount = m_nativeEventCount;
     m_eventEmitter->onKeyPress(keyPressMetrics);
