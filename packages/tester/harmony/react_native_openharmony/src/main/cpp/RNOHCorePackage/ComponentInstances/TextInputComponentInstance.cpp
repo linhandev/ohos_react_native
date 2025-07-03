@@ -40,6 +40,8 @@ TextInputComponentInstance::TextInputComponentInstance(Context context)
 
   m_textAreaNode.setBackgroundColor(facebook::react::clearColor());
   m_textInputNode.setBackgroundColor(facebook::react::clearColor());
+  m_textAreaNode.setCaretColor(facebook::react::blackColor());
+  m_textInputNode.setCaretColor(facebook::react::blackColor());
 }
 
 void TextInputComponentInstance::onChange(

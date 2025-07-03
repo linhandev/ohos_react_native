@@ -95,8 +95,4 @@ export default class TextInputDelegate extends BaseTextInputDelegate {
       return RCTSinglelineTextInputNativeCommands;
     }
   }
-
-  override getDefaultCursorColor(selectionColor: any): any {
-    return 'black';
-  }
 }
