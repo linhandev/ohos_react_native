@@ -85,7 +85,7 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
     if (tagAndComponentInstance == m_componentInstanceByTag.end()) {
       return;
     }
-    auto componentInstance = tagAndComponentInstance->second;
+    const auto& componentInstance = tagAndComponentInstance->second;
     auto componentInstanceId = componentInstance->getId();
     if (!componentInstanceId.empty()) {
       m_tagById.erase(componentInstanceId);

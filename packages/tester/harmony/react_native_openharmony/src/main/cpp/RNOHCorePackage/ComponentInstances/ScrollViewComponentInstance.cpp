@@ -877,7 +877,7 @@ void ScrollViewComponentInstance::adjustVisibleContentPosition(
   const auto& firstVisibleView = m_firstVisibleView.value();
   ComponentInstance::Shared firstVisibleChild = nullptr;
   for (const auto& child : m_children[0]->getChildren()) {
-    auto childComponentInstance =
+    const auto& childComponentInstance =
         std::static_pointer_cast<ComponentInstance>(child);
     if (childComponentInstance->getTag() == firstVisibleView.tag) {
       firstVisibleChild = childComponentInstance;

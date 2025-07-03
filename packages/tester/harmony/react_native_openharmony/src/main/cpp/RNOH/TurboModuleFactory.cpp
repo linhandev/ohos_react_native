@@ -170,7 +170,7 @@ TurboModuleFactory::delegateCreatingTurboModule(
     const std::string& name) const {
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::INITIALIZE_MODULE_START, name.c_str());
-  for (auto delegate : m_delegates) {
+  for (const auto& delegate : m_delegates) {
     auto result = delegate->createTurboModule(ctx, name);
     if (result != nullptr) {
       RNOHMarker::logMarker(

@@ -99,7 +99,7 @@ void TaskExecutor::cancelDelayedTask(DelayedTask taskId) {
 
 bool TaskExecutor::isOnTaskThread(TaskThread thread) const {
   facebook::react::SystraceSection s("#RNOH::TaskExecutor::isOnTaskThread");
-  auto runner = m_taskRunners[thread];
+  const auto& runner = m_taskRunners[thread];
   return runner && runner->isOnCurrentThread();
 }
 
@@ -131,7 +131,7 @@ void TaskExecutor::setExceptionHandler(ExceptionHandler handler) {
 
 AbstractTaskRunner::Shared TaskExecutor::getTaskRunner(
     TaskThread taskThread) const {
-  auto runner = m_taskRunners[taskThread];
+  const auto& runner = m_taskRunners[taskThread];
   RNOH_ASSERT(runner != nullptr);
   return runner;
 }

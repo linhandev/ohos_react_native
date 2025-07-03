@@ -96,8 +96,7 @@ void RNInstanceInternal::start() {
   m_turboModuleProvider = createTurboModuleProvider();
   initializeScheduler(m_turboModuleProvider);
   m_reactInstance->getBufferedRuntimeExecutor()(
-      [runtimeScheduler = m_runtimeScheduler,
-       binders = m_globalJSIBinders,
+      [binders = m_globalJSIBinders,
        turboModuleProvider =
            m_turboModuleProvider](facebook::jsi::Runtime& rt) {
         for (auto& binder : binders) {
@@ -179,8 +178,7 @@ void RNInstanceInternal::initializeScheduler(
   auto runtimeExecutor = m_reactInstance->getBufferedRuntimeExecutor();
 
   react::EventBeat::Factory eventBeatFactory =
-      [runtimeExecutor, uiTicker = m_uiTicker, reactInstance = m_reactInstance](
-          auto ownerBox) {
+      [uiTicker = m_uiTicker, reactInstance = m_reactInstance](auto ownerBox) {
         return std::make_unique<EventBeat>(
             ownerBox, *reactInstance->getRuntimeScheduler(), uiTicker);
       };
@@ -194,9 +192,9 @@ void RNInstanceInternal::initializeScheduler(
 
   react::SchedulerToolbox schedulerToolbox{
       .contextContainer = m_contextContainer,
-      .componentRegistryFactory = componentRegistryFactory,
+      .componentRegistryFactory = std::move(componentRegistryFactory),
       .runtimeExecutor = runtimeExecutor,
-      .eventBeatFactory = eventBeatFactory};
+      .eventBeatFactory = std::move(eventBeatFactory)};
 
   m_animationDriver = std::make_shared<react::LayoutAnimationDriver>(
       runtimeExecutor, m_contextContainer, this);

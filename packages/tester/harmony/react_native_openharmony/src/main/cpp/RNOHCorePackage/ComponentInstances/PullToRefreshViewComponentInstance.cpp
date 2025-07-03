@@ -160,7 +160,7 @@ void PullToRefreshViewComponentInstance::onRefreshStateChanged(
 facebook::react::Point PullToRefreshViewComponentInstance::getCurrentOffset()
     const {
   if (!this->getChildren().empty() && this->getChildren()[0] != nullptr) {
-    auto scrollComponent = this->getChildren()[0];
+    const auto& scrollComponent = this->getChildren()[0];
     auto scrollPosition =
         scrollComponent->getLocalRootArkUINode().getLayoutPosition();
     auto pointScaleFactor = m_layoutMetrics.pointScaleFactor;
