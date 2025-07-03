@@ -108,7 +108,8 @@ export function Page({name, children}: {name: string; children: any}) {
               navigateTo('INDEX');
             }}>
             <Text
-              style={[styles.buttonText, {color: PALETTE.REACT_CYAN_LIGHT}]}>
+              style={[styles.buttonText, {color: PALETTE.REACT_CYAN_LIGHT}]}
+              testID="TOP_BACK_BUTTON">
               {'‹ Back'}
             </Text>
           </TouchableOpacity>
