@@ -42,11 +42,11 @@
     "./types/**/*",
     "./*.js",
     "./*.json",
-    "./harmony/*",
     "./LICENSE",
     "./LICENSE-Meta",
     "./NOTICE.md",
-    "./metro.config.d.ts"
+    "./metro.config.d.ts",
+    "./react_native_openharmony.har"
   ],
   "dependencies": {
     "colors": "^1.4.0",

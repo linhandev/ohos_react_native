@@ -36,12 +36,9 @@ async function findFirstFile(directory, filename) {
   try {
     const buildHarCommand = `"${nodePath}" "${hvigorwPath}" --mode module -p product=default -p module=react_native_openharmony@default -p buildMode=debug assembleHar --analyze=false --parallel --incremental --no-daemon`;
     execSync(buildHarCommand, { stdio: "inherit", cwd: "../tester/harmony" });
-    if (!fs.existsSync("./harmony")) {
-      fs.mkdirSync("./harmony/");
-    }
     fs.copyFileSync(
       "../tester/harmony/react_native_openharmony/build/default/outputs/default/react_native_openharmony.har",
-      "./harmony/react_native_openharmony.har"
+      "./react_native_openharmony.har"
     );
     process.exit(0);
   } catch (error) {
