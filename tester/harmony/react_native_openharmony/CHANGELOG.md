@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.72.77
+- fix: eventCount does not increase when pressing backspace with empty content in TextInput 72,([af5810eb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af5810eb82bef54af99168d02eab22592cf63847))
+- fix:​​ Modal fails to appear on the right side when the RN page is displayed on the right in a Navigation split-screen layout.,([f3e9ce7b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f3e9ce7b0d1b7d649bf43ee0ec8a5a004493b84a))
+- Fix: TextInput::onKeyPress doesn't get triggered when backspace is pressed in an empty TextInput,([30a08b05](https://gitcode.com/openharmony-sig/ohos_react_native/commit/30a08b05331061fc9dc675283ae1306692f1bc49))
+- chore: updated to version 6.0.0.401(0.72.76),([c87de53e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c87de53e99a10f0be3932b288f8413ec85562fd4))
+
 ## 0.72.76
 - feat：Support Native Animation LTPO,([1350262e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1350262e4cff41bb8c52a4af8b270ebedd1b8665))
 - feat: JSVM Init Options,([6dbb7840](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6dbb784092b40f8d2940e4ff18becdfb106777a7))

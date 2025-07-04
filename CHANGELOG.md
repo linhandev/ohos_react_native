@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.0.402
+- doc: compile optimization guide,([52d99e1d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/52d99e1da3995561db4dfe9679e431d844c5c2bd))
+- fix: eventCount does not increase when pressing backspace with empty content in TextInput 72,([af5810eb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af5810eb82bef54af99168d02eab22592cf63847))
+- fix:​​ Modal fails to appear on the right side when the RN page is displayed on the right in a Navigation split-screen layout.,([f3e9ce7b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f3e9ce7b0d1b7d649bf43ee0ec8a5a004493b84a))
+- Fix: TextInput::onKeyPress doesn't get triggered when backspace is pressed in an empty TextInput,([30a08b05](https://gitcode.com/openharmony-sig/ohos_react_native/commit/30a08b05331061fc9dc675283ae1306692f1bc49))
+- fix: update import for Commands in GeneratedSampleComponentArkTS,([be44608f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/be44608f325326a1898d71593a6dc26fe26d3468))
+- chore: updated to version 6.0.0.401(0.72.76),([c87de53e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c87de53e99a10f0be3932b288f8413ec85562fd4))
+
 ## 6.0.0.401
 - feat：Support Native Animation LTPO,([1350262e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1350262e4cff41bb8c52a4af8b270ebedd1b8665))
 - feat: add command handling to ArkTS and C++ component generators.,([b950a978](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b950a978e0219320a935a3e705c4177f2d0fd3e4))
