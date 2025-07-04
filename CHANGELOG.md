@@ -1,5 +1,26 @@
 # Changelog
 
+## Internal: v0.77.12
+- profile guide optimization,([c47971f7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c47971f7e468ebfc8d5e1eb0653900419bde4b22))
+- fix: enableDebugger flag is ignored,([6003336c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6003336cb8016703166b9545f5b750103b5fd382))
+- doc: update environment setup English doc,([f8b91c26](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f8b91c266b6538cd263a1681d5df689ef2205ca3))
+- doc: for compile optimization interface,([95160b39](https://gitcode.com/openharmony-sig/ohos_react_native/commit/95160b39f6c5bae32467c784062664e147e8b2c8))
+- chore: Add oat scanning exception for profile data,([2e504c20](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2e504c2059f431348792b982383a0184acc95d9e))
+- fix: native crash when reloading app with DevSettings.reload(),([e412de22](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e412de22a0c863f69f5bd6a13e8e3138c3dd7e1f))
+- fix: TextInput cursorColor is not following selectionColor,([e4cfaeef](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e4cfaeef6d244134b957e5b39b4eb2e608e380ed))
+- fix: DevTool connection is not terminated properly when navigating between RN and native page,([2f066beb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f066beb270bebacbb4f9f7aa84ea3e9a2b6056f))
+- fix: eventCount does not increase when pressing backspace with empty content in TextInput,([135ad22f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/135ad22fbee4088974c4d15c4b38cb2e922981de))
+- doc: for DescriptorRegistry.,([2c4fa2cd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c4fa2cd64b6d1a4ad2fd485077143acfddafbee))
+- chore: update RNC version,([517975f8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/517975f8e18a94577a99db1eaf6050a50f16632f))
+- fix: e2e test,([69e2a790](https://gitcode.com/openharmony-sig/ohos_react_native/commit/69e2a7900c577e316eb7363d0e7ae18b68e42a87))
+- optimize copy to const reference for std::shared_ptr,([00d991ae](https://gitcode.com/openharmony-sig/ohos_react_native/commit/00d991ae2d8c4f085c4b47f04b171420f1cd6d8e))
+- fix: update import for Commands in GeneratedSampleComponentArkTS,([ef63c712](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ef63c71216e6a1b23e965ebef087c32eda89d15c))
+- fix: Open React Native DevTools instead of Flipper from DevMenu,([e45372a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e45372a8764bf881d3a2c4805fc082da941f1ebd))
+- perf: set default value of m_oldPointScaleFactor based on screen scale,([02fcf770](https://gitcode.com/openharmony-sig/ohos_react_native/commit/02fcf77020005a1f0788e6002d1ee10ade8aa1ab))
+- Fix: KeyboardAvoidingView jitters in modals without set height,([06e2db92](https://gitcode.com/openharmony-sig/ohos_react_native/commit/06e2db922b687029757c41f644c83664b69cdbe7))
+- chore: improve findChangedFiles function to handle upstream branch diff,([cc425f6e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cc425f6e30fa5c5e63750bd725b2e182b01c606c))
+- chore: updated to version 6.0.0.401(0.77.11),([872b7a0e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/872b7a0e3defc79f490d01c40d4eb666601469af))
+
 ## Internal: v0.77.11
 - fix: debugger disconnecting after reload,([e9093633](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e9093633706a1354e48805b08841787f1367f4dc))
 - Fix: TextInput::onKeyPress doesn't get triggered when backspace is pressed in an empty TextInput,([61066d4f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/61066d4f6d39824ff24b66a16f029ea0a68ac245))
