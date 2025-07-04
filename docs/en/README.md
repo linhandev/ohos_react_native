@@ -11,7 +11,7 @@ This section targets developers who want to create a new RNOH application, RNOH 
 
 ## Learning Objectives
 
-- [Set up a development environment and run your first RNOH project.](./environment-setup.md)
+- [Set up a development environment and run your first RNOH project.](./getting-started.md)
 - [Manage JavaScript bundles.](rn-js-bundle.md)
 - [Identify core elements of native API created for app developers.](./api-description.md)
 - [Apply patterns used in real projects.](./common-development-scenarios.md)
@@ -21,11 +21,12 @@ This section targets developers who want to create a new RNOH application, RNOH 
 - [Prepare your application for performance analysis.](./application-performance-optimization.md)
 - [Analyze performance issues and explore techniques for improving performance.](./performance-optimization.md)
 
-## Useful links
+## Useful Links
 
-- [RN Libraries compatible with RNOH](https://gitee.com/react-native-oh-library/usage-docs#rnoh-%E4%B8%89%E6%96%B9%E5%BA%93%E6%80%BB%E8%A7%88) - A centralized place that lists adapted RN libraries compatible with RNOH. If you plan to add the OpenHarmony platform to your RN project, consider evaluating your project's dependencies against the supported libraries.
-- [Project Samples](./appendix.md) — A curated collection of project examples to help you understand how to integrate RNOH in OH application.
-- [RNOH Architecture](./architecture.md) — A peek under the hood of RNOH.
+- [RN Libraries compatible with RNOH](https://gitee.com/react-native-oh-library/usage-docs#rnoh-%E4%B8%89%E6%96%B9%E5%BA%93%E6%80%BB%E8%A7%88) - Centralized place that lists adapted RN libraries compatible with RNOH. If you plan to add the OpenHarmony platform to your RN project, consider evaluating your project's dependencies against the supported libraries.
+- [Supported RN API](./supported-api.md) — Overview of RNOH Compliance with React Native JS API
+- [Project Samples](./appendix.md) — Curated collection of project examples to help you understand how to integrate RNOH in OH application.
+- [RNOH Architecture](./architecture.md) — Peek under the hood of RNOH.
 
 # RNOH Library Developers
 

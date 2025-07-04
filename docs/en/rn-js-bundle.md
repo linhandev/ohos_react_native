@@ -3,7 +3,7 @@
 ​
 In React Native, the JavaScript code and resources of your applications need to run on the device. To improve the loading speed and performance of applications and reduce network requests, React Native applications are usually packaged before being released. All code and resources are packaged into one or more files.
 
-​ This section describes how to package bundles in a ReactJS project after React Native for OpenHarmony is implemented. The OpenHarmony-based bundling process involves `react-native-harmony.tgz`, `react-native-harmony-cli.tgz`, and `metro.config.js`. For details about how to set up a basic ReactJs OpenHarmony environment, see [Environment Setup](../en/environment-setup.md).
+​This section describes how to package bundles in a ReactJS project after React Native for OpenHarmony is implemented. The OpenHarmony-based bundling process involves `react-native-harmony.tgz`, `react-native-harmony-cli.tgz`, and `metro.config.js`. For details about how to set up a basic ReactJs OpenHarmony environment, see [Environment Setup](./environment-setup.md).
 
 ## OpenHarmony-based Packaging Process
 
