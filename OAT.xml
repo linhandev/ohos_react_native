@@ -49,6 +49,7 @@
                 <filteritem type="filename" name="rnoh-hvigor-plugin-.*.tgz"
                     desc="hvigor plugin for autolinking, code generation, etc." />
                 <filteritem type="filename" name="*.jpg|*.png|*.ttf" desc="desc files" />
+                <filteritem type="filename" name="rnoh.profdata" desc="Profile data for profile guided optimization" />
             </filefilter>
             <filefilter name="copyrightPolicyFilter" desc="">
                 <filteritem 
