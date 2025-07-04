@@ -152,10 +152,12 @@ export class RNInstanceRegistry {
 
   public async createInstance(options: RNInstanceOptions): Promise<RNInstance> {
     const id = this.napiBridge.getNextRNInstanceId();
-    await this.napiBridge.createInspectorHostTarget(id,
-      (type: string, payload: string) => {
-        this.devToolsController.processInspectorMessage(type, payload)
-    });
+    if (options.enableDebugger) {
+      this.napiBridge.createInspectorHostTarget(id,
+        (type: string, payload: string) => {
+          this.devToolsController.processInspectorMessage(type, payload)
+        });
+    }
     this.instanceOptionsMap.set(id, options);
     return this.createAndInitRNInstanceImpl(id, options);
   }

@@ -156,7 +156,8 @@ void RNInstanceInternal::initialize() {
       m_jsQueue,
       timerManager,
       onJSError,
-      m_inspectorHostTarget->getHostTarget().get());
+      m_inspectorHostTarget ? m_inspectorHostTarget->getHostTarget().get()
+                            : nullptr);
   m_reactInstance->initializeRuntime(
       {},
       // runtime installer, which is run when the runtime
