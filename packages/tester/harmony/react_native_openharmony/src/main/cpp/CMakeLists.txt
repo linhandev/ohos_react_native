@@ -15,6 +15,9 @@ message("USE_HERMES is set to: ${USE_HERMES}")
 add_compile_options("-Wno-error=unused-command-line-argument")
 
 option(ENABLE_COMPILER_OPTS "Enable or disable compiler optimizations" ON)
+set(PGO_MODE "USE") # PGO mode: COLLECT(collect profdata) or USE(apply pgo)
+set(PROFDATA_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../resources/rawfile/rnoh.profdata")
+set(PROFRAW_GENERATING_PATH "/data/storage/el2/base/files/rnohprofraw")
 
 if(ENABLE_COMPILER_OPTS)
     add_compile_options(
@@ -40,11 +43,21 @@ if(ENABLE_COMPILER_OPTS)
     include(CheckLinkerFlag)
     check_linker_flag("CXX" "-Wl,--aarch64-inline-plt" USING_BISHENG_COMPILER)
     if(OHOS_ARCH STREQUAL "arm64-v8a")
-        set(PROFDATA_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../resources/rawfile/rnoh.profdata")
-        add_compile_options(
-            "-fprofile-use=${PROFDATA_FILE}"
-            "-Wno-error=backend-plugin"
-        )
+        if(PGO_MODE STREQUAL "USE")
+            add_compile_options(
+                "-fprofile-use=${PROFDATA_FILE_PATH}"
+                "-Wno-error=backend-plugin"
+            )
+        elseif(PGO_MODE STREQUAL "COLLECT")
+            add_compile_options(
+                "-fprofile-generate=${PROFRAW_GENERATING_PATH}"
+                "SHELL:-mllvm -pgo-instrument-entry=true"
+            )
+            add_link_options(
+                "-fprofile-generate=${PROFRAW_GENERATING_PATH}"
+                "-Wl,-mllvm,-pgo-instrument-entry=true"
+            )
+        endif()
         if(USING_BISHENG_COMPILER)
           add_link_options("-Wl,--aarch64-inline-plt")
         endif()
