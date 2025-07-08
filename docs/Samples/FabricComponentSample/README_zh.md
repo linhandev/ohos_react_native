@@ -1,6 +1,6 @@
 # 说明
-这是创建自定义Fabric组件（包括CAPI组件和ArkTS组件）的demo工程。
 
+这是创建自定义Fabric组件（包括CAPI组件和ArkTS组件）的demo工程
 
 ## 目录结构
 
@@ -14,19 +14,23 @@ FabricComponentSample
 └── README.md
 ```
 
-
 ## 环境搭建
-1. 在 `fabric-component-sample-package` 中运行 **npm pack** 生成tgz文件；
-2. 在 `ReactProject` 目录下执行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖;
-3. 在 `entry` 目录下执行 **ohpm i @rnoh/react-native-openharmony@x.x.x** 安装依赖；
-4. 回到 `ReactProject` 目录执行 **npm run dev** 生成 bundle，运行 **npm start** 启动metro服务；
-5. 检查 `NativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
-6. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
-7. 点击 File > Project Structure > Signing Configs，登录并完成签名；
-8. 点击右上角的 **run** 启动项目；
-9. 如果启动的是metro服务，还需要运行 `hdc rport tcp:8081 tcp:8081` 来转发8081端口，然后再在手机上重新打开应用。
+
+1. 在 `fabric-component-sample-package` 中运行 **npm pack** 进行打包；
+2. 在 `ReactProject` 目录下执行 **npm i** 安装依赖;
+3. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
+5. 点击 File > Project Structure > Signing Configs，登录并完成签名；
+6. 在 `ReactProject` 目录下执行 **npm run dev** 使用 codegen 进行代码生成，打包 bundle;
+7. 点击 DevEco Studio 右上角的 **run** 启动项目；
+
+> NOTE: 安装时项目默认使用最新的RNOH依赖，如需安装特定版本请查阅[RNOH版本演进规划和分支策略](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md)获取版本号。
+> 
+> npm依赖安装： `npm i @react-native-oh/react-native-harmony@0.77.xx` `npm i --save-dev @react-native-oh/react-native-harmony-cli@0.77.xx`
+> 
+> ohpm依赖安装：`ohpm i @rnoh/react-native-openharmony@0.77.xx`
 
 ## 效果预览
+
 启动后页面效果如下：
 
 ![FabricComponentSample运行界面](./screenshots/Screenshot.jpeg)

@@ -1,24 +1,30 @@
-# 说明
+# README
 
-这是一个支持捕捉bundle包的内部异常的示例工程。
+This is a sample project that supports capturing exceptions within bundles.
 
-# 目录结构
+## Directory Structure
 
-ReactProject -- RN 侧工程  
-NativeProject -- 原生工程
+```shell
+├── NativeProject -- Native project
+└── ReactProject -- RN project
+```
 
-# 环境搭建
+## Environment Setup
 
-1. 在 `ReactProject` 目录下执行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖，执行 **npm run dev** 生成 bundle；
-2. 在 `entry` 目录下执行 **ohpm i @rnoh/react-native-openharmony@x.x.x** 安装依赖；
-3. 检查 `NativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
-4. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
-5. 点击 File > Project Structure > Signing Configs，登录并完成签名；
-6. 点击右上角的 **run** 启动项目。
+1. In the `ReactProject` directory, execute **npm i** to install dependencies, then execute **npm run dev** to generate the bundle;
+2. Open `NativeProject` with DevEco Studio, execute **Sync and Refresh Project**;
+3. Click File > Project Structure > Signing Configs, log in and complete the signing;
+4. Click **run** in the upper right corner to start the project.
 
+> NOTE: By default, the project uses the latest RNOH dependency during installation. If you need to install a specific version, please refer to [RNOH Version Evolution Planning and Branch Strategy](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md) to get the version number.
+> 
+> npm dependency installation: `npm i @react-native-oh/react-native-harmony@0.77.xx` `npm i --save-dev @react-native-oh/react-native-harmony-cli@0.77.xx`
+> 
+> ohpm dependency installation: `ohpm i @rnoh/react-native-openharmony@0.77.xx`
 
-# 效果预览
-启动后页面效果如下：
+## Preview
+
+After launch, the page effects are as follows:
 
 <table style="width: 100%; margin: 0 auto; text-align: center;">
   <thead>
@@ -43,19 +49,19 @@ NativeProject -- 原生工程
   <tbody>
     <tr>
       <td style="width: 20%;">
-        首页
+        Home Page
       </td>
       <td style="width: 20%;">
-        点击【ReferenceError】按钮
+        Click [ReferenceError] button
       </td>
       <td style="width: 20%;">
-        点击【Standard Error】按钮
+        Click [Standard Error] button
       </td>
       <td style="width: 20%;">
-        点击【Frozen Error】按钮
+        Click [Frozen Error] button
       </td>
       <td style="width: 20%;">
-        点击【Warning】按钮
+        Click [Warning] button
       </td>
     </tr>
   </tbody>

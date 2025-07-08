@@ -21,8 +21,10 @@ MutilBundleSample
 5. 点击 File > Project Structure > Signing Configs，登录并完成签名。
 6. 点击右上角的 **run** 启动项目。
 
-> NOTE: 项目默认使用最新的RNOH依赖，如需安装特定版本请参考[RNOH版本演进规划和分支策略](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md)。
+> NOTE: 安装时项目默认使用最新的RNOH依赖，如需安装特定版本请查阅[RNOH版本演进规划和分支策略](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md)获取版本号。
+> 
 > npm依赖安装： `npm i @react-native-oh/react-native-harmony@0.77.xx` `npm i --save-dev @react-native-oh/react-native-harmony-cli@0.77.xx`
+> 
 > ohpm依赖安装：`ohpm i @rnoh/react-native-openharmony@0.77.xx`
 
 ## 效果预览
