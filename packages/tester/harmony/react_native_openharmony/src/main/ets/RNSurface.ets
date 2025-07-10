@@ -46,8 +46,8 @@ export type SurfaceConfig1 = UnmanagedSurfaceConfig
  * RNOH is responsible for creating and deleting a SurfaceHandle.
  */
 export interface ManagedSurfaceConfig {
-  appKey: string,
-  initialProps: SurfaceProps,
+  appKey?: string,
+  initialProps?: SurfaceProps,
 }
 
 /**
@@ -209,7 +209,7 @@ export struct RNSurface {
       this.surfaceHandle.setDisplayMode(DisplayMode.Visible);
     } else {
       this.surfaceHandle = this.ctx.rnInstance.createSurface((this.surfaceConfig as ManagedSurfaceConfig).appKey);
-      this.initialProps = (this.surfaceConfig as ManagedSurfaceConfig).initialProps;
+      this.initialProps = (this.surfaceConfig as ManagedSurfaceConfig).initialProps ?? {};
       this.shouldStartSurface = true;
       this.shouldStopSurface = true;
     }
