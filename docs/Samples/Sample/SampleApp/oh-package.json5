@@ -13,6 +13,6 @@
     "@ohos/axios": "^2.1.1"
   },
   "overrides": {
-    "@rnoh/react-native-openharmony": "../SampleProject/MainProject/node_modules/@react-native-oh/react-native-harmony/harmony/react_native_openharmony.har"
+    "@rnoh/react-native-openharmony": "../SampleProject/MainProject/node_modules/@react-native-oh/react-native-harmony/react_native_openharmony.har"
   }
 }
