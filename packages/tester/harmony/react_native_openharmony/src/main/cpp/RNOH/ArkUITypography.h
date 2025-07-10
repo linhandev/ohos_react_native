@@ -125,7 +125,11 @@ class ArkUITypography final {
             OH_Drawing_DestroyTypography),
         m_attachmentCount(attachmentCount),
         m_fragmentLengths(std::move(fragmentLengths)),
-        m_layoutConstraints(std::move(layoutConstraints)),
+        m_layoutConstraints(
+            {layoutConstraints.minimumSize,
+             {layoutConstraints.maximumSize.width,
+              std::numeric_limits<facebook::react::Float>::infinity()},
+             layoutConstraints.layoutDirection}),
         m_scale(scale) {
     facebook::react::Float scaledWidth =
         m_layoutConstraints.maximumSize.width * m_scale;
