@@ -1,6 +1,6 @@
 {
   "name": "@react-native-oh/react-native-harmony-cli",
-  "version": "0.77.12",
+  "version": "0.77.13",
   "description": "",
   "scripts": {
     "build": "tsc --outDir dist -p tsconfig.build.json && node ./scripts/copy-template.js",

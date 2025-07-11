@@ -1,5 +1,14 @@
 # Changelog
 
+## Internal: v0.77.13
+- fix: Height setting of text component,([29df9c6d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/29df9c6db3221e38e502de60554b3368cee22218))
+- fix: profile use and profile generate conflict,([3e97a586](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e97a586803cb4b04e13a74dfde6672a1ee9b26a))
+- fix: Resolve the incompatibility issue of SurfaceConfig on 77 and 72,([afa09dd6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/afa09dd6f87e64599acd7b492194fbd6114ced72))
+- Add PGO mode control option,([e8c8d078](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8c8d0788accc33a1176baaf24ca58042a5a8ee8))
+- doc: add upstream breaking change,([626da8e6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/626da8e6780b019434a98f593f236d20157b8007))
+- fix: align har package's position inside npm package with 72,([42f53bf5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/42f53bf5fabc32125a76bebeb63fbc163677094e))
+- [chore]: updated to version 6.0.0.402(0.77.12),([382b2792](https://gitcode.com/openharmony-sig/ohos_react_native/commit/382b2792e40dd6ca842b43ac25a8c1356b773ac3))
+
 ## Internal: v0.77.12
 - profile guide optimization,([c47971f7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c47971f7e468ebfc8d5e1eb0653900419bde4b22))
 - fix: enableDebugger flag is ignored,([6003336c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6003336cb8016703166b9545f5b750103b5fd382))
