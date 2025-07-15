@@ -51,6 +51,23 @@ void logTransactionTelemetryMarkers(MountingTransaction const& transaction) {
       RNOHMarker::RNOHMarkerId::FABRIC_LAYOUT_END, "", layoutEndTime);
 }
 
+void SchedulerDelegate::reportMount(
+    const facebook::react::ShadowViewMutationList& mutations) {
+  const auto& scheduler = m_scheduler.lock();
+  if (!scheduler) {
+    return;
+  }
+  std::unordered_set<SurfaceId> mountedSurfaceIds;
+  for (const auto& mutation : mutations) {
+    mountedSurfaceIds.insert(mutation.newChildShadowView.surfaceId);
+  }
+  if (!mountedSurfaceIds.empty()) {
+    for (SurfaceId surfaceId : mountedSurfaceIds) {
+      scheduler->reportMount(surfaceId);
+    }
+  }
+}
+
 void SchedulerDelegate::schedulerDidRequestPreliminaryViewAllocation(
     const ShadowNode& shadowNode) {
   facebook::react::SystraceSection s(
@@ -147,10 +164,11 @@ void SchedulerDelegate::performTransaction(
           }
           for (const auto& mutations : slicesOfMutations) {
             performOnMainThread(
-                [mutations,
-                 taskTrace](MountingManager::Shared const& mountingManager) {
+                [mutations, this, taskTrace](
+                    MountingManager::Shared const& mountingManager) {
                   facebook::react::SystraceSection s(taskTrace.c_str());
                   mountingManager->didMount(mutations);
+                  this->reportMount(mutations);
                 });
           }
         }
@@ -159,6 +177,7 @@ void SchedulerDelegate::performTransaction(
                 MountingManager::Shared const& mountingManager) {
               facebook::react::SystraceSection s(taskTrace.c_str());
               mountingManager->didMount(otherMutations);
+              this->reportMount(otherMutations);
               mountingManager->clearPreallocatedViews();
             });
         logTransactionTelemetryMarkers(transaction);

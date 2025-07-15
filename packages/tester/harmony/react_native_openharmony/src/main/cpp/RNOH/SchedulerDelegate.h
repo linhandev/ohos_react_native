@@ -73,6 +73,7 @@ class SchedulerDelegate final : public facebook::react::SchedulerDelegate {
       const std::shared_ptr<const MountingCoordinator>& mountingCoordinator);
 
  private:
+  void reportMount(const facebook::react::ShadowViewMutationList& mutations);
   template <typename Operation>
   void performOnMainThread(Operation operation) {
     if (m_taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
