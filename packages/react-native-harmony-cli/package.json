@@ -27,7 +27,6 @@
     "@types/adm-zip": "^0.5.5",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "^29.5.1",
-    "@types/jszip": "^3.4.1",
     "@types/mustache": "^4.2.5",
     "@types/tar": "^6.1.5",
     "@types/tmp": "^0.2.3",
