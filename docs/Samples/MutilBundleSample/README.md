@@ -21,8 +21,10 @@ MutilBundleSample
 5. Click File > Project Structure > Signing Configs, log in and create signing config.
 6. Click **run** in the upper right corner to start the project.
 
-> NOTE: The project uses the latest RNOH dependencies by default. If you need to install a specific version, please refer to [RNOH Version Evolution Plan and Branch Strategy](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md).
+> NOTE: The project uses the latest RNOH dependencies by default. If you need to install a specific version, please refer to [RNOH Version Evolution Plan and Branch Strategy](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md)
+> 
 > npm dependencies installation: `npm i @react-native-oh/react-native-harmony@0.77.xx` `npm i --save-dev @react-native-oh/react-native-harmony-cli@0.77.xx`
+> 
 > ohpm dependencies installation: `ohpm i @rnoh/react-native-openharmony@0.77.xx`
 
 ## Result

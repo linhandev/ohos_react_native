@@ -1,49 +1,48 @@
-# README
+# Description
 
-这个项目包含了两个演示：一个演示原生侧注册字体的方法，另一个演示RN侧使用字体的效果。
+This project contains two demonstrations: one shows how to register fonts on the native side, and the other demonstrates the effect of using fonts on the RN side.
 
-# 目录结构
+## Directory Structure
 
 ```
 ├── RegisterFontNativeProject
 |   └── Index.ets
-|       ├── fontResourceByFontFamily # OpenHarmony 侧注册字体的方法1
-|       └── rnInstance.registerFont # OpenHarmony 侧自定义注册字体的方法2，随时可以注册字体文件
+|       ├── fontResourceByFontFamily # OpenHarmony font registration method 1
+|       └── rnInstance.registerFont # OpenHarmony custom font registration method 2, can register font files at any time
 └── RegisterFontRnProject
-    └── example.tsx  # React Native 侧展示使用字体的效果
-
+    └── example.tsx  # React Native side demonstrates the effect of using fonts
 ```
 
-# OpenHarmony 侧
+## OpenHarmony Side
 
-1. **fontResourceByFontFamily**: 常规注册字体方法，创建实例时注册
-2. **rnInstance.registerFont**: 找到对应的rnInstance可随时注册字体
+1. **fontResourceByFontFamily**: Regular font registration method, register when creating instance
+2. **rnInstance.registerFont**: Find the corresponding rnInstance to register fonts at any time
 
-# React Native 侧
+## React Native Side
 
-1. **使用字体文件**: 使用 `example.tsx` 中的代码，直接使用OpenHarmony 侧注册的字体
+1. **Using Font Files**: Use the code in `example.tsx` to directly use fonts registered on the OpenHarmony side
 
-# 运行步骤
+## Environment Setup
 
-1. 在 `RegisterFontRnProject` 目录下执行 **npm i @react-native-oh/react-native-harmony@x.x.x**或**yarn add @react-native-oh/react-native-harmony@x.x.x** 安装依赖，执行 **npm run dev** 生成 bundle；
-2. 在 `entry` 目录下执行 **ohpm i @rnoh/react-native-openharmony@x.x.x** 安装依赖；
-3. 检查 `RegisterFontNativeProject`、`entry` 目录下是否生成 `oh-modules` 文件夹；
-4. 用 DevEco Studio 打开 `RegisterFontNativeProject`，执行 **Sync and Refresh Project**；
-5. 点击 File > Project Structure > Signing Configs，登录并完成签名；
-6. 点击右上角的 **run** 启动项目；
-7. 确保鸿蒙和 rn 侧依赖下载无缺，版本配套正常；
-8. 打开生成的 app 来确认文件已正确加载。
+1. In the `RegisterFontRnProject` directory, run **npm i** to install dependencies and run **npm run dev** to generate the bundle;
+2. Open `RegisterFontNativeProject` in DevEco Studio and run **Sync and Refresh Project**;
+3. Click File > Project Structure > Signing Configs, log in and complete the signing;
+4. Click **run** in the upper right corner to start the project;
 
-# 注意事项
+> NOTE: The project uses the latest RNOH dependencies by default during installation. If you need to install a specific version, please refer to [RNOH Version Evolution Planning and Branch Strategy](https://gitcode.com/openharmony-sig/ohos_react_native/wiki/RNOH版本演进规划和分支策略.md) to get the version number.
+> 
+> npm dependency installation: `npm i @react-native-oh/react-native-harmony@0.77.xx` `npm i --save-dev @react-native-oh/react-native-harmony-cli@0.77.xx`
+> 
+> ohpm dependency installation: `ohpm i @rnoh/react-native-openharmony@0.77.xx`
 
-- 确保 OpenHarmony 和 React Native 项目配置正确，以便文件可以在两个系统之间无缝传递与加载。
-- 沙箱路径的使用和文件访问权限需要根据具体环境进行调整。
+## Notes
 
----
+- Ensure that OpenHarmony and React Native projects are configured correctly so that files can be seamlessly transferred and loaded between the two systems.
+- The use of sandbox paths and file access permissions need to be adjusted according to the specific environment.
 
-# 效果预览
-- 默认字体  
-- 常规注册字体  
-- rnInstance.registerFont方法注册字体  
+## Preview
+- Default font  
+- Regular registered font  
+- rnInstance.registerFont method registered font  
 
-![注册字体运行效果图](../../zh-cn/figures/注册字体运行效果图.png)
+![Font registration effect screenshot](../../zh-cn/figures/注册字体运行效果图.png)

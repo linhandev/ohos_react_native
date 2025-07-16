@@ -4,3 +4,5 @@
 /build
 /.cxx
 /.test
+/src/main/cpp/generated
+/src/main/resources/rawfile/bundle.harmony.js

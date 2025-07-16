@@ -1,12 +1,13 @@
-# 运行Sample工程
+# 说明
 
 ## 工程运行指导
 
-​本Demo包含一个鸿蒙工程目录 `SampleApp`和一个ReactNative工程目录`SampleProject`，接下来需要使用`SampleProject`生成bundle包，并将bundle包加载到`SampleApp`中运行鸿蒙工程。
+​本Demo包含一个鸿蒙工程目录 `SampleApp` 和一个ReactNative工程目录 `SampleProject`，接下来需要使用 `SampleProject` 生成bundle包，并将bundle包加载到 `SampleApp` 中运行鸿蒙工程。
 
 ### React Native工程操作
+
 1. 在 `SampleProject/MainProject` 目录下执行 **npm i** 安装依赖；
-2. 运行 **npm run dev:all** 生成本地bundle。执行此命令后会在`SampleApp/entry/src/main/resources/rawfile`目录下生成名为`bundle`和`assets`文件夹；
+2. 运行 **npm run dev:all** 生成本地bundle。执行此命令后会在 `SampleApp/entry/src/main/resources/rawfile` 目录下生成名为 `bundle` 和 `assets` 文件夹；
 3. 如果您想使用Metro服务进行热更新调试，请连接真机，执行以下命令：
   
   ```bash
