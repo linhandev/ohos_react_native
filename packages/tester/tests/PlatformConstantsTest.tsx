@@ -1,8 +1,13 @@
 import {Platform} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 export function PlatformConstantsTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   return (
     <TestSuite name="PlatformConstants">
       <TestCase.Logical
@@ -13,10 +18,12 @@ export function PlatformConstantsTest() {
         }}
       />
       <TestCase.Logical
-        skip={{android: true, harmony: false}}
+        skip={{android: true, harmony: !driver}}
         itShould="specify platform version"
-        fn={({expect}) => {
-          expect(Platform.Version.toString().split('.').length - 1).to.be.eq(3);
+        fn={async ({expect}) => {
+          expect(await driver?.getDeviceVersion()).to.eq(
+            Platform.Version.toString(),
+          );
         }}
       />
       <TestCase.Logical
@@ -59,9 +66,10 @@ export function PlatformConstantsTest() {
       />
       <TestCase.Logical
         itShould="specify product model"
-        fn={({expect}) => {
+        skip={{android: true, harmony: !driver}}
+        fn={async ({expect}) => {
           if (Platform.OS === 'harmony') {
-            expect(['NOH', 'ALN-AL00', 'ALT-AL10']).to.include(
+            expect(await driver?.getDeviceModel()).to.eq(
               Platform.constants.Model,
             );
           }

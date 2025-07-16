@@ -198,4 +198,10 @@ export class HdcClient {
       },
     };
   }
+
+  async getSystemParam(paramName: string): Promise<string> {
+    const result = await this.sendCommand(`param get ${paramName}`);
+    // remove trailling invisible chars
+    return result.replace(/\s+$/, '');
+  }
 }

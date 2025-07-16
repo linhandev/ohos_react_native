@@ -157,4 +157,12 @@ export class Driver {
     await this.hdcClient.hitrace().begin('app');
     return new Tracing(this.hdcClient);
   }
+
+  async getDeviceModel(): Promise<string> {
+    return this.hdcClient.getSystemParam('const.product.model');
+  }
+
+  async getDeviceVersion(): Promise<string> {
+    return this.hdcClient.getSystemParam('const.ohos.fullname');
+  }
 }
