@@ -17,16 +17,15 @@ export type Asset = AssetData;
  */
 export function getAssetDestRelativePath(asset: Asset): string {
   const fileName = getResourceIdentifier(asset);
-  return `${fileName}.${asset.type}`;
+  // Assets can have relative paths outside of the project root.
+  // Replace `../` with `_` to make sure they don't end up outside of
+  // the expected assets directory.
+  return `${fileName}.${asset.type}`.replace(/\.\.\//g, '_');
 }
 
 function getResourceIdentifier(asset: Asset): string {
   const folderPath = getBasePath(asset);
-  return `${folderPath}/${asset.name}`
-    .toLowerCase()
-    .replace(/\//g, '_')
-    .replace(/([^a-z0-9_])/g, '')
-    .replace(/^assets_/, '');
+  return `${folderPath}/${asset.name}`.replace(/^assets\//, '');
 }
 
 function pickScale(scales: Array<number>, deviceScale?: number): number {
