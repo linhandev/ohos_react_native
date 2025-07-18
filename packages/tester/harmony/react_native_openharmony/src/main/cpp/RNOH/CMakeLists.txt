@@ -27,6 +27,7 @@ target_link_libraries(
          uv
          folly
          reactnative
+         c++_shared
          )
 
 target_compile_options(rnoh_core PUBLIC ${folly_FLAGS})
