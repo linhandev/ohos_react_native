@@ -9,13 +9,13 @@ const TEMPLATE = `
   license: "ISC",
   repository: {},
   dependencies: {
-    "@rnoh/react-native-openharmony": "file:../node_modules/{{{rnohNpmPackageName}}}/harmony/react_native_openharmony.har",
+    "@rnoh/react-native-openharmony": "file:../node_modules/{{{rnohNpmPackageName}}}/react_native_openharmony.har",
     },
   devDependencies: {
     "@ohos/hypium": "1.0.6",
   },
   overrides: {
-    "@rnoh/react-native-openharmony": "file:../node_modules/{{{rnohNpmPackageName}}}/harmony/react_native_openharmony.har",
+    "@rnoh/react-native-openharmony": "file:../node_modules/{{{rnohNpmPackageName}}}/react_native_openharmony.har",
   },
 }
 `;

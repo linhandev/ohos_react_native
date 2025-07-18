@@ -20,15 +20,17 @@ export class ProjectDependency {
   getHarFilePaths(): AbsolutePath[] {
     const packageHarmonyPath =
       this.packageRootPath.copyWithNewSegment('harmony');
-    if (!this.fs.existsSync(packageHarmonyPath)) {
-      return [];
+    if (this.fs.existsSync(packageHarmonyPath)) {
+      return this.fs.findFilePathsWithExtensions(
+        packageHarmonyPath,
+        ['har']
+      );
+    } else {
+      return this.fs.findFilePathsWithExtensions(
+        this.packageRootPath,
+        ['har']
+      );
     }
-
-    const harFilePaths = this.fs.findFilePathsWithExtensions(
-      packageHarmonyPath,
-      ['har']
-    );
-    return harFilePaths;
   }
 
   readPackageJSON() {
