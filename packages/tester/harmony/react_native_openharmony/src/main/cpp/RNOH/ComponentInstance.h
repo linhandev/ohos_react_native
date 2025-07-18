@@ -47,6 +47,15 @@ class ComponentInstance
  private:
   std::string m_componentName;
   std::unordered_set<std::string> m_nativeResponderBlockOrigins;
+  bool m_isJSResponder = false;
+
+  /**
+   * @brief Mark whether the current component is a JS responder.
+   * @param isJSResponder
+   */
+  void setIsJSResponder(bool isJSResponder) {
+    m_isJSResponder = isJSResponder;
+  };
 
  protected:
   /**
@@ -434,6 +443,17 @@ class ComponentInstance
   virtual std::weak_ptr<UIInputEventHandler> getUIInputEventHandler() {
     return {};
   }
+
+  /**
+   * @brief The JSResponder is the view currently recognized by the JavaScript
+   * context as the "responder". It is part of the responder system and
+   * represents the view that exclusively handles touch interactions,
+   * responsible for receiving and processing user touch events.
+   * @return bool
+   */
+  bool isJSResponder() const override {
+    return m_isJSResponder;
+  };
 
   /**
    * @brief Get the TouchTarget Tag

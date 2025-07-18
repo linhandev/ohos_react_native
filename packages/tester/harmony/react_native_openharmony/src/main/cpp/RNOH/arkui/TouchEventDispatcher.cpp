@@ -102,7 +102,7 @@ std::optional<facebook::react::Touch> convertTouchPointToReactTouch(
   return touch;
 }
 
-bool isParentHandlingTouches(
+bool isAncestorHandlingTouches(
     TouchTarget::Shared touchTarget,
     TouchTarget::Shared const& rootTarget) {
   auto tmpTouchTarget = touchTarget;
@@ -159,7 +159,7 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
       if (touchTarget == nullptr) {
         continue;
       }
-      if (isParentHandlingTouches(touchTarget, rootTarget)) {
+      if (isAncestorHandlingTouches(touchTarget, rootTarget)) {
         continue;
       }
       registerTargetForTouch(activeTouch, touchTarget);
@@ -170,14 +170,20 @@ void TouchEventDispatcher::findTargetAndSendTouchEvent(
       if (touchTarget == nullptr) {
         continue;
       }
-      if (isParentHandlingTouches(touchTarget, rootTarget)) {
+      if (isAncestorHandlingTouches(touchTarget, rootTarget)) {
+        auto ancestorJSResponderTouchTarget =
+            touchTarget->getTouchTargetParent();
+        while (ancestorJSResponderTouchTarget != rootTarget &&
+               !ancestorJSResponderTouchTarget->isJSResponder()) {
+          ancestorJSResponderTouchTarget =
+              ancestorJSResponderTouchTarget->getTouchTargetParent();
+        }
         cancelPreviousTouchEvent(timestampSeconds, touchTarget);
-        auto parentTouchTarget = touchTarget->getTouchTargetParent();
-        if (parentTouchTarget && parentTouchTarget != rootTarget) {
+        if (ancestorJSResponderTouchTarget != rootTarget) {
           m_touchTargetByTouchId.insert_or_assign(
-              activeTouch.id, parentTouchTarget);
+              activeTouch.id, ancestorJSResponderTouchTarget);
           DLOG(INFO) << "TOUCH::DOWN";
-          parentTouchTarget->getTouchEventEmitter()->onTouchStart(
+          ancestorJSResponderTouchTarget->getTouchEventEmitter()->onTouchStart(
               m_previousEvent);
         } else {
           m_touchTargetByTouchId.erase(activeTouch.id);

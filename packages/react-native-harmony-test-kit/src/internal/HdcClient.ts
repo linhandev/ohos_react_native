@@ -114,6 +114,23 @@ export class HdcClient {
 
             await this.sendCommand(`uitest uiInput dircFling ${dir} ${speed}`);
           },
+          swipe: async (
+            fx: number,
+            fy: number,
+            tx: number,
+            ty: number,
+            speed: number = 600,
+          ): Promise<void> => {
+            if (!isVelocity(speed)) {
+              throw new HdcClientError(
+                'Velocity must be integer between 200 and 40000',
+              );
+            }
+
+            await this.sendCommand(
+              `uitest uiInput swipe ${fx} ${fy} ${tx} ${ty} ${speed}`,
+            );
+          },
           keyEvent: () => {
             const that = this;
             let keyChain: (string | number)[] = [];

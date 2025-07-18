@@ -75,6 +75,22 @@ export class Driver {
       .dircFling(UIDirectionEnum[direction], speed);
   }
 
+  async swipe({
+    ref,
+    fromOffset,
+    toOffset,
+    speed = 600,
+  }: {
+    ref: React.RefObject<React.Component<any>>;
+    fromOffset: Offset;
+    toOffset: Offset;
+    speed?: number;
+  }): Promise<void> {
+    const {x: fx, y: fy} = await this.getAbsolutePosition(ref, fromOffset);
+    const {x: tx, y: ty} = await this.getAbsolutePosition(ref, toOffset);
+    this.hdcClient.uiTest().uiInput().swipe(fx, fy, tx, ty, speed);
+  }
+
   private getAbsolutePosition(
     ref: React.RefObject<React.Component<any>>,
     offset: Offset = {x: 0, y: 0},

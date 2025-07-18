@@ -136,6 +136,7 @@ const PanResponderInScrollViewWithRefresh = () => {
 const ScrollViewNestedInPanResponder = () => {
   const [refreshing, setRefreshing] = useState(false);
   const scrollOffsetY = useRef(0);
+  const [time, setTime] = useState(0);
   const headerHeight = 80;
   const pan = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
@@ -217,8 +218,17 @@ const ScrollViewNestedInPanResponder = () => {
           backgroundColor: 'yellow',
         }}
         {...panResponder.panHandlers}>
-        <Animated.ScrollView onScroll={handleScroll} overScrollMode={'never'}>
-          <View style={{backgroundColor: 'lightgreen', height: 1000}} />
+        <Animated.ScrollView
+          overScrollMode={'never'}
+          onScroll={handleScroll}
+          onTouchStart={() => {
+            setTime(time + 1);
+          }}>
+          <View style={{backgroundColor: 'lightgreen', height: 1000}}>
+            <Text style={{marginTop: 100, textAlign: 'center'}}>
+              onTouchStart: {time}
+            </Text>
+          </View>
         </Animated.ScrollView>
       </Animated.View>
     </View>

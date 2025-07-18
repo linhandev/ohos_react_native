@@ -45,6 +45,9 @@ class TouchTarget {
   virtual bool isHandlingTouches() const {
     return false;
   };
+  virtual bool isJSResponder() const {
+    return false;
+  };
   virtual facebook::react::Tag getTouchTargetTag() const = 0;
   virtual facebook::react::SharedTouchEventEmitter getTouchEventEmitter()
       const = 0;
