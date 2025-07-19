@@ -87,7 +87,7 @@ export const NetworkingTest = () => {
           }}
         />
         <TestCase.Logical
-          itShould="fetch local assets correctly (test needs to be run without metro)"
+          itShould="fetch local assets correctly"
           fn={async ({expect}) => {
             const uri = require('../assets/heliport-14.svg');
             const source = resolveAssetSource(uri);

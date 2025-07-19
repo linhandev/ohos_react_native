@@ -205,6 +205,36 @@ export function TextTest() {
         {textLineHeight(15)}
         {textLineHeight(30)}
       </TestCase.Example>
+      <TestCase.Example itShould="support letterSpacing">
+        <View style={{width: '100%'}}>
+          <Text style={{margin: 5, fontSize: 16}}>
+            The letterSpacing and fontSize on the follow is 16
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              letterSpacing: 16,
+              margin: 5,
+            }}>
+            letterSpacing and fontSize is 16
+          </Text>
+        </View>
+      </TestCase.Example>
+      <TestCase.Example itShould="double underline should not be clipped when textDecorationStyle is set to 'double'">
+        <View style={{width: '100%', padding: 8}}>
+          <Text
+            style={{
+              fontSize: 18,
+              color: 'black',
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'double',
+              textDecorationColor: 'red',
+            }}>
+            double underline should not be clipped when textDecorationStyle is
+            set to 'double'
+          </Text>
+        </View>
+      </TestCase.Example>
     </TestSuite>
   );
 }
@@ -234,7 +264,6 @@ type OnLayoutViewProps<T> = {
     done: () => void;
   };
 };
-
 const OnLayoutView = forwardRef<
   View,
   OnLayoutViewProps<{innerRef: React.RefObject<View>}>

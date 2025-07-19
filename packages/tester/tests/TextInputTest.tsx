@@ -12,6 +12,7 @@ import {
   TextInput,
   TextInputProps,
   View,
+  Image,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React, {useState, useRef, createRef, forwardRef} from 'react';
@@ -593,7 +594,14 @@ export function TextInputTest() {
       <TestCase.Example modal itShould="toggle between different enter keys">
         <EnterKeyHintExample />
       </TestCase.Example>
-      <TestCase.Example itShould="render secure text input (text obscured)">
+      <TestCase.Example itShould="render secure text input with no password Icon (text obscured)">
+        <Text>Please pay attention to whether the style is correct</Text>
+        <Image
+          source={require('../assets/textinput_secure_style.png')}
+          style={{width: '100%'}}
+          resizeMode="contain"
+        />
+        <Text>e.g</Text>
         <TextInputWithText style={styles.textInput} secureTextEntry />
       </TestCase.Example>
       <TestCase.Automated
@@ -1213,6 +1221,14 @@ export function TextInputTest() {
         itShould="render multiline with different InputMode types">
         <TextAreaInputModeTest />
       </TestCase.Example>
+
+      <TestCase.Example itShould="when value is set and entering Chinese, the cursor position is at the correct position">
+        <TextInput
+          placeholder="Please Enter Text"
+          value="Enter a piece of Chinese text at any position"
+          style={{borderWidth: 1, height: 50}}
+        />
+      </TestCase.Example>
       <TestCase.Manual
         itShould="not trigger backspace event after pressing any other key"
         initialState={''}
@@ -1242,7 +1258,6 @@ const createSingleAndMultilineTest = (
     </>
   );
 };
-
 const SetNativePropsTest = () => {
   const ref = useRef<TextInput>(null);
 

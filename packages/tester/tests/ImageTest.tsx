@@ -232,6 +232,17 @@ export const ImageTest = () => {
         }}
       />
       <TestCase.Example
+        itShould={
+          'display uri prefixes for different bundle load \n-Metro:http:// \n-File:file:// \n-Resource:asset://'
+        }>
+        <View>
+          <Text>
+            Resolved Source URI:{' '}
+            {Image.resolveAssetSource(require('../assets/heliport-14.svg')).uri}
+          </Text>
+        </View>
+      </TestCase.Example>
+      <TestCase.Example
         skip={{android: false, harmony: {arkTs: true, cAPI: true}}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/246
         itShould="render circular image on a red rectangle (overlayColor)">
         <Image

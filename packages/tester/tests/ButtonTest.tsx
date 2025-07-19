@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Button, StyleSheet, Text, findNodeHandle} from 'react-native';
+import {
+  View,
+  Button,
+  StyleSheet,
+  Text,
+  findNodeHandle,
+  Image,
+} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {TestCase} from '../components';
 
@@ -11,6 +18,13 @@ export const ButtonTest = () => {
           style={{
             margin: 8,
           }}>
+          <Text>Please pay attention to whether the style is correct</Text>
+          <Image
+            source={require('../assets/button_default_style.png')}
+            style={{width: '100%'}}
+            resizeMode="contain"
+          />
+          <Text style={{marginBottom: 8}}>e.g</Text>
           <Button title="noop" />
         </View>
       </TestCase.Example>

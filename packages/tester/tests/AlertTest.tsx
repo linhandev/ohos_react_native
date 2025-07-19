@@ -89,6 +89,43 @@ export function AlertTest() {
           expect(state).to.be.true;
         }}
       />
+      <TestCase.Example itShould="verify buttons order (from top to bottom: primary, secondary, and tertiary)">
+        <View style={{flexDirection: 'row', gap: 10}}>
+          <Button
+            label="Test button order"
+            onPress={() => {
+              Alert.alert(
+                'Button Order Test',
+                'verify buttons order (from top to bottom: primary, secondary, and tertiary)',
+                [
+                  {
+                    text: 'Primary Button',
+                    onPress: () => {
+                      console.log('Primary Button pressed');
+                    },
+                    style: 'default',
+                  },
+                  {
+                    text: 'Secondary Button',
+                    onPress: () => {
+                      console.log('Secondary Button pressed');
+                    },
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Tertiary Button',
+                    onPress: () => {
+                      console.log('Tertiary Button pressed');
+                    },
+                    style: 'default',
+                  },
+                ],
+                {cancelable: false},
+              );
+            }}
+          />
+        </View>
+      </TestCase.Example>
     </TestSuite>
   );
 }
