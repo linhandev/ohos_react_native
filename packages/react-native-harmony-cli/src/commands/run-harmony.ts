@@ -1,9 +1,17 @@
+/**
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 import { AbsolutePath, DescriptiveError } from '../core';
 import { Logger, RealFS } from '../io';
 import { RealCliExecutor } from '../io/CliExecutor';
 import { Command } from './types';
 import crypto from 'node:crypto';
 import JSON5 from 'json5';
+import inquirer from 'inquirer';
 
 const COMMAND_NAME = 'run-harmony';
 
@@ -35,6 +43,11 @@ export const commandRunHarmony: Command = {
       name: '--ability <string>',
       description: 'Name of the ability to start.',
       default: 'EntryAbility',
+    },
+    {
+      name: '--simulator <string>',
+      description: 'The name of the simulator that are currently connected.',
+      default: 'undefined',
     },
   ],
   func: async (_argv, _config, rawArgs: any) => {
@@ -79,6 +92,7 @@ export const commandRunHarmony: Command = {
       const buildMode: string = rawArgs.buildMode;
       const moduleName: string = rawArgs.module;
       const abilityName: string = rawArgs.ability;
+      const simulatorName: string = rawArgs.simulator;
       const devEcoStudioToolsPath = new AbsolutePath(
         DEVECO_SDK_HOME
       ).copyWithNewSegment('..', 'tools');
@@ -92,6 +106,84 @@ export const commandRunHarmony: Command = {
           harmonyProjectPath.copyWithNewSegment('AppScope', 'app.json5')
         )
       ).app.bundleName;
+
+      const selectDevice = async (deviceAndSimulatorInfos: string) => {
+        const lines = deviceAndSimulatorInfos.trim().split('\n');
+        const availableDevices = lines.map((line) => {
+          const parts = line.split(/\s+/);
+          return {
+            name: parts[0],
+            method: parts[1],
+            state: parts[2],
+            locate: parts[3],
+            connectTool: parts[4]
+          };
+        });
+        if (simulatorName !== 'undefined') {
+          const isRequestedDeviceAvailable = availableDevices.some((deviceOrSimulator) => deviceOrSimulator.name === simulatorName);
+          if (!isRequestedDeviceAvailable) {
+            throw new DescriptiveError({
+              whatHappened: `Simulator with name "${simulatorName}" not found.`,
+              whatCanUserDo: [
+                'Please confirm whether the entered simulator name has been activated.',
+              ]
+            });
+          }
+          return simulatorName;
+        }
+        const connectedDevices = availableDevices.filter((deviceOrSimulator) => deviceOrSimulator.state === 'Connected');
+        if (connectedDevices.length > 1) {
+          const answers = await inquirer.prompt([
+            {
+              type: 'list',
+              name: 'selectedDeviceIndex',
+              message: 'Please select a device:',
+              choices: connectedDevices.map((deviceOrSimulator, index) => `${index + 1}. ${deviceOrSimulator.name}`)
+            }
+          ])
+          return connectedDevices[parseInt(answers.selectedDeviceIndex) - 1].name;
+        } else if (connectedDevices.length === 1) {
+          return connectedDevices[0].name;
+        } else {
+          throw new DescriptiveError({
+            whatHappened: `No devices are connected in the current environment.`,
+            whatCanUserDo: [
+              'Please connect your HarmonyOS device or open the simulator.',
+            ]
+          });
+        }
+      };
+
+      const deviceAndSimulatorInfo: string = await cli.run(
+        sdkToolchainsPath.copyWithNewSegment('hdc').toString(),
+        {
+          args: ['list', 'targets', '-v'],
+          cwd: harmonyProjectPath,
+        }
+      );
+
+      const deviceOrSimulatorName = await selectDevice(deviceAndSimulatorInfo)
+
+      const isForwardPortingEnabled = async () => {
+        let fportInfo: string = '';
+        await cli.run(
+          sdkToolchainsPath.copyWithNewSegment('hdc').toString(),
+          {
+            args: ['fport', 'ls'],
+            cwd: harmonyProjectPath,
+            onStdout: (msg) => {
+              fportInfo += msg;
+            },
+            onStderr: (msg) => {
+              logger.debug((s) => s.gray(msg.trimEnd()));
+            },
+          });
+        if (fportInfo.includes('tcp:8081 tcp:8081')) {
+          return true;
+        } else {
+          return false;
+        }
+      };
 
       const runJob = async (name: string, job: () => Promise<void>) => {
         const stop = logger.start((s) => s.bold(name));
@@ -112,27 +204,25 @@ export const commandRunHarmony: Command = {
         }
       };
 
-      await runJob('[1/2] building app', async () => {
+      await runJob('[1/3] installing dependencies', async () => {
+        let ohpmPath = devEcoStudioToolsPath
+          .copyWithNewSegment('ohpm', 'bin', 'ohpm');
+        if (process.platform === 'win32') {
+          ohpmPath = devEcoStudioToolsPath
+            .copyWithNewSegment('ohpm', 'bin', 'ohpm.bat');
+        }
         await cli.run(
-          devEcoStudioToolsPath
-            .copyWithNewSegment('node', 'bin', 'node')
-            .toString(),
+          process.platform === 'win32' ? `"${ohpmPath.toString()}"` :
+            ohpmPath.toString(),
           {
             args: [
-              devEcoStudioToolsPath
-                .copyWithNewSegment('hvigor', 'bin', 'hvigorw.js')
-                .toString(),
-              `-p`,
-              `module=${moduleName}@default`,
-              `-p`,
-              `product=${productName}`,
-              `-p`,
-              `buildMode=${buildMode}`,
-              `-p`,
-              `requiredDeviceType=phone`,
-              `assembleHap`,
+              'install',
+              '--all',
+              '--strict_ssl',
+              'true',
             ],
             cwd: harmonyProjectPath,
+            shell: true,
             onArgsStringified: (commandWithArgs) => {
               logger.debug((s) => s.bold(s.gray(commandWithArgs)));
             },
@@ -145,13 +235,52 @@ export const commandRunHarmony: Command = {
           }
         );
       });
-      await runJob('[2/2] installing and opening app', async () => {
+      await runJob('[2/3] building app', async () => {
+        let nodePath = devEcoStudioToolsPath
+          .copyWithNewSegment('node', 'bin', 'node');
+        if (!fs.existsSync(nodePath)) {
+          nodePath = devEcoStudioToolsPath.copyWithNewSegment('node', 'node');
+        }
+        let hvigorPathRaw = devEcoStudioToolsPath.copyWithNewSegment('hvigor', 'bin', 'hvigorw.js').toString();
+        const hvigorPath = process.platform === 'win32' ? `"${hvigorPathRaw}"` : hvigorPathRaw;
+        await cli.run(
+          process.platform === 'win32' ? `"${nodePath.toString()}"` :
+            nodePath.toString(),
+          {
+            args: [
+              hvigorPath,
+              `-p`,
+              `module=${moduleName}@default`,
+              `-p`,
+              `product=${productName}`,
+              `-p`,
+              `buildMode=${buildMode}`,
+              `-p`,
+              `requiredDeviceType=phone`,
+              `assembleHap`,
+            ],
+            cwd: harmonyProjectPath,
+            shell: true,
+            onArgsStringified: (commandWithArgs) => {
+              logger.debug((s) => s.bold(s.gray(commandWithArgs)));
+            },
+            onStdout: (msg) => {
+              logger.debug((s) => s.gray(msg.trimEnd()));
+            },
+            onStderr(msg) {
+              logger.debug(() => msg.trimEnd());
+            },
+          }
+        );
+      });
+      await runJob('[3/3] installing and opening app', async () => {
         const tmpDirName = generateRandomString();
         const ohosTmpDirPath = `data/local/tmp/${tmpDirName}`;
 
         const exec = async (command: string, args: string[]) => {
           const result = await cli.run(command, {
             args: args,
+            shell: true,
             onArgsStringified: (commandWithArgs) =>
               logger.debug((s) => s.bold(s.gray(commandWithArgs))),
           });
@@ -166,13 +295,20 @@ export const commandRunHarmony: Command = {
           return result;
         };
 
-        const hdcPathStr = sdkToolchainsPath
+        const hdcPathStrRaw = sdkToolchainsPath
           .copyWithNewSegment('hdc')
           .toString();
-        await exec(hdcPathStr, ['shell', 'aa', 'force-stop', bundleName]);
+        const hdcPathStr = process.platform === 'win32' ? `"${hdcPathStrRaw.toString()}"` : hdcPathStrRaw;
+        await exec(hdcPathStr, ['-t', deviceOrSimulatorName, 'shell', 'aa', 'force-stop', bundleName]);
         try {
-          await exec(hdcPathStr, ['shell', 'mkdir', ohosTmpDirPath]);
+          await exec(hdcPathStr, ['-t', deviceOrSimulatorName, 'shell', 'mkdir', ohosTmpDirPath]);
+          let hapName = `${moduleName}-default-signed.hap`;
+          if (simulatorName !== 'undefined') {
+            hapName = `${moduleName}-default-unsigned.hap`;
+          }
           await exec(hdcPathStr, [
+            '-t',
+            deviceOrSimulatorName,
             'file',
             'send',
             harmonyProjectPath
@@ -182,12 +318,14 @@ export const commandRunHarmony: Command = {
                 'default',
                 'outputs',
                 'default',
-                `${moduleName}-default-signed.hap`
+                hapName
               )
               .toString(),
             ohosTmpDirPath,
           ]);
           const installationResult = await exec(hdcPathStr, [
+            '-t',
+            deviceOrSimulatorName,
             'shell',
             'bm',
             'install',
@@ -203,9 +341,11 @@ export const commandRunHarmony: Command = {
             });
           }
         } finally {
-          await exec(hdcPathStr, ['shell', 'rm', '-rf', ohosTmpDirPath]);
+          await exec(hdcPathStr, ['-t', deviceOrSimulatorName, 'shell', 'rm', '-rf', ohosTmpDirPath]);
         }
         await exec(hdcPathStr, [
+          '-t',
+          deviceOrSimulatorName,
           'shell',
           'aa',
           'start',
@@ -213,6 +353,21 @@ export const commandRunHarmony: Command = {
           abilityName,
           '-b',
           bundleName,
+        ]);
+        if (await isForwardPortingEnabled() === true) {
+          await exec(hdcPathStr, [
+            'fport',
+            'rm',
+            'tcp:8081',
+            'tcp:8081'
+          ]);
+        }
+        await exec(hdcPathStr, [
+          '-t',
+          deviceOrSimulatorName,
+          'rport',
+          'tcp:8081',
+          'tcp:8081'
         ]);
       });
     } catch (err) {

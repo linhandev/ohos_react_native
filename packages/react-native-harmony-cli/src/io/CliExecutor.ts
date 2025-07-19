@@ -7,6 +7,7 @@ export type CliOptions = {
   onArgsStringified?: (commandWithArgs: string) => void;
   onStdout?: (data: string) => void;
   onStderr?: (data: string) => void;
+  shell?: boolean;
 };
 
 export abstract class CliExecutor {
@@ -25,6 +26,7 @@ export class RealCliExecutor extends CliExecutor {
       options?.onArgsStringified?.(commandWithArgs);
       const process = spawn(command, argStrings, {
         cwd: options?.cwd?.toString(),
+        shell: options?.shell ? true : false,
       });
 
       let stdout = '';
