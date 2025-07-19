@@ -43,6 +43,16 @@
                 <filteritem type="filepath"
                     name="packages/tester/harmony/react_native_openharmony/src/main/cpp/patches/.*"
                     desc="Upstream code with modifications using the original license header" />
+                <filteritem type="filepath" name="packages/template/template.config.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/_eslintrc.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/_gitignore" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/_prettierrc.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/_watchmanconfig" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/App.tsx" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/babel.config.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/index.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/jest.config.js" desc="Upstream community code, no need to check." />
+                <filteritem type="filepath" name="packages/template/template/__tests__/App.test.tsx" desc="Upstream community code, no need to check." />
             </filefilter>
             <filefilter name="binaryFileTypePolicyFilter" desc="">
                 <filteritem type="filename" name="rnoh-testerino-.*.tgz" desc="Testing dependency" />
