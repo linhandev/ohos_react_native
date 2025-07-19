@@ -16,9 +16,8 @@ static constexpr std::array SCROLL_NODE_EVENT_TYPES{
     NODE_EVENT_ON_APPEAR};
 
 namespace rnoh {
-ScrollNode::ScrollNode()
-    : ArkUINode(NativeNodeApi::getInstance()->createNode(
-          ArkUI_NodeType::ARKUI_NODE_SCROLL)),
+ScrollNode::ScrollNode(Context context)
+    : ArkUINode(context, ArkUI_NodeType::ARKUI_NODE_SCROLL),
       m_childArkUINodeHandle(nullptr),
       m_scrollNodeDelegate(nullptr) {
   for (auto eventType : SCROLL_NODE_EVENT_TYPES) {
@@ -78,8 +77,8 @@ void ScrollNode::insertChild(ArkUINode& child) {
   if (m_childArkUINodeHandle != nullptr) {
     LOG(FATAL) << "ScrollNode can only have one child";
   }
-  maybeThrow(NativeNodeApi::getInstance()->addChild(
-      m_nodeHandle, child.getArkUINodeHandle()));
+  maybeThrow(
+      m_context.nodeApi.addChild(m_nodeHandle, child.getArkUINodeHandle()));
   m_childArkUINodeHandle = child.getArkUINodeHandle();
 }
 
@@ -101,7 +100,7 @@ void ScrollNode::setNestedScroll(ArkUI_ScrollNestedMode scrollNestedMode) {
       {{.i32 = scrollNestedMode}, {.i32 = scrollNestedMode}}};
   ArkUI_AttributeItem item = {
       value.data(), sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_NESTED_SCROLL, &item));
 }
 
@@ -111,7 +110,7 @@ ScrollNode& ScrollNode::setHorizontal(bool horizontal) {
       : ArkUI_ScrollDirection::ARKUI_SCROLL_DIRECTION_VERTICAL;
   ArkUI_NumberValue value[] = {{.i32 = scrollDirection}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_SCROLL_DIRECTION, &item));
   return *this;
 }
@@ -127,7 +126,7 @@ ScrollNode& ScrollNode::setEnableScrollInteraction(
     bool enableScrollInteraction) {
   ArkUI_NumberValue value[] = {{.i32 = enableScrollInteraction}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_ENABLE_SCROLL_INTERACTION, &item));
   return *this;
 }
@@ -135,7 +134,7 @@ ScrollNode& ScrollNode::setEnableScrollInteraction(
 ScrollNode& ScrollNode::setFriction(float friction) {
   ArkUI_NumberValue value[] = {{.f32 = friction}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_FRICTION, &item));
   return *this;
 }
@@ -146,7 +145,7 @@ ScrollNode& ScrollNode::setEdgeEffect(bool bounces, bool alwaysBounce) {
       : ArkUI_EdgeEffect::ARKUI_EDGE_EFFECT_NONE;
   ArkUI_NumberValue value[] = {{.i32 = edgeEffect}, {.i32 = alwaysBounce}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));
   return *this;
 }
@@ -164,7 +163,7 @@ void ScrollNode::setScrollOverScrollMode(std::string const& overScrollMode) {
   }
   ArkUI_NumberValue value[] = {{.i32 = edgeEffect}, {.i32 = alwaysBounce}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_EDGE_EFFECT, &item));
 }
 
@@ -182,21 +181,21 @@ void ScrollNode::scrollTo(
       {.i32 = 0},
       {.i32 = (int32_t)scrollToOverflowEnabled}};
   item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_SCROLL_OFFSET, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_SCROLL_OFFSET, &item));
 }
 ScrollNode& ScrollNode::setScrollBarDisplayMode(
     ArkUI_ScrollBarDisplayMode scrollBarDisplayMode) {
   ArkUI_NumberValue value[] = {{.i32 = scrollBarDisplayMode}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_BAR_DISPLAY_MODE, &item));
   return *this;
 }
 ScrollNode& ScrollNode::setScrollBarColor(uint32_t scrollBarColor) {
   ArkUI_NumberValue value[] = {{.u32 = scrollBarColor}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_BAR_COLOR, &item));
   return *this;
 }
@@ -212,15 +211,15 @@ ScrollNode& ScrollNode::setScrollSnap(
     value.push_back({.f32 = static_cast<float>(snapPoint)});
   }
   ArkUI_AttributeItem item = {value.data(), static_cast<int32_t>(value.size())};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_SCROLL_SNAP, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_SCROLL_SNAP, &item));
   return *this;
 }
 
 ScrollNode& ScrollNode::setEnablePaging(bool enablePaging) {
   ArkUI_NumberValue value[] = {{.i32 = enablePaging}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_ENABLE_PAGING, &item));
   return *this;
 }
@@ -231,21 +230,20 @@ ScrollNode& ScrollNode::setCenterContent(bool centerContent) {
       : ArkUI_Alignment::ARKUI_ALIGNMENT_TOP_START;
   std::array<ArkUI_NumberValue, 1> value = {{{.i32 = alignmentMode}}};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_STACK_ALIGN_CONTENT, &item));
   return *this;
 }
 
 ScrollNode& ScrollNode::resetScrollSnap() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_SCROLL_SNAP));
+  maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_SCROLL_SNAP));
   return *this;
 }
 
 void ScrollNode::setNestedScrollEnabled(bool nestedScrollEnabled) {
   ArkUI_NumberValue value[] = {{.i32 = nestedScrollEnabled}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_SCROLL_ENABLE_SCROLL_INTERACTION, &item));
 }
 
@@ -254,7 +252,7 @@ void ScrollNode::setEndFillColor(uint32_t color) {
   ArkUI_AttributeItem colorItem = {
       preparedColorValue,
       sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BACKGROUND_COLOR, &colorItem));
 }
 

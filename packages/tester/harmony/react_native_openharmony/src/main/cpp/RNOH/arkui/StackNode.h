@@ -59,8 +59,10 @@ class StackNode : public ArkUINode {
   /**
    * @brief Constructs a new StackNode object.
    * Initializes the StackNode, setting up any necessary resources.
+   *
+   * @param context The Context of ArkUINode.
    */
-  StackNode();
+  explicit StackNode(Context context = {});
 
   /**
    * @brief Destroys the StackNode object.

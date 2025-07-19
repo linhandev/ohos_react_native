@@ -12,8 +12,8 @@
 
 namespace rnoh {
 
-TextInputNodeBase::TextInputNodeBase(ArkUI_NodeType nodeType)
-    : ArkUINode(NativeNodeApi::getInstance()->createNode(nodeType)) {}
+TextInputNodeBase::TextInputNodeBase(Context context, ArkUI_NodeType nodeType)
+    : ArkUINode(context, nodeType) {}
 
 ArkUI_TextInputType TextInputNodeBase::convertInputType(
     facebook::react::KeyboardType keyboardType) {
@@ -188,8 +188,7 @@ void TextInputNodeBase::setPadding(
       static_cast<float>(padding.bottom),
       static_cast<float>(padding.left)};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_PADDING, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_PADDING, &item));
 }
 
 void TextInputNodeBase::setFocusable(bool const& focusable) {
@@ -199,8 +198,8 @@ void TextInputNodeBase::setFocusable(bool const& focusable) {
   }
   ArkUI_NumberValue value[] = {{.i32 = focusableValue}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUSABLE, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FOCUSABLE, &item));
 }
 
 bool TextInputNodeBase::isFocused() {
@@ -213,7 +212,7 @@ bool TextInputNodeBase::isFocused() {
 void TextInputNodeBase::setSelectAll(bool selectAll) {
   ArkUI_NumberValue value = {.i32 = int32_t(selectAll)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_SELECT_ALL, &item));
 }
 
@@ -223,7 +222,7 @@ void TextInputNodeBase::setResponseRegion(
   ArkUI_NumberValue value[] = {
       0.0f, 0.0f, (float)size.width, (float)size.height};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_RESPONSE_REGION, &item));
 }
 
@@ -234,7 +233,7 @@ void TextInputNodeBase::setFontColor(
   ArkUI_AttributeItem colorItem = {
       preparedColorValue,
       sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_FONT_COLOR, &colorItem));
 }
 
@@ -263,24 +262,23 @@ void TextInputNodeBase::setTextInputLineHeight(
   }
   ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
 }
 
 void TextInputNodeBase::setCommonFontAttributes(
     facebook::react::TextAttributes const& textAttributes) {
   if (textAttributes.fontFamily.empty()) {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_FONT_FAMILY));
+    maybeThrow(
+        m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FONT_FAMILY));
   } else {
     ArkUI_AttributeItem item = {.string = textAttributes.fontFamily.c_str()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_FONT_FAMILY, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_FAMILY, &item));
   }
 
   if (std::isnan(textAttributes.fontSize)) {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_FONT_SIZE));
+    maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FONT_SIZE));
   } else {
     bool allowFontScaling = true;
     if (textAttributes.allowFontScaling.has_value()) {
@@ -296,8 +294,8 @@ void TextInputNodeBase::setCommonFontAttributes(
     }
     std::array<ArkUI_NumberValue, 1> value = {{{.f32 = fontSize}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_FONT_SIZE, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_SIZE, &item));
   }
 
   if (textAttributes.fontWeight.has_value()) {
@@ -305,11 +303,11 @@ void TextInputNodeBase::setCommonFontAttributes(
         {{.i32 = static_cast<int32_t>(
               rnoh::convertFontWeight(textAttributes.fontWeight.value()))}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_FONT_WEIGHT, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_WEIGHT, &item));
   } else {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_FONT_WEIGHT));
+    maybeThrow(
+        m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FONT_WEIGHT));
   }
 
   if (textAttributes.fontStyle.has_value() &&
@@ -317,11 +315,10 @@ void TextInputNodeBase::setCommonFontAttributes(
     std::array<ArkUI_NumberValue, 1> value = {
         {{.i32 = static_cast<int32_t>(ARKUI_FONT_STYLE_ITALIC)}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_FONT_STYLE, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_STYLE, &item));
   } else {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_FONT_STYLE));
+    maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FONT_STYLE));
   }
 }
 
@@ -332,11 +329,10 @@ void TextInputNodeBase::setTextAlign(
         {{.i32 = static_cast<int32_t>(
               rnoh::convertTextAlign(textAlign.value()))}}};
     ArkUI_AttributeItem item = {value.data(), value.size()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_TEXT_ALIGN, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_ALIGN, &item));
   } else {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_TEXT_ALIGN));
+    maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_TEXT_ALIGN));
   }
 }
 
@@ -345,17 +341,17 @@ void TextInputNodeBase::setTextSelection(int32_t start, int32_t end) {
   if (start == end) {
     ArkUI_NumberValue value = {.i32 = start};
     ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+    maybeThrow(m_context.nodeApi.setAttribute(
         m_nodeHandle, NODE_TEXT_INPUT_CARET_OFFSET, &item));
   } else {
     ArkUI_AttributeItem item = {.value = value.data(), .size = 2};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+    maybeThrow(m_context.nodeApi.setAttribute(
         m_nodeHandle, NODE_TEXT_INPUT_TEXT_SELECTION, &item));
   }
 }
 
 void TextInputNodeBase::resetMaxLength() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+  maybeThrow(m_context.nodeApi.resetAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH));
 }
 
@@ -364,7 +360,7 @@ void TextInputNodeBase::setAlignment(ArkUI_Alignment const& textAlignment) {
       {.i32 = static_cast<int32_t>(textAlignment)}};
   ArkUI_AttributeItem alignmentItem = {
       alignmentValue, sizeof(alignmentValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ALIGNMENT, &alignmentItem));
 }
 } // namespace rnoh

@@ -10,6 +10,7 @@ import type { Tag } from './DescriptorBase';
 import type { NapiBridge } from './NapiBridge';
 import type { RNInstance, SurfaceContext} from './RNInstance';
 import { NodeContent } from '@ohos.arkui.node';
+import { UIContext } from '@kit.ArkUI';
 
 export type SurfaceProps = Record<string, any>;
 
@@ -321,5 +322,8 @@ export class SurfaceHandle {
    */
   public detachRootView(instanceId: number, surfaceId: number) {
     return this.napiBridge.detachRootView(instanceId, surfaceId);
+  }
+  public setUIContext(instanceId: number, context: UIContext) {
+    return this.napiBridge.setUIContext(instanceId, context);
   }
 }

@@ -25,8 +25,8 @@ static constexpr std::array TEXT_AREA_NODE_EVENT_TYPES = {
 
 namespace rnoh {
 
-TextAreaNode::TextAreaNode()
-    : TextInputNodeBase(ArkUI_NodeType::ARKUI_NODE_TEXT_AREA),
+TextAreaNode::TextAreaNode(Context context)
+    : TextInputNodeBase(context, ArkUI_NodeType::ARKUI_NODE_TEXT_AREA),
       m_textAreaNodeDelegate(nullptr) {
   for (auto eventType : TEXT_AREA_NODE_EVENT_TYPES) {
     registerNodeEvent(eventType);
@@ -139,14 +139,14 @@ void TextAreaNode::onNodeEvent(
     if (m_autoFocus) {
       ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(1)};
       ArkUI_AttributeItem item = {&value, 1};
-      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      maybeThrow(m_context.nodeApi.setAttribute(
           m_nodeHandle, NODE_FOCUS_STATUS, &item));
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
     if (isFocused()) {
       ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
       ArkUI_AttributeItem item = {&value, 1};
-      maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+      maybeThrow(m_context.nodeApi.setAttribute(
           m_nodeHandle, NODE_FOCUS_STATUS, &item));
     }
   }
@@ -241,8 +241,8 @@ void TextAreaNode::setTextContent(std::string const& textContent) {
   ArkUI_AttributeItem item = {.string = textContent.c_str()};
   m_hasRNSetTextContext = true;
   m_textContent = textContent;
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_AREA_TEXT, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_AREA_TEXT, &item));
 }
 
 void TextAreaNode::setInputType(facebook::react::KeyboardType rawKeyboardType) {
@@ -253,15 +253,15 @@ void TextAreaNode::setInputType(facebook::react::KeyboardType rawKeyboardType) {
   }
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
 }
 
 void TextAreaNode::setInputType(ArkUI_TextAreaType keyboardType) {
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_AREA_TYPE, &item));
 }
 
 void TextAreaNode::setFont(
@@ -298,14 +298,14 @@ void TextAreaNode::setFont(
        {.i32 = static_cast<int32_t>(fontStyle)},
        {.i32 = static_cast<int32_t>(fontWeight)}}};
   ArkUI_AttributeItem item = {value.data(), value.size(), fontFamily.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_PLACEHOLDER_FONT, &item));
 }
 
 void TextAreaNode::setLineHeight(float lineHeight) {
   ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
 }
 
@@ -313,20 +313,20 @@ void TextAreaNode::setCaretColor(facebook::react::SharedColor const& color) {
   uint32_t colorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
 }
 
 void TextAreaNode::setMaxLength(int32_t maxLength) {
   ArkUI_NumberValue value = {.i32 = maxLength};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_MAX_LENGTH, &item));
 }
 
 void TextAreaNode::setPlaceholder(std::string const& placeholder) {
   ArkUI_AttributeItem item = {.string = placeholder.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_PLACEHOLDER, &item));
 }
 
@@ -335,7 +335,7 @@ void TextAreaNode::setPlaceholderColor(
   uint32_t colorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_PLACEHOLDER_COLOR, &item));
 }
 
@@ -348,21 +348,20 @@ void TextAreaNode::setEnterKeyType(
   }
   ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_ENTER_KEY_TYPE, &item));
 }
 void TextAreaNode::setEnterKeyType(ArkUI_EnterKeyType returnKeyType) {
   ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_ENTER_KEY_TYPE, &item));
 }
 
 void TextAreaNode::defaultSetPadding() {
   ArkUI_NumberValue value = {.f32 = 0.f};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_PADDING, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_PADDING, &item));
 }
 
 std::string TextAreaNode::getTextContent() {
@@ -375,14 +374,14 @@ void TextAreaNode::setContextMenuHidden(bool hidden) {
   std::array<ArkUI_NumberValue, 1> value = {
       {{.i32 = static_cast<int32_t>(hidden)}}};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_SELECTION_MENU_HIDDEN, &item));
 }
 
 void TextAreaNode::setBlurOnSubmit(bool blurOnSubmit) {
   ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_BLUR_ON_SUBMIT, &item));
 }
 
@@ -398,7 +397,7 @@ void TextAreaNode::setTextContentType(std::string const& textContentType) {
   }
   std::array<ArkUI_NumberValue, 1> value = {type};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
 }
 
@@ -409,7 +408,7 @@ void TextAreaNode::setUnderlineColor(
   }
   ArkUI_NumberValue showValue = {.i32 = 1};
   ArkUI_AttributeItem showItem = {&showValue, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
   ArkUI_NumberValue value[] = {
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
@@ -423,7 +422,7 @@ void TextAreaNode::setUnderlineColor(
 
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_INPUT_UNDERLINE_COLOR, &item));
 }
 
@@ -431,7 +430,7 @@ void TextAreaNode::setAutoFill(bool autoFill) {
   uint32_t isAutoFill = static_cast<uint32_t>(autoFill);
   ArkUI_NumberValue value = {.u32 = isAutoFill};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_ENABLE_AUTO_FILL, &item));
 }
 
@@ -452,13 +451,13 @@ void TextAreaNode::setAutoFill(std::string const& autoFill) {
 void TextAreaNode::setShowKeyboardOnFocus(bool enable) {
   ArkUI_NumberValue value = {.i32 = int32_t(enable)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_SHOW_KEYBOARD_ON_FOCUS, &item));
 }
 
 void TextAreaNode::setInputFilter(const std::string& inputFilter) {
   ArkUI_AttributeItem item = {.string = inputFilter.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TEXT_AREA_INPUT_FILTER, &item));
 }
 

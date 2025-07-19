@@ -98,7 +98,7 @@ class RefreshNode : public ArkUINode {
   static constexpr float REFRESH_NODE_SIZE = 29;
 
  public:
-  RefreshNode();
+  explicit RefreshNode(Context context = {});
 
   ~RefreshNode();
 

@@ -43,8 +43,10 @@ class ColumnNode : public ArkUINode {
    * @brief Constructor that initializes the column node.
    * This sets up the node and any necessary internal state for managing child
    * nodes.
+   *
+   * @param context The Context of ArkUINode.
    */
-  ColumnNode();
+  explicit ColumnNode(Context context = {});
 
   /**
    * @brief Destructor that cleans up resources when the column node is

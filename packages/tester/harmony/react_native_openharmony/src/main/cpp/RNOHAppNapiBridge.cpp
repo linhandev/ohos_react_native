@@ -33,6 +33,7 @@
 #include "RNOH/TaskExecutor/NapiTaskRunner.h"
 #include "RNOH/TaskExecutor/ThreadTaskRunner.h"
 #include "RNOH/UITicker.h"
+#include "RNOH/arkui/NodeApi.h"
 
 #ifndef USE_HERMES
 #define USE_HERMES 1
@@ -792,6 +793,33 @@ static napi_value detachRootView(napi_env env, napi_callback_info info) {
   });
 }
 
+static napi_value setUIContext(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 2);
+    auto instanceId = arkJS.getInteger(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.createFromRNOHError(
+          RNOHError("Failed to get the RNInstance"));
+    }
+    ArkUI_ContextHandle newContext = nullptr;
+    auto status = OH_ArkUI_GetContextFromNapiValue(env, args[1], &newContext);
+    if (status != ARKUI_ERROR_CODE_NO_ERROR) {
+      return arkJS.createFromRNOHError(RNOHError(
+          "UIContextHandle operation failed with code: " +
+          std::to_string(status)));
+    }
+    auto rnInstanceCAPIRawPtr =
+        std::dynamic_pointer_cast<RNInstanceCAPI>(rnInstance);
+    if (rnInstanceCAPIRawPtr != nullptr) {
+      ArkUINode::Context arkUINodeContext = {.nodeApi = NodeApi(newContext)};
+      rnInstanceCAPIRawPtr->setArkUINodeContext(arkUINodeContext);
+    }
+    return arkJS.getNull();
+  });
+}
+
 static napi_value getNativeNodeIdByTag(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
@@ -1057,7 +1085,14 @@ static napi_value Init(napi_env env, napi_value exports) {
        nullptr,
        napi_default,
        nullptr},
-  };
+      {"setUIContext",
+       nullptr,
+       ::setUIContext,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr}};
 
   napi_define_properties(
       env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc);

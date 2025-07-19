@@ -23,7 +23,8 @@ constexpr std::string_view FILE_PREFIX = "file://";
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
       ImageSourceResolver::ImageSourceUpdateListener(
-          m_deps->imageSourceResolver) {
+          m_deps->imageSourceResolver),
+      m_imageNode(context.arkUINodeContext) {
   this->getLocalRootArkUINode().setNodeDelegate(this);
   this->getLocalRootArkUINode().setInterpolation(
       ARKUI_IMAGE_INTERPOLATION_HIGH);

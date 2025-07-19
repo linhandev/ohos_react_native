@@ -237,7 +237,9 @@ void ScrollViewComponentInstance::onTouchEventActionUp() {
 
 ScrollViewComponentInstance::ScrollViewComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
-      m_touchHandler(std::make_unique<ScrollViewTouchHandler>(this)) {
+      m_touchHandler(std::make_unique<ScrollViewTouchHandler>(this)),
+      m_scrollNode(context.arkUINodeContext),
+      m_contentContainerNode(context.arkUINodeContext) {
   m_internalState = std::make_unique<IdleScrollViewInternalState>(this);
   m_scrollNode.insertChild(m_contentContainerNode);
   // NOTE: perhaps this needs to take rtl into account?

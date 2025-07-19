@@ -21,6 +21,7 @@
 #include <react/renderer/graphics/Transform.h>
 #include <initializer_list>
 #include <stdexcept>
+#include "NodeApi.h"
 #include "glog/logging.h"
 #include "react/renderer/components/view/primitives.h"
 
@@ -72,6 +73,15 @@ class ArkUINodeDelegate {
 class ArkUINode {
   ArkUINodeDelegate* m_arkUINodeDelegate = nullptr;
 
+ public:
+  /**
+   * @brief Context class that encapsulates NodeApi and related functionality
+   * Used by non-singleton NativeNodeApi to provide context-aware operations
+   */
+  struct Context {
+    NodeApi nodeApi;
+  };
+
  protected:
   ArkUINode(const ArkUINode& other) = delete;
   ArkUINode& operator=(const ArkUINode& other) = delete;
@@ -103,6 +113,14 @@ class ArkUINode {
    * @param nodeHandle Handle to the native ArkUI node
    */
   ArkUINode(ArkUI_NodeHandle nodeHandle);
+
+  /**
+   * @brief Constructs an ArkUINode with Context and node type
+   * Creates NodeApi and then creates the node handle internally
+   * @param context Context containing UI context and dependencies
+   * @param nodeType Type of ArkUI node to create
+   */
+  ArkUINode(Context context, ArkUI_NodeType nodeType);
 
   /**
    * @brief Sets the delegate for handling node events and actions
@@ -604,6 +622,7 @@ class ArkUINode {
   }
 
   ArkUI_NodeHandle m_nodeHandle;
+  Context m_context;
 
  private:
   int32_t m_measuredWidth = 0;

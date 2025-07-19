@@ -75,7 +75,7 @@ class CustomNode : public ArkUINode {
   int32_t getMeasuredHeight();
 
  public:
-  CustomNode();
+  explicit CustomNode(Context context = {});
 
   ~CustomNode() override;
 

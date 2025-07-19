@@ -75,8 +75,10 @@ class ImageNode : public ArkUINode {
  public:
   /**
    * @brief Constructs an ImageNode with default parameters.
+   *
+   * @param context The Context of ArkUINode.
    */
-  ImageNode();
+  explicit ImageNode(Context context = {});
 
   /**
    * @brief Destroys the ImageNode and unregisters its events.

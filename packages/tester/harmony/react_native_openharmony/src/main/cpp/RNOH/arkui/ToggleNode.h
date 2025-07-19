@@ -64,8 +64,10 @@ class ToggleNode : public ArkUINode {
    * Initializes the ToggleNode by creating a new ArkUI node of type
    * `ARKUI_NODE_TOGGLE`.
    * Registers the `NODE_TOGGLE_ON_CHANGE` event.
+   *
+   * @param context The Context of ArkUINode.
    */
-  ToggleNode();
+  explicit ToggleNode(Context context = {});
 
   /**
    * @brief Destructor for ToggleNode.

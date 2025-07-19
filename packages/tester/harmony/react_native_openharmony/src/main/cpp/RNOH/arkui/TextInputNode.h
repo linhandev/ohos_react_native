@@ -150,7 +150,7 @@ class TextInputNode : public TextInputNodeBase {
   TextInputNodeDelegate* m_textInputNodeDelegate;
 
  public:
-  TextInputNode();
+  explicit TextInputNode(Context context = {});
   ~TextInputNode() override;
 
   /**

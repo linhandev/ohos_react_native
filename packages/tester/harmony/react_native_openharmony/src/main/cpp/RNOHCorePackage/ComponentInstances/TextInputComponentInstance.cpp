@@ -32,7 +32,9 @@ namespace rnoh {
 
 TextInputComponentInstance::TextInputComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
-      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub) {
+      ArkTSMessageHub::Observer(m_deps->arkTSMessageHub),
+      m_textInputNode(context.arkUINodeContext),
+      m_textAreaNode(context.arkUINodeContext) {
   m_textInputNode.setPadding(resolveEdges(
       [this](auto edge) { return m_props->yogaStyle.padding(edge); }));
   m_textAreaNode.setPadding(resolveEdges(

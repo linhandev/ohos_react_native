@@ -21,9 +21,8 @@ const std::string RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 
 namespace rnoh {
 
-ImageNode::ImageNode()
-    : ArkUINode(NativeNodeApi::getInstance()->createNode(
-          ArkUI_NodeType::ARKUI_NODE_IMAGE)),
+ImageNode::ImageNode(Context context)
+    : ArkUINode(context, ArkUI_NodeType::ARKUI_NODE_IMAGE),
       m_childArkUINodeHandle(nullptr),
       m_imageNodeDelegate(nullptr) {
   for (auto eventType : IMAGE_NODE_EVENT_TYPES) {
@@ -73,16 +72,16 @@ ImageNode& ImageNode::setSources(std::string const& uri, std::string prefix) {
   } else {
     item = {.string = uri.c_str()};
   }
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_IMAGE_SRC, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_IMAGE_SRC, &item));
   return *this;
 }
 
 ImageNode& ImageNode::setSource(std::string const& imageSource) {
   ArkUI_AttributeItem item = {.string = imageSource.c_str()};
   m_uri = imageSource;
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_IMAGE_SRC, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_IMAGE_SRC, &item));
   return *this;
 }
 
@@ -103,7 +102,7 @@ ImageNode& ImageNode::setResizeMode(
 
   ArkUI_NumberValue value[] = {{.i32 = val}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_OBJECT_FIT, &item));
   return *this;
 }
@@ -111,7 +110,7 @@ ImageNode& ImageNode::setResizeMode(
 ImageNode& ImageNode::setTintColor(
     facebook::react::SharedColor const& sharedColor) {
   if (!sharedColor) { // restore default value
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    maybeThrow(m_context.nodeApi.resetAttribute(
         m_nodeHandle, NODE_IMAGE_COLOR_FILTER));
     return *this;
   }
@@ -124,7 +123,7 @@ ImageNode& ImageNode::setTintColor(
       {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.alpha}, {.f32 = 0}};
 
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_COLOR_FILTER, &item));
   return *this;
 }
@@ -132,8 +131,7 @@ ImageNode& ImageNode::setTintColor(
 ImageNode& ImageNode::setBlur(facebook::react::Float blur) {
   ArkUI_NumberValue value[] = {{.f32 = static_cast<float>(blur)}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_BLUR, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_BLUR, &item));
   return *this;
 }
 
@@ -146,7 +144,7 @@ ImageNode& ImageNode::setObjectRepeat(
 
   ArkUI_NumberValue value[] = {{.i32 = val}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_OBJECT_REPEAT, &item));
   return *this;
 }
@@ -154,7 +152,7 @@ ImageNode& ImageNode::setObjectRepeat(
 ImageNode& ImageNode::setInterpolation(int32_t interpolation) {
   ArkUI_NumberValue value[] = {{.i32 = interpolation}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_INTERPOLATION, &item));
   return *this;
 }
@@ -162,7 +160,7 @@ ImageNode& ImageNode::setInterpolation(int32_t interpolation) {
 ImageNode& ImageNode::setDraggable(bool draggable) {
   ArkUI_NumberValue value[] = {{.i32 = static_cast<int32_t>(draggable)}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_DRAGGABLE, &item));
   return *this;
 }
@@ -186,7 +184,7 @@ ImageNode& ImageNode::setCapInsets(
   ArkUI_NumberValue value[] = {
       {.f32 = left}, {.f32 = top}, {.f32 = right}, {.f32 = bottom}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_RESIZABLE, &item));
   return *this;
 }
@@ -196,7 +194,7 @@ ImageNode& ImageNode::setFadeDuration(int32_t duration) {
   ArkUI_NumberValue value[] = {
       {.f32 = 0.0}, {.i32 = duration}, {.i32 = ARKUI_CURVE_LINEAR}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_OPACITY_TRANSITION, &item));
   return *this;
 }
@@ -204,8 +202,8 @@ ImageNode& ImageNode::setFadeDuration(int32_t duration) {
 ImageNode& ImageNode::setFocusable(bool focusable) {
   ArkUI_NumberValue value[] = {{.i32 = static_cast<int32_t>(focusable)}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUSABLE, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FOCUSABLE, &item));
   return *this;
 }
 
@@ -213,7 +211,7 @@ ImageNode& ImageNode::setResizeMethod(std::string const& resizeMethod) {
   auto autoResize = (resizeMethod != "scale") ? 1 : 0;
   ArkUI_NumberValue value[] = {{.i32 = autoResize}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_IMAGE_AUTO_RESIZE, &item));
   return *this;
 }
@@ -223,8 +221,8 @@ ImageNode& ImageNode::setAlt(std::string const& uri, std::string prefix) {
     std::string resourceStr = prefix == "" ? RAWFILE_PREFIX : prefix;
     resourceStr += uri.substr(ASSET_PREFIX.size());
     ArkUI_AttributeItem item = {.string = resourceStr.c_str()};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-        m_nodeHandle, NODE_IMAGE_ALT, &item));
+    maybeThrow(
+        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_IMAGE_ALT, &item));
   }
   return *this;
 }
@@ -241,18 +239,16 @@ ImageNode& ImageNode::setAccessibilityMode(
 }
 
 ImageNode& ImageNode::resetFocusable() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_FOCUSABLE));
+  maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FOCUSABLE));
   return *this;
 }
 ImageNode& ImageNode::resetResizeMethod() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
+  maybeThrow(
+      m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_IMAGE_AUTO_RESIZE));
   return *this;
 }
 ImageNode& ImageNode::resetSource() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_IMAGE_SRC));
+  maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_IMAGE_SRC));
   return *this;
 }
 

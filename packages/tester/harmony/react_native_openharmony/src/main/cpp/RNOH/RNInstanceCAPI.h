@@ -152,6 +152,15 @@ class RNInstanceCAPI final : public RNInstanceInternal {
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
 
+  void setArkUINodeContext(ArkUINode::Context arkUINodeContext) {
+    if (m_componentInstanceFactory) {
+      m_componentInstanceFactory->setArkUINodeContext(arkUINodeContext);
+    } else {
+      DLOG(ERROR)
+          << "RNInstanceCAPI::setArkUINodeContext: m_componentInstanceFactory is null";
+    }
+  }
+
  protected:
   std::shared_ptr<TurboModuleProvider> createTurboModuleProvider() override;
 

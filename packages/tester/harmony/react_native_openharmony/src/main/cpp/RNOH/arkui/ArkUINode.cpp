@@ -165,6 +165,18 @@ ArkUINode::ArkUINode(ArkUI_NodeHandle nodeHandle) : m_nodeHandle(nodeHandle) {
   }
 }
 
+ArkUINode::ArkUINode(Context context, ArkUI_NodeType nodeType)
+    : m_context(context) {
+  m_nodeHandle = m_context.nodeApi.createNode(nodeType);
+  RNOH_ASSERT(m_nodeHandle != nullptr);
+  maybeThrow(NativeNodeApi::getInstance()->addNodeEventReceiver(
+      m_nodeHandle, receiveEvent));
+  NODE_BY_HANDLE.emplace(m_nodeHandle, this);
+  for (auto eventType : NODE_EVENT_TYPES) {
+    this->registerNodeEvent(eventType);
+  }
+}
+
 ArkUINode::~ArkUINode() noexcept {
   for (auto eventType : NODE_EVENT_TYPES) {
     this->unregisterNodeEvent(eventType);
@@ -204,8 +216,8 @@ ArkUINode& ArkUINode::setPosition(facebook::react::Point const& position) {
   ArkUI_NumberValue value[] = {
       static_cast<float>(position.x), static_cast<float>(position.y)};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_POSITION, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_POSITION, &item));
   return *this;
 }
 
@@ -216,8 +228,8 @@ ArkUINode& ArkUINode::setSize(facebook::react::Size const& size) {
   ArkUI_AttributeItem widthItem = {
       widthValue, sizeof(widthValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_WIDTH, &widthItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_WIDTH, &widthItem));
 
   // HACK: ArkUI doesn't handle 0-sized views properly
   ArkUI_NumberValue heightValue[] = {
@@ -225,8 +237,8 @@ ArkUINode& ArkUINode::setSize(facebook::react::Size const& size) {
   ArkUI_AttributeItem heightItem = {
       heightValue, sizeof(heightValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_HEIGHT, &heightItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_HEIGHT, &heightItem));
   return *this;
 }
 
@@ -248,8 +260,8 @@ ArkUINode& ArkUINode::setHeight(float height) {
   ArkUI_AttributeItem heightItem = {
       heightValue, sizeof(heightValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_HEIGHT, &heightItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_HEIGHT, &heightItem));
   return *this;
 }
 
@@ -264,8 +276,8 @@ ArkUINode& ArkUINode::setLayoutRect(
       {.i32 = static_cast<int32_t>(size.height * pointScaleFactor + 0.5)}};
   this->saveSize(value[2].i32, value[3].i32);
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_LAYOUT_RECT, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_LAYOUT_RECT, &item));
   return *this;
 }
 
@@ -283,8 +295,8 @@ ArkUINode& ArkUINode::setWidth(float width) {
   ArkUI_AttributeItem widthItem = {
       widthValue, sizeof(widthValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_WIDTH, &widthItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_WIDTH, &widthItem));
   return *this;
 }
 
@@ -304,7 +316,7 @@ ArkUINode& ArkUINode::setBorderWidth(
   ArkUI_AttributeItem borderWidthItem = {
       borderWidthValue, sizeof(borderWidthValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BORDER_WIDTH, &borderWidthItem));
   return *this;
 }
@@ -336,7 +348,7 @@ ArkUINode& ArkUINode::setBorderColor(
   ArkUI_AttributeItem borderColorItem = {
       borderColorValue, sizeof(borderColorValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BORDER_COLOR, &borderColorItem));
   return *this;
 }
@@ -368,7 +380,7 @@ ArkUINode& ArkUINode::setBorderRadius(
   ArkUI_AttributeItem borderRadiusItem = {
       borderRadiusValue, sizeof(borderRadiusValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BORDER_RADIUS, &borderRadiusItem));
   return *this;
 }
@@ -388,7 +400,7 @@ ArkUINode& ArkUINode::setBorderStyle(
   ArkUI_AttributeItem borderStyleItem = {
       borderStyleValue, sizeof(borderStyleValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BORDER_STYLE, &borderStyleItem));
   return *this;
 }
@@ -424,7 +436,7 @@ ArkUINode& ArkUINode::setShadow(
   ArkUI_AttributeItem shadowItem = {
       .value = shadowValue,
       .size = sizeof(shadowValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_CUSTOM_SHADOW, &shadowItem));
   return *this;
 }
@@ -451,43 +463,39 @@ ArkUINode& ArkUINode::setHitTestMode(
 
 ArkUINode& ArkUINode::setAccessibilityRole(std::string const& roleName) {
   if (roleName == "none") {
-    NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
     return *this;
   }
   std::optional<ArkUI_NodeType> maybeNodeType = roleNameToNodeType(roleName);
   if (!maybeNodeType.has_value()) {
     DLOG(WARNING) << "Unsupported accessibility role: " << roleName;
-    NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
     return *this;
   }
   auto nodeType = maybeNodeType.value();
   ArkUI_NumberValue value[] = {{.u32 = nodeType}};
   ArkUI_AttributeItem attr = {
       .value = value, .size = sizeof(nodeType) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_ROLE, &attr));
   return *this;
 }
 
 ArkUINode& ArkUINode::setAccessibilityRole(facebook::react::Role roleName) {
   if (roleName == facebook::react::Role::None) {
-    NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
     return *this;
   }
   std::optional<ArkUI_NodeType> maybeNodeType = roleNameToNodeType(roleName);
   if (!maybeNodeType.has_value()) {
-    NativeNodeApi::getInstance()->resetAttribute(
-        m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
+    m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_ACCESSIBILITY_ROLE);
     return *this;
   }
   auto nodeType = maybeNodeType.value();
   ArkUI_NumberValue value[] = {{.u32 = nodeType}};
   ArkUI_AttributeItem attr = {
       .value = value, .size = sizeof(nodeType) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_ROLE, &attr));
   return *this;
 }
@@ -505,13 +513,13 @@ ArkUINode& ArkUINode::setAccessibilityActions(
     actionTypes.push_back({.u32 = actionType.value()});
   }
   if (actionTypes.empty()) {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    maybeThrow(m_context.nodeApi.resetAttribute(
         m_nodeHandle, NODE_ACCESSIBILITY_ACTIONS));
   } else {
     ArkUI_AttributeItem attr = {
         .value = actionTypes.data(),
         .size = static_cast<int32_t>(actionTypes.size())};
-    maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+    maybeThrow(m_context.nodeApi.setAttribute(
         m_nodeHandle, NODE_ACCESSIBILITY_ACTIONS, &attr));
   }
   return *this;
@@ -521,7 +529,7 @@ ArkUINode& ArkUINode::setAccessibilityDescription(
     std::string const& accessibilityDescription) {
   ArkUI_AttributeItem descriptionItem = {
       .string = accessibilityDescription.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_DESCRIPTION, &descriptionItem));
   return *this;
 }
@@ -540,7 +548,7 @@ ArkUINode& ArkUINode::setAccessibilityState(
       rnState.checked == facebook::react::AccessibilityState::Checked);
   OH_ArkUI_AccessibilityState_SetSelected(state.get(), rnState.selected);
   ArkUI_AttributeItem item = {.object = state.get()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_STATE, &item));
   return *this;
 }
@@ -548,7 +556,7 @@ ArkUINode& ArkUINode::setAccessibilityState(
 ArkUINode& ArkUINode::setAccessibilityState(
     const std::optional<facebook::react::AccessibilityState>& maybeA11yState) {
   if (!maybeA11yState.has_value()) {
-    maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+    maybeThrow(m_context.nodeApi.resetAttribute(
         m_nodeHandle, NODE_ACCESSIBILITY_STATE));
     return *this;
   }
@@ -565,7 +573,7 @@ ArkUINode& ArkUINode::setAccessibilityState(
       a11yState.checked == facebook::react::AccessibilityState::Checked);
   OH_ArkUI_AccessibilityState_SetSelected(state.get(), a11yState.selected);
   ArkUI_AttributeItem item = {.object = state.get()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_STATE, &item));
   return *this;
 }
@@ -579,7 +587,7 @@ ArkUINode& ArkUINode::setAccessibilityLevel(
   ArkUI_AttributeItem levelItem = {
       .value = levelValue,
       .size = sizeof(levelValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_MODE, &levelItem));
   return *this;
 }
@@ -619,7 +627,7 @@ ArkUINode& ArkUINode::setAccessibilityMode(ArkUI_AccessibilityMode mode) {
 ArkUINode& ArkUINode::setAccessibilityText(
     std::string const& accessibilityLabel) {
   ArkUI_AttributeItem textItem = {.string = accessibilityLabel.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_TEXT, &textItem));
   return *this;
 }
@@ -629,15 +637,14 @@ ArkUINode& ArkUINode::setAccessibilityGroup(bool enableGroup) {
   ArkUI_AttributeItem groupItem = {
       .value = groupValue,
       .size = sizeof(groupValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ACCESSIBILITY_GROUP, &groupItem));
   return *this;
 }
 
 ArkUINode& ArkUINode::setId(std::string const& id) {
   ArkUI_AttributeItem idItem = {.string = id.c_str()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_ID, &idItem));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_ID, &idItem));
   return *this;
 }
 
@@ -664,7 +671,7 @@ ArkUINode& ArkUINode::setBackgroundColor(uint32_t color) {
   ArkUI_AttributeItem colorItem = {
       preparedColorValue,
       sizeof(preparedColorValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_BACKGROUND_COLOR, &colorItem));
   return *this;
 }
@@ -696,7 +703,7 @@ ArkUINode& ArkUINode::setTransform(
 
   ArkUI_AttributeItem transformItem = {
       transformValue.data(), transformValue.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TRANSFORM, &transformItem));
   return *this;
 }
@@ -705,7 +712,7 @@ ArkUINode& ArkUINode::setTranslate(float x, float y, float z) {
   ArkUI_NumberValue translateValue[] = {{.f32 = x}, {.f32 = y}, {.f32 = z}};
   ArkUI_AttributeItem translateItem = {
       translateValue, sizeof(translateValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TRANSLATE, &translateItem));
   return *this;
 }
@@ -715,8 +722,8 @@ ArkUINode& ArkUINode::setOpacity(facebook::react::Float opacity) {
   ArkUI_AttributeItem opacityItem = {
       opacityValue, sizeof(opacityValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_OPACITY, &opacityItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_OPACITY, &opacityItem));
   return *this;
 }
 
@@ -726,8 +733,8 @@ ArkUINode& ArkUINode::setClip(bool clip) {
   ArkUI_AttributeItem clipItem = {
       clipValue, sizeof(clipValue) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_CLIP, &clipItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_CLIP, &clipItem));
   return *this;
 }
 
@@ -736,7 +743,7 @@ ArkUINode& ArkUINode::setAlignment(Alignment alignment) {
       {.i32 = static_cast<int32_t>(alignment)}};
   ArkUI_AttributeItem alignmentItem = {
       alignmentValue, sizeof(alignmentValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_ALIGNMENT, &alignmentItem));
   return *this;
 }
@@ -753,13 +760,13 @@ ArkUINode& ArkUINode::setTranslateTransition(
       {.i32 = static_cast<int32_t>(ARKUI_CURVE_LINEAR)}};
   ArkUI_AttributeItem translateItem = {
       translateValue.data(), translateValue.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_TRANSLATE_TRANSITION, &translateItem));
   return *this;
 }
 
 ArkUINode& ArkUINode::resetTranslateTransition() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
+  maybeThrow(m_context.nodeApi.resetAttribute(
       m_nodeHandle, NODE_TRANSLATE_TRANSITION));
   return *this;
 }
@@ -770,14 +777,14 @@ ArkUINode& ArkUINode::setOpacityTransition(int32_t animationDurationMillis) {
       {.i32 = animationDurationMillis},
       {.i32 = static_cast<int32_t>(ARKUI_CURVE_LINEAR)}};
   ArkUI_AttributeItem opacityItem = {args.data(), args.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
+  maybeThrow(m_context.nodeApi.setAttribute(
       m_nodeHandle, NODE_OPACITY_TRANSITION, &opacityItem));
   return *this;
 }
 
 ArkUINode& ArkUINode::resetOpacityTransition() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_OPACITY_TRANSITION));
+  maybeThrow(
+      m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_OPACITY_TRANSITION));
   return *this;
 }
 
@@ -785,22 +792,21 @@ ArkUINode& ArkUINode::setOffset(float x, float y) {
   ArkUI_NumberValue offsetValue[] = {{.f32 = x}, {.f32 = y}};
   ArkUI_AttributeItem offsetItem = {
       offsetValue, sizeof(offsetValue) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_OFFSET, &offsetItem));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_OFFSET, &offsetItem));
   return *this;
 }
 
 ArkUINode& ArkUINode::setEnabled(bool enabled) {
   ArkUI_NumberValue value = {.i32 = int32_t(enabled)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_ENABLED, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_ENABLED, &item));
   return *this;
 }
 
 ArkUINode& ArkUINode::resetAccessibilityText() {
-  maybeThrow(NativeNodeApi::getInstance()->resetAttribute(
-      m_nodeHandle, NODE_ACCESSIBILITY_TEXT));
+  maybeThrow(
+      m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_ACCESSIBILITY_TEXT));
   return *this;
 }
 
@@ -843,8 +849,8 @@ void ArkUINode::onNodeEvent(
 ArkUINode& ArkUINode::setFocusStatus(int32_t focus) {
   std::array<ArkUI_NumberValue, 1> value = {{{.i32 = focus}}};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_FOCUS_STATUS, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FOCUS_STATUS, &item));
   return *this;
 }
 
@@ -853,8 +859,7 @@ ArkUINode::setMargin(float left, float top, float right, float bottom) {
   ArkUI_NumberValue value[] = {
       {.f32 = top}, {.f32 = right}, {.f32 = bottom}, {.f32 = left}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_MARGIN, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_MARGIN, &item));
   return *this;
 }
 
@@ -863,32 +868,30 @@ ArkUINode::setPadding(float left, float top, float right, float bottom) {
   ArkUI_NumberValue value[] = {
       {.f32 = top}, {.f32 = right}, {.f32 = bottom}, {.f32 = left}};
   ArkUI_AttributeItem item = {.value = value, .size = 4};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_PADDING, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_PADDING, &item));
   return *this;
 }
 
 ArkUINode& ArkUINode::setVisibility(ArkUI_Visibility visibility) {
   ArkUI_NumberValue value[] = {{.i32 = visibility}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_VISIBILITY, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_VISIBILITY, &item));
   return *this;
 }
 
 ArkUINode& ArkUINode::setZIndex(float index) {
   std::array<ArkUI_NumberValue, 1> values = {{{.f32 = index}}};
   ArkUI_AttributeItem item = {values.data(), values.size()};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_Z_INDEX, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, NODE_Z_INDEX, &item));
   return *this;
 }
 
 ArkUINode& ArkUINode::setRenderGroup(bool renderOffscreen) {
   ArkUI_NumberValue value[] = {{.i32 = (int32_t)renderOffscreen}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_RENDER_GROUP, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_RENDER_GROUP, &item));
   return *this;
 }
 
@@ -921,16 +924,15 @@ const ArkUI_AttributeItem& ArkUINode::getAttribute(
 ArkUINode& ArkUINode::setDirection(ArkUI_Direction direction) {
   ArkUI_NumberValue value = {.u32 = direction};
   ArkUI_AttributeItem item = {.value = &value, .size = 1};
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, NODE_DIRECTION, &item));
+  maybeThrow(
+      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_DIRECTION, &item));
   return *this;
 }
 
 void ArkUINode::setAttribute(
     ArkUI_NodeAttributeType attribute,
     ArkUI_AttributeItem const& item) {
-  maybeThrow(NativeNodeApi::getInstance()->setAttribute(
-      m_nodeHandle, attribute, &item));
+  maybeThrow(m_context.nodeApi.setAttribute(m_nodeHandle, attribute, &item));
 }
 
 void ArkUINode::setAttribute(

@@ -9,6 +9,7 @@
  * @architecture: C-API
  */
 #pragma once
+#include <arkui/native_type.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/EventEmitter.h>
 #include <react/renderer/core/LayoutMetrics.h>
@@ -180,6 +181,11 @@ class ComponentInstance
      * @brief shared_ptr to the Dependencies.
      */
     Dependencies::Shared dependencies;
+
+    /**
+     * @brief the UIContext Of ArkUI.
+     */
+    ArkUINode::Context arkUINodeContext;
   };
 
   /**

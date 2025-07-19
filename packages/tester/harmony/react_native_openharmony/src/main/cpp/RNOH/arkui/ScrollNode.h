@@ -81,7 +81,7 @@ class ScrollNode : public ArkUINode {
   ScrollNodeDelegate* m_scrollNodeDelegate;
 
  public:
-  ScrollNode();
+  explicit ScrollNode(Context context = {});
 
   ~ScrollNode() override;
 

@@ -45,7 +45,7 @@ class TextNode : public ArkUINode {
   float m_left = 0.0;
 
  public:
-  TextNode();
+  explicit TextNode(Context context = {});
 
   /**
    * @brief append a new child node, usually an attachment

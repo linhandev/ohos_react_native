@@ -21,9 +21,12 @@ namespace rnoh {
 class LoadingProgressNode : public ArkUINode {
  public:
   /**
-   * @brief Initializes a new instance of the loading progress indicator node.
+   * @brief Initializes a new instance of the loading progress indicator node
+   * with the specified context.
+   *
+   * @param context The Context of ArkUINode.
    */
-  LoadingProgressNode();
+  explicit LoadingProgressNode(Context context = {});
 
   /**
    * @brief Sets the foreground color of the loading progress bar.

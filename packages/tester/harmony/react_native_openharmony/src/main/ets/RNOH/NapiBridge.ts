@@ -26,6 +26,7 @@ import {
 import { NodeContent } from '@ohos.arkui.node';
 import { JsBundle } from './JSBundleProvider';
 import { RNOHErrorStack } from './RNOHError';
+import { UIContext } from '@kit.ArkUI';
 
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -389,6 +390,11 @@ export class NapiBridge {
 
   detachRootView(instanceId: number, surfaceId: number) {
     const result = this.libRNOHApp?.detachRootView(instanceId, surfaceId)
+    return this.unwrapResult(result);
+  }
+
+  setUIContext(instanceId: number, context: UIContext) {
+    const result = this.libRNOHApp?.setUIContext(instanceId, context)
     return this.unwrapResult(result);
   }
 }
