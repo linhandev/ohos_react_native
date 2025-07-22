@@ -1,5 +1,24 @@
 # Changelog
 
+## Internal: v0.77.14
+- The subwindow affects the page rendering of the mainwindow,([796c5116](https://gitcode.com/openharmony-sig/ohos_react_native/commit/796c5116f4b7a55cc56f0037708ab14b15fe0d50))
+- feat: This is a template for creating the RNOH project.,([aec40537](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aec4053752af6ae4fca49a8346008646b4b712e5))
+- feat: Create a new RNOH project through the command npx @react-native-oh/react-native-harmony-cli init ProjectName,([2b8f185b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2b8f185b74a81adee3fc4b9761cd651ce69ebd87))
+- Add tester based on some PR,([9fc3f1bb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9fc3f1bb80ddaa4b1d5af91ab5544c835d8bcfd1))
+- fix:runtime_error cannot be caught by exception,([2f454b05](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2f454b0507df014442d79c348863d459ae97e4aa))
+- fix: the issue where scrolling the ScrollView triggers the outer TouchableOpacity's onPress event.,([fc053587](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fc0535871934c3422660df6155d0b86a4eacdafa))
+- fix: init-sample-project no work.,([7595155e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7595155ebea99190b40a841b25badfb0c1f70a6a))
+- refactor: Adjust the implementation of getResourceIdentifier to return the original path of the image.,([eb44583c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/eb44583c8e9103f3fb4d0d8b12265a8224381fd2))
+- doc: upgrade samples,([19bd2ec1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/19bd2ec1c41a029ebb9983ec77aa28f827ad7dc9))
+- doc: 72 to 77 upgrade guide,([c025a51c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c025a51c2cb33bc7c24a0d3e6fcc6c263cb3d067))
+- fix: platform constant tests fail for certain device models,([b27adaf3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b27adaf3a2e60ac9fe4d933458771fd391b4b502))
+- chore: remove deprecated and unused dev dependency,([0f1f362a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0f1f362a1ed37105ed8ac06f4454da1427a01090))
+- fix: If accessible={true}, then focusable={true}.,([6ea78053](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6ea780536615bbcec7d5e6c9538f2d87fd599e39))
+- Add reportaMount logic to schedulerDidDispatcheCommand,([69bd7e45](https://gitcode.com/openharmony-sig/ohos_react_native/commit/69bd7e4559e42f2d975d06890914069e23b7d1f6))
+- [chore]: updated to version 6.0.0.403(0.77.13),([69c12737](https://gitcode.com/openharmony-sig/ohos_react_native/commit/69c127373e5ae638f8346b0e74fa78bba6bc98eb))
+- [feat]: Use REAL_PATH to resolve absolute paths, shortening command lines and preventing "command too long" errors.,([baa74e2f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/baa74e2f4d2ad03b2970e57064bc6ce366e633da))
+- doc: clarify where the pgo profile should be placed,([8cb98df7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8cb98df7c429eccb1718d388d035149938448032))
+
 ## Internal: v0.77.13
 - fix: Height setting of text component,([29df9c6d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/29df9c6db3221e38e502de60554b3368cee22218))
 - fix: profile use and profile generate conflict,([3e97a586](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e97a586803cb4b04e13a74dfde6672a1ee9b26a))

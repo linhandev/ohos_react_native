@@ -17,4 +17,4 @@
 
 > 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 15，相应配套版本可通过：链接 https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/deveco-studio-new-features-503-release 获取
 >
-> [上游社区0.72.5到0.77.1的不兼容变更说明](../上游社区非兼容变更.md)
+> [上游社区0.72.5到0.77.1的不兼容变更说明](../上游社区不兼容变更.md)
