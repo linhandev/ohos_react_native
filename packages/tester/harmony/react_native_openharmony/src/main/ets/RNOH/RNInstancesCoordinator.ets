@@ -323,6 +323,16 @@ export class RNInstancesCoordinator {
     }
   }
 
+  public updateWindowRect(windowRect: window.Rect) {
+    this.displayMetricsManager.updateWindowRect(windowRect);
+    this.rnInstanceRegistry.forEach((rnInstance) => {
+      rnInstance.onWindowSizeChange({
+        height: windowRect.height,
+        width: windowRect.width
+      })
+    })
+  }
+
   public onWindowSizeChange(windowSize: window.Size) {
     this.displayMetricsManager.updateWindowSize(windowSize);
     this.rnInstanceRegistry.forEach((rnInstance) => {

@@ -20,7 +20,17 @@ namespace rnoh {
 auto physicalPixelsFromNapiValue(napi_env env, napi_value value)
     -> PhysicalPixels {
   ArkJS arkJS(env);
+  auto top = arkJS.hasProperty(value, "top")
+      ? static_cast<float>(
+            arkJS.getDouble(arkJS.getObjectProperty(value, "top")))
+      : 0.0f;
+  auto left = arkJS.hasProperty(value, "left")
+      ? static_cast<float>(
+            arkJS.getDouble(arkJS.getObjectProperty(value, "left")))
+      : 0.0f;
   return {
+      top,
+      left,
       static_cast<float>(
           arkJS.getDouble(arkJS.getObjectProperty(value, "width"))),
       static_cast<float>(

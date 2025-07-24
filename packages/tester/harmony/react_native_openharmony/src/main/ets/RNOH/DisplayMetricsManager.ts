@@ -14,6 +14,8 @@ import AbilityConfiguration from '@ohos.app.ability.Configuration';
 
 const defaultDisplayMetrics: DisplayMetrics = {
   windowPhysicalPixels: {
+    top: 0,
+    left: 0,
     width: 0,
     height: 0,
     scale: 1,
@@ -45,7 +47,16 @@ export class DisplayMetricsManager {
     this.logger = logger.clone("DisplayMetricsManager");
   }
 
-  public updateWindowSize(windowSize: window.Size | window.Rect) {
+  public updateWindowRect(windowRect: window.Rect) {
+    this.displayMetrics.windowPhysicalPixels.top = windowRect.top;
+    this.displayMetrics.windowPhysicalPixels.left = windowRect.left;
+    this.updateWindowSize({
+      height: windowRect.height,
+      width: windowRect.width
+    })
+  }
+
+  public updateWindowSize(windowSize: window.Size) {
     this.displayMetrics.windowPhysicalPixels.height = windowSize.height;
     this.displayMetrics.windowPhysicalPixels.width = windowSize.width;
     this.updateDisplayMetrics()
@@ -89,6 +100,8 @@ export class DisplayMetricsManager {
         yDpi: displayInstance.yDPI
       },
       windowPhysicalPixels: {
+        top: this.displayMetrics.windowPhysicalPixels.top,
+        left: this.displayMetrics.windowPhysicalPixels.left,
         width: this.displayMetrics.windowPhysicalPixels.width,
         height: this.displayMetrics.windowPhysicalPixels.height,
         scale: displayInstance.densityPixels,

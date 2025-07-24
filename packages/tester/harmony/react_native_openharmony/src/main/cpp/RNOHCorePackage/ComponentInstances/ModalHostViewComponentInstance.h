@@ -31,7 +31,7 @@ class ModalHostViewComponentInstance
   std::optional<ScreenOrientation> m_screenOrientation;
 
  private:
-  void updateDisplaySize(
+  void updateDisplayRect(
       DisplayMetrics const& displayMetrics,
       SharedConcreteState const& state);
 

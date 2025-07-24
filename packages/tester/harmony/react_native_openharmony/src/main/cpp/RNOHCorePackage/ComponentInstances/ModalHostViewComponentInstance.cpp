@@ -39,7 +39,7 @@ class ModalHostTouchHandler : public UIInputEventHandler {
   }
 };
 
-void ModalHostViewComponentInstance::updateDisplaySize(
+void ModalHostViewComponentInstance::updateDisplayRect(
     DisplayMetrics const& displayMetrics,
     SharedConcreteState const& state) {
   const auto& windowMetrics = displayMetrics.windowPhysicalPixels;
@@ -54,6 +54,9 @@ void ModalHostViewComponentInstance::updateDisplaySize(
       m_eventEmitter->onOrientationChange({.orientation = screenOrientation});
     }
   }
+  m_rootCustomNode.setPosition(
+      {windowMetrics.left / windowMetrics.scale,
+       windowMetrics.top / windowMetrics.scale});
   facebook::react::Size screenSize = {
       .width = windowMetrics.width / windowMetrics.scale,
       .height = windowMetrics.height / windowMetrics.scale};
@@ -79,7 +82,6 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
       m_rootCustomNode(context.arkUINodeContext) {
   m_virtualNode.setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);
-  m_rootCustomNode.setPosition({0, 0});
 }
 
 void ModalHostViewComponentInstance::setLayout(
@@ -116,9 +118,9 @@ void ModalHostViewComponentInstance::onStateChanged(
     SharedConcreteState const& state) {
   CppComponentInstance::onStateChanged(state);
   if (!m_state) {
-    // set screen size the first time the component is initialized
+    // set screen rect the first time the component is initialized
     auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
-    updateDisplaySize(displayMetrics, state);
+    updateDisplayRect(displayMetrics, state);
   }
 }
 
@@ -173,7 +175,7 @@ void ModalHostViewComponentInstance::onMessageReceived(
   if (message.name == "WINDOW_SIZE_CHANGE") {
     if (m_state) {
       auto displayMetrics = m_deps->displayMetricsManager->getDisplayMetrics();
-      updateDisplaySize(displayMetrics, m_state);
+      updateDisplayRect(displayMetrics, m_state);
     }
   }
 }
