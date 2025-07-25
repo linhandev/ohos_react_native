@@ -598,6 +598,9 @@ void TextInputComponentInstance::setTextContent(std::string const& content) {
   auto selectionFromEnd = countUtf8Characters(m_content) - m_selectionLocation;
   auto selectionStart = countUtf8Characters(content) - selectionFromEnd;
   auto selectionEnd = selectionStart + m_selectionLength;
+  if (m_isControlledTextInput) {
+    m_caretPositionForControlledInput = selectionStart;
+  }
   setTextContentAndSelection(content, selectionStart, selectionEnd);
 }
 
