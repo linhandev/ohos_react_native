@@ -49,7 +49,7 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
     std::shared_ptr<EventDispatcher> eventDispatcher,
     std::shared_ptr<MessageQueueThread> jsQueue,
     std::shared_ptr<facebook::react::Scheduler> scheduler,
-    std::weak_ptr<RNInstance> instance) const {
+    RNInstance::SafeWeak instance) const {
   LOG(INFO) << "Creating Turbo Module: " << name;
   auto arkTSTurboModuleThread =
       this->findArkTSTurboModuleThread(name).value_or(TaskThread::JS);

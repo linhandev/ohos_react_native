@@ -24,10 +24,10 @@
 #include "RNOH/DisplayMetricsManager.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/TouchTarget.h"
-#include "RNOH/TurboModule.h"
 #include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
+class TurboModule;
 using MutationsListener = std::function<void(
     MutationsToNapiConverter const&,
     facebook::react::ShadowViewMutationList const& mutations)>;
@@ -70,6 +70,45 @@ class RNInstance {
 
  public:
   using Weak = std::weak_ptr<RNInstance>;
+  /**
+   * @actor RNOH_LIBRARY
+   * @brief Prevents locking RNInstance if it's about to be destroyed,
+   * avoiding crashes when the last shared_ptr is held on a non-JS thread.
+   */
+  class SafeWeak {
+   public:
+    SafeWeak() = default;
+
+    SafeWeak(
+        const std::weak_ptr<RNInstance>& instance,
+        const std::weak_ptr<std::atomic<bool>>& destroyFlag)
+        : m_weak(instance), m_destroyFlag(destroyFlag) {}
+
+    std::shared_ptr<RNInstance> lock() const {
+      auto flag = m_destroyFlag.lock();
+      if (!flag || flag->load()) {
+        return nullptr;
+      }
+
+      return m_weak.lock();
+    }
+
+    bool expired() const {
+      return m_weak.expired();
+    }
+
+    void reset() {
+      m_weak.reset();
+    }
+
+    long use_count() const {
+      return m_weak.use_count();
+    }
+
+   private:
+    std::weak_ptr<RNInstance> m_weak;
+    std::weak_ptr<std::atomic<bool>> m_destroyFlag;
+  };
 
   virtual ~RNInstance();
 
@@ -91,7 +130,8 @@ class RNInstance {
    * @param name The module name.
    * @return A shared pointer to the requested TurboModule.
    */
-  virtual TurboModule::Shared getTurboModule(const std::string& name) = 0;
+  virtual std::shared_ptr<TurboModule> getTurboModule(
+      const std::string& name) = 0;
 
   /**
    * @brief Retrieves a typed TurboModule by name.

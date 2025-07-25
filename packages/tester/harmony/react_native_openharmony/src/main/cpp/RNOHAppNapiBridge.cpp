@@ -401,7 +401,6 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         std::move(fontPathByFontFamily),
         std::move(jsEngineProvider),
         inspectorHostTarget);
-
     auto lock = std::lock_guard<std::mutex>(RN_INSTANCE_BY_ID_MTX);
     if (RN_INSTANCE_BY_ID.find(rnInstanceId) != RN_INSTANCE_BY_ID.end()) {
       LOG(FATAL) << "RNInstance with the following id "
@@ -432,6 +431,7 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
       // and may cause crash when registering a new instance before the
       // destructor was executed.
       instance->unregisterFromInspector();
+      instance->markSelfAboutToDestroyed();
       taskExecutor->runTask(
           TaskThread::JS, [instance = std::move(instance)] {});
     }

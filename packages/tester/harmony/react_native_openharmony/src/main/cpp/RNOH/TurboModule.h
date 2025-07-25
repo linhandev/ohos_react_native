@@ -11,10 +11,9 @@
 #include <glog/logging.h>
 #include <memory>
 #include "RNOH/ArkTSMessageHub.h"
+#include "RNOH/RNInstance.h"
 
 namespace rnoh {
-
-class RNInstance;
 
 /**
  * @actor RNOH_LIBRARY
@@ -37,7 +36,7 @@ class TurboModule : public facebook::react::TurboModule {
      * @brief Weak pointer to the RNInstance.
      * This is used to set view properties.
      */
-    std::weak_ptr<RNInstance> instance;
+    RNInstance::SafeWeak instance;
 
     /**
      * @brief Shared pointer to the ArkTSMessageHub.

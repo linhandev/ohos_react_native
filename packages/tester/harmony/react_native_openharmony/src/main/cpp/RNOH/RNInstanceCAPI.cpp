@@ -278,14 +278,13 @@ std::optional<std::string> RNInstanceCAPI::getNativeNodeIdByTag(
 std::shared_ptr<TurboModuleProvider>
 RNInstanceCAPI::createTurboModuleProvider() {
   DLOG(INFO) << "RNInstanceCAPI::createTurboModuleProvider";
-  auto sharedInstance = shared_from_this();
   auto turboModuleProvider = std::make_shared<TurboModuleProvider>(
       std::make_shared<facebook::react::RuntimeSchedulerCallInvoker>(
           m_runtimeScheduler),
       std::move(m_turboModuleFactory),
       m_eventDispatcher,
       std::move(m_jsQueue),
-      sharedInstance);
+      m_weakSelf);
   turboModuleProvider->installJSBindings(
       m_reactInstance->getUnbufferedRuntimeExecutor());
   return turboModuleProvider;

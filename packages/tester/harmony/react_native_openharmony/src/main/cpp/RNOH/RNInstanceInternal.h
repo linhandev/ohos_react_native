@@ -187,6 +187,8 @@ class RNInstanceInternal
    */
   void removeArkTSMessageHandler(ArkTSMessageHandler::Shared handler);
   void unregisterFromInspector();
+  void onCreate();
+  void markSelfAboutToDestroyed();
 
  protected:
   void initialize();
@@ -207,6 +209,8 @@ class RNInstanceInternal
 
   int m_id;
   TaskExecutor::Shared m_taskExecutor;
+  std::shared_ptr<std::atomic<bool>> m_isAboutToBeDestroyed;
+  RNInstance::SafeWeak m_weakSelf;
   facebook::react::ContextContainer::Shared m_contextContainer;
   std::unique_ptr<rnoh::SchedulerDelegate> m_schedulerDelegate = nullptr;
   MountingManager::Shared m_mountingManager;

@@ -26,7 +26,7 @@ class TurboModuleProvider
       TurboModuleFactory&& turboModuleFactory,
       std::shared_ptr<EventDispatcher> eventDispatcher,
       std::shared_ptr<MessageQueueThread> jsQueue,
-      std::shared_ptr<RNInstance> const& instance = nullptr);
+      RNInstance::SafeWeak const& instance);
 
   std::shared_ptr<facebook::react::TurboModule> getTurboModule(
       std::string const& moduleName);
@@ -37,7 +37,7 @@ class TurboModuleProvider
 
  private:
   std::shared_ptr<facebook::react::CallInvoker> m_jsInvoker;
-  std::weak_ptr<RNInstance> m_instance;
+  RNInstance::SafeWeak m_instance;
   std::function<std::shared_ptr<facebook::react::TurboModule>(
       std::string const&,
       std::shared_ptr<facebook::react::CallInvoker>,

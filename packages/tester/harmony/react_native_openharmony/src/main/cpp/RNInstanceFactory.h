@@ -275,6 +275,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::move(componentJSIBinderByName),
       std::move(jsEngineProvider),
       std::move(inspectorHostTarget));
+  rnInstance->onCreate();
   componentInstanceDependencies->rnInstance = rnInstance;
   auto imageSourceResolver =
       std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);

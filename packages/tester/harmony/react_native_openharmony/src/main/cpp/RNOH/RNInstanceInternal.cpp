@@ -538,6 +538,16 @@ std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
 
+void RNInstanceInternal::onCreate() {
+  m_weakSelf = RNInstance::SafeWeak(shared_from_this(), m_isAboutToBeDestroyed);
+}
+
+void RNInstanceInternal::markSelfAboutToDestroyed() {
+  if (m_isAboutToBeDestroyed) {
+    m_isAboutToBeDestroyed->store(true);
+  }
+}
+
 /**
  * @brief Get the path of the bundle
  * @return m_bundlePath
@@ -605,6 +615,7 @@ RNInstanceInternal::RNInstanceInternal(
     std::shared_ptr<InspectorHostTarget> inspectorHostTarget)
     : m_id(id),
       m_taskExecutor(std::move(taskExecutor)),
+      m_isAboutToBeDestroyed(std::make_shared<std::atomic<bool>>(false)),
       m_contextContainer(std::move(contextContainer)),
       m_mountingManager(std::move(mountingManager)),
       m_componentDescriptorProviderRegistry(
