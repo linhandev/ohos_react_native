@@ -15,7 +15,7 @@ namespace rnoh {
  */
 class ImageSpanNode : public ArkUINode {
  public:
-  explicit ImageSpanNode(Context context = {});
+  explicit ImageSpanNode(const ArkUINode::Context::Shared& context);
 };
 
 /**
@@ -33,7 +33,7 @@ class SpanNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit SpanNode(Context context = {});
+  explicit SpanNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Sets the textual content of this span.

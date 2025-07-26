@@ -62,7 +62,7 @@ class StackNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit StackNode(Context context = {});
+  explicit StackNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Destroys the StackNode object.

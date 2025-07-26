@@ -132,7 +132,7 @@ class TextAreaNode : public TextInputNodeBase {
   TextAreaNodeDelegate* m_textAreaNodeDelegate;
 
  public:
-  explicit TextAreaNode(Context context = {});
+  explicit TextAreaNode(const ArkUINode::Context::Shared& context = nullptr);
   ~TextAreaNode() override;
 
   /**

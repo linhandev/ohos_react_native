@@ -25,7 +25,7 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_EVENT_ON_DISAPPEAR};
 namespace rnoh {
 
-TextInputNode::TextInputNode(Context context)
+TextInputNode::TextInputNode(const ArkUINode::Context::Shared& context)
     : TextInputNodeBase(context, ArkUI_NodeType::ARKUI_NODE_TEXT_INPUT),
       m_textInputNodeDelegate(nullptr) {
   for (auto eventType : TEXT_INPUT_NODE_EVENT_TYPES) {
@@ -34,8 +34,8 @@ TextInputNode::TextInputNode(Context context)
 
   ArkUI_NumberValue value = {.i32 = 1};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_KEYBOARD_ON_FOCUS, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_KEYBOARD_ON_FOCUS, &item);
 }
 
 TextInputNode::~TextInputNode() {
@@ -93,15 +93,13 @@ void TextInputNode::onNodeEvent(
     if (m_autoFocus) {
       ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(1)};
       ArkUI_AttributeItem item = {&value, 1};
-      maybeThrow(m_context.nodeApi.setAttribute(
-          m_nodeHandle, NODE_FOCUS_STATUS, &item));
+      m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUS_STATUS, &item);
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
     if (isFocused()) {
       ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
       ArkUI_AttributeItem item = {&value, 1};
-      maybeThrow(m_context.nodeApi.setAttribute(
-          m_nodeHandle, NODE_FOCUS_STATUS, &item));
+      m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUS_STATUS, &item);
     }
   }
 }
@@ -182,8 +180,7 @@ void TextInputNode::setTextContent(std::string const& textContent) {
   ArkUI_AttributeItem item = {.string = textContent.c_str()};
   m_hasRNSetTextContext = true;
   m_textContent = textContent;
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_TEXT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_TEXT, &item);
 }
 
 void TextInputNode::setSelectedBackgroundColor(
@@ -192,16 +189,15 @@ void TextInputNode::setSelectedBackgroundColor(
       .u32 = TextInputNodeBase::convertColorToTranslucentSelection(color)};
   ArkUI_AttributeItem colorItem = {
       &selectedBackgroundColor, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR, &colorItem));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR, &colorItem);
 }
 
 void TextInputNode::setCaretHidden(bool hidden) {
   if (hidden) {
     ArkUI_NumberValue value = {.f32 = 0};
     ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item);
 
     /**
      * Following setting is trying to set caret as transparent when
@@ -210,19 +206,16 @@ void TextInputNode::setCaretHidden(bool hidden) {
      */
     value = {.u32 = 0};
     item = {&value, sizeof(ArkUI_NumberValue)};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item);
   } else {
     ArkUI_NumberValue value = {
         .f32 = 2}; // The default width of the cursor in ArkUI is 2 vp
     ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CARET_STYLE, &item);
 
     value = {.u32 = m_caretColorValue};
     item = {&value, sizeof(ArkUI_NumberValue)};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item);
   }
 }
 
@@ -237,22 +230,20 @@ void TextInputNode::setInputType(
   }
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item);
 }
 
 void TextInputNode::setInputType(ArkUI_TextInputType keyboardType) {
   ArkUI_NumberValue value = {.i32 = keyboardType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_TYPE, &item);
 }
 
 void TextInputNode::setPasswordIconVisibility(bool isVisible) {
   ArkUI_NumberValue value = {.i32 = isVisible ? 1 : 0};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SHOW_PASSWORD_ICON, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_PASSWORD_ICON, &item);
 }
 
 void TextInputNode::setEnterKeyType(
@@ -264,14 +255,12 @@ void TextInputNode::setEnterKeyType(
   }
   ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item);
 }
 void TextInputNode::setEnterKeyType(ArkUI_EnterKeyType returnKeyType) {
   ArkUI_NumberValue value = {.i32 = returnKeyType};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_ENTER_KEY_TYPE, &item);
 }
 
 void TextInputNode::setCancelButtonMode(
@@ -288,8 +277,7 @@ void TextInputNode::setCancelButtonMode(
   ArkUI_NumberValue value[] = {{.i32 = cancelButtonStyle}};
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
 
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_CANCEL_BUTTON, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CANCEL_BUTTON, &item);
 }
 
 void TextInputNode::setFont(
@@ -326,15 +314,14 @@ void TextInputNode::setFont(
        {.i32 = static_cast<int32_t>(fontStyle)},
        {.i32 = static_cast<int32_t>(fontWeight)}}};
   ArkUI_AttributeItem item = {value.data(), value.size(), fontFamily.c_str()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER_FONT, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER_FONT, &item);
 }
 
 void TextInputNode::setLineHeight(float lineHeight) {
   ArkUI_NumberValue value[] = {{.f32 = lineHeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item);
 }
 
 void TextInputNode::setCaretColor(facebook::react::SharedColor const& color) {
@@ -342,8 +329,7 @@ void TextInputNode::setCaretColor(facebook::react::SharedColor const& color) {
   m_caretColorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CARET_COLOR, &item);
 }
 
 void TextInputNode::setUnderlineColor(
@@ -353,8 +339,8 @@ void TextInputNode::setUnderlineColor(
   }
   ArkUI_NumberValue showValue = {.i32 = 1};
   ArkUI_AttributeItem showItem = {&showValue, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_UNDERLINE, &showItem);
   ArkUI_NumberValue value[] = {
       {.u32 = TextInputNodeBase::convertColorToTranslucentUnderline(
            underlineColor)},
@@ -367,21 +353,18 @@ void TextInputNode::setUnderlineColor(
 
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_UNDERLINE_COLOR, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_UNDERLINE_COLOR, &item);
 }
 
 void TextInputNode::setMaxLength(int32_t maxLength) {
   ArkUI_NumberValue value = {.i32 = maxLength};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_MAX_LENGTH, &item);
 }
 
 void TextInputNode::setPlaceholder(std::string const& placeholder) {
   ArkUI_AttributeItem item = {.string = placeholder.c_str()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER, &item);
 }
 
 void TextInputNode::setPlaceholderColor(
@@ -389,13 +372,13 @@ void TextInputNode::setPlaceholderColor(
   uint32_t colorValue = *color;
   ArkUI_NumberValue value = {.u32 = colorValue};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER_COLOR, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_PLACEHOLDER_COLOR, &item);
 }
 
 void TextInputNode::resetSelectedBackgroundColor() {
-  maybeThrow(m_context.nodeApi.resetAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR));
+  m_nodeApi->resetAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECTED_BACKGROUND_COLOR);
 }
 
 void TextInputNode::setTextContentType(std::string const& textContentType) {
@@ -410,16 +393,15 @@ void TextInputNode::setTextContentType(std::string const& textContentType) {
   }
   std::array<ArkUI_NumberValue, 1> value = {type};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_CONTENT_TYPE, &item);
 }
 
 void TextInputNode::setAutoFill(bool autoFill) {
   uint32_t isAutoFill = static_cast<uint32_t>(autoFill);
   ArkUI_NumberValue value = {.u32 = isAutoFill};
   ArkUI_AttributeItem item = {&value, sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_ENABLE_AUTO_FILL, &item);
 }
 
 void TextInputNode::setAutoFill(std::string const& autoFill) {
@@ -439,21 +421,19 @@ void TextInputNode::setAutoFill(std::string const& autoFill) {
 void TextInputNode::setBlurOnSubmit(bool blurOnSubmit) {
   ArkUI_NumberValue value = {.i32 = int32_t(blurOnSubmit)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_BLUR_ON_SUBMIT, &item);
 }
 
 void TextInputNode::setShowKeyboardOnFocus(bool enable) {
   ArkUI_NumberValue value = {.i32 = int32_t(enable)};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SHOW_KEYBOARD_ON_FOCUS, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SHOW_KEYBOARD_ON_FOCUS, &item);
 }
 
 void TextInputNode::setInputFilter(const std::string& inputFilter) {
   ArkUI_AttributeItem item = {.string = inputFilter.c_str()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_INPUT_FILTER, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_INPUT_FILTER, &item);
 }
 
 std::string TextInputNode::getTextContent() {
@@ -466,14 +446,13 @@ void TextInputNode::setContextMenuHidden(bool hidden) {
   std::array<ArkUI_NumberValue, 1> value = {
       {{.i32 = static_cast<int32_t>(hidden)}}};
   ArkUI_AttributeItem item = {value.data(), value.size()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_SELECTION_MENU_HIDDEN, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_INPUT_SELECTION_MENU_HIDDEN, &item);
 }
 
 void TextInputNode::setPasswordRules(const std::string rules) {
   ArkUI_AttributeItem item = {.string = rules.c_str()};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INPUT_PASSWORD_RULES, &item);
 }
 
 void TextInputNode::setAutoFocus(bool autoFocus) {

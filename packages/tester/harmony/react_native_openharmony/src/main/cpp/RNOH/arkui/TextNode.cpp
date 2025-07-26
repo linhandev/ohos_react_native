@@ -12,15 +12,15 @@
 
 namespace rnoh {
 
-TextNode::TextNode(Context context)
+TextNode::TextNode(const ArkUINode::Context::Shared& context)
     : ArkUINode(context, ArkUI_NodeType::ARKUI_NODE_TEXT) {
   maybeThrow(NativeNodeApi::getInstance()->registerNodeEvent(
       m_nodeHandle, NODE_EVENT_ON_DISAPPEAR, NODE_EVENT_ON_DISAPPEAR, this));
 }
 
 void TextNode::insertChild(ArkUINode& child, std::size_t index) {
-  maybeThrow(m_context.nodeApi.insertChildAt(
-      m_nodeHandle, child.getArkUINodeHandle(), static_cast<int32_t>(index)));
+  m_nodeApi->insertChildAt(
+      m_nodeHandle, child.getArkUINodeHandle(), static_cast<int32_t>(index));
 }
 
 void TextNode::removeChild(ArkUINode& child) {
@@ -30,53 +30,47 @@ void TextNode::removeChild(ArkUINode& child) {
 
 TextNode& TextNode::setTextContent(const std::string& text) {
   ArkUI_AttributeItem item = {.string = text.c_str()};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_CONTENT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_CONTENT, &item);
   return *this;
 }
 
 TextNode& TextNode::setFontColor(uint32_t color) {
   ArkUI_NumberValue value[] = {{.u32 = color}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_COLOR, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_FONT_COLOR, &item);
   return *this;
 }
 
 TextNode& TextNode::resetFontColor() {
-  maybeThrow(m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_FONT_COLOR));
+  m_nodeApi->resetAttribute(m_nodeHandle, NODE_FONT_COLOR);
   return *this;
 }
 
 TextNode& TextNode::setFontSize(float fontSize) {
   ArkUI_NumberValue value[] = {{.f32 = fontSize}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_SIZE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_FONT_SIZE, &item);
   return *this;
 }
 
 TextNode& TextNode::setFontStyle(int32_t fontStyle) {
   ArkUI_NumberValue value[] = {{.i32 = fontStyle}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_STYLE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_FONT_STYLE, &item);
   return *this;
 }
 
 TextNode& TextNode::setFontWeight(int32_t fontWeight) {
   ArkUI_NumberValue value[] = {{.i32 = fontWeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_WEIGHT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_FONT_WEIGHT, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextLineHeight(float textLineHeight) {
   ArkUI_NumberValue value[] = {{.f32 = textLineHeight}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_LINE_HEIGHT, &item);
   return *this;
 }
 
@@ -87,69 +81,60 @@ TextNode& TextNode::setTextDecoration(
       {.i32 = decorationStyle}, {.u32 = decorationColor}};
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_DECORATION, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_DECORATION, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextCase(int32_t textCase) {
   ArkUI_NumberValue value[] = {{.i32 = textCase}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_CASE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_CASE, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextLetterSpacing(float textLetterSpacing) {
   ArkUI_NumberValue value[] = {{.f32 = textLetterSpacing}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_LETTER_SPACING, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_LETTER_SPACING, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextMaxLines(int32_t textMaxLines) {
   ArkUI_NumberValue value[] = {{.i32 = textMaxLines}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_MAX_LINES, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_MAX_LINES, &item);
   return *this;
 }
 
 TextNode& TextNode::resetTextMaxLines() {
-  maybeThrow(
-      m_context.nodeApi.resetAttribute(m_nodeHandle, NODE_TEXT_MAX_LINES));
+  m_nodeApi->resetAttribute(m_nodeHandle, NODE_TEXT_MAX_LINES);
   return *this;
 }
 
 TextNode& TextNode::setTextAlign(int32_t align) {
   ArkUI_NumberValue value[] = {{.i32 = align}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_ALIGN, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_ALIGN, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextEllipsisMode(int32_t ellipsisMode) {
   ArkUI_NumberValue value[] = {{.i32 = ellipsisMode}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_ELLIPSIS_MODE, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_ELLIPSIS_MODE, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextOverflow(int32_t textOverflow) {
   ArkUI_NumberValue value[] = {{.i32 = textOverflow}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_OVERFLOW, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_OVERFLOW, &item);
   return *this;
 }
 
 TextNode& TextNode::setFontFamily(const std::string& fontFamily) {
   ArkUI_AttributeItem item = {.string = fontFamily.c_str()};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_FONT_FAMILY, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_FONT_FAMILY, &item);
   return *this;
 }
 
@@ -159,8 +144,7 @@ TextNode& TextNode::setTextCopyOption(int32_t textCopyOption) {
             << m_initFlag[FLAG_COPYOPTION];
     ArkUI_NumberValue value[] = {{.i32 = textCopyOption}};
     ArkUI_AttributeItem item = {.value = value, .size = 1};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_COPY_OPTION, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_COPY_OPTION, &item);
     m_initFlag[FLAG_COPYOPTION] = true;
     m_textCopyOption = textCopyOption;
   }
@@ -170,8 +154,7 @@ TextNode& TextNode::setTextCopyOption(int32_t textCopyOption) {
 TextNode& TextNode::setTextBaselineOffset(float textBaselineOffset) {
   ArkUI_NumberValue value[] = {{.f32 = textBaselineOffset}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_BASELINE_OFFSET, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_BASELINE_OFFSET, &item);
   return *this;
 }
 
@@ -189,8 +172,7 @@ TextNode& TextNode::setTextShadow(
       {.f32 = textShadowOffsetY}};
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_TEXT_SHADOW, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_TEXT_SHADOW, &item);
   return *this;
 }
 
@@ -200,8 +182,7 @@ TextNode& TextNode::setMinFontSize(float minFontSize) {
             << m_initFlag[FLAG_MINFONTSIZE];
     ArkUI_NumberValue value[] = {{.f32 = minFontSize}};
     ArkUI_AttributeItem item = {.value = value, .size = 1};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_MIN_FONT_SIZE, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_MIN_FONT_SIZE, &item);
     m_initFlag[FLAG_MINFONTSIZE] = true;
     m_minFontSize = minFontSize;
   }
@@ -214,8 +195,7 @@ TextNode& TextNode::setMaxFontSize(float maxFontSize) {
             << m_initFlag[FLAG_MAXFONTSIZE];
     ArkUI_NumberValue value[] = {{.f32 = maxFontSize}};
     ArkUI_AttributeItem item = {.value = value, .size = 1};
-    maybeThrow(m_context.nodeApi.setAttribute(
-        m_nodeHandle, NODE_TEXT_MAX_FONT_SIZE, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_MAX_FONT_SIZE, &item);
     m_initFlag[FLAG_MAXFONTSIZE] = true;
     m_maxFontSize = maxFontSize;
   }
@@ -231,24 +211,22 @@ TextNode& TextNode::setTextFont(
       {.f32 = fontSize}, {.i32 = fontWeight}, {.i32 = fontStyle}};
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_FONT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_FONT, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextHeightAdaptivePolicy(int32_t policyType) {
   ArkUI_NumberValue value[] = {{.i32 = policyType}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_HEIGHT_ADAPTIVE_POLICY, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_HEIGHT_ADAPTIVE_POLICY, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextIndent(float textIndent) {
   ArkUI_NumberValue value[] = {{.f32 = textIndent}};
   ArkUI_AttributeItem item = {.value = value, .size = 1};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_TEXT_INDENT, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_INDENT, &item);
   return *this;
 }
 
@@ -257,8 +235,7 @@ TextNode& TextNode::setTextEnable(bool enableFlag) {
     VLOG(3) << "[text-debug] setTextEnable flag=" << m_initFlag[FLAG_ENABLE];
     ArkUI_NumberValue value[] = {{.i32 = enableFlag}};
     ArkUI_AttributeItem item = {value, 1};
-    maybeThrow(
-        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_ENABLED, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_ENABLED, &item);
     m_initFlag[FLAG_ENABLE] = true;
     m_enableFlag = enableFlag;
   }
@@ -274,8 +251,7 @@ TextNode::setPadding(float top, float right, float bottom, float left) {
     ArkUI_NumberValue value[] = {
         {.f32 = top}, {.f32 = right}, {.f32 = bottom}, {.f32 = left}};
     ArkUI_AttributeItem item = {.value = value, .size = 4};
-    maybeThrow(
-        m_context.nodeApi.setAttribute(m_nodeHandle, NODE_PADDING, &item));
+    m_nodeApi->setAttribute(m_nodeHandle, NODE_PADDING, &item);
     m_initFlag[FLAG_PADDING] = true;
     m_top = top;
     m_right = right;
@@ -288,8 +264,7 @@ TextNode::setPadding(float top, float right, float bottom, float left) {
 TextNode& TextNode::setWordBreak(ArkUI_WordBreak wordBreak) {
   ArkUI_NumberValue value = {.i32 = wordBreak};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_WORD_BREAK, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_WORD_BREAK, &item);
   return *this;
 }
 
@@ -297,46 +272,43 @@ TextNode& TextNode::setWritingDirection(int32_t direction) {
   ArkUI_NumberValue value[] = {{.i32 = direction}};
   ArkUI_AttributeItem item = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(
-      m_context.nodeApi.setAttribute(m_nodeHandle, NODE_DIRECTION, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_DIRECTION, &item);
   return *this;
 }
 
 TextNode& TextNode::setSelectedBackgroundColor(uint32_t color) {
   ArkUI_NumberValue value = {.u32 = color};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_SELECTED_BACKGROUND_COLOR, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_SELECTED_BACKGROUND_COLOR, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextContentWithStyledString(
     ArkUI_StyledString* styledString) {
   ArkUI_AttributeItem item = {.object = styledString};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING, &item);
   return *this;
 }
 
 TextNode& TextNode::resetTextContentWithStyledString() {
-  maybeThrow(m_context.nodeApi.resetAttribute(
-      m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING));
+  m_nodeApi->resetAttribute(m_nodeHandle, NODE_TEXT_CONTENT_WITH_STYLED_STRING);
   return *this;
 }
 
 TextNode& TextNode::setTextDataDetectorEnable(int32_t enableFlag) {
   ArkUI_NumberValue value = {.i32 = enableFlag};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item);
   return *this;
 }
 
 TextNode& TextNode::setTextDataDetectorType(ArkUI_TextDataDetectorType type) {
   ArkUI_NumberValue value = {.i32 = type};
   ArkUI_AttributeItem item = {&value, 1};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item);
   return *this;
 }
 
@@ -345,14 +317,13 @@ TextNode& TextNode::setTextDataDetectorType(
     const ArkUI_NumberValue* types,
     int size) {
   ArkUI_AttributeItem item = {.value = types, .size = size};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item));
+  m_nodeApi->setAttribute(
+      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR_CONFIG, &item);
 
   ArkUI_NumberValue value[] = {{.i32 = enable}};
   ArkUI_AttributeItem item2 = {
       .value = value, .size = sizeof(value) / sizeof(ArkUI_NumberValue)};
-  maybeThrow(m_context.nodeApi.setAttribute(
-      m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item2));
+  m_nodeApi->setAttribute(m_nodeHandle, NODE_TEXT_ENABLE_DATA_DETECTOR, &item2);
   return *this;
 }
 

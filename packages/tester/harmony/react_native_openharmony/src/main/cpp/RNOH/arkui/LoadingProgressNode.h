@@ -26,7 +26,8 @@ class LoadingProgressNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit LoadingProgressNode(Context context = {});
+  explicit LoadingProgressNode(
+      const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Sets the foreground color of the loading progress bar.

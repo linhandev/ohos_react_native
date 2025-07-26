@@ -10,8 +10,7 @@
 
 namespace rnoh {
 ViewComponentInstance::ViewComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)),
-      m_customNode(context.arkUINodeContext) {
+    : CppComponentInstance(std::move(context)), m_customNode(m_arkUINodeCtx) {
   m_customNode.setCustomNodeDelegate(this);
 }
 

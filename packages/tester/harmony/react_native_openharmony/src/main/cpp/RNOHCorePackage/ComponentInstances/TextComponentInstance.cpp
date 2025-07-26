@@ -20,8 +20,7 @@ namespace rnoh {
 const static float DEFAULT_LINE_SPACING = 0.15f;
 
 TextComponentInstance::TextComponentInstance(Context context)
-    : CppComponentInstance(std::move(context)),
-      m_textNode(context.arkUINodeContext) {
+    : CppComponentInstance(std::move(context)), m_textNode(m_arkUINodeCtx) {
   m_textNode.setAlignment(ARKUI_ALIGNMENT_TOP_START);
   m_textNode.setTextOverflow(ARKUI_TEXT_OVERFLOW_ELLIPSIS);
 }

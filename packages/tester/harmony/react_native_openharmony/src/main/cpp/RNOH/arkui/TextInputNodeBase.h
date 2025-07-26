@@ -64,7 +64,9 @@ namespace rnoh {
  */
 class TextInputNodeBase : public ArkUINode {
  protected:
-  TextInputNodeBase(Context context, ArkUI_NodeType nodeType);
+  TextInputNodeBase(
+      const ArkUINode::Context::Shared& context,
+      ArkUI_NodeType nodeType);
   void setCommonFontAttributes(
       facebook::react::TextAttributes const& textAttributes);
 

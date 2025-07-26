@@ -45,7 +45,7 @@ class TextNode : public ArkUINode {
   float m_left = 0.0;
 
  public:
-  explicit TextNode(Context context = {});
+  explicit TextNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief append a new child node, usually an attachment

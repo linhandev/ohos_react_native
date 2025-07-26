@@ -20,6 +20,7 @@
 #include <react/renderer/graphics/Rect.h>
 #include <react/renderer/graphics/Transform.h>
 #include <initializer_list>
+#include <memory>
 #include <stdexcept>
 #include "NodeApi.h"
 #include "glog/logging.h"
@@ -74,12 +75,11 @@ class ArkUINode {
   ArkUINodeDelegate* m_arkUINodeDelegate = nullptr;
 
  public:
-  /**
-   * @brief Context class that encapsulates NodeApi and related functionality
-   * Used by non-singleton NativeNodeApi to provide context-aware operations
-   */
   struct Context {
-    NodeApi nodeApi;
+    Context() = default;
+    explicit Context(std::shared_ptr<NodeApi> nodeApi) : nodeApi(nodeApi) {}
+    using Shared = std::shared_ptr<Context>;
+    std::shared_ptr<NodeApi> nodeApi = nullptr;
   };
 
  protected:
@@ -117,10 +117,11 @@ class ArkUINode {
   /**
    * @brief Constructs an ArkUINode with Context and node type
    * Creates NodeApi and then creates the node handle internally
-   * @param context Context containing UI context and dependencies
+   * @param context Shared pointer to Context containing shared NodeApi and
+   * dependencies
    * @param nodeType Type of ArkUI node to create
    */
-  ArkUINode(Context context, ArkUI_NodeType nodeType);
+  ArkUINode(const Context::Shared context, ArkUI_NodeType nodeType);
 
   /**
    * @brief Sets the delegate for handling node events and actions
@@ -622,7 +623,9 @@ class ArkUINode {
   }
 
   ArkUI_NodeHandle m_nodeHandle;
-  Context m_context;
+
+ protected:
+  std::shared_ptr<NodeApi> m_nodeApi = std::make_shared<NodeApi>();
 
  private:
   int32_t m_measuredWidth = 0;

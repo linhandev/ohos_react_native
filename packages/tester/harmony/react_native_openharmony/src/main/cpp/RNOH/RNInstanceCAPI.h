@@ -152,7 +152,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
 
-  void setArkUINodeContext(ArkUINode::Context arkUINodeContext) {
+  void setArkUINodeContext(const ArkUINode::Context::Shared& arkUINodeContext) {
     if (m_componentInstanceFactory) {
       m_componentInstanceFactory->setArkUINodeContext(arkUINodeContext);
     } else {

@@ -78,7 +78,7 @@ class ImageNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit ImageNode(Context context = {});
+  explicit ImageNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Destroys the ImageNode and unregisters its events.

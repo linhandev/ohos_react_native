@@ -46,7 +46,7 @@ class ColumnNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit ColumnNode(Context context = {});
+  explicit ColumnNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Destructor that cleans up resources when the column node is

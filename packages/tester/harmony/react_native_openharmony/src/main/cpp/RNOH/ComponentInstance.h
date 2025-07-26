@@ -185,7 +185,7 @@ class ComponentInstance
     /**
      * @brief the UIContext Of ArkUI.
      */
-    ArkUINode::Context arkUINodeContext;
+    ArkUINode::Context::Shared arkUINodeContext;
   };
 
   /**
@@ -584,6 +584,11 @@ class ComponentInstance
    * Stores the Dependencies data of the component.
    */
   Dependencies::Shared m_deps;
+  /**
+   * @actor RNOH_LIBRARY
+   * the UIContext Of ArkUI.
+   */
+  ArkUINode::Context::Shared m_arkUINodeCtx;
   /**
    * @internal
    * @deprecated Do not use it. It's an internal property. This property was

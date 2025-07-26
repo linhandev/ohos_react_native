@@ -67,7 +67,7 @@ class ToggleNode : public ArkUINode {
    *
    * @param context The Context of ArkUINode.
    */
-  explicit ToggleNode(Context context = {});
+  explicit ToggleNode(const ArkUINode::Context::Shared& context = nullptr);
 
   /**
    * @brief Destructor for ToggleNode.

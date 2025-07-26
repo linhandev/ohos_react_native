@@ -75,7 +75,7 @@ class CustomNode : public ArkUINode {
   int32_t getMeasuredHeight();
 
  public:
-  explicit CustomNode(Context context = {});
+  explicit CustomNode(const ArkUINode::Context::Shared& context = nullptr);
 
   ~CustomNode() override;
 
