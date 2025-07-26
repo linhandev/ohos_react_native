@@ -1,5 +1,16 @@
 # Changelog
 
+## Internal: v0.77.15
+- Improve the stability and abstraction of the API.,([5611253f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5611253faff68483df21b353f13ca378a856a4b3))
+- [doc]: improve 3 documents.,([2ff6e8fb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2ff6e8fb9030747d5772db81cb08aeb5c9e2d123))
+- fix: In the TextInput component, when entering a bank card number, the cursor does not automatically move past the space after encountering one.,([884c8a85](https://gitcode.com/openharmony-sig/ohos_react_native/commit/884c8a8568ccb77b722a078590cb847f8114e02c))
+- fix: rnoh 0.77 package doesn't have all dependencies in package.json,([483f6519](https://gitcode.com/openharmony-sig/ohos_react_native/commit/483f65198cc4d7305b99b89553c8e9cd709a1084))
+- fix:crash due to destruction on main thread,([d113ce25](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d113ce259e730387e6935db15565463376c5fd4a))
+- ​​fix the componentInstance null pointer issue​.,([67f14115](https://gitcode.com/openharmony-sig/ohos_react_native/commit/67f141155027bbff3e837f76199fbe6d89fc6322))
+- fix:​​ Modal fails to appear on the right side when the RN page is displayed on the right in a Navigation split-screen layout.,([6fd2ce21](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6fd2ce210a581dd3a70afcdfa5c32925cc264e10))
+- fix: C TextInput/TextArea with negative lineHeight behave differently from ArkTS TextInput/TextArea,([79cb8445](https://gitcode.com/openharmony-sig/ohos_react_native/commit/79cb84456e7397b329379b97abd6bd98e0f79553))
+- [chore]: updated to version 6.0.0.500(0.77.14),([043573f2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/043573f2e70deebc250aec307ac1a049e5e0098d))
+
 ## Internal: v0.77.14
 - The subwindow affects the page rendering of the mainwindow,([796c5116](https://gitcode.com/openharmony-sig/ohos_react_native/commit/796c5116f4b7a55cc56f0037708ab14b15fe0d50))
 - feat: This is a template for creating the RNOH project.,([aec40537](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aec4053752af6ae4fca49a8346008646b4b712e5))
