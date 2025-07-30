@@ -178,5 +178,5 @@ This section describes how to upgrade a RN project for OpenHarmony from 0.72.x t
 
 References:
 - [AwesomeProject template project changes from 0.72.5 to 0.77.1](https://react-native-community.github.io/upgrade-helper/?from=0.72.5&to=0.77.1)
-- [Upstream community non-compatible changes from 0.72.5 to 0.77.1](./upstream-community-non-compatible-changes.md)
+- [Upstream community non-compatible changes from 0.72.5 to 0.77.1](../zh-cn/上游社区不兼容变更.md)
 - [Upstream Community ChangeLog](https://github.com/facebook/react-native/blob/main/CHANGELOG-0.7x.md#v0725)

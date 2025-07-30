@@ -1,0 +1,1 @@
+This package is in progress. The goal of this package is providing compatibility with React Native 0.61.

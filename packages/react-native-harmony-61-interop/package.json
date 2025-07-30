@@ -1,0 +1,16 @@
+{
+  "name": "@react-native-oh/react-native-harmony-61-interop",
+  "private": true,
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "peerDependencies": {
+    "@react-native-oh/react-native-harmony": "workspace:*"
+  },
+  "license": "MIT"
+}

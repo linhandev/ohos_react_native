@@ -8,6 +8,8 @@ packages:
   - 'packages/react-native-core/packages/react-native'
   - 'packages/hdc-server'
   - 'packages/react-native-harmony-test-kit'
+  - 'packages/react-native-harmony-61-interop'
+  - 'packages/react-native-harmony-61-interop-tester/rnoh-entry'
 
   # In the monorepo setup, @ohos packages used by hvigor-plugin are hoisted to the root node_modules and
   # it seems hvigor in tester or tester-ecosystem tries to use those packages when building a project,
