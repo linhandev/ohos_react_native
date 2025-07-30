@@ -9,7 +9,7 @@
 
 #include <deviceinfo.h>
 #include "DynamicArkUILoader.h"
-#include "glog/logging.h"
+#include "NativeNodeApi.h"
 
 namespace rnoh {
 
