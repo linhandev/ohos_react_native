@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// @ts-check
 import React from 'react';
 import {SafeAreaView, Text, StatusBar, View} from 'react-native';
 
@@ -17,7 +16,7 @@ const App = () => {
         <View style={{padding: 24}}>
           <Text style={{fontSize: 24}}>TODO</Text>
           <Text>
-            - switch to TypeScript and test it in the legacy project after
+            ✅ - switch to TypeScript and test it in the legacy project after
             validating Android build
           </Text>
           <Text>- copy simple navigation simple from tester project</Text>

@@ -15,6 +15,7 @@
         <filefilterlist>
             <filefilter name="defaultFilter" desc="">
                 <filteritem type="filename" name=".eslintrc" desc="json file" />
+                <filteritem type="filename" name=".java-version" desc="config file" />
                 <filteritem type="filename" name=".node-version" desc="config file" />
                 <filteritem type="filename" name=".npmignore" desc="config file" />
                 <filteritem type="filename" name=".npmrc" desc="config file" />
