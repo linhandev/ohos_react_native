@@ -104,6 +104,28 @@ function createHarmonyMetroConfig(options) {
              * react-native-harmony/react-native.config.js::config::platforms::harmony::npmPackageName
              * when importing from `react-native`.
              */
+
+              const rnInteropLibraryPackageName =
+                getHarmonyPackageByAliasMap(nodeModulesPaths)[
+                  reactNativeHarmonyPackageName
+                ]?.name;
+              if (rnInteropLibraryPackageName) {
+                /**
+                 * A special case for a react-native-harmony-interop-61 library.
+                 */
+                try {
+                  const newModuleName = moduleName.replace(
+                    reactNativeHarmonyPackageName,
+                    rnInteropLibraryPackageName
+                  );
+                  return ctx.resolveRequest(
+                    ctx,
+                    newModuleName,
+                    HARMONY_PLATFORM_NAME
+                  );
+                } catch {}
+              }
+
             try {
               return ctx.resolveRequest(ctx, moduleName, HARMONY_PLATFORM_NAME);
             } catch {
@@ -370,32 +392,51 @@ function getHarmonyPackageByAliasMap(nodeModulesPaths) {
   }
   cachedHarmonyPackageByAliasMap = findHarmonyNodeModulePaths(
     findHarmonyNodeModuleSearchPaths(nodeModulesPaths)
-  ).reduce((acc, harmonyNodeModulePath) => {
-    const harmonyNodeModulePathSegments = harmonyNodeModulePath.split(
-      pathUtils.sep
-    );
-    let harmonyNodeModuleName =
-      harmonyNodeModulePathSegments[harmonyNodeModulePathSegments.length - 1];
-    if (harmonyNodeModulePathSegments.length > 1) {
-      const harmonyNodeModuleParentDirName =
-        harmonyNodeModulePathSegments[harmonyNodeModulePathSegments.length - 2];
-      if (harmonyNodeModuleParentDirName.startsWith('@')) {
-        harmonyNodeModuleName = `${harmonyNodeModuleParentDirName}/${harmonyNodeModuleName}`;
+  ).reduce(
+    (
+      acc,
+      {
+        resolvedPath: harmonyNodeModuleResolvedPath,
+        unresolvedPath: harmonyNodeModuleUnresolvedPath,
       }
-    }
-    const packageJsonPath = `${harmonyNodeModulePath}${pathUtils.sep}package.json`;
-    const packageJson = readHarmonyModulePackageJSON(packageJsonPath);
-    const alias = packageJson.harmony?.alias;
-    const redirectInternalImports =
-      packageJson?.harmony?.redirectInternalImports ?? false;
-    if (alias) {
-      acc[alias] = {
-        name: harmonyNodeModuleName,
-        redirectInternalImports: redirectInternalImports,
-      };
-    }
-    return acc;
-  }, initialAcc);
+    ) => {
+      // use unresolved path for monorepos to find actual package name (which can be installed under an alias)
+      const harmonyNodeModulePath = harmonyNodeModuleResolvedPath.includes(
+        'node_modules'
+      )
+        ? harmonyNodeModuleResolvedPath
+        : harmonyNodeModuleUnresolvedPath;
+
+      const harmonyNodeModulePathSegments = harmonyNodeModulePath.split(
+        pathUtils.sep
+      );
+
+      let harmonyNodeModuleName =
+        harmonyNodeModulePathSegments[harmonyNodeModulePathSegments.length - 1];
+      if (harmonyNodeModulePathSegments.length > 1) {
+        const harmonyNodeModuleParentDirName =
+          harmonyNodeModulePathSegments[
+            harmonyNodeModulePathSegments.length - 2
+          ];
+        if (harmonyNodeModuleParentDirName.startsWith('@')) {
+          harmonyNodeModuleName = `${harmonyNodeModuleParentDirName}/${harmonyNodeModuleName}`;
+        }
+      }
+      const packageJsonPath = `${harmonyNodeModuleResolvedPath}${pathUtils.sep}package.json`;
+      const packageJson = readHarmonyModulePackageJSON(packageJsonPath);
+      const alias = packageJson.harmony?.alias;
+      const redirectInternalImports =
+        packageJson?.harmony?.redirectInternalImports ?? false;
+      if (alias) {
+        acc[alias] = {
+          name: harmonyNodeModuleName,
+          redirectInternalImports: redirectInternalImports,
+        };
+      }
+      return acc;
+    },
+    initialAcc
+  );
   const harmonyPackagesCount = Object.keys(
     cachedHarmonyPackageByAliasMap
   ).length;
@@ -448,7 +489,7 @@ function findHarmonyNodeModuleSearchPaths(nodeModulesPaths) {
 
 /**
  * @param searchPaths {string[]}
- * @returns {string[]}
+ * @returns {{resolvedPath:string, unresolvedPath: string}[]}
  */
 function findHarmonyNodeModulePaths(searchPaths) {
   return searchPaths
@@ -458,17 +499,22 @@ function findHarmonyNodeModulePaths(searchPaths) {
         .map((dirent) => {
           const direntPath =
             (dirent.parentPath ?? dirent.path) + pathUtils.sep + dirent.name;
-
           if (dirent.isSymbolicLink()) {
-            return pathUtils.resolve(fs.readlinkSync(direntPath));
+            return {
+              resolvedPath: pathUtils.resolve(
+                dirent.parentPath ?? dirent.path,
+                fs.readlinkSync(direntPath)
+              ),
+              unresolvedPath: pathUtils.resolve(
+                dirent.parentPath ?? dirent.path,
+                direntPath
+              ),
+            };
           } else {
-            return direntPath;
+            return { resolvedPath: direntPath, unresolvedPath: direntPath };
           }
         })
-        .map((potentialHarmonyNodeModulePath) => {
-          return potentialHarmonyNodeModulePath;
-        })
-        .filter(hasPackageJSON);
+        .filter(({ resolvedPath }) => hasPackageJSON(resolvedPath));
     })
     .flat();
 }
@@ -481,7 +527,9 @@ function hasPackageJSON(nodeModulePath) {
   if (!fs.existsSync(nodeModulePath)) {
     return false;
   }
-  if (!fs.lstatSync(nodeModulePath).isDirectory()) return false;
+  if (!fs.lstatSync(nodeModulePath).isDirectory()) {
+    return false;
+  }
   const nodeModuleContentNames = fs.readdirSync(nodeModulePath);
   return nodeModuleContentNames.includes('package.json');
 }

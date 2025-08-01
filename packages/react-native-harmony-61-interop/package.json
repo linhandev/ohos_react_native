@@ -12,5 +12,8 @@
   "peerDependencies": {
     "@react-native-oh/react-native-harmony": "workspace:*"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "harmony": {
+    "alias": "@react-native-oh/react-native-harmony"
+  }
 }

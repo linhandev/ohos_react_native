@@ -5,8 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { TurboModule, TurboModuleRegistry } from 'react-native';
 import type { PlatformHarmonyConstants } from './Platform';
+import * as TurboModuleRegistry from '../TurboModule/TurboModuleRegistry';
+import type { TurboModule } from '../TurboModule/RCTExport';
 
 interface Spec extends TurboModule {
   getConstants: () => PlatformHarmonyConstants;
