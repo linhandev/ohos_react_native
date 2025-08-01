@@ -19,6 +19,7 @@
 #include <vector>
 #include "RNOH/ArkTSChannel.h"
 #include "RNOH/ArkTSMessageHub.h"
+#include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/DisplayMetricsManager.h"
 #include "RNOH/ImageSourceResolver.h"
 #include "RNOH/RNInstance.h"
