@@ -279,7 +279,10 @@ PropUpdatesList AnimatedNodesManager::runUpdates(long long frameTimeNanos) {
   }
 
   auto propUpdatesList = updateNodes();
-  auto finalFrameRate = getMinAcceptableFrameRate(valueNodeTags);
+  int32_t finalFrameRate;
+  if (IsAtLeastApi20()) {
+    finalFrameRate = getMinAcceptableFrameRate(valueNodeTags);
+  }
 
   for (auto animationId : finishedAnimations) {
     auto const& animation = m_animationById.at(animationId);
@@ -290,11 +293,17 @@ PropUpdatesList AnimatedNodesManager::runUpdates(long long frameTimeNanos) {
   }
 
   if (m_animationById.empty()) {
-    m_scheduleStopFn();
+    if (IsAtLeastApi20()) {
+      m_scheduleStopFn();
+    }
     m_isRunningAnimations = false;
   } else {
     m_isRunningAnimations = true;
-    m_scheduleUpdateFn(finalFrameRate);
+    if (IsAtLeastApi20()) {
+      m_scheduleUpdateFn(finalFrameRate);
+    } else {
+      m_scheduleStartFn();
+    }
   }
   return propUpdatesList;
 }

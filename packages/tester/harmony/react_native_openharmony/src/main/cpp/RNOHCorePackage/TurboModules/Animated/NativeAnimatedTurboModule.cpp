@@ -303,6 +303,15 @@ void NativeAnimatedTurboModule::stopDisplaySoloist() {
   }
 }
 
+void NativeAnimatedTurboModule::requestAnimationFrame() {
+  m_vsyncListener->requestFrame(
+      [weakSelf = weak_from_this()](long long _timestamp) {
+        if (auto self = weakSelf.lock()) {
+          self->runUpdates(_timestamp);
+        }
+      });
+}
+
 void NativeAnimatedTurboModule::startDisplaySoloist() {
   if (isDisplaySoloistRegistered()) {
     return;
@@ -470,14 +479,22 @@ NativeAnimatedTurboModule::NativeAnimatedTurboModule(
     const std::string name)
     : rnoh::ArkTSTurboModule(ctx, name),
       m_nativeDisplaySoloist(
-          OH_DisplaySoloist_Create(false),
-          &OH_DisplaySoloist_Destroy),
+          IsAtLeastApi20() ? OH_DisplaySoloist_Create(false) : nullptr,
+          IsAtLeastApi20()
+              ? [](OH_DisplaySoloist* d) { OH_DisplaySoloist_Destroy(d); }
+              : [](OH_DisplaySoloist* d) {}),
       m_isDisplaySoloistRegistered(false),
       m_animatedNodesManager(
           [this](int frameRate) {
             this->setDisplaySoloistFrameRate(frameRate);
           },
-          [this]() { this->startDisplaySoloist(); },
+          [this]() {
+            if (IsAtLeastApi20()) {
+              this->startDisplaySoloist();
+            } else {
+              this->requestAnimationFrame();
+            }
+          },
           [this]() { this->stopDisplaySoloist(); },
           m_ctx.displayMetricsManager) {
   methodMap_ = {
@@ -510,7 +527,9 @@ NativeAnimatedTurboModule::NativeAnimatedTurboModule(
 }
 
 NativeAnimatedTurboModule::~NativeAnimatedTurboModule() {
-  stopDisplaySoloist();
+  if (IsAtLeastApi20()) {
+    this->stopDisplaySoloist();
+  }
   if (m_initializedEventListener) {
     m_ctx.eventDispatcher->unregisterExpiredListeners();
   }
@@ -679,8 +698,11 @@ void NativeAnimatedTurboModule::runUpdates(long long frameTimeNanos) {
           }
           self->setNativeProps(tagsToUpdate);
         });
-  } catch (std::exception& e) {
+  } catch (const std::exception& e) {
     LOG(ERROR) << "Error in animation update: " << e.what();
+    if (!IsAtLeastApi20()) {
+      this->requestAnimationFrame();
+    }
   }
 }
 

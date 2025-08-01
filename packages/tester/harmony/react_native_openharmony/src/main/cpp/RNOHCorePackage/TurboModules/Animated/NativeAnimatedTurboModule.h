@@ -15,6 +15,9 @@
 #include <mutex>
 
 #include "AnimatedNodesManager.h"
+#include "RNOH/ApiVersionCheck.h"
+#include "RNOH/NativeVsyncHandle.h"
+#include "RNOH/VSyncListener.h"
 
 namespace rnoh {
 
@@ -168,14 +171,18 @@ class NativeAnimatedTurboModule
 
   bool isDisplaySoloistRegistered() const;
 
+  void requestAnimationFrame();
+
   // `shared_from_this` cannot be used in constructor,
   // so we defer the initialization of the event listener
   // until the first animated event is registered.
   void initializeEventListener();
 
   int32_t m_currentFrameRate = 0;
-  std::unique_ptr<OH_DisplaySoloist, decltype(&OH_DisplaySoloist_Destroy)>
+  std::unique_ptr<OH_DisplaySoloist, void (*)(OH_DisplaySoloist*)>
       m_nativeDisplaySoloist;
+  std::shared_ptr<VSyncListener> m_vsyncListener =
+      std::make_shared<VSyncListener>();
   std::atomic<bool> m_isDisplaySoloistRegistered{false};
   AnimatedNodesManager m_animatedNodesManager;
   std::mutex m_nodesManagerLock;

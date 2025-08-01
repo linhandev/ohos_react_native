@@ -16,6 +16,7 @@
 #include "Drivers/AnimationDriver.h"
 #include "Drivers/EventAnimationDriver.h"
 #include "Nodes/AnimatedNode.h"
+#include "RNOH/ApiVersionCheck.h"
 #include "RNOH/DisplayMetricsManager.h"
 
 namespace rnoh {
