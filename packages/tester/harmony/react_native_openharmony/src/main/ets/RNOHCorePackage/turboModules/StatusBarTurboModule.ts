@@ -90,7 +90,7 @@ export class StatusBarTurboModule extends UITurboModule {
   }
 
   private async setConstants() {
-    const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+    const windowInstance = await this.ctx.rnInstance.getRNWindow();
     try {
       const statusBarHeight = windowInstance.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM).topRect.height;
 
@@ -105,7 +105,7 @@ export class StatusBarTurboModule extends UITurboModule {
   }
 
   private async registerWindowAvoidAreaChangeListener() {
-    const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+    const windowInstance = await this.ctx.rnInstance.getRNWindow();
     const onWindowAvoidAreaChange = (avoidAreaOptions: window.AvoidAreaOptions) => {
       if(avoidAreaOptions.type === window.AvoidAreaType.TYPE_SYSTEM){
         const scaledStatusBarHeight = px2vp(avoidAreaOptions.area.topRect.height);
@@ -142,7 +142,7 @@ export class StatusBarTurboModule extends UITurboModule {
       systemBarProperties.statusBarContentColor = '#000000';
     }
     try {
-      const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+      const windowInstance = await this.ctx.rnInstance.getRNWindow();
       windowInstance.setWindowSystemBarProperties(systemBarProperties);
       this.ctx.logger.info('Succeeded in setting the status bar content style.');
     }
@@ -159,7 +159,7 @@ export class StatusBarTurboModule extends UITurboModule {
     };
     let intervalId;
     try {
-      const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+      const windowInstance = await this.ctx.rnInstance.getRNWindow();
       if (!animated) {
         windowInstance.setWindowSystemBarProperties(systemBarProperties);
       } else {
@@ -186,7 +186,7 @@ export class StatusBarTurboModule extends UITurboModule {
   async setHidden(hidden: boolean, withAnimation?: string) {
     const skipAnimation = !withAnimation || withAnimation === 'none'
     try {
-      const windowInstance = await window.getLastWindow(this.ctx.uiAbilityContext);
+      const windowInstance = await this.ctx.rnInstance.getRNWindow();
       await windowInstance.setSpecificSystemBarEnabled('status', !hidden);
       this._isStatusBarHidden = hidden
       this.eventEmitter.emit("SYSTEM_BAR_VISIBILITY_CHANGE", { hidden })

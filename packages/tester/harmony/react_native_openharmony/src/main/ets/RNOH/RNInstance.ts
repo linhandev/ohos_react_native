@@ -32,6 +32,7 @@ import { WorkerThread } from "./WorkerThread"
 import font from "@ohos.font"
 import { RNOHMarker, RNOHMarkerEventPayload } from './RNOHMarker'
 import { JSEngineName } from './types'
+import { common } from '@kit.AbilityKit'
 
 
 export type Resource = Exclude<font.FontOptions['familySrc'], string>;
@@ -355,6 +356,11 @@ export interface RNInstance {
     rootTouchTargetTag: number,
     touchEvent: TouchEvent,
   );
+
+  /**
+   * @returns The RN Window associated with this RNInstance.
+  */
+  getRNWindow(): Promise<window.Window>;
 }
 
 /**
@@ -509,7 +515,8 @@ export class RNInstanceImpl implements RNInstance {
   private packages: RNPackage[] = [];
   private maybeDisconnectDebugger?: (() => void) | undefined = undefined;
   private unregisterDevToolsMessageListeners: (() => void)[] = [];
-
+  private uiAbilityContext: common.UIAbilityContext = undefined;
+  private rnWindow: window.Window = undefined;
 
   constructor(
     private envId: number,
@@ -1204,5 +1211,29 @@ export class RNInstanceImpl implements RNInstance {
           payload.timestamp
         )
     )
+  }
+
+  public setUIAbilityContext(uiAbilityContext: common.UIAbilityContext): void {
+    if (uiAbilityContext != undefined) {
+      this.uiAbilityContext = uiAbilityContext;
+    }
+  }
+
+  public setRNWindow(rnWindow: window.Window): void {
+    if (rnWindow != undefined) {
+      this.rnWindow = rnWindow;
+      return;
+    }
+
+    if (this.uiAbilityContext != undefined) {
+      this.rnWindow = this.uiAbilityContext.windowStage.getMainWindowSync();
+    }
+  }
+
+  public async getRNWindow(): Promise<window.Window> {
+    if (this.rnWindow != undefined) {
+      return this.rnWindow;
+    }
+    return await window.getLastWindow(this.uiAbilityContext);
   }
 }

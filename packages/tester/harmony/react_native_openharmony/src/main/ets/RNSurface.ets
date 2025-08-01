@@ -22,6 +22,7 @@ import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
 import type { SurfaceContext } from './RNOH/RNInstance';
 import { NodeContent } from '@ohos.arkui.node'
+import { window } from '@kit.ArkUI';
 
 interface RootViewState {}
 
@@ -200,6 +201,7 @@ export struct RNSurface {
     }
     const stopTracing = this.logger.clone("aboutToAppear").startTracing();
     (this.ctx.rnInstance as RNInstanceImpl).setUIContext(this.getUIContext());
+    (this.ctx.rnInstance as RNInstanceImpl).setRNWindow(window.findWindow(this.getUIContext().getWindowName()));
     this.ctx.rnInstance.setFrameNodeFactory(new CustomRNComponentFrameNodeFactory(this.getUIContext(), this.ctx.logger,
       () => {
         return this.ctx as RNComponentContext
