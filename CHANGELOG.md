@@ -1,5 +1,18 @@
 # Changelog
 
+## Internal: v0.77.16
+- fix: update memfs version to 4.12.0,([e34092e48](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e34092e484a56422e05520498de552a6e6711096))
+- feat: redirect imports to rnoh-61-interop package,([2e642ec83](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2e642ec833ecc1b91d59722aca620dfdd92568f1))
+- feat: Add the --port and --no-packager parameters to the run-harmony command.,([3511ccfc3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3511ccfc373da54b797eb74d05fc953e56f8dd5f))
+- fix: When modifying multiple windows, the issue of getting mismatched windows using getLastWindow,([65b3c58f8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/65b3c58f8b20d5914e18782e6df11e482680cee0))
+- chore:API level isolation LTPO feature,([8c3661d7a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8c3661d7a7f1f9a86e5bc2c9b2e99f0ae8848639))
+- fix: rnoh template supports bundle.harmony.js,([1224c4195](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1224c4195bb4064ff2c552ad8a23cf78bc17470e))
+- fix:Compilation failed because header file dependencies are missing,([b14f23a9e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b14f23a9e207d98a8bc4e8f7e7b5b5229ca94e30))
+- Chore: Run Interop 61 Tester's legacy project on Android and add setup instructions explaining how to setup Android. Switch App.js to App.tsx.,([037024ac6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/037024ac6adee296c76ee8bef2c2c51935ae30e1))
+- chore: Init RNOH Interop 61 Project,([ff4c4ece5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ff4c4ece50fbd112b59235c2bb3d7b25d1d82dbf))
+- fix: Solve the compilation problem of linear-gradient,([843925780](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8439257807ef43e56670dc21ca557c2f7c2e6dc0))
+- [chore]: updated to version 6.0.0.501(0.77.15),([741c1bbd5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/741c1bbd54623201bd7229e81200bac757ec9903))
+
 ## Internal: v0.77.15
 - Improve the stability and abstraction of the API.,([5611253f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5611253faff68483df21b353f13ca378a856a4b3))
 - [doc]: improve 3 documents.,([2ff6e8fb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2ff6e8fb9030747d5772db81cb08aeb5c9e2d123))
