@@ -15,6 +15,7 @@ set(OH_MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../oh_modules") # requi
 add_subdirectory("${RNOH_CPP_DIR}" ./rn)
 
 #include("${CMAKE_CURRENT_SOURCE_DIR}/autolinking.cmake")
+add_subdirectory("../../../../react_native_harmony_61_interop/src/main/cpp" ./react-native-harmony-61-interop)
 
 file(GLOB GENERATED_CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp") # this line is needed by codegen v1
 add_library(rnoh_app SHARED
@@ -25,3 +26,4 @@ add_library(rnoh_app SHARED
 target_link_libraries(rnoh_app PUBLIC rnoh)
 
 #autolink_libraries(rnoh_app)
+target_link_libraries(rnoh_app PUBLIC rnoh_interop_61)

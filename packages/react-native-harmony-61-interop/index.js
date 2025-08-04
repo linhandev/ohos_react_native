@@ -6,16 +6,19 @@
  */
 module.exports = {
   get AccessibilityInfo() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/AccessibilityInfo/AccessibilityInfo')
+      .default;
   },
   get ActivityIndicator() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/ActivityIndicator/ActivityIndicator').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/ActivityIndicator/ActivityIndicator')
+      .default;
   },
   get Alert() {
     return require('@react-native-oh/react-native-harmony/Libraries/Alert/Alert');
   },
   get Animated() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Animated/Animated').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Animated/Animated')
+      .default;
   },
   get Appearance() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Appearance');
@@ -27,34 +30,41 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/AppState/AppState');
   },
   get BackHandler() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler')
+      .default;
   },
   get Button() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Button').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/Button')
+      .default;
   },
   get DevSettings() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/DevSettings');
   },
   get Dimensions() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions')
+      .default;
   },
   get DeviceEventEmitter() {
-    return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/RCTDeviceEventEmitter').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/RCTDeviceEventEmitter')
+      .default;
   },
   get DrawerLayoutAndroid() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid');
   },
   get Easing() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Animated/Easing').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Animated/Easing')
+      .default;
   },
   get findNodeHandle() {
-    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RendererProxy').findNodeHandle;
+    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RendererProxy')
+      .findNodeHandle;
   },
   get FlatList() {
     return require('@react-native-oh/react-native-harmony/Libraries/Lists/FlatList');
   },
   get Image() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Image/Image').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Image/Image')
+      .default;
   },
   get ImageBackground() {
     return require('@react-native-oh/react-native-harmony/Libraries/Image/ImageBackground');
@@ -69,7 +79,8 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Linking/Linking');
   },
   get LogBox() {
-    return require('@react-native-oh/react-native-harmony/Libraries/LogBox/LogBox').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/LogBox/LogBox')
+      .default;
   },
   get Modal() {
     return require('@react-native-oh/react-native-harmony/Libraries/Modal/Modal');
@@ -78,40 +89,49 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/Keyboard');
   },
   get KeyboardAvoidingView() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/KeyboardAvoidingView').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/KeyboardAvoidingView')
+      .default;
   },
   get NativeEventEmitter() {
-    return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/NativeEventEmitter').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/NativeEventEmitter')
+      .default;
   },
   get NativeModules() {
     return require('@react-native-oh/react-native-harmony/Libraries/BatchedBridge/NativeModules');
   },
   get PixelRatio() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/PixelRatio').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/PixelRatio')
+      .default;
   },
   get Platform() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Platform');
   },
   get PlatformColor() {
-    return require('@react-native-oh/react-native-harmony/Libraries/StyleSheet/PlatformColorValueTypes').PlatformColor;
+    return require('@react-native-oh/react-native-harmony/Libraries/StyleSheet/PlatformColorValueTypes')
+      .PlatformColor;
   },
   get Pressable() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Pressable/Pressable').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/Pressable/Pressable')
+      .default;
   },
   get RefreshControl() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/RefreshControl/RefreshControl');
   },
   get requireNativeComponent() {
-    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/requireNativeComponent').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/requireNativeComponent')
+      .default;
   },
   get RootTagContext() {
-    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RootTag').RootTagContext;
+    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RootTag')
+      .RootTagContext;
   },
   get SafeAreaView() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/SafeAreaView/SafeAreaView').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/SafeAreaView/SafeAreaView')
+      .default;
   },
   get Settings() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Settings/Settings').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Settings/Settings')
+      .default;
   },
   get Share() {
     return require('@react-native-oh/react-native-harmony/Libraries/Share/Share');
@@ -126,7 +146,8 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/StyleSheet/StyleSheet');
   },
   get Switch() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Switch/Switch').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/Switch/Switch')
+      .default;
   },
   get Systrace() {
     return require('@react-native-oh/react-native-harmony/Libraries/Performance/Systrace');
@@ -141,7 +162,8 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/ToastAndroid/ToastAndroid.android');
   },
   get Touchable() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/Touchable').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/Touchable')
+      .default;
   },
   get TouchableHighlight() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableHighlight');
@@ -162,16 +184,20 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/UIManager');
   },
   get unstable_batchedUpdates() {
-    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RendererProxy').unstable_batchedUpdates;
+    return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RendererProxy')
+      .unstable_batchedUpdates;
   },
   get useAnimatedValue() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Animated/useAnimatedValue').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Animated/useAnimatedValue')
+      .default;
   },
   get useColorScheme() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/useColorScheme').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/useColorScheme')
+      .default;
   },
   get useWindowDimensions() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/useWindowDimensions').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/useWindowDimensions')
+      .default;
   },
   get View() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
@@ -180,13 +206,16 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Interaction/InteractionManager');
   },
   get PanResponder() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Interaction/PanResponder').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Interaction/PanResponder')
+      .default;
   },
   get processColor() {
-    return require('@react-native-oh/react-native-harmony/Libraries/StyleSheet/processColor').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/StyleSheet/processColor')
+      .default;
   },
   get SectionList() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Lists/SectionList').default;
+    return require('@react-native-oh/react-native-harmony/Libraries/Lists/SectionList')
+      .default;
   },
   get Vibration() {
     return require('@react-native-oh/react-native-harmony/Libraries/Vibration/Vibration');
@@ -194,15 +223,22 @@ module.exports = {
   get VirtualizedList() {
     return require('@react-native-oh/react-native-harmony/Libraries/Lists/VirtualizedList');
   },
-    // BEGIN: react-native-harmony specific exports
+  // BEGIN: react-native-harmony specific exports
   get registerViewConfig() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Renderer/shims/ReactNativeViewConfigRegistry').register;
+    return require('@react-native-oh/react-native-harmony/Libraries/Renderer/shims/ReactNativeViewConfigRegistry')
+      .register;
   },
   get ReactNativeViewAttributes() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/View/ReactNativeViewAttributes');
   },
   get dispatchCommand() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Renderer/shims/ReactNative').default.dispatchCommand;
+    return require('@react-native-oh/react-native-harmony/Libraries/Renderer/shims/ReactNative')
+      .default.dispatchCommand;
   },
   // END: react-native-harmony specific exports
+  // BEGIN: 61 specific exports
+  get CheckBox() {
+    return require('./Libraries/Components/CheckBox/CheckBox').default;
+  },
+  // END: 61 specific exports
 };

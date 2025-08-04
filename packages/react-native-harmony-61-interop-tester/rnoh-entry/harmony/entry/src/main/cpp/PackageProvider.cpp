@@ -8,7 +8,6 @@
 #include "RNOH/PackageProvider.h"
 // autolinking => #include "RNOHPackagesFactory.h"
 #include "generated/RNOHGeneratedPackage.h"
-
 using namespace rnoh;
 
 std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(

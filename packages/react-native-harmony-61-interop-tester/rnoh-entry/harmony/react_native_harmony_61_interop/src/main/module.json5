@@ -1,0 +1,7 @@
+{
+  module: {
+    name: "react_native_harmony_61_interop",
+    type: 'har',
+    deviceTypes: ['default'],
+  },
+}

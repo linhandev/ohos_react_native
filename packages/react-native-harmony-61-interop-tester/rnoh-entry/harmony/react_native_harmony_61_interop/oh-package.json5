@@ -1,0 +1,10 @@
+{
+  "name": "@rnoh/react-native-openharmony-61-interop",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./src/main/ets/ReactNativeHarmony61InteropPackage.ets",
+  "author": "",
+  "license": "",
+  "dependencies": {
+  }
+}

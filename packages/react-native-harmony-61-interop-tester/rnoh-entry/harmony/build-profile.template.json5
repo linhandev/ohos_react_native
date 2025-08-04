@@ -29,9 +29,23 @@
       targets: [
         {
           name: 'default',
-          applyToProducts: ['default'],
+          applyToProducts: [
+            'default'
+          ],
         },
       ],
     },
+    {
+      name: 'react_native_harmony_61_interop',
+      srcPath: './react_native_harmony_61_interop',
+      targets: [
+        {
+          name: 'default',
+          applyToProducts: [
+            'default',
+          ],
+        },
+      ],
+    }
   ],
 }
