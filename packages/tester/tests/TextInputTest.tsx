@@ -15,7 +15,7 @@ import {
   Image,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
-import React, {useState, useRef, createRef, forwardRef} from 'react';
+import React, {useState, useRef, createRef, forwardRef, useEffect} from 'react';
 import {Button, Effect, StateKeeper, TestCase} from '../components';
 import {useEnvironment} from '../contexts';
 
@@ -27,6 +27,12 @@ const KEYBOARD_TYPES: KeyboardTypeOptions[] = [
   'email-address',
   'phone-pad',
   'url',
+];
+
+const TEXTS = [
+  'Text content',
+  'Hello, World!',
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 ];
 
 const expectKeyboardToAppear = (timeout = 500): Promise<void> => {
@@ -124,9 +130,45 @@ export function TextInputTest() {
           expect(state.keyboardOpened).to.be.equal(true);
         }}
       />
-      <TestCase.Example itShould="render textinput with set content">
-        <TextInputWithTextContent style={styles.textInput} />
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="render textinput with set content"
+        tags={['sequential']}
+        initialState={{
+          index: 0, // Which TEXTS item is currently sent to the component
+          collectedTexts: [] as string[], // What the component reported back via onRendered
+        }}
+        arrange={({state, setState}) => (
+          <TextInputWithTextContent
+            style={styles.textInput}
+            content={TEXTS[state.index]}
+            onRendered={text =>
+              setState(prev => ({
+                ...prev,
+                collectedTexts: [...prev.collectedTexts, text],
+              }))
+            }
+          />
+        )}
+        act={async ({setState, done}) => {
+          await new Promise(res => setTimeout(res, 500));
+          for (let i = 0; i < 3; i++) {
+            setState(prev => ({
+              ...prev,
+              index: (prev.index + 1) % TEXTS.length,
+            }));
+            await new Promise(res => setTimeout(res, 500));
+          }
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.collectedTexts).to.deep.equal([
+            'Text content',
+            'Hello, World!',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'Text content',
+          ]);
+        }}
+      />
       <TestCase.Automated
         itShould="render non-editable textInput"
         tags={['sequential']}
@@ -1221,7 +1263,6 @@ export function TextInputTest() {
         itShould="render multiline with different InputMode types">
         <TextAreaInputModeTest />
       </TestCase.Example>
-
       <TestCase.Example itShould="when value is set and entering Chinese, the cursor position is at the correct position">
         <TextInput
           placeholder="Please Enter Text"
@@ -1363,21 +1404,27 @@ const TextInputKeyboardType = (props: TextInputProps) => {
   );
 };
 
-const TextInputWithTextContent = (props: TextInputProps) => {
-  const texts = [
-    'Text content',
-    'Hello, World!',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  ];
-  const [index, setIndex] = useState(0);
+/**
+ * A purely-controlled TextInput that receives its text via `content`.
+ * Whenever `content` changes, we inform the parent through `onRendered`.
+ */
+const TextInputWithTextContent = (
+  props: TextInputProps & {
+    content?: string;
+    onRendered?: (txt: string) => void;
+  },
+) => {
+  const text = props.content ?? TEXTS[0];
+
+  useEffect(() => props.onRendered?.(text), [text]);
 
   return (
     <>
-      <TextInput {...props}>{texts[index]}</TextInput>
-      <Button
-        label="Toggle text"
-        onPress={() => setIndex(i => (i + 1) % texts.length)}
-      />
+      <TextInput {...props}>{text}</TextInput>
+      <Text style={{marginTop: 8, fontSize: 12, color: '#666'}}>
+        The TextInput above should display:
+      </Text>
+      <Text style={{fontSize: 16, color: '#333'}}>{text}</Text>
     </>
   );
 };
