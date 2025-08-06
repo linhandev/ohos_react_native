@@ -2,28 +2,55 @@ import React, {useState} from 'react';
 import {View, Switch, StyleSheet, Text} from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {Button, TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 export function SwitchTest() {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [event, setEvent] = useState('');
-
+  const {
+    env: {driver},
+  } = useEnvironment();
   return (
     <TestSuite name="Switch">
-      <TestCase.Example itShould="Render a working switch and display it's state and SwitchChangeEvent details">
-        <View style={styles.container}>
-          <Text style={{height: 30}}>
-            Switch isEnabled: {isEnabled.toString()}
-          </Text>
-          <Text style={{height: 30}}>OnChange event: {event}</Text>
-          <Switch
-            trackColor={{false: 'green', true: 'firebrick'}}
-            thumbColor={'beige'}
-            onValueChange={setIsEnabled}
-            value={isEnabled}
-            onChange={e => setEvent(JSON.stringify(e.nativeEvent))}
-          />
-        </View>
-      </TestCase.Example>
+      <TestCase.Automated
+        itShould="Render a working switch and display its state and SwitchChangeEvent details"
+        initialState={{
+          isSwitchEnabled: false,
+          event: '',
+          trackColor: '',
+          ref: React.createRef<React.ElementRef<typeof Switch>>(),
+        }}
+        arrange={({state, setState}) => (
+          <View style={styles.container}>
+            <Text style={{height: 30}}>
+              Switch isEnabled: {state.isSwitchEnabled.toString()}
+            </Text>
+            <Text style={{height: 30}}>
+              OnChange event: {state.event || 'No event yet'}
+            </Text>
+            <Switch
+              ref={state.ref}
+              trackColor={{false: 'green', true: 'firebrick'}}
+              thumbColor={'beige'}
+              value={state.isSwitchEnabled}
+              onChange={e => {
+                const eventData = {...e.nativeEvent};
+                setState(prev => ({
+                  ...prev,
+                  event: JSON.stringify(eventData),
+                  isSwitchEnabled: eventData.value,
+                }));
+              }}
+            />
+          </View>
+        )}
+        act={async ({state, done}) => {
+          await driver?.click({ref: state.ref});
+          done();
+        }}
+        assert={({expect, state}) => {
+          expect(state.isSwitchEnabled).to.be.true;
+          expect(JSON.parse(state.event).value).to.be.true;
+        }}
+      />
       <TestCase.Example itShould="Not override value set by prop when clicked">
         <ValuePropExample />
       </TestCase.Example>
