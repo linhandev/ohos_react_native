@@ -83,7 +83,7 @@ const getPaddingBottom = (
     height < windowHeight &&
     pageY > 0 &&
     pageY > windowHeight &&
-    positionY > 0
+    positionY >= 0
   ) {
     return 0;
   }
