@@ -58,126 +58,6 @@ importers:
         specifier: 5.0.4
         version: 5.0.4
 
-  packages/react-native-core/packages/react-native:
-    dependencies:
-      '@jest/create-cache-key-function':
-        specifier: ^29.6.3
-        version: 29.7.0
-      '@react-native/assets-registry':
-        specifier: 0.77.1
-        version: 0.77.1
-      '@react-native/codegen':
-        specifier: 0.77.1
-        version: 0.77.1(@babel/preset-env@7.26.7(@babel/core@7.26.7))
-      '@react-native/community-cli-plugin':
-        specifier: 0.77.1
-        version: 0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)
-      '@react-native/gradle-plugin':
-        specifier: 0.77.1
-        version: 0.77.1
-      '@react-native/js-polyfills':
-        specifier: 0.77.1
-        version: 0.77.1
-      '@react-native/normalize-colors':
-        specifier: 0.77.1
-        version: 0.77.1
-      '@react-native/virtualized-lists':
-        specifier: 0.77.1
-        version: 0.77.1(@types/react@18.3.18)(react-native@0.77.1(@babel/core@7.26.7)(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@react-native-community/cli-server-api@15.0.1)(@types/react@18.3.18)(react@18.3.1))(react@18.3.1)
-      '@types/react':
-        specifier: ^18.2.6
-        version: 18.3.18
-      abort-controller:
-        specifier: ^3.0.0
-        version: 3.0.0
-      anser:
-        specifier: ^1.4.9
-        version: 1.4.10
-      ansi-regex:
-        specifier: ^5.0.0
-        version: 5.0.1
-      babel-jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@babel/core@7.26.7)
-      babel-plugin-syntax-hermes-parser:
-        specifier: 0.25.1
-        version: 0.25.1
-      base64-js:
-        specifier: ^1.5.1
-        version: 1.5.1
-      chalk:
-        specifier: ^4.0.0
-        version: 4.1.2
-      commander:
-        specifier: ^12.0.0
-        version: 12.1.0
-      event-target-shim:
-        specifier: ^5.0.1
-        version: 5.0.1
-      flow-enums-runtime:
-        specifier: ^0.0.6
-        version: 0.0.6
-      glob:
-        specifier: ^7.1.1
-        version: 7.2.3
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
-      jest-environment-node:
-        specifier: ^29.6.3
-        version: 29.7.0
-      jsc-android:
-        specifier: ^250231.0.0
-        version: 250231.0.0
-      memoize-one:
-        specifier: ^5.0.0
-        version: 5.2.1
-      metro-runtime:
-        specifier: ^0.81.0
-        version: 0.81.1
-      metro-source-map:
-        specifier: ^0.81.0
-        version: 0.81.1
-      nullthrows:
-        specifier: ^1.1.1
-        version: 1.1.1
-      pretty-format:
-        specifier: ^29.7.0
-        version: 29.7.0
-      promise:
-        specifier: ^8.3.0
-        version: 8.3.0
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-devtools-core:
-        specifier: ^6.0.1
-        version: 6.1.0
-      react-refresh:
-        specifier: ^0.14.0
-        version: 0.14.2
-      regenerator-runtime:
-        specifier: ^0.13.2
-        version: 0.13.11
-      scheduler:
-        specifier: 0.24.0-canary-efb381bbf-20230505
-        version: 0.24.0-canary-efb381bbf-20230505
-      semver:
-        specifier: ^7.1.3
-        version: 7.7.1
-      stacktrace-parser:
-        specifier: ^0.1.10
-        version: 0.1.10
-      whatwg-fetch:
-        specifier: ^3.0.0
-        version: 3.6.20
-      ws:
-        specifier: ^6.2.3
-        version: 6.2.3
-      yargs:
-        specifier: ^17.6.2
-        version: 17.7.2
-
   packages/react-native-harmony:
     dependencies:
       '@react-native/assets-registry':
@@ -381,8 +261,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       memfs:
-        specifier: ^4.12.0
-        version: 4.17.0
+        specifier: 4.12.0
+        version: 4.12.0
       metro:
         specifier: ^0.81.0
         version: 0.81.1
@@ -6325,8 +6205,8 @@ packages:
     resolution: {integrity: sha512-qvwipnozMohxLXG1pOqoLiZKNkC4r4qqRucSoDwXowsNGDSULiqFTRUF05vcZWnwJSG22qTsynQhxbaMtnX9gw==}
     engines: {node: '>=8'}
 
-  memfs@4.17.0:
-    resolution: {integrity: sha512-4eirfZ7thblFmqFjywlTmuWVSvccHAJbn1r8qQLzmTO11qcqpohOjmY2mFce6x7x7WtskzRqApPD0hv+Oa74jg==}
+  memfs@4.12.0:
+    resolution: {integrity: sha512-74wDsex5tQDSClVkeK1vtxqYCAgCoXxx+K4NSHzgU/muYVYByFqa+0RnrPO9NM6naWm1+G9JmZ0p6QHhXmeYfA==}
     engines: {node: '>= 4.0.0'}
 
   memoize-one@5.2.1:
@@ -11535,7 +11415,7 @@ snapshots:
       fs-extra: 11.3.0
       inquirer: 12.8.2(@types/node@22.13.1)
       json5: 2.2.3
-      memfs: 4.17.0
+      memfs: 4.12.0
       metro: 0.81.1
       mustache: 4.2.0
       tar: 6.2.1
@@ -12321,9 +12201,7 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/preset-env'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@react-native/normalize-color@2.1.0': {}
 
@@ -16189,7 +16067,7 @@ snapshots:
       mimic-fn: 2.1.0
       p-is-promise: 2.1.0
 
-  memfs@4.17.0:
+  memfs@4.12.0:
     dependencies:
       '@jsonjoy.com/json-pack': 1.1.1(tslib@2.8.1)
       '@jsonjoy.com/util': 1.5.0(tslib@2.8.1)

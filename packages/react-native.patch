@@ -1,0 +1,4455 @@
+# last commit in this patch file is: bcf5a8983cb000f7e5b71b78b72cdf4a898f4ed7
+diff --git a/.gitignore b/.gitignore
+index 0c64f7e5c4..91eabc4a0d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,3 +1,9 @@
++# RNOH patch - ignore the diff file
++rnc.patch
++
++.yarn
++**/*.tgz
++
+ # Xcode
+ !**/*.xcodeproj
+ !**/*.pbxproj
+diff --git a/LICENSE b/LICENSE
+index b93be90515..0d2fb73292 100644
+--- a/LICENSE
++++ b/LICENSE
+@@ -1,4 +1,8 @@
+-MIT License
++The MIT License (MIT)
++
++Copyright (c) 2024
++
++Significant Portions derived from React Native (https://github.com/facebook/react-native):
+ 
+ Copyright (c) Meta Platforms, Inc. and affiliates.
+ 
+@@ -18,4 +22,4 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-SOFTWARE.
++SOFTWARE.
+\ No newline at end of file
+diff --git a/README.md b/README.md
+index e5eb2b01fe..88dcca1ef1 100644
+--- a/README.md
++++ b/README.md
+@@ -1,147 +1,15 @@
+-<h1 align="center">
+-  <a href="https://reactnative.dev/">
+-    React Native
+-  </a>
+-</h1>
++# React Native Core
+ 
+-<p align="center">
+-  <strong>Learn once, write anywhere:</strong><br>
+-  Build mobile apps with React.
+-</p>
++Fork of react-native https://github.com/facebook/react-native. This repository adapts the React Native codebase to make it more extensible for out-of-tree platforms, particularly [React Native OpenHarmony](https://gitee.com/openharmony-sig/ohos_react_native/).
+ 
+-<p align="center">
+-  <a href="https://github.com/facebook/react-native/blob/HEAD/LICENSE">
+-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="React Native is released under the MIT license." />
+-  </a>
+-  <a href="https://circleci.com/gh/facebook/react-native">
+-    <img src="https://circleci.com/gh/facebook/react-native.svg?style=shield" alt="Current CircleCI build status." />
+-  </a>
+-  <a href="https://www.npmjs.org/package/react-native">
+-    <img src="https://img.shields.io/npm/v/react-native?color=brightgreen&label=npm%20package" alt="Current npm package version." />
+-  </a>
+-  <a href="https://reactnative.dev/docs/contributing">
+-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" />
+-  </a>
+-  <a href="https://twitter.com/intent/follow?screen_name=reactnative">
+-    <img src="https://img.shields.io/twitter/follow/reactnative.svg?label=Follow%20@reactnative" alt="Follow @reactnative" />
+-  </a>
+-</p>
++Ideally, changes made in this repository will eventually be integrated into the upstream repository.
+ 
+-<h3 align="center">
+-  <a href="https://reactnative.dev/docs/getting-started">Getting Started</a>
+-  <span> · </span>
+-  <a href="https://reactnative.dev/docs/tutorial">Learn the Basics</a>
+-  <span> · </span>
+-  <a href="https://reactnative.dev/showcase">Showcase</a>
+-  <span> · </span>
+-  <a href="https://reactnative.dev/docs/contributing">Contribute</a>
+-  <span> · </span>
+-  <a href="https://reactnative.dev/help">Community</a>
+-  <span> · </span>
+-  <a href="https://github.com/facebook/react-native/blob/HEAD/.github/SUPPORT.md">Support</a>
+-</h3>
++## What Are the Main Differences Compared to the Upstream Repository?
+ 
+-React Native brings [**React**'s][r] declarative UI framework to iOS and Android. With React Native, you use native UI controls and have full access to the native platform.
++### `packages/react-native/ReactCommon`
+ 
+-- **Declarative.** React makes it painless to create interactive UIs. Declarative views make your code more predictable and easier to debug.
+-- **Component-Based.** Build encapsulated components that manage their state, then compose them to make complex UIs.
+-- **Developer Velocity.** See local changes in seconds. Changes to JavaScript code can be live reloaded without rebuilding the native app.
+-- **Portability.** Reuse code across iOS, Android, and [other platforms][p].
++Various files in ReactCommon that decouple them from Android/iOS platform.
+ 
+-React Native is developed and supported by many companies and individual core contributors. Find out more in our [ecosystem overview][e].
++### `react-native/Libraries`
+ 
+-[r]: https://react.dev/
+-[p]: https://reactnative.dev/docs/out-of-tree-platforms
+-[e]: https://github.com/facebook/react-native/blob/HEAD/ECOSYSTEM.md
+-
+-## Contents
+-
+-- [Requirements](#-requirements)
+-- [Building your first React Native app](#-building-your-first-react-native-app)
+-- [Documentation](#-documentation)
+-- [Upgrading](#-upgrading)
+-- [How to Contribute](#-how-to-contribute)
+-- [Code of Conduct](#code-of-conduct)
+-- [License](#-license)
+-
+-
+-## 📋 Requirements
+-
+-React Native apps may target iOS 13.4 and Android 6.0 (API 23) or newer. You may use Windows, macOS, or Linux as your development operating system, though building and running iOS apps is limited to macOS. Tools like [Expo](https://expo.dev) can be used to work around this.
+-
+-## 🎉 Building your first React Native app
+-
+-Follow the [Getting Started guide](https://reactnative.dev/docs/getting-started). The recommended way to install React Native depends on your project. Here you can find short guides for the most common scenarios:
+-
+-- [Trying out React Native][hello-world]
+-- [Creating a New Application][new-app]
+-- [Adding React Native to an Existing Application][existing]
+-
+-[hello-world]: https://snack.expo.dev/@samples/hello-world
+-[new-app]: https://reactnative.dev/docs/getting-started
+-[existing]: https://reactnative.dev/docs/integration-with-existing-apps
+-
+-## 📖 Documentation
+-
+-The full documentation for React Native can be found on our [website][docs].
+-
+-The React Native documentation discusses components, APIs, and topics that are specific to React Native. For further documentation on the React API that is shared between React Native and React DOM, refer to the [React documentation][r-docs].
+-
+-The source for the React Native documentation and website is hosted on a separate repository, [**@facebook/react-native-website**][repo-website].
+-
+-[docs]: https://reactnative.dev/docs/getting-started
+-[r-docs]: https://react.dev/learn
+-[repo-website]: https://github.com/facebook/react-native-website
+-
+-## 🚀 Upgrading
+-
+-Upgrading to new versions of React Native may give you access to more APIs, views, developer tools, and other goodies. See the [Upgrading Guide][u] for instructions.
+-
+-React Native releases are discussed [in this discussion repo](https://github.com/reactwg/react-native-releases/discussions).
+-
+-[u]: https://reactnative.dev/docs/upgrading
+-[repo-releases]: https://github.com/react-native-community/react-native-releases
+-
+-## 👏 How to Contribute
+-
+-The main purpose of this repository is to continue evolving React Native core. We want to make contributing to this project as easy and transparent as possible, and we are grateful to the community for contributing bug fixes and improvements. Read below to learn how you can take part in improving React Native.
+-
+-### [Code of Conduct][code]
+-
+-Facebook has adopted a Code of Conduct that we expect project participants to adhere to.
+-Please read the [full text][code] so that you can understand what actions will and will not be tolerated.
+-
+-[code]: https://code.fb.com/codeofconduct/
+-
+-### [Contributing Guide][contribute]
+-
+-Read our [**Contributing Guide**][contribute] to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to React Native.
+-
+-[contribute]: https://reactnative.dev/docs/contributing
+-
+-### [Open Source Roadmap][roadmap]
+-
+-You can learn more about our vision for React Native in the [**Roadmap**][roadmap].
+-
+-[roadmap]: https://github.com/facebook/react-native/wiki/Roadmap
+-
+-### Good First Issues
+-
+-We have a list of [good first issues][gfi] that contain bugs which have a relatively limited scope. This is a great place to get started, gain experience, and get familiar with our contribution process.
+-
+-[gfi]: https://github.com/facebook/react-native/labels/good%20first%20issue
+-
+-### Discussions
+-
+-Larger discussions and proposals are discussed in [**@react-native-community/discussions-and-proposals**][repo-meta].
+-
+-[repo-meta]: https://github.com/react-native-community/discussions-and-proposals
+-
+-## 📄 License
+-
+-React Native is MIT licensed, as found in the [LICENSE][l] file.
+-
+-React Native documentation is Creative Commons licensed, as found in the [LICENSE-docs][ld] file.
+-
+-[l]: https://github.com/facebook/react-native/blob/main/LICENSE
+-[ld]: https://github.com/facebook/react-native/blob/main/LICENSE-docs
++This directory includes new 'delegate' files intended to be overridden by other platforms. Some original RN files were modified to call delegate methods.
+diff --git a/package.json b/package.json
+index d31502fd82..dc4b876f44 100644
+--- a/package.json
++++ b/package.json
+@@ -32,11 +32,11 @@
+     "test-typescript": "dtslint packages/react-native/types",
+     "test": "jest",
+     "trigger-react-native-release": "node ./scripts/releases-local/trigger-react-native-release.js",
+-    "update-lock": "npx yarn-deduplicate"
++    "update-lock": "npx yarn-deduplicate",
++    "generate-patch": "echo \"# last commit in this patch file is: $(git rev-parse HEAD)\" > rnc.patch && git diff cda796b88513b2be44a38ce6e2f3aff3e96436b1..HEAD >> rnc.patch"
+   },
+   "workspaces": [
+-    "packages/*",
+-    "tools/*",
++    "packages/*",    "tools/*",
+     "!packages/helloworld"
+   ],
+   "devDependencies": {
+diff --git a/packages/core-cli-utils/package.json b/packages/core-cli-utils/package.json
+index dc233b4d5b..bbb95deb88 100644
+--- a/packages/core-cli-utils/package.json
++++ b/packages/core-cli-utils/package.json
+@@ -25,7 +25,5 @@
+   },
+   "files": [
+     "dist"
+-  ],
+-  "dependencies": {},
+-  "devDependencies": {}
++  ]
+ }
+diff --git a/packages/react-native-codegen-typescript-test/package.json b/packages/react-native-codegen-typescript-test/package.json
+index ed2aacf510..2b663df079 100644
+--- a/packages/react-native-codegen-typescript-test/package.json
++++ b/packages/react-native-codegen-typescript-test/package.json
+@@ -23,14 +23,14 @@
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+-    "@babel/plugin-transform-class-properties": "^7.25.4",
+-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+-    "@babel/plugin-transform-object-rest-spread": "^7.24.7",
+-    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+     "@babel/plugin-transform-async-to-generator": "^7.24.7",
++    "@babel/plugin-transform-class-properties": "^7.25.4",
+     "@babel/plugin-transform-destructuring": "^7.24.8",
+     "@babel/plugin-transform-flow-strip-types": "^7.25.2",
++    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
++    "@babel/plugin-transform-object-rest-spread": "^7.24.7",
++    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+     "@babel/preset-env": "^7.25.3",
+     "@types/jest": "^29.5.3",
+     "jest": "^29.6.3",
+diff --git a/packages/react-native-codegen/package.json b/packages/react-native-codegen/package.json
+index daaf327da6..67ff41b1ac 100644
+--- a/packages/react-native-codegen/package.json
++++ b/packages/react-native-codegen/package.json
+@@ -39,14 +39,14 @@
+   },
+   "devDependencies": {
+     "@babel/core": "^7.25.2",
+-    "@babel/plugin-transform-class-properties": "^7.25.4",
+-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
+-    "@babel/plugin-transform-object-rest-spread": "^7.24.7",
+-    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+     "@babel/plugin-transform-async-to-generator": "^7.24.7",
++    "@babel/plugin-transform-class-properties": "^7.25.4",
+     "@babel/plugin-transform-destructuring": "^7.24.8",
+     "@babel/plugin-transform-flow-strip-types": "^7.25.2",
++    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
++    "@babel/plugin-transform-object-rest-spread": "^7.24.7",
++    "@babel/plugin-transform-optional-chaining": "^7.24.8",
+     "@babel/preset-env": "^7.25.3",
+     "chalk": "^4.0.0",
+     "hermes-estree": "0.25.1",
+diff --git a/packages/react-native-test-renderer/package.json b/packages/react-native-test-renderer/package.json
+index 9df0c465fa..e59fed29b4 100644
+--- a/packages/react-native-test-renderer/package.json
++++ b/packages/react-native-test-renderer/package.json
+@@ -10,7 +10,6 @@
+     "@babel/preset-env": "^7.25.3",
+     "@babel/preset-flow": "^7.20.0"
+   },
+-  "dependencies": {},
+   "main": "src/index.js",
+   "peerDependencies": {
+     "jest": "^29.7.0"
+diff --git a/packages/react-native/Libraries/Alert/Alert.js b/packages/react-native/Libraries/Alert/Alert.js
+index a6b0585f78..d3cddbd39c 100644
+--- a/packages/react-native/Libraries/Alert/Alert.js
++++ b/packages/react-native/Libraries/Alert/Alert.js
+@@ -8,10 +8,12 @@
+  * @flow
+  */
+ 
+-import type {DialogOptions} from '../NativeModules/specs/NativeDialogManagerAndroid';
++// import type {DialogOptions} from '../NativeModules/specs/NativeDialogManagerAndroid';
+ 
+ import Platform from '../Utilities/Platform';
+-import RCTAlertManager from './RCTAlertManager';
++// import RCTAlertManager from './RCTAlertManager';
++import AlertDelegate from './delegates/AlertDelegate';
++const ALERT_DELEGATE = new AlertDelegate({});
+ 
+ export type AlertType =
+   | 'default'
+@@ -46,74 +48,75 @@ class Alert {
+     buttons?: Buttons,
+     options?: Options,
+   ): void {
+-    if (Platform.OS === 'ios') {
+-      Alert.prompt(
+-        title,
+-        message,
+-        buttons,
+-        'default',
+-        undefined,
+-        undefined,
+-        options,
+-      );
+-    } else if (Platform.OS === 'android') {
+-      const NativeDialogManagerAndroid =
+-        require('../NativeModules/specs/NativeDialogManagerAndroid').default;
+-      if (!NativeDialogManagerAndroid) {
+-        return;
+-      }
+-      const constants = NativeDialogManagerAndroid.getConstants();
++    ALERT_DELEGATE.alert(title, message, buttons, options);
++    // if (Platform.OS === 'ios') {
++    //   Alert.prompt(
++    //     title,
++    //     message,
++    //     buttons,
++    //     'default',
++    //     undefined,
++    //     undefined,
++    //     options,
++    //   );
++    // } else if (Platform.OS === 'android') {
++    //   const NativeDialogManagerAndroid =
++    //     require('../NativeModules/specs/NativeDialogManagerAndroid').default;
++    //   if (!NativeDialogManagerAndroid) {
++    //     return;
++    //   }
++    //   const constants = NativeDialogManagerAndroid.getConstants();
+ 
+-      const config: DialogOptions = {
+-        title: title || '',
+-        message: message || '',
+-        cancelable: false,
+-      };
++    //   const config: DialogOptions = {
++    //     title: title || '',
++    //     message: message || '',
++    //     cancelable: false,
++    //   };
+ 
+-      if (options && options.cancelable) {
+-        config.cancelable = options.cancelable;
+-      }
+-      // At most three buttons (neutral, negative, positive). Ignore rest.
+-      // The text 'OK' should be probably localized. iOS Alert does that in native.
+-      const defaultPositiveText = 'OK';
+-      const validButtons: Buttons = buttons
+-        ? buttons.slice(0, 3)
+-        : [{text: defaultPositiveText}];
+-      const buttonPositive = validButtons.pop();
+-      const buttonNegative = validButtons.pop();
+-      const buttonNeutral = validButtons.pop();
++    //   if (options && options.cancelable) {
++    //     config.cancelable = options.cancelable;
++    //   }
++    //   // At most three buttons (neutral, negative, positive). Ignore rest.
++    //   // The text 'OK' should be probably localized. iOS Alert does that in native.
++    //   const defaultPositiveText = 'OK';
++    //   const validButtons: Buttons = buttons
++    //     ? buttons.slice(0, 3)
++    //     : [{text: defaultPositiveText}];
++    //   const buttonPositive = validButtons.pop();
++    //   const buttonNegative = validButtons.pop();
++    //   const buttonNeutral = validButtons.pop();
+ 
+-      if (buttonNeutral) {
+-        config.buttonNeutral = buttonNeutral.text || '';
+-      }
+-      if (buttonNegative) {
+-        config.buttonNegative = buttonNegative.text || '';
+-      }
+-      if (buttonPositive) {
+-        config.buttonPositive = buttonPositive.text || defaultPositiveText;
+-      }
++    //   if (buttonNeutral) {
++    //     config.buttonNeutral = buttonNeutral.text || '';
++    //   }
++    //   if (buttonNegative) {
++    //     config.buttonNegative = buttonNegative.text || '';
++    //   }
++    //   if (buttonPositive) {
++    //     config.buttonPositive = buttonPositive.text || defaultPositiveText;
++    //   }
+ 
+-      /* $FlowFixMe[missing-local-annot] The type annotation(s) required by
+-       * Flow's LTI update could not be added via codemod */
+-      const onAction = (action, buttonKey) => {
+-        if (action === constants.buttonClicked) {
+-          if (buttonKey === constants.buttonNeutral) {
+-            // $FlowFixMe[incompatible-type]
+-            buttonNeutral.onPress && buttonNeutral.onPress();
+-          } else if (buttonKey === constants.buttonNegative) {
+-            // $FlowFixMe[incompatible-type]
+-            buttonNegative.onPress && buttonNegative.onPress();
+-          } else if (buttonKey === constants.buttonPositive) {
+-            // $FlowFixMe[incompatible-type]
+-            buttonPositive.onPress && buttonPositive.onPress();
+-          }
+-        } else if (action === constants.dismissed) {
+-          options && options.onDismiss && options.onDismiss();
+-        }
+-      };
+-      const onError = (errorMessage: string) => console.warn(errorMessage);
+-      NativeDialogManagerAndroid.showAlert(config, onError, onAction);
+-    }
++    //   /* $FlowFixMe[missing-local-annot] The type annotation(s) required by
++    //    * Flow's LTI update could not be added via codemod */
++    //   const onAction = (action, buttonKey) => {
++    //     if (action === constants.buttonClicked) {
++    //       if (buttonKey === constants.buttonNeutral) {
++    //         // $FlowFixMe[incompatible-type]
++    //         buttonNeutral.onPress && buttonNeutral.onPress();
++    //       } else if (buttonKey === constants.buttonNegative) {
++    //         // $FlowFixMe[incompatible-type]
++    //         buttonNegative.onPress && buttonNegative.onPress();
++    //       } else if (buttonKey === constants.buttonPositive) {
++    //         // $FlowFixMe[incompatible-type]
++    //         buttonPositive.onPress && buttonPositive.onPress();
++    //       }
++    //     } else if (action === constants.dismissed) {
++    //       options && options.onDismiss && options.onDismiss();
++    //     }
++    //   };
++    //   const onError = (errorMessage: string) => console.warn(errorMessage);
++    //   NativeDialogManagerAndroid.showAlert(config, onError, onAction);
++    // }
+   }
+ 
+   static prompt(
+@@ -125,52 +128,53 @@ class Alert {
+     keyboardType?: string,
+     options?: Options,
+   ): void {
+-    if (Platform.OS === 'ios') {
+-      let callbacks: Array<?any> = [];
+-      const buttons = [];
+-      let cancelButtonKey;
+-      let destructiveButtonKey;
+-      let preferredButtonKey;
+-      if (typeof callbackOrButtons === 'function') {
+-        callbacks = [callbackOrButtons];
+-      } else if (Array.isArray(callbackOrButtons)) {
+-        callbackOrButtons.forEach((btn, index) => {
+-          callbacks[index] = btn.onPress;
+-          if (btn.style === 'cancel') {
+-            cancelButtonKey = String(index);
+-          } else if (btn.style === 'destructive') {
+-            destructiveButtonKey = String(index);
+-          }
+-          if (btn.isPreferred) {
+-            preferredButtonKey = String(index);
+-          }
+-          if (btn.text || index < (callbackOrButtons || []).length - 1) {
+-            const btnDef: {[number]: string} = {};
+-            btnDef[index] = btn.text || '';
+-            buttons.push(btnDef);
+-          }
+-        });
+-      }
++    ALERT_DELEGATE.prompt(title, message, callbackOrButtons, type, defaultValue, keyboardValue, options);
++    // if (Platform.OS === 'ios') {
++    //   let callbacks: Array<?any> = [];
++    //   const buttons = [];
++    //   let cancelButtonKey;
++    //   let destructiveButtonKey;
++    //   let preferredButtonKey;
++    //   if (typeof callbackOrButtons === 'function') {
++    //     callbacks = [callbackOrButtons];
++    //   } else if (Array.isArray(callbackOrButtons)) {
++    //     callbackOrButtons.forEach((btn, index) => {
++    //       callbacks[index] = btn.onPress;
++    //       if (btn.style === 'cancel') {
++    //         cancelButtonKey = String(index);
++    //       } else if (btn.style === 'destructive') {
++    //         destructiveButtonKey = String(index);
++    //       }
++    //       if (btn.isPreferred) {
++    //         preferredButtonKey = String(index);
++    //       }
++    //       if (btn.text || index < (callbackOrButtons || []).length - 1) {
++    //         const btnDef: {[number]: string} = {};
++    //         btnDef[index] = btn.text || '';
++    //         buttons.push(btnDef);
++    //       }
++    //     });
++    //   }
+ 
+-      RCTAlertManager.alertWithArgs(
+-        {
+-          title: title || '',
+-          message: message || undefined,
+-          buttons,
+-          type: type || undefined,
+-          defaultValue,
+-          cancelButtonKey,
+-          destructiveButtonKey,
+-          preferredButtonKey,
+-          keyboardType,
+-          userInterfaceStyle: options?.userInterfaceStyle || undefined,
+-        },
+-        (id, value) => {
+-          const cb = callbacks[id];
+-          cb && cb(value);
+-        },
+-      );
+-    }
++    //   RCTAlertManager.alertWithArgs(
++    //     {
++    //       title: title || '',
++    //       message: message || undefined,
++    //       buttons,
++    //       type: type || undefined,
++    //       defaultValue,
++    //       cancelButtonKey,
++    //       destructiveButtonKey,
++    //       preferredButtonKey,
++    //       keyboardType,
++    //       userInterfaceStyle: options?.userInterfaceStyle || undefined,
++    //     },
++    //     (id, value) => {
++    //       const cb = callbacks[id];
++    //       cb && cb(value);
++    //     },
++    //   );
++    // }
+   }
+ }
+ 
+diff --git a/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts b/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts
+new file mode 100644
+index 0000000000..7f113da1b9
+--- /dev/null
++++ b/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts
+@@ -0,0 +1,33 @@
++/**
++ * @format
++ */
++import {
++  BaseAlertDelegate,
++  AlertDelegateButton,
++  AlertDelegateOptions,
++  AlertDelegateType,
++} from './BaseAlertDelegate';
++import {UnsupportedByPlatformError} from '../../../delegates/DelegateError';
++
++export default class AlertDelegate extends BaseAlertDelegate {
++  alert(
++    title: string,
++    message?: string,
++    buttons?: AlertDelegateButton[],
++    options?: AlertDelegateOptions,
++  ): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  prompt(
++    title: string,
++    message?: string,
++    callbackOrButtons?: ((text: string) => void) | AlertDelegateButton[],
++    type?: AlertDelegateType,
++    defaultValue?: string,
++    keyboardType?: string,
++    options?: AlertDelegateOptions,
++  ): void {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts b/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts
+new file mode 100644
+index 0000000000..07f3fc1313
+--- /dev/null
++++ b/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts
+@@ -0,0 +1,37 @@
++/**
++ * @format
++ */
++import type {
++  AlertButton,
++  AlertOptions,
++  AlertType,
++} from '../../Alert/Alert';
++
++export type AlertDelegateContext = {};
++
++export type AlertDelegateButton = AlertButton;
++
++export type AlertDelegateOptions = AlertOptions;
++
++export type AlertDelegateType = AlertType;
++
++export abstract class BaseAlertDelegate {
++  constructor(protected ctx: AlertDelegateContext) {}
++
++  abstract alert(
++    title: string,
++    message?: string,
++    buttons?: AlertDelegateButton[],
++    options?: AlertDelegateOptions,
++  ): void;
++
++  abstract prompt(
++    title: string,
++    message?: string,
++    callbackOrButtons?: ((text: string) => void) | AlertDelegateButton[],
++    type?: AlertDelegateType,
++    defaultValue?: string,
++    keyboardType?: string,
++    options?: AlertDelegateOptions,
++  ): void;
++}
+diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js b/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
+index ccae5960ac..0f21a97339 100644
+--- a/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
++++ b/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
+@@ -14,9 +14,10 @@ import type {EventSubscription} from '../../vendor/emitter/EventEmitter';
+ import RCTDeviceEventEmitter from '../../EventEmitter/RCTDeviceEventEmitter';
+ import {sendAccessibilityEvent} from '../../ReactNative/RendererProxy';
+ import Platform from '../../Utilities/Platform';
++// import NativeAccessibilityInfoAndroid from './NativeAccessibilityInfo'; // RNC_patch
++// import NativeAccessibilityManagerIOS from './NativeAccessibilityManager'; // RNC_patch
++import AccessibilityInfoDelegate from './delegates/AccessibilityInfoDelegate'; // RNC_patch
+ import legacySendAccessibilityEvent from './legacySendAccessibilityEvent';
+-import NativeAccessibilityInfoAndroid from './NativeAccessibilityInfo';
+-import NativeAccessibilityManagerIOS from './NativeAccessibilityManager';
+ 
+ // Events that are only supported on Android.
+ type AccessibilityEventDefinitionsAndroid = {
+@@ -70,6 +71,8 @@ const EventNames: Map<
+       ['darkerSystemColorsChanged', 'darkerSystemColorsChanged'],
+     ]);
+ 
++const DELEGATE = new AccessibilityInfoDelegate({});
++
+ /**
+  * Sometimes it's useful to know whether or not the device has a screen reader
+  * that is currently active. The `AccessibilityInfo` API is designed for this
+@@ -89,20 +92,22 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isBoldTextEnabled
+    */
+   isBoldTextEnabled(): Promise<boolean> {
+-    if (Platform.OS === 'android') {
+-      return Promise.resolve(false);
+-    } else {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentBoldTextState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    }
++    // RNC_patch
++    return DELEGATE.isBoldTextEnabled();
++    // if (Platform.OS === 'android') {
++    //   return Promise.resolve(false);
++    // } else {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentBoldTextState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // }
+   },
+ 
+   /**
+@@ -114,26 +119,28 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isGrayscaleEnabled
+    */
+   isGrayscaleEnabled(): Promise<boolean> {
+-    if (Platform.OS === 'android') {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityInfoAndroid?.isGrayscaleEnabled != null) {
+-          NativeAccessibilityInfoAndroid.isGrayscaleEnabled(resolve);
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    } else {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentGrayscaleState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    }
++    // RNC_patch
++    return DELEGATE.isGrayscaleEnabled();
++    // if (Platform.OS === 'android') {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityInfoAndroid?.isGrayscaleEnabled != null) {
++    //       NativeAccessibilityInfoAndroid.isGrayscaleEnabled(resolve);
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // } else {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentGrayscaleState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // }
+   },
+ 
+   /**
+@@ -145,26 +152,28 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isInvertColorsEnabled
+    */
+   isInvertColorsEnabled(): Promise<boolean> {
+-    if (Platform.OS === 'android') {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityInfoAndroid?.isInvertColorsEnabled != null) {
+-          NativeAccessibilityInfoAndroid.isInvertColorsEnabled(resolve);
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    } else {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentInvertColorsState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    }
++    // RNC_patch
++    return DELEGATE.isInvertColorsEnabled();
++    // if (Platform.OS === 'android') {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityInfoAndroid?.isInvertColorsEnabled != null) {
++    //       NativeAccessibilityInfoAndroid.isInvertColorsEnabled(resolve);
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // } else {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentInvertColorsState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // }
+   },
+ 
+   /**
+@@ -176,24 +185,26 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isReduceMotionEnabled
+    */
+   isReduceMotionEnabled(): Promise<boolean> {
+-    return new Promise((resolve, reject) => {
+-      if (Platform.OS === 'android') {
+-        if (NativeAccessibilityInfoAndroid != null) {
+-          NativeAccessibilityInfoAndroid.isReduceMotionEnabled(resolve);
+-        } else {
+-          reject(null);
+-        }
+-      } else {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentReduceMotionState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      }
+-    });
++    // RNC_patch
++    return DELEGATE.isReduceMotionEnabled();
++    // return new Promise((resolve, reject) => {
++    //   if (Platform.OS === 'android') {
++    //     if (NativeAccessibilityInfoAndroid != null) {
++    //       NativeAccessibilityInfoAndroid.isReduceMotionEnabled(resolve);
++    //     } else {
++    //       reject(null);
++    //     }
++    //   } else {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentReduceMotionState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   }
++    // });
+   },
+ 
+   /**
+@@ -251,23 +262,25 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#prefersCrossFadeTransitions
+    */
+   prefersCrossFadeTransitions(): Promise<boolean> {
+-    return new Promise((resolve, reject) => {
+-      if (Platform.OS === 'android') {
+-        return Promise.resolve(false);
+-      } else {
+-        if (
+-          NativeAccessibilityManagerIOS?.getCurrentPrefersCrossFadeTransitionsState !=
+-          null
+-        ) {
+-          NativeAccessibilityManagerIOS.getCurrentPrefersCrossFadeTransitionsState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      }
+-    });
++    // RNC_patch
++    return DELEGATE.prefersCrossFadeTransitions();
++    // return new Promise((resolve, reject) => {
++    //   if (Platform.OS === 'android') {
++    //     return Promise.resolve(false);
++    //   } else {
++    //     if (
++    //       NativeAccessibilityManagerIOS?.getCurrentPrefersCrossFadeTransitionsState !=
++    //       null
++    //     ) {
++    //       NativeAccessibilityManagerIOS.getCurrentPrefersCrossFadeTransitionsState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   }
++    // });
+   },
+ 
+   /**
+@@ -279,20 +292,22 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isReduceTransparencyEnabled
+    */
+   isReduceTransparencyEnabled(): Promise<boolean> {
+-    if (Platform.OS === 'android') {
+-      return Promise.resolve(false);
+-    } else {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentReduceTransparencyState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      });
+-    }
++    // RNC_patch
++    return DELEGATE.isReduceTransparencyEnabled();
++    // if (Platform.OS === 'android') {
++    //   return Promise.resolve(false);
++    // } else {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentReduceTransparencyState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   });
++    // }
+   },
+ 
+   /**
+@@ -304,24 +319,26 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#isScreenReaderEnabled
+    */
+   isScreenReaderEnabled(): Promise<boolean> {
+-    return new Promise((resolve, reject) => {
+-      if (Platform.OS === 'android') {
+-        if (NativeAccessibilityInfoAndroid != null) {
+-          NativeAccessibilityInfoAndroid.isTouchExplorationEnabled(resolve);
+-        } else {
+-          reject(null);
+-        }
+-      } else {
+-        if (NativeAccessibilityManagerIOS != null) {
+-          NativeAccessibilityManagerIOS.getCurrentVoiceOverState(
+-            resolve,
+-            reject,
+-          );
+-        } else {
+-          reject(null);
+-        }
+-      }
+-    });
++    // RNC_patch
++    return DELEGATE.isScreenReaderEnabled();
++    // return new Promise((resolve, reject) => {
++    //   if (Platform.OS === 'android') {
++    //     if (NativeAccessibilityInfoAndroid != null) {
++    //       NativeAccessibilityInfoAndroid.isTouchExplorationEnabled(resolve);
++    //     } else {
++    //       reject(null);
++    //     }
++    //   } else {
++    //     if (NativeAccessibilityManagerIOS != null) {
++    //       NativeAccessibilityManagerIOS.getCurrentVoiceOverState(
++    //         resolve,
++    //         reject,
++    //       );
++    //     } else {
++    //       reject(null);
++    //     }
++    //   }
++    // });
+   },
+ 
+   /**
+@@ -335,20 +352,21 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo/#isaccessibilityserviceenabled-android
+    */
+   isAccessibilityServiceEnabled(): Promise<boolean> {
+-    return new Promise((resolve, reject) => {
+-      if (Platform.OS === 'android') {
+-        if (
+-          NativeAccessibilityInfoAndroid != null &&
+-          NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled != null
+-        ) {
+-          NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled(resolve);
+-        } else {
+-          reject(null);
+-        }
+-      } else {
+-        reject(null);
+-      }
+-    });
++    return DELEGATE.isAccessibilityServiceEnabled();
++    // return new Promise((resolve, reject) => {
++    //   if (Platform.OS === 'android') {
++    //     if (
++    //       NativeAccessibilityInfoAndroid != null &&
++    //       NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled != null
++    //     ) {
++    //       NativeAccessibilityInfoAndroid.isAccessibilityServiceEnabled(resolve);
++    //     } else {
++    //       reject(null);
++    //     }
++    //   } else {
++    //     reject(null);
++    //   }
++    // });
+   },
+ 
+   /**
+@@ -399,11 +417,8 @@ const AccessibilityInfo = {
+     // $FlowIssue[incompatible-type] - Flow bug with unions and generics (T128099423)
+     handler: (...$ElementType<AccessibilityEventDefinitions, K>) => void,
+   ): EventSubscription {
+-    const deviceEventName = EventNames.get(eventName);
+-    return deviceEventName == null
+-      ? {remove(): void {}}
+-      : // $FlowFixMe[incompatible-call]
+-        RCTDeviceEventEmitter.addListener(deviceEventName, handler);
++    // RNC_patch: changed implementation to support accessibilityServiceChanged
++    return RCTDeviceEventEmitter.addListener(EventNames.get(eventName) ?? eventName, handler);
+   },
+ 
+   /**
+@@ -412,7 +427,9 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#setaccessibilityfocus
+    */
+   setAccessibilityFocus(reactTag: number): void {
+-    legacySendAccessibilityEvent(reactTag, 'focus');
++    // RNC_patch
++    DELEGATE.setAccessibilityFocus(reactTag);
++    // legacySendAccessibilityEvent(reactTag, 'focus');
+   },
+ 
+   /**
+@@ -436,11 +453,13 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#announceforaccessibility
+    */
+   announceForAccessibility(announcement: string): void {
+-    if (Platform.OS === 'android') {
+-      NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
+-    } else {
+-      NativeAccessibilityManagerIOS?.announceForAccessibility(announcement);
+-    }
++    // RNC_patch
++    DELEGATE.announceForAccessibility(announcement);
++    // if (Platform.OS === 'android') {
++    //   NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
++    // } else {
++    //   NativeAccessibilityManagerIOS?.announceForAccessibility(announcement);
++    // }
+   },
+ 
+   /**
+@@ -453,18 +472,19 @@ const AccessibilityInfo = {
+     announcement: string,
+     options: {queue?: boolean},
+   ): void {
+-    if (Platform.OS === 'android') {
+-      NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
+-    } else {
+-      if (NativeAccessibilityManagerIOS?.announceForAccessibilityWithOptions) {
+-        NativeAccessibilityManagerIOS?.announceForAccessibilityWithOptions(
+-          announcement,
+-          options,
+-        );
+-      } else {
+-        NativeAccessibilityManagerIOS?.announceForAccessibility(announcement);
+-      }
+-    }
++    DELEGATE.announceForAccessibilityWithOptions(announcement, options);
++    // if (Platform.OS === 'android') {
++    //   NativeAccessibilityInfoAndroid?.announceForAccessibility(announcement);
++    // } else {
++    //   if (NativeAccessibilityManagerIOS?.announceForAccessibilityWithOptions) {
++    //     NativeAccessibilityManagerIOS?.announceForAccessibilityWithOptions(
++    //       announcement,
++    //       options,
++    //     );
++    //   } else {
++    //     NativeAccessibilityManagerIOS?.announceForAccessibility(announcement);
++    //   }
++    // }
+   },
+ 
+   /**
+@@ -473,20 +493,21 @@ const AccessibilityInfo = {
+    * See https://reactnative.dev/docs/accessibilityinfo#getrecommendedtimeoutmillis
+    */
+   getRecommendedTimeoutMillis(originalTimeout: number): Promise<number> {
+-    if (Platform.OS === 'android') {
+-      return new Promise((resolve, reject) => {
+-        if (NativeAccessibilityInfoAndroid?.getRecommendedTimeoutMillis) {
+-          NativeAccessibilityInfoAndroid.getRecommendedTimeoutMillis(
+-            originalTimeout,
+-            resolve,
+-          );
+-        } else {
+-          resolve(originalTimeout);
+-        }
+-      });
+-    } else {
+-      return Promise.resolve(originalTimeout);
+-    }
++    return DELEGATE.getRecommendedTimeoutMillis(originalTimeout);
++    // if (Platform.OS === 'android') {
++    //   return new Promise((resolve, reject) => {
++    //     if (NativeAccessibilityInfoAndroid?.getRecommendedTimeoutMillis) {
++    //       NativeAccessibilityInfoAndroid.getRecommendedTimeoutMillis(
++    //         originalTimeout,
++    //         resolve,
++    //       );
++    //     } else {
++    //       resolve(originalTimeout);
++    //     }
++    //   });
++    // } else {
++    //   return Promise.resolve(originalTimeout);
++    // }
+   },
+ };
+ 
+diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts
+new file mode 100644
+index 0000000000..4d5b42fd79
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts
+@@ -0,0 +1,28 @@
++/**
++ * @format
++ */
++import {BaseAccessibilityInfoDelegate} from './BaseAccessibilityInfoDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++export default class AccessibilityInfoDelegate extends BaseAccessibilityInfoDelegate {
++  override setAccessibilityFocus(reactTag: number): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override announceForAccessibility(announcement: string): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override announceForAccessibilityWithOptions(
++    announcement: string,
++    options: {queue?: boolean},
++  ) {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getRecommendedTimeoutMillis(
++    originalTimeout: number,
++  ): Promise<number> {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts
+new file mode 100644
+index 0000000000..b65571189f
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts
+@@ -0,0 +1,69 @@
++/**
++ * @format
++ */
++import type {AccessibilityChangeEventName} from '../AccessibilityInfo';
++
++export type BaseAccessibilityInfoDelegateContext = {};
++
++export abstract class BaseAccessibilityInfoDelegate {
++  constructor(protected ctx: BaseAccessibilityInfoDelegateContext) {}
++
++  getPlatformEventNameByAPIEventNameMap(): Map<
++    AccessibilityChangeEventName,
++    string
++  > {
++    return new Map<AccessibilityChangeEventName, string>()
++      .set('change', 'change')
++      .set('boldTextChanged', 'boldTextChanged')
++      .set('grayscaleChanged', 'grayscaleChanged')
++      .set('invertColorsChanged', 'invertColorsChanged')
++      .set('reduceMotionChanged', 'reduceMotionChanged')
++      .set('screenReaderChanged', 'screenReaderChanged')
++      .set('reduceTransparencyChanged', 'reduceTransparencyChanged');
++  }
++
++  async isBoldTextEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async isGrayscaleEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async isInvertColorsEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async isReduceMotionEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async prefersCrossFadeTransitions(): Promise<boolean> {
++    return false;
++  }
++
++  async isReduceTransparencyEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async isScreenReaderEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  async isAccessibilityServiceEnabled(): Promise<boolean> {
++    return false;
++  }
++
++  abstract setAccessibilityFocus(reactTag: number): void;
++
++  abstract announceForAccessibility(announcement: string): void;
++
++  abstract announceForAccessibilityWithOptions(
++    announcement: string,
++    options: {queue?: boolean},
++  );
++
++  abstract getRecommendedTimeoutMillis(
++    originalTimeout: number,
++  ): Promise<number>;
++}
+diff --git a/packages/react-native/Libraries/Components/Button.js b/packages/react-native/Libraries/Components/Button.js
+index 1b5c0b6027..7a530ee0cb 100644
+--- a/packages/react-native/Libraries/Components/Button.js
++++ b/packages/react-native/Libraries/Components/Button.js
+@@ -26,6 +26,7 @@ import TouchableOpacity from './Touchable/TouchableOpacity';
+ import View from './View/View';
+ import invariant from 'invariant';
+ import * as React from 'react';
++import ButtonDelegate from "./delegates/ButtonDelegate"
+ 
+ type ButtonProps = $ReadOnly<{|
+   /**
+@@ -280,6 +281,8 @@ type ButtonProps = $ReadOnly<{|
+   ```
+  */
+ 
++const DELEGATE = new ButtonDelegate({});
++
+ const Touchable: typeof TouchableNativeFeedback | typeof TouchableOpacity =
+   Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
+ 
+@@ -360,6 +363,8 @@ const Button: component(
+       ? 'no-hide-descendants'
+       : importantForAccessibility;
+ 
++  const innerViewFocusable = DELEGATE.getInnerViewFocusable();
++
+   return (
+     <Touchable
+       accessible={accessible}
+@@ -385,7 +390,7 @@ const Button: component(
+       // $FlowFixMe[prop-missing]
+       // $FlowFixMe[incompatible-type-arg]
+       ref={ref}>
+-      <View style={buttonStyles}>
++      <View style={buttonStyles} focusable={innerViewFocusable}>
+         <Text style={textStyles} disabled={disabled}>
+           {formattedTitle}
+         </Text>
+@@ -398,6 +403,7 @@ Button.displayName = 'Button';
+ 
+ const styles = StyleSheet.create({
+   button: Platform.select({
++    default: DELEGATE.getButtonStyle(),
+     ios: {},
+     android: {
+       elevation: 4,
+@@ -410,6 +416,7 @@ const styles = StyleSheet.create({
+     textAlign: 'center',
+     margin: 8,
+     ...Platform.select({
++      default: DELEGATE.getTextStyle(),
+       ios: {
+         // iOS blue from https://developer.apple.com/ios/human-interface-guidelines/visual-design/color/
+         color: '#007AFF',
+@@ -422,6 +429,7 @@ const styles = StyleSheet.create({
+     }),
+   },
+   buttonDisabled: Platform.select({
++    default: DELEGATE.getButtonDisabledStyle(),
+     ios: {},
+     android: {
+       elevation: 0,
+@@ -429,6 +437,7 @@ const styles = StyleSheet.create({
+     },
+   }),
+   textDisabled: Platform.select({
++    default: DELEGATE.getTextDisabledStyle(),
+     ios: {
+       color: '#cdcdcd',
+     },
+diff --git a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js b/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
+index 77c81f0431..371979af8d 100644
+--- a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
++++ b/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
+@@ -24,6 +24,7 @@ import Platform from '../../Utilities/Platform';
+ import {type EventSubscription} from '../../vendor/emitter/EventEmitter';
+ import AccessibilityInfo from '../AccessibilityInfo/AccessibilityInfo';
+ import View from '../View/View';
++import KeyboardAvoidingViewDelegate from './delegates/KeyboardAvoidingViewDelegate';
+ import Keyboard from './Keyboard';
+ import * as React from 'react';
+ 
+@@ -69,16 +70,22 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+   _initialFrameHeight: number = 0;
+   _bottom: number = 0;
+   _windowWidth: number = Dimensions.get('window').width;
++  _delegate: KeyboardAvoidingViewDelegate;
+ 
+   constructor(props: Props) {
+     super(props);
+     this.state = {bottom: 0};
+     this.viewRef = React.createRef();
++    this._delegate = new KeyboardAvoidingViewDelegate({ getProps: () => this.props });
+   }
+ 
+   async _relativeKeyboardHeight(
+     keyboardFrame: KeyboardMetrics,
+   ): Promise<number> {
++    const result = this._delegate.getRelativeKeyboardHeight(keyboardFrame, this.props);
++    if (result !== null) {
++      return result;
++    }
+     const frame = this._frame;
+     if (!frame || !keyboardFrame) {
+       return 0;
+@@ -230,6 +237,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+       ...props
+     } = this.props;
+     const bottomHeight = enabled === true ? this.state.bottom : 0;
++    const preparedChildren = this._delegate.prepareChildren(children, { bottomHeight });
+     switch (behavior) {
+       case 'height':
+         let heightStyle;
+@@ -249,7 +257,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+             style={StyleSheet.compose(style, heightStyle)}
+             onLayout={this._onLayout}
+             {...props}>
+-            {children}
++            {preparedChildren}
+           </View>
+         );
+ 
+@@ -264,7 +272,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+               style={StyleSheet.compose(contentContainerStyle, {
+                 bottom: bottomHeight,
+               })}>
+-              {children}
++              {preparedChildren}
+             </View>
+           </View>
+         );
+@@ -276,7 +284,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+             style={StyleSheet.compose(style, {paddingBottom: bottomHeight})}
+             onLayout={this._onLayout}
+             {...props}>
+-            {children}
++            {preparedChildren}
+           </View>
+         );
+ 
+@@ -287,7 +295,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+             onLayout={this._onLayout}
+             style={style}
+             {...props}>
+-            {children}
++            {preparedChildren}
+           </View>
+         );
+     }
+diff --git a/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts b/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts
+new file mode 100644
+index 0000000000..ce4b6755d4
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts
+@@ -0,0 +1,28 @@
++/**
++ * @format
++ */
++import {ReactNode} from 'react';
++import type {KeyboardAvoidingViewProps, KeyboardMetrics} from 'react-native';
++
++export type BaseKeyboardAvoidingViewDelegateContext = {
++  getProps(): KeyboardAvoidingViewProps;
++};
++
++export type PrepareChildrenOptions = {
++  bottomHeight?: number;
++};
++
++export abstract class BaseKeyboardAvoidingViewDelegate {
++  constructor(protected ctx: BaseKeyboardAvoidingViewDelegateContext) {}
++
++  getRelativeKeyboardHeight(keyboardFrame: KeyboardMetrics): number | null {
++    return null;
++  }
++
++  prepareChildren(
++    children: ReactNode,
++    options: PrepareChildrenOptions = {},
++  ): ReactNode {
++    return children;
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts b/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts
+new file mode 100644
+index 0000000000..c1cde588e2
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts
+@@ -0,0 +1,6 @@
++/**
++ * @format
++ */
++import {BaseKeyboardAvoidingViewDelegate} from './BaseKeyboardAvoidingViewDelegate';
++
++export default class KeyboardAvoidingViewDelegate extends BaseKeyboardAvoidingViewDelegate {}
+diff --git a/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js b/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
+index 221df2405e..36f4a39c61 100644
+--- a/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
++++ b/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
+@@ -11,14 +11,16 @@
+ import type {ColorValue} from '../../StyleSheet/StyleSheet';
+ import type {ViewProps} from '../View/ViewPropTypes';
+ 
+-import AndroidSwipeRefreshLayoutNativeComponent, {
+-  Commands as AndroidSwipeRefreshLayoutCommands,
+-} from './AndroidSwipeRefreshLayoutNativeComponent';
+-import PullToRefreshViewNativeComponent, {
+-  Commands as PullToRefreshCommands,
+-} from './PullToRefreshViewNativeComponent';
+-
+-const Platform = require('../../Utilities/Platform');
++// RNC_patch
++// import AndroidSwipeRefreshLayoutNativeComponent, {
++//   Commands as AndroidSwipeRefreshLayoutCommands,
++// } from './AndroidSwipeRefreshLayoutNativeComponent';
++// import PullToRefreshViewNativeComponent, {
++//   Commands as PullToRefreshCommands,
++// } from './PullToRefreshViewNativeComponent';
++import RefreshControlDelegate from './delegates/RefreshControlDelegate';
++
++// const Platform = require('../../Utilities/Platform');
+ const React = require('react');
+ 
+ type IOSProps = $ReadOnly<{|
+@@ -128,6 +130,13 @@ class RefreshControl extends React.Component<RefreshControlProps> {
+   >;
+   _lastNativeRefreshing = false;
+ 
++  // RNC_patch
++  _delegate: RefreshControlDelegate;
++  constructor(props: RefreshControlProps) {
++    super(props);
++    this._delegate = new RefreshControlDelegate({ getProps: () => this.props });
++  }
++
+   componentDidMount() {
+     this._lastNativeRefreshing = this.props.refreshing;
+   }
+@@ -142,42 +151,48 @@ class RefreshControl extends React.Component<RefreshControlProps> {
+       this.props.refreshing !== this._lastNativeRefreshing &&
+       this._nativeRef
+     ) {
+-      if (Platform.OS === 'android') {
+-        AndroidSwipeRefreshLayoutCommands.setNativeRefreshing(
+-          this._nativeRef,
+-          this.props.refreshing,
+-        );
+-      } else {
+-        PullToRefreshCommands.setNativeRefreshing(
+-          this._nativeRef,
+-          this.props.refreshing,
+-        );
+-      }
++      this._delegate.onSetNativeRefreshing(this._nativeRef, this.props.refreshing);
++      // if (Platform.OS === 'android') {
++      //   AndroidSwipeRefreshLayoutCommands.setNativeRefreshing(
++      //     this._nativeRef,
++      //     this.props.refreshing,
++      //   );
++      // } else {
++      //   PullToRefreshCommands.setNativeRefreshing(
++      //     this._nativeRef,
++      //     this.props.refreshing,
++      //   );
++      // }
+       this._lastNativeRefreshing = this.props.refreshing;
+     }
+   }
+ 
+   render(): React.Node {
+-    if (Platform.OS === 'ios') {
+-      const {enabled, colors, progressBackgroundColor, size, ...props} =
+-        this.props;
+-      return (
+-        <PullToRefreshViewNativeComponent
+-          {...props}
+-          ref={this._setNativeRef}
+-          onRefresh={this._onRefresh}
+-        />
+-      );
+-    } else {
+-      const {tintColor, titleColor, title, ...props} = this.props;
+-      return (
+-        <AndroidSwipeRefreshLayoutNativeComponent
+-          {...props}
+-          ref={this._setNativeRef}
+-          onRefresh={this._onRefresh}
+-        />
+-      );
+-    }
++    // RNC_patch
++    return this._delegate.renderNativeComponent({
++      setNativeRef: this._setNativeRef,
++      onRefresh: this._onRefresh,
++    });
++    // if (Platform.OS === 'ios') {
++    //   const {enabled, colors, progressBackgroundColor, size, ...props} =
++    //     this.props;
++    //   return (
++    //     <PullToRefreshViewNativeComponent
++    //       {...props}
++    //       ref={this._setNativeRef}
++    //       onRefresh={this._onRefresh}
++    //     />
++    //   );
++    // } else {
++    //   const {tintColor, titleColor, title, ...props} = this.props;
++    //   return (
++    //     <AndroidSwipeRefreshLayoutNativeComponent
++    //       {...props}
++    //       ref={this._setNativeRef}
++    //       onRefresh={this._onRefresh}
++    //     />
++    //   );
++    // }
+   }
+ 
+   _onRefresh = () => {
+diff --git a/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts b/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts
+new file mode 100644
+index 0000000000..c7004103ae
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts
+@@ -0,0 +1,31 @@
++/**
++ * @format
++ */
++import React from 'react';
++import type { RefreshControlProps } from '../RefreshControl';
++
++export type RefreshControlDelegateContext = {
++  getProps: () => RefreshControlProps
++};
++
++export type RefreshControlDelegateRenderInternalProps<
++  TNativeComponent extends {new (props: any): React.Component<any>},
++> = {
++  setNativeRef: (ref: React.ElementRef<TNativeComponent>) => void;
++  onRefresh: () => void;
++};
++
++export abstract class BaseRefreshControlDelegate<
++  TNativeComponent extends {new (props: any): React.Component<any>},
++> {
++  constructor(protected ctx: RefreshControlDelegateContext) {}
++
++  abstract onSetNativeRefreshing(
++    ref: React.ElementRef<TNativeComponent>,
++    refreshing: boolean,
++  ): void;
++
++  abstract renderNativeComponent(
++    internalProps: RefreshControlDelegateRenderInternalProps<TNativeComponent>,
++  ): React.ReactNode;
++}
+diff --git a/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts b/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts
+new file mode 100644
+index 0000000000..2e83301540
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts
+@@ -0,0 +1,21 @@
++/**
++ * @format
++ */
++
++import {
++  BaseRefreshControlDelegate,
++  RefreshControlDelegateRenderInternalProps,
++} from './BaseRefreshControlDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++export default class RefreshControlDelegate extends BaseRefreshControlDelegate<any> {
++  renderNativeComponent(
++    internalProps: RefreshControlDelegateRenderInternalProps<any>,
++  ): React.ReactNode {
++    throw new UnsupportedByPlatformError();
++  }
++
++  onSetNativeRefreshing(ref: unknown, refreshing: boolean): void {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/ScrollView/ScrollView.js b/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
+index f2dbf2646f..4f4f418416 100644
+--- a/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
++++ b/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
+@@ -44,6 +44,7 @@ import dismissKeyboard from '../../Utilities/dismissKeyboard';
+ import Platform from '../../Utilities/Platform';
+ import Keyboard from '../Keyboard/Keyboard';
+ import TextInputState from '../TextInput/TextInputState';
++import ScrollViewDelegate from './delegates/ScrollViewDelegate';
+ import processDecelerationRate from './processDecelerationRate';
+ import Commands from './ScrollViewCommands';
+ import ScrollViewContext, {HORIZONTAL, VERTICAL} from './ScrollViewContext';
+@@ -655,6 +656,7 @@ export type Props = $ReadOnly<{|
+ 
+ type State = {|
+   layoutHeight: ?number,
++  showScrollIndicator: boolean, // RNC_patch
+ |};
+ 
+ const IS_ANIMATING_TOUCH_START_THRESHOLD_MS = 16;
+@@ -701,13 +703,16 @@ export type ScrollViewComponentStatics = $ReadOnly<{|
+ class ScrollView extends React.Component<Props, State> {
+   static Context: typeof ScrollViewContext = ScrollViewContext;
+ 
++  _delegate: ScrollViewDelegate;
++
+   constructor(props: Props) {
+     super(props);
+-
++    // RNOH patch - resolving flashScrollIndicators command on the JS side
+     this._scrollAnimatedValue = new AnimatedImplementation.Value(
+       this.props.contentOffset?.y ?? 0,
+     );
+     this._scrollAnimatedValue.setOffset(this.props.contentInset?.top ?? 0);
++    this._delegate = new ScrollViewDelegate({});
+   }
+ 
+   _scrollAnimatedValue: AnimatedImplementation.Value;
+@@ -740,6 +745,7 @@ class ScrollView extends React.Component<Props, State> {
+ 
+   state: State = {
+     layoutHeight: null,
++    showScrollIndicator: false, // RNC_patch
+   };
+ 
+   componentDidMount() {
+@@ -918,11 +924,16 @@ class ScrollView extends React.Component<Props, State> {
+    * @platform ios
+    */
+   flashScrollIndicators: () => void = () => {
+-    const component = this.getNativeScrollRef();
+-    if (component == null) {
+-      return;
+-    }
+-    Commands.flashScrollIndicators(component);
++    // RNC_patch
++    this.setState(prev => ({...prev, showScrollIndicator: true}));
++    setTimeout(() => {
++      this.setState(prev => ({...prev, showScrollIndicator: false}));
++    }, 500);
++    // const component = this.getNativeScrollRef();
++    // if (component == null) {
++    //   return;
++    // }
++    // Commands.flashScrollIndicators(component);
+   };
+ 
+   /**
+@@ -1265,10 +1276,7 @@ class ScrollView extends React.Component<Props, State> {
+   _handleScrollBeginDrag: (e: ScrollEvent) => void = (e: ScrollEvent) => {
+     FrameRateLogger.beginScroll(); // TODO: track all scrolls after implementing onScrollEndAnimation
+ 
+-    if (
+-      Platform.OS === 'android' &&
+-      this.props.keyboardDismissMode === 'on-drag'
+-    ) {
++    if (this._delegate.shouldDismissKeyboardOnScrollBeginDrag(this.props)) {
+       dismissKeyboard();
+     }
+ 
+@@ -1769,18 +1777,21 @@ class ScrollView extends React.Component<Props, State> {
+       // default to true
+       snapToEnd: this.props.snapToEnd !== false,
+       // pagingEnabled is overridden by snapToInterval / snapToOffsets
+-      pagingEnabled: Platform.select({
+-        // on iOS, pagingEnabled must be set to false to have snapToInterval / snapToOffsets work
+-        ios:
+-          this.props.pagingEnabled === true &&
+-          this.props.snapToInterval == null &&
+-          this.props.snapToOffsets == null,
+-        // on Android, pagingEnabled must be set to true to have snapToInterval / snapToOffsets work
+-        android:
+-          this.props.pagingEnabled === true ||
+-          this.props.snapToInterval != null ||
+-          this.props.snapToOffsets != null,
+-      }),
++      // RNC_patch: BEGIN
++      pagingEnabled:
++        this.props.pagingEnabled === true &&
++        this.props.snapToInterval == null &&
++        this.props.snapToOffsets == null,
++      showsVerticalScrollIndicator:
++        (this.props.showsVerticalScrollIndicator ?? true) ||
++        this.state.showScrollIndicator,
++      showsHorizontalScrollIndicator:
++        (this.props.showsHorizontalScrollIndicator ?? true) ||
++        this.state.showScrollIndicator,
++      persistentScrollbar:
++        this.props.persistentScrollbar || this.state.showScrollIndicator,
++      // RNC_patch: END
++      ...this._delegate.getCustomNativeProps(this.props),
+     };
+ 
+     const {decelerationRate} = this.props;
+@@ -1794,36 +1805,44 @@ class ScrollView extends React.Component<Props, State> {
+     );
+ 
+     if (refreshControl) {
+-      if (Platform.OS === 'ios') {
+-        // On iOS the RefreshControl is a child of the ScrollView.
+-        return (
+-          // $FlowFixMe[incompatible-type] - Flow only knows element refs.
+-          <NativeScrollView {...props} ref={scrollViewRef}>
+-            {refreshControl}
+-            {contentContainer}
+-          </NativeScrollView>
+-        );
+-      } else if (Platform.OS === 'android') {
+-        // On Android wrap the ScrollView with a AndroidSwipeRefreshLayout.
+-        // Since the ScrollView is wrapped add the style props to the
+-        // AndroidSwipeRefreshLayout and use flex: 1 for the ScrollView.
+-        // Note: we should split props.style on the inner and outer props
+-        // however, the ScrollView still needs the baseStyle to be scrollable
+-        // $FlowFixMe[underconstrained-implicit-instantiation]
+-        // $FlowFixMe[incompatible-call]
+-        const {outer, inner} = splitLayoutProps(flattenStyle(props.style));
+-        return React.cloneElement(
+-          refreshControl,
+-          {style: StyleSheet.compose(baseStyle, outer)},
+-          <NativeScrollView
+-            {...props}
+-            style={StyleSheet.compose(baseStyle, inner)}
+-            // $FlowFixMe[incompatible-type] - Flow only knows element refs.
+-            ref={scrollViewRef}>
+-            {contentContainer}
+-          </NativeScrollView>,
+-        );
+-      }
++      return this._delegate.renderScrollViewWithRefreshControl({
++        NativeScrollView,
++        props,
++        scrollViewRef,
++        refreshControl,
++        contentContainer,
++        baseStyle,
++      });
++      // if (Platform.OS === 'ios') {
++      //   // On iOS the RefreshControl is a child of the ScrollView.
++      //   return (
++      //     // $FlowFixMe[incompatible-type] - Flow only knows element refs.
++      //     <NativeScrollView {...props} ref={scrollViewRef}>
++      //       {refreshControl}
++      //       {contentContainer}
++      //     </NativeScrollView>
++      //   );
++      // } else if (Platform.OS === 'android') {
++      //   // On Android wrap the ScrollView with a AndroidSwipeRefreshLayout.
++      //   // Since the ScrollView is wrapped add the style props to the
++      //   // AndroidSwipeRefreshLayout and use flex: 1 for the ScrollView.
++      //   // Note: we should split props.style on the inner and outer props
++      //   // however, the ScrollView still needs the baseStyle to be scrollable
++      //   // $FlowFixMe[underconstrained-implicit-instantiation]
++      //   // $FlowFixMe[incompatible-call]
++      //   const {outer, inner} = splitLayoutProps(flattenStyle(props.style));
++      //   return React.cloneElement(
++      //     refreshControl,
++      //     {style: StyleSheet.compose(baseStyle, outer)},
++      //     <NativeScrollView
++      //       {...props}
++      //       style={StyleSheet.compose(baseStyle, inner)}
++      //       // $FlowFixMe[incompatible-type] - Flow only knows element refs.
++      //       ref={scrollViewRef}>
++      //       {contentContainer}
++      //     </NativeScrollView>,
++      //   );
++      // }
+     }
+     return (
+       // $FlowFixMe[incompatible-type] - Flow only knows element refs.
+diff --git a/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js b/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
+index 9e225c1dc2..5d9ec5f717 100644
+--- a/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
++++ b/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
+@@ -15,163 +15,12 @@ import type {
+ import type {ScrollViewNativeProps as Props} from './ScrollViewNativeComponentType';
+ 
+ import * as NativeComponentRegistry from '../../NativeComponent/NativeComponentRegistry';
+-import {ConditionallyIgnoredEventHandlers} from '../../NativeComponent/ViewConfigIgnore';
+-import Platform from '../../Utilities/Platform';
++import ScrollViewNativeComponentDelegate from './delegates/ScrollViewNativeComponentDelegate';
++
++const DELEGATE = new ScrollViewNativeComponentDelegate({});
+ 
+ export const __INTERNAL_VIEW_CONFIG: PartialViewConfig =
+-  Platform.OS === 'android'
+-    ? {
+-        uiViewClassName: 'RCTScrollView',
+-        bubblingEventTypes: {},
+-        directEventTypes: {
+-          topMomentumScrollBegin: {
+-            registrationName: 'onMomentumScrollBegin',
+-          },
+-          topMomentumScrollEnd: {
+-            registrationName: 'onMomentumScrollEnd',
+-          },
+-          topScroll: {
+-            registrationName: 'onScroll',
+-          },
+-          topScrollBeginDrag: {
+-            registrationName: 'onScrollBeginDrag',
+-          },
+-          topScrollEndDrag: {
+-            registrationName: 'onScrollEndDrag',
+-          },
+-        },
+-        validAttributes: {
+-          contentOffset: {
+-            diff: require('../../Utilities/differ/pointsDiffer'),
+-          },
+-          decelerationRate: true,
+-          disableIntervalMomentum: true,
+-          maintainVisibleContentPosition: true,
+-          pagingEnabled: true,
+-          scrollEnabled: true,
+-          showsVerticalScrollIndicator: true,
+-          snapToAlignment: true,
+-          snapToEnd: true,
+-          snapToInterval: true,
+-          snapToOffsets: true,
+-          snapToStart: true,
+-          borderBottomLeftRadius: true,
+-          borderBottomRightRadius: true,
+-          sendMomentumEvents: true,
+-          borderRadius: true,
+-          nestedScrollEnabled: true,
+-          scrollEventThrottle: true,
+-          borderStyle: true,
+-          borderRightColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          borderColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          borderBottomColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          persistentScrollbar: true,
+-          horizontal: true,
+-          endFillColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          fadingEdgeLength: true,
+-          overScrollMode: true,
+-          borderTopLeftRadius: true,
+-          scrollPerfTag: true,
+-          borderTopColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          removeClippedSubviews: true,
+-          borderTopRightRadius: true,
+-          borderLeftColor: {
+-            process: require('../../StyleSheet/processColor').default,
+-          },
+-          pointerEvents: true,
+-          isInvertedVirtualizedList: true,
+-        },
+-      }
+-    : {
+-        uiViewClassName: 'RCTScrollView',
+-        bubblingEventTypes: {},
+-        directEventTypes: {
+-          topMomentumScrollBegin: {
+-            registrationName: 'onMomentumScrollBegin',
+-          },
+-          topMomentumScrollEnd: {
+-            registrationName: 'onMomentumScrollEnd',
+-          },
+-          topScroll: {
+-            registrationName: 'onScroll',
+-          },
+-          topScrollBeginDrag: {
+-            registrationName: 'onScrollBeginDrag',
+-          },
+-          topScrollEndDrag: {
+-            registrationName: 'onScrollEndDrag',
+-          },
+-          topScrollToTop: {
+-            registrationName: 'onScrollToTop',
+-          },
+-        },
+-        validAttributes: {
+-          alwaysBounceHorizontal: true,
+-          alwaysBounceVertical: true,
+-          automaticallyAdjustContentInsets: true,
+-          automaticallyAdjustKeyboardInsets: true,
+-          automaticallyAdjustsScrollIndicatorInsets: true,
+-          bounces: true,
+-          bouncesZoom: true,
+-          canCancelContentTouches: true,
+-          centerContent: true,
+-          contentInset: {
+-            diff: require('../../Utilities/differ/insetsDiffer'),
+-          },
+-          contentOffset: {
+-            diff: require('../../Utilities/differ/pointsDiffer'),
+-          },
+-          contentInsetAdjustmentBehavior: true,
+-          decelerationRate: true,
+-          endDraggingSensitivityMultiplier: true,
+-          directionalLockEnabled: true,
+-          disableIntervalMomentum: true,
+-          indicatorStyle: true,
+-          inverted: true,
+-          keyboardDismissMode: true,
+-          maintainVisibleContentPosition: true,
+-          maximumZoomScale: true,
+-          minimumZoomScale: true,
+-          pagingEnabled: true,
+-          pinchGestureEnabled: true,
+-          scrollEnabled: true,
+-          scrollEventThrottle: true,
+-          scrollIndicatorInsets: {
+-            diff: require('../../Utilities/differ/insetsDiffer'),
+-          },
+-          scrollToOverflowEnabled: true,
+-          scrollsToTop: true,
+-          showsHorizontalScrollIndicator: true,
+-          showsVerticalScrollIndicator: true,
+-          snapToAlignment: true,
+-          snapToEnd: true,
+-          snapToInterval: true,
+-          snapToOffsets: true,
+-          snapToStart: true,
+-          verticalScrollIndicatorInsets: {
+-            diff: require('../../Utilities/differ/insetsDiffer'),
+-          },
+-          zoomScale: true,
+-          ...ConditionallyIgnoredEventHandlers({
+-            onScrollBeginDrag: true,
+-            onMomentumScrollEnd: true,
+-            onScrollEndDrag: true,
+-            onMomentumScrollBegin: true,
+-            onScrollToTop: true,
+-            onScroll: true,
+-          }),
+-        },
+-      };
++  DELEGATE.getIntenalViewConfig();
+ 
+ const ScrollViewNativeComponent: HostComponent<Props> =
+   NativeComponentRegistry.get<Props>(
+diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts
+new file mode 100644
+index 0000000000..e37a17d243
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts
+@@ -0,0 +1,36 @@
++/**
++ * @format
++ */
++
++import {ScrollViewProps as _ScrollViewProps} from '../ScrollView';
++
++export type ScrollViewDelegateContext = {};
++
++export type CustomNativeProps = Record<string, any>;
++
++export interface RenderScrollViewWithRefreshControlArgs {
++  NativeScrollView: React.ComponentType<any>;
++  refreshControl: React.ReactElement;
++  scrollViewRef: React.Ref<any>;
++  contentContainer: React.ReactNode;
++  props: any;
++  baseStyle: any;
++}
++
++export type ScrollViewProps = _ScrollViewProps;
++
++export abstract class BaseScrollViewDelegate {
++  constructor(protected ctx: ScrollViewDelegateContext) {}
++
++  abstract renderScrollViewWithRefreshControl(
++    args: RenderScrollViewWithRefreshControlArgs,
++  ): React.ReactNode;
++
++  shouldDismissKeyboardOnScrollBeginDrag(props: ScrollViewProps): boolean {
++    return props.keyboardDismissMode === 'on-drag';
++  }
++
++  getCustomNativeProps(props: ScrollViewProps): CustomNativeProps {
++    return {};
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts
+new file mode 100644
+index 0000000000..66415de3f1
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts
+@@ -0,0 +1,12 @@
++/**
++ * @format
++ */
++
++import type {PartialViewConfig} from '../../../Renderer/shims/ReactNativeTypes';
++export type ScrollViewNativeComponentDelegateContext = {};
++
++export abstract class BaseScrollViewNativeComponentDelegate {
++  constructor(protected ctx: ScrollViewNativeComponentDelegateContext) {}
++
++  abstract getIntenalViewConfig(): PartialViewConfig;
++}
+diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts
+new file mode 100644
+index 0000000000..32a6bfffad
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts
+@@ -0,0 +1,23 @@
++/**
++ * @format
++ */
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++import {
++  BaseScrollViewDelegate,
++  RenderScrollViewWithRefreshControlArgs,
++  ScrollViewProps,
++} from './BaseScrollViewDelegate';
++
++export default class ScrollViewDelegate extends BaseScrollViewDelegate {
++  override renderScrollViewWithRefreshControl(
++    args: RenderScrollViewWithRefreshControlArgs,
++  ): React.ReactNode {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override shouldDismissKeyboardOnScrollBeginDrag(
++    props: ScrollViewProps,
++  ): boolean {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts
+new file mode 100644
+index 0000000000..3ebaf9a4e4
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts
+@@ -0,0 +1,14 @@
++/**
++ * @format
++ */
++
++import type {PartialViewConfig} from '../../../Renderer/shims/ReactNativeTypes';
++
++import {BaseScrollViewNativeComponentDelegate} from './BaseScrollViewNativeComponentDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++export default class ScrollViewNativeComponentDelegate extends BaseScrollViewNativeComponentDelegate {
++  override getIntenalViewConfig(): PartialViewConfig {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts
+new file mode 100644
+index 0000000000..411b69a92c
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts
+@@ -0,0 +1 @@
++export type DecelerationRateType = 'fast' | 'normal' | number;
+diff --git a/packages/react-native/Libraries/Components/StatusBar/StatusBar.js b/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
+index f3be5e02ad..0ab29b737b 100644
+--- a/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
++++ b/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
+@@ -12,8 +12,7 @@ import type {ColorValue} from '../../StyleSheet/StyleSheet';
+ 
+ import processColor from '../../StyleSheet/processColor';
+ import Platform from '../../Utilities/Platform';
+-import NativeStatusBarManagerAndroid from './NativeStatusBarManagerAndroid';
+-import NativeStatusBarManagerIOS from './NativeStatusBarManagerIOS';
++import StatusBarDelegate from './delegates/StatusBarDelegate';
+ import invariant from 'invariant';
+ import * as React from 'react';
+ 
+@@ -160,6 +159,8 @@ function createStackEntry(props: any): any {
+   };
+ }
+ 
++const DELEGATE = new StatusBarDelegate({});
++
+ /**
+  * Component to control the app status bar.
+  *
+@@ -206,11 +207,7 @@ class StatusBar extends React.Component<Props> {
+   static _propsStack: Array<any> = [];
+ 
+   static _defaultProps: any = createStackEntry({
+-    backgroundColor:
+-      Platform.OS === 'android'
+-        ? NativeStatusBarManagerAndroid.getConstants()
+-            .DEFAULT_BACKGROUND_COLOR ?? 'black'
+-        : 'black',
++    backgroundColor: DELEGATE.getDefaultBackgroundColor(),
+     barStyle: 'default',
+     translucent: false,
+     hidden: false,
+@@ -230,12 +227,9 @@ class StatusBar extends React.Component<Props> {
+   /**
+    * The current height of the status bar on the device.
+    *
+-   * @platform android
++   * @platform androidk
+    */
+-  static currentHeight: ?number =
+-    Platform.OS === 'android'
+-      ? NativeStatusBarManagerAndroid.getConstants().HEIGHT
+-      : null;
++  static currentHeight: ?number = DELEGATE.getCurrentHeight();
+ 
+   // Provide an imperative API as static functions of the component.
+   // See the corresponding prop for more detail.
+@@ -249,11 +243,12 @@ class StatusBar extends React.Component<Props> {
+   static setHidden(hidden: boolean, animation?: StatusBarAnimation) {
+     animation = animation || 'none';
+     StatusBar._defaultProps.hidden.value = hidden;
+-    if (Platform.OS === 'ios') {
+-      NativeStatusBarManagerIOS.setHidden(hidden, animation);
+-    } else if (Platform.OS === 'android') {
+-      NativeStatusBarManagerAndroid.setHidden(hidden);
+-    }
++    DELEGATE.setHidden(hidden, animation);
++    // if (Platform.OS === 'ios') {
++    //   NativeStatusBarManagerIOS.setHidden(hidden, animation);
++    // } else if (Platform.OS === 'android') {
++    //   NativeStatusBarManagerAndroid.setHidden(hidden);
++    // }
+   }
+ 
+   /**
+@@ -264,11 +259,12 @@ class StatusBar extends React.Component<Props> {
+   static setBarStyle(style: StatusBarStyle, animated?: boolean) {
+     animated = animated || false;
+     StatusBar._defaultProps.barStyle.value = style;
+-    if (Platform.OS === 'ios') {
+-      NativeStatusBarManagerIOS.setStyle(style, animated);
+-    } else if (Platform.OS === 'android') {
+-      NativeStatusBarManagerAndroid.setStyle(style);
+-    }
++    DELEGATE.setBarStyle(style, animated);
++    // if (Platform.OS === 'ios') {
++    //   NativeStatusBarManagerIOS.setStyle(style, animated);
++    // } else if (Platform.OS === 'android') {
++    //   NativeStatusBarManagerAndroid.setStyle(style);
++    // }
+   }
+ 
+   /**
+@@ -285,7 +281,8 @@ class StatusBar extends React.Component<Props> {
+       return;
+     }
+     StatusBar._defaultProps.networkActivityIndicatorVisible = visible;
+-    NativeStatusBarManagerIOS.setNetworkActivityIndicatorVisible(visible);
++    DELEGATE.setNetworkActivityIndicatorVisible(visible);
++    // NativeStatusBarManagerIOS.setNetworkActivityIndicatorVisible(visible);
+   }
+ 
+   /**
+@@ -294,10 +291,11 @@ class StatusBar extends React.Component<Props> {
+    * @param animated Animate the style change.
+    */
+   static setBackgroundColor(color: string, animated?: boolean): void {
+-    if (Platform.OS !== 'android') {
+-      console.warn('`setBackgroundColor` is only available on Android');
+-      return;
+-    }
++    // RNC_patch
++    // if (Platform.OS !== 'android') {
++    //   console.warn('`setBackgroundColor` is only available on Android');
++    //   return;
++    // }
+     animated = animated || false;
+     StatusBar._defaultProps.backgroundColor.value = color;
+ 
+@@ -313,7 +311,7 @@ class StatusBar extends React.Component<Props> {
+       'Unexpected color given for StatusBar.setBackgroundColor',
+     );
+ 
+-    NativeStatusBarManagerAndroid.setColor(processedColor, animated);
++    DELEGATE.setColor(processedColor, animated);
+   }
+ 
+   /**
+@@ -321,12 +319,13 @@ class StatusBar extends React.Component<Props> {
+    * @param translucent Set as translucent.
+    */
+   static setTranslucent(translucent: boolean) {
+-    if (Platform.OS !== 'android') {
+-      console.warn('`setTranslucent` is only available on Android');
+-      return;
+-    }
++    // RNC_patch
++    // if (Platform.OS !== 'android') {
++    //   console.warn('`setTranslucent` is only available on Android');
++    //   return;
++    // }
+     StatusBar._defaultProps.translucent = translucent;
+-    NativeStatusBarManagerAndroid.setTranslucent(translucent);
++    DELEGATE.setTranslucent(translucent);
+   }
+ 
+   /**
+@@ -407,67 +406,67 @@ class StatusBar extends React.Component<Props> {
+         StatusBar._propsStack,
+         StatusBar._defaultProps,
+       );
+-
++      DELEGATE.updatePropsStack(oldProps, mergedProps);
+       // Update the props that have changed using the merged values from the props stack.
+-      if (Platform.OS === 'ios') {
+-        if (
+-          !oldProps ||
+-          oldProps.barStyle.value !== mergedProps.barStyle.value
+-        ) {
+-          NativeStatusBarManagerIOS.setStyle(
+-            mergedProps.barStyle.value,
+-            mergedProps.barStyle.animated || false,
+-          );
+-        }
+-        if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
+-          NativeStatusBarManagerIOS.setHidden(
+-            mergedProps.hidden.value,
+-            mergedProps.hidden.animated
+-              ? mergedProps.hidden.transition
+-              : 'none',
+-          );
+-        }
+-
+-        if (
+-          !oldProps ||
+-          oldProps.networkActivityIndicatorVisible !==
+-            mergedProps.networkActivityIndicatorVisible
+-        ) {
+-          NativeStatusBarManagerIOS.setNetworkActivityIndicatorVisible(
+-            mergedProps.networkActivityIndicatorVisible,
+-          );
+-        }
+-      } else if (Platform.OS === 'android') {
+-        //todo(T60684787): Add back optimization to only update bar style and
+-        //background color if the new value is different from the old value.
+-        NativeStatusBarManagerAndroid.setStyle(mergedProps.barStyle.value);
+-        const processedColor = processColor(mergedProps.backgroundColor.value);
+-        if (processedColor == null) {
+-          console.warn(
+-            `\`StatusBar._updatePropsStack\`: Color ${mergedProps.backgroundColor.value} parsed to null or undefined`,
+-          );
+-        } else {
+-          invariant(
+-            typeof processedColor === 'number',
+-            'Unexpected color given in StatusBar._updatePropsStack',
+-          );
+-          NativeStatusBarManagerAndroid.setColor(
+-            processedColor,
+-            mergedProps.backgroundColor.animated,
+-          );
+-        }
+-        if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
+-          NativeStatusBarManagerAndroid.setHidden(mergedProps.hidden.value);
+-        }
+-        // Activities are not translucent by default, so always set if true.
+-        if (
+-          !oldProps ||
+-          oldProps.translucent !== mergedProps.translucent ||
+-          mergedProps.translucent
+-        ) {
+-          NativeStatusBarManagerAndroid.setTranslucent(mergedProps.translucent);
+-        }
+-      }
++      // if (Platform.OS === 'ios') {
++      //   if (
++      //     !oldProps ||
++      //     oldProps.barStyle.value !== mergedProps.barStyle.value
++      //   ) {
++      //     NativeStatusBarManagerIOS.setStyle(
++      //       mergedProps.barStyle.value,
++      //       mergedProps.barStyle.animated || false,
++      //     );
++      //   }
++      //   if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
++      //     NativeStatusBarManagerIOS.setHidden(
++      //       mergedProps.hidden.value,
++      //       mergedProps.hidden.animated
++      //         ? mergedProps.hidden.transition
++      //         : 'none',
++      //     );
++      //   }
++
++      //   if (
++      //     !oldProps ||
++      //     oldProps.networkActivityIndicatorVisible !==
++      //       mergedProps.networkActivityIndicatorVisible
++      //   ) {
++      //     NativeStatusBarManagerIOS.setNetworkActivityIndicatorVisible(
++      //       mergedProps.networkActivityIndicatorVisible,
++      //     );
++      //   }
++      // } else if (Platform.OS === 'android') {
++      //   //todo(T60684787): Add back optimization to only update bar style and
++      //   //background color if the new value is different from the old value.
++      //   NativeStatusBarManagerAndroid.setStyle(mergedProps.barStyle.value);
++      //   const processedColor = processColor(mergedProps.backgroundColor.value);
++      //   if (processedColor == null) {
++      //     console.warn(
++      //       `\`StatusBar._updatePropsStack\`: Color ${mergedProps.backgroundColor.value} parsed to null or undefined`,
++      //     );
++      //   } else {
++      //     invariant(
++      //       typeof processedColor === 'number',
++      //       'Unexpected color given in StatusBar._updatePropsStack',
++      //     );
++      //     NativeStatusBarManagerAndroid.setColor(
++      //       processedColor,
++      //       mergedProps.backgroundColor.animated,
++      //     );
++      //   }
++      //   if (!oldProps || oldProps.hidden.value !== mergedProps.hidden.value) {
++      //     NativeStatusBarManagerAndroid.setHidden(mergedProps.hidden.value);
++      //   }
++      //   // Activities are not translucent by default, so always set if true.
++      //   if (
++      //     !oldProps ||
++      //     oldProps.translucent !== mergedProps.translucent ||
++      //     mergedProps.translucent
++      //   ) {
++      //     NativeStatusBarManagerAndroid.setTranslucent(mergedProps.translucent);
++      //   }
++      // }
+       // Update the current prop values.
+       StatusBar._currentValues = mergedProps;
+     });
+diff --git a/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts b/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts
+new file mode 100644
+index 0000000000..cb7ba66fdd
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts
+@@ -0,0 +1,25 @@
++/**
++ * @format
++ */
++
++export type StatusBarAnimation = 'none' | 'fade' | 'slide';
++
++export type StatusBarStyle = 'default' | 'light-content' | 'dark-content';
++
++export abstract class BaseStatusBarDelegate {
++  abstract getDefaultBackgroundColor(): string;
++
++  abstract getCurrentHeight(): number;
++
++  abstract setHidden(hidden: boolean, animation?: StatusBarAnimation): void;
++
++  abstract setBarStyle(style: StatusBarStyle, animated?: boolean): void;
++
++  abstract setNetworkActivityIndicatorVisible(visible: boolean): void;
++
++  abstract setColor(processedColor: number, animated?: boolean): void;
++
++  abstract setTranslucent(translucent: boolean): void;
++
++  abstract updatePropsStack(oldProps: any, mergedProps: any): void;
++}
+diff --git a/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts b/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts
+new file mode 100644
+index 0000000000..efc9b36f83
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts
+@@ -0,0 +1,44 @@
++/**
++ * @format
++ */
++
++import {
++  BaseStatusBarDelegate,
++  StatusBarAnimation,
++  StatusBarStyle,
++} from './BaseStatusBarDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++export default class StatusBarDelegate extends BaseStatusBarDelegate {
++  getCurrentHeight(): number {
++    throw new UnsupportedByPlatformError();
++  }
++
++  getDefaultBackgroundColor(): string {
++    throw new UnsupportedByPlatformError();
++  }
++
++  setBarStyle(style: StatusBarStyle, animated?: boolean): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  setColor(processedColor: number, animated?: boolean): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  setHidden(hidden: boolean, animation?: StatusBarAnimation): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  setNetworkActivityIndicatorVisible(visible: boolean): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  setTranslucent(translucent: boolean): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  updatePropsStack(oldProps: any, mergedProps: any): void {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/TextInput/TextInput.js b/packages/react-native/Libraries/Components/TextInput/TextInput.js
+index dcf1123759..6fdb48bb25 100644
+--- a/packages/react-native/Libraries/Components/TextInput/TextInput.js
++++ b/packages/react-native/Libraries/Components/TextInput/TextInput.js
+@@ -30,12 +30,15 @@ import Text from '../../Text/Text';
+ import TextAncestor from '../../Text/TextAncestor';
+ import Platform from '../../Utilities/Platform';
+ import useMergeRefs from '../../Utilities/useMergeRefs';
++import TextInputDelegate from './delegates/TextInputDelegate';
+ import TextInputState from './TextInputState';
+ import invariant from 'invariant';
+ import nullthrows from 'nullthrows';
+ import * as React from 'react';
+ import {useCallback, useLayoutEffect, useRef, useState} from 'react';
+ 
++const DELEGATE = new TextInputDelegate({});
++
+ type ReactRefSetter<T> = {current: null | T, ...} | ((ref: null | T) => mixed);
+ type TextInputInstance = HostInstance & {
+   +clear: () => void,
+@@ -1310,11 +1313,7 @@ function InternalTextInput(props: Props): React.Node {
+         ? props.defaultValue
+         : '';
+ 
+-  const viewCommands =
+-    AndroidTextInputCommands ||
+-    (props.multiline === true
+-      ? RCTMultilineTextInputNativeCommands
+-      : RCTSinglelineTextInputNativeCommands);
++  const viewCommands = DELEGATE.getTextInputCommands(props.multiline);
+ 
+   const [mostRecentEventCount, setMostRecentEventCount] = useState<number>(0);
+   const useTextInputStateSynchronization =
+@@ -1469,6 +1468,8 @@ function InternalTextInput(props: Props): React.Node {
+ 
+   const multiline = props.multiline ?? false;
+ 
++  let blurOnSubmit = props.blurOnSubmit; // RNC_patch
++
+   let submitBehavior: SubmitBehavior;
+   if (props.submitBehavior != null) {
+     // `submitBehavior` is set explicitly
+@@ -1487,6 +1488,7 @@ function InternalTextInput(props: Props): React.Node {
+   } else {
+     // Single line
+     if (props.blurOnSubmit !== false) {
++      blurOnSubmit = true; // RNC_patch: The default value is true for single-line fields
+       submitBehavior = 'blurAndSubmit';
+     } else {
+       submitBehavior = 'submit';
+@@ -1518,7 +1520,7 @@ function InternalTextInput(props: Props): React.Node {
+       },
+       onPressIn: onPressIn,
+       onPressOut: onPressOut,
+-      cancelable: Platform.OS === 'ios' ? !rejectResponderTermination : null,
++      cancelable: DELEGATE.shouldBeCancellable(rejectResponderTermination),
+     }),
+     [
+       editable,
+@@ -1584,117 +1586,156 @@ function InternalTextInput(props: Props): React.Node {
+     }
+   }
+ 
+-  if (Platform.OS === 'ios') {
+-    const RCTTextInputView =
+-      props.multiline === true
+-        ? RCTMultilineTextInputView
+-        : RCTSinglelineTextInputView;
+-
+-    const useMultilineDefaultStyle =
+-      props.multiline === true &&
+-      (flattenedStyle == null ||
+-        (flattenedStyle.padding == null &&
+-          flattenedStyle.paddingVertical == null &&
+-          flattenedStyle.paddingTop == null));
+-
+-    textInput = (
+-      <RCTTextInputView
+-        // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
+-        ref={ref}
+-        {...otherProps}
+-        {...eventHandlers}
+-        accessibilityState={_accessibilityState}
+-        accessible={accessible}
+-        submitBehavior={submitBehavior}
+-        caretHidden={caretHidden}
+-        dataDetectorTypes={props.dataDetectorTypes}
+-        focusable={tabIndex !== undefined ? !tabIndex : focusable}
+-        mostRecentEventCount={mostRecentEventCount}
+-        nativeID={id ?? props.nativeID}
+-        onBlur={_onBlur}
+-        onChange={_onChange}
+-        onContentSizeChange={props.onContentSizeChange}
+-        onFocus={_onFocus}
+-        onScroll={_onScroll}
+-        onSelectionChange={_onSelectionChange}
+-        onSelectionChangeShouldSetResponder={emptyFunctionThatReturnsTrue}
+-        selection={selection}
+-        selectionColor={selectionColor}
+-        style={StyleSheet.compose(
++  // RNC_patch
++  const _accessibilityLabelledBy =
++  props?.['aria-labelledby'] ?? props?.accessibilityLabelledBy;
++  const useMultilineDefaultStyle =
++  props.multiline === true &&
++  (_style == null ||
++    (_style.padding == null &&
++      _style.paddingVertical == null &&
++      _style.paddingTop == null));
++  textInput = DELEGATE.createNativeTextInput({
++    ref,
++    ...otherProps,
++    ...eventHandlers,
++    accessibilityState,
++    accessibilityLabelledBy: _accessibilityLabelledBy,
++    accessible,
++    submitBehavior,
++    caretHidden,
++    dataDetectorTypes: props.dataDetectorTypes,
++    focusable: tabIndex !== undefined ? !tabIndex : focusable,
++    mostRecentEventCount,
++    nativeID: id ?? props.nativeID,
++    onBlur: _onBlur,
++    onChange: _onChange,
++    onContentSizeChange: props.onContentSizeChange,
++    onFocus: _onFocus,
++    onScroll: _onScroll,
++    onSelectionChange: _onSelectionChange,
++    onSelectionChangeShouldSetResponder: emptyFunctionThatReturnsTrue,
++    selection,
++    selectionColor: selectionColor,
++    cursorColor: cursorColor === undefined ? selectionColor : cursorColor,
++    style: StyleSheet.compose(
+           useMultilineDefaultStyle ? styles.multilineDefault : null,
+           _style,
+-        )}
+-        text={text}
+-      />
+-    );
+-  } else if (Platform.OS === 'android') {
+-    const autoCapitalize = props.autoCapitalize || 'sentences';
+-    const _accessibilityLabelledBy =
+-      props?.['aria-labelledby'] ?? props?.accessibilityLabelledBy;
+-    const placeholder = props.placeholder ?? '';
+-    let children = props.children;
+-    const childCount = React.Children.count(children);
+-    invariant(
+-      !(props.value != null && childCount),
+-      'Cannot specify both value and children.',
+-    );
+-    if (childCount > 1) {
+-      children = <Text>{children}</Text>;
+-    }
+-    // For consistency with iOS set cursor/selectionHandle color as selectionColor
+-    const colorProps = {
+-      selectionColor,
+-      selectionHandleColor:
+-        selectionHandleColor === undefined
+-          ? selectionColor
+-          : selectionHandleColor,
+-      cursorColor: cursorColor === undefined ? selectionColor : cursorColor,
+-    };
+-    textInput = (
+-      /* $FlowFixMe[prop-missing] the types for AndroidTextInput don't match up
+-       * exactly with the props for TextInput. This will need to get fixed */
+-      /* $FlowFixMe[incompatible-type] the types for AndroidTextInput don't
+-       * match up exactly with the props for TextInput. This will need to get
+-       * fixed */
+-      /* $FlowFixMe[incompatible-type-arg] the types for AndroidTextInput don't
+-       * match up exactly with the props for TextInput. This will need to get
+-       * fixed */
+-      <AndroidTextInput
+-        // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
+-        ref={ref}
+-        {...otherProps}
+-        {...colorProps}
+-        {...eventHandlers}
+-        accessibilityState={_accessibilityState}
+-        accessibilityLabelledBy={_accessibilityLabelledBy}
+-        accessible={accessible}
+-        autoCapitalize={autoCapitalize}
+-        submitBehavior={submitBehavior}
+-        caretHidden={caretHidden}
+-        children={children}
+-        disableFullscreenUI={props.disableFullscreenUI}
+-        focusable={tabIndex !== undefined ? !tabIndex : focusable}
+-        mostRecentEventCount={mostRecentEventCount}
+-        nativeID={id ?? props.nativeID}
+-        numberOfLines={props.rows ?? props.numberOfLines}
+-        onBlur={_onBlur}
+-        onChange={_onChange}
+-        onFocus={_onFocus}
+-        /* $FlowFixMe[prop-missing] the types for AndroidTextInput don't match
+-         * up exactly with the props for TextInput. This will need to get fixed
+-         */
+-        /* $FlowFixMe[incompatible-type-arg] the types for AndroidTextInput
+-         * don't match up exactly with the props for TextInput. This will need
+-         * to get fixed */
+-        onScroll={_onScroll}
+-        onSelectionChange={_onSelectionChange}
+-        placeholder={placeholder}
+-        style={_style}
+-        text={text}
+-        textBreakStrategy={props.textBreakStrategy}
+-      />
+-    );
+-  }
++    ),
++    text,
++    blurOnSubmit,
++  });
++// if (Platform.OS === 'ios') {
++  //   const RCTTextInputView =
++  //     props.multiline === true
++  //       ? RCTMultilineTextInputView
++  //       : RCTSinglelineTextInputView;
++
++  //   const useMultilineDefaultStyle =
++  //     props.multiline === true &&
++  //     (flattenedStyle == null ||
++  //       (flattenedStyle.padding == null &&
++  //         flattenedStyle.paddingVertical == null &&
++  //         flattenedStyle.paddingTop == null));
++
++  //   textInput = (
++  //     <RCTTextInputView
++  //       // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
++  //       ref={ref}
++  //       {...otherProps}
++  //       {...eventHandlers}
++  //       accessibilityState={_accessibilityState}
++  //       accessible={accessible}
++  //       submitBehavior={submitBehavior}
++  //       caretHidden={caretHidden}
++  //       dataDetectorTypes={props.dataDetectorTypes}
++  //       focusable={tabIndex !== undefined ? !tabIndex : focusable}
++  //       mostRecentEventCount={mostRecentEventCount}
++  //       nativeID={id ?? props.nativeID}
++  //       onBlur={_onBlur}
++  //       onChange={_onChange}
++  //       onContentSizeChange={props.onContentSizeChange}
++  //       onFocus={_onFocus}
++  //       onScroll={_onScroll}
++  //       onSelectionChange={_onSelectionChange}
++  //       onSelectionChangeShouldSetResponder={emptyFunctionThatReturnsTrue}
++  //       selection={selection}
++  //       selectionColor={selectionColor}
++  //       style={StyleSheet.compose(
++  //         useMultilineDefaultStyle ? styles.multilineDefault : null,
++  //         _style,
++  //       )}
++  //       text={text}
++  //     />
++  //   );
++  // } else if (Platform.OS === 'android') {
++  //   const autoCapitalize = props.autoCapitalize || 'sentences';
++  //   const _accessibilityLabelledBy =
++  //     props?.['aria-labelledby'] ?? props?.accessibilityLabelledBy;
++  //   const placeholder = props.placeholder ?? '';
++  //   let children = props.children;
++  //   const childCount = React.Children.count(children);
++  //   invariant(
++  //     !(props.value != null && childCount),
++  //     'Cannot specify both value and children.',
++  //   );
++  //   if (childCount > 1) {
++  //     children = <Text>{children}</Text>;
++  //   }
++  //   // For consistency with iOS set cursor/selectionHandle color as selectionColor
++  //   const colorProps = {
++  //     selectionColor,
++  //     selectionHandleColor:
++  //       selectionHandleColor === undefined
++  //         ? selectionColor
++  //         : selectionHandleColor,
++  //     cursorColor: cursorColor === undefined ? selectionColor : cursorColor,
++  //   };
++  //   textInput = (
++  //     /* $FlowFixMe[prop-missing] the types for AndroidTextInput don't match up
++  //      * exactly with the props for TextInput. This will need to get fixed */
++  //     /* $FlowFixMe[incompatible-type] the types for AndroidTextInput don't
++  //      * match up exactly with the props for TextInput. This will need to get
++  //      * fixed */
++  //     /* $FlowFixMe[incompatible-type-arg] the types for AndroidTextInput don't
++  //      * match up exactly with the props for TextInput. This will need to get
++  //      * fixed */
++  //     <AndroidTextInput
++  //       // $FlowFixMe[incompatible-type] - Figure out imperative + forward refs.
++  //       ref={ref}
++  //       {...otherProps}
++  //       {...colorProps}
++  //       {...eventHandlers}
++  //       accessibilityState={_accessibilityState}
++  //       accessibilityLabelledBy={_accessibilityLabelledBy}
++  //       accessible={accessible}
++  //       autoCapitalize={autoCapitalize}
++  //       submitBehavior={submitBehavior}
++  //       caretHidden={caretHidden}
++  //       children={children}
++  //       disableFullscreenUI={props.disableFullscreenUI}
++  //       focusable={tabIndex !== undefined ? !tabIndex : focusable}
++  //       mostRecentEventCount={mostRecentEventCount}
++  //       nativeID={id ?? props.nativeID}
++  //       numberOfLines={props.rows ?? props.numberOfLines}
++  //       onBlur={_onBlur}
++  //       onChange={_onChange}
++  //       onFocus={_onFocus}
++  //       /* $FlowFixMe[prop-missing] the types for AndroidTextInput don't match
++  //        * up exactly with the props for TextInput. This will need to get fixed
++  //        */
++  //       /* $FlowFixMe[incompatible-type-arg] the types for AndroidTextInput
++  //        * don't match up exactly with the props for TextInput. This will need
++  //        * to get fixed */
++  //       onScroll={_onScroll}
++  //       onSelectionChange={_onSelectionChange}
++  //       placeholder={placeholder}
++  //       style={_style}
++  //       text={text}
++  //       textBreakStrategy={props.textBreakStrategy}
++  //     />
++  //   );
++  // }
+   return (
+     <TextAncestor.Provider value={true}>{textInput}</TextAncestor.Provider>
+   );
+@@ -1711,14 +1752,14 @@ const enterKeyHintToReturnTypeMap = {
+ };
+ 
+ const inputModeToKeyboardTypeMap = {
+-  none: 'default',
+-  text: 'default',
+-  decimal: 'decimal-pad',
+-  numeric: 'number-pad',
+-  tel: 'phone-pad',
+-  search: Platform.OS === 'ios' ? 'web-search' : 'default',
+-  email: 'email-address',
+-  url: 'url',
++  none: DELEGATE.getKeyboardTypeByInputMode('none'),
++  text: DELEGATE.getKeyboardTypeByInputMode('text'),
++  decimal: DELEGATE.getKeyboardTypeByInputMode('decimal'),
++  numeric: DELEGATE.getKeyboardTypeByInputMode('numeric'),
++  tel: DELEGATE.getKeyboardTypeByInputMode('tel'),
++  search: DELEGATE.getKeyboardTypeByInputMode('search'),
++  email: DELEGATE.getKeyboardTypeByInputMode('email'),
++  url: DELEGATE.getKeyboardTypeByInputMode('url'),
+ };
+ 
+ // Map HTML autocomplete values to Android autoComplete values
+@@ -1817,6 +1858,14 @@ const ExportedForwardRef: component(
+   },
+   forwardedRef: ReactRefSetter<TextInputInstance>,
+ ) {
++
++  // RNC_patch: invalid `keyboardType` prop values crash the app
++  {
++    // supported keyboard types from `textinput/conversions.h`
++    if (keyboardType && !DELEGATE.getSupportedKeyboardTypes().includes(keyboardType)) {
++      keyboardType = 'default';
++    }
++  }
+   return (
+     <InternalTextInput
+       allowFontScaling={allowFontScaling}
+@@ -1833,23 +1882,25 @@ const ExportedForwardRef: component(
+         inputMode == null ? showSoftInputOnFocus : inputMode !== 'none'
+       }
+       autoComplete={
+-        Platform.OS === 'android'
+-          ? // $FlowFixMe[invalid-computed-prop]
+-            // $FlowFixMe[prop-missing]
+-            autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
+-            autoComplete
+-          : undefined
++        DELEGATE.getNativeAutocomplete(autoComplete)
++        // Platform.OS === 'android'
++        //   ? // $FlowFixMe[invalid-computed-prop]
++        //     // $FlowFixMe[prop-missing]
++        //     autoCompleteWebToAutoCompleteAndroidMap[autoComplete] ??
++        //     autoComplete
++        // : undefined
+       }
+       textContentType={
+-        textContentType != null
+-          ? textContentType
+-          : Platform.OS === 'ios' &&
+-              autoComplete &&
+-              autoComplete in autoCompleteWebToTextContentTypeMap
+-            ? // $FlowFixMe[invalid-computed-prop]
+-              // $FlowFixMe[prop-missing]
+-              autoCompleteWebToTextContentTypeMap[autoComplete]
+-            : textContentType
++        DELEGATE.getNativeTextContentType(textContentType, {autocomplete: autoComplete, autocompleteWebToTextContentTypeMap: autoCompleteWebToTextContentTypeMap})
++        // textContentType != null
++        //   ? textContentType
++        //   : Platform.OS === 'ios' &&
++        //       autoComplete &&
++        //       autoComplete in autoCompleteWebToTextContentTypeMap
++        //     ? // $FlowFixMe[invalid-computed-prop]
++        //       // $FlowFixMe[prop-missing]
++        //       autoCompleteWebToTextContentTypeMap[autoComplete]
++        //     : textContentType
+       }
+       {...restProps}
+       forwardedRef={forwardedRef}
+diff --git a/packages/react-native/Libraries/Components/TextInput/TextInputState.js b/packages/react-native/Libraries/Components/TextInput/TextInputState.js
+index b3dfd5c8ca..5cd7581fd8 100644
+--- a/packages/react-native/Libraries/Components/TextInput/TextInputState.js
++++ b/packages/react-native/Libraries/Components/TextInput/TextInputState.js
+@@ -19,12 +19,14 @@ import type {
+   MeasureOnSuccessCallback,
+ } from '../../Renderer/shims/ReactNativeTypes';
+ 
+-import {Commands as AndroidTextInputCommands} from '../../Components/TextInput/AndroidTextInputNativeComponent';
+-import {Commands as iOSTextInputCommands} from '../../Components/TextInput/RCTSingelineTextInputNativeComponent';
++// RNC_patch: use delegate instead of directly using NativeComponent commands
++import TextInputStateDelegate from './delegates/TextInputStateDelegate';
+ 
+ const {findNodeHandle} = require('../../ReactNative/RendererProxy');
+ const Platform = require('../../Utilities/Platform');
+ 
++const DELEGATE = new TextInputStateDelegate({});
++
+ let currentlyFocusedInputRef: ?HostInstance = null;
+ const inputs = new Set<{
+   blur(): void,
+@@ -111,16 +113,17 @@ function focusTextInput(textField: ?HostInstance) {
+       return;
+     }
+     focusInput(textField);
+-    if (Platform.OS === 'ios') {
+-      // This isn't necessarily a single line text input
+-      // But commands don't actually care as long as the thing being passed in
+-      // actually has a command with that name. So this should work with single
+-      // and multiline text inputs. Ideally we'll merge them into one component
+-      // in the future.
+-      iOSTextInputCommands.focus(textField);
+-    } else if (Platform.OS === 'android') {
+-      AndroidTextInputCommands.focus(textField);
+-    }
++    DELEGATE.focus(textField);
++    // if (Platform.OS === 'ios') {
++    //   // This isn't necessarily a single line text input
++    //   // But commands don't actually care as long as the thing being passed in
++    //   // actually has a command with that name. So this should work with single
++    //   // and multiline text inputs. Ideally we'll merge them into one component
++    //   // in the future.
++    //   iOSTextInputCommands.focus(textField);
++    // } else if (Platform.OS === 'android') {
++    //   AndroidTextInputCommands.focus(textField);
++    // }
+   }
+ }
+ 
+@@ -142,16 +145,17 @@ function blurTextInput(textField: ?HostInstance) {
+ 
+   if (currentlyFocusedInputRef === textField && textField != null) {
+     blurInput(textField);
+-    if (Platform.OS === 'ios') {
+-      // This isn't necessarily a single line text input
+-      // But commands don't actually care as long as the thing being passed in
+-      // actually has a command with that name. So this should work with single
+-      // and multiline text inputs. Ideally we'll merge them into one component
+-      // in the future.
+-      iOSTextInputCommands.blur(textField);
+-    } else if (Platform.OS === 'android') {
+-      AndroidTextInputCommands.blur(textField);
+-    }
++    DELEGATE.blur(textField);
++    // if (Platform.OS === 'ios') {
++    //   // This isn't necessarily a single line text input
++    //   // But commands don't actually care as long as the thing being passed in
++    //   // actually has a command with that name. So this should work with single
++    //   // and multiline text inputs. Ideally we'll merge them into one component
++    //   // in the future.
++    //   iOSTextInputCommands.blur(textField);
++    // } else if (Platform.OS === 'android') {
++    //   AndroidTextInputCommands.blur(textField);
++    // }
+   }
+ }
+ 
+diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts
+new file mode 100644
+index 0000000000..8da1b58ced
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts
+@@ -0,0 +1,39 @@
++/**
++ * @format
++ */
++
++export type TextInputDelegateContext = {};
++
++export type GetNativeTextContentTypeOptions = {
++  autocomplete: string;
++  autocompleteWebToTextContentTypeMap: Record<string, string>;
++};
++
++export abstract class BaseTextInputDelegate {
++  constructor(protected ctx: TextInputDelegateContext) {}
++
++  abstract shouldBeCancellable(
++    rejectResponderTermination: boolean,
++  ): boolean | null;
++
++  abstract createNativeTextInput(props: any): React.ReactNode;
++
++  abstract getKeyboardTypeByInputMode(inputMode: string): string;
++
++  abstract getSupportedKeyboardTypes(): string[];
++
++  abstract getTextInputCommands(multiline: boolean): any;
++
++  getNativeAutocomplete(
++    autocomplete: string | null | undefined,
++  ): string | null | undefined {
++    return autocomplete;
++  }
++
++  getNativeTextContentType(
++    textContentType: string | null | undefined,
++    options: GetNativeTextContentTypeOptions,
++  ): string | null | undefined {
++    return textContentType;
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts
+new file mode 100644
+index 0000000000..8cc9d6c09a
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts
+@@ -0,0 +1,12 @@
++/**
++ * @format
++ */
++export type TextInputStateContext = {};
++
++export abstract class BaseTextInputStateDelegate {
++  constructor(protected ctx: TextInputStateContext) {}
++
++  abstract focus(ref: React.ComponentRef<any>): void;
++
++  abstract blur(ref: React.ComponentRef<any>): void;
++}
+diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts
+new file mode 100644
+index 0000000000..4d58d36d01
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts
+@@ -0,0 +1,40 @@
++/**
++ * @format
++ */
++
++import {BaseTextInputDelegate, GetNativeTextContentTypeOptions} from './BaseTextInputDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++
++export default class TextInputDelegate extends BaseTextInputDelegate {
++  override createNativeTextInput(props: any): React.ReactNode {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getKeyboardTypeByInputMode(inputMode: string): string {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getSupportedKeyboardTypes(): string[] {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getNativeAutocomplete(autocomplete: string): string {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getNativeTextContentType(
++    textContentType: string,
++    options: GetNativeTextContentTypeOptions,
++  ): string {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override shouldBeCancellable(rejectResponderTermination: boolean): boolean | null {
++    throw new UnsupportedByPlatformError();
++  }
++
++  override getTextInputCommands(multiline: boolean): any {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts
+new file mode 100644
+index 0000000000..81e10fc439
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts
+@@ -0,0 +1,15 @@
++/**
++ * @format
++ */
++import {BaseTextInputStateDelegate} from './BaseTextInputStateDelegate';
++import {UnsupportedByPlatformError} from '../../../../delegates/DelegateError';
++
++export default class TextInputDelegate extends BaseTextInputStateDelegate {
++  blur(ref: React.ComponentRef<any>): void {
++    throw new UnsupportedByPlatformError();
++  }
++
++  focus(ref: React.ComponentRef<any>): void {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js b/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
+index e0aad9ca2e..d5d5de9624 100644
+--- a/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
++++ b/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
+@@ -18,8 +18,11 @@ import Pressability, {
+ import {PressabilityDebugView} from '../../Pressability/PressabilityDebug';
+ import StyleSheet, {type ViewStyleProp} from '../../StyleSheet/StyleSheet';
+ import Platform from '../../Utilities/Platform';
++import TouchableHighlightDelegate from './delegates/TouchableHighlightDelegate';
+ import * as React from 'react';
+ 
++const DELEGATE = new TouchableHighlightDelegate({});
++
+ type AndroidProps = $ReadOnly<{|
+   nextFocusDown?: ?number,
+   nextFocusForward?: ?number,
+@@ -349,7 +352,9 @@ class TouchableHighlight extends React.Component<Props, State> {
+         nativeID={this.props.id ?? this.props.nativeID}
+         testID={this.props.testID}
+         ref={this.props.hostRef}
+-        {...eventHandlersWithoutBlurAndFocus}>
++        {...eventHandlersWithoutBlurAndFocus}
++        {...DELEGATE.getExtraContainerProps()}
++        >
+         {React.cloneElement(child, {
+           style: StyleSheet.compose(
+             child.props.style,
+diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js b/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
+index 0fb5f86702..e804b9db79 100644
+--- a/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
++++ b/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
+@@ -20,9 +20,12 @@ import {findHostInstance_DEPRECATED} from '../../ReactNative/RendererProxy';
+ import processColor from '../../StyleSheet/processColor';
+ import Platform from '../../Utilities/Platform';
+ import {Commands} from '../View/ViewNativeComponent';
++import TouchableNativeFeedbackDelegate from './delegates/TouchableNativeFeedbackDelegate';
+ import invariant from 'invariant';
+ import * as React from 'react';
+ 
++const DELEGATE = new TouchableNativeFeedbackDelegate({});
++
+ type Props = $ReadOnly<{|
+   ...React.ElementConfig<TouchableWithoutFeedback>,
+ 
+@@ -331,6 +334,7 @@ class TouchableNativeFeedback extends React.Component<Props, State> {
+         nextFocusUp: this.props.nextFocusUp,
+         onLayout: this.props.onLayout,
+         testID: this.props.testID,
++        ...DELEGATE.getExtraProps(),
+       },
+       ...children,
+     );
+diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js b/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
+index d584a2f862..dd164ea481 100755
+--- a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
++++ b/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
+@@ -26,9 +26,12 @@ import type {
+ import View from '../../Components/View/View';
+ import {PressabilityDebugView} from '../../Pressability/PressabilityDebug';
+ import usePressability from '../../Pressability/usePressability';
++import TouchableWithoutFeedbackDelegate from './delegates/TouchableWithoutFeedbackDelegate';
+ import * as React from 'react';
+ import {useMemo} from 'react';
+ 
++const DELEGATE = new TouchableWithoutFeedbackDelegate({});
++
+ type Props = $ReadOnly<{|
+   accessibilityActions?: ?$ReadOnlyArray<AccessibilityActionInfo>,
+   accessibilityElementsHidden?: ?boolean,
+@@ -221,6 +224,7 @@ module.exports = function TouchableWithoutFeedback(props: Props): React.Node {
+     accessibilityLiveRegion:
+       ariaLive === 'off' ? 'none' : ariaLive ?? props.accessibilityLiveRegion,
+     nativeID: props.id ?? props.nativeID,
++    ...DELEGATE.getExtraProps(),
+   };
+ 
+   for (const prop of PASSTHROUGH_PROPS) {
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts
+new file mode 100644
+index 0000000000..cc81932611
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts
+@@ -0,0 +1,13 @@
++/**
++ * @format
++ */
++
++export type BaseTouchableHighlightContext = {};
++
++export abstract class BaseTouchableHighlightDelegate {
++  constructor(protected ctx: BaseTouchableHighlightContext) {}
++
++  getExtraContainerProps(): Record<string, any> {
++    return {};
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts
+new file mode 100644
+index 0000000000..4afcdcb69a
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts
+@@ -0,0 +1,13 @@
++/**
++ * @format
++ */
++
++export type BaseTouchableNativeFeedbackContext = {};
++
++export abstract class BaseTouchableNativeFeedbackDelegate {
++  constructor(protected ctx: BaseTouchableNativeFeedbackContext) {}
++
++  getExtraProps(): Record<string, any> {
++    return {};
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts
+new file mode 100644
+index 0000000000..9377e82a8a
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts
+@@ -0,0 +1,13 @@
++/**
++ * @format
++ */
++
++export type BaseTouchableWithoutFeedbackContext = {};
++
++export abstract class BaseTouchableWithoutFeedbackDelegate {
++  constructor(protected ctx: BaseTouchableWithoutFeedbackContext) {}
++
++  getExtraProps(): Record<string, any> {
++    return {};
++  }
++}
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts
+new file mode 100644
+index 0000000000..c06f9b68ba
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts
+@@ -0,0 +1,6 @@
++/**
++ * @format
++ */
++import {BaseTouchableHighlightDelegate} from './BaseTouchableHighlightDelegate';
++
++export default class TouchableHighlightDelegate extends BaseTouchableHighlightDelegate {}
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts
+new file mode 100644
+index 0000000000..c63d10f172
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts
+@@ -0,0 +1,6 @@
++/**
++ * @format
++ */
++import {BaseTouchableNativeFeedbackDelegate} from './BaseTouchableNativeFeedbackDelegate';
++
++export default class TouchableNativeFeedbackDelegate extends BaseTouchableNativeFeedbackDelegate {}
+diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts
+new file mode 100644
+index 0000000000..03ce346876
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts
+@@ -0,0 +1,6 @@
++/**
++ * @format
++ */
++import {BaseTouchableWithoutFeedbackDelegate} from './BaseTouchableWithoutFeedbackDelegate';
++
++export default class TouchableWithoutFeedbackDelegate extends BaseTouchableWithoutFeedbackDelegate {}
+diff --git a/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts b/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts
+new file mode 100644
+index 0000000000..afe75c0029
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts
+@@ -0,0 +1,15 @@
++/**
++ * @format
++ */
++import type {TextStyle, ViewStyle} from 'react-native';
++
++export type ButtonDelegateContext = {};
++
++export abstract class BaseButtonDelegate {
++  constructor(protected ctx: ButtonDelegateContext) {}
++  abstract getButtonStyle(): ViewStyle;
++  abstract getTextStyle(): TextStyle;
++  abstract getButtonDisabledStyle(): ViewStyle;
++  abstract getTextDisabledStyle(): TextStyle;
++  abstract getInnerViewFocusable(): boolean;
++}
+diff --git a/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts b/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts
+new file mode 100644
+index 0000000000..085623b3cc
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts
+@@ -0,0 +1,27 @@
++/**
++ * @format
++ */
++import {TextStyle, ViewStyle} from 'react-native';
++import {BaseButtonDelegate} from './BaseButtonDelegate';
++
++export default class ButtonDelegate extends BaseButtonDelegate {
++  getButtonDisabledStyle(): ViewStyle {
++    return {};
++  }
++
++  getButtonStyle(): ViewStyle {
++    return {};
++  }
++
++  getTextDisabledStyle(): TextStyle {
++    return {};
++  }
++
++  getTextStyle(): TextStyle {
++    return {};
++  }
++
++  getInnerViewFocusable(): boolean {
++    return true;
++  }
++}
+diff --git a/packages/react-native/Libraries/Core/InitializeCore.js b/packages/react-native/Libraries/Core/InitializeCore.js
+index f01d96e0df..d966ab06e8 100644
+--- a/packages/react-native/Libraries/Core/InitializeCore.js
++++ b/packages/react-native/Libraries/Core/InitializeCore.js
+@@ -40,6 +40,7 @@ require('./setUpAlert');
+ require('./setUpNavigator');
+ require('./setUpBatchedBridge');
+ require('./setUpSegmentFetcher');
++require('./setUpPlatform');
+ if (__DEV__) {
+   require('./checkNativeVersion');
+   require('./setUpDeveloperTools');
+diff --git a/packages/react-native/Libraries/Core/setUpPlatform.js b/packages/react-native/Libraries/Core/setUpPlatform.js
+new file mode 100644
+index 0000000000..a5c71df932
+--- /dev/null
++++ b/packages/react-native/Libraries/Core/setUpPlatform.js
+@@ -0,0 +1 @@
++// This file is meant to be empty. Platforms are expected to "override" it by creating a new setUpPlatform file with a platform-specific extension.
+diff --git a/packages/react-native/Libraries/Core/setUpReactDevTools.js b/packages/react-native/Libraries/Core/setUpReactDevTools.js
+index 56c0228f83..c3f8816bc7 100644
+--- a/packages/react-native/Libraries/Core/setUpReactDevTools.js
++++ b/packages/react-native/Libraries/Core/setUpReactDevTools.js
+@@ -123,6 +123,17 @@ if (__DEV__) {
+       // or the code will throw for bundles that don't have it.
+       const isAppActive = () => AppState.currentState !== 'background';
+ 
++      // RNC_patch: added the following segment to fix issue in multi ReactInstance environment
++      if (!isAppActive()) {
++        const subscription = AppState.addEventListener('change', () => {
++          if (isAppActive()) {
++            connectToWSBasedReactDevToolsFrontend();
++            subscription.remove();
++          }
++        });
++        return;
++      }
++
+       // Get hostname from development server (packager)
+       const devServer = getDevServer();
+       const host = devServer.bundleLoadedFromServer
+diff --git a/packages/react-native/Libraries/Image/ImageViewNativeComponent.js b/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
+index 22ac430c21..c7646e6b7a 100644
+--- a/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
++++ b/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
+@@ -141,6 +141,7 @@ export const __INTERNAL_VIEW_CONFIG: PartialViewConfig =
+           },
+         },
+         validAttributes: {
++          fadeDuration: true,
+           blurRadius: true,
+           capInsets: {
+             diff: require('../Utilities/differ/insetsDiffer'),
+diff --git a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js b/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
+index 99a067ec35..d549fd2a07 100644
+--- a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
++++ b/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
+@@ -9,6 +9,9 @@
+  */
+ 
+ import Platform from '../Utilities/Platform';
++import Delegate from './delegates/ViewConfigIgnoreDelegate';
++
++const DELEGATE = new Delegate({});
+ 
+ const ignoredViewConfigProps = new WeakSet<{...}>();
+ 
+@@ -37,10 +40,11 @@ export function DynamicallyInjectedByGestureHandler<T: {...}>(object: T): T {
+ export function ConditionallyIgnoredEventHandlers<T: {[name: string]: true}>(
+   value: T,
+ ): T | void {
+-  if (Platform.OS === 'ios') {
+-    return value;
+-  }
+-  return undefined;
++  return DELEGATE.conditionallyIgnoredEventHandlers(value);
++  // if (Platform.OS === 'ios') {
++  //   return value;
++  // }
++  // return undefined;
+ }
+ 
+ export function isIgnored(value: mixed): boolean {
+diff --git a/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts b/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts
+new file mode 100644
+index 0000000000..aaba2afaa0
+--- /dev/null
++++ b/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts
+@@ -0,0 +1,10 @@
++/**
++ * @format
++ */
++export type ViewConfigIgnoreDelegateContext = {};
++
++export abstract class BaseViewConfigIgnoreDelegate {
++  constructor(protected ctx: ViewConfigIgnoreDelegateContext) {}
++
++  abstract conditionallyIgnoredEventHandlers<T>(value: T): T | undefined;
++}
+diff --git a/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts b/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts
+new file mode 100644
+index 0000000000..02783bc0eb
+--- /dev/null
++++ b/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts
+@@ -0,0 +1,10 @@
++/**
++ * @format
++ */
++import {BaseViewConfigIgnoreDelegate} from './BaseViewConfigIgnoreDelegate';
++
++export default class ViewConfigIgnoreDelegate extends BaseViewConfigIgnoreDelegate {
++  conditionallyIgnoredEventHandlers<T>(value: T): T | undefined {
++    return undefined;
++  }
++}
+diff --git a/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js b/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
+index 6bed4989c5..db9652076e 100644
+--- a/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
++++ b/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
+@@ -15,9 +15,20 @@ import type {UIManagerJSInterface} from '../Types/UIManagerJSInterface';
+ 
+ import {unstable_hasComponent} from '../NativeComponent/NativeComponentRegistryUnstable';
+ import defineLazyObjectProperty from '../Utilities/defineLazyObjectProperty';
+-import Platform from '../Utilities/Platform';
++import Delegate from './delegates/BridgelessUIManagerDelegate';
+ import {getFabricUIManager} from './FabricUIManager';
+ import nullthrows from 'nullthrows';
++import Platform from '../Utilities/Platform';
++
++
++const DELEGATE = new Delegate({});
++
++// RNC_patch
++const PatchedPlatform = {
++  select(implementationByPlatformName) {
++    return implementationByPlatformName[DELEGATE.selectAndroidOrIOSImplementation()];
++  },
++};
+ 
+ function raiseSoftError(methodName: string, details?: string): void {
+   console.error(
+@@ -163,7 +174,7 @@ const UIManagerJSDeprecatedPlatformAPIs = Platform.select({
+   android: {},
+ });
+ 
+-const UIManagerJSPlatformAPIs = Platform.select({
++const UIManagerJSPlatformAPIs = PatchedPlatform.select({
+   android: {
+     getConstantsForViewManager: (viewManagerName: string): ?Object => {
+       if (getConstantsForViewManager) {
+diff --git a/packages/react-native/Libraries/ReactNative/I18nManager.js b/packages/react-native/Libraries/ReactNative/I18nManager.js
+index 1c3225638e..b10fe54bbd 100644
+--- a/packages/react-native/Libraries/ReactNative/I18nManager.js
++++ b/packages/react-native/Libraries/ReactNative/I18nManager.js
+@@ -10,10 +10,9 @@
+ 
+ import type {I18nManagerConstants} from './NativeI18nManager';
+ 
++import Delegate from './delegates/I18nManagerDelegate';
+ import NativeI18nManager from './NativeI18nManager';
+ 
+-const i18nConstants: I18nManagerConstants = getI18nManagerConstants();
+-
+ function getI18nManagerConstants(): I18nManagerConstants {
+   if (NativeI18nManager) {
+     const {isRTL, doLeftAndRightSwapInRTL, localeIdentifier} =
+@@ -27,10 +26,10 @@ function getI18nManagerConstants(): I18nManagerConstants {
+   };
+ }
+ 
++const DELEGATE = new Delegate({constantsCallback: getI18nManagerConstants});
++
+ module.exports = {
+-  getConstants: (): I18nManagerConstants => {
+-    return i18nConstants;
+-  },
++  getConstants: DELEGATE.getConstants,
+ 
+   allowRTL: (shouldAllow: boolean) => {
+     if (!NativeI18nManager) {
+@@ -56,6 +55,10 @@ module.exports = {
+     NativeI18nManager.swapLeftAndRightInRTL(flipStyles);
+   },
+ 
+-  isRTL: i18nConstants.isRTL,
+-  doLeftAndRightSwapInRTL: i18nConstants.doLeftAndRightSwapInRTL,
++  get isRTL(): boolean {
++    return DELEGATE.isRTL;
++  },
++  get doLeftAndRightSwapInRTL(): boolean {
++    return DELEGATE.doLeftAndRightSwapInRTL;
++  },
+ };
+diff --git a/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts
+new file mode 100644
+index 0000000000..378105fcd5
+--- /dev/null
++++ b/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts
+@@ -0,0 +1,14 @@
++/**
++ * @format
++ */
++
++export type BridgelessUIManagerContext = {};
++
++export abstract class BaseBridgelessUIManagerDelegate {
++  constructor(protected ctx: BridgelessUIManagerContext) {}
++
++  /**
++   * NOTE: delegates should be platform independent, but doing it properly requires more changes and we want to minimize maintenance.
++   */
++  abstract selectAndroidOrIOSImplementation(): 'android' | 'ios';
++}
+diff --git a/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts
+new file mode 100644
+index 0000000000..91d68b59b5
+--- /dev/null
++++ b/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts
+@@ -0,0 +1,18 @@
++/**
++ * @format
++ */
++import type {I18nManagerConstants} from '../NativeI18nManager';
++
++export type I18nManagerContext = {
++  constantsCallback: () => I18nManagerConstants;
++};
++
++export abstract class BaseI18nManagerDelegate {
++  constructor(protected ctx: I18nManagerContext) {}
++
++  abstract getConstants: () => I18nManagerConstants;
++
++  abstract isRTL: boolean;
++
++  abstract doLeftAndRightSwapInRTL: boolean;
++}
+diff --git a/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts
+new file mode 100644
+index 0000000000..73a752f424
+--- /dev/null
++++ b/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts
+@@ -0,0 +1,11 @@
++/**
++ * @format
++ */
++import {BaseBridgelessUIManagerDelegate} from './BaseBridgelessUIManagerDelegate';
++import {UnsupportedByPlatformError} from '../../../delegates/DelegateError';
++
++export default class BridgelessUIManagerDelegate extends BaseBridgelessUIManagerDelegate {
++  override selectAndroidOrIOSImplementation(): 'android' | 'ios' {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts
+new file mode 100644
+index 0000000000..72015afc70
+--- /dev/null
++++ b/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts
+@@ -0,0 +1,24 @@
++/**
++ * @format
++ */
++
++import type {I18nManagerConstants} from '../NativeI18nManager';
++import type {I18nManagerContext} from './BaseI18nManagerDelegate';
++import {BaseI18nManagerDelegate} from './BaseI18nManagerDelegate';
++
++export default class I18nManagerDelegate extends BaseI18nManagerDelegate {
++  i18nConstants: I18nManagerConstants;
++  constructor(protected ctx: I18nManagerContext) {
++    super(ctx);
++    this.i18nConstants = ctx.constantsCallback();
++    this.isRTL = this.i18nConstants.isRTL;
++    this.doLeftAndRightSwapInRTL = this.i18nConstants.doLeftAndRightSwapInRTL;
++  }
++
++  getConstants: () => I18nManagerConstants = () => {
++    return this.i18nConstants;
++  };
++
++  isRTL: boolean;
++  doLeftAndRightSwapInRTL: boolean;
++}
+diff --git a/packages/react-native/Libraries/Share/Share.js b/packages/react-native/Libraries/Share/Share.js
+index 0a21bbac14..fd7573aa2e 100644
+--- a/packages/react-native/Libraries/Share/Share.js
++++ b/packages/react-native/Libraries/Share/Share.js
+@@ -9,12 +9,15 @@
+  */
+ 
+ import NativeActionSheetManager from '../ActionSheetIOS/NativeActionSheetManager';
++import Delegate from './delegates/ShareDelegate';
+ import NativeShareModule from './NativeShareModule';
+ 
+ const processColor = require('../StyleSheet/processColor').default;
+ const Platform = require('../Utilities/Platform');
+ const invariant = require('invariant');
+ 
++const DELEGATE = new Delegate({});
++
+ export type ShareContent =
+   | {
+       title?: string,
+@@ -88,6 +91,7 @@ class Share {
+       'Options must be a valid object',
+     );
+ 
++    return DELEGATE.onShare(content, options);
+     if (Platform.OS === 'android') {
+       invariant(
+         NativeShareModule,
+@@ -102,6 +106,7 @@ class Share {
+         title: content.title,
+         message:
+           typeof content.message === 'string' ? content.message : undefined,
++        url: typeof content.url === 'string' ? content.url : undefined, // RNC_patch
+       };
+ 
+       return NativeShareModule.share(newContent, options.dialogTitle).then(
+diff --git a/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts b/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts
+new file mode 100644
+index 0000000000..f349349d6e
+--- /dev/null
++++ b/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts
+@@ -0,0 +1,21 @@
++/**
++ * @format
++ */
++import type {
++  ShareContent as _ShareContent,
++  ShareOptions as _ShareOptions,
++  ShareAction as _ShareAction,
++} from '../Share';
++
++export type ShareDelegateContext = {};
++export type ShareContent = _ShareContent;
++export type ShareOptions = _ShareOptions;
++export type ShareAction = _ShareAction
++export abstract class BaseShareDelegate {
++  constructor(protected ctx: ShareDelegateContext) {}
++
++  abstract onShare(
++    content: ShareContent,
++    options: ShareOptions,
++  ): Promise<ShareAction>;
++}
+diff --git a/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts b/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts
+new file mode 100644
+index 0000000000..e967e76341
+--- /dev/null
++++ b/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts
+@@ -0,0 +1,20 @@
++/**
++ * @format
++ */
++
++import {
++  BaseShareDelegate,
++  ShareAction,
++  ShareContent,
++  ShareOptions,
++} from './BaseShareDelegate';
++import {UnsupportedByPlatformError} from '../../../delegates/DelegateError';
++
++export default class ShareDelegate extends BaseShareDelegate {
++  override onShare(
++    content: ShareContent,
++    options: ShareOptions,
++  ): Promise<ShareAction> {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/Libraries/Utilities/Platform.d.ts b/packages/react-native/Libraries/Utilities/Platform.d.ts
+index 7f7dc61c10..7850990f45 100644
+--- a/packages/react-native/Libraries/Utilities/Platform.d.ts
++++ b/packages/react-native/Libraries/Utilities/Platform.d.ts
+@@ -16,6 +16,7 @@ export type PlatformOSType =
+   | 'macos'
+   | 'windows'
+   | 'web'
++  | 'harmony'
+   | 'native';
+ type PlatformConstants = {
+   isTesting: boolean;
+@@ -96,11 +97,31 @@ interface PlatformWebStatic extends PlatformStatic {
+   OS: 'web';
+ }
+ 
++export type PlatformHarmonyConstants = PlatformConstants & {
++  deviceType:
++    | 'default'
++    | 'phone'
++    | 'wearable'
++    | 'liteWearable'
++    | 'tablet'
++    | 'tv'
++    | 'car'
++    | 'smartVision';
++  osFullName: string;
++  Model: string;
++};
++
++export interface PlatformHarmonyStatic extends PlatformStatic {
++  OS: 'harmony';
++  constants: PlatformHarmonyConstants;
++  isPad: boolean;
++}
+ export type Platform =
+   | PlatformIOSStatic
+   | PlatformAndroidStatic
+   | PlatformWindowsOSStatic
+   | PlatformMacOSStatic
++  | PlatformHarmonyStatic
+   | PlatformWebStatic;
+ 
+ export const Platform: Platform;
+diff --git a/packages/react-native/Libraries/Utilities/createPerformanceLogger.js b/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
+index fba6d7711a..89e351d322 100644
+--- a/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
++++ b/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
+@@ -20,7 +20,7 @@ import infoLog from './infoLog';
+ const PRINT_TO_CONSOLE: false = false; // Type as false to prevent accidentally committing `true`;
+ 
+ export const getCurrentTimestamp: () => number =
+-  global.nativeQPLTimestamp ?? (() => global.performance.now());
++  global.nativeQPLTimestamp ?? global.performance ? global.performance.now.bind(global.performance) : Date.now; // RNC_patch
+ 
+ class PerformanceLogger implements IPerformanceLogger {
+   _timespans: {[key: string]: ?Timespan} = {};
+diff --git a/packages/react-native/Libraries/Vibration/Vibration.js b/packages/react-native/Libraries/Vibration/Vibration.js
+index db124c6323..23dac1bb71 100644
+--- a/packages/react-native/Libraries/Vibration/Vibration.js
++++ b/packages/react-native/Libraries/Vibration/Vibration.js
+@@ -9,9 +9,10 @@
+  * @jsdoc
+  */
+ 
++import Delegate from './delegates/VibrationDelegate';
+ import NativeVibration from './NativeVibration';
+ 
+-const Platform = require('../Utilities/Platform');
++const DELEGATE = new Delegate({});
+ 
+ /**
+  * Vibration API
+@@ -75,7 +76,7 @@ const Vibration = {
+     pattern: number | Array<number> = _default_vibration_length,
+     repeat: boolean = false,
+   ) {
+-    if (Platform.OS === 'android') {
++    if (DELEGATE.shouldUseAndroidImplementation()) {
+       if (typeof pattern === 'number') {
+         NativeVibration.vibrate(pattern);
+       } else if (Array.isArray(pattern)) {
+@@ -102,9 +103,10 @@ const Vibration = {
+    * See https://reactnative.dev/docs/vibration#cancel
+    */
+   cancel: function () {
+-    if (Platform.OS === 'ios') {
++    if (!DELEGATE.shouldUseAndroidImplementation()) {
+       _vibrating = false;
+-    } else {
++    }
++    else {
+       NativeVibration.cancel();
+     }
+   },
+diff --git a/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts b/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts
+new file mode 100644
+index 0000000000..4840a46341
+--- /dev/null
++++ b/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts
+@@ -0,0 +1,11 @@
++/**
++ * @format
++ */
++
++export type VibrationDelegateContext = {};
++
++export abstract class BaseVibrationDelegate {
++  constructor(protected ctx: VibrationDelegateContext) {}
++
++  abstract shouldUseAndroidImplementation(): boolean;
++}
+diff --git a/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts b/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts
+new file mode 100644
+index 0000000000..9eb1887d93
+--- /dev/null
++++ b/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts
+@@ -0,0 +1,11 @@
++/**
++ * @format
++ */
++import {BaseVibrationDelegate} from './BaseVibrationDelegate';
++import {UnsupportedByPlatformError} from '../../../delegates/DelegateError';
++
++export default class VibrationDelegate extends BaseVibrationDelegate {
++  override shouldUseAndroidImplementation(): boolean {
++    throw new UnsupportedByPlatformError();
++  }
++}
+diff --git a/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp b/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
+index 59cfe8d41e..904e26695a 100644
+--- a/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
++++ b/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
+@@ -38,7 +38,8 @@ JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
+     const static auto ps = sysconf(_SC_PAGESIZE);
+     auto d = lldiv(offset, ps);
+ 
+-    m_mapOff = static_cast<off_t>(d.quot);
++    // RNC_patch - multiply by page size so we get offset in bytes instead of number of pages.
++    m_mapOff = static_cast<off_t>(d.quot) * ps;
+     m_pageOff = static_cast<off_t>(d.rem);
+     m_size = size + m_pageOff;
+   } else {
+diff --git a/packages/react-native/ReactCommon/cxxreact/SystraceSection.h b/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
+index f661be9714..4108530d6d 100644
+--- a/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
++++ b/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
+@@ -7,10 +7,16 @@
+ 
+ #pragma once
+ 
+-#ifdef WITH_FBSYSTRACE
+-#include <fbsystrace.h>
++#ifdef WITH_CUSTOM_SYSTRACE // RNC_patch
++#include <extras/SystraceSection.h> // RNC_patch
+ #endif
+ 
++// RNC_PATCH: BEGIN
++#ifndef __unused
++#define __unused __attribute__((unused))
++#endif
++// RNC_PATCH: END
++
+ #if defined(__APPLE__)
+ // This is required so that OS_LOG_TARGET_HAS_10_15_FEATURES will be set.
+ #include <os/trace_base.h>
+@@ -57,6 +63,8 @@ struct ConcreteSystraceSection {
+   fbsystrace::FbSystraceSection m_section;
+ };
+ using SystraceSectionUnwrapped = ConcreteSystraceSection;
++#elif defined(WITH_CUSTOM_SYSTRACE) // RNC_patch
++using SystraceSectionUnwrapped = CustomSystraceSection; // RNC_patch
+ #else
+ struct DummySystraceSection {
+  public:
+diff --git a/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt b/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
+index b05009bd70..b72eef700d 100644
+--- a/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
++++ b/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
+@@ -20,4 +20,5 @@ target_link_libraries(jserrorhandler
+         folly_runtime
+         mapbufferjni
+         react_featureflags
++        react_cxxreact # RNC_patch: JsErrorHandler imports <cxxreact/ErrorUtils.h>
+ )
+diff --git a/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt b/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
+index 2b6db3cd6e..6a68492c9e 100644
+--- a/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
++++ b/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
+@@ -11,14 +11,14 @@ add_compile_options(
+         -fexceptions
+         -std=c++20)
+ 
+-include(${REACT_ANDROID_DIR}/src/main/jni/first-party/jni-lib-merge/SoMerging-utils.cmake)
++# include(${REACT_ANDROID_DIR}/src/main/jni/first-party/jni-lib-merge/SoMerging-utils.cmake) # RNC_patch
+ 
+ file(GLOB jsinspector_SRC CONFIGURE_DEPENDS *.cpp)
+ # jsinspector contains singletons that hold app-global state (InspectorFlags, InspectorImpl).
+ # Placing it in a shared library makes the singletons safe to use from arbitrary shared libraries
+ # (even ones that don't depend on one another).
+ add_library(jsinspector OBJECT ${jsinspector_SRC})
+-target_merge_so(jsinspector)
++# target_merge_so(jsinspector) # RNC_patch
+ 
+ target_include_directories(jsinspector PUBLIC ${REACT_COMMON_DIR})
+ 
+diff --git a/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt b/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
+index 93289d66cd..6a513f9838 100644
+--- a/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
++++ b/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
+@@ -14,20 +14,36 @@ add_compile_options(
+         -Wpedantic
+         -DLOG_TAG=\"ReactNative\")
+ 
++# RNC_patch: BEGIN
++set(react_nativemodule_core_platform_SRC "")
++if(DEFINED REACT_NATIVE_PLATFORM)
++    file(GLOB react_nativemodule_core_platform_SRC CONFIGURE_DEPENDS
++        "platform/${REACT_NATIVE_PLATFORM}/ReactCommon/*.cpp")
++endif()
++# RNC_patch: END
+ 
+ file(GLOB react_nativemodule_core_SRC CONFIGURE_DEPENDS
+         ReactCommon/*.cpp
+-        platform/android/ReactCommon/*.cpp)
++        # platform/android/ReactCommon/*.cpp # RNC_patch
++        )
+ add_library(react_nativemodule_core
+         OBJECT
+-        ${react_nativemodule_core_SRC})
++        ${react_nativemodule_core_SRC}
++        ${react_nativemodule_core_platform_SRC}) # RNC_patch
+ 
+ target_include_directories(react_nativemodule_core
+         PUBLIC
+           ${CMAKE_CURRENT_SOURCE_DIR}
+-          ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/
++          # ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/ # RNC_patch
+         )
+ 
++# RNC_patch: BEGIN
++if(DEFINED REACT_NATIVE_PLATFORM)
++    target_include_directories(react_nativemodule_core PUBLIC
++        "${CMAKE_CURRENT_SOURCE_DIR}/platform/${REACT_NATIVE_PLATFORM}/")
++endif()
++# RNC_patch: END
++
+ target_link_libraries(react_nativemodule_core
+         fbjni
+         folly_runtime
+diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
+index f2317ba080..49a90d9408 100644
+--- a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
++++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
+@@ -21,6 +21,8 @@ bool ParagraphAttributes::operator==(const ParagraphAttributes& rhs) const {
+              textBreakStrategy,
+              adjustsFontSizeToFit,
+              includeFontPadding,
++             allowFontScaling, // RNC_patch
++             writingDirection, // RNC_patch
+              android_hyphenationFrequency) ==
+       std::tie(
+              rhs.maximumNumberOfLines,
+@@ -28,8 +30,12 @@ bool ParagraphAttributes::operator==(const ParagraphAttributes& rhs) const {
+              rhs.textBreakStrategy,
+              rhs.adjustsFontSizeToFit,
+              rhs.includeFontPadding,
++             rhs.allowFontScaling, // RNC_patch
++             rhs.writingDirection, // RNC_patch
+              rhs.android_hyphenationFrequency) &&
+       floatEquality(minimumFontSize, rhs.minimumFontSize) &&
++      floatEquality(minimumFontScale, rhs.minimumFontScale) && // RNC_patch
++      floatEquality(maxFontSizeMultiplier, rhs.maxFontSizeMultiplier) && // RNC_patch
+       floatEquality(maximumFontSize, rhs.maximumFontSize);
+ }
+ 
+diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
+index d73f8632b8..dcd7502df8 100644
+--- a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
++++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
+@@ -70,6 +70,13 @@ class ParagraphAttributes : public DebugStringConvertible {
+   Float minimumFontSize{std::numeric_limits<Float>::quiet_NaN()};
+   Float maximumFontSize{std::numeric_limits<Float>::quiet_NaN()};
+ 
++  // RNC_patch: BEGIN
++  WritingDirection writingDirection{};
++  bool allowFontScaling{true};
++  Float maxFontSizeMultiplier{std::numeric_limits<Float>::quiet_NaN()};
++  Float minimumFontScale{std::numeric_limits<Float>::quiet_NaN()};
++  // RNC_patch: END
++
+   bool operator==(const ParagraphAttributes&) const;
+   bool operator!=(const ParagraphAttributes&) const;
+ 
+@@ -96,6 +103,7 @@ struct hash<facebook::react::ParagraphAttributes> {
+         attributes.minimumFontSize,
+         attributes.maximumFontSize,
+         attributes.includeFontPadding,
++        attributes.minimumFontScale, // RNC_patch
+         attributes.android_hyphenationFrequency);
+   }
+ };
+diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h b/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
+index de53360ce2..b58b83179f 100644
+--- a/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
++++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
+@@ -827,6 +827,26 @@ inline ParagraphAttributes convertRawProp(
+       "maximumFontSize",
+       sourceParagraphAttributes.maximumFontSize,
+       defaultParagraphAttributes.maximumFontSize);
++  // RNC_PATCH: BEGIN
++  paragraphAttributes.writingDirection = convertRawProp(
++      context,
++      rawProps,
++      "writingDirection",
++      sourceParagraphAttributes.writingDirection,
++      defaultParagraphAttributes.writingDirection);
++  paragraphAttributes.allowFontScaling = convertRawProp(
++      context,
++      rawProps,
++      "allowFontScaling",
++      sourceParagraphAttributes.allowFontScaling,
++      defaultParagraphAttributes.allowFontScaling);
++  paragraphAttributes.maxFontSizeMultiplier = convertRawProp(
++      context,
++      rawProps,
++      "maxFontSizeMultiplier",
++      sourceParagraphAttributes.maxFontSizeMultiplier,
++      defaultParagraphAttributes.maxFontSizeMultiplier);
++  // RNC_PATCH: END
+   paragraphAttributes.includeFontPadding = convertRawProp(
+       context,
+       rawProps,
+diff --git a/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp b/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
+index de9e320087..c08bd3a51e 100644
+--- a/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
++++ b/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include "componentNameByReactViewName.h"
+ #include <algorithm>
++#include <glog/logging.h>
+ 
+ namespace facebook::react {
+ 
+@@ -19,7 +20,38 @@ std::string componentNameByReactViewName(std::string viewName) {
+   if (std::mismatch(rctPrefix.begin(), rctPrefix.end(), viewName.begin())
+           .first == rctPrefix.end()) {
+     // If `viewName` has "RCT" prefix, remove it.
+-    viewName.erase(0, rctPrefix.length());
++    // RNC: patch
++    if (viewName == "RCTView") {
++      viewName = "View";
++    } else if (viewName == "RCTRawText") {
++      viewName = "RawText";
++    } else if (viewName == "RCTText") {
++      viewName = "Text";
++    } else if (viewName == "RCTScrollContentView") {
++      viewName = "ScrollContentView";
++    } else if (viewName == "RCTActivityIndicatorView") {
++      viewName = "ActivityIndicatorView";
++    } else if (viewName == "RCTScrollView") {
++      viewName = "ScrollView";
++    } else if (viewName == "RCTVirtualText") {
++      viewName = "VirtualText";
++    } else if (viewName == "RCTImageView") {
++      viewName = "ImageView";
++    } else if (viewName == "RCTSinglelineTextInputView") {
++      viewName = "SinglelineTextInputView";
++    } else if (viewName == "RCTMultilineTextInputView") {
++      viewName = "MultilineTextInputView";
++    } else if (viewName == "RCTSafeAreaView") {
++      viewName = "SafeAreaView";
++    } else if (viewName == "RCTModalHostView") {
++      viewName = "ModalHostView";
++    } else if (viewName == "RCTRefreshControl") {
++      viewName = "RefreshControl";
++    } else if (viewName == "RCTSwitch") {
++      viewName = "Switch";
++    } else {
++      DLOG(INFO) << "Skipped removing RCT prefix for component: " << viewName;
++    }
+   }
+ 
+   // Fabric uses slightly new names for Text components because of differences
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
+index 08dadd11f9..5221882aa3 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
++++ b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
+@@ -44,6 +44,7 @@ jsi::Value ScrollEvent::asJSIValue(jsi::Runtime& runtime) const {
+ 
+   payload.setProperty(runtime, "zoomScale", zoomScale);
+   payload.setProperty(runtime, "timestamp", timestamp * 1000);
++  payload.setProperty(runtime, "responderIgnoreScroll", responderIgnoreScroll); // RNC_patch
+ 
+   return payload;
+ }
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
+index 8eac9e879b..0c927b927c 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
++++ b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
+@@ -20,6 +20,7 @@ struct ScrollEvent : public EventPayload {
+   EdgeInsets contentInset;
+   Size containerSize;
+   Float zoomScale{};
++  bool responderIgnoreScroll; // RNC_patch
+ 
+   /*
+    * The time in seconds when the touch occurred or when it was last mutated.
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
+index 3be6198d73..265363e325 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
++++ b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
+@@ -121,7 +121,7 @@ void ParagraphShadowNode::updateStateIfNeeded(const Content& content) {
+ 
+   react_native_assert(textLayoutManager_);
+ 
+-  if (state.attributedString == content.attributedString) {
++  if (state.attributedString == content.attributedString && state.paragraphAttributes == content.paragraphAttributes) {
+     return;
+   }
+ 
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
+index 91839534d3..8d8d17582d 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
++++ b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
+@@ -45,7 +45,7 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
+     traits.set(ShadowNodeTraits::Trait::MeasurableYogaNode);
+     traits.set(ShadowNodeTraits::Trait::BaselineYogaNode);
+ 
+-#ifdef ANDROID
++#ifdef UNSET_FORMS_STACKING_CONTEXT // RNC_patch
+     // Unsetting `FormsStackingContext` trait is essential on Android where we
+     // can't mount views inside `TextView`.
+     traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt b/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
+index 6198066ac4..1a8d760731 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
++++ b/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
+@@ -16,14 +16,14 @@ add_compile_options(
+ 
+ file(GLOB rrc_view_SRC CONFIGURE_DEPENDS
+         *.cpp
+-        platform/android/react/renderer/components/view/*.cpp)
++        platform/${REACT_NATIVE_PLATFORM}/react/renderer/components/view/*.cpp) # RNC_PATCH
+ 
+ add_library(rrc_view OBJECT ${rrc_view_SRC})
+ 
+ target_include_directories(rrc_view
+         PUBLIC
+           ${REACT_COMMON_DIR}
+-          ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/
++          ${CMAKE_CURRENT_SOURCE_DIR}/platform/${REACT_NATIVE_PLATFORM}/ # RNC_PATCH
+ )
+ 
+ target_link_libraries(rrc_view
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h b/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
+index 1aec3ac18a..8ba05dd2f1 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
++++ b/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
+@@ -45,12 +45,14 @@ static inline void interpolateViewProps(
+   // that use RawProps/folly::dynamic instead of concrete props on the
+   // mounting layer. Once we can remove this, we should change `rawProps` to
+   // be const again.
+-#ifdef ANDROID
++#ifdef RAW_PROPS_ENABLED
+   if (!interpolatedProps->rawProps.isNull()) {
+     interpolatedProps->rawProps["opacity"] = interpolatedProps->opacity;
+ 
++#ifdef ANDROID
+     interpolatedProps->rawProps["transform"] =
+         (folly::dynamic)interpolatedProps->transform;
++#endif
+   }
+ #endif
+ }
+diff --git a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp b/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
+index 2e494ba7d2..c7040c1228 100644
+--- a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
++++ b/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
+@@ -28,7 +28,7 @@ void Props::initialize(
+   nativeId = ReactNativeFeatureFlags::enableCppPropsIteratorSetter()
+       ? sourceProps.nativeId
+       : convertRawProp(context, rawProps, "nativeID", sourceProps.nativeId, {});
+-#ifdef ANDROID
++#ifdef RAW_PROPS_ENABLED
+   this->rawProps = (folly::dynamic)rawProps;
+ #endif
+ }
+diff --git a/packages/react-native/ReactCommon/react/renderer/core/Props.h b/packages/react-native/ReactCommon/react/renderer/core/Props.h
+index 144cc8a039..b7766cc765 100644
+--- a/packages/react-native/ReactCommon/react/renderer/core/Props.h
++++ b/packages/react-native/ReactCommon/react/renderer/core/Props.h
+@@ -57,7 +57,8 @@ class Props : public virtual Sealable, public virtual DebugStringConvertible {
+ 
+   std::string nativeId;
+ 
+-#ifdef ANDROID
++// RNC_PATCH
++#ifdef RAW_PROPS_ENABLED
+   folly::dynamic rawProps = folly::dynamic::object();
+ 
+   virtual folly::dynamic getDiffProps(const Props* prevProps) const {
+diff --git a/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt b/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
+index c849f3ed74..bd93b50920 100644
+--- a/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
++++ b/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
+@@ -20,7 +20,7 @@ add_library(react_render_graphics OBJECT ${react_render_graphics_SRC})
+ target_include_directories(react_render_graphics
+         PUBLIC
+           ${REACT_COMMON_DIR}
+-          ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/
++          ${CMAKE_CURRENT_SOURCE_DIR}/platform/${REACT_NATIVE_PLATFORM}/ # RNC_PATCH
+         )
+ 
+ target_link_libraries(react_render_graphics glog fb fbjni folly_runtime react_debug react_utils)
+diff --git a/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h b/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
+index ee0ee3e6a3..0abacea1a3 100644
+--- a/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
++++ b/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
+@@ -15,6 +15,10 @@ namespace facebook::react {
+  * Exact type of float numbers which ideally should match a type behing
+  * platform- and chip-architecture-specific float type.
+  */
++#ifdef REACT_NATIVE__RENDER__GRAPHICS__FLOAT
++using Float = REACT_NATIVE__RENDER__GRAPHICS__FLOAT;
++#else
+ using Float = float;
++#endif
+ 
+ } // namespace facebook::react
+diff --git a/packages/react-native/delegates/DelegateError.ts b/packages/react-native/delegates/DelegateError.ts
+new file mode 100644
+index 0000000000..15ef685ee6
+--- /dev/null
++++ b/packages/react-native/delegates/DelegateError.ts
+@@ -0,0 +1,10 @@
++/**
++ * @format
++ */
++export abstract class DelegateError extends Error {}
++
++export class UnsupportedByPlatformError extends DelegateError {
++  constructor() {
++    super('Unsupported by the platform');
++  }
++}
+diff --git a/packages/react-native/package.json b/packages/react-native/package.json
+index bc8a358488..a2e5d6668c 100644
+--- a/packages/react-native/package.json
++++ b/packages/react-native/package.json
+@@ -1,100 +1,30 @@
+ {
+-  "name": "react-native",
+-  "version": "0.77.1",
+-  "description": "A framework for building native apps using React",
++  "name": "@rnoh/react-native-core",
++  "version": "0.77.4",
++  "description": "Unofficial, platform independent core of React Native.",
+   "license": "MIT",
+-  "repository": {
+-    "type": "git",
+-    "url": "git+https://github.com/facebook/react-native.git",
+-    "directory": "packages/react-native"
+-  },
+-  "homepage": "https://reactnative.dev/",
+-  "keywords": [
+-    "react",
+-    "react-native",
+-    "android",
+-    "ios",
+-    "mobile",
+-    "cross-platform",
+-    "app-framework",
+-    "mobile-development"
+-  ],
+-  "bugs": "https://github.com/facebook/react-native/issues",
++  "keywords": [],
+   "engines": {
+     "node": ">=18"
+   },
+-  "bin": {
+-    "react-native": "cli.js"
+-  },
++  "bin": "cli.js",
+   "types": "types",
+   "jest-junit": {
+     "outputDirectory": "reports/junit",
+     "outputName": "js-test-results.xml"
+   },
+   "files": [
+-    "android",
+-    "build.gradle.kts",
+-    "cli.js",
+-    "flow",
+-    "gradle.properties",
+-    "gradle/libs.versions.toml",
+-    "index.js",
+-    "interface.js",
+-    "jest-preset.js",
+-    "jest",
+-    "Libraries",
+-    "LICENSE",
+-    "React-Core.podspec",
+-    "react-native.config.js",
+-    "React.podspec",
+-    "React",
+-    "!React/Fabric/RCTThirdPartyFabricComponentsProvider.*",
+-    "ReactAndroid",
+-    "ReactApple",
+     "ReactCommon",
+-    "README.md",
+-    "rn-get-polyfills.js",
+-    "scripts/compose-source-maps.js",
+-    "scripts/find-node-for-xcode.sh",
+-    "scripts/bundle.js",
+-    "scripts/generate-codegen-artifacts.js",
+-    "scripts/generate-provider-cli.js",
+-    "scripts/generate-specs-cli.js",
+-    "scripts/codegen",
+-    "!scripts/codegen/__tests__",
+-    "!scripts/codegen/__test_fixtures__",
+-    "scripts/hermes/hermes-utils.js",
+-    "scripts/hermes/prepare-hermes-for-build.js",
+-    "scripts/ios-configure-glog.sh",
+-    "scripts/xcode/ccache-clang++.sh",
+-    "scripts/xcode/ccache-clang.sh",
+-    "scripts/xcode/ccache.conf",
+-    "scripts/xcode/with-environment.sh",
+-    "scripts/native_modules.rb",
+-    "scripts/node-binary.sh",
+-    "scripts/packager.sh",
+-    "scripts/packager-reporter.js",
+-    "scripts/react_native_pods_utils/script_phases.rb",
+-    "scripts/react_native_pods_utils/script_phases.sh",
+-    "scripts/react_native_pods.rb",
+-    "scripts/cocoapods",
+-    "!scripts/cocoapods/__tests__",
+-    "scripts/react-native-xcode.sh",
+-    "sdks/.hermesversion",
+-    "sdks/hermes-engine",
+-    "sdks/hermesc",
+-    "settings.gradle.kts",
++    "Libraries",
++    "types",
++    "delegates",
+     "src",
+-    "template.config.js",
+-    "template",
+-    "!template/node_modules",
+-    "!template/package-lock.json",
+-    "!template/yarn.lock",
+-    "third-party-podspecs",
+-    "types"
++    "index.js",
++    "react-native.config.js",
++    "LICENSE"
+   ],
+   "scripts": {
+-    "prepack": "node ./scripts/prepack.js",
++    "_prepack": "node ./scripts/prepack.js",
+     "featureflags": "node ./scripts/featureflags/index.js"
+   },
+   "peerDependencies": {
+@@ -144,23 +74,5 @@
+     "whatwg-fetch": "^3.0.0",
+     "ws": "^6.2.3",
+     "yargs": "^17.6.2"
+-  },
+-  "codegenConfig": {
+-    "libraries": [
+-      {
+-        "name": "FBReactNativeSpec",
+-        "type": "modules",
+-        "ios": {},
+-        "android": {},
+-        "jsSrcsDir": "src"
+-      },
+-      {
+-        "name": "rncore",
+-        "type": "components",
+-        "ios": {},
+-        "android": {},
+-        "jsSrcsDir": "src"
+-      }
+-    ]
+   }
+-}
++}
+\ No newline at end of file
+diff --git a/packages/react-native/react-native.config.js b/packages/react-native/react-native.config.js
+index 3b572bb1e9..460645b513 100644
+--- a/packages/react-native/react-native.config.js
++++ b/packages/react-native/react-native.config.js
+@@ -1,119 +1,15 @@
+ /**
+- * Copyright (c) Meta Platforms, Inc. and affiliates.
+- *
+- * This source code is licensed under the MIT license found in the
+- * LICENSE file in the root directory of this source tree.
+- *
+- * @format
++ * If this configuration is not provided, react-native/Libraries/Core/InitializeCore.js isn't called and a bundle execution later fails.
++ * @type {import("@react-native-community/cli-types").Config}
+  */
+-
+-'use strict';
+-
+-// React Native shouldn't be exporting itself like this, the Community Template should be be directly
+-// depending on and injecting:
+-// - @react-native-community/cli-platform-android
+-// - @react-native-community/cli-platform-ios
+-// - @react-native/community-cli-plugin (via the @react-native/core-cli-utils package)
+-// - codegen command should be inhoused into @react-native-community/cli
+-//
+-// This is a temporary workaround.
+-
+-const verbose = process.env.DEBUG && process.env.DEBUG.includes('react-native');
+-
+-let android;
+-try {
+-  android = require('@react-native-community/cli-platform-android');
+-} catch {
+-  if (verbose) {
+-    console.warn(
+-      '@react-native-community/cli-platform-android not found, the react-native.config.js may be unusable.',
+-    );
+-  }
+-}
+-
+-let ios;
+-try {
+-  ios = require('@react-native-community/cli-platform-ios');
+-} catch {
+-  if (verbose) {
+-    console.warn(
+-      '@react-native-community/cli-platform-ios not found, the react-native.config.js may be unusable.',
+-    );
+-  }
+-}
+-
+-const commands = [];
+-
+-try {
+-  const {
+-    bundleCommand,
+-    startCommand,
+-  } = require('@react-native/community-cli-plugin');
+-  commands.push(bundleCommand, startCommand);
+-} catch (e) {
+-  const known =
+-    e.code === 'MODULE_NOT_FOUND' &&
+-    e.message.includes('@react-native-community/cli-server-api');
+-
+-  if (!known) {
+-    throw e;
+-  }
+-
+-  if (verbose) {
+-    console.warn(
+-      '@react-native-community/cli-server-api not found, the react-native.config.js may be unusable.',
+-    );
+-  }
+-}
+-
+-const codegenCommand = {
+-  name: 'codegen',
+-  options: [
+-    {
+-      name: '--path <path>',
+-      description: 'Path to the React Native project root.',
+-      default: process.cwd(),
+-    },
+-    {
+-      name: '--platform <string>',
+-      description:
+-        'Target platform. Supported values: "android", "ios", "all".',
+-      default: 'all',
+-    },
+-    {
+-      name: '--outputPath <path>',
+-      description: 'Path where generated artifacts will be output to.',
+-    },
+-  ],
+-  func: (argv, config, args) =>
+-    require('./scripts/codegen/generate-artifacts-executor').execute(
+-      args.path,
+-      args.platform,
+-      args.outputPath,
+-    ),
+-};
+-
+-commands.push(codegenCommand);
+-
+ const config = {
+-  commands,
+-  platforms: {},
++  platforms: {
++    __core__: {
++      npmPackageName: '@react-native-oh/react-native-core',
++      projectConfig: () => ({}),
++      dependencyConfig: () => ({}),
++    },
++  },
+ };
+ 
+-if (ios != null) {
+-  config.commands.push(...ios.commands);
+-  config.platforms.ios = {
+-    projectConfig: ios.projectConfig,
+-    dependencyConfig: ios.dependencyConfig,
+-  };
+-}
+-
+-if (android != null) {
+-  config.commands.push(...android.commands);
+-  config.platforms.android = {
+-    projectConfig: android.projectConfig,
+-    dependencyConfig: android.dependencyConfig,
+-  };
+-}
+-
+ module.exports = config;

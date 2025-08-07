@@ -5,7 +5,6 @@ packages:
   - 'packages/tester'
   - 'packages/tester-ecosystem'
   - 'packages/testerino'
-  - 'packages/react-native-core/packages/react-native'
   - 'packages/hdc-server'
   - 'packages/react-native-harmony-test-kit'
   - 'packages/react-native-harmony-61-interop'
