@@ -140,9 +140,13 @@ class ArkUITypography final {
     // When TextComponentInstance reuses TextStorage from TextMeasurer, the text
     // has incorrect position (platform bug?) if text alignement is different
     // from 'left'.
+    //
+    // The return value of the OH_Drawing_TypographyGetLongestLine () interface
+    // needs to be rounded up; otherwise, abnormal text line breaks may occur on
+    // some devices, such as mate 70 pro.
     OH_Drawing_TypographyLayout(
         m_typography.get(),
-        OH_Drawing_TypographyGetLongestLine(m_typography.get()));
+        std::ceil(OH_Drawing_TypographyGetLongestLine(m_typography.get())));
   }
 
   std::shared_ptr<OH_Drawing_Typography> m_typography;
