@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState, useCallback} from 'react';
 import {
   View,
   SectionList,
@@ -325,6 +325,9 @@ export const SectionListTest = () => {
           <SectionListRecordInteractionTest />
         </View>
       </TestCase.Example>
+      <TestCase.Example modal itShould="display smooth scroll offset updates">
+        <SectionListSmoothScrollOffsetExample />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -487,6 +490,40 @@ function SectionListRecordInteractionTest() {
         onViewableItemsChanged={onViewableItemsChanged}
       />
     </>
+  );
+}
+
+function SectionListSmoothScrollOffsetExample() {
+  const [headerPageY, setHeaderPageY] = React.useState(0);
+  const headerRef = React.useRef<View>(null);
+
+  const measureHeader = useCallback(() => {
+    headerRef.current?.measure?.((_x, _y, _width, _height, _pageX, pageY) => {
+      setHeaderPageY(pageY);
+    });
+  }, []);
+
+  const customRenderSectionHeader: SectionListProps<string>['renderSectionHeader'] =
+    ({section}) =>
+      section.title === DATA[0].title ? (
+        <View ref={headerRef} style={styles.title}>
+          <Text style={styles.title}>{section.title}</Text>
+        </View>
+      ) : (
+        <Text style={styles.title}>{section.title}</Text>
+      );
+
+  return (
+    <View style={styles.container}>
+      <Text style={{marginBottom: 8, fontSize: 16}}>
+        Header PageY: {headerPageY.toFixed(2)}
+      </Text>
+      <SectionList
+        {...commonProps}
+        renderSectionHeader={customRenderSectionHeader}
+        onScroll={measureHeader}
+      />
+    </View>
   );
 }
 
