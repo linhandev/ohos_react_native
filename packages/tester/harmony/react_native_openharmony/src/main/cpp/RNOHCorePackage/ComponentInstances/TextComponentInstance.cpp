@@ -345,7 +345,9 @@ void TextComponentInstance::updateFragmentTouchTargets(
   }
 
   auto const& typography = m_textStorage->arkUITypography;
-  auto rects = typography.getRectsForFragments();
+  auto left = m_layoutMetrics.contentInsets.left;
+  auto top = m_layoutMetrics.contentInsets.top;
+  auto rects = typography.getRectsForFragments({left, top});
 
   FragmentTouchTargetByTag touchTargetByTag;
   size_t textFragmentCount = 0;

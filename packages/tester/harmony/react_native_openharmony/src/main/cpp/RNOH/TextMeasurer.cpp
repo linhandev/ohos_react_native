@@ -173,12 +173,18 @@ TextMeasurer::TextStorage::Shared TextMeasurer::createTextStorage(
   }
 
   auto styledString = createStyledString(attributedString, paragraphAttributes);
+  std::optional<facebook::react::TextAlignment> textAlign{};
+  if (!attributedString.getFragments().empty()) {
+    const auto& fragment = attributedString.getFragments()[0];
+    textAlign = fragment.textAttributes.alignment;
+  }
   auto typography = ArkUITypography(
       styledString.get(),
       styledString.m_attachmentCount,
       styledString.m_fragmentLengths,
       layoutConstraints,
-      m_scale);
+      m_scale,
+      textAlign);
   return std::make_shared<TextStorage>(
       styledString,
       std::move(typography),
@@ -269,12 +275,18 @@ auto TextMeasurer::findFitFontSize(
   // check if already fit
   auto finalStyledString =
       createStyledString(attributedString, paragraphAttributes);
+  std::optional<facebook::react::TextAlignment> finalTextAlign{};
+  if (!attributedString.getFragments().empty()) {
+    const auto& fragment = attributedString.getFragments()[0];
+    finalTextAlign = fragment.textAttributes.alignment;
+  }
   auto finalTypography = ArkUITypography(
       finalStyledString.get(),
       finalStyledString.m_attachmentCount,
       finalStyledString.m_fragmentLengths,
       layoutConstraints,
-      m_scale);
+      m_scale,
+      finalTextAlign);
 
   if (finalTypography.getHeight() <= layoutConstraints.maximumSize.height &&
       (paragraphAttributes.maximumNumberOfLines == 0 ||
@@ -310,12 +322,18 @@ auto TextMeasurer::findFitFontSize(
 
     auto styledString =
         createStyledString(fittedAttributedString, paragraphAttributes);
+    std::optional<facebook::react::TextAlignment> textAlign{};
+    if (!fittedAttributedString.getFragments().empty()) {
+      const auto& fragment = fittedAttributedString.getFragments()[0];
+      textAlign = fragment.textAttributes.alignment;
+    }
     auto typography = ArkUITypography(
         styledString.get(),
         styledString.m_attachmentCount,
         styledString.m_fragmentLengths,
         layoutConstraints,
-        m_scale);
+        m_scale,
+        textAlign);
     if (typography.getHeight() <= layoutConstraints.maximumSize.height &&
         (paragraphAttributes.maximumNumberOfLines == 0 ||
          !typography.didExceedMaxLines())) {

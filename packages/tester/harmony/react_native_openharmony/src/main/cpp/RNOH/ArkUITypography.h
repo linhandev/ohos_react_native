@@ -72,7 +72,7 @@ class ArkUITypography final {
 
   using Rects = std::vector<facebook::react::Rect>;
 
-  std::vector<Rects> getRectsForFragments() const {
+  std::vector<Rects> getRectsForFragments(facebook::react::Point origin) const {
     std::vector<Rects> result;
     result.reserve(m_fragmentLengths.size());
     size_t fragmentBegin = 0;
@@ -89,8 +89,10 @@ class ArkUITypography final {
       rects.reserve(textBoxCount);
       for (size_t j = 0; j < textBoxCount; j++) {
         facebook::react::Rect rect;
-        rect.origin.x = OH_Drawing_GetLeftFromTextBox(textBoxes, j) / m_scale;
-        rect.origin.y = OH_Drawing_GetTopFromTextBox(textBoxes, j) / m_scale;
+        rect.origin.x = OH_Drawing_GetLeftFromTextBox(textBoxes, j) / m_scale +
+            m_offset.x / m_scale + origin.x;
+        rect.origin.y = OH_Drawing_GetTopFromTextBox(textBoxes, j) / m_scale +
+            m_offset.y / m_scale + origin.y;
         rect.size.width = (OH_Drawing_GetRightFromTextBox(textBoxes, j) -
                            OH_Drawing_GetLeftFromTextBox(textBoxes, j)) /
             m_scale;
@@ -119,7 +121,8 @@ class ArkUITypography final {
       size_t attachmentCount,
       std::vector<size_t> fragmentLengths,
       facebook::react::LayoutConstraints layoutConstraints,
-      float scale)
+      float scale,
+      std::optional<facebook::react::TextAlignment> textAlign)
       : m_typography(
             OH_ArkUI_StyledString_CreateTypography(styledString),
             OH_Drawing_DestroyTypography),
@@ -137,6 +140,27 @@ class ArkUITypography final {
       scaledWidth = std::numeric_limits<decltype(scaledWidth)>::max();
     }
     OH_Drawing_TypographyLayout(m_typography.get(), scaledWidth);
+    std::shared_ptr<OH_Drawing_LineMetrics> lineMetrics(
+        OH_Drawing_TypographyGetLineMetrics(m_typography.get()),
+        OH_Drawing_DestroyLineMetrics);
+    if (lineMetrics) {
+      m_offset.x = lineMetrics->x;
+      m_offset.y = lineMetrics->y;
+    }
+    if (textAlign.has_value()) {
+      auto longestWidth =
+          OH_Drawing_TypographyGetLongestLine(m_typography.get());
+      switch (textAlign.value()) {
+        case facebook::react::TextAlignment::Right:
+          m_offset.x = scaledWidth - longestWidth;
+          break;
+        case facebook::react::TextAlignment::Center:
+          m_offset.x = (scaledWidth - longestWidth) / 2;
+          break;
+        default:
+          break;
+      }
+    }
     // When TextComponentInstance reuses TextStorage from TextMeasurer, the text
     // has incorrect position (platform bug?) if text alignement is different
     // from 'left'.
@@ -153,6 +177,7 @@ class ArkUITypography final {
   size_t m_attachmentCount;
   std::vector<size_t> m_fragmentLengths;
   facebook::react::LayoutConstraints m_layoutConstraints;
+  facebook::react::Point m_offset;
 
   float m_scale = 1.0;
 
