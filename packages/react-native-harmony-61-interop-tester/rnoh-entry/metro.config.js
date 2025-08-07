@@ -38,7 +38,7 @@ module.exports = mergeConfig(
        * RNOH_APP: By default, Metro doesn't see files above the project root.
        * If you integrate RNOH 61 Interop package, you may need to add this file to your configuration.
        */
-      pathUtils.resolve(__dirname, '..'),
+      pathUtils.resolve(__dirname, '..', 'legacy-rn61-project'),
       /**
        * INTERNAL: This is needed to make monorepo setup work.
        */
@@ -47,7 +47,7 @@ module.exports = mergeConfig(
     resolver: {
       nodeModulesPaths: [
         /**
-         * RNOH_APP: This configuration tells Metro to use RNOH 0.77 dependencies for the code located outside this project.
+         * RNOH_APP: This configuration tells Metro where RNOH 0.77 dependencies can be found.
          */
         pathUtils.resolve(rnoh61ProjectRoot, 'node_modules'),
         /**
@@ -55,6 +55,11 @@ module.exports = mergeConfig(
          */
         pathUtils.resolve(monorepoRoot, 'node_modules'),
       ],
+      /**
+       * RNOH_APP: node_modules from the legacy project can't be used. If this configuration is not provided,
+       * Metro will use 2 different "reacts" likely resulting in "Invalid hook call" error.
+       */
+      blockList: [/legacy-rn61-project\/node_modules/],
     },
   }
 );
