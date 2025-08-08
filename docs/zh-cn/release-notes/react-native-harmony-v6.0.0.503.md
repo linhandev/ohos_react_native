@@ -4,8 +4,8 @@
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| react-native-harmony.tgz        | 0.77.16 |
-| react-native-harmony-cli.tgz    | 0.77.16 |
+| react-native-harmony.tgz        | 0.77.17 |
+| react-native-harmony-cli.tgz    | 0.77.17 |
 
 配套IDE、SDK版本和手机ROM:
 
@@ -15,6 +15,6 @@
 | HarmonyOS SDK     | HarmonyOS SDK 6.0.0.43(SP2) |
 | 手机ROM           | ALN-AL00 206.0.0.43(SP30DEVC00E43R4P4) <br> ALN-AL80 206.0.0.43(SP30DEVC00E43R4P4) <br> BRA-AL00 206.0.0.43(SP30DEVC00E43R4P3) |
 
-> 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 15，相应配套版本可通过：链接 https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/deveco-studio-new-features-503-release 获取
+> 该React Native鸿蒙化版本依赖的OpenHarmony SDK最低版本为API 20，相应配套版本可通过：链接 https://developer.huawei.com/consumer/cn/doc/harmonyos-releases/deveco-studio-new-features-600 获取
 >
 > [上游社区0.72.5到0.77.1的不兼容变更说明](../上游社区不兼容变更.md)

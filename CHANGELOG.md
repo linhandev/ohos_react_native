@@ -1,5 +1,19 @@
 # Changelog
 
+## Internal: v0.77.17
+- refactor: use react-native submodule + patch instead of private react-native-core submodule,([84240269d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/84240269d7a940c1e2aecb0ab4aef7d2500d1b68))
+- doc: Resolve the error caused by dependency conflicts when upgrading from version 0.72 to the major version 0.77.,([a1afd38f9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a1afd38f94f045b6c0576752415b7da5008d030f))
+- fixed heigh of SafeAreaView,([0f91db2e3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0f91db2e3bc33747f60a7916f39e1c90a9a71154))
+- fix: update ScrollViewComponentInstance to handle content offset state,([8a7d99e77](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8a7d99e774008ad0638ee3b884dd3c4b5a0420b5))
+- fix: the click response position offset in nested text scenarios.​,([f2b3fd03f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f2b3fd03fba6d6e2aa2bc581a9fba8f6f4ef19c2))
+- fix: The text content abnormally breaks lines on mate 70 pro,([8c1dcaa58](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8c1dcaa58d3b06757f1333d16ef98b331711a320))
+- fix: Update the default value of the focusable property for the CustomNode node to false.,([dd6801288](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dd6801288d2f764363136cba66abb3cda47d2564))
+- Chore: add RNTester from upstream repo,([f3a594f5d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f3a594f5ddadab90cf3e7fc90b326a42c84507bf))
+- Automate test for switch,([d472294b5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d472294b54515e505c7920f452e7cc5a2f41324a))
+- feat: automate TextInput TC "render textinput with set content",([d2cf1c727](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d2cf1c727623d37caf53965b9bfbb94836584ee4))
+- chore(interop-61): setup native code + add CheckBox boilerplate for reference,([2e2a60393](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2e2a60393faa742aaecdebfce97982914c5668e9))
+- chore: updated to version 6.0.0.502(0.77.16),([f11678359](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f1167835942b8fefa58a5ccdec72295c9dda57fb))
+
 ## Internal: v0.77.16
 - fix: update memfs version to 4.12.0,([e34092e48](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e34092e484a56422e05520498de552a6e6711096))
 - feat: redirect imports to rnoh-61-interop package,([2e642ec83](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2e642ec833ecc1b91d59722aca620dfdd92568f1))
