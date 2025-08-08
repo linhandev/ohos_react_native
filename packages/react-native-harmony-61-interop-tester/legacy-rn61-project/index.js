@@ -10,5 +10,5 @@ import App from './App';
 import RNTesterApp from './RNTester/RNTesterApp';
 import {name as appName} from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
-// AppRegistry.registerComponent(appName, () => RNTesterApp);
+// AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => RNTesterApp);

@@ -33,6 +33,7 @@ class BaseReactNativeHarmony61InteropPackageEventEmitRequestHandler : public Eve
         };
 
         std::vector<std::string> supportedEventNames = {
+            "valueChange",
         };
 
         if (std::find(supportedComponentNames.begin(), supportedComponentNames.end(), componentName) != supportedComponentNames.end() &&

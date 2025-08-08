@@ -178,6 +178,9 @@ importers:
       '@react-native-oh/react-native-harmony':
         specifier: workspace:*
         version: link:../react-native-harmony
+      nullthrows:
+        specifier: ^1.1.1
+        version: 1.1.1
 
   packages/react-native-harmony-61-interop-tester/rnoh-entry:
     dependencies:

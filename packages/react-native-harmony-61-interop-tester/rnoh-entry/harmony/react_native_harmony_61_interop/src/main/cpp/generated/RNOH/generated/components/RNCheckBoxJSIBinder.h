@@ -10,6 +10,14 @@ class RNCheckBoxJSIBinder : public ViewComponentJSIBinder {
   protected:
     facebook::jsi::Object createNativeProps(facebook::jsi::Runtime &rt) override {
         auto object = ViewComponentJSIBinder::createNativeProps(rt);
+        object.setProperty(rt, "value", true);
+        object.setProperty(rt, "disabled", true);
+        object.setProperty(rt, "checkedColor", true);
+        object.setProperty(rt, "uncheckedColor", true);
+        object.setProperty(rt, "markSize", true);
+        object.setProperty(rt, "strokeColor", true);
+        object.setProperty(rt, "boxType", true);
+        object.setProperty(rt, "lineWidth", true);
         return object;
     }
 
@@ -25,6 +33,7 @@ class RNCheckBoxJSIBinder : public ViewComponentJSIBinder {
 
     facebook::jsi::Object createDirectEventTypes(facebook::jsi::Runtime &rt) override {
         facebook::jsi::Object events(rt);
+        events.setProperty(rt, "topValueChange", createDirectEvent(rt, "onValueChange"));
         return events;
     }
 };

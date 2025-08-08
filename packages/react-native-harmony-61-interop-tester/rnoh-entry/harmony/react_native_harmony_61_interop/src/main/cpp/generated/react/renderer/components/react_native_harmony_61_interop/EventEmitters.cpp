@@ -13,4 +13,13 @@
 
 namespace facebook::react {
 
+void RNCheckBoxEventEmitter::onValueChange(OnValueChange $event) const {
+  dispatchEvent("valueChange", [$event=std::move($event)](jsi::Runtime &runtime) {
+    auto $payload = jsi::Object(runtime);
+    $payload.setProperty(runtime, "target", $event.target);
+$payload.setProperty(runtime, "value", $event.value);
+    return $payload;
+  });
+}
+
 } // namespace facebook::react

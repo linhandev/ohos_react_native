@@ -11,8 +11,25 @@
 
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/PropsParserContext.h>
+#include <react/renderer/graphics/Color.h>
 
 namespace facebook::react {
+
+enum class RNCheckBoxBoxType { Circle, Square };
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNCheckBoxBoxType &result) {
+  auto string = (std::string)value;
+  if (string == "circle") { result = RNCheckBoxBoxType::Circle; return; }
+  if (string == "square") { result = RNCheckBoxBoxType::Square; return; }
+  abort();
+}
+
+static inline std::string toString(const RNCheckBoxBoxType &value) {
+  switch (value) {
+    case RNCheckBoxBoxType::Circle: return "circle";
+    case RNCheckBoxBoxType::Square: return "square";
+  }
+}
 
 class RNCheckBoxProps final : public ViewProps {
  public:
@@ -21,7 +38,14 @@ class RNCheckBoxProps final : public ViewProps {
 
 #pragma mark - Props
 
-  
+  bool value{false};
+  bool disabled{false};
+  SharedColor checkedColor{};
+  SharedColor uncheckedColor{};
+  int markSize{-1};
+  SharedColor strokeColor{};
+  RNCheckBoxBoxType boxType{RNCheckBoxBoxType::Square};
+  int lineWidth{-1};
 };
 
 } // namespace facebook::react

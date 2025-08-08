@@ -10,6 +10,9 @@
   },
   "keywords": [],
   "author": "",
+  "dependencies": {
+    "nullthrows": "^1.1.1"
+  },
   "peerDependencies": {
     "@react-native-oh/react-native-harmony": "workspace:*"
   },

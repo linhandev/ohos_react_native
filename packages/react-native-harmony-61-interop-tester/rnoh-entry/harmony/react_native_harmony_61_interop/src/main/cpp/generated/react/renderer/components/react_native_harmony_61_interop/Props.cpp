@@ -17,9 +17,16 @@ namespace facebook::react {
 RNCheckBoxProps::RNCheckBoxProps(
     const PropsParserContext &context,
     const RNCheckBoxProps &sourceProps,
-    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps)
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
 
-    
+    value(convertRawProp(context, rawProps, "value", sourceProps.value, {false})),
+    disabled(convertRawProp(context, rawProps, "disabled", sourceProps.disabled, {false})),
+    checkedColor(convertRawProp(context, rawProps, "checkedColor", sourceProps.checkedColor, {})),
+    uncheckedColor(convertRawProp(context, rawProps, "uncheckedColor", sourceProps.uncheckedColor, {})),
+    markSize(convertRawProp(context, rawProps, "markSize", sourceProps.markSize, {-1})),
+    strokeColor(convertRawProp(context, rawProps, "strokeColor", sourceProps.strokeColor, {})),
+    boxType(convertRawProp(context, rawProps, "boxType", sourceProps.boxType, {RNCheckBoxBoxType::Square})),
+    lineWidth(convertRawProp(context, rawProps, "lineWidth", sourceProps.lineWidth, {-1}))
       {}
 
 } // namespace facebook::react

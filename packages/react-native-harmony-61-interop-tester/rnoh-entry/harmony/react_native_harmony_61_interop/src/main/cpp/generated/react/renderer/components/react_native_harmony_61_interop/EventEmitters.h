@@ -17,7 +17,10 @@ class RNCheckBoxEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
 
-  
-  
+  struct OnValueChange {
+      int target;
+    bool value;
+    };
+  void onValueChange(OnValueChange value) const;
 };
 } // namespace facebook::react

@@ -20,6 +20,14 @@ export namespace RNCheckBox {
   export const NAME = "RNCheckBox" as const
 
   export interface DirectRawProps {
+    value?: boolean;
+    disabled?: boolean;
+    checkedColor?: ColorValue;
+    uncheckedColor?: ColorValue;
+    markSize?: number;
+    strokeColor?: ColorValue;
+    boxType?: 'circle' | 'square';
+    lineWidth?: number;
   }
   
   export interface Props extends ViewBaseProps {}
@@ -29,7 +37,51 @@ export namespace RNCheckBox {
   export interface RawProps extends ViewRawProps, DirectRawProps {}
   
   export class PropsSelector extends ViewPropsSelector<Props, RawProps> {
+    get value() {
+      return this.rawProps.value ?? false;
+    }
+    
+    get disabled() {
+      return this.rawProps.disabled ?? false;
+    }
+    
+    get markSize() {
+      return this.rawProps.markSize ?? -1;
+    }
+    
+    get boxType() {
+      return this.rawProps.boxType ?? 'square';
+    }
+    
+    get lineWidth() {
+      return this.rawProps.lineWidth ?? -1;
+    }
+    
   
+    get checkedColor() {
+        if (this.rawProps.checkedColor) {
+          return Color.fromColorValue(this.rawProps.checkedColor)
+        } else {
+          return new Color({ r: 0, g: 0, b: 0, a: 255})
+        }
+    }
+    
+    get uncheckedColor() {
+        if (this.rawProps.uncheckedColor) {
+          return Color.fromColorValue(this.rawProps.uncheckedColor)
+        } else {
+          return new Color({ r: 0, g: 0, b: 0, a: 255})
+        }
+    }
+    
+    get strokeColor() {
+        if (this.rawProps.strokeColor) {
+          return Color.fromColorValue(this.rawProps.strokeColor)
+        } else {
+          return new Color({ r: 0, g: 0, b: 0, a: 255})
+        }
+    }
+    
   }
 
   export type Descriptor = ComponentDescriptor<
@@ -52,6 +104,7 @@ export namespace RNCheckBox {
   }
   
   export interface EventPayloadByName {
+    "valueChange": {target: number, value: boolean}
   }
   
   export class EventEmitter {

@@ -20,7 +20,13 @@ THE OPEN SOURCE SOFTWARE IN THIS PRODUCT IS DISTRIBUTED IN THE HOPE THAT IT WILL
 3. **Official RN 61 Tester**
   - **Path**: `packages/react-native-harmony-61-interop-tester/legacy-rn61-project/RNTester`
   - **License**: MIT License
-
+4. **Libraries extracted from React Native**
+  - **Path**: `packages/react-native-harmony-61-interop/Libraries/Components/CheckBox/CheckBox.tsx`
+  - **License**: MIT License
+  - **License Path**: `packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/rn/LICENSE`
+5. **React Native v0.61**
+   - **Path**: `packages/react-native-harmony-61-interop/Libraries/Utilities/setAndForwardRef.js`
+   - **LicensePath**: `./LICENSE-Facebook`
 
 The tester's app icon uses react-native's logo, which is [part of the react-native repository](https://github.com/facebook/react-native/blob/main/packages/react-native/Libraries/NewAppScreen/components/logo.png), licensed under the MIT license.
 
@@ -74,3 +80,32 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+End of Notice
+
+
+Software: @react-native-community/checkbox
+Copyright notice:
+MIT License
+
+Copyright (c) 2019 react-native-community
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+End of Notice
