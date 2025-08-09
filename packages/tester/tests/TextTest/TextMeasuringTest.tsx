@@ -1,7 +1,7 @@
 import {Text, View, Button} from 'react-native';
 import {TestSuite, TestCase} from '@rnoh/testerino';
 import {SAMPLE_PARAGRAPH_TEXT} from './fixtures';
-import {useState} from 'react';
+import {Component, useState} from 'react';
 
 export function TextMeasuringTest() {
   return (
@@ -332,6 +332,9 @@ export function TextMeasuringTest() {
         <TestCase itShould="click to update numberOfLines">
           <TextUpdateNumberOfLinesTest />
         </TestCase>
+        <TestCase itShould="<Text><Text></Text></Text> click to close and Open">
+          <TextStateUpdateNumberOfLinesTest content="" />
+        </TestCase>
         <TestCase itShould="show text without a space below or above (fragments)">
           <Text>
             <Text>
@@ -447,3 +450,53 @@ const TextUpdateNumberOfLinesTest = () => {
     </View>
   );
 };
+
+class TextStateUpdateNumberOfLinesTest extends Component<{
+  content: string | undefined;
+}> {
+  numberOfLines: number;
+  state: {
+    numberOfLines: any;
+  };
+
+  constructor(props: {content: string}) {
+    super(props);
+    this.state = {
+      numberOfLines: null,
+    };
+    this.numberOfLines = 5;
+  }
+
+  setMumberOfLinesValue = () => {
+    if (this.state.numberOfLines === this.numberOfLines) {
+      this.setState({
+        numberOfLines: null,
+      });
+    } else {
+      this.setState({
+        numberOfLines: this.numberOfLines,
+      });
+    }
+  };
+
+  render() {
+    return (
+      <View>
+        <Text
+          style={{fontSize: 12, color: 'red', backgroundColor: 'yellow'}}
+          numberOfLines={this.state.numberOfLines}>
+          <Text style={{fontSize: 12, color: 'green', backgroundColor: 'blue'}}>
+            '111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'
+          </Text>
+          <Text style={{fontSize: 12, color: 'red', backgroundColor: 'green'}}>
+            '22222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222'
+          </Text>
+          <Text style={{fontSize: 12, color: 'green', backgroundColor: 'red'}}>
+            '33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333'
+          </Text>
+        </Text>
+        <Button title="closeAndOpen" onPress={this.setMumberOfLinesValue} />
+      </View>
+    );
+  }
+}
