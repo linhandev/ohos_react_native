@@ -40,8 +40,11 @@ void ComponentInstance::removeChild(
 
   auto it =
       std::find(m_children.begin(), m_children.end(), childComponentInstance);
-  m_children.erase(it);
-  onChildRemoved(childComponentInstance);
+  if (it != m_children.end()) {
+    auto childComponentInstance = std::move(*it);
+    m_children.erase(it);
+    onChildRemoved(childComponentInstance);
+  }
 }
 
 ComponentInstance::NoArkUINodeError::NoArkUINodeError(
