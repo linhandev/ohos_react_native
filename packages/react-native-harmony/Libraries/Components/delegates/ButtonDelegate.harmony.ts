@@ -32,7 +32,6 @@ export default class ButtonDelegate extends BaseButtonDelegate {
     return {
       color: '#FFFFFF',
       fontSize: 16,
-      fontWeight: '500',
     };
   }
 
