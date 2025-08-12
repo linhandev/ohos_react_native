@@ -6,6 +6,10 @@ interface HarmonyMetroConfigOptions {
    * @internal
    */
   __reactNativeHarmonyPattern?: string;
+  /**
+   * @internal
+   */
+  __reactNativeInteropLibraryPackagePattern?: string;
 }
 
 export function createHarmonyMetroConfig(

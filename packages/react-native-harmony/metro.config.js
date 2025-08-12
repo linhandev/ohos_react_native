@@ -41,6 +41,8 @@ function createHarmonyMetroConfig(options) {
     pathUtils.sep +
       reactNativeHarmonyPackageName.replace('/', pathUtils.sep) +
       pathUtils.sep;
+  const reactNativeInteropLibraryPackagePattern =
+    options?.__reactNativeInteropLibraryPackagePattern;
 
   return {
     transformer: {
@@ -109,7 +111,25 @@ function createHarmonyMetroConfig(options) {
                 getHarmonyPackageByAliasMap(nodeModulesPaths)[
                   reactNativeHarmonyPackageName
                 ]?.name;
-              if (rnInteropLibraryPackageName) {
+
+              /**
+               * We have to check if the module is not resolved from interop package
+               * to prevent an infinite resolution loop caused by a circular dependency.
+               * e.g.
+               * origin module: react-native-harmony/Libraries/Image/ImageSourceUtils.js
+               * redirected to module: react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js
+               * and react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js imports react-native-harmony/Libraries/Image/ImageSourceUtils.js
+               * This creates a circular dependency, causing an infinite resolution loop.
+              */
+              if (
+                rnInteropLibraryPackageName &&
+                !ctx.originModulePath.includes(
+                  reactNativeInteropLibraryPackagePattern ??
+                    getRNInteropLibraryPackagePattern(
+                      rnInteropLibraryPackageName
+                    )
+                )
+              ) {
                 /**
                  * A special case for a react-native-harmony-interop-61 library.
                  */
@@ -136,6 +156,38 @@ function createHarmonyMetroConfig(options) {
               );
             }
           } else if (ctx.originModulePath.includes(reactNativeHarmonyPattern)) {
+            const rnInteropLibraryPackage =
+                getHarmonyPackageByAliasMap(nodeModulesPaths)[
+                  reactNativeHarmonyPackageName
+                ];
+            // Redirect internal react-native-harmony imports to the interop package
+            if (rnInteropLibraryPackage && moduleName.startsWith('.')) {
+              const rnInteropLibraryPackageName = rnInteropLibraryPackage.name;
+              const redirectInternalImports = rnInteropLibraryPackage.redirectInternalImports;
+              if (redirectInternalImports) {
+                const moduleAbsPath = pathUtils.resolve(
+                  pathUtils.dirname(ctx.originModulePath),
+                  moduleName
+                );
+
+                try {
+                  // We have to replace either /react-native-harmony/ or /@react-native-oh/react-native-harmony/ with the interop package name.
+                  const newModuleName = moduleAbsPath.replace(
+                    reactNativeHarmonyPattern,
+                    reactNativeInteropLibraryPackagePattern ??
+                      getRNInteropLibraryPackagePattern(
+                        rnInteropLibraryPackageName
+                      )
+                  );
+
+                  return ctx.resolveRequest(
+                    ctx,
+                    newModuleName,
+                    HARMONY_PLATFORM_NAME
+                  );
+                } catch {}
+              }
+            }
             // Internal RN imports
             const maybeResult = resolveRequestOnlyForHarmony(ctx, moduleName);
             if (maybeResult) {
@@ -540,4 +592,14 @@ function hasPackageJSON(nodeModulePath) {
  */
 function readHarmonyModulePackageJSON(packageJSONPath) {
   return JSON.parse(fs.readFileSync(packageJSONPath).toString());
+}
+
+
+/**
+ * @param rnInteropLibraryPackageName {string}
+ * @param isInMonorepo {boolean} 
+ * @returns {string} - Either package name without the scope or the full package name with platform specific separator
+ */
+function getRNInteropLibraryPackagePattern(rnInteropLibraryPackageName) {
+  return `${pathUtils.sep}${rnInteropLibraryPackageName.replace('/', pathUtils.sep)}${pathUtils.sep}`;
 }

@@ -23,6 +23,12 @@ module.exports = mergeConfig(
      */
     __reactNativeHarmonyPattern:
       pathUtils.sep + 'react-native-harmony' + pathUtils.sep,
+
+    /**
+     * INTERNAL: We do it because RNOH isn't in node_modules (it's symlinked).
+     */
+    __reactNativeInteropLibraryPackagePattern:
+      pathUtils.sep + 'react-native-harmony-61-interop' + pathUtils.sep,
   }),
   {
     transformer: {

@@ -18,6 +18,7 @@
   },
   "license": "MIT",
   "harmony": {
-    "alias": "@react-native-oh/react-native-harmony"
+    "alias": "@react-native-oh/react-native-harmony",
+    "redirectInternalImports": true
   }
 }
