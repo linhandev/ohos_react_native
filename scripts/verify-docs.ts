@@ -33,6 +33,8 @@ async function runMarkdownLinkCheck(
     const ignoreFilePathPatterns = [
       `docs${pathUtils.sep}Samples`,
       `docs${pathUtils.sep}zh-cn`,
+      'node_modules',
+      'oh_modules'
     ];
     console.log(
       `🧐 Checking links in Markdown files except: ${ignoreFilePathPatterns.join(', ')}`
