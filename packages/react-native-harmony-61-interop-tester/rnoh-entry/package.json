@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "postinstall": "node ./scripts/create-build-profile",
-    "dev": "react-native start --port 8085"
+    "dev": "react-native start --port 8085",
+    "bundle:hermes": "react-native bundle-harmony --dev=false --minify=true --js-engine=hermes --hermesc-dir ../../../node_modules/react-native/sdks/hermesc"
   },
   "dependencies": {
     "@react-native-oh/react-native-harmony": "workspace:*",

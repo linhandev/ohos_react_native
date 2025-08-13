@@ -77,11 +77,25 @@ function createHarmonyMetroConfig(options) {
           ) {
             /**
              * Importing from `react-native` when preparing offline bundle.
+             * For some reason there's a difference in behavior when a bundle is provided via Metro server and when creating an offline bundle.
              */
             const newModuleName = moduleName.replace(
               'react-native',
               reactNativeHarmonyPackageName
             );
+            /**
+             * Special case for a library which hijacks imports to react-native-harmony.
+             */
+            const maybeInteropLibraryResult = resolveIfInteropLibraryRequest(
+              ctx,
+              newModuleName,
+              nodeModulesPaths,
+              reactNativeHarmonyPackageName,
+              reactNativeInteropLibraryPackagePattern
+            );
+            if (maybeInteropLibraryResult) {
+              return maybeInteropLibraryResult;
+            }
             try {
               return ctx.resolveRequest(
                 ctx,
@@ -107,44 +121,19 @@ function createHarmonyMetroConfig(options) {
              * when importing from `react-native`.
              */
 
-              const rnInteropLibraryPackageName =
-                getHarmonyPackageByAliasMap(nodeModulesPaths)[
-                  reactNativeHarmonyPackageName
-                ]?.name;
-
-              /**
-               * We have to check if the module is not resolved from interop package
-               * to prevent an infinite resolution loop caused by a circular dependency.
-               * e.g.
-               * origin module: react-native-harmony/Libraries/Image/ImageSourceUtils.js
-               * redirected to module: react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js
-               * and react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js imports react-native-harmony/Libraries/Image/ImageSourceUtils.js
-               * This creates a circular dependency, causing an infinite resolution loop.
-              */
-              if (
-                rnInteropLibraryPackageName &&
-                !ctx.originModulePath.includes(
-                  reactNativeInteropLibraryPackagePattern ??
-                    getRNInteropLibraryPackagePattern(
-                      rnInteropLibraryPackageName
-                    )
-                )
-              ) {
-                /**
-                 * A special case for a react-native-harmony-interop-61 library.
-                 */
-                try {
-                  const newModuleName = moduleName.replace(
-                    reactNativeHarmonyPackageName,
-                    rnInteropLibraryPackageName
-                  );
-                  return ctx.resolveRequest(
-                    ctx,
-                    newModuleName,
-                    HARMONY_PLATFORM_NAME
-                  );
-                } catch {}
-              }
+            /**
+             * Special case for a library which hijacks imports to react-native-harmony.
+             */
+            const result = resolveIfInteropLibraryRequest(
+              ctx,
+              moduleName,
+              nodeModulesPaths,
+              reactNativeHarmonyPackageName,
+              reactNativeInteropLibraryPackagePattern
+            );
+            if (result) {
+              return result;
+            }
 
             try {
               return ctx.resolveRequest(ctx, moduleName, HARMONY_PLATFORM_NAME);
@@ -157,13 +146,14 @@ function createHarmonyMetroConfig(options) {
             }
           } else if (ctx.originModulePath.includes(reactNativeHarmonyPattern)) {
             const rnInteropLibraryPackage =
-                getHarmonyPackageByAliasMap(nodeModulesPaths)[
-                  reactNativeHarmonyPackageName
-                ];
+              getHarmonyPackageByAliasMap(nodeModulesPaths)[
+                reactNativeHarmonyPackageName
+              ];
             // Redirect internal react-native-harmony imports to the interop package
             if (rnInteropLibraryPackage && moduleName.startsWith('.')) {
               const rnInteropLibraryPackageName = rnInteropLibraryPackage.name;
-              const redirectInternalImports = rnInteropLibraryPackage.redirectInternalImports;
+              const redirectInternalImports =
+                rnInteropLibraryPackage.redirectInternalImports;
               if (redirectInternalImports) {
                 const moduleAbsPath = pathUtils.resolve(
                   pathUtils.dirname(ctx.originModulePath),
@@ -302,6 +292,51 @@ function createHarmonyMetroConfig(options) {
 module.exports = {
   createHarmonyMetroConfig,
 };
+
+/**
+ * @param ctx {Parameters<NonNullable<import("metro-config").ResolverConfigT["resolveRequest"]>>[0]}
+ * @param moduleName {string}
+ * @param nodeModulesPaths {string[]}
+ * @param reactNativeHarmonyPackageName {string}
+ * @param reactNativeInteropLibraryPackagePattern {string | undefined}
+ */
+function resolveIfInteropLibraryRequest(
+  ctx,
+  moduleName,
+  nodeModulesPaths,
+  reactNativeHarmonyPackageName,
+  reactNativeInteropLibraryPackagePattern
+) {
+  const rnInteropLibraryPackageName =
+    getHarmonyPackageByAliasMap(nodeModulesPaths)[reactNativeHarmonyPackageName]
+      ?.name;
+
+  /**
+   * We have to check if the module is not resolved from interop package
+   * to prevent an infinite resolution loop caused by a circular dependency.
+   * e.g.
+   * origin module: react-native-harmony/Libraries/Image/ImageSourceUtils.js
+   * redirected to module: react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js
+   * and react-native-harmony-61-interop/Libraries/Image/ImageSourceUtils.js imports react-native-harmony/Libraries/Image/ImageSourceUtils.js
+   * This creates a circular dependency, causing an infinite resolution loop.
+   */
+  if (
+    rnInteropLibraryPackageName &&
+    !ctx.originModulePath.includes(
+      reactNativeInteropLibraryPackagePattern ??
+        getRNInteropLibraryPackagePattern(rnInteropLibraryPackageName)
+    )
+  ) {
+    try {
+      const newModuleName = moduleName.replace(
+        reactNativeHarmonyPackageName,
+        rnInteropLibraryPackageName
+      );
+      return ctx.resolveRequest(ctx, newModuleName, HARMONY_PLATFORM_NAME);
+    } catch {}
+  }
+  return null;
+}
 
 /**
  * Let's say we have following files:
@@ -594,10 +629,9 @@ function readHarmonyModulePackageJSON(packageJSONPath) {
   return JSON.parse(fs.readFileSync(packageJSONPath).toString());
 }
 
-
 /**
  * @param rnInteropLibraryPackageName {string}
- * @param isInMonorepo {boolean} 
+ * @param isInMonorepo {boolean}
  * @returns {string} - Either package name without the scope or the full package name with platform specific separator
  */
 function getRNInteropLibraryPackagePattern(rnInteropLibraryPackageName) {

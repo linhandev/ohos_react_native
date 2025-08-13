@@ -4,13 +4,14 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
- 
+
 import {
   MetroJSBundleProvider,
   RNApp,
   RNOHErrorDialog,
   ResourceJSBundleProvider,
-  RNOHCoreContext
+  RNOHCoreContext,
+  AnyJSBundleProvider
 } from '@rnoh/react-native-openharmony';
 import { getRNOHPackages } from '../PackageProvider';
 
@@ -34,7 +35,10 @@ struct Index {
           },
           appKey: "tester61",
           jsBundleProvider: this.rnohCoreContext?.isDebugModeEnabled ?
-          MetroJSBundleProvider.fromServerIp("localhost", 8085) :
+            new AnyJSBundleProvider([
+              MetroJSBundleProvider.fromServerIp("localhost", 8085),
+              new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
+            ]) :
             /**
              * NOTE: The HBC format is recommended for Hermes in a production environment. HBC provides better performance and loading times.
              */
