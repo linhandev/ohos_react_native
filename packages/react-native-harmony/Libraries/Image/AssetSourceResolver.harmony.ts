@@ -10,42 +10,50 @@ import type { AssetData } from 'metro';
 import { getBasePath } from '@react-native/assets-registry/path-support';
 import { Dimensions, Platform } from 'react-native';
 
-export type Asset = AssetData;
+const ALLOWED_SCALES: number[] = [1, 2, 3, 4];
 
-/**
- * Keep this method in sync with the one use in @react-native-oh/react-native-harmony-cli/src/AssetResolver.
- */
-export function getAssetDestRelativePath(asset: Asset): string {
-  const fileName = getResourceIdentifier(asset);
-  // Assets can have relative paths outside of the project root.
-  // Replace `../` with `_` to make sure they don't end up outside of
-  // the expected assets directory.
-  return `${fileName}.${asset.type}`.replace(/\.\.\//g, '_');
-}
-
-function getResourceIdentifier(asset: Asset): string {
-  const folderPath = getBasePath(asset);
-  return `${folderPath}/${asset.name}`.replace(/^assets\//, '');
+function filterAssetScales(
+  scales: readonly number[],
+): readonly number[] {
+  const result = scales.filter(scale => ALLOWED_SCALES.includes(scale));
+  if (result.length === 0 && scales.length > 0) {
+    // No matching scale found, but there are some available. Ideally we don't
+    // want to be in this situation and should throw, but for now as a fallback
+    // let's just use the closest larger image
+    const maxScale = ALLOWED_SCALES[ALLOWED_SCALES.length - 1];
+    for (const scale of scales) {
+      if (scale > maxScale) {
+        result.push(scale);
+        break;
+      }
+    }
+    // There is no larger scales available, use the largest we have
+    if (result.length === 0) {
+      result.push(scales[scales.length - 1]);
+    }
+  }
+  return result;
 }
 
 function pickScale(scales: Array<number>, deviceScale?: number): number {
+  const validScales = filterAssetScales(scales);
   if (deviceScale == null) {
     deviceScale = Dimensions.get('window').scale;
   }
   // Packager guarantees that `scales` array is sorted
-  for (let i = 0; i < scales.length; i++) {
-    if (scales[i] >= deviceScale) {
-      return scales[i];
+  for (let i = 0; i < validScales.length; i++) {
+    if (validScales[i] >= deviceScale) {
+      return validScales[i];
     }
   }
 
   // If nothing matches, device scale is larger than any available
   // scales, so we return the biggest one. Unless the array is empty,
   // in which case we default to 1
-  return scales[scales.length - 1] || 1;
+  return validScales[validScales.length - 1] || 1;
 }
 
-function getScaledAssetPath(asset: Asset): string {
+function getScaledAssetPath(asset: AssetData): string {
   const scale = pickScale(asset.scales);
   const scaleSuffix = scale === 1 ? '' : '@' + scale + 'x';
   const assetDir = getBasePath(asset);
@@ -64,7 +72,7 @@ class AssetSourceResolver {
   constructor(
     private serverUrl: string | undefined,
     private jsbundleUrl: string | undefined,
-    private asset: Asset
+    private asset: AssetData
   ) {}
 
   isLoadedFromServer(): boolean {
@@ -76,13 +84,17 @@ class AssetSourceResolver {
       return this.assetServerURL();
     }
 
-    return {
-      __packager_asset: this.asset.__packager_asset,
-      uri: `asset://${getAssetDestRelativePath(this.asset)}`,
-      scale: 1,
-      width: this.asset.width,
-      height: this.asset.height,
-    };
+    const path = 'asset://';
+
+    // Assets can have relative paths outside of the project root.
+    // Replace `../` with `_` to make sure they don't end up outside of
+    // the expected assets directory.
+    return this.fromSource(
+      path +
+        getScaledAssetPath(this.asset)
+          .replace(/^assets\//, '')
+          .replace(/\.\.\//g, '_')
+    );
   }
 
   /**
@@ -110,7 +122,7 @@ class AssetSourceResolver {
       width: this.asset.width,
       height: this.asset.height,
       uri: source,
-      scale: 1,
+      scale: pickScale(this.asset.scales),
     };
   }
 }

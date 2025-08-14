@@ -6,7 +6,7 @@ import Metro from 'metro';
 import { RunBuildOptions as BuildOptions } from 'metro';
 import MetroServer from 'metro/src/Server';
 import pathUtils from 'path';
-import { getAssetDestRelativePath } from '../assetResolver';
+import { copyAssets } from '../assetResolver';
 import { execSync } from 'child_process';
 import { Logger } from '../io';
 import { DescriptiveError } from '../core';
@@ -266,86 +266,4 @@ async function retrieveAssetsData(
   } finally {
     metroServer.end();
   }
-}
-
-async function copyAssets(
-  logger: Logger,
-  assetsData: readonly AssetData[],
-  assetsDest: Path
-): Promise<void> {
-  if (assetsDest == null) {
-    logger.warn((s) => 'Assets destination folder is not set, skipping...');
-    return;
-  }
-  const fileDestBySrc: Record<Path, Path> = {};
-  for (const asset of assetsData) {
-    const idx = getHighestQualityFileIdx(asset);
-    fileDestBySrc[asset.files[idx]] = pathUtils.join(
-      assetsDest,
-      getAssetDestRelativePath(asset)
-    );
-  }
-  return copyFiles(logger, fileDestBySrc);
-}
-
-function getHighestQualityFileIdx(assetData: AssetData): number {
-  let result = 0;
-  let maxScale = -1;
-  for (let idx = 0; idx < assetData.scales.length; idx++) {
-    const scale = assetData.scales[idx];
-    if (scale > maxScale) {
-      maxScale = scale;
-      result = idx;
-    }
-  }
-  return result;
-}
-
-function copyFiles(logger: Logger, fileDestBySrc: Record<Path, Path>) {
-  const fileSources = Object.keys(fileDestBySrc);
-  if (fileSources.length === 0) {
-    return Promise.resolve();
-  }
-
-  const assetFilesCount = fileSources.length;
-  return new Promise<void>((resolve, reject) => {
-    const copyNext = (error?: Error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      if (fileSources.length === 0) {
-        logger.info(
-          () =>
-            `Copied ${assetFilesCount} ${
-              assetFilesCount === 1 ? 'asset' : 'assets'
-            }`
-        );
-        resolve();
-      } else {
-        // fileSources.length === 0 is checked in previous branch, so this is string
-        const src = fileSources.shift()!;
-        const dest = fileDestBySrc[src];
-        copyFile(src, dest, copyNext);
-      }
-    };
-    copyNext();
-  });
-}
-
-function copyFile(
-  src: string,
-  dest: string,
-  onFinished: (error?: Error) => void
-): void {
-  const destDir = pathUtils.dirname(dest);
-  fs.mkdir(destDir, { recursive: true }, (err?) => {
-    if (err) {
-      onFinished(err);
-      return;
-    }
-    fs.createReadStream(src)
-      .pipe(fs.createWriteStream(dest))
-      .on('finish', onFinished);
-  });
 }

@@ -14,6 +14,7 @@ import {useEnvironment} from '../contexts';
 
 const WRONG_IMAGE_SRC = 'not_image';
 const LOCAL_IMAGE_ASSET_ID = require('../assets/pravatar-131.jpg');
+const MULTI_DENSITY_IMAGE_ASSET_ID = require('../assets/fig-without-poppy.jpeg');
 const REMOTE_IMAGE_URL =
   'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=400&q=80';
 const INVALID_IMAGE_URL = '';
@@ -229,6 +230,28 @@ export const ImageTest = () => {
           expect(result?.[REMOTE_IMAGE_URL]).to.be.not.undefined;
           expect(result?.[REMOTE_IMAGE_URL]).to.be.eq('disk');
           expect(result?.[WRONG_IMAGE_SRC]).to.be.undefined;
+        }}
+      />
+      <TestCase.Logical
+        itShould="Automatically select high-density image variants.​"
+        fn={({expect}) => {
+          const resolvedAsset = Image.resolveAssetSource(
+            MULTI_DENSITY_IMAGE_ASSET_ID,
+          );
+          const deviceScale = Dimensions.get('window').scale;
+          const scales = [1, 2, 3];
+          let scale = 0;
+          for (let i = 0; i < scales.length; i++) {
+            if (scales[i] >= deviceScale) {
+              scale = scales[i];
+              break;
+            }
+          }
+          if (!scale) {
+            scale = scales[scales.length - 1];
+          }
+          const filename = `fig-without-poppy${scale === 1 ? '' : '@' + scale + 'x'}.jpeg`;
+          expect(resolvedAsset.uri).to.be.includes(filename);
         }}
       />
       <TestCase.Example
@@ -662,9 +685,6 @@ export const ImageTest = () => {
         itShould="Load proper image source for different container dimensions">
         <MultipleSourceImage />
       </TestCase.Example>
-      <TestCase.Example modal itShould="Use higher resolution image">
-        <ImageSuffixesTest />
-      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -958,14 +978,6 @@ const MultipleSourceImage = () => {
     </View>
   );
 };
-
-function ImageSuffixesTest() {
-  return (
-    <View>
-      <Image source={require('../assets/fig-without-poppy.jpeg')} />
-    </View>
-  );
-}
 
 function TextNestedImageTest() {
   return (
