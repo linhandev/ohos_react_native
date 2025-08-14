@@ -116,10 +116,10 @@ export class RNInstanceRegistry {
       options.backPressHandler,
       options.jsvmInitOptions,
     );
+    rnInstance.setUIAbilityContext(this.uiAbilityContext);
     const packages = options.createRNPackages({})
     packages.unshift(new RNOHCorePackage({}));
     await rnInstance.initialize(packages);
-    rnInstance.setUIAbilityContext(this.uiAbilityContext);
     this.instanceMap.set(instanceId, rnInstance);
     return rnInstance;
   }
