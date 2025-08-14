@@ -33,10 +33,15 @@ class TurboModule : public facebook::react::TurboModule {
     std::shared_ptr<facebook::react::CallInvoker> jsInvoker;
 
     /**
+     * @deprecated Use `safeInstance` instead.
+     */
+    std::weak_ptr<RNInstance> instance;
+
+    /**
      * @brief Weak pointer to the RNInstance.
      * This is used to set view properties.
      */
-    RNInstance::SafeWeak instance;
+    RNInstance::SafeWeak safeInstance;
 
     /**
      * @brief Shared pointer to the ArkTSMessageHub.
