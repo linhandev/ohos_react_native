@@ -93,14 +93,19 @@ facebook::react::LinesMeasurements TextMeasurer::measureLines(
     const facebook::react::ParagraphAttributes& paragraphAttributes,
     const facebook::react::Size& size) {
   auto& attributedString = attributedStringBox.getValue();
+  auto paragraphAttributesWithoutMaxLines = paragraphAttributes;
+  paragraphAttributesWithoutMaxLines.maximumNumberOfLines = {};
   auto textStorage = getTextStorage(
       {attributedString,
-       paragraphAttributes,
+       paragraphAttributesWithoutMaxLines,
        {m_scale},
        static_cast<int>(ceil(size.width * m_scale))});
   if (!textStorage) {
     textStorage = createTextStorage(
-        attributedString, paragraphAttributes, {m_scale}, {size, size});
+        attributedString,
+        paragraphAttributesWithoutMaxLines,
+        {m_scale},
+        {size, size});
   }
   auto& typography = textStorage->arkUITypography;
   std::stringstream ss;
