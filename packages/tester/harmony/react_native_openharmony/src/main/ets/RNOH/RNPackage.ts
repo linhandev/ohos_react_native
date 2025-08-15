@@ -88,7 +88,10 @@ export type DescriptorWrapperFactoryByDescriptorType = Record<
 >;
 
 /**
- * @deprecated (latestRNOHVersion: 0.72.38)
+ * @deprecated: This class is no longer recommended for use. It is recommended to use either of the following pairs of methods instead:
+ * getUITurboModuleFactoryByNameMap() and createEagerUITurboModuleByNameMap()
+ * getAnyThreadTurboModuleFactoryByNameMap() and createEagerAnyThreadTurboModuleByNameMap()
+ * (latestRNOHVersion: 0.72.38)
  */
 export abstract class UITurboModuleFactory extends TurboModulesFactory<
   UITurboModule,
