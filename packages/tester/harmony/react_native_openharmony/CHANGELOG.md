@@ -1,5 +1,14 @@
 # Changelog
 
+## Internal: v0.77.18
+- [chore]: Add README.md and CHANGELOG.md(77),([291aa33a7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/291aa33a7071d5cb678411e26796ac3a2896d2e3))
+- revert: Revert the default value of the focusable property for the CustomNode node to true.,([8462fa12d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8462fa12dbf7e59c0565a938ec4511c82ce30a4f))
+- fix: type mismatch between SafeWeak and weak_ptr,([f9d8e91f0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f9d8e91f0b259fa37253a92da950818038754777))
+- The information obtained by the onTextLayout of the Text component is incomplete, and the unrendered text information cannot be retrieved.,([4bcf89d19](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4bcf89d19a821b67046400219182cae90e0e7d44))
+- fix：Modifying some scenes to obtain rnWindow failed,([b1affb063](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b1affb0630dada6d7dbb20d6a9f11691340b305b))
+- fix: an occasional crash when the component is removed.​,([c5f4f8638](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c5f4f863822dce1dd531805f2bdc3453bfd2bee2))
+- [chore]: updated to version 6.0.0.503(0.77.17),([1fc8b7790](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1fc8b77900c25dd0e4cbaa017fed905f0df2c1af))
+
 ## Internal: v0.77.17
 - refactor: use react-native submodule + patch instead of private react-native-core submodule,([84240269d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/84240269d7a940c1e2aecb0ab4aef7d2500d1b68))
 - doc: Resolve the error caused by dependency conflicts when upgrading from version 0.72 to the major version 0.77.,([a1afd38f9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a1afd38f94f045b6c0576752415b7da5008d030f))

@@ -1,5 +1,23 @@
 # Changelog
 
+## Internal: v0.77.18
+- [chore]: Add README.md and CHANGELOG.md(77),([291aa33a7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/291aa33a7071d5cb678411e26796ac3a2896d2e3))
+- revert: Revert the default value of the focusable property for the CustomNode node to true.,([8462fa12d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8462fa12dbf7e59c0565a938ec4511c82ce30a4f))
+- Add test case for TextLayout,([133610e4c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/133610e4c17261560d80b3c483c15b8ad954f07b))
+- fix: type mismatch between SafeWeak and weak_ptr,([f9d8e91f0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f9d8e91f0b259fa37253a92da950818038754777))
+- feat: support automatic selection of high-density image variants.,([51484e8ca](https://gitcode.com/openharmony-sig/ohos_react_native/commit/51484e8caf41e38dd70798abb6758a5ea92cb541))
+- The information obtained by the onTextLayout of the Text component is incomplete, and the unrendered text information cannot be retrieved.,([4bcf89d19](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4bcf89d19a821b67046400219182cae90e0e7d44))
+- fix：Modifying some scenes to obtain rnWindow failed,([b1affb063](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b1affb0630dada6d7dbb20d6a9f11691340b305b))
+- fix: skip *.md in nested node_modules in verify-docs script,([2eec64146](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2eec64146ddfcd134b9dcb901a879808c459c293))
+- feat(interop-61): support offline bundles,([524d3d973](https://gitcode.com/openharmony-sig/ohos_react_native/commit/524d3d9734ff298956919f6c55cbc48b7ca964bd))
+- fix:Modify the default style of the button component to make it consistent with the button style in the 72 environment.,([b2d406c9b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b2d406c9bbd6f6a4abcc60ab362e67158a4dfd22))
+- fix: metro service supports loading applications in release mode.,([de98d5fd7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de98d5fd784a52550157f9563986b517268d137e))
+- chore(interop-61): enable deep imports and redirectInternalImports,([4d4aa74c6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4d4aa74c61463a0a0bb3a703ba0e9b1e618a8650))
+- fix: an occasional crash when the component is removed.​,([c5f4f8638](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c5f4f863822dce1dd531805f2bdc3453bfd2bee2))
+- chore: add text numberOfLines testcase,([6c5f7a778](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6c5f7a77875533da0d53fc111563bec5815f88fe))
+- feat(interop-61): CheckBox,([a227e79b6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a227e79b6dabe584f90c58fb73d0dd949448cb99))
+- [chore]: updated to version 6.0.0.503(0.77.17),([1fc8b7790](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1fc8b77900c25dd0e4cbaa017fed905f0df2c1af))
+
 ## Internal: v0.77.17
 - refactor: use react-native submodule + patch instead of private react-native-core submodule,([84240269d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/84240269d7a940c1e2aecb0ab4aef7d2500d1b68))
 - doc: Resolve the error caused by dependency conflicts when upgrading from version 0.72 to the major version 0.77.,([a1afd38f9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a1afd38f94f045b6c0576752415b7da5008d030f))
