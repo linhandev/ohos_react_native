@@ -153,8 +153,8 @@ exports.examples = [
     },
   },
   {
-    platform: 'android',
-    title: 'Custom size (size: 75)',
+    // platform: 'android',
+    title: 'Custom size (size: 75, android only)',
     render(): Node {
       return <ActivityIndicator style={styles.centering} size={75} />;
     },

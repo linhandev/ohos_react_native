@@ -453,18 +453,16 @@ exports.examples = [
     platform: 'ios',
   },
   {
-    title: 'StatusBar background color',
+    title: 'StatusBar background color (android only)',
     render(): React.Node {
       return <StatusBarBackgroundColorExample />;
     },
-    platform: 'android',
   },
   {
-    title: 'StatusBar translucent',
+    title: 'StatusBar translucent (android only)',
     render(): React.Node {
       return <StatusBarTranslucentExample />;
     },
-    platform: 'android',
   },
   {
     title: 'StatusBar static API',
@@ -474,14 +472,13 @@ exports.examples = [
     platform: 'ios',
   },
   {
-    title: 'StatusBar static API',
+    title: 'StatusBar static API (android only)',
     render(): React.Node {
       return <StatusBarStaticAndroidExample />;
     },
-    platform: 'android',
   },
   {
-    title: 'StatusBar dimensions',
+    title: 'StatusBar dimensions (android only)',
     render(): React.Node {
       return (
         <View>
@@ -489,7 +486,6 @@ exports.examples = [
         </View>
       );
     },
-    platform: 'android',
   },
 ];
 

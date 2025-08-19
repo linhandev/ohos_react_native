@@ -152,7 +152,16 @@ const styles = StyleSheet.create({
   },
 });
 
-module.exports = {
-  AlertExample,
-  SimpleAlertExampleBlock,
-};
+
+exports.framework = 'React';
+exports.title = 'Alert';
+exports.description = 'Alerts display a concise and informative message and prompt the user to make a decision.';
+exports.examples = [
+  {
+    title: "Simple Alert Example",
+    render() {
+      return <SimpleAlertExampleBlock />;
+    },
+  },
+]
+

@@ -20,6 +20,7 @@ const {
   Text,
   TouchableHighlight,
   View,
+  Platform,
 } = require('react-native');
 
 const BINARY_TYPES = {
@@ -111,13 +112,18 @@ class XHRExampleBinaryUpload extends React.Component<{}, $FlowFixMeState> {
     return (
       <View>
         <Text>Upload 255 bytes as...</Text>
-        <Picker
-          selectedValue={this.state.type}
-          onValueChange={type => this.setState({type})}>
-          {Object.keys(BINARY_TYPES).map(type => (
-            <Picker.Item key={type} label={type} value={type} />
-          ))}
-        </Picker>
+        {Platform.OS === 'harmony' ? (
+          // TODO: remove harmony specific branch once Picker is supported
+          <Text>Picker not supported</Text>
+        ) : (
+          <Picker
+            selectedValue={this.state.type}
+            onValueChange={(type) => this.setState({type})}>
+            {Object.keys(BINARY_TYPES).map((type) => (
+              <Picker.Item key={type} label={type} value={type} />
+            ))}
+          </Picker>
+        )}
         <View style={styles.uploadButton}>
           <TouchableHighlight onPress={this._upload}>
             <View style={styles.uploadButtonBox}>

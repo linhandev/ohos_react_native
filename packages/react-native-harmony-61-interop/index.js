@@ -125,6 +125,14 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/RootTag')
       .RootTagContext;
   },
+  get ProgressBarAndroid() {
+    // Placeholder
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
+  },
+  get ProgressViewIOS() {
+    // Placeholder
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
+  },
   get SafeAreaView() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/SafeAreaView/SafeAreaView')
       .default;
