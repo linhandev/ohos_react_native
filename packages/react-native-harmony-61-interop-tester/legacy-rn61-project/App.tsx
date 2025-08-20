@@ -6,7 +6,6 @@
  */
 import React from 'react';
 import { SafeAreaView, Text, StatusBar, View, CheckBox } from 'react-native';
-// import View from 'react-native/Libraries/Components/View/View';
 
 const App = () => {
   return (

@@ -136,6 +136,10 @@ function createHarmonyMetroConfig(options) {
             }
 
             try {
+              const maybeResult = resolveRequestOnlyForHarmony(ctx, moduleName);
+              if (maybeResult) {
+                return maybeResult;
+              }
               return ctx.resolveRequest(ctx, moduleName, HARMONY_PLATFORM_NAME);
             } catch {
               return ctx.resolveRequest(

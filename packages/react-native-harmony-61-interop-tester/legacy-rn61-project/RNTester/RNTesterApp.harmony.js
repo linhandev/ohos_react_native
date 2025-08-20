@@ -43,7 +43,7 @@ type Props = {
 // ]);
 
 const Header = ({onBack, title}: {onBack?: () => mixed, title: string}) => (
-  <View style={styles.headerContainer}>
+  <SafeAreaView style={styles.headerContainer}>
     <View style={styles.header}>
       <View style={styles.headerCenter}>
         <Text style={styles.title}>{title}</Text>
@@ -54,7 +54,7 @@ const Header = ({onBack, title}: {onBack?: () => mixed, title: string}) => (
         </View>
       )}
     </View>
-  </View>
+  </SafeAreaView>
 );
 
 class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
@@ -169,9 +169,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   exampleContainer: {
-    width: '100%',
-    height: '100%',
-    paddingTop: StatusBar.currentHeight || 0,
+    flex: 1
   },
 });
 
