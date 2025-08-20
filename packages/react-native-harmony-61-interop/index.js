@@ -4,10 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+const restoreRemoveListener = require('./compat/restoreRemoveListener');
+
 module.exports = {
   get AccessibilityInfo() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/AccessibilityInfo/AccessibilityInfo')
-      .default;
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
+    restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
+    return mod;
   },
   get ActivityIndicator() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/ActivityIndicator/ActivityIndicator')
@@ -27,11 +30,14 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/AppRegistry');
   },
   get AppState() {
-    return require('@react-native-oh/react-native-harmony/Libraries/AppState/AppState');
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/AppState/AppState');
+    restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
+    return mod;
   },
   get BackHandler() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler')
-      .default;
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler').default;
+    restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
+    return mod;
   },
   get Button() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Button')
@@ -41,8 +47,9 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/DevSettings');
   },
   get Dimensions() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions')
-      .default;
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions').default;
+    restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
+    return mod;
   },
   get DeviceEventEmitter() {
     return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/RCTDeviceEventEmitter')
@@ -76,7 +83,9 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/LayoutAnimation/LayoutAnimation');
   },
   get Linking() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Linking/Linking');
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/Linking/Linking');
+    restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
+    return mod;
   },
   get LogBox() {
     return require('@react-native-oh/react-native-harmony/Libraries/LogBox/LogBox')
@@ -86,7 +95,9 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Modal/Modal');
   },
   get Keyboard() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/Keyboard');
+    const mod = require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/Keyboard');
+    restoreRemoveListener(mod, 'addListener', 'removeListener');
+    return mod;
   },
   get KeyboardAvoidingView() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Keyboard/KeyboardAvoidingView')
@@ -94,7 +105,7 @@ module.exports = {
   },
   get NativeEventEmitter() {
     return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/NativeEventEmitter')
-      .default;
+    .default;
   },
   get NativeModules() {
     return require('@react-native-oh/react-native-harmony/Libraries/BatchedBridge/NativeModules');

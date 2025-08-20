@@ -224,6 +224,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'XHRExample',
     module: require('../examples/XHR/XHRExample'),
   },
+  {
+    key: 'LegacyListenersExample',
+    module: require('../examples/Interop/LegacyListenersExample'),
+  },
 ];
 
 const Modules = {};
