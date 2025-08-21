@@ -5,25 +5,37 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from 'react';
-import { SafeAreaView, Text, StatusBar, View, CheckBox } from 'react-native';
+import {SafeAreaView, Text, StatusBar, View} from 'react-native';
+import {Environment} from './contexts';
+import {NavigationContainer, Page} from './components';
 
 const App = () => {
   return (
-    <View>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <View style={{ padding: 24 }}>
-          <CheckBox style={{width: 64, height: 64, backgroundColor: "red"}} value={true} onValueChange={() => { }} />
-          <Text style={{ fontSize: 24 }}>TODO</Text>
-          <Text>
+    <Environment>
+      <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
+        <View>
+          <Text style={{fontSize: 24, color: 'white'}}>TODO</Text>
+          <Text style={{color: 'white'}}>
             ✅ - switch to TypeScript and test it in the legacy project after
             validating Android build
           </Text>
-          <Text>- copy simple navigation simple from tester project</Text>
-          <Text>- integrate testerino and custom components from tester</Text>
+          <Text style={{color: 'white'}}>
+            ✅ - copy simple navigation from tester project
+          </Text>
+          <Text style={{color: 'white'}}>
+            - integrate testerino and custom components from tester
+          </Text>
+        </View>
+
+        <View style={{flex: 1}}>
+          <NavigationContainer>
+            <Page name="Test Section w/o test">
+              <View></View>
+            </Page>
+          </NavigationContainer>
         </View>
       </SafeAreaView>
-    </View>
+    </Environment>
   );
 };
 
