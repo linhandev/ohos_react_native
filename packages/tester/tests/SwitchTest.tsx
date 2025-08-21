@@ -11,7 +11,8 @@ export function SwitchTest() {
   return (
     <TestSuite name="Switch">
       <TestCase.Automated
-        itShould="Render a working switch and display its state and SwitchChangeEvent details"
+        tags={['sequential']}
+        itShould="render a working switch and display its state and SwitchChangeEvent details"
         initialState={{
           isSwitchEnabled: false,
           event: '',

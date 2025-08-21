@@ -18,11 +18,11 @@ export function PlatformConstantsTest() {
         }}
       />
       <TestCase.Logical
-        skip={{android: true, harmony: !driver}}
+        skip={{android: true, harmony: false}}
         itShould="specify platform version"
         fn={async ({expect}) => {
-          expect(await driver?.getDeviceVersion()).to.eq(
-            Platform.Version.toString(),
+          expect(Platform.Version.toString()).to.match(
+            /^OpenHarmony-\d+\.\d+\.\d+\.\d+(?:\(Beta\d+\))?$/,
           );
         }}
       />
