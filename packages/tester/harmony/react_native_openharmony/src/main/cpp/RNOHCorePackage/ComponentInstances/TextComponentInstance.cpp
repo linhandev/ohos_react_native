@@ -163,7 +163,6 @@ void TextComponentInstance::onStateChanged(
   auto const& stateData = textState->getData();
   auto const& fragments = stateData.attributedString.getFragments();
   if (fragments.empty()) {
-    m_textNode.resetTextContentWithStyledString();
     this->disposeTextStorage();
     return;
   }
@@ -394,32 +393,7 @@ void TextComponentInstance::updateFragmentTouchTargets(
 }
 
 void TextComponentInstance::disposeTextStorage() {
-  m_deps->taskExecutor->runDelayedTask(
-      TaskThread::MAIN,
-      [textStorage = std::move(m_textStorage)]() {
-        /**
-         * ApplyIndent crash
-         *
-         * After updating RN to 0.77, the tester application started crashing on
-         * certain pages. The crash occurs on the platform side in
-         * MultipleParagraphLayoutAlgorithm::ApplyIndent. It can be reproduced
-         * by navigating to the AppRegistry page in the RNOH tester app (the All
-         * Tests page doesn't crash). The
-         * MultipleParagraphLayoutAlgorithm::ApplyIndent method is called on the
-         * VSync thread. Commenting out OH_Drawing_DestroyTypography in
-         * ArkUITypography eliminated this problem, however, it introduced a
-         * massive memory leak.
-         *
-         * My hypothesis is that some internal platform objects are kept
-         * indirectly by textStorage and need to be alive when
-         * MultipleParagraphLayoutAlgorithm::ApplyIndent is called.
-         *
-         * TextMeasurer in RN v0.72.5 supported hostTextStorage, but this
-         * concept was removed in RN v0.75. For some reason, no crashes were
-         * observed in RNOH v0.75 or v0.76...
-         */
-      },
-      1000);
+  m_textNode.resetTextContentWithStyledString();
   m_textStorage = nullptr;
 }
 } // namespace rnoh
