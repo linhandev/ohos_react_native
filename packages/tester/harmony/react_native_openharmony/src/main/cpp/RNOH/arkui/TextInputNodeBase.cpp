@@ -203,13 +203,6 @@ void TextInputNodeBase::setFocusable(bool const& focusable) {
   m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUSABLE, &item);
 }
 
-bool TextInputNodeBase::isFocused() {
-  return NativeNodeApi::getInstance()
-      ->getAttribute(m_nodeHandle, NODE_FOCUS_STATUS)
-      ->value[0]
-      .i32;
-}
-
 void TextInputNodeBase::setSelectAll(bool selectAll) {
   ArkUI_NumberValue value = {.i32 = int32_t(selectAll)};
   ArkUI_AttributeItem item = {&value, 1};

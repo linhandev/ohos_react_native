@@ -30,6 +30,9 @@ void StackNode::addChild(ArkUINode& child) {
 }
 
 void StackNode::removeChild(ArkUINode& child) {
+  if (child.isFocused()) {
+    child.setFocusStatus(0);
+  }
   maybeThrow(NativeNodeApi::getInstance()->removeChild(
       m_nodeHandle, child.getArkUINodeHandle()));
 }

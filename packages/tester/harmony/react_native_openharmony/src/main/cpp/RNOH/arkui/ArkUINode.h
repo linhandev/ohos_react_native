@@ -580,6 +580,12 @@ class ArkUINode {
    */
   virtual void onTouchIntercept(const ArkUI_UIInputEvent* event);
 
+  /**
+   * @brief Verify the focus status of the TextInput.
+   * @return Focus status: true-focused, false-unfocused.
+   */
+  virtual bool isFocused();
+
   virtual ~ArkUINode() noexcept;
 
  protected:

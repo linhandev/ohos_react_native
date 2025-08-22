@@ -21,8 +21,7 @@ static constexpr std::array TEXT_INPUT_NODE_EVENT_TYPES = {
     NODE_TEXT_INPUT_ON_CONTENT_SCROLL,
     NODE_TEXT_INPUT_ON_CONTENT_SIZE_CHANGE,
     NODE_TEXT_INPUT_ON_WILL_DELETE,
-    NODE_EVENT_ON_APPEAR,
-    NODE_EVENT_ON_DISAPPEAR};
+    NODE_EVENT_ON_APPEAR};
 namespace rnoh {
 
 TextInputNode::TextInputNode(const ArkUINode::Context::Shared& context)
@@ -91,15 +90,7 @@ void TextInputNode::onNodeEvent(
     }
   } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_APPEAR) {
     if (m_autoFocus) {
-      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(1)};
-      ArkUI_AttributeItem item = {&value, 1};
-      m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUS_STATUS, &item);
-    }
-  } else if (eventType == ArkUI_NodeEventType::NODE_EVENT_ON_DISAPPEAR) {
-    if (isFocused()) {
-      ArkUI_NumberValue value = {.i32 = static_cast<int32_t>(0)};
-      ArkUI_AttributeItem item = {&value, 1};
-      m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUS_STATUS, &item);
+      setFocusStatus(1);
     }
   }
 }

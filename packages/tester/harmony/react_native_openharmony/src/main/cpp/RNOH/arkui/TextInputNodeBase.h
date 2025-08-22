@@ -96,12 +96,6 @@ class TextInputNodeBase : public ArkUINode {
   };
 
   /**
-   * @brief Verify the focus status of the TextInput.
-   * @return Focus status: true-focused, false-unfocused.
-   */
-  bool isFocused();
-
-  /**
    * @brief Set the selection to all text in the TextInput.
    * @param selectAll SelectAll flag.
    */

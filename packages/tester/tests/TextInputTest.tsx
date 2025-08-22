@@ -1070,6 +1070,62 @@ export function TextInputTest() {
           expect(state.text).to.be.equal('');
         }}
       />
+      <TestCase.Automated
+        skip={{android: true, harmony: false}}
+        itShould="When the TextInput is unmounted, other components will not gain focus passively.​"
+        tags={['sequential']}
+        initialState={{
+          inputRef: createRef<TextInput>(),
+          show: true,
+          firstFocus: false,
+          secondFocus: false,
+        }}
+        arrange={({state, setState}) => (
+          <View collapsable={false} style={{gap: 10}}>
+            <TextInput
+              ref={state.inputRef}
+              placeholder="TextInput1"
+              style={{backgroundColor: 'pink', height: 40}}
+              onFocus={() => {
+                setState(prev => ({...prev, firstFocus: true}));
+              }}
+            />
+            <TextInput
+              placeholder="TextInput2"
+              style={{backgroundColor: 'orange', height: 40}}
+              onFocus={() => {
+                setState(prev => ({...prev, secondFocus: true}));
+              }}
+            />
+            {state.show ? (
+              <TextInput
+                placeholder="TextInput3"
+                autoFocus={true}
+                style={{backgroundColor: 'blue', height: 40}}
+              />
+            ) : null}
+          </View>
+        )}
+        act={async ({done, state, setState}) => {
+          setTimeout(() => {
+            setState(prev => ({...prev, show: false}));
+          }, 300);
+          setTimeout(() => {
+            setState(prev => ({...prev, show: true}));
+          }, 400);
+          setTimeout(() => {
+            setState(prev => ({...prev, show: false}));
+            state.inputRef.current?.focus();
+          }, 500);
+          setTimeout(() => {
+            done();
+          }, 600);
+        }}
+        assert={({expect, state}) => {
+          expect(state.firstFocus).to.be.true;
+          expect(state.secondFocus).to.be.false;
+        }}
+      />
       <TestCase.Example
         // Only "unless-editing" mode doesn't work on C_API
         modal

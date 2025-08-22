@@ -75,10 +75,15 @@ void CustomNode::insertChild(ArkUINode& child, std::size_t index) {
   m_nodeApi->insertChildAt(
       m_nodeHandle, child.getArkUINodeHandle(), static_cast<int32_t>(index));
 }
+
 void CustomNode::addChild(ArkUINode& child) {
   m_nodeApi->addChild(m_nodeHandle, child.getArkUINodeHandle());
 }
+
 void CustomNode::removeChild(ArkUINode& child) {
+  if (child.isFocused()) {
+    child.setFocusStatus(0);
+  }
   maybeThrow(NativeNodeApi::getInstance()->removeChild(
       m_nodeHandle, child.getArkUINodeHandle()));
 }
