@@ -103,6 +103,12 @@ void SettlingScrollViewInternalState::onScrollStop() {
       std::make_unique<IdleScrollViewInternalState>(m_instance));
 };
 
+void CancelingScrollViewInternalState::onScrollStop() {
+  m_instance->resetScrollInteraction();
+  m_instance->onChangeInternalState(
+      std::make_unique<IdleScrollViewInternalState>(m_instance));
+};
+
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // ScrollViewInternalStateDelegate
 
@@ -192,10 +198,27 @@ void ScrollViewComponentInstance::onScroll() {
   m_onScrollCallsAfterFrameBeginCallCounter++;
 }
 
+bool ScrollViewComponentInstance::shouldDisableScrollInteraction() {
+  auto ancestorTouchTarget = getTouchTargetParent();
+  while (ancestorTouchTarget) {
+    if (ancestorTouchTarget->isJSResponder()) {
+      return true;
+    }
+    ancestorTouchTarget = ancestorTouchTarget->getTouchTargetParent();
+  }
+  return false;
+}
+
 float ScrollViewComponentInstance::onScrollFrameBegin(
     float offset,
     int32_t scrollNodeState) {
   m_onScrollCallsAfterFrameBeginCallCounter = 0;
+  if (!m_props->scrollEnabled || shouldDisableScrollInteraction()) {
+    m_recentScrollFrameOffset = 0;
+    m_internalState = std::make_unique<CancelingScrollViewInternalState>(this);
+    m_scrollNode.setEnableScrollInteraction(false);
+    return 0;
+  }
   if (!m_props->scrollEnabled) {
     m_recentScrollFrameOffset = 0;
     return 0;
@@ -547,7 +570,8 @@ ScrollViewComponentInstance::getScrollViewMetrics() {
 }
 
 bool ScrollViewComponentInstance::isHandlingTouches() const {
-  return m_internalState->asScrollNodeState() != ScrollNodeState::IDLE;
+  return m_internalState->asScrollNodeState() == ScrollNodeState::DRAGGING ||
+      m_internalState->asScrollNodeState() == ScrollNodeState::SETTLING;
 }
 
 // —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
@@ -696,7 +720,10 @@ void ScrollViewComponentInstance::onFinalizeUpdates() {
   }
 
   updateOffsetAfterChildChange(m_scrollNode.getScrollOffset());
+  resetScrollInteraction();
+}
 
+void ScrollViewComponentInstance::resetScrollInteraction() {
   m_scrollNode.setEnableScrollInteraction(
       !m_isNativeResponderBlocked && m_props->scrollEnabled &&
       (!m_rawProps.nestedScrollEnabled.has_value() ||

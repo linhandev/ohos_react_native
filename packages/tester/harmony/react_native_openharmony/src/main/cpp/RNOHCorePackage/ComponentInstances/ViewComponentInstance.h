@@ -19,11 +19,13 @@ class ViewComponentInstance
   CustomNode m_customNode;
   std::unordered_map<facebook::react::Tag, bool> m_childrenClippedState;
   facebook::react::Point m_previousOffset;
+  bool m_isJSResponder = false;
 
   bool isViewClipped(
       const ComponentInstance::Shared& child,
       facebook::react::Point currentOffset,
       facebook::react::Rect parentBoundingBox);
+  void setIsJSResponder(bool isJSResponder) override;
 
  public:
   ViewComponentInstance(Context context);
@@ -44,6 +46,7 @@ class ViewComponentInstance
   void onClick() override;
   void onHoverIn() override;
   void onHoverOut() override;
+  bool isJSResponder() const override;
   CustomNode& getLocalRootArkUINode() override;
 };
 } // namespace rnoh

@@ -64,27 +64,37 @@ export const TouchableOpacityTest = () => {
         </TouchableOpacity>
       </TestCase.Example>
       <TestCase.Automated
-        itShould="not trigger parent's onPress when dragging started over a gray square"
+        itShould="Gray square does not trigger onPress when pressed and dragged; pink square does not trigger onScroll."
         tags={['sequential']}
         initialState={{
-          hasParentTouchableOpacityBeenPressed: false,
+          pressIn: 0,
+          pressed: 0,
+          scrolled: 0,
           ref: createRef<React.ElementRef<typeof View>>(),
         }}
         arrange={({state, setState, done}) => {
           return (
             <ScrollViewNestedInTouchableOpacity
               draggingTargetRef={state.ref}
-              onParentTouchableOpacityPress={() => {
-                setState((prev: any) => ({
-                  ...prev,
-                  hasParentTouchableOpacityBeenPressed: true,
-                }));
+              onTouchableOpacityPressIn={() => {
+                setState(prev => ({...prev, pressIn: prev.pressIn + 1}));
               }}
-              onFinishedDragging={done}
+              onParentTouchableOpacityPress={() => {
+                setState(prev => ({...prev, pressed: prev.pressed + 1}));
+              }}
+              onFinishedDragging={() => {
+                setState(prev => ({...prev, scrolled: prev.scrolled + 1}));
+                done();
+              }}
             />
           );
         }}
         act={async ({state}) => {
+          await driver?.swipe({
+            ref: state.ref,
+            fromOffset: {x: 60, y: 0},
+            toOffset: {x: 0, y: 0},
+          });
           await driver?.swipe({
             ref: state.ref,
             fromOffset: {x: 0, y: 0},
@@ -92,7 +102,9 @@ export const TouchableOpacityTest = () => {
           });
         }}
         assert={({expect, state}) => {
-          expect(state.hasParentTouchableOpacityBeenPressed).to.be.false;
+          expect(state.pressIn).to.be.eq(1);
+          expect(state.pressed).to.be.eq(1);
+          expect(state.scrolled).to.be.eq(1);
         }}
       />
     </TestSuite>
@@ -111,6 +123,7 @@ function PressMe(props: ViewProps & {endLabel?: string | number}) {
 
 function ScrollViewNestedInTouchableOpacity(props: {
   onParentTouchableOpacityPress: () => void;
+  onTouchableOpacityPressIn: () => void;
   onFinishedDragging: () => void;
   draggingTargetRef: React.Ref<View>;
 }) {
@@ -139,6 +152,7 @@ function ScrollViewNestedInTouchableOpacity(props: {
               <TouchableOpacity
                 ref={value === 1 ? props.draggingTargetRef : undefined}
                 key={value}
+                onPressIn={() => props.onTouchableOpacityPressIn()}
                 style={{
                   width: 64,
                   height: 64,

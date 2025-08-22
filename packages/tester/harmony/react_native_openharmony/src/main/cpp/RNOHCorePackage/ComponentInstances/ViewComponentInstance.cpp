@@ -52,6 +52,14 @@ void ViewComponentInstance::onHoverOut() {
   }
 }
 
+void ViewComponentInstance::setIsJSResponder(bool isJSResponder) {
+  m_isJSResponder = isJSResponder;
+}
+
+bool ViewComponentInstance::isJSResponder() const {
+  return m_isJSResponder;
+}
+
 void ViewComponentInstance::onPropsChanged(SharedConcreteProps const& props) {
   CppComponentInstance::onPropsChanged(props);
   if (!props->removeClippedSubviews && !m_childrenClippedState.empty()) {

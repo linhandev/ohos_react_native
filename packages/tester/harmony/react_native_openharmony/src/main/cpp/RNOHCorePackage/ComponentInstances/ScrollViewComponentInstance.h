@@ -15,7 +15,7 @@
 #include "RNOHCorePackage/TurboModules/Animated/NativeAnimatedTurboModule.h"
 
 namespace rnoh {
-enum ScrollNodeState : int32_t { IDLE, DRAGGING, SETTLING };
+enum ScrollNodeState : int32_t { IDLE, DRAGGING, SETTLING, CANCELING };
 
 class ScrollViewComponentInstance;
 
@@ -76,6 +76,21 @@ class IdleScrollViewInternalState : public ScrollViewInternalState {
   void onScrollStart() override;
   void onDragStart() override;
   void onScroll() override;
+};
+
+class CancelingScrollViewInternalState : public ScrollViewInternalState {
+ public:
+  using ScrollViewInternalState::ScrollViewInternalState;
+
+  std::string getDebugName() override {
+    return "CANCELING";
+  }
+
+  ScrollNodeState asScrollNodeState() override {
+    return ScrollNodeState::CANCELING;
+  }
+
+  void onScrollStop() override;
 };
 
 class DraggingScrollViewInternalState : public ScrollViewInternalState {
@@ -238,6 +253,7 @@ class ScrollViewComponentInstance
   friend IdleScrollViewInternalState;
   friend DraggingScrollViewInternalState;
   friend SettlingScrollViewInternalState;
+  friend CancelingScrollViewInternalState;
 
   ScrollViewComponentInstance(Context context);
 
@@ -301,6 +317,8 @@ class ScrollViewComponentInstance
   facebook::react::Float adjustOffsetIfRTL(facebook::react::Float x) const;
   facebook::react::Point getScrollOffset() const;
   facebook::react::Point getContentViewOffset() const;
+  bool shouldDisableScrollInteraction();
+  void resetScrollInteraction();
   ComponentInstance::Weak m_keyboardAvoider;
   std::optional<facebook::react::Point> m_targetOffsetOfScrollToCommand =
       std::nullopt;

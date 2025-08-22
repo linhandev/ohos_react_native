@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Pressable,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {useRef, useState} from 'react';
@@ -219,16 +220,15 @@ const ScrollViewNestedInPanResponder = () => {
         }}
         {...panResponder.panHandlers}>
         <Animated.ScrollView
-          overScrollMode={'never'}
           onScroll={handleScroll}
           onTouchStart={() => {
             setTime(time + 1);
           }}>
-          <View style={{backgroundColor: 'lightgreen', height: 1000}}>
+          <Pressable style={{backgroundColor: 'lightgreen', height: 1000}}>
             <Text style={{marginTop: 100, textAlign: 'center'}}>
               onTouchStart: {time}
             </Text>
-          </View>
+          </Pressable>
         </Animated.ScrollView>
       </Animated.View>
     </View>
