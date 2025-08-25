@@ -15,6 +15,7 @@ const {
   Modal,
   SegmentedControlIOS,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableHighlight,
@@ -44,15 +45,27 @@ class KeyboardAvoidingViewExample extends React.Component<Props, State> {
     return (
       <View style={styles.outerContainer}>
         <Modal animationType="fade" visible={this.state.modalOpen}>
-          <KeyboardAvoidingView
-            behavior={this.state.behavior}
-            style={styles.container}>
-            <SegmentedControlIOS
-              onValueChange={this.onSegmentChange}
-              selectedIndex={this.state.behavior === 'padding' ? 0 : 1}
-              style={styles.segment}
-              values={['Padding', 'Position']}
-            />
+          <KeyboardAvoidingView behavior={this.state.behavior} style={styles.container}>
+            {Platform.OS !== 'ios' ? (
+              <View style={{flexDirection: 'row'}}>
+                <Text>Padding/Position</Text>
+                <Switch
+                  value={this.state.behavior === 'padding'}
+                  onChange={e => {
+                    this.setState({
+                      behavior: e.nativeEvent.value === true ? 'padding' : 'position',
+                    });
+                  }}
+                />
+              </View>
+            ) : (
+              <SegmentedControlIOS
+                onValueChange={this.onSegmentChange}
+                selectedIndex={this.state.behavior === 'padding' ? 0 : 1}
+                style={styles.segment}
+                values={['Padding', 'Position']}
+              />
+            )}
             <TextInput placeholder="<TextInput />" style={styles.textInput} />
           </KeyboardAvoidingView>
           <TouchableHighlight

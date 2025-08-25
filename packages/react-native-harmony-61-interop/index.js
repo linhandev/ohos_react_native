@@ -148,6 +148,10 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/SafeAreaView/SafeAreaView')
       .default;
   },
+  get SegmentedControlIOS() {
+    // Placeholder
+    return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
+  },
   get Settings() {
     return require('@react-native-oh/react-native-harmony/Libraries/Settings/Settings')
       .default;
