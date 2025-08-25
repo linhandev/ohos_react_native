@@ -267,15 +267,24 @@ ArkUINode& ArkUINode::setHeight(float height) {
   return *this;
 }
 
+inline int32_t roundToInt(double value) {
+  constexpr double HALF = 0.5;
+  if (value >= 0) {
+    return static_cast<int32_t>(value + HALF);
+  } else {
+    return -static_cast<int32_t>(-value + HALF);
+  }
+}
+
 ArkUINode& ArkUINode::setLayoutRect(
     facebook::react::Point const& position,
     facebook::react::Size const& size,
     facebook::react::Float pointScaleFactor) {
   ArkUI_NumberValue value[] = {
-      {.i32 = static_cast<int32_t>(position.x * pointScaleFactor + 0.5)},
-      {.i32 = static_cast<int32_t>(position.y * pointScaleFactor + 0.5)},
-      {.i32 = static_cast<int32_t>(size.width * pointScaleFactor + 0.5)},
-      {.i32 = static_cast<int32_t>(size.height * pointScaleFactor + 0.5)}};
+      {.i32 = roundToInt(position.x * pointScaleFactor)},
+      {.i32 = roundToInt(position.y * pointScaleFactor)},
+      {.i32 = roundToInt(size.width * pointScaleFactor)},
+      {.i32 = roundToInt(size.height * pointScaleFactor)}};
   this->saveSize(value[2].i32, value[3].i32);
   ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   m_nodeApi->setAttribute(m_nodeHandle, NODE_LAYOUT_RECT, &item);
