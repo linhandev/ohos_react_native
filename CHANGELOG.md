@@ -1,5 +1,18 @@
 # Changelog
 
+## Internal: v0.77.19
+- fix: an issue where unmounting a TextInput component causes another TextInput component to gain focus passively.​,([0ccf557a0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ccf557a0008e89d75965579ebdf27615db590bf))
+- fix: the touch interaction issue between ScrollView and its parent component.,([e8e8bbd68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8e8bbd68c65c538c5992994d540f7cf6171aacd))
+- Copy over navigation to 0.61 tester,([105d3cfed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/105d3cfedc65ec1386b4438bf4411a71d6cac381))
+- fix ApplyIndent crash,([fcde886e8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fcde886e8f1c8720f1bf208fbec8ef0b57c014e1))
+- fix: support selecting text input if selection end is smaller than selection start,([aaf2de4c9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aaf2de4c97cce00e42e926851539085ed6519856))
+- chore: fix failing tests,([5dc7da8dc](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5dc7da8dc8464d9f29e16cb511b077442a08bc1d))
+- feat(interop-61): restore legacy listener removal methods,([25afab18d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/25afab18d16ddb83fdc9bc33c265617fb39ab1af))
+- fix(interop-61): resolving *.harmony files in metro config,([74ea60d7b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/74ea60d7b684d83c5cc6db3c9afbc3c232c66345))
+- chore: enable RNOH 61 RN Tester examples on OHOS,([03240a449](https://gitcode.com/openharmony-sig/ohos_react_native/commit/03240a44946528385770390d871a342fba529217))
+- [doc]: Use the new TurboModule management methods in the document TurboModule.md,([af58ff7fb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af58ff7fb24e47dbfec2081e93f433dfe68448dd))
+- [chore]: updated to version 6.0.0.504(0.77.18),([866efdb13](https://gitcode.com/openharmony-sig/ohos_react_native/commit/866efdb133afdb6f91e45cf343091ac1fdbb0858))
+
 ## Internal: v0.77.18
 - [chore]: Add README.md and CHANGELOG.md(77),([291aa33a7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/291aa33a7071d5cb678411e26796ac3a2896d2e3))
 - revert: Revert the default value of the focusable property for the CustomNode node to true.,([8462fa12d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8462fa12dbf7e59c0565a938ec4511c82ce30a4f))
