@@ -204,10 +204,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'TimerExample',
     module: require('../examples/Timer/TimerExample'),
   },
-  // {
-  //   key: 'ToastAndroidExample',
-  //   module: require('../examples/ToastAndroid/ToastAndroidExample'),
-  // },
+  {
+    key: 'ToastAndroidExample',
+    module: require('../examples/ToastAndroid/ToastAndroidExample'),
+  },
   {
     key: 'TransformExample',
     module: require('../examples/Transform/TransformExample'),
