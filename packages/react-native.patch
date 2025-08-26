@@ -1,6 +1,5 @@
-# last commit in this patch file is: bcf5a8983cb000f7e5b71b78b72cdf4a898f4ed7
 diff --git a/.gitignore b/.gitignore
-index 0c64f7e5c4..91eabc4a0d 100644
+index 0c64f7e5c43bcb3ee805c63ce120ed86c11f19db..91eabc4a0d26542bd7865a6a6063fffd01fdd69a 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -1,3 +1,9 @@
@@ -14,7 +13,7 @@ index 0c64f7e5c4..91eabc4a0d 100644
  !**/*.xcodeproj
  !**/*.pbxproj
 diff --git a/LICENSE b/LICENSE
-index b93be90515..0d2fb73292 100644
+index b93be90515ccd0b9daedaa589e42bf5929693f1f..0d2fb73292c858cfaa5055a81ec29f241652bf7e 100644
 --- a/LICENSE
 +++ b/LICENSE
 @@ -1,4 +1,8 @@
@@ -35,7 +34,7 @@ index b93be90515..0d2fb73292 100644
 +SOFTWARE.
 \ No newline at end of file
 diff --git a/README.md b/README.md
-index e5eb2b01fe..88dcca1ef1 100644
+index e5eb2b01fe5b52121b65371cf6a7cd1f19b51a71..88dcca1ef133bd364f206a99abb0c67141cf441d 100644
 --- a/README.md
 +++ b/README.md
 @@ -1,147 +1,15 @@
@@ -195,7 +194,7 @@ index e5eb2b01fe..88dcca1ef1 100644
 -[ld]: https://github.com/facebook/react-native/blob/main/LICENSE-docs
 +This directory includes new 'delegate' files intended to be overridden by other platforms. Some original RN files were modified to call delegate methods.
 diff --git a/package.json b/package.json
-index d31502fd82..dc4b876f44 100644
+index d31502fd820d9ded9f4b2b19bc0953e4ae10d9d7..dc4b876f446dcb956d081ebce5bc9f492ea4b70f 100644
 --- a/package.json
 +++ b/package.json
 @@ -32,11 +32,11 @@
@@ -214,7 +213,7 @@ index d31502fd82..dc4b876f44 100644
    ],
    "devDependencies": {
 diff --git a/packages/core-cli-utils/package.json b/packages/core-cli-utils/package.json
-index dc233b4d5b..bbb95deb88 100644
+index dc233b4d5b3b5a0982c672596f15ba8543410286..bbb95deb88bd75c058b231760dbac658ab87af05 100644
 --- a/packages/core-cli-utils/package.json
 +++ b/packages/core-cli-utils/package.json
 @@ -25,7 +25,5 @@
@@ -227,7 +226,7 @@ index dc233b4d5b..bbb95deb88 100644
 +  ]
  }
 diff --git a/packages/react-native-codegen-typescript-test/package.json b/packages/react-native-codegen-typescript-test/package.json
-index ed2aacf510..2b663df079 100644
+index ed2aacf5102de08b38ea1af329907ca9741ba94b..2b663df0795ea72d578ca68beb20c9f669250a5a 100644
 --- a/packages/react-native-codegen-typescript-test/package.json
 +++ b/packages/react-native-codegen-typescript-test/package.json
 @@ -23,14 +23,14 @@
@@ -250,7 +249,7 @@ index ed2aacf510..2b663df079 100644
      "@types/jest": "^29.5.3",
      "jest": "^29.6.3",
 diff --git a/packages/react-native-codegen/package.json b/packages/react-native-codegen/package.json
-index daaf327da6..67ff41b1ac 100644
+index daaf327da69d8d169aaa6408fd67f5df2cf3b29b..67ff41b1ac87a152d978a40496a8ac73b64d1f3d 100644
 --- a/packages/react-native-codegen/package.json
 +++ b/packages/react-native-codegen/package.json
 @@ -39,14 +39,14 @@
@@ -273,7 +272,7 @@ index daaf327da6..67ff41b1ac 100644
      "chalk": "^4.0.0",
      "hermes-estree": "0.25.1",
 diff --git a/packages/react-native-test-renderer/package.json b/packages/react-native-test-renderer/package.json
-index 9df0c465fa..e59fed29b4 100644
+index 9df0c465fa7c7491ce7d78ceaf0f07ce64fb6ddd..e59fed29b45ad534ef9b1cb187d3222a79148ff4 100644
 --- a/packages/react-native-test-renderer/package.json
 +++ b/packages/react-native-test-renderer/package.json
 @@ -10,7 +10,6 @@
@@ -285,7 +284,7 @@ index 9df0c465fa..e59fed29b4 100644
    "peerDependencies": {
      "jest": "^29.7.0"
 diff --git a/packages/react-native/Libraries/Alert/Alert.js b/packages/react-native/Libraries/Alert/Alert.js
-index a6b0585f78..d3cddbd39c 100644
+index a6b0585f7865e11b8b807cc4e2435cad8d196f18..d3cddbd39c66707f6fa6945b44ceb44c874bde3d 100644
 --- a/packages/react-native/Libraries/Alert/Alert.js
 +++ b/packages/react-native/Libraries/Alert/Alert.js
 @@ -8,10 +8,12 @@
@@ -544,7 +543,7 @@ index a6b0585f78..d3cddbd39c 100644
  
 diff --git a/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts b/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts
 new file mode 100644
-index 0000000000..7f113da1b9
+index 0000000000000000000000000000000000000000..7f113da1b981d47584d28cdcd93374fa12a2a213
 --- /dev/null
 +++ b/packages/react-native/Libraries/Alert/delegates/AlertDelegate.ts
 @@ -0,0 +1,33 @@
@@ -583,7 +582,7 @@ index 0000000000..7f113da1b9
 +}
 diff --git a/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts b/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts
 new file mode 100644
-index 0000000000..07f3fc1313
+index 0000000000000000000000000000000000000000..07f3fc1313ea7920ee76e64b52a77d8ad3ff079b
 --- /dev/null
 +++ b/packages/react-native/Libraries/Alert/delegates/BaseAlertDelegate.ts
 @@ -0,0 +1,37 @@
@@ -625,7 +624,7 @@ index 0000000000..07f3fc1313
 +  ): void;
 +}
 diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js b/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
-index ccae5960ac..0f21a97339 100644
+index ccae5960ac2106fe2d6c711525cb72643ad70687..0f21a97339a27f84ca3a8f73eeac3a3fec3c19a4 100644
 --- a/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
 +++ b/packages/react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo.js
 @@ -14,9 +14,10 @@ import type {EventSubscription} from '../../vendor/emitter/EventEmitter';
@@ -1105,7 +1104,7 @@ index ccae5960ac..0f21a97339 100644
  
 diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts
 new file mode 100644
-index 0000000000..4d5b42fd79
+index 0000000000000000000000000000000000000000..4d5b42fd7917d6fdd06e385ec57d76ff7cea47ce
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/AccessibilityInfoDelegate.ts
 @@ -0,0 +1,28 @@
@@ -1139,7 +1138,7 @@ index 0000000000..4d5b42fd79
 +}
 diff --git a/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts
 new file mode 100644
-index 0000000000..b65571189f
+index 0000000000000000000000000000000000000000..b65571189fe4486d9e1dd50cc61792ea93ea9d1e
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/AccessibilityInfo/delegates/BaseAccessibilityInfoDelegate.ts
 @@ -0,0 +1,69 @@
@@ -1213,7 +1212,7 @@ index 0000000000..b65571189f
 +  ): Promise<number>;
 +}
 diff --git a/packages/react-native/Libraries/Components/Button.js b/packages/react-native/Libraries/Components/Button.js
-index 1b5c0b6027..7a530ee0cb 100644
+index 1b5c0b6027894dfd0165787555ca84d866c69692..7a530ee0cbfb0f68867111242339edc68d8f713f 100644
 --- a/packages/react-native/Libraries/Components/Button.js
 +++ b/packages/react-native/Libraries/Components/Button.js
 @@ -26,6 +26,7 @@ import TouchableOpacity from './Touchable/TouchableOpacity';
@@ -1284,7 +1283,7 @@ index 1b5c0b6027..7a530ee0cb 100644
        color: '#cdcdcd',
      },
 diff --git a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js b/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
-index 77c81f0431..371979af8d 100644
+index 77c81f04316e20ca7e32c942274e53699e0319e9..371979af8de4e8630370e16f2fa0b9f78b60d45f 100644
 --- a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
 +++ b/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
 @@ -24,6 +24,7 @@ import Platform from '../../Utilities/Platform';
@@ -1364,7 +1363,7 @@ index 77c81f0431..371979af8d 100644
      }
 diff --git a/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts b/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts
 new file mode 100644
-index 0000000000..ce4b6755d4
+index 0000000000000000000000000000000000000000..ce4b6755d41a8f4897ab7bb6cac42619dad69c8e
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Keyboard/delegates/BaseKeyboardAvoidingViewDelegate.ts
 @@ -0,0 +1,28 @@
@@ -1398,7 +1397,7 @@ index 0000000000..ce4b6755d4
 +}
 diff --git a/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts b/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts
 new file mode 100644
-index 0000000000..c1cde588e2
+index 0000000000000000000000000000000000000000..c1cde588e266ccb21f63d1acb3b5430461cd0edd
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Keyboard/delegates/KeyboardAvoidingViewDelegate.ts
 @@ -0,0 +1,6 @@
@@ -1409,7 +1408,7 @@ index 0000000000..c1cde588e2
 +
 +export default class KeyboardAvoidingViewDelegate extends BaseKeyboardAvoidingViewDelegate {}
 diff --git a/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js b/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
-index 221df2405e..36f4a39c61 100644
+index 221df2405e256b161ebad8f064c2216d552078d4..36f4a39c613c50e14867f4445c531fb09fe8c05a 100644
 --- a/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
 +++ b/packages/react-native/Libraries/Components/RefreshControl/RefreshControl.js
 @@ -11,14 +11,16 @@
@@ -1533,7 +1532,7 @@ index 221df2405e..36f4a39c61 100644
    _onRefresh = () => {
 diff --git a/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts b/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts
 new file mode 100644
-index 0000000000..c7004103ae
+index 0000000000000000000000000000000000000000..c7004103ae6a24a995d0d8ed859e228b4f3b42e5
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/RefreshControl/delegates/BaseRefreshControlDelegate.ts
 @@ -0,0 +1,31 @@
@@ -1570,7 +1569,7 @@ index 0000000000..c7004103ae
 +}
 diff --git a/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts b/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts
 new file mode 100644
-index 0000000000..2e83301540
+index 0000000000000000000000000000000000000000..2e833015402fdaa05c06fdbf18894b2a304d03b7
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/RefreshControl/delegates/RefreshControlDelegate.ts
 @@ -0,0 +1,21 @@
@@ -1596,7 +1595,7 @@ index 0000000000..2e83301540
 +  }
 +}
 diff --git a/packages/react-native/Libraries/Components/ScrollView/ScrollView.js b/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
-index f2dbf2646f..4f4f418416 100644
+index f2dbf2646fbe44d0299893fc5ef11237be1be690..4f4f41841623f41daa4dd10e7a91e16f14214b01 100644
 --- a/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
 +++ b/packages/react-native/Libraries/Components/ScrollView/ScrollView.js
 @@ -44,6 +44,7 @@ import dismissKeyboard from '../../Utilities/dismissKeyboard';
@@ -1785,7 +1784,7 @@ index f2dbf2646f..4f4f418416 100644
      return (
        // $FlowFixMe[incompatible-type] - Flow only knows element refs.
 diff --git a/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js b/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
-index 9e225c1dc2..5d9ec5f717 100644
+index 9e225c1dc21bbc2cabd234a8558daac07d0bdecd..5d9ec5f717a2b6b36e2f9130f3d13c73ba2953dd 100644
 --- a/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
 +++ b/packages/react-native/Libraries/Components/ScrollView/ScrollViewNativeComponent.js
 @@ -15,163 +15,12 @@ import type {
@@ -1958,7 +1957,7 @@ index 9e225c1dc2..5d9ec5f717 100644
    NativeComponentRegistry.get<Props>(
 diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts
 new file mode 100644
-index 0000000000..e37a17d243
+index 0000000000000000000000000000000000000000..e37a17d24351dd0085c762fc210dcd49c9b844da
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewDelegate.ts
 @@ -0,0 +1,36 @@
@@ -2000,7 +1999,7 @@ index 0000000000..e37a17d243
 +}
 diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts
 new file mode 100644
-index 0000000000..66415de3f1
+index 0000000000000000000000000000000000000000..66415de3f1fa77a96ab2cf5041944689371ee3e5
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/ScrollView/delegates/BaseScrollViewNativeComponentDelegate.ts
 @@ -0,0 +1,12 @@
@@ -2018,7 +2017,7 @@ index 0000000000..66415de3f1
 +}
 diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts
 new file mode 100644
-index 0000000000..32a6bfffad
+index 0000000000000000000000000000000000000000..32a6bfffad0a75c0aed6f993ce3fb78153a08e58
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewDelegate.ts
 @@ -0,0 +1,23 @@
@@ -2047,7 +2046,7 @@ index 0000000000..32a6bfffad
 +}
 diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts
 new file mode 100644
-index 0000000000..3ebaf9a4e4
+index 0000000000000000000000000000000000000000..3ebaf9a4e4c5ec6102ffa2ecc740cea5bb296271
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/ScrollView/delegates/ScrollViewNativeComponentDelegate.ts
 @@ -0,0 +1,14 @@
@@ -2067,13 +2066,13 @@ index 0000000000..3ebaf9a4e4
 +}
 diff --git a/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts b/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts
 new file mode 100644
-index 0000000000..411b69a92c
+index 0000000000000000000000000000000000000000..411b69a92c9ca6b5abbb7d6c67e393e5f98e9c4e
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/ScrollView/delegates/types.ts
 @@ -0,0 +1 @@
 +export type DecelerationRateType = 'fast' | 'normal' | number;
 diff --git a/packages/react-native/Libraries/Components/StatusBar/StatusBar.js b/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
-index f3be5e02ad..0ab29b737b 100644
+index f3be5e02ad97ced39388f905b3463a2375542584..0ab29b737b8fecce96f320a9792945925f328c0e 100644
 --- a/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
 +++ b/packages/react-native/Libraries/Components/StatusBar/StatusBar.js
 @@ -12,8 +12,7 @@ import type {ColorValue} from '../../StyleSheet/StyleSheet';
@@ -2343,7 +2342,7 @@ index f3be5e02ad..0ab29b737b 100644
      });
 diff --git a/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts b/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts
 new file mode 100644
-index 0000000000..cb7ba66fdd
+index 0000000000000000000000000000000000000000..cb7ba66fdd141f89892c8e03ac68493f7e2eca57
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/StatusBar/delegates/BaseStatusBarDelegate.ts
 @@ -0,0 +1,25 @@
@@ -2374,7 +2373,7 @@ index 0000000000..cb7ba66fdd
 +}
 diff --git a/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts b/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts
 new file mode 100644
-index 0000000000..efc9b36f83
+index 0000000000000000000000000000000000000000..efc9b36f8340858fa3d7109822ac6f464a65ee69
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/StatusBar/delegates/StatusBarDelegate.ts
 @@ -0,0 +1,44 @@
@@ -2423,7 +2422,7 @@ index 0000000000..efc9b36f83
 +  }
 +}
 diff --git a/packages/react-native/Libraries/Components/TextInput/TextInput.js b/packages/react-native/Libraries/Components/TextInput/TextInput.js
-index dcf1123759..6fdb48bb25 100644
+index dcf11237599d2f262012d88d0c0ff79ee9d3606d..6fdb48bb2501002477d4b667b12d035b7b04aa59 100644
 --- a/packages/react-native/Libraries/Components/TextInput/TextInput.js
 +++ b/packages/react-native/Libraries/Components/TextInput/TextInput.js
 @@ -30,12 +30,15 @@ import Text from '../../Text/Text';
@@ -2827,7 +2826,7 @@ index dcf1123759..6fdb48bb25 100644
        {...restProps}
        forwardedRef={forwardedRef}
 diff --git a/packages/react-native/Libraries/Components/TextInput/TextInputState.js b/packages/react-native/Libraries/Components/TextInput/TextInputState.js
-index b3dfd5c8ca..5cd7581fd8 100644
+index b3dfd5c8ca061bb84634d3946f26bb81b7cbc6da..5cd7581fd8459a2a51dd309c349e5415d54689bd 100644
 --- a/packages/react-native/Libraries/Components/TextInput/TextInputState.js
 +++ b/packages/react-native/Libraries/Components/TextInput/TextInputState.js
 @@ -19,12 +19,14 @@ import type {
@@ -2905,7 +2904,7 @@ index b3dfd5c8ca..5cd7581fd8 100644
  
 diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts
 new file mode 100644
-index 0000000000..8da1b58ced
+index 0000000000000000000000000000000000000000..8da1b58cedcb909f5554b0e556ed776c6792f192
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputDelegate.ts
 @@ -0,0 +1,39 @@
@@ -2950,7 +2949,7 @@ index 0000000000..8da1b58ced
 +}
 diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts
 new file mode 100644
-index 0000000000..8cc9d6c09a
+index 0000000000000000000000000000000000000000..8cc9d6c09a1ea6266a7e8a6d796f7aa96363eb6f
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/TextInput/delegates/BaseTextInputStateDelegate.ts
 @@ -0,0 +1,12 @@
@@ -2968,7 +2967,7 @@ index 0000000000..8cc9d6c09a
 +}
 diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts
 new file mode 100644
-index 0000000000..4d58d36d01
+index 0000000000000000000000000000000000000000..4d58d36d01af42db1447b05371fc505a9028e43b
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputDelegate.ts
 @@ -0,0 +1,40 @@
@@ -3014,7 +3013,7 @@ index 0000000000..4d58d36d01
 +}
 diff --git a/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts
 new file mode 100644
-index 0000000000..81e10fc439
+index 0000000000000000000000000000000000000000..81e10fc439d7bb4685c7705e83903c6a8dab96be
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/TextInput/delegates/TextInputStateDelegate.ts
 @@ -0,0 +1,15 @@
@@ -3034,7 +3033,7 @@ index 0000000000..81e10fc439
 +  }
 +}
 diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js b/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
-index e0aad9ca2e..d5d5de9624 100644
+index e0aad9ca2e5ddb5280abe10cbb40d3baa4b127ec..d5d5de962432aa4674d8d4da4c553d4571fa554f 100644
 --- a/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
 +++ b/packages/react-native/Libraries/Components/Touchable/TouchableHighlight.js
 @@ -18,8 +18,11 @@ import Pressability, {
@@ -3061,7 +3060,7 @@ index e0aad9ca2e..d5d5de9624 100644
            style: StyleSheet.compose(
              child.props.style,
 diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js b/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
-index 0fb5f86702..e804b9db79 100644
+index 0fb5f86702e4177618fa9e2dde6f7133ca3e441f..e804b9db79a76904b38b41d08c6c8d205e05ba22 100644
 --- a/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
 +++ b/packages/react-native/Libraries/Components/Touchable/TouchableNativeFeedback.js
 @@ -20,9 +20,12 @@ import {findHostInstance_DEPRECATED} from '../../ReactNative/RendererProxy';
@@ -3086,7 +3085,7 @@ index 0fb5f86702..e804b9db79 100644
        ...children,
      );
 diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js b/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
-index d584a2f862..dd164ea481 100755
+index d584a2f8623f5e8fb9afafa44215ca482216a938..dd164ea481e7a52b0dff0a99d976b2cc64d34cf6 100755
 --- a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
 +++ b/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
 @@ -26,9 +26,12 @@ import type {
@@ -3112,7 +3111,7 @@ index d584a2f862..dd164ea481 100755
    for (const prop of PASSTHROUGH_PROPS) {
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts
 new file mode 100644
-index 0000000000..cc81932611
+index 0000000000000000000000000000000000000000..cc81932611af4a800e69c4a748f946f62a22e17b
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableHighlightDelegate.ts
 @@ -0,0 +1,13 @@
@@ -3131,7 +3130,7 @@ index 0000000000..cc81932611
 +}
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts
 new file mode 100644
-index 0000000000..4afcdcb69a
+index 0000000000000000000000000000000000000000..4afcdcb69ae736fa06532e9c902d94a4fb14dd64
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableNativeFeedbackDelegate.ts
 @@ -0,0 +1,13 @@
@@ -3150,7 +3149,7 @@ index 0000000000..4afcdcb69a
 +}
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts
 new file mode 100644
-index 0000000000..9377e82a8a
+index 0000000000000000000000000000000000000000..9377e82a8a9150038819e4199d3221b916300cd5
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/BaseTouchableWithoutFeedbackDelegate.ts
 @@ -0,0 +1,13 @@
@@ -3169,7 +3168,7 @@ index 0000000000..9377e82a8a
 +}
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts
 new file mode 100644
-index 0000000000..c06f9b68ba
+index 0000000000000000000000000000000000000000..c06f9b68bad5a883814ce1908c190f559bbd66f9
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableHighlightDelegate.ts
 @@ -0,0 +1,6 @@
@@ -3181,7 +3180,7 @@ index 0000000000..c06f9b68ba
 +export default class TouchableHighlightDelegate extends BaseTouchableHighlightDelegate {}
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts
 new file mode 100644
-index 0000000000..c63d10f172
+index 0000000000000000000000000000000000000000..c63d10f17284c19430d5759763320270c107bbb0
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableNativeFeedbackDelegate.ts
 @@ -0,0 +1,6 @@
@@ -3193,7 +3192,7 @@ index 0000000000..c63d10f172
 +export default class TouchableNativeFeedbackDelegate extends BaseTouchableNativeFeedbackDelegate {}
 diff --git a/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts
 new file mode 100644
-index 0000000000..03ce346876
+index 0000000000000000000000000000000000000000..03ce3468767e4f3f554aa7bd042334756d9b57ff
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/Touchable/delegates/TouchableWithoutFeedbackDelegate.ts
 @@ -0,0 +1,6 @@
@@ -3205,7 +3204,7 @@ index 0000000000..03ce346876
 +export default class TouchableWithoutFeedbackDelegate extends BaseTouchableWithoutFeedbackDelegate {}
 diff --git a/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts b/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts
 new file mode 100644
-index 0000000000..afe75c0029
+index 0000000000000000000000000000000000000000..afe75c002996f93cd8818cd10fcb94635d4ba419
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts
 @@ -0,0 +1,15 @@
@@ -3226,7 +3225,7 @@ index 0000000000..afe75c0029
 +}
 diff --git a/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts b/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts
 new file mode 100644
-index 0000000000..085623b3cc
+index 0000000000000000000000000000000000000000..085623b3ccd535134749db03014e50f3d53ba84e
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/delegates/ButtonDelegate.ts
 @@ -0,0 +1,27 @@
@@ -3258,7 +3257,7 @@ index 0000000000..085623b3cc
 +  }
 +}
 diff --git a/packages/react-native/Libraries/Core/InitializeCore.js b/packages/react-native/Libraries/Core/InitializeCore.js
-index f01d96e0df..d966ab06e8 100644
+index f01d96e0df11945b7c39c9d67b54fe0d76533d84..d966ab06e8fac8de9efb86368faf6fe2503e55d5 100644
 --- a/packages/react-native/Libraries/Core/InitializeCore.js
 +++ b/packages/react-native/Libraries/Core/InitializeCore.js
 @@ -40,6 +40,7 @@ require('./setUpAlert');
@@ -3271,13 +3270,13 @@ index f01d96e0df..d966ab06e8 100644
    require('./setUpDeveloperTools');
 diff --git a/packages/react-native/Libraries/Core/setUpPlatform.js b/packages/react-native/Libraries/Core/setUpPlatform.js
 new file mode 100644
-index 0000000000..a5c71df932
+index 0000000000000000000000000000000000000000..a5c71df932e64cf18181dd0506c0cab8b404476b
 --- /dev/null
 +++ b/packages/react-native/Libraries/Core/setUpPlatform.js
 @@ -0,0 +1 @@
 +// This file is meant to be empty. Platforms are expected to "override" it by creating a new setUpPlatform file with a platform-specific extension.
 diff --git a/packages/react-native/Libraries/Core/setUpReactDevTools.js b/packages/react-native/Libraries/Core/setUpReactDevTools.js
-index 56c0228f83..c3f8816bc7 100644
+index 56c0228f834ec3b6fb59bdfc3b4f8a5cbdfc0026..c3f8816bc781591780002fc6e5aac70f8466d072 100644
 --- a/packages/react-native/Libraries/Core/setUpReactDevTools.js
 +++ b/packages/react-native/Libraries/Core/setUpReactDevTools.js
 @@ -123,6 +123,17 @@ if (__DEV__) {
@@ -3299,7 +3298,7 @@ index 56c0228f83..c3f8816bc7 100644
        const devServer = getDevServer();
        const host = devServer.bundleLoadedFromServer
 diff --git a/packages/react-native/Libraries/Image/ImageViewNativeComponent.js b/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
-index 22ac430c21..c7646e6b7a 100644
+index 22ac430c2190ef3af06e89e1d55210336354325d..c7646e6b7a8e8bcd084d5cd059c63f0dce79844e 100644
 --- a/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
 +++ b/packages/react-native/Libraries/Image/ImageViewNativeComponent.js
 @@ -141,6 +141,7 @@ export const __INTERNAL_VIEW_CONFIG: PartialViewConfig =
@@ -3311,7 +3310,7 @@ index 22ac430c21..c7646e6b7a 100644
            capInsets: {
              diff: require('../Utilities/differ/insetsDiffer'),
 diff --git a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js b/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
-index 99a067ec35..d549fd2a07 100644
+index 99a067ec35d8e2223171be297d2d2dbe8d3b33ff..d549fd2a07f7b9f45c17339853fc674a7b0d7b03 100644
 --- a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
 +++ b/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
 @@ -9,6 +9,9 @@
@@ -3342,7 +3341,7 @@ index 99a067ec35..d549fd2a07 100644
  export function isIgnored(value: mixed): boolean {
 diff --git a/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts b/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts
 new file mode 100644
-index 0000000000..aaba2afaa0
+index 0000000000000000000000000000000000000000..aaba2afaa03ac89aa995206e181dd7ac3c2f056d
 --- /dev/null
 +++ b/packages/react-native/Libraries/NativeComponent/delegates/BaseViewConfigIgnoreDelegate.ts
 @@ -0,0 +1,10 @@
@@ -3358,7 +3357,7 @@ index 0000000000..aaba2afaa0
 +}
 diff --git a/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts b/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts
 new file mode 100644
-index 0000000000..02783bc0eb
+index 0000000000000000000000000000000000000000..02783bc0ebce947ee6c95ec5f8d11cb6fca76a59
 --- /dev/null
 +++ b/packages/react-native/Libraries/NativeComponent/delegates/ViewConfigIgnoreDelegate.ts
 @@ -0,0 +1,10 @@
@@ -3373,7 +3372,7 @@ index 0000000000..02783bc0eb
 +  }
 +}
 diff --git a/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js b/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
-index 6bed4989c5..db9652076e 100644
+index 6bed4989c535a29284c5c60fc9602d23755877ef..db9652076ee334e47d7ee250c7424dbcd799861f 100644
 --- a/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
 +++ b/packages/react-native/Libraries/ReactNative/BridgelessUIManager.js
 @@ -15,9 +15,20 @@ import type {UIManagerJSInterface} from '../Types/UIManagerJSInterface';
@@ -3408,7 +3407,7 @@ index 6bed4989c5..db9652076e 100644
      getConstantsForViewManager: (viewManagerName: string): ?Object => {
        if (getConstantsForViewManager) {
 diff --git a/packages/react-native/Libraries/ReactNative/I18nManager.js b/packages/react-native/Libraries/ReactNative/I18nManager.js
-index 1c3225638e..b10fe54bbd 100644
+index 1c3225638e94ea275c406ebe3b4ec81ec8e6bd83..b10fe54bbdf0d70625f6d9992a8914bc51be3f06 100644
 --- a/packages/react-native/Libraries/ReactNative/I18nManager.js
 +++ b/packages/react-native/Libraries/ReactNative/I18nManager.js
 @@ -10,10 +10,9 @@
@@ -3452,7 +3451,7 @@ index 1c3225638e..b10fe54bbd 100644
  };
 diff --git a/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts
 new file mode 100644
-index 0000000000..378105fcd5
+index 0000000000000000000000000000000000000000..378105fcd5f557d99522a333a79e8b4923f86f6d
 --- /dev/null
 +++ b/packages/react-native/Libraries/ReactNative/delegates/BaseBridgelessUIManagerDelegate.ts
 @@ -0,0 +1,14 @@
@@ -3472,7 +3471,7 @@ index 0000000000..378105fcd5
 +}
 diff --git a/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts
 new file mode 100644
-index 0000000000..91d68b59b5
+index 0000000000000000000000000000000000000000..91d68b59b51039bb5c60902ccb4793c0168066e1
 --- /dev/null
 +++ b/packages/react-native/Libraries/ReactNative/delegates/BaseI18nManagerDelegate.ts
 @@ -0,0 +1,18 @@
@@ -3496,7 +3495,7 @@ index 0000000000..91d68b59b5
 +}
 diff --git a/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts
 new file mode 100644
-index 0000000000..73a752f424
+index 0000000000000000000000000000000000000000..73a752f4241fa30bec228b8d6ed9ba3e28f592b1
 --- /dev/null
 +++ b/packages/react-native/Libraries/ReactNative/delegates/BridgelessUIManagerDelegate.ts
 @@ -0,0 +1,11 @@
@@ -3513,7 +3512,7 @@ index 0000000000..73a752f424
 +}
 diff --git a/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts b/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts
 new file mode 100644
-index 0000000000..72015afc70
+index 0000000000000000000000000000000000000000..72015afc70392d951b98516e3a1b2d4ce2188f84
 --- /dev/null
 +++ b/packages/react-native/Libraries/ReactNative/delegates/I18nManagerDelegate.ts
 @@ -0,0 +1,24 @@
@@ -3542,7 +3541,7 @@ index 0000000000..72015afc70
 +  doLeftAndRightSwapInRTL: boolean;
 +}
 diff --git a/packages/react-native/Libraries/Share/Share.js b/packages/react-native/Libraries/Share/Share.js
-index 0a21bbac14..fd7573aa2e 100644
+index 0a21bbac142bf6f22f2c1c4420fcc3609c9dc088..fd7573aa2e9555c4ce372e48a505b10e0cfb21c6 100644
 --- a/packages/react-native/Libraries/Share/Share.js
 +++ b/packages/react-native/Libraries/Share/Share.js
 @@ -9,12 +9,15 @@
@@ -3579,7 +3578,7 @@ index 0a21bbac14..fd7573aa2e 100644
        return NativeShareModule.share(newContent, options.dialogTitle).then(
 diff --git a/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts b/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts
 new file mode 100644
-index 0000000000..f349349d6e
+index 0000000000000000000000000000000000000000..f349349d6e738aa65b0e72816c75cf98af016687
 --- /dev/null
 +++ b/packages/react-native/Libraries/Share/delegates/BaseShareDelegate.ts
 @@ -0,0 +1,21 @@
@@ -3606,7 +3605,7 @@ index 0000000000..f349349d6e
 +}
 diff --git a/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts b/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts
 new file mode 100644
-index 0000000000..e967e76341
+index 0000000000000000000000000000000000000000..e967e763410e32ecc0ce901c8bad3ae62ece4a1d
 --- /dev/null
 +++ b/packages/react-native/Libraries/Share/delegates/ShareDelegate.ts
 @@ -0,0 +1,20 @@
@@ -3631,7 +3630,7 @@ index 0000000000..e967e76341
 +  }
 +}
 diff --git a/packages/react-native/Libraries/Utilities/Platform.d.ts b/packages/react-native/Libraries/Utilities/Platform.d.ts
-index 7f7dc61c10..7850990f45 100644
+index 7f7dc61c10474cf663e975ca4b364b4465449c69..7850990f4588c73dbbac4438318e56b313537cef 100644
 --- a/packages/react-native/Libraries/Utilities/Platform.d.ts
 +++ b/packages/react-native/Libraries/Utilities/Platform.d.ts
 @@ -16,6 +16,7 @@ export type PlatformOSType =
@@ -3675,7 +3674,7 @@ index 7f7dc61c10..7850990f45 100644
  
  export const Platform: Platform;
 diff --git a/packages/react-native/Libraries/Utilities/createPerformanceLogger.js b/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
-index fba6d7711a..89e351d322 100644
+index fba6d7711aef096c7dabfdc9b63e71ab3f4def0f..89e351d322ade36128e4feadbc908cdbf82ff4e7 100644
 --- a/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
 +++ b/packages/react-native/Libraries/Utilities/createPerformanceLogger.js
 @@ -20,7 +20,7 @@ import infoLog from './infoLog';
@@ -3688,7 +3687,7 @@ index fba6d7711a..89e351d322 100644
  class PerformanceLogger implements IPerformanceLogger {
    _timespans: {[key: string]: ?Timespan} = {};
 diff --git a/packages/react-native/Libraries/Vibration/Vibration.js b/packages/react-native/Libraries/Vibration/Vibration.js
-index db124c6323..23dac1bb71 100644
+index db124c63235c42666ca1d0ea0f35e44cc3e5f3e6..23dac1bb7180df0f1f19f41b629e27bbd2721b08 100644
 --- a/packages/react-native/Libraries/Vibration/Vibration.js
 +++ b/packages/react-native/Libraries/Vibration/Vibration.js
 @@ -9,9 +9,10 @@
@@ -3727,7 +3726,7 @@ index db124c6323..23dac1bb71 100644
    },
 diff --git a/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts b/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts
 new file mode 100644
-index 0000000000..4840a46341
+index 0000000000000000000000000000000000000000..4840a463418a14a6617e1a77c5507bd9d454e7df
 --- /dev/null
 +++ b/packages/react-native/Libraries/Vibration/delegates/BaseVibrationDelegate.ts
 @@ -0,0 +1,11 @@
@@ -3744,7 +3743,7 @@ index 0000000000..4840a46341
 +}
 diff --git a/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts b/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts
 new file mode 100644
-index 0000000000..9eb1887d93
+index 0000000000000000000000000000000000000000..9eb1887d930e9eb993c95ab3fba39934cac6c2dc
 --- /dev/null
 +++ b/packages/react-native/Libraries/Vibration/delegates/VibrationDelegate.ts
 @@ -0,0 +1,11 @@
@@ -3760,7 +3759,7 @@ index 0000000000..9eb1887d93
 +  }
 +}
 diff --git a/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp b/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
-index 59cfe8d41e..904e26695a 100644
+index 59cfe8d41e85e7065725bfaa74690a40a4a15b8f..904e26695a0046b73e8d2f15eebf1dd9ab3c7c73 100644
 --- a/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
 +++ b/packages/react-native/ReactCommon/cxxreact/JSBigString.cpp
 @@ -38,7 +38,8 @@ JSBigFileString::JSBigFileString(int fd, size_t size, off_t offset /*= 0*/)
@@ -3774,7 +3773,7 @@ index 59cfe8d41e..904e26695a 100644
      m_size = size + m_pageOff;
    } else {
 diff --git a/packages/react-native/ReactCommon/cxxreact/SystraceSection.h b/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
-index f661be9714..4108530d6d 100644
+index f661be97142eee512a0c30351ea74336c791c78e..4108530d6d312a4746092424f0013149f249f13f 100644
 --- a/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
 +++ b/packages/react-native/ReactCommon/cxxreact/SystraceSection.h
 @@ -7,10 +7,16 @@
@@ -3806,7 +3805,7 @@ index f661be9714..4108530d6d 100644
  struct DummySystraceSection {
   public:
 diff --git a/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt b/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
-index b05009bd70..b72eef700d 100644
+index b05009bd70b6dd70960d692a5893944dd78fe283..b72eef700d79e2b781f247cc8cfcdb9a69836a2b 100644
 --- a/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
 +++ b/packages/react-native/ReactCommon/jserrorhandler/CMakeLists.txt
 @@ -20,4 +20,5 @@ target_link_libraries(jserrorhandler
@@ -3816,7 +3815,7 @@ index b05009bd70..b72eef700d 100644
 +        react_cxxreact # RNC_patch: JsErrorHandler imports <cxxreact/ErrorUtils.h>
  )
 diff --git a/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt b/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
-index 2b6db3cd6e..6a68492c9e 100644
+index 2b6db3cd6ec855bf677b44387b424a59b4ee9d37..6a68492c9e564ece82a3524dde6e4de379af264f 100644
 --- a/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
 +++ b/packages/react-native/ReactCommon/jsinspector-modern/CMakeLists.txt
 @@ -11,14 +11,14 @@ add_compile_options(
@@ -3837,7 +3836,7 @@ index 2b6db3cd6e..6a68492c9e 100644
  target_include_directories(jsinspector PUBLIC ${REACT_COMMON_DIR})
  
 diff --git a/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt b/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
-index 93289d66cd..6a513f9838 100644
+index 93289d66cdfd47a343856572bf2f9869be8deaf1..6a513f9838a0777d39f70d4ac1668de880960d9e 100644
 --- a/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
 +++ b/packages/react-native/ReactCommon/react/nativemodule/core/CMakeLists.txt
 @@ -14,20 +14,36 @@ add_compile_options(
@@ -3881,7 +3880,7 @@ index 93289d66cd..6a513f9838 100644
          fbjni
          folly_runtime
 diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
-index f2317ba080..49a90d9408 100644
+index f2317ba080f2027c351ff1296529f524be060803..49a90d9408829aa0e9afb812ac778ef73a13cb0d 100644
 --- a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
 +++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.cpp
 @@ -21,6 +21,8 @@ bool ParagraphAttributes::operator==(const ParagraphAttributes& rhs) const {
@@ -3907,7 +3906,7 @@ index f2317ba080..49a90d9408 100644
  }
  
 diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
-index d73f8632b8..dcd7502df8 100644
+index d73f8632b84f6f40264005888ed84abcd633f7d1..dcd7502df8e3d1812076c12c56c75cf8390bb0de 100644
 --- a/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
 +++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/ParagraphAttributes.h
 @@ -70,6 +70,13 @@ class ParagraphAttributes : public DebugStringConvertible {
@@ -3933,7 +3932,7 @@ index d73f8632b8..dcd7502df8 100644
    }
  };
 diff --git a/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h b/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
-index de53360ce2..b58b83179f 100644
+index de53360ce2f043e3cd5742a2dd12e17283c40a9c..b58b83179f77bbc1000554a935311382172b70cf 100644
 --- a/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
 +++ b/packages/react-native/ReactCommon/react/renderer/attributedstring/conversions.h
 @@ -827,6 +827,26 @@ inline ParagraphAttributes convertRawProp(
@@ -3964,7 +3963,7 @@ index de53360ce2..b58b83179f 100644
        context,
        rawProps,
 diff --git a/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp b/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
-index de9e320087..c08bd3a51e 100644
+index de9e32008760d86f6e941fa76a59e63a3a6b6856..c08bd3a51ea5ff4c440692f8b8068253ef4c25c2 100644
 --- a/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
 +++ b/packages/react-native/ReactCommon/react/renderer/componentregistry/componentNameByReactViewName.cpp
 @@ -7,6 +7,7 @@
@@ -4016,7 +4015,7 @@ index de9e320087..c08bd3a51e 100644
  
    // Fabric uses slightly new names for Text components because of differences
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
-index 08dadd11f9..5221882aa3 100644
+index 08dadd11f95b7479d4676059db00df4a81d8ffd2..5221882aa375292ecbd08a8b7ed9774b4b9948c6 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
 +++ b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.cpp
 @@ -44,6 +44,7 @@ jsi::Value ScrollEvent::asJSIValue(jsi::Runtime& runtime) const {
@@ -4028,7 +4027,7 @@ index 08dadd11f9..5221882aa3 100644
    return payload;
  }
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
-index 8eac9e879b..0c927b927c 100644
+index 8eac9e879b544810c17f0e87887799d1b69cb79d..0c927b927ca08d79f16068b45a4d53495d2c1671 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
 +++ b/packages/react-native/ReactCommon/react/renderer/components/scrollview/ScrollEvent.h
 @@ -20,6 +20,7 @@ struct ScrollEvent : public EventPayload {
@@ -4040,7 +4039,7 @@ index 8eac9e879b..0c927b927c 100644
    /*
     * The time in seconds when the touch occurred or when it was last mutated.
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
-index 3be6198d73..265363e325 100644
+index 3be6198d73cd77e7d951db68aeaeb8c8c5ffe11f..265363e3252721200abd28d3277df0d43287a407 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
 +++ b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.cpp
 @@ -121,7 +121,7 @@ void ParagraphShadowNode::updateStateIfNeeded(const Content& content) {
@@ -4053,7 +4052,7 @@ index 3be6198d73..265363e325 100644
    }
  
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
-index 91839534d3..8d8d17582d 100644
+index 91839534d37f1fa2214399c9191023782a507705..8d8d17582d9a26fc3b3b1c98132ebeb76a8ae13b 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
 +++ b/packages/react-native/ReactCommon/react/renderer/components/text/ParagraphShadowNode.h
 @@ -45,7 +45,7 @@ class ParagraphShadowNode final : public ConcreteViewShadowNode<
@@ -4066,7 +4065,7 @@ index 91839534d3..8d8d17582d 100644
      // can't mount views inside `TextView`.
      traits.unset(ShadowNodeTraits::Trait::FormsStackingContext);
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt b/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
-index 6198066ac4..1a8d760731 100644
+index 6198066ac449c86c704b3aac28f935217b4d1416..1a8d7607314540adc3534d762dca03c5fb9285dd 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
 +++ b/packages/react-native/ReactCommon/react/renderer/components/view/CMakeLists.txt
 @@ -16,14 +16,14 @@ add_compile_options(
@@ -4087,7 +4086,7 @@ index 6198066ac4..1a8d760731 100644
  
  target_link_libraries(rrc_view
 diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h b/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
-index 1aec3ac18a..8ba05dd2f1 100644
+index 1aec3ac18ac975e0b3c23a24b5931d2bc72780b4..8ba05dd2f14ebc9522ccc33be42a9098620dad72 100644
 --- a/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
 +++ b/packages/react-native/ReactCommon/react/renderer/components/view/ViewPropsInterpolation.h
 @@ -45,12 +45,14 @@ static inline void interpolateViewProps(
@@ -4107,7 +4106,7 @@ index 1aec3ac18a..8ba05dd2f1 100644
  #endif
  }
 diff --git a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp b/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
-index 2e494ba7d2..c7040c1228 100644
+index 2e494ba7d2fc4386099d21caabe459f49b71dac6..c7040c122838136a226dbaec774456d563d47c7f 100644
 --- a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
 +++ b/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
 @@ -28,7 +28,7 @@ void Props::initialize(
@@ -4120,7 +4119,7 @@ index 2e494ba7d2..c7040c1228 100644
  #endif
  }
 diff --git a/packages/react-native/ReactCommon/react/renderer/core/Props.h b/packages/react-native/ReactCommon/react/renderer/core/Props.h
-index 144cc8a039..b7766cc765 100644
+index 144cc8a039d0d3d179f2cda98bd37ea5a0a5994f..b7766cc765b284c7d2710eabfb7637e46c1f67a6 100644
 --- a/packages/react-native/ReactCommon/react/renderer/core/Props.h
 +++ b/packages/react-native/ReactCommon/react/renderer/core/Props.h
 @@ -57,7 +57,8 @@ class Props : public virtual Sealable, public virtual DebugStringConvertible {
@@ -4134,7 +4133,7 @@ index 144cc8a039..b7766cc765 100644
  
    virtual folly::dynamic getDiffProps(const Props* prevProps) const {
 diff --git a/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt b/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
-index c849f3ed74..bd93b50920 100644
+index c849f3ed741b7272b8b3fe220c2707218f87fcf3..bd93b5092050d7a6fdce190c5aa6d20121c7ef63 100644
 --- a/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
 +++ b/packages/react-native/ReactCommon/react/renderer/graphics/CMakeLists.txt
 @@ -20,7 +20,7 @@ add_library(react_render_graphics OBJECT ${react_render_graphics_SRC})
@@ -4147,7 +4146,7 @@ index c849f3ed74..bd93b50920 100644
  
  target_link_libraries(react_render_graphics glog fb fbjni folly_runtime react_debug react_utils)
 diff --git a/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h b/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
-index ee0ee3e6a3..0abacea1a3 100644
+index ee0ee3e6a37681271ac3a34b5fe70d44f56fe9b6..0abacea1a320e524b72108e2068d0ab257135ff4 100644
 --- a/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
 +++ b/packages/react-native/ReactCommon/react/renderer/graphics/platform/cxx/react/renderer/graphics/Float.h
 @@ -15,6 +15,10 @@ namespace facebook::react {
@@ -4163,7 +4162,7 @@ index ee0ee3e6a3..0abacea1a3 100644
  } // namespace facebook::react
 diff --git a/packages/react-native/delegates/DelegateError.ts b/packages/react-native/delegates/DelegateError.ts
 new file mode 100644
-index 0000000000..15ef685ee6
+index 0000000000000000000000000000000000000000..15ef685ee68123083bcdae3ac37005563e509d74
 --- /dev/null
 +++ b/packages/react-native/delegates/DelegateError.ts
 @@ -0,0 +1,10 @@
@@ -4178,7 +4177,7 @@ index 0000000000..15ef685ee6
 +  }
 +}
 diff --git a/packages/react-native/package.json b/packages/react-native/package.json
-index bc8a358488..a2e5d6668c 100644
+index bc8a3584880f299b88e1dafec078b47698153075..a2e5d6668cdde3ddd25e1738aa12d921a3ff85a5 100644
 --- a/packages/react-native/package.json
 +++ b/packages/react-native/package.json
 @@ -1,100 +1,30 @@
@@ -4321,7 +4320,7 @@ index bc8a358488..a2e5d6668c 100644
 +}
 \ No newline at end of file
 diff --git a/packages/react-native/react-native.config.js b/packages/react-native/react-native.config.js
-index 3b572bb1e9..460645b513 100644
+index 3b572bb1e9c6d6d436fd6ec19b6f98e314cd4b3f..460645b513fbb81a2c26b7bcda8f3061f6c178c0 100644
 --- a/packages/react-native/react-native.config.js
 +++ b/packages/react-native/react-native.config.js
 @@ -1,119 +1,15 @@
