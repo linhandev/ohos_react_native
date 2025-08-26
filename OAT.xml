@@ -81,6 +81,10 @@
             <filefilter name="copyrightPolicyFilter" desc="">
                 <filteritem 
                     type="filepath"
+                    name="packages/tester/harmony/react_native_openharmony/src/main/cpp/RNOHCorePackage/TurboModules/IdleCallbacksCxxTurboModule.cpp"
+                    desc="Upstream code with modifications using the original license header" />
+                <filteritem 
+                    type="filepath"
                     name="packages/tester/harmony/react_native_openharmony/src/main/cpp/RNOHCorePackage/ComponentDescriptors/ModalHostViewComponentDescriptor.h"
                     desc="Upstream code with modifications using the original license header" />
                 <filteritem 

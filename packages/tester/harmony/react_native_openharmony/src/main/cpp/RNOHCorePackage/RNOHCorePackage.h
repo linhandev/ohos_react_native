@@ -52,6 +52,7 @@
 #include "RNOHCorePackage/TurboModules/ExceptionsManagerTurboModule.h"
 #include "RNOHCorePackage/TurboModules/FileReaderTurboModule.h"
 #include "RNOHCorePackage/TurboModules/I18nManagerTurboModule.h"
+#include "RNOHCorePackage/TurboModules/IdleCallbacksCxxTurboModule.h"
 #include "RNOHCorePackage/TurboModules/ImageLoaderTurboModule.h"
 #include "RNOHCorePackage/TurboModules/LinkingManagerTurboModule.h"
 #include "RNOHCorePackage/TurboModules/LogBoxTurboModule.h"
@@ -134,6 +135,8 @@ class RNOHCoreTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
       return std::make_shared<ReactNativeFeatureFlagsTurboModule>(ctx, name);
     } else if (name == "NativeMicrotasksCxx") {
       return std::make_shared<MicrotasksTurboModule>(ctx, name);
+    } else if (name == "NativeIdleCallbacksCxx") {
+      return std::make_shared<IdleCallbacksCxxTurboModule>(ctx, name);
     }
     return nullptr;
   };

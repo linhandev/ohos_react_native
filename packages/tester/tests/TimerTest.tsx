@@ -9,11 +9,55 @@ async function wait(ms: number) {
   });
 }
 
+function burnCPU(ms: number) {
+  const start = Date.now();
+  while (Date.now() < start + ms) {}
+}
+
 const PRECISION_IN_MS = 100;
 
 export function TimerTest() {
   return (
     <TestSuite name="Timer">
+      <TestSuite name="requestIdleCallback">
+        <TestCase.Logical
+          tags={['sequential']}
+          itShould="not crash"
+          fn={async () => {
+            // @ts-ignore
+            cancelIdleCallback(requestIdleCallback(() => {}));
+          }}
+        />
+        <TestCase.Logical
+          tags={['sequential']}
+          itShould="eventually execute idle callback"
+          fn={async ({expect}) => {
+            await new Promise<void>(resolve => {
+              // @ts-ignore
+              requestIdleCallback(deadline => {
+                expect(deadline.didTimeout).to.be.false;
+                expect(deadline.timeRemaining()).greaterThanOrEqual(0);
+                return resolve();
+              });
+            });
+          }}
+        />
+        <TestCase.Logical
+          tags={['sequential']}
+          itShould="did timeout"
+          fn={async ({expect}) => {
+            // @ts-ignore
+            requestIdleCallback(
+              // @ts-ignore
+              deadline => {
+                expect(deadline.didTimeout).to.be.true;
+              },
+              {timeout: 50},
+            );
+            burnCPU(100);
+          }}
+        />
+      </TestSuite>
       <TestCase.Logical
         itShould="take one second to finish this test (setTimeout, 1s)"
         tags={['sequential']}
