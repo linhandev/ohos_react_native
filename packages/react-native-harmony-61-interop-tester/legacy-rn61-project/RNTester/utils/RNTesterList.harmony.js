@@ -189,6 +189,10 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('../examples/PointerEvents/PointerEventsExample'),
   },
   {
+    key: 'PromiseExample - RNOH 0.61 Interop',
+    module: require('../examples/Promise/PromiseExample'),
+  },
+  {
     key: 'RTLExample',
     module: require('../examples/RTL/RTLExample'),
   },

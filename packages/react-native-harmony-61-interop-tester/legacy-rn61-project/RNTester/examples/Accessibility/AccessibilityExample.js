@@ -522,14 +522,11 @@ class ScreenReaderStatusExample extends React.Component<{}> {
       'change',
       this._handleScreenReaderToggled,
     );
-    if (Platform.OS !== "harmony") {
-    // TODO: remove "if" (task 195)
     AccessibilityInfo.fetch().done(isEnabled => {
       this.setState({
         screenReaderEnabled: isEnabled,
       });
     });
-    }
   }
 
   componentWillUnmount() {

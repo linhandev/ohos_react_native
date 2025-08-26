@@ -189,6 +189,10 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('../examples/PointerEvents/PointerEventsExample'),
   },
   {
+    key: 'PromiseExample',
+    module: require('../examples/Promise/PromiseExample'),
+  },
+  {
     key: 'RTLExample',
     module: require('../examples/RTL/RTLExample'),
   },
@@ -228,7 +232,7 @@ const APIExamples: Array<RNTesterExample> = [
 
 const Modules = {};
 
-APIExamples.concat(ComponentExamples).forEach(Example => {
+APIExamples.concat(ComponentExamples).forEach((Example) => {
   Modules[Example.key] = Example.module;
 });
 

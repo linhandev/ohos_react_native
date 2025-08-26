@@ -8,7 +8,7 @@ const restoreRemoveListener = require('./compat/restoreRemoveListener');
 
 module.exports = {
   get AccessibilityInfo() {
-    const mod = require('@react-native-oh/react-native-harmony/Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
+    const mod = require('./Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
     restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
     return mod;
   },
