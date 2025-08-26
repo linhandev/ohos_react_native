@@ -161,7 +161,6 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
     if (m_eventEmitter) {
       m_eventEmitter->onScroll(scrollViewMetrics);
     }
-    updateStateWithContentOffset(scrollViewMetrics.contentOffset);
     m_currentOffset = scrollViewMetrics.contentOffset;
     m_currentOffset.x = adjustOffsetIfRTL(m_currentOffset.x);
     updateContentClippedSubviews();
