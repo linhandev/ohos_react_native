@@ -232,6 +232,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'LegacyListenersExample',
     module: require('../examples/Interop/LegacyListenersExample'),
   },
+  {
+    key: 'AnimatedShimsWarningTest',
+    module: require('../examples/Interop/AnimatedShimsWarningTest'),
+  },
 ];
 
 const Modules = {};

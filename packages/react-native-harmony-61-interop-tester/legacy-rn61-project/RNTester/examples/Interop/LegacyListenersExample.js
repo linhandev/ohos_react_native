@@ -161,7 +161,7 @@ function runLegacyListenerTests() {
   return errors;
 }
 
-exports.title = 'LegacyListeners Smoke Test';
+exports.title = '[RNOH] LegacyListeners Smoke Test';
 exports.description = 'Verifies removeEventListener/removeListener exist and work.';
 exports.examples = [
   {

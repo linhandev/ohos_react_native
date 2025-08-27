@@ -20,8 +20,7 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Alert/Alert');
   },
   get Animated() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Animated/Animated')
-      .default;
+    return require('./Libraries/Animated/Animated').default;
   },
   get Appearance() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/Appearance');
