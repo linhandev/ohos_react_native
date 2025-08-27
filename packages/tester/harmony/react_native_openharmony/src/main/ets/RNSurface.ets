@@ -22,7 +22,6 @@ import { SurfaceHandle, SurfaceProps } from './RNOH/SurfaceHandle';
 import { I18nManagerTurboModule } from './RNOHCorePackage/turboModules';
 import type { SurfaceContext } from './RNOH/RNInstance';
 import { NodeContent } from '@ohos.arkui.node'
-import { window } from '@kit.ArkUI';
 
 interface RootViewState {}
 
@@ -169,17 +168,11 @@ export struct RNSurface {
   /** ID of the debounce timer (used for delaying layout updates). */
   private timerId: undefined | number = undefined;
 
-  /** Timestamp of the last layout or constraint update in milliseconds. */
-  private lastChangeTimeInMs: number = 0;
-
   /** Whether the user is actively dragging a window or surface. */
   private isWindowRectDrag: boolean = false;
 
   /** Stores the size of the last measured layout. */
   private currentMeasuredSize: Size | undefined = undefined;
-
-  /** Flag indicating if the latest constraint update came from a timeout. */
-  private isLatestConstraintsUpdateFromTimeout: boolean = false;
 
   /**
    * Delay for applying layout constraint updates.
@@ -298,54 +291,39 @@ export struct RNSurface {
     constraint: ConstraintSizeOptions): SizeResult {
     if (this.surfaceHandle.isDestroyed()) {
       return {width: 0, height: 0};
-    }    
-    const currentTime = Date.now(); 
-    if (!this.isWindowRectDrag || 
-      (currentTime - this.lastChangeTimeInMs > this.surfaceConstraintsDebounceTimeInMs) || 
-      this.isLatestConstraintsUpdateFromTimeout) {
-      if (this.timerId) {
-        clearTimeout(this.timerId);
-        this.timerId = undefined;
-      }
+    }
+    if (!this.isWindowRectDrag) {
       this.currentMeasuredSize =
         this.updateSurfaceConstraints({
           minWidth: constraint.maxWidth as number,
           minHeight: constraint.minHeight as number,
           maxWidth: constraint.maxWidth as number,
           maxHeight: constraint.maxHeight as number,
-        })
-      this.isLatestConstraintsUpdateFromTimeout = false;
-      this.lastChangeTimeInMs = currentTime;
+        });
     } else {
-      if(this.timerId){
-        clearTimeout(this.timerId)
-        this.timerId = undefined;
-      }
-      this.timerId = setTimeout(() =>{
+      clearTimeout(this.timerId);
+      this.timerId = setTimeout(() => {
         this.currentMeasuredSize =
-        this.updateSurfaceConstraints({
-          minWidth: constraint.maxWidth as number,
-          minHeight: constraint.minHeight as number,
-          maxWidth: constraint.maxWidth as number,
-          maxHeight: constraint.maxHeight as number,
-        })
-        this.timerId = undefined;
-        this.isLatestConstraintsUpdateFromTimeout = true;
-        this.lastChangeTimeInMs = Date.now();
-      }, this.surfaceConstraintsDebounceTimeInMs)
+          this.updateSurfaceConstraints({
+            minWidth: constraint.maxWidth as number,
+            minHeight: constraint.minHeight as number,
+            maxWidth: constraint.maxWidth as number,
+            maxHeight: constraint.maxHeight as number,
+          });
+      }, this.surfaceConstraintsDebounceTimeInMs);
     }
     const measuredSize = this.currentMeasuredSize;
     const newSize: Size =
-      { width: measuredSize?.width || selfLayoutInfo.width, height: measuredSize?.height || selfLayoutInfo.height }
+      { width: measuredSize?.width || selfLayoutInfo.width, height: measuredSize?.height || selfLayoutInfo.height };
     children.forEach((child) => {
       child.measure({
         minHeight: newSize.height,
         minWidth: newSize.width,
         maxWidth: newSize.width,
         maxHeight: newSize.height
-      })
-    })
-    return newSize
+      });
+    });
+    return newSize;
   }
 
   /**

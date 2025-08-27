@@ -187,6 +187,14 @@ export class RNInstancesCoordinator {
   private envId: number;
   private workerTaskRunner: WorkerTaskRunner
   private onDestroyCallbacks: Function[]
+  private timerId: number = 0
+  private lastChangeTime: number = 0;
+  private isWindowRectDrag: boolean = false
+  /**
+   * Note: You may need to change this delay along with RNSurface's onMeasuredSize delay,
+   * as both have an effect on window changes.
+   */
+  private readonly delayTime: number = 500;
 
   private constructor(napiBridge: NapiBridge,
     logger: RNOHLogger,
@@ -312,14 +320,12 @@ export class RNInstancesCoordinator {
   }
 
   public onWindowRectChange(data: window.RectChangeOptions) {
-    if (data.reason === window.RectChangeReason.DRAG_START) {
+    const isWindowRectDrag = data.reason === window.RectChangeReason.DRAG;
+    if (this.isWindowRectDrag !== isWindowRectDrag) {
       this.rnInstanceRegistry.forEach((rnInstance) => {
-        rnInstance.onWindowReactChange(true)
-      })
-    } else if(data.reason === window.RectChangeReason.DRAG_END) {
-      this.rnInstanceRegistry.forEach((rnInstance) => {
-        rnInstance.onWindowReactChange(false)
-      })
+        rnInstance.onWindowReactChange(isWindowRectDrag);
+      });
+      this.isWindowRectDrag = isWindowRectDrag;
     }
   }
 
@@ -334,10 +340,26 @@ export class RNInstancesCoordinator {
   }
 
   public onWindowSizeChange(windowSize: window.Size) {
-    this.displayMetricsManager.updateWindowSize(windowSize);
-    this.rnInstanceRegistry.forEach((rnInstance) => {
-      rnInstance.onWindowSizeChange(windowSize)
-    })
+    const currentTime = Date.now();
+    if (currentTime - this.lastChangeTime > this.delayTime) {
+      this.displayMetricsManager.updateWindowSize(windowSize);
+      this.rnInstanceRegistry.forEach((rnInstance) => {
+        rnInstance.onWindowSizeChange(windowSize)
+      })
+      this.lastChangeTime = currentTime;
+    } else {
+      if (this.timerId) {
+        clearTimeout(this.timerId)
+      }
+      this.timerId = setTimeout(() =>{
+        this.displayMetricsManager.updateWindowSize(windowSize);
+        this.rnInstanceRegistry.forEach((rnInstance) => {
+          rnInstance.onWindowSizeChange(windowSize)
+        })
+        this.lastChangeTime = Date.now();
+      }, this.delayTime)
+      this.lastChangeTime = currentTime;
+    }
   }
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
