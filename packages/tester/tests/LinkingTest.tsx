@@ -37,7 +37,13 @@ export function LinkingTest() {
       <TestCase.Logical
         itShould="not support wrong schema urls"
         fn={async ({expect}) => {
-          expect(await Linking.canOpenURL('wrong://host')).to.be.false;
+          try {
+            expect(await Linking.canOpenURL('wrong://host')).to.be.false;
+          } catch (error) {
+            expect((error as {message: string}).message).to.equal(
+              'URL scheme wrong is not in querySchemes in the module.json5 file',
+            );
+          }
         }}
       />
       <TestCase.Logical
@@ -98,6 +104,16 @@ export function LinkingTest() {
             Linking.openURL('bad://url').catch(e => console.warn(e))
           }
           label="Bad URL"
+        />
+      </TestCase.Example>
+      <TestCase.Example itShould="throw error that the scheme isn't in querySchemes">
+        <Button
+          onPress={() =>
+            Linking.canOpenURL('unsupportedscheme://url').catch(e =>
+              console.warn(e),
+            )
+          }
+          label="Unsupported scheme"
         />
       </TestCase.Example>
     </TestSuite>

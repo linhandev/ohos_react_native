@@ -16,7 +16,8 @@ import bundleManager from '@ohos.bundle.bundleManager';
 export class LinkingManagerTurboModule extends TurboModule {
   public static readonly NAME = 'LinkingManager' as const;
 
-  private static readonly CUSTOM_HANDLED_SCHEMES = ['tel', 'sms']; // those exceptions are manually handled in openURL because OH doesn't support opening urls with those schemes
+  private static readonly CUSTOM_HANDLED_SCHEMES = ['tel',
+    'sms']; // those exceptions are manually handled in openURL because OH doesn't support opening urls with those schemes
   private initialUrl: string | undefined;
 
   constructor(ctx: TurboModuleContext) {
@@ -29,10 +30,9 @@ export class LinkingManagerTurboModule extends TurboModule {
   }
 
   async canOpenURL(urlString: string): Promise<boolean> {
+    const scheme = new uri.URI(urlString).scheme;
     if (
-      LinkingManagerTurboModule.CUSTOM_HANDLED_SCHEMES.includes(
-        new uri.URI(urlString).scheme,
-      )
+    LinkingManagerTurboModule.CUSTOM_HANDLED_SCHEMES.includes(scheme)
     ) {
       return true;
     }
@@ -40,6 +40,9 @@ export class LinkingManagerTurboModule extends TurboModule {
       // this will return true for custom schemes only if you enable quering those schemes in the module.json5 file (in the app which tries to make a query)
       return bundleManager.canOpenLink(urlString);
     } catch (e) {
+      if (this.ctx.isDebugModeEnabled && e.code && e.code === 17700056) {
+        throw new Error(`URL scheme ${scheme} is not in querySchemes in the module.json5 file`);
+      }
       this.ctx.logger.error(e);
       return false;
     }
@@ -76,7 +79,7 @@ export class LinkingManagerTurboModule extends TurboModule {
   openSettings(): Promise<void> {
     return this.ctx.uiAbilityContext.startAbility({
       bundleName: 'com.huawei.hmos.settings',
-      abilityName:'com.huawei.hmos.settings.MainAbility',
+      abilityName: 'com.huawei.hmos.settings.MainAbility',
       uri: 'application_info_entry',
       parameters: {
         settingsParamBundleName: this.ctx.uiAbilityContext.abilityInfo.bundleName
