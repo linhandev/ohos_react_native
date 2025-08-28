@@ -1,6 +1,6 @@
 import {View, ScrollView, Text, StyleSheet} from 'react-native';
-import {TestSuite, TestCase} from '@rnoh/testerino';
-import React, {useState} from 'react';
+
+import React, {createRef, useState} from 'react';
 import {Button} from '../../components';
 import {StylesTest} from './StylesTest';
 import {ContentContainerStyleTest} from './ContentContainerStyleTest';
@@ -15,10 +15,73 @@ import {ScrollToTest} from './ScrollToTest';
 import {CenterContentTest} from './CenterContentTest';
 import RemoveClippedTest from './RemoveClippedTest';
 import {OverScrollTest} from './OverScrollTest';
+import {TestCase} from '../../components';
+import {TestSuite} from '@rnoh/testerino';
+import {useEnvironment} from '../../contexts';
 
 export function ScrollViewTest() {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   return (
     <TestSuite name="ScrollView">
+      <TestSuite name="scrolling">
+        <TestCase.Automated
+          skip={{android: true, harmony: !driver}}
+          tags={['sequential']}
+          itShould="scroll when padding is set"
+          initialState={{
+            scrollViewRef: createRef<ScrollView>(),
+            targetRef: createRef<View>(),
+            hasPressedTarget: false,
+          }}
+          arrange={({state, setState, done}) => {
+            return (
+              <ScrollView
+                ref={state.scrollViewRef}
+                style={{
+                  paddingLeft: 6,
+                  height: 256,
+                  width: 256,
+                }}>
+                <View
+                  style={{
+                    width: 256,
+                    height: 256,
+                    backgroundColor: 'gray',
+                  }}
+                />
+                <View
+                  onTouchEnd={() => {
+                    setState(prev => ({...prev, hasPressedTarget: true}));
+                    done();
+                  }}
+                  ref={state.targetRef}
+                  style={{
+                    width: 256,
+                    height: 64,
+                    backgroundColor: 'red',
+                  }}
+                />
+              </ScrollView>
+            );
+          }}
+          act={async ({state}) => {
+            await driver?.swipe({
+              ref: state.scrollViewRef,
+              fromOffset: {x: 0, y: 0},
+              toOffset: {x: 0, y: -100},
+              speed: 3000,
+            });
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await driver?.click({ref: state.targetRef});
+          }}
+          assert={({expect, state}) => {
+            expect(state.hasPressedTarget).to.be.true;
+          }}
+        />
+      </TestSuite>
       <StylesTest />
       <ContentContainerStyleTest />
       <ScrollBarsTest />
@@ -32,22 +95,22 @@ export function ScrollViewTest() {
       <MiscPropsTest />
       <CenterContentTest />
       <OverScrollTest />
-      <TestCase
+      <TestCase.Example
         modal
         itShould="maintain scroll position when adding/removing elements">
         <AppendingList />
-      </TestCase>
-      <TestCase
+      </TestCase.Example>
+      <TestCase.Example
         modal
         itShould="pick partially visible element as scroll anchor when growing the content size">
         <ScrollAnchorsTest />
-      </TestCase>
-      <TestCase
+      </TestCase.Example>
+      <TestCase.Example
         modal
-        skip // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/498
+        skip={{harmony: true, android: false}} // https://gl.swmansion.com/rnoh/react-native-harmony/-/issues/498
         itShould="fill the remaining space of scroll view with yellow color but the element inside scroll view remains transparent">
         <ScrollViewEndFillColorTest />
-      </TestCase>
+      </TestCase.Example>
     </TestSuite>
   );
 }

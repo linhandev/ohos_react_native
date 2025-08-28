@@ -805,7 +805,7 @@ bool ScrollViewComponentInstance::isCloseToTargetOffset(
 
 bool ScrollViewComponentInstance::isHorizontal(
     SharedConcreteProps const& props) {
-  return props->horizontal || m_contentSize.width > m_containerSize.width;
+  return props->horizontal;
 }
 
 void ScrollViewComponentInstance::disableIntervalMomentum() {
