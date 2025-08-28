@@ -159,7 +159,7 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Share/Share');
   },
   get ScrollView() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/ScrollView/ScrollView');
+    return require('./Libraries/Components/ScrollView/ScrollView').default;
   },
   get StatusBar() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/StatusBar/StatusBar');
