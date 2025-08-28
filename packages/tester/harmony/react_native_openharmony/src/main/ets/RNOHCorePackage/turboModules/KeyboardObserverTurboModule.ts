@@ -13,6 +13,8 @@ declare function px2vp(px: number): number;
 
 export class KeyboardObserverTurboModule extends TurboModule {
   public static readonly NAME = 'KeyboardObserver';
+
+  private cleanUpCallbacks: (() => void)[] = [];
   private keyboardHeight: number;
 
   constructor(protected ctx: TurboModuleContext) {
@@ -63,7 +65,7 @@ export class KeyboardObserverTurboModule extends TurboModule {
   private async subscribeListeners() {
     const windowInstance = await this.ctx.rnInstance.getRNWindow();
     // using inputMethodEngine.on('keyboardShow') and .on('keyboardHide') would be preferable, but it doesn't work at the time of writing.
-    windowInstance.on('keyboardHeightChange', async (keyboardHeight) => {
+    const onWindowKeyboardHeightChange = async (keyboardHeight) => {
       if (keyboardHeight > 0) {
         const windowRect = windowInstance.getWindowProperties().windowRect;
         const keyboardAvoidArea = windowInstance.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD).bottomRect;
@@ -93,7 +95,16 @@ export class KeyboardObserverTurboModule extends TurboModule {
       }
     }
 
-    )
+    windowInstance.on('keyboardHeightChange', onWindowKeyboardHeightChange);
+    this.cleanUpCallbacks.push(() => {
+      windowInstance.off("keyboardHeightChange", onWindowKeyboardHeightChange);
+    });
+  }
+
+  __onDestroy__() {
+    super.__onDestroy__();
+    this.cleanUpCallbacks.forEach(cb => cb());
+    this.cleanUpCallbacks = [];
   }
 }
 
