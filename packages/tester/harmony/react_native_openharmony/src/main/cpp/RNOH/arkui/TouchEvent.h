@@ -12,6 +12,10 @@
 
 namespace rnoh {
 
+constexpr int32_t ARKUI_MOUSE_POINTER_ID = 1001;
+constexpr int32_t RN_MOUSE_POINTER_ID = 0;
+constexpr int32_t TOUCH_IDENTIFIER_POOL_OFFSET = 1;
+
 struct TouchPoint {
   int32_t id;
   float force;
@@ -64,6 +68,21 @@ struct TouchEvent {
     return action;
   }
 
+  int32_t generatedTouchPointIdentifier(int32_t pointerId) {
+    if (pointerId == ARKUI_MOUSE_POINTER_ID) {
+      return RN_MOUSE_POINTER_ID;
+    } else {
+      return pointerId + TOUCH_IDENTIFIER_POOL_OFFSET;
+    }
+  }
+
+  int32_t generatedTouchPointIdentifier(
+      const ArkUI_UIInputEvent* event,
+      uint32_t idx) {
+    auto pointerId = OH_ArkUI_PointerEvent_GetPointerId(event, idx);
+    return generatedTouchPointIdentifier(pointerId);
+  }
+
   std::vector<TouchPoint> getTouchesFromArkTSTouchEvent(
       const folly::dynamic& event) {
     std::vector<TouchPoint> result;
@@ -71,7 +90,8 @@ struct TouchEvent {
     result.reserve(touchPointCount);
     for (auto idx = 0; idx < touchPointCount; idx++) {
       result.emplace_back(TouchPoint{
-          .id = int32_t(event["touches"][idx]["id"].asInt()),
+          .id = generatedTouchPointIdentifier(
+              int32_t(event["touches"][idx]["id"].asInt())),
           .force = float(event["pressure"].asDouble()),
           .nodeX = int32_t(event["touches"][idx]["x"].asDouble()),
           .nodeY = int32_t(event["touches"][idx]["y"].asDouble()),
@@ -88,7 +108,7 @@ struct TouchEvent {
     result.reserve(touchPointCount);
     for (auto idx = 0; idx < touchPointCount; idx++) {
       result.emplace_back(TouchPoint{
-          .id = OH_ArkUI_PointerEvent_GetPointerId(event, idx),
+          .id = generatedTouchPointIdentifier(event, idx),
           .force = OH_ArkUI_PointerEvent_GetPressure(event, idx),
           .nodeX = int32_t(OH_ArkUI_PointerEvent_GetXByIndex(event, idx)),
           .nodeY = int32_t(OH_ArkUI_PointerEvent_GetYByIndex(event, idx)),
@@ -112,7 +132,7 @@ struct TouchEvent {
           screenY ==
               int32_t(OH_ArkUI_PointerEvent_GetDisplayYByIndex(event, idx))) {
         actionTouch = TouchPoint{
-            .id = OH_ArkUI_PointerEvent_GetPointerId(event, idx),
+            .id = generatedTouchPointIdentifier(event, idx),
             .force = OH_ArkUI_PointerEvent_GetPressure(event, idx),
             .nodeX = int32_t(OH_ArkUI_PointerEvent_GetX(event)),
             .nodeY = int32_t(OH_ArkUI_PointerEvent_GetY(event)),
@@ -133,7 +153,8 @@ struct TouchEvent {
     }
 
     actionTouch = TouchPoint{
-        .id = int32_t(event["touches"][0]["id"].asInt()),
+        .id = generatedTouchPointIdentifier(
+            int32_t(event["touches"][0]["id"].asInt())),
         .force = float(event["pressure"].asDouble()),
         .nodeX = int32_t(event["touches"][0]["x"].asDouble()),
         .nodeY = int32_t(event["touches"][0]["y"].asDouble()),
