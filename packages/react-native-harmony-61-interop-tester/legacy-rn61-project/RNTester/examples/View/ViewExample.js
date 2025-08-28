@@ -468,4 +468,44 @@ exports.examples = [
       );
     },
   },
+  {
+    title: 'Accessibility: legacy accessibilityStates interop',
+    render(): React.Node {
+      const styles = StyleSheet.create({
+        box: {
+          height: 48,
+          margin: 8,
+          backgroundColor: '#eee',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+      });
+      return (
+        <View>
+          <Text style={{marginBottom: 8}}>
+            Turn on screen reader. Navigate to the boxes below. You should hear:
+            "Selected, Example 1" for the first box and "Example 2, unavailable"
+            for the second box. These use legacy accessibilityStates and are
+            converted to accessibilityState.
+          </Text>
+          <View
+            accessible
+            accessibilityLabel="Example 1"
+            accessibilityStates={['selected']}
+            style={styles.box}>
+            <Text>Example 1: Selected</Text>
+          </View>
+          <View
+            accessible
+            accessibilityLabel="Example 2"
+            accessibilityStates={['disabled']}
+            style={styles.box}
+          >
+            <Text>Example 2: Disabled</Text>
+          </View>
+        </View>
+      );
+    },
+  },
 ];
