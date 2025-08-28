@@ -7,6 +7,7 @@
 
 import vibrator from '@ohos.vibrator'
 import { RNOHLogger } from "./RNOHLogger"
+import { RNOHError } from "./RNOHError"
 
 export class VibrationController {
   private static isVibrating: boolean = false;
@@ -31,15 +32,34 @@ export class VibrationController {
     }, (error) => {
       const logger = this.logger.clone('vibrate');
       if (error) {
-        if (error.code === 201) {
-          logger?.error('Permission denied. Check if \'ohos.permission.VIBRATE\' has been granted');
+        switch (error.code) {
+          case 201: {
+            const err = new RNOHError({
+              whatHappened: "VIBRATE permission isn't granted.",
+              howCanItBeFixed: ['Add `{ name: "ohos.permission.VIBRATE" }` to your module.json5::module.requestPermissions'],
+              extraData: error,
+            })
+            logger?.error(err)
+            break;
+          }
+          case 14600101: {
+            const err = new RNOHError({
+              whatHappened: "Device operation failed.",
+              howCanItBeFixed: ['Enable "Settings > Sounds & vibration > System haptics"'],
+              extraData: error,
+            })
+            logger?.error(err)
+            break;
+          }
+          default:
+            logger.error(error, "(code=" + error?.code + ")");
         }
-        logger.error(error);
+
       }
     });
   }
 
-  public vibrateByPattern(pattern: Array<number>, repeat: number): void{
+  public vibrateByPattern(pattern: Array<number>, repeat: number): void {
     if (VibrationController.isVibrating) {
       return;
     }
@@ -57,7 +77,7 @@ export class VibrationController {
     repeat: number,
     nextIndex: number,
     shouldVibrate: boolean = false, // first value in pattern is delay
-  ): void{
+  ): void {
     if (!VibrationController.isVibrating || id !== VibrationController.vibrationRequestId) {
       return;
     }
