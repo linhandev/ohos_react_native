@@ -38,17 +38,50 @@ OH_Drawing_FontWeight mapValueToFontWeight(int value) {
       return OH_Drawing_FontWeight::FONT_WEIGHT_400;
   }
 }
-
-size_t utf8Length(const std::string& str) {
-  size_t length = 0;
-  for (auto c : str) {
-    if ((c & 0x80) == 0 || (c & 0xc0) == 0xc0) {
-      length++;
+size_t utf16Length(const std::string& str) {
+  size_t len = 0;
+  const unsigned char* currentByte =
+      reinterpret_cast<const unsigned char*>(str.data());
+  const unsigned char* endOfBytes = currentByte + str.size();
+  // Judge the length of UTF-8 characters based on the number of bits higher
+  // than the first byte, take out the significant bits, and record the number
+  // of continuation bytes that need to be read
+  while (currentByte < endOfBytes) {
+    uint32_t codePoint = 0;
+    int continuationBytes = 0;
+    if (*currentByte < 0x80) {
+      codePoint = *currentByte++;
+    } else if ((*currentByte >> 5) == 0x6) {
+      codePoint = *currentByte & 0x1F;
+      continuationBytes = 1;
+      ++currentByte;
+    } else if ((*currentByte >> 4) == 0xE) {
+      codePoint = *currentByte & 0x0F;
+      continuationBytes = 2;
+      ++currentByte;
+    } else if ((*currentByte >> 3) == 0x1E) {
+      codePoint = *currentByte & 0x07;
+      continuationBytes = 3;
+      ++currentByte;
+    } else {
+      ++currentByte;
+      continue;
+    }
+    // The remaining bytes are taken and the length is calculated
+    while (continuationBytes-- && currentByte < endOfBytes &&
+           ((*currentByte & 0xC0) == 0x80)) {
+      codePoint = (codePoint << 6) | (*currentByte++ & 0x3F);
+    }
+    // The number of code elements is calculated according to the hexadecimal
+    // format
+    if (codePoint < 0x10000) {
+      len += 1;
+    } else {
+      len += 2;
     }
   }
-  return length;
+  return len;
 }
-
 std::string stringCapitalize(const std::string& strInput) {
   if (strInput.empty()) {
     return strInput;
@@ -276,7 +309,7 @@ void StyledStringWrapper::addTextFragment(
   // push text and corresponding textStyle to handler
   OH_ArkUI_StyledString_PushTextStyle(m_styledString.get(), textStyle.get());
   OH_ArkUI_StyledString_AddText(m_styledString.get(), fragmentContent.c_str());
-  m_fragmentLengths.emplace_back(utf8Length(fragment.string));
+  m_fragmentLengths.emplace_back(utf16Length(fragment.string));
 }
 void StyledStringWrapper::addAttachment(
     const facebook::react::AttributedString::Fragment& fragment) {
