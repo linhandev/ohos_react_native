@@ -125,7 +125,7 @@ module.exports = {
       .default;
   },
   get RefreshControl() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/RefreshControl/RefreshControl');
+    return require('./Libraries/Components/RefreshControl/RefreshControl').default;
   },
   get requireNativeComponent() {
     return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/requireNativeComponent')

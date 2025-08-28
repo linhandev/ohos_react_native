@@ -109,6 +109,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'ViewExample',
     module: require('../examples/View/ViewExample'),
   },
+  {
+    key: '[RNOH] RefreshControlSizeExample',
+    module: require('../examples/RefreshControl/RefreshControlSizeExample'),
+  },
 ];
 
 const APIExamples: Array<RNTesterExample> = [
