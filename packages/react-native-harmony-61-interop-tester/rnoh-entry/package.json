@@ -5,7 +5,8 @@
   "scripts": {
     "postinstall": "node ./scripts/create-build-profile",
     "dev": "react-native start --port 8085",
-    "bundle:hermes": "react-native bundle-harmony --dev=false --minify=true --js-engine=hermes --hermesc-dir ../../../node_modules/react-native/sdks/hermesc"
+    "bundle:hermes": "react-native bundle-harmony --dev=false --minify=true --js-engine=hermes --hermesc-dir ../../../node_modules/react-native/sdks/hermesc",
+    "harmony": "react-native run-harmony --port 8085"
   },
   "dependencies": {
     "@react-native-oh/react-native-harmony": "workspace:*",

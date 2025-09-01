@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "dev": "react-native start"
+    "android": "react-native run-android --port 8087",
+    "dev": "react-native start --port 8087"
   },
   "dependencies": {
     "react": "16.9.0",

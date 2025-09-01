@@ -13,6 +13,8 @@ This is an internal project for testing `react-native-harmony-61-interop` packag
 ### OpenHarmony
 
 Similarly to the RNOH tester. Read [project-setup.md](../../docs/rnoh-maintainers/project-setup.md).
+However, there's one more extra step. You need to generate `react-native-openharmony.har` file in react-native-harmony project. To do it run `pnpm build:rnoh` from the project root level directory. 
+This file needs to be manually regenerated whenever `packages/tester/harmony/react_native_openharmony` is modified.
 
 ### Android
 
