@@ -3270,11 +3270,11 @@ index f1522cf7a857f352d1f416ef455e640e99bb8040..4f253f1994070032f8c8c60b8dbb8b3c
          accessibilityValue={_accessibilityValue}
 diff --git a/packages/react-native/Libraries/Components/View/delegates/ViewDelegate.js b/packages/react-native/Libraries/Components/View/delegates/ViewDelegate.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..a9a2a5eed45ed51ce31c3999d5de15ab45ea3c18
+index 0000000000000000000000000000000000000000..75d17373977eecaa740cba2701f0ba824fdf2b5f
 --- /dev/null
 +++ b/packages/react-native/Libraries/Components/View/delegates/ViewDelegate.js
 @@ -0,0 +1,3 @@
-+export default function convertAccessibilityStates(props) {
++export function convertAccessibilityStates(props) {
 +    return props;
 +}
 diff --git a/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts b/packages/react-native/Libraries/Components/delegates/BaseButtonDelegate.ts

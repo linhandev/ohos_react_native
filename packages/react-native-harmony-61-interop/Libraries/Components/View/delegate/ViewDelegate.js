@@ -9,7 +9,7 @@
  * Map legacy RN61 accessibilityStates array to modern accessibilityState object.
  * If both are provided, values from accessibilityState take precedence.
  */
-export default function convertAccessibilityStates(props) {
+export function convertAccessibilityStates(props) {
   const statesSupportedIn61 = [
     'selected',
     'disabled',
