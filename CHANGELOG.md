@@ -1,5 +1,31 @@
 # Changelog
 
+## Internal: v0.77.20
+- fix: clean up eager TurboModules on destroy to prevent memory leaks,([4abdcf435](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4abdcf435822e6f11dea743965919dd430ff38e5))
+- fix: ensure atomic jsvm code cache writes with read-only files,([018916f21](https://gitcode.com/openharmony-sig/ohos_react_native/commit/018916f214d25a1a77e58ac7df0c2650b7b440e0))
+- fix:When emojis are included in the text component, errors may occurv-77,([601054c76](https://gitcode.com/openharmony-sig/ohos_react_native/commit/601054c7604539949eea4031ac6f4b7ba4726341))
+- feat: add more descriptive Vibration error messages,([932c3873a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/932c3873a54aa131d99bb6210f692e036f3e9ec7))
+- fix: ​​Adjusted Metro Service Error Judgment Logic to Support More Status Codes​.,([d66f8eec8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d66f8eec89de455fd4297900a1b2397778409738))
+- feat(interop-61): bring back ref.getNode() support for Animated components,([87a393922](https://gitcode.com/openharmony-sig/ohos_react_native/commit/87a39392279bc86219978a9e06ba968fc9952c01))
+- feat(interop-61): View,([af0eebd52](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af0eebd5203fd02648e37e6ae3aef0966c37db66))
+- [chore]: Update react-native-openharmony Package Information​.,([50f694aaf](https://gitcode.com/openharmony-sig/ohos_react_native/commit/50f694aaf7dd49532649a1cd8523f278ec4a99f1))
+- fix: AppStateTurboModule, KeyboardObserverTurboModule, SafeAreaTurboModule memory leak,([77a69df88](https://gitcode.com/openharmony-sig/ohos_react_native/commit/77a69df8894a0f1fe80a9750a78e2f0f88c4e63d))
+- Add scrollWithoutAnimationTo function with example to ScrollView,([d40b1f5e3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d40b1f5e30e187e06c2facee573ef1e91bc20503))
+- feat(interop-61): RefreshControl,([0b9a9235d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0b9a9235d6c3ff80f09580e29386f1fb076ff118))
+- fix: ScrollView not scrolling when padding is set,([c5f30c6b4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c5f30c6b41d2f6dade21e1a2ff1f3bf31f5d6771))
+- fix: the warning issue where clicking on PC triggers the message "Touch identifier 1001 is greater than maximum supported 20...",([f879e1c64](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f879e1c64e2e84ae443291fa17a9183ed722f052))
+- fix(interop-61): Linking doesn't work,([0a771f8ef](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0a771f8ef7db29063a7778bd1303e4936da4aa68))
+- feat(interop-61): Animated - eliminate differences,([3aeed6171](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3aeed61716468cd2cb4a7978472662b5fac5dce7))
+- fix: window jitter after dragging.,([ebe74458d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ebe74458da72bee2dbee140341aa81db01901107))
+- chore: add `patch:rn` script and update react-native patching instructions,([baf1df9a1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/baf1df9a1404b040c71b973967922392cca75526))
+- fix: onScroll of the page cannot respond in a timely manner,([3e39aeb4b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e39aeb4b29e3d03c177ba45b41d09a647afb3d4))
+- Chore(interop-61): AccessibilityInfo.fetch and Promise.prototype.done,([e5fd309ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e5fd309ed274e38ca0bb925aa90cc72233e076bc))
+- feat: support requestIdleCallback,([53f92d864](https://gitcode.com/openharmony-sig/ohos_react_native/commit/53f92d864e2f733feb865e68a3fa68704ab015ae))
+- fix(interop-61): reexport placeholder for SegmentedControlIOS and fix KeyboardAvoidingView Example,([ef47ef0a6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ef47ef0a69b40110438292cbbd67f73574030b0f))
+- chore(interop-61): enable Toast examples,([edb73226e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/edb73226ec701fa85f9efe6118ed23e298733d56))
+- fix: NumberValue conversion for negative x/y coordinates,([d83343f12](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d83343f123d60c44c072c99c12610bfe983abdd5))
+- [chore]: updated to version 6.0.0.505(0.77.19),([fc4bbce36](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fc4bbce363ba3facb04f3dee1dcfe6352e2cf094))
+
 ## Internal: v0.77.19
 - fix: an issue where unmounting a TextInput component causes another TextInput component to gain focus passively.​,([0ccf557a0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0ccf557a0008e89d75965579ebdf27615db590bf))
 - fix: the touch interaction issue between ScrollView and its parent component.,([e8e8bbd68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8e8bbd68c65c538c5992994d540f7cf6171aacd))
