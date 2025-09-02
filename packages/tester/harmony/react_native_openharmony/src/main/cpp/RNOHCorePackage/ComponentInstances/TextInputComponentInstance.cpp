@@ -132,8 +132,16 @@ void TextInputComponentInstance::onTextSelectionChange(
     ArkUINode* node,
     int32_t location,
     int32_t length) {
-  if (m_isControlledTextInput) {
+  if (m_isControlledTextInput &&
+      m_hasLatestControlledValueChangeBeenProcessed) {
     m_caretPositionForControlledInput = m_selectionStart.value();
+    /**
+     * `m_valueChanged` is used here because "setTextAndSelection" command is
+     * emitted only if value has changed.
+     */
+    if (m_valueChanged) {
+      m_hasLatestControlledValueChangeBeenProcessed = false;
+    }
   }
   if (m_textWasPastedOrCut) {
     m_textWasPastedOrCut = false;
@@ -637,6 +645,7 @@ void TextInputComponentInstance::onCommandReceived(
   } else if (
       commandName == "setTextAndSelection" && args.isArray() &&
       args.size() == 4 && args[0].asInt() >= m_nativeEventCount) {
+    m_hasLatestControlledValueChangeBeenProcessed = true;
     auto textContent = args[1].asString();
     auto selectionStart = args[2].asInt();
     auto selectionEnd = args[3].asInt();
