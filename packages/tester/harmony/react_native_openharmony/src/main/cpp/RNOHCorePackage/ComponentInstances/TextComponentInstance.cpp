@@ -174,20 +174,23 @@ void TextComponentInstance::onStateChanged(
 
   this->disposeTextStorage();
 
+  auto contentSize = m_layoutMetrics.getContentFrame().size;
+  if (std::isnan(contentSize.width) || contentSize.width <= 0) {
+    return;
+  }
+
   m_textStorage = textMeasurer->getTextStorage(
       {stateData.attributedString,
        stateData.paragraphAttributes,
        {m_layoutMetrics.pointScaleFactor},
-       static_cast<int>(ceil(
-           m_layoutMetrics.getContentFrame().size.width *
-           m_layoutMetrics.pointScaleFactor))});
+       static_cast<int>(
+           ceil(contentSize.width * m_layoutMetrics.pointScaleFactor))});
   if (m_textStorage == nullptr) {
     m_textStorage = textMeasurer->createTextStorage(
         stateData.attributedString,
         stateData.paragraphAttributes,
         {m_layoutMetrics.pointScaleFactor},
-        {m_layoutMetrics.getContentFrame().size,
-         m_layoutMetrics.getContentFrame().size});
+        {contentSize, contentSize});
   }
 
   RNOH_ASSERT(m_textStorage);
