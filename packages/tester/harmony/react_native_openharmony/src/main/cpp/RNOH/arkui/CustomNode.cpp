@@ -49,16 +49,6 @@ CustomNode::CustomNode(const ArkUINode::Context::Shared& context)
       ARKUI_NODE_CUSTOM_EVENT_ON_LAYOUT,
       ON_LAYOUT_TARGET_ID,
       this));
-
-  /**
-   * This is for 2in1 CustomNode focusing problem, we want to mark
-   * custom node focusable, so that when using keyboard tab to switch
-   * focus between element, we want CustomNode to be focusable.
-   */
-  ArkUI_NumberValue focusValue[] = {{.i32 = 1}};
-  ArkUI_AttributeItem focusItem = {.value = focusValue, .size = 1};
-  m_nodeApi->setAttribute(m_nodeHandle, NODE_FOCUSABLE, &focusItem);
-
   /**
    * This is for 2in1 CustomNode focusing problem, focusing would
    * raise the component and setting ZIndex as 2^31-1, which would

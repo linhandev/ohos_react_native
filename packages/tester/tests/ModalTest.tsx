@@ -65,7 +65,7 @@ export function ModalTest() {
         }}
       />
       <TestCase.Example itShould="soft keyboard should cover modal">
-        <ModalExample withTextInput />
+        <ModalExample withTextInput hideTitle />
       </TestCase.Example>
       <TestCase.Example itShould="allow to display one modal on top of another">
         <NestedModalinModal />
@@ -115,7 +115,9 @@ const ModalExampleOrientation = () => {
   );
 };
 
-const ModalExample = (props: ModalProps & {withTextInput?: boolean}) => {
+const ModalExample = (
+  props: ModalProps & {withTextInput?: boolean; hideTitle?: boolean},
+) => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <View>
@@ -131,9 +133,11 @@ const ModalExample = (props: ModalProps & {withTextInput?: boolean}) => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-            {props.withTextInput && <TextInput style={styles.textInput} />}
+            {props.hideTitle ? null : (
+              <Text style={styles.modalText}>Hello World!</Text>
+            )}
             <Button label="Hide Modal" onPress={() => setModalVisible(false)} />
+            {props.withTextInput && <TextInput style={styles.textInput} />}
           </View>
         </View>
       </Modal>

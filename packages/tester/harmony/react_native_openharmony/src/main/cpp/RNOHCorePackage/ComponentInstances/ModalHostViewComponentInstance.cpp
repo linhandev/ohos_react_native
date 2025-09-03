@@ -54,6 +54,12 @@ void ModalHostViewComponentInstance::updateDisplayRect(
       m_eventEmitter->onOrientationChange({.orientation = screenOrientation});
     }
   }
+  auto stackNodeWidth =
+      (windowMetrics.left + windowMetrics.width) / windowMetrics.scale;
+  auto stackNodeHeight =
+      (windowMetrics.top + windowMetrics.height) / windowMetrics.scale;
+  m_rootStackNode.setSize(
+      facebook::react::Size{stackNodeWidth, stackNodeHeight});
   m_rootCustomNode.setPosition(
       {windowMetrics.left / windowMetrics.scale,
        windowMetrics.top / windowMetrics.scale});
@@ -82,6 +88,7 @@ ModalHostViewComponentInstance::ModalHostViewComponentInstance(Context context)
       m_rootCustomNode(m_arkUINodeCtx) {
   m_virtualNode.setSize(facebook::react::Size{0, 0});
   m_dialogHandler.setDialogDelegate(this);
+  m_rootStackNode.insertChild(m_rootCustomNode, 0);
 }
 
 void ModalHostViewComponentInstance::setLayout(
@@ -150,7 +157,7 @@ void ModalHostViewComponentInstance::onFinalizeUpdates() {
 }
 
 void ModalHostViewComponentInstance::showDialog() {
-  m_dialogHandler.setContent(m_rootCustomNode);
+  m_dialogHandler.setContent(m_rootStackNode);
   m_dialogHandler.show();
 }
 

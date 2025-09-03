@@ -11,6 +11,7 @@
 
 namespace rnoh {
 
+constexpr int API_LEVEL_15 = 15;
 constexpr int API_LEVEL_20 = 20;
 
 /**
@@ -37,4 +38,15 @@ inline bool IsAtLeastApi() {
 inline bool IsAtLeastApi20() {
   return IsAtLeastApi<API_LEVEL_20>();
 }
+
+/**
+ * @ThreadSafe
+ *
+ * Check if current API level is at least 15.
+ * @return true if API level >= 15, false otherwise.
+ */
+inline bool IsAtLeastApi15() {
+  return IsAtLeastApi<API_LEVEL_15>();
+}
+
 } // namespace rnoh

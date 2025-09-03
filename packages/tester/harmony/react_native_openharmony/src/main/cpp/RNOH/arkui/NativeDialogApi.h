@@ -31,10 +31,16 @@ class NativeDialogApi {
    */
   static ArkUI_NativeDialogAPI_1* getInstance();
 
+  /**
+   * @brief Gets the singleton instance of the NativeDialogApi.
+   *
+   * @return ArkUI_NativeDialogAPI_2* A pointer to the NativeDialog API
+   * instance.
+   */
+  static ArkUI_NativeDialogAPI_2* getInstance2();
+
  private:
   NativeDialogApi() {}
-
-  static ArkUI_NativeDialogAPI_1* api;
 };
 
 } // namespace rnoh

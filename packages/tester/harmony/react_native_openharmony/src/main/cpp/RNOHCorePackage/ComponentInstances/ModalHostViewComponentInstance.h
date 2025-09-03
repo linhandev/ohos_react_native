@@ -13,6 +13,7 @@
 #include "RNOH/CppComponentInstance.h"
 #include "RNOH/arkui/ArkUIDialogHandler.h"
 #include "RNOH/arkui/CustomNode.h"
+#include "RNOH/arkui/StackNode.h"
 #include "RNOH/arkui/UIInputEventHandler.h"
 
 namespace rnoh {
@@ -24,6 +25,7 @@ class ModalHostViewComponentInstance
   using ScreenOrientation = facebook::react::ModalHostViewEventEmitter::
       OnOrientationChangeOrientation;
   CustomNode m_virtualNode{};
+  StackNode m_rootStackNode;
   CustomNode m_rootCustomNode{};
   ArkUIDialogHandler m_dialogHandler;
   std::shared_ptr<UIInputEventHandler> m_touchHandler;
