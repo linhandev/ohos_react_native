@@ -17,12 +17,19 @@ EventBeat::EventBeat(
     : facebook::react::EventBeat(std::move(ownerBox), runtimeScheduler),
       m_uiTicker(std::move(uiTicker)) {}
 
+/**
+ * @thread MAIN
+ */
 EventBeat::~EventBeat() {
+  std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
   if (m_unsubscribeUITickerListener != nullptr) {
     m_unsubscribeUITickerListener();
   }
 }
 
+/**
+ * @thread JS
+ */
 void EventBeat::request() const {
   facebook::react::EventBeat::request();
   std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
