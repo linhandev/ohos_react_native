@@ -1,5 +1,16 @@
 # Changelog
 
+## Internal: v0.77.21
+- revert: the issue where the Web component fails to initialize when an error occurs during hot reload.,([3e97876b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e97876b8af4d44c8cc7eb8cf7193146b3fcc1ff))
+- Skip text content setting when content width is NaN or non-positive,([ca1cc3b81](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ca1cc3b8161769476503ec0682a37c6ebdafaf64))
+- fix:Fixed the issue where the content of textInput would be missing when the delete key is long-pressed in cases where the value is fixed and unchanging.,([d62cc0655](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d62cc065592ef2770f5a9b28ccfc27afa28197ba))
+- fix: maybe fix crash in EventBeat::induce,([b67afac36](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b67afac360948be3a8171b9f0082cac9cc9f0008))
+- Fix: problem of misaligned Justify attribute in textAlign,([0fa15ee60](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0fa15ee6048e3a2626fa993369a0a97db8d6dca8))
+- fix: the issue where the Web component fails to initialize when an error occurs during hot reload.,([500fdf910](https://gitcode.com/openharmony-sig/ohos_react_native/commit/500fdf9106d2f91b87bc3bd41686be8d769765e0))
+- fix: Column nodes beneath Dialog become invisible after Modal pops up.,([4784ac06a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4784ac06aad9720cc599c08712a54a6158fb3178))
+- fix: make TextInput's cursor stay in place for hardcoded value when two keys are pressed quickly,([0f0ea3514](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0f0ea3514566aa94b7761d8ec2a882481783de7e))
+- [chore]: updated to version 6.0.0.506(0.77.20),([cf1febab7](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cf1febab706977a7cc9c6e13c0890bb98504f52b))
+
 ## Internal: v0.77.20
 - fix: clean up eager TurboModules on destroy to prevent memory leaks,([4abdcf435](https://gitcode.com/openharmony-sig/ohos_react_native/commit/4abdcf435822e6f11dea743965919dd430ff38e5))
 - fix: ensure atomic jsvm code cache writes with read-only files,([018916f21](https://gitcode.com/openharmony-sig/ohos_react_native/commit/018916f214d25a1a77e58ac7df0c2650b7b440e0))

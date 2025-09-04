@@ -1,6 +1,6 @@
 {
   "name": "@rnoh/hvigor-plugin",
-  "version": "0.77.20",
+  "version": "0.77.21",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
