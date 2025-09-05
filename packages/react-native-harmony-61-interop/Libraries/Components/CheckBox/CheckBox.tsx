@@ -125,13 +125,12 @@ class CheckBox extends React.Component<Props> {
       enabled: !disabled,
       on: value,
       /**
-       * - gray to match behavior on Android
        * - #317aff to be consistent with default button. It's not exactly the color used by the platform by default, but so is the case with button.
        * The color used by button can't be changed because of strict breaking changes policy.
        */
       checkedColor: tintColors?.true !== undefined
         ? processColor(tintColors.true)
-        : processColor(disabled ? 'gray' : '#317aff'),
+        : processColor('#317aff'),
       /**
        * #666666 — color used by Android
        */
