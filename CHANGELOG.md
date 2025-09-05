@@ -1,5 +1,12 @@
 # Changelog
 
+## Internal: v0.77.22
+- revert:fix:Fixed the issue where the content of textInput would be missing when the delete key is long-pressed in cases where the value is fixed and unchanging.,([86f3498a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86f3498a8e12e51ab3e2f4dd770c755fa3c26581))
+- fix(61): CheckBox default disabled color,([22c58fe61](https://gitcode.com/openharmony-sig/ohos_react_native/commit/22c58fe615bc38bef831e11e3e342ce10cc2a9ce))
+- chore: enable client logs for all Metro servers & update package locks,([c9304bf95](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c9304bf9512c121b600319912f0726d76f4f53ca))
+- fix(61): make local images (and other assets) work in interop 61 tester,([cd60b7e9d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/cd60b7e9dac3998593d367720fa465504ef34984))
+- [chore]: updated to version 6.0.0.507(0.77.21),([d47ca02a4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d47ca02a43f31a2d71f262c6c380315d6721ec10))
+
 ## Internal: v0.77.21
 - revert: the issue where the Web component fails to initialize when an error occurs during hot reload.,([3e97876b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e97876b8af4d44c8cc7eb8cf7193146b3fcc1ff))
 - Skip text content setting when content width is NaN or non-positive,([ca1cc3b81](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ca1cc3b8161769476503ec0682a37c6ebdafaf64))

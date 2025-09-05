@@ -1,5 +1,9 @@
 # Changelog
 
+## Internal: v0.77.22
+- revert:fix:Fixed the issue where the content of textInput would be missing when the delete key is long-pressed in cases where the value is fixed and unchanging.,([86f3498a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86f3498a8e12e51ab3e2f4dd770c755fa3c26581))
+- [chore]: updated to version 6.0.0.507(0.77.21),([d47ca02a4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d47ca02a43f31a2d71f262c6c380315d6721ec10))
+
 ## Internal: v0.77.21
 - revert: the issue where the Web component fails to initialize when an error occurs during hot reload.,([3e97876b8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3e97876b8af4d44c8cc7eb8cf7193146b3fcc1ff))
 - Skip text content setting when content width is NaN or non-positive,([ca1cc3b81](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ca1cc3b8161769476503ec0682a37c6ebdafaf64))
