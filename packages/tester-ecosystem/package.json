@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "node ./scripts/create-build-profile",
-    "dev": "react-native start --port 8084",
+    "dev": "react-native start --port 8084 --client-logs",
     "build": "node ./scripts/build.js",
     "test": "pnpm build",
     "harmony": "react-native run-harmony",
