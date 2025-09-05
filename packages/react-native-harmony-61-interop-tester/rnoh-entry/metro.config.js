@@ -39,6 +39,10 @@ module.exports = mergeConfig(
         },
       }),
     },
+    /**
+     * RNOH_APP: Images provided by a Metro server aren't resolved correctly without this config.
+     */
+    projectRoot: pathUtils.resolve(rnoh61ProjectRoot, '../legacy-rn61-project'),
     watchFolders: [
       /**
        * RNOH_APP: By default, Metro doesn't see files above the project root.
