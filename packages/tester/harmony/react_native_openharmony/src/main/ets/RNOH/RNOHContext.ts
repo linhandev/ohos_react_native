@@ -13,7 +13,7 @@ import type { DescriptorRegistry } from './DescriptorRegistry';
 import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
 import type { RNInstance } from './RNInstance';
 import type { ComponentManagerRegistry } from './ComponentManagerRegistry';
-import type { HttpClient } from '../HttpClient/HttpClient';
+import type { HttpClient, CAPathProvider } from '../HttpClient/HttpClient';
 import type { RNOHLogger } from './RNOHLogger';
 import type { WorkerRNInstance } from './WorkerRNInstance';
 import type { DevMenu } from './DevMenu';
@@ -270,6 +270,14 @@ export class RNOHContext extends RNOHCoreContext {
   }
 
   /**
+   * Check RNInstance::caPathProvider documentation
+   * @returns
+   */
+  get caPathProvider(): CAPathProvider {
+    return this.rnInstance.caPathProvider;
+  }
+
+  /**
    * Invoked by React Native when the React application doesn't want to handle the device back press. This method may be relocated in the future.
    */
   invokeDefaultBackPressHandler() {
@@ -313,6 +321,7 @@ export interface AnyThreadTurboModuleContext {
   uiAbilityContext: common.UIAbilityContext;
   rnInstance: AnyThreadRNInstance;
   httpClient: HttpClient;
+  caPathProvider: CAPathProvider;
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
 }
 
@@ -346,6 +355,7 @@ export type WorkerTurboModuleContextDependencies = {
   uiAbilityContext: common.UIAbilityContext;
   rnInstance: WorkerRNInstance;
   httpClient: HttpClient;
+  caPathProvider: CAPathProvider;
   safeAreaInsetsProvider: SafeAreaInsetsProvider;
 };
 
@@ -388,6 +398,13 @@ export class WorkerTurboModuleContext implements AnyThreadTurboModuleContext {
    */
   get httpClient() {
     return this._workerTurboModuleContextDeps.httpClient;
+  }
+
+  /**
+   * @returns caPathProvider
+   */
+  get caPathProvider() {
+    return this._workerTurboModuleContextDeps.caPathProvider;
   }
 
   /**

@@ -26,7 +26,7 @@ import { DevToolsController } from './DevToolsController'
 import { RNInstanceError, RNInstanceErrorEventEmitter, RNOHError, RNOHErrorEventEmitter } from './RNOHError'
 import window from '@ohos.window'
 import { DevServerHelper } from './DevServerHelper'
-import { HttpClient } from '../HttpClient/HttpClient'
+import { HttpClient, CAPathProvider } from '../HttpClient/HttpClient'
 import resourceManager from '@ohos.resourceManager'
 import { WorkerThread } from "./WorkerThread"
 import font from "@ohos.font"
@@ -289,6 +289,12 @@ export interface RNInstance {
   get httpClient(): HttpClient;
 
   /**
+   * (Almost) all network requests support a custom caPath callback function, which can be used to define custom caPath rules
+   * in network requests for flexible caCallPath support.
+   */
+  get caPathProvider(): CAPathProvider;
+
+  /**
    * @returns base path specifying where to look for bundled assets
    */
   getAssetsDest(): string;
@@ -431,6 +437,10 @@ export type RNInstanceOptions = {
    */
   httpClient?: HttpClient;
   /**
+   * If not provided, a default value will be used. Typically, an empty string is returned.
+   */
+  caPathProvider?: CAPathProvider;
+  /**
    * Specifies custom fonts used by RN application.
    * NOTE: Due to ArkUI limitations, fonts from the application sandbox can only be used by the <Text> component.
    * @example {
@@ -538,6 +548,7 @@ export class RNInstanceImpl implements RNInstance {
     private resourceManager: resourceManager.ResourceManager,
     private fontPathByFontFamily: Record<string, string>,
     private _httpClient: HttpClient,
+    private _caPathProvider: CAPathProvider,
     backPressHandler?: () => void,
     private jsvmInitOptions?: ReadonlyArray<JSVMInitOption>,
   ) {
@@ -554,6 +565,10 @@ export class RNInstanceImpl implements RNInstance {
 
   public get httpClient() {
     return this._httpClient;
+  }
+
+  public get caPathProvider() {
+    return this._caPathProvider;
   }
 
   public getAssetsDest(): string {

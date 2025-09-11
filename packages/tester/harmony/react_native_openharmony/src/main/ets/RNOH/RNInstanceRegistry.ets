@@ -113,6 +113,7 @@ export class RNInstanceRegistry {
       this.resourceManager,
       fontPathByFontFamily,
       options?.httpClient ?? this.defaultHttpClient,
+      options?.caPathProvider ?? ((url: string) => ''),
       options.backPressHandler,
       options.jsvmInitOptions,
     );
