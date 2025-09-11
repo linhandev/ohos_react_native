@@ -76,3 +76,28 @@
         **参数说明详见**[文档](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/ide-hvigor-build-profile-V5)。
  
         手动解决：需要将 **RN** 源码目录 `oh_modules/@rnoh/react-native-openharmony/src/main/cpp/third-party/prebuilt` 下的内容整体拷贝到 `oh_modules/@rnoh/react-native-openharmony/libs` 目录下。
+
+### 运行后报错：cannot find record '&@rnoh/react-native-openharmony/generated/ts&0.77.23',please check the request path.'/data/storage/el1/bundle/entry/ets/modules.abc'.
+ 
+- 现象
+    
+    运行 **RN** 应用时，jscrash，提示：`cannot find record '&@rnoh/react-native-openharmony/generated/ts&0.77.23',please check the request path.'/data/storage/el1/bundle/entry/ets/modules.abc'.`。
+ 
+- 原因
+ 
+    遇到这个 jscrash 这个错说明您使用的是字节码格式的release包，具体原因如下：
+    1. 开发者执行Codegen时将ArkTS组件或Turbomodule的类型声明文件生成到 oh_modules/@rnoh/react-native-openharmony/generated 目录下；
+    1. 在使用时也能支持导入到该目录；
+    1. 但ohmurl的标准import路径没有指向文件，导致运行时找不到该record。
+ 
+- 解决
+ 
+    react-native-openharmony-cli 0.77.23 及之后的版本中 **codegen-harmony** 命令提供了 `--ets-output-path` 参数，通过该参数将 Codegen 生成的 ets 文件生成在源码目录下，而不是在 oh_modules 目录下，然后重新调整相关文件的导入路径。如：
+    ```diff
+    - "codegen": "react-native codegen-harmony --cpp-output-path ../NativeProject/entry/src/main/cpp/generated --rnoh-module-path ../NativeProject/entry/oh_modules/@rnoh/react-native-openharmony --no-safety-check"
+    + "codegen": "react-native codegen-harmony --cpp-output-path ../NativeProject/entry/src/main/cpp/generated --ets-output-path ../NativeProject/entry/src/main/ets --no-safety-check"
+    ```
+    ```diff
+    - import { RNC } from "@rnoh/react-native-openharmony/generated/ts"
+    + import { RNC } from "./generated/ts"
+    ```

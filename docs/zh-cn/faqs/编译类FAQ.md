@@ -272,3 +272,32 @@ target_link_libraries(xxx PUBLIC ${folly_compile_options})
             "check-action-status":"false"
         }
         ```
+
+## ERROR: Bytecode HARs: [@rnoh/react-native-openharmony] not supported when useNormalizedOHMUrl is not true.
+
+- 现象
+
+    ![useNormalizedOHMUrl](../figures/faqs-useNormalizedOHMUrl.png)
+
+- 原因
+
+    遇到这个错说明您使用的是字节码格式的release包，需要在工程级的build-profile.json5设置 `useNormalizedOHMUrl: true`。
+
+- 解决
+
+    在工程级的build-profile.json5设置 `useNormalizedOHMUrl: true`。
+    ```diff
+     "products": [
+       {
+         "name": "default",
+         "signingConfig": "default",
+         "compatibleSdkVersion": "5.0.1(13)",
+         "runtimeOS": "HarmonyOS",
+    +    "buildOption": {
+    +      "strictMode": {
+    +        "useNormalizedOHMUrl": true
+    +      }
+    +    }
+       }
+     ],
+    ```
