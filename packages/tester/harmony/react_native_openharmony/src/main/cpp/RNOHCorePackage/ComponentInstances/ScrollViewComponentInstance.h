@@ -171,6 +171,7 @@ class ScrollViewComponentInstance
   facebook::react::Point m_currentOffset = {0, 0};
   bool m_persistentScrollbar = false;
   long long m_lastScrollDispatchTime = 0;
+  long long m_lastStateUpdateTimeMs = 0;
   bool m_allowNextScrollEvent = false;
   facebook::react::Float m_scrollEventThrottle = 0;
   bool m_isNativeResponderBlocked = false;

@@ -161,6 +161,12 @@ void ScrollViewComponentInstance::onEmitOnScrollEvent() {
     if (m_eventEmitter) {
       m_eventEmitter->onScroll(scrollViewMetrics);
     }
+    // Similar millisecond checks are used on Android implementation
+    static const int singleTimeframe = 17;
+    if (now - m_lastStateUpdateTimeMs >= 3 * singleTimeframe) {
+      updateStateWithContentOffset(scrollViewMetrics.contentOffset);
+      m_lastStateUpdateTimeMs = now;
+    }
     m_currentOffset = scrollViewMetrics.contentOffset;
     m_currentOffset.x = adjustOffsetIfRTL(m_currentOffset.x);
     updateContentClippedSubviews();
