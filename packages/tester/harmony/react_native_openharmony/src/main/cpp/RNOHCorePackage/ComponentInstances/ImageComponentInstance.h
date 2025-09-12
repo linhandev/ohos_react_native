@@ -35,6 +35,7 @@ class ImageComponentInstance
 
   void setSources(facebook::react::ImageSources const& sources);
   std::string getBundlePath();
+  std::string getHspModuleName();
   std::string getAssetsPrefix();
 
   enum class EventType {

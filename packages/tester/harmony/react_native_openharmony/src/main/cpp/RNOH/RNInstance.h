@@ -193,6 +193,8 @@ class RNInstance {
    * @return The absolute file path of the JS bundle.
    */
   virtual std::string getBundlePath() const = 0;
+
+  virtual std::string getHspModuleName() const = 0;
 };
 
 } // namespace rnoh

@@ -116,6 +116,7 @@ export class RNInstanceRegistry {
       options?.caPathProvider ?? ((url: string) => ''),
       options.backPressHandler,
       options.jsvmInitOptions,
+      options.hspModuleName,
     );
     rnInstance.setUIAbilityContext(this.uiAbilityContext);
     const packages = options.createRNPackages({})

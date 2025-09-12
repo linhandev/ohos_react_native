@@ -75,7 +75,8 @@ class RNInstanceInternal
       ArkTSBridge::Shared arkTSBridge,
       FontRegistry::Shared fontRegistry,
       std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
-      std::shared_ptr<InspectorHostTarget> inspectorHostTarget);
+      std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
+      std::string hspModuleName);
 
   virtual ~RNInstanceInternal() noexcept;
 
@@ -86,6 +87,8 @@ class RNInstanceInternal
       folly::dynamic const& payload) override;
 
   std::string getBundlePath() const override;
+
+  std::string getHspModuleName() const override;
 
   NativeResourceManager const* getNativeResourceManager() const override;
 
@@ -251,6 +254,7 @@ class RNInstanceInternal
       nullptr;
   FontRegistry::Shared m_fontRegistry;
   std::string m_bundlePath;
+  std::string m_hspModuleName;
   std::unique_ptr<facebook::react::jsinspector_modern::HostTargetDelegate>
       m_inspectorHostDelegate;
   std::shared_ptr<InspectorHostTarget> m_inspectorHostTarget;

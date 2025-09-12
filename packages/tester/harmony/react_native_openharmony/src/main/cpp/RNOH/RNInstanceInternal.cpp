@@ -538,6 +538,10 @@ std::string RNInstanceInternal::getBundlePath() const {
   return m_bundlePath;
 }
 
+std::string RNInstanceInternal::getHspModuleName() const {
+  return m_hspModuleName;
+}
+
 void RNInstanceInternal::onCreate() {
   m_weakSelf = RNInstance::SafeWeak(shared_from_this(), m_isAboutToBeDestroyed);
 }
@@ -612,7 +616,8 @@ RNInstanceInternal::RNInstanceInternal(
     ArkTSBridge::Shared arkTSBridge,
     FontRegistry::Shared fontRegistry,
     std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
-    std::shared_ptr<InspectorHostTarget> inspectorHostTarget)
+    std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
+    std::string hspModuleName)
     : m_id(id),
       m_taskExecutor(std::move(taskExecutor)),
       m_isAboutToBeDestroyed(std::make_shared<std::atomic<bool>>(false)),
@@ -636,7 +641,8 @@ RNInstanceInternal::RNInstanceInternal(
       m_inspectorHostDelegate(
           std::make_unique<JSInspectorHostTargetDelegate>(m_arkTSChannel)),
       m_jsEngineProvider(std::move(jsEngineProvider)),
-      m_inspectorHostTarget(std::move(inspectorHostTarget)) {
+      m_inspectorHostTarget(std::move(inspectorHostTarget)),
+      m_hspModuleName(hspModuleName) {
   m_fontRegistry = std::move(fontRegistry);
 }
 

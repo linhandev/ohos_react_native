@@ -19,6 +19,8 @@ using namespace std::literals;
 constexpr std::string_view ASSET_PREFIX = "asset://"sv;
 constexpr std::string_view RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 constexpr std::string_view FILE_PREFIX = "file://";
+constexpr std::string_view RESFILE_PREFIX = "file:///data/storage/el1/bundle/";
+constexpr std::string_view RESFILE_PATH = "/resources/resfile/assets/";
 
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
@@ -257,12 +259,22 @@ std::string ImageComponentInstance::getBundlePath() {
   return rnInstance->getBundlePath();
 }
 
+std::string ImageComponentInstance::getHspModuleName() {
+  auto rnInstance = m_deps->rnInstance.lock();
+  RNOH_ASSERT(rnInstance != nullptr);
+  return rnInstance->getHspModuleName();
+}
+
 std::string ImageComponentInstance::getAssetsPrefix() {
   auto bundlePath = getBundlePath();
   auto position = bundlePath.rfind('/');
 
   if (position == std::string::npos || bundlePath.find('/', 0) != 0) {
-    return std::string(RAWFILE_PREFIX);
+    if (this->getHspModuleName().empty()) {
+      return std::string(RAWFILE_PREFIX);
+    }
+    return std::string(RESFILE_PREFIX) + this->getHspModuleName() +
+        std::string(RESFILE_PATH);
   }
 
   auto prefix = std::string(FILE_PREFIX) + bundlePath.substr(0, position + 1);

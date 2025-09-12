@@ -485,6 +485,13 @@ export type RNInstanceOptions = {
    * @deprecated: Do not enable this option.
    */
   enableImageLoader?: boolean;
+
+  /**
+   * Indicates the hsp module name where image assets are placed.
+   * This config should be set when developers want to place image assets in the resfile directory of the hsp resource.
+   * The config hspModuleName corresponds to the name in the module.json of the hsp module.
+   */
+  hspModuleName?: string;
 };
 
 /**
@@ -551,6 +558,7 @@ export class RNInstanceImpl implements RNInstance {
     private _caPathProvider: CAPathProvider,
     backPressHandler?: () => void,
     private jsvmInitOptions?: ReadonlyArray<JSVMInitOption>,
+    private hspModuleName?: string,
   ) {
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.logger = injectedLogger.clone('RNInstance');
@@ -690,6 +698,7 @@ export class RNInstanceImpl implements RNInstance {
       this.resourceManager,
       this.fontPathByFontFamily,
       this.jsvmInitOptions ?? JSVM_INIT_OPTIONS_PRESET.DEFAULT,
+      this.hspModuleName ?? ""
     );
     stopTracing();
   }

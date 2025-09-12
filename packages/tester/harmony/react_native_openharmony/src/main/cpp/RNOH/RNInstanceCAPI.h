@@ -53,7 +53,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
       RNOHMarker::RNOHMarkerListener::Unique markerListener,
       ComponentJSIBinderByString componentJSIBinderByName,
       std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
-      std::shared_ptr<InspectorHostTarget> inspectorHostTarget)
+      std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
+      std::string hspModuleName)
       : RNInstanceInternal(
             id,
             contextContainer,
@@ -74,7 +75,8 @@ class RNInstanceCAPI final : public RNInstanceInternal {
             std::move(arkTSBridge),
             std::move(FontRegistry),
             std::move(jsEngineProvider),
-            std::move(inspectorHostTarget)),
+            std::move(inspectorHostTarget),
+            hspModuleName),
         m_arkTSMessageHub(std::move(arkTSMessageHub)),
         m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
         m_componentInstanceFactory(std::move(componentInstanceFactory)),

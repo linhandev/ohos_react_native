@@ -153,6 +153,7 @@ export class NapiBridge {
     resourceManager: ohosResourceManager.ResourceManager,
     fontPathByFontFamily: Record<string, string>,
     jsvmInitOptions: ReadonlyArray<JSVMInitOption>,
+    hspModuleName: string
   ) {
     const cppFeatureFlagStatusByName = cppFeatureFlags.reduce((acc, cppFeatureFlag) => {
       acc[cppFeatureFlag] = true
@@ -171,6 +172,7 @@ export class NapiBridge {
       envId,
       fontPathByFontFamily,
       jsvmInitOptions,
+      hspModuleName,
     );
     return this.unwrapResult(result)
   }

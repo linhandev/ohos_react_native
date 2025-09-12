@@ -73,7 +73,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     bool shouldEnableDebugger,
     std::unordered_map<std::string, std::string> fontPathByFontFamily,
     std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
-    std::shared_ptr<InspectorHostTarget> inspectorHostTarget) {
+    std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
+    std::string hspModuleName) {
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_START, id);
 
@@ -274,7 +275,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       std::move(markerListener),
       std::move(componentJSIBinderByName),
       std::move(jsEngineProvider),
-      std::move(inspectorHostTarget));
+      std::move(inspectorHostTarget),
+      hspModuleName);
   rnInstance->onCreate();
   componentInstanceDependencies->rnInstance = rnInstance;
   auto imageSourceResolver =
