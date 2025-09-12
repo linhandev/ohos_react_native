@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 cmake_policy(SET CMP0079 NEW) # Allow to link libraries from different
 # directories than targets
 
+project(rnoh)
+set(RNOH_CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation"
        OFF)
 option(WITH_HITRACE_REACT_MARKER

@@ -4,6 +4,8 @@ react-native
 out
 harmony/*
 react_native_openharmony.har
+react_native_openharmony_release.har
+react_native_openharmony_release2.har
 
 # To add a new file to one of those directories, use `git add -f`
 Libraries/*

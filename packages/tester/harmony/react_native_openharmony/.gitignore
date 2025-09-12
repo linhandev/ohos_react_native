@@ -6,3 +6,4 @@
 *.tgz
 /oh_modules
 /generated
+src/main/include

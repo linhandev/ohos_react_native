@@ -16,7 +16,9 @@
     "./LICENSE-Meta",
     "./NOTICE.md",
     "./metro.config.d.ts",
-    "./react_native_openharmony.har"
+    "./react_native_openharmony.har",
+    "./react_native_openharmony_release.har",
+    "./react_native_openharmony_release2.har"
   ],
   "scripts": {
     "build": "node ./scripts/build-har.js",

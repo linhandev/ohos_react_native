@@ -1,0 +1,49 @@
+{
+  "apiType": "stageMode",
+  "targets": [
+    {
+      "name": "default",
+      "runtimeOS": "HarmonyOS",
+    }
+  ],
+  "buildOptionSet": [
+    {
+      name: "release",
+      externalNativeOptions: {
+        path: "./src/main/cpp/CMakeLists.txt",
+        arguments: [
+          "-DRNOH_APP_DIR=${RNOH_CPP_DIR}",
+          "-DLOG_VERBOSITY_LEVEL=1",
+          "-DWITH_HITRACE_SYSTRACE=ON",
+          "-DWITH_HITRACE_REACT_MARKER=ON",
+          "-DADD_JSVM_SO=ON",
+        ],
+        cppFlags: "-fstack-protector-strong -Wl,-z,noexecstack"
+      },
+      nativeLib: {
+        headerPath: [
+          "./src/main/include"
+        ],
+        librariesInfo: [
+          {
+            name: "librnoh_core.so",
+            linkLibraries: [
+              "libace_napi.z.so",
+              "libace_ndk.z.so",
+              "libbundle_ndk.z.so",
+              "libdeviceinfo_ndk.z.so",
+              "libhilog_ndk.z.so",
+              "librawfile.z.so",
+              "libnative_vsync.so",
+              "libnative_drawing.so",
+              "libnative_display_soloist.so",
+              "libqos.so",
+              "react-native-openharmony::reactnative",
+              "react-native-openharmony::jsi"
+            ]
+          }
+        ]
+      },
+    }
+  ]
+}

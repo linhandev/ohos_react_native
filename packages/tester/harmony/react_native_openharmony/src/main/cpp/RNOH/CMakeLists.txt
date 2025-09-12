@@ -51,3 +51,6 @@ else()
   target_compile_definitions(rnoh_core
                              PUBLIC USE_HERMES=0)
 endif()
+if(DEFINED ADD_JSVM_SO)
+    add_subdirectory("${RNOH_CPP_DIR}/RNOH/JSEngine/jsvm")
+endif()
