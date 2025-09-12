@@ -7,6 +7,7 @@
 
 #include "ImageNode.h"
 
+#include <native_drawing/drawing_color_filter.h>
 #include <string_view>
 #include "NativeNodeApi.h"
 
@@ -111,14 +112,10 @@ ImageNode& ImageNode::setTintColor(
     return *this;
   }
 
-  facebook::react::ColorComponents com = colorComponentsFromColor(sharedColor);
-  ArkUI_NumberValue value[] = {
-      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.red},   {.f32 = 0},
-      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.green}, {.f32 = 0},
-      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.blue},  {.f32 = 0},
-      {.f32 = 0}, {.f32 = 0}, {.f32 = 0}, {.f32 = com.alpha}, {.f32 = 0}};
+  auto* colorFilter =
+      OH_Drawing_ColorFilterCreateBlendMode(*sharedColor, BLEND_MODE_SRC_IN);
+  ArkUI_AttributeItem item = {.size = 0, .object = colorFilter};
 
-  ArkUI_AttributeItem item = {value, sizeof(value) / sizeof(ArkUI_NumberValue)};
   m_nodeApi->setAttribute(m_nodeHandle, NODE_IMAGE_COLOR_FILTER, &item);
   return *this;
 }

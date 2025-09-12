@@ -5,6 +5,7 @@ import {
   ScrollView,
   Text,
   View,
+  StyleSheet,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React, {useEffect, useMemo, useState} from 'react';
@@ -685,6 +686,11 @@ export const ImageTest = () => {
         itShould="Load proper image source for different container dimensions">
         <MultipleSourceImage />
       </TestCase.Example>
+      <TestCase.Example
+        modal
+        itShould="render the same colors as the Android screenshot on the right">
+        <ImageTintColorTest />
+      </TestCase.Example>
     </TestSuite>
   );
 };
@@ -993,3 +999,77 @@ function TextNestedImageTest() {
     </View>
   );
 }
+
+const ImageTintColorTest = () => {
+  const styles = StyleSheet.create({
+    parent: {
+      alignItems: 'center',
+      flexDirection: 'column',
+      height: '85%',
+    },
+    gallery: {
+      flexWrap: 'wrap',
+      flexDirection: 'row',
+      width: '75%',
+    },
+    image: {
+      width: '50%',
+      aspectRatio: 1,
+    },
+    screenshot: {
+      width: '100%',
+      height: '50%',
+      alignItems: 'center',
+    },
+  });
+
+  return (
+    <View style={styles.parent}>
+      <View style={styles.gallery}>
+        <Image
+          source={require('../assets/test.png')}
+          style={styles.image}
+          tintColor="rgb(241, 35, 70)"
+        />
+        <Image
+          source={require('../assets/test.png')}
+          style={{tintColor: 'rgb(241, 35, 70)', ...styles.image}}
+        />
+        <Image
+          source={require('../assets/test.png')}
+          style={{opacity: 0.7, ...styles.image}}
+          tintColor="rgb(241, 35, 70)"
+        />
+        <Image
+          source={require('../assets/test.png')}
+          style={{
+            opacity: 0.7,
+            tintColor: 'rgb(241, 35, 70)',
+            ...styles.image,
+          }}
+        />
+        <Image
+          source={require('../assets/test.png')}
+          style={styles.image}
+          tintColor="rgba(241, 35, 70, 0.7)"
+        />
+        <Image
+          source={require('../assets/test.png')}
+          style={{
+            tintColor: 'rgba(241, 35, 70, 0.7)',
+            ...styles.image,
+          }}
+        />
+      </View>
+      <View style={styles.screenshot}>
+        <Image
+          style={{
+            height: '100%',
+            resizeMode: 'contain',
+          }}
+          source={require('../assets/android_tintColor.png')}
+        />
+      </View>
+    </View>
+  );
+};
