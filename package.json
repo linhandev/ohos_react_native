@@ -43,7 +43,9 @@
     "//": "Fix formatting problems.",
     "format": "pnpm run --recursive format:js && pnpm run format:cpp",
     "//": "Fix formatting in modified C++ files.",
-    "format:cpp": "ts-node ./scripts/format-cpp.ts"
+    "format:cpp": "ts-node ./scripts/format-cpp.ts",
+    "//": "Regenerate codegen-lib result for the interop-61 library",
+    "codegen:61": "pnpm run --filter ./packages/react-native-harmony-61-interop codegen-lib"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

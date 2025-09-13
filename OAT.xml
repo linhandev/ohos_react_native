@@ -38,6 +38,7 @@
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop-tester/legacy-rn61-project/RNTester/.*" desc="Official Meta/Facebook Tester from upstream repository, with some modifications" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Utilities/setAndForwardRef.js" desc="File from upstream (RN 0.61.5)" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/CheckBox/CheckBox.tsx" desc="File from @react-native-community/checkbox" />
+                <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/Picker/Picker.tsx" desc="File based on the code from RN 0.61.5" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Promise.js" desc="File from upstream (RN 0.61.5)" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Core/polyfillPromise.js" desc="File from upstream (RN 0.61.5)" />
                 <filteritem 

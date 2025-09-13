@@ -9,9 +9,12 @@
  */
 #pragma once
 
+#include <folly/dynamic.h>
 #include <react/renderer/components/view/ViewProps.h>
 #include <react/renderer/core/PropsParserContext.h>
+#include <react/renderer/core/propsConversions.h>
 #include <react/renderer/graphics/Color.h>
+#include <vector>
 
 namespace facebook::react {
 
@@ -46,6 +49,76 @@ class RNCheckBoxProps final : public ViewProps {
   SharedColor strokeColor{};
   RNCheckBoxBoxType boxType{RNCheckBoxBoxType::Square};
   int lineWidth{-1};
+};
+
+enum class RNPickerMode { Dialog, Dropdown };
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNPickerMode &result) {
+  auto string = (std::string)value;
+  if (string == "dialog") { result = RNPickerMode::Dialog; return; }
+  if (string == "dropdown") { result = RNPickerMode::Dropdown; return; }
+  abort();
+}
+
+static inline std::string toString(const RNPickerMode &value) {
+  switch (value) {
+    case RNPickerMode::Dialog: return "dialog";
+    case RNPickerMode::Dropdown: return "dropdown";
+  }
+}
+struct RNPickerItemsStruct {
+  std::string label{};
+  folly::dynamic value{};
+  SharedColor color{};
+};
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNPickerItemsStruct &result) {
+  auto map = (std::unordered_map<std::string, RawValue>)value;
+
+  auto tmp_label = map.find("label");
+  if (tmp_label != map.end()) {
+    fromRawValue(context, tmp_label->second, result.label);
+  }
+  auto tmp_value = map.find("value");
+  if (tmp_value != map.end()) {
+    fromRawValue(context, tmp_value->second, result.value);
+  }
+  auto tmp_color = map.find("color");
+  if (tmp_color != map.end()) {
+    fromRawValue(context, tmp_color->second, result.color);
+  }
+}
+
+static inline std::string toString(const RNPickerItemsStruct &value) {
+  return "[Object RNPickerItemsStruct]";
+}
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, std::vector<RNPickerItemsStruct> &result) {
+  auto items = (std::vector<RawValue>)value;
+  for (const auto &item : items) {
+    RNPickerItemsStruct newItem;
+    fromRawValue(context, item, newItem);
+    result.emplace_back(newItem);
+  }
+}
+
+class RNPickerProps final : public ViewProps {
+ public:
+  RNPickerProps() = default;
+  RNPickerProps(const PropsParserContext& context, const RNPickerProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  folly::dynamic selectedValue{};
+  bool enabled{true};
+  RNPickerMode mode{RNPickerMode::Dropdown};
+  std::string prompt{};
+  std::vector<RNPickerItemsStruct> items{};
+  SharedColor fontColor{};
+  SharedColor itemFontColor{};
+  SharedColor itemBackgroundColor{};
+  SharedColor selectedItemFontColor{};
+  SharedColor selectedItemBackgroundColor{};
 };
 
 } // namespace facebook::react

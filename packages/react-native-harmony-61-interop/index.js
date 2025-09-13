@@ -8,7 +8,8 @@ const restoreRemoveListener = require('./compat/restoreRemoveListener');
 
 module.exports = {
   get AccessibilityInfo() {
-    const mod = require('./Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
+    const mod =
+      require('./Libraries/Components/AccessibilityInfo/AccessibilityInfo').default;
     restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
     return mod;
   },
@@ -34,7 +35,8 @@ module.exports = {
     return mod;
   },
   get BackHandler() {
-    const mod = require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler').default;
+    const mod =
+      require('@react-native-oh/react-native-harmony/Libraries/Utilities/BackHandler').default;
     restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
     return mod;
   },
@@ -46,7 +48,8 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/DevSettings');
   },
   get Dimensions() {
-    const mod = require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions').default;
+    const mod =
+      require('@react-native-oh/react-native-harmony/Libraries/Utilities/Dimensions').default;
     restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
     return mod;
   },
@@ -104,10 +107,14 @@ module.exports = {
   },
   get NativeEventEmitter() {
     return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/NativeEventEmitter')
-    .default;
+      .default;
   },
   get NativeModules() {
     return require('@react-native-oh/react-native-harmony/Libraries/BatchedBridge/NativeModules');
+  },
+  get Picker() {
+    return require('./Libraries/Components/Picker/Picker')
+      .default;
   },
   get PixelRatio() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/PixelRatio')
@@ -125,7 +132,8 @@ module.exports = {
       .default;
   },
   get RefreshControl() {
-    return require('./Libraries/Components/RefreshControl/RefreshControl').default;
+    return require('./Libraries/Components/RefreshControl/RefreshControl')
+      .default;
   },
   get requireNativeComponent() {
     return require('@react-native-oh/react-native-harmony/Libraries/ReactNative/requireNativeComponent')

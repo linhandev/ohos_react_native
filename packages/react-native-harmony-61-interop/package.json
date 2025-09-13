@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "pnpm codegen-lib",
-    "codegen-lib": "react-native codegen-lib-harmony --no-safety-check --arkts-components-spec-paths ./private/specs/components/CheckBoxNativeComponent.ts --npm-package-name react-native-harmony-61-interop --cpp-output-path ../react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/cpp/generated --ets-output-path ../react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/ets/generated"
+    "codegen-lib": "react-native codegen-lib-harmony --no-safety-check --arkts-components-spec-paths ./src/private/specs/components --npm-package-name react-native-harmony-61-interop --cpp-output-path ../react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/cpp/generated --ets-output-path ../react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/ets/generated"
   },
   "keywords": [],
   "author": "",

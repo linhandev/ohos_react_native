@@ -11,18 +11,21 @@ import {
   DescriptorWrapperFactoryByDescriptorType
 } from "@rnoh/react-native-openharmony"
 import { RNCheckBox } from "./components/RNCheckBox"
+import { RNPicker } from "./components/RNPicker"
 import { RNC } from "./generated"
 
 export default class ReactHarmony61InteropPackage extends RNOHPackage {
   override createWrappedCustomRNComponentBuilderByComponentNameMap() {
     const result = new Map<string, WrappedBuilder<[ComponentBuilderContext]>>();
     result.set(RNCheckBox.NAME, wrapBuilder(buildRNCheckBox))
+    result.set(RNPicker.NAME, wrapBuilder(buildRNPicker))
     return result;
   }
 
   override createDescriptorWrapperFactoryByDescriptorType(_: DescriptorWrapperFactoryByDescriptorTypeCtx) {
     const result: DescriptorWrapperFactoryByDescriptorType = {}
-    result[RNC.RNCheckBox.NAME] = (ctx2) => new RNC.RNCheckBox.DescriptorWrapper(ctx2.descriptor)
+    result[RNC.RNCheckBox.NAME] = (ctx) => new RNC.RNCheckBox.DescriptorWrapper(ctx.descriptor)
+    result[RNC.RNPicker.NAME] = (ctx) => new RNC.RNPicker.DescriptorWrapper(ctx.descriptor)
     return result;
   }
 }
@@ -30,6 +33,14 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
 @Builder
 function buildRNCheckBox(ctx: ComponentBuilderContext) {
   RNCheckBox({
+    ctx: ctx.rnComponentContext,
+    tag: ctx.tag,
+  })
+}
+
+@Builder
+function buildRNPicker(ctx: ComponentBuilderContext) {
+  RNPicker({
     ctx: ctx.rnComponentContext,
     tag: ctx.tag,
   })

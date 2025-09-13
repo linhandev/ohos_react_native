@@ -10,7 +10,7 @@
 #pragma once
 
 #include <react/renderer/components/view/ViewEventEmitter.h>
-
+#include <folly/dynamic.h>
 
 namespace facebook::react {
 class RNCheckBoxEventEmitter : public ViewEventEmitter {
@@ -20,6 +20,16 @@ class RNCheckBoxEventEmitter : public ViewEventEmitter {
   struct OnValueChange {
       int target;
     bool value;
+    };
+  void onValueChange(OnValueChange value) const;
+};
+class RNPickerEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  struct OnValueChange {
+      folly::dynamic itemValue;
+    int itemIndex;
     };
   void onValueChange(OnValueChange value) const;
 };

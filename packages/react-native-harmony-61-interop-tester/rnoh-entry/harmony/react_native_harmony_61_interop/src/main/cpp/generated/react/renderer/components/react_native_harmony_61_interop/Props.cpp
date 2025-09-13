@@ -9,6 +9,7 @@
  */
 
 #include "Props.h"
+#include <folly/dynamic.h>
 #include <react/renderer/core/PropsParserContext.h>
 #include <react/renderer/core/propsConversions.h>
 
@@ -27,6 +28,22 @@ RNCheckBoxProps::RNCheckBoxProps(
     strokeColor(convertRawProp(context, rawProps, "strokeColor", sourceProps.strokeColor, {})),
     boxType(convertRawProp(context, rawProps, "boxType", sourceProps.boxType, {RNCheckBoxBoxType::Square})),
     lineWidth(convertRawProp(context, rawProps, "lineWidth", sourceProps.lineWidth, {-1}))
+      {}
+RNPickerProps::RNPickerProps(
+    const PropsParserContext &context,
+    const RNPickerProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    selectedValue(convertRawProp(context, rawProps, "selectedValue", sourceProps.selectedValue, {})),
+    enabled(convertRawProp(context, rawProps, "enabled", sourceProps.enabled, {true})),
+    mode(convertRawProp(context, rawProps, "mode", sourceProps.mode, {RNPickerMode::Dropdown})),
+    prompt(convertRawProp(context, rawProps, "prompt", sourceProps.prompt, {})),
+    items(convertRawProp(context, rawProps, "items", sourceProps.items, {})),
+    fontColor(convertRawProp(context, rawProps, "fontColor", sourceProps.fontColor, {})),
+    itemFontColor(convertRawProp(context, rawProps, "itemFontColor", sourceProps.itemFontColor, {})),
+    itemBackgroundColor(convertRawProp(context, rawProps, "itemBackgroundColor", sourceProps.itemBackgroundColor, {})),
+    selectedItemFontColor(convertRawProp(context, rawProps, "selectedItemFontColor", sourceProps.selectedItemFontColor, {})),
+    selectedItemBackgroundColor(convertRawProp(context, rawProps, "selectedItemBackgroundColor", sourceProps.selectedItemBackgroundColor, {}))
       {}
 
 } // namespace facebook::react

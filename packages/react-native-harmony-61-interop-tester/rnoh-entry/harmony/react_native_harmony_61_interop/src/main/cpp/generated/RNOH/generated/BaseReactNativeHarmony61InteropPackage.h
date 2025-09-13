@@ -8,6 +8,7 @@
 #include "RNOH/Package.h"
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/generated/components/RNCheckBoxJSIBinder.h"
+#include "RNOH/generated/components/RNPickerJSIBinder.h"
 
 namespace rnoh {
 
@@ -30,9 +31,11 @@ class BaseReactNativeHarmony61InteropPackageEventEmitRequestHandler : public Eve
 
         std::vector<std::string> supportedComponentNames = {
             "RNCheckBox",
+            "RNPicker",
         };
 
         std::vector<std::string> supportedEventNames = {
+            "valueChange",
             "valueChange",
         };
 
@@ -55,12 +58,14 @@ class BaseReactNativeHarmony61InteropPackage : public Package {
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {
         return {
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNCheckBoxComponentDescriptor>(),
+            facebook::react::concreteComponentDescriptorProvider<facebook::react::RNPickerComponentDescriptor>(),
         };
     }
 
     ComponentJSIBinderByString createComponentJSIBinderByName() override {
         return {
             {"RNCheckBox", std::make_shared<RNCheckBoxJSIBinder>()},
+            {"RNPicker", std::make_shared<RNPickerJSIBinder>()},
         };
     };
 

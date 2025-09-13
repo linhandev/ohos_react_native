@@ -29,4 +29,15 @@ using RNCheckBoxShadowNode = ConcreteViewShadowNode<
     RNCheckBoxEventEmitter,
     RNCheckBoxState>;
 
+JSI_EXPORT extern const char RNPickerComponentName[];
+
+/*
+ * `ShadowNode` for <RNPicker> component.
+ */
+using RNPickerShadowNode = ConcreteViewShadowNode<
+    RNPickerComponentName,
+    RNPickerProps,
+    RNPickerEventEmitter,
+    RNPickerState>;
+
 } // namespace facebook::react

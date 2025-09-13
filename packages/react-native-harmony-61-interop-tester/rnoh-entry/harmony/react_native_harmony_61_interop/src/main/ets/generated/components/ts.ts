@@ -3,3 +3,4 @@
  */
 
 export * from "./RNCheckBox"
+export * from "./RNPicker"

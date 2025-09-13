@@ -53,10 +53,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'NewAppScreenExample',
     module: require('../examples/NewAppScreen/NewAppScreenExample'),
   },
-  // {
-  //   key: 'PickerExample',
-  //   module: require('../examples/Picker/PickerExample'),
-  // },
+  {
+    key: 'PickerExample',
+    module: require('../examples/Picker/PickerExample'),
+  },
   {
     key: 'ProgressBarAndroidExample',
     module: require('../examples/ProgressBarAndroid/ProgressBarAndroidExample'),

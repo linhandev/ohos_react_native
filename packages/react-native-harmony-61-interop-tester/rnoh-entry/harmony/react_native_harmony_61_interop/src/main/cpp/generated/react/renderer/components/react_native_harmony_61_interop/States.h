@@ -26,4 +26,16 @@ public:
 #endif
 };
 
+class RNPickerState {
+public:
+  RNPickerState() = default;
+
+#ifdef ANDROID
+  RNPickerState(RNPickerState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
 } // namespace facebook::react

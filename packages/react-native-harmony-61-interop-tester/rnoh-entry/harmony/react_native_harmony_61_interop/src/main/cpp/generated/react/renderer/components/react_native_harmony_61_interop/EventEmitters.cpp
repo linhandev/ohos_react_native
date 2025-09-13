@@ -9,7 +9,7 @@
  */
 
 #include "EventEmitters.h"
-
+#include <jsi/JSIDynamic.h>
 
 namespace facebook::react {
 
@@ -18,6 +18,16 @@ void RNCheckBoxEventEmitter::onValueChange(OnValueChange $event) const {
     auto $payload = jsi::Object(runtime);
     $payload.setProperty(runtime, "target", $event.target);
 $payload.setProperty(runtime, "value", $event.value);
+    return $payload;
+  });
+}
+
+
+void RNPickerEventEmitter::onValueChange(OnValueChange $event) const {
+  dispatchEvent("valueChange", [$event=std::move($event)](jsi::Runtime &runtime) {
+    auto $payload = jsi::Object(runtime);
+    $payload.setProperty(runtime, "itemValue", jsi::valueFromDynamic(runtime, $event.itemValue));
+$payload.setProperty(runtime, "itemIndex", $event.itemIndex);
     return $payload;
   });
 }
