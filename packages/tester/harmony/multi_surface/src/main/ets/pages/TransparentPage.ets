@@ -9,6 +9,11 @@ import {
 } from '@rnoh/react-native-openharmony';
 import { createRNPackages } from '../PackageProvider';
 
+@Builder
+export function TransparentPageBuilder() {
+  TransparentPage()
+}
+
 @Component
 struct PressCounter {
   @State count: number = 0
@@ -49,7 +54,6 @@ struct TransparentPage {
         RNApp({
           rnInstanceConfig: {
             createRNPackages,
-            enablePartialSyncOfDescriptorRegistryInCAPI: true,
           },
           initialProps: { "foo": "bar" },
           appKey: "transparent",

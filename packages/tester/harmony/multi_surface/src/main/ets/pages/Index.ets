@@ -16,45 +16,59 @@ const PAGES = [
 @Entry
 @Component
 struct Index {
+  pathStack: NavPathStack = new NavPathStack()
+
+  aboutToAppear(): void {
+    AppStorage.setOrCreate("PathStack", this.pathStack)
+  }
+
   build() {
-    Column() {
-      List({ space: 12, initialIndex: 0 }) {
-        ListItem() {
-          Navigator({target: "pages/ReactApplicationPage", type: NavigationType.Push}) {
+    Navigation(this.pathStack) {
+      Column() {
+        List({ space: 12, initialIndex: 0 }) {
+          ListItem() {
             Text("Go to standalone app")
               .fontColor(Color.Blue)
               .width('100%')
               .textAlign(TextAlign.Center)
+              .onClick(() => {
+                this.pathStack.pushPath({ name: "ReactApplicationPage" })
+              })
+              .margin(12)
           }
-          .margin(12)
-        }
-        ForEach(PAGES, (appKeyAndTitle: [string, string], index: number) => {
-          ListItem() {
-            Navigator({target: "pages/ReactPage", type: NavigationType.Push}) {
+
+          ForEach(PAGES, (appKeyAndTitle: [string, string], index: number) => {
+            ListItem() {
               Text("Go to " + appKeyAndTitle[1])
                 .fontColor(Color.Blue)
                 .width('100%')
                 .textAlign(TextAlign.Center)
+                .onClick(() => {
+                  this.pathStack.pushPath({ name: "ReactPage", param: appKeyAndTitle[0] })
+                })
+                .margin(12)
             }
-            .params({appKey: appKeyAndTitle[0]})
-            .margin(12)
-          }
-        }, (appKeyAndTitle: [string, string]) => appKeyAndTitle[0])
-        ListItem() {
-          Navigator({target: "pages/TransparentPage", type: NavigationType.Push}) {
+          }, (appKeyAndTitle: [string, string]) => appKeyAndTitle[0])
+
+          ListItem() {
             Text("Go to Transparent Example")
               .fontColor(Color.Blue)
               .width('100%')
               .textAlign(TextAlign.Center)
+              .onClick(() => {
+                this.pathStack.pushPath({ name: "TransparentPage", param: "transparent" })
+              })
           }
-          .params({appKey: 'transparent'})
           .margin(12)
         }
+        .height('100%')
+        .width('100%')
+        .divider({ strokeWidth: 4 })
       }
       .height('100%')
-      .width('100%')
-      .divider({strokeWidth: 4})
-    }.height('100%')
-    .margin(32)
+      .margin(32)
+    }
+    .id("Index")
+    .mode(NavigationMode.Stack)
   }
 }

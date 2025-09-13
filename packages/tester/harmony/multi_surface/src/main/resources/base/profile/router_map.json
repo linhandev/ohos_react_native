@@ -1,0 +1,20 @@
+{
+  "routerMap": [
+
+    {
+      "name": "ReactApplicationPage",
+      "pageSourceFile": "src/main/ets/pages/ReactApplicationPage.ets",
+      "buildFunction": "ReactApplicationPageBuilder"
+    },
+    {
+      "name": "ReactPage",
+      "pageSourceFile": "src/main/ets/pages/ReactPage.ets",
+      "buildFunction": "ReactPageBuilder"
+    },
+    {
+      "name": "TransparentPage",
+      "pageSourceFile": "src/main/ets/pages/TransparentPage.ets",
+      "buildFunction": "TransparentPageBuilder"
+    }
+  ]
+}
