@@ -119,6 +119,13 @@ export class InternalDevMenu implements DevMenu {
       }
     });
     this.devMenuButtons.push({
+      value: "Toggle Perf Monitor",
+      action: () => {
+        this.devToolsController.togglePerfMonitor();
+        this.hideDevMenuDialog();
+      }
+    });
+    this.devMenuButtons.push({
       value: "Settings",
       action: () => {
         this.settingDialog.open(() => {

@@ -46,6 +46,8 @@ export class DevToolsController {
     "DEV_MENU_SHOWN",
     "DID_PRESS_MENU_ITEM": [item: DevMenuItem],
     "OPEN_DEBUGGER": [onError: () => void],
+    "TOGGLE_PERF_MONITOR",
+    "STOP_PERF_MONITOR": [rnInstanceId: number]
   }>();
 
   /**
@@ -101,6 +103,14 @@ export class DevToolsController {
    */
   dismissRNOHErrorDialog(): void {
     this.eventEmitter.emit("DISMISS_RNOH_ERROR_DIALOG");
+  }
+
+  togglePerfMonitor(): void {
+    this.eventEmitter.emit("TOGGLE_PERF_MONITOR");
+  }
+
+  stopPerfMonitor(rnInstanceId: number): void {
+    this.eventEmitter.emit("STOP_PERF_MONITOR", rnInstanceId);
   }
 
   /**

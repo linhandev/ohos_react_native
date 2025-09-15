@@ -59,6 +59,10 @@ class UITicker {
     }
   }
 
+  std::optional<int64_t> getPeriodNs() const {
+    return m_vsyncHandle.getPeriodNs();
+  }
+
  private:
   std::mutex m_taskMtx;
   std::vector<Task> m_tasks;

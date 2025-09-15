@@ -28,6 +28,7 @@ import { WorkerTaskRunner } from './WorkerTaskRunner';
 import { EtsUITurboModuleContext } from './EtsRNOHContext';
 import { RNSettingDialog } from './RNSettingDialog';
 import { JSEngineName } from './types';
+import { UIFpsMonitor, InternalUIFpsMonitor, NoopUIFpsMonitor } from "./UIFpsMonitor"
 
 /**
  * This interface allows providing dependencies in any order.
@@ -190,6 +191,7 @@ export class RNInstancesCoordinator {
   private timerId: number = 0
   private lastChangeTime: number = 0;
   private isWindowRectDrag: boolean = false
+  private uiFpsMonitor: UIFpsMonitor;
   /**
    * Note: You may need to change this delay along with RNSurface's onMeasuredSize delay,
    * as both have an effect on window changes.
@@ -225,7 +227,7 @@ export class RNInstancesCoordinator {
     this.jsPackagerClient = jsPackagerClient;
     this.defaultBackPressHandler = defaultBackPressHandler;
     this.globalRNOHErrorEventEmitter = globalRNOHErrorEventEmitter;
-    const workerThreadPromise = rnohWorkerScriptUrl !== undefined ? WorkerThread.create({
+    const workerThreadPromise = rnohWorkerScriptUrl !== undefined ? WorkerThread.create ({
       scriptUrl: rnohWorkerScriptUrl,
       name: "RNOHWorker",
       logger: logger,
@@ -251,6 +253,13 @@ export class RNInstancesCoordinator {
       this.uiAbilityContext.resourceManager,
       workerThreadPromise
     )
+
+    // Create PerfMonitorController after rnInstanceRegistry to capture startup markers
+    this.uiFpsMonitor = this.isDebugModeEnabled
+      ? new InternalUIFpsMonitor(this.rawLogger)
+      : new NoopUIFpsMonitor();
+
+    
     this.rnohCoreContext = new InternalRNOHCoreContext({
       reactNativeVersion: "0.77.1",
       safeAreaInsetsProvider: new SafeAreaInsetsProvider(uiAbilityContext),
@@ -267,7 +276,8 @@ export class RNInstancesCoordinator {
       devMenu: this.devMenu,
       rnohErrorEventEmitter: this.globalRNOHErrorEventEmitter,
       erasedWorkerTaskRunner: this.workerTaskRunner,
-      napiBridge: napiBridge
+      napiBridge: napiBridge,
+      uiFpsMonitor: this.uiFpsMonitor
     });
     this.onDestroyCallbacks = onDestoryCallbacks ?? []
   }

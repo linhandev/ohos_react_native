@@ -691,6 +691,66 @@ static napi_value onMemoryLevel(napi_env env, napi_callback_info info) {
   });
 }
 
+static napi_value startJSFpsMonitor(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 2);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.getNull();
+    }
+    auto cbRef = arkJS.createNapiRef(args[1]);
+    auto taskExecutor = rnInstance->getTaskExecutor();
+
+    auto fpsCallback = [env, cbRef = std::move(cbRef)](double fps) {
+      ArkJS arkJS(env);
+      auto fn = arkJS.getReferenceValue(cbRef);
+      std::array<napi_value, 1> args{arkJS.createDouble(fps)};
+      arkJS.call<1>(fn, args);
+    };
+
+    if (taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      rnInstance->startJSFpsMonitor(std::move(fpsCallback));
+    } else {
+      taskExecutor->runTask(
+          TaskThread::MAIN,
+          [weak = std::weak_ptr<RNInstanceInternal>(rnInstance),
+           fpsCallback = std::move(fpsCallback)]() mutable {
+            if (auto inst = weak.lock()) {
+              inst->startJSFpsMonitor(std::move(fpsCallback));
+            }
+          });
+    }
+    return arkJS.getNull();
+  });
+}
+
+static napi_value stopJsFpsMonitor(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.getNull();
+    }
+    auto taskExecutor = rnInstance->getTaskExecutor();
+    if (taskExecutor->isOnTaskThread(TaskThread::MAIN)) {
+      rnInstance->stopJsFpsMonitor();
+    } else {
+      taskExecutor->runTask(
+          TaskThread::MAIN,
+          [weak = std::weak_ptr<RNInstanceInternal>(rnInstance)]() {
+            if (auto instance = weak.lock()) {
+              instance->stopJsFpsMonitor();
+            }
+          });
+    }
+    return arkJS.getNull();
+  });
+}
+
 static napi_value updateState(napi_env env, napi_callback_info info) {
   return invoke(env, [&] {
     ArkJS arkJS(env);
@@ -1028,6 +1088,22 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"onMemoryLevel",
        nullptr,
        onMemoryLevel,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"startJSFpsMonitor",
+       nullptr,
+       startJSFpsMonitor,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"stopJsFpsMonitor",
+       nullptr,
+       stopJsFpsMonitor,
        nullptr,
        nullptr,
        nullptr,

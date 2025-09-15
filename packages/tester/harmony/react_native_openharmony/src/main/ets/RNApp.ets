@@ -15,6 +15,7 @@ import {
   RNOHLogger,
   RNDevLoadingView,
   RNComponentContext,
+  RNPerfMonitorView,
   WrappedCustomRNComponentBuilder,
   RNOHCoreContext,
   RNOHContext,
@@ -330,11 +331,14 @@ export struct RNApp {
    * Automatically inserts debugger overlays when in debug mode.
    */
   build() {
-    Stack() {
-      if (this.shouldShow && this.rnohCoreContext!.isDebugModeEnabled) {
-        RNPauseInDebuggerDialog({ ctx: this.ctx })
-      }
-      if (this.shouldShow) {
+    if (this.shouldShow) {
+      Stack() {
+        if (this.rnohCoreContext!.isDebugModeEnabled) {
+          RNPauseInDebuggerDialog({ ctx: this.ctx })
+        }
+        if (this.rnohCoreContext!.isDebugModeEnabled) {
+          RNPerfMonitorView({ ctx: this.rnohCoreContext, rnInstance: this.rnInstance });
+        }
         RNSurface({
           ctx: this.ctx,
           surfaceConfig: {
@@ -342,14 +346,14 @@ export struct RNApp {
             appKey: this.appKey,
           },
         })
-      }
       if (this.rnohCoreContext!.isDebugModeEnabled) {
         RNDevLoadingView({ useSafeAreaInsets: true, ctx: this.rnohCoreContext }).position({ x: 0, y: 0 })
       }
+      }
+      .expandSafeArea([SafeAreaType.KEYBOARD])
+      .hitTestBehavior(HitTestMode.Transparent)
+      .width("100%")
+      .height("100%")
     }
-    .expandSafeArea([SafeAreaType.KEYBOARD])
-    .hitTestBehavior(HitTestMode.Transparent)
-    .width("100%")
-    .height("100%")
   }
 }

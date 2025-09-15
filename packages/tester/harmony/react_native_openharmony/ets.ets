@@ -6,6 +6,8 @@ export { LogBoxDialog } from './src/main/ets/LogBoxDialog'
 
 export { RNOHErrorDialog } from './src/main/ets/RNOHErrorDialog'
 
+export { RNPerfMonitorView } from './src/main/ets/RNOH/RNPerfMonitorView'
+
 export { RNComponentContext,
   ComponentBuilderContext,
   CustomRNComponentFrameNodeFactory,

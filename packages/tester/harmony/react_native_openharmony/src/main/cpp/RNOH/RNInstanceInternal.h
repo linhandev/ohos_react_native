@@ -17,6 +17,7 @@
 #include "RNOH/GlobalJSIBinder.h"
 #include "RNOH/InspectorHostTarget.h"
 #include "RNOH/MountingManager.h"
+#include "RNOH/Performance/JSFpsMonitor.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/SchedulerDelegate.h"
@@ -79,6 +80,9 @@ class RNInstanceInternal
       std::string hspModuleName);
 
   virtual ~RNInstanceInternal() noexcept;
+  // Performance monitor (JS FPS)
+  void startJSFpsMonitor(std::function<void(double)> callback);
+  void stopJsFpsMonitor();
 
   facebook::react::ContextContainer const& getContextContainer() const override;
   TurboModule::Shared getTurboModule(const std::string& name) override;
@@ -259,5 +263,6 @@ class RNInstanceInternal
       m_inspectorHostDelegate;
   std::shared_ptr<InspectorHostTarget> m_inspectorHostTarget;
   std::shared_ptr<facebook::react::JSRuntimeFactory> m_jsEngineProvider;
+  std::shared_ptr<JSFpsMonitor> m_jsFpsMonitor;
 };
 } // namespace rnoh

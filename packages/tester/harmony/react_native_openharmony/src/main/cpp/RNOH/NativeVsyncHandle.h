@@ -8,6 +8,7 @@
 #pragma once
 
 #include <native_vsync/native_vsync.h>
+#include <optional>
 #include <string>
 
 namespace rnoh {
@@ -45,6 +46,18 @@ class NativeVsyncHandle {
 
   void requestFrame(OH_NativeVSync_FrameCallback callback, void* data) {
     OH_NativeVSync_RequestFrame(m_nativeVSync, callback, data);
+  }
+
+  std::optional<int64_t> getPeriodNs() const {
+    if (m_nativeVSync == nullptr) {
+      return std::nullopt;
+    }
+    long long periodNs = 0; // API expects long long*
+    auto ret = OH_NativeVSync_GetPeriod(m_nativeVSync, &periodNs);
+    if (ret == 0 && periodNs > 0) {
+      return static_cast<int64_t>(periodNs);
+    }
+    return std::nullopt;
   }
 
   std::string m_name;

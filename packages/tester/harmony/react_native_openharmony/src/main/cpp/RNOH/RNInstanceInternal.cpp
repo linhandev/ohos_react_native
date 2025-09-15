@@ -24,6 +24,7 @@
 #include "JSInspectorHostTargetDelegate.h"
 #include "RNOH/EventBeat.h"
 #include "RNOH/MessageQueueThread.h"
+#include "RNOH/Performance/JSFpsMonitor.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNFeatureFlags.h"
 #include "RNOH/SchedulerDelegate.h"
@@ -652,5 +653,32 @@ RNInstanceInternal::RNInstanceInternal(
 RNInstanceInternal::~RNInstanceInternal() noexcept {
   m_reactInstance->unregisterFromInspector();
 };
+
+void RNInstanceInternal::startJSFpsMonitor(
+    std::function<void(double)> callback) {
+  // Stop existing monitor if present
+  if (m_jsFpsMonitor) {
+    m_jsFpsMonitor->stop();
+    m_jsFpsMonitor.reset();
+  }
+
+  m_jsFpsMonitor = std::make_shared<JSFpsMonitor>(m_uiTicker, m_taskExecutor);
+
+  if (callback) {
+    m_jsFpsMonitor->setPublishCallback(
+        [exec = m_taskExecutor, callback = std::move(callback)](double fps) {
+          exec->runTask(TaskThread::MAIN, [callback, fps]() { callback(fps); });
+        });
+  }
+  m_jsFpsMonitor->start();
+}
+
+void RNInstanceInternal::stopJsFpsMonitor() {
+  if (m_jsFpsMonitor) {
+    m_jsFpsMonitor->stop();
+    m_jsFpsMonitor->setPublishCallback(nullptr);
+    m_jsFpsMonitor.reset();
+  }
+}
 
 } // namespace rnoh

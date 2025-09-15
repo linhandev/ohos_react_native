@@ -1251,4 +1251,19 @@ export class RNInstanceImpl implements RNInstance {
       return this.uiAbilityContext.windowStage.getMainWindowSync();
     }
   }
+  /**
+ * @internal
+ * Called by PerfMonitorController when PerfMonitor is toggled
+ */
+  public startJSFpsMonitor(callback: (fps: number) => void): void {
+    this.napiBridge.startJSFpsMonitor(this.id, callback);
+  }
+
+  /**
+ * @internal
+ * Called by PerfMonitorController when PerfMonitor is toggled
+ */
+  public stopJsFpsMonitor(): void {
+    this.napiBridge.stopJsFpsMonitor(this.id);
+  }
 }

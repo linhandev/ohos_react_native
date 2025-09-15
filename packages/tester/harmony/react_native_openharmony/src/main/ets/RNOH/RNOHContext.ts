@@ -22,6 +22,7 @@ import type { DisplayMetrics, JSEngineName } from './types';
 import type { RNInstanceOptions } from './RNInstance';
 import type { SafeAreaInsetsProvider } from './SafeAreaInsetsProvider';
 import { NapiBridge } from './NapiBridge';
+import { UIFpsMonitor } from './UIFpsMonitor';
 
 export type UIAbilityState = 'FOREGROUND' | 'BACKGROUND';
 
@@ -47,6 +48,7 @@ type RNOHCoreContextDependencies = {
   launchUri?: string;
   erasedWorkerTaskRunner: unknown;
   napiBridge: NapiBridge;
+  uiFpsMonitor: UIFpsMonitor;
 };
 
 /**
@@ -184,6 +186,10 @@ export class RNOHCoreContext {
 export class InternalRNOHCoreContext extends RNOHCoreContext {
   get jsEngineName(): JSEngineName {
     return this._rnohCoreContextDeps.jsEngineName;
+  }
+
+  get uiFpsMonitor(): UIFpsMonitor {
+    return this._rnohCoreContextDeps.uiFpsMonitor;
   }
 
   onDestroy() {}

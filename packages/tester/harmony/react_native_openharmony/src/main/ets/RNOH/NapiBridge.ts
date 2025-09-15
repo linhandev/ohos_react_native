@@ -399,4 +399,14 @@ export class NapiBridge {
     const result = this.libRNOHApp?.setUIContext(instanceId, context)
     return this.unwrapResult(result);
   }
+
+  startJSFpsMonitor(instanceId: number, cb: (fps: number) => void): void {
+    const result = this.libRNOHApp?.startJSFpsMonitor(instanceId, cb)
+    return this.unwrapResult(result)
+  }
+
+  stopJsFpsMonitor(instanceId: number): void {
+    const result = this.libRNOHApp?.stopJsFpsMonitor(instanceId)
+    return this.unwrapResult(result)
+  }
 }
