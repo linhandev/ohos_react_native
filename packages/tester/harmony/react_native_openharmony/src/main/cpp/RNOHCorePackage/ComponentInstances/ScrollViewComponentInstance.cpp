@@ -186,6 +186,14 @@ void ScrollViewComponentInstance::onEmitOnScrollEndDragEvent() {
 }
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+//  Called from PullToRefresh
+
+void ScrollViewComponentInstance::onPullToRefreshOffsetChange(float offsetY) {
+  m_onPullToRefreshOffsetY = offsetY;
+  m_internalState->onScroll();
+}
+
+// ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 //  ScrollNodeDelegate
 
 void ScrollViewComponentInstance::onScrollStart() {
@@ -201,6 +209,13 @@ void ScrollViewComponentInstance::onScroll() {
   }
   m_internalState->onScroll();
   m_onScrollCallsAfterFrameBeginCallCounter++;
+  /**
+   * m_onPullToRefreshOffsetY is cleared here not in onPullToRefreshOffsetChange
+   * to ignore contentOffsetY in the first onScroll after releasing a pointer
+   * during the pull-to-refresh action. That first value causes a flicker in a
+   * sticky component.
+   */
+  m_onPullToRefreshOffsetY = std::nullopt;
 }
 
 bool ScrollViewComponentInstance::shouldDisableScrollInteraction() {
@@ -1037,6 +1052,9 @@ facebook::react::Float ScrollViewComponentInstance::adjustOffsetIfRTL(
 facebook::react::Point ScrollViewComponentInstance::getScrollOffset() const {
   auto scrollOffset = m_scrollNode.getScrollOffset();
   scrollOffset.x = adjustOffsetIfRTL(scrollOffset.x);
+  if (m_onPullToRefreshOffsetY.has_value()) {
+    scrollOffset.y = m_onPullToRefreshOffsetY.value() * (-1);
+  }
   return scrollOffset;
 }
 

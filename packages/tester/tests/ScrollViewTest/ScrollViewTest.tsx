@@ -1,5 +1,4 @@
-import {View, ScrollView, Text, StyleSheet} from 'react-native';
-
+import {View, ScrollView, Text, StyleSheet, RefreshControl} from 'react-native';
 import React, {createRef, useState} from 'react';
 import {Button} from '../../components';
 import {StylesTest} from './StylesTest';
@@ -26,6 +25,69 @@ export function ScrollViewTest() {
 
   return (
     <TestSuite name="ScrollView">
+      <TestSuite name="onScroll">
+        <TestCase.Automated
+          skip={{android: true, harmony: !driver}}
+          tags={['sequential']}
+          itShould="receive negative offsetY when refreshControl is provided"
+          initialState={{
+            ref: createRef<ScrollView>(),
+            offsetsY: [] as number[],
+          }}
+          arrange={({setState, done, state}) => {
+            return (
+              <>
+                <ScrollView
+                  ref={state.ref}
+                  style={{height: 400}}
+                  onScroll={e => {
+                    const offsetY = e.nativeEvent.contentOffset.y;
+                    setState(current => ({
+                      ...current,
+                      offsetsY: [...current.offsetsY, offsetY],
+                    }));
+                  }}
+                  onScrollEndDrag={() => done()}
+                  refreshControl={
+                    <RefreshControl refreshing={false} onRefresh={() => {}} />
+                  }>
+                  {[1, 2, 3, 4, 5].map(value => {
+                    return (
+                      <View
+                        key={value}
+                        style={{
+                          width: '100%',
+                          height: 64,
+                          backgroundColor: 'pink',
+                          marginBottom: 64,
+                        }}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </>
+            );
+          }}
+          act={({state}) => {
+            driver?.swipe({
+              ref: state.ref,
+              fromOffset: {x: 0, y: 0},
+              toOffset: {x: 0, y: 100},
+              speed: 5000,
+            });
+          }}
+          assert={({expect, state}) => {
+            expect(
+              state.offsetsY.some(offsetY => offsetY < -50),
+              'Expected some offsetY to be significantly negative',
+            ).to.be.true;
+            expect(
+              state.offsetsY.filter(offsetY => offsetY < 0).length,
+              'Expected few onScroll events with a negative offset',
+            ).to.be.greaterThan(5);
+          }}
+        />
+      </TestSuite>
       <TestSuite name="scrolling">
         <TestCase.Automated
           skip={{android: true, harmony: !driver}}
@@ -72,7 +134,7 @@ export function ScrollViewTest() {
               ref: state.scrollViewRef,
               fromOffset: {x: 0, y: 0},
               toOffset: {x: 0, y: -100},
-              speed: 3000,
+              speed: 5000,
             });
             await new Promise(resolve => setTimeout(resolve, 1000));
             await driver?.click({ref: state.targetRef});

@@ -17,6 +17,7 @@
 namespace rnoh {
 enum ScrollNodeState : int32_t { IDLE, DRAGGING, SETTLING, CANCELING };
 
+class PullToRefreshViewComponentInstance;
 class ScrollViewComponentInstance;
 
 /**
@@ -185,6 +186,11 @@ class ScrollViewComponentInstance
   std::vector<facebook::react::Float> m_snapToOffsets = {};
   std::optional<ChildTagWithOffset> m_firstVisibleView = std::nullopt;
   std::unique_ptr<UIInputEventHandler> m_touchHandler;
+  /**
+   * ScrollNode doesn't emit events during pull to refresh action which messes
+   * up sticky headers.
+   */
+  std::optional<float> m_onPullToRefreshOffsetY = std::nullopt;
 
   /**
    * `onScrollFrameBegin` is not always called but is needed to detect when
@@ -250,6 +256,10 @@ class ScrollViewComponentInstance
   void updateContentClippedSubviews();
 
  public:
+  /**
+   * PullToRefreshViewComponentInstance is tightly coupled with ScrollView.
+   */
+  friend PullToRefreshViewComponentInstance;
   friend ScrollViewInternalState;
   friend IdleScrollViewInternalState;
   friend DraggingScrollViewInternalState;
@@ -275,6 +285,7 @@ class ScrollViewComponentInstance
       std::string const& commandName,
       folly::dynamic const& args) override;
 
+  void onPullToRefreshOffsetChange(float offsetY);
   // ScrollNodeDelegate implementation
   void onScroll() override;
   void onScrollStart() override;

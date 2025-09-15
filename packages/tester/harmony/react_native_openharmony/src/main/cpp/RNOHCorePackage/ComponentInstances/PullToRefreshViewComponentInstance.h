@@ -57,6 +57,8 @@ class PullToRefreshViewComponentInstance
   void onPropsChanged(SharedConcreteProps const& props) override;
   void onRefresh() override;
   void onRefreshStateChanged(RefreshStatus state) override;
+  void onRefreshNodeOffsetChange(RefreshNode* refreshNode, float offset)
+      override;
   facebook::react::Point getCurrentOffset() const override;
 
   bool isRefreshControlComponentInstance() const override {

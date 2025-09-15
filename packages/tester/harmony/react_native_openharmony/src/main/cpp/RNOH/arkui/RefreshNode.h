@@ -51,6 +51,7 @@ class RefreshNodeDelegate {
  * @actor RNOH_LIBRARY
  */
 namespace rnoh {
+class RefreshNode;
 
 /**
  * @brief Drop down refresh node delegation interface, used to listen for
@@ -86,6 +87,10 @@ class RefreshNodeDelegate {
    * @param state current state
    */
   virtual void onRefreshStateChanged(RefreshStatus state){};
+
+  virtual void onRefreshNodeOffsetChange(
+      RefreshNode* refreshNode,
+      float offset) {}
 };
 
 /**
