@@ -116,7 +116,7 @@ class RNInstance {
    * @brief Returns the unique ID of the instance.
    * @return Instance identifier.
    */
-  virtual int getId() = 0;
+  virtual size_t getId() = 0;
 
   /**
    * @brief Returns the context container which holds shared runtime

@@ -38,7 +38,7 @@ class ArkUISurface : public Surface,
       ArkTSMessageHub::Shared arkTSMessageHub,
       DisplayMetricsManager::Shared displayMetricsManager,
       facebook::react::SurfaceId surfaceId,
-      int rnInstanceId,
+      size_t rnInstanceId,
       std::string const& appKey);
 
   ArkUISurface(ArkUISurface const& other) = delete;
@@ -92,6 +92,7 @@ class ArkUISurface : public Surface,
 
  private:
   facebook::react::SurfaceId m_surfaceId;
+  size_t m_rnInstanceId;
   std::shared_ptr<facebook::react::Scheduler> m_scheduler;
   std::optional<NodeContentHandle> m_nodeContentHandle;
   ComponentInstance::Shared m_rootView = nullptr;

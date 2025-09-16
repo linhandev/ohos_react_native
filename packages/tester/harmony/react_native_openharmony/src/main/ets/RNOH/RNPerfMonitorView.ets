@@ -7,10 +7,16 @@
 
 import { InternalRNOHCoreContext, RNOHCoreContext } from './RNOHContext'
 import { SafeAreaInsets } from "./SafeAreaInsetsProvider"
-import { PerfMonitorController } from "./PerfMonitorController"
+import { PerfMonitorController, DEFAULT_PERFORMANCE_METRICS} from "./PerfMonitorController"
 import { RNInstance } from "./RNInstance"
+import type { RNInstancePerformanceMetricsSnapshot } from "./NapiBridge.ts"
 
 const METRICS_POLLING_INTERVAL_MS = 500;
+
+const PADDING = 4;
+const MARGIN = 8;
+const FONT_SIZE = 12;
+const FONT_COLOR = Color.White;
 
 @Component
 export struct RNPerfMonitorView {
@@ -20,6 +26,10 @@ export struct RNPerfMonitorView {
   @State private showDetails: boolean = false;
   @State private jsFps: number = 0;
   @State private uiFps: number = 0;
+  @State private performanceMetrics: RNInstancePerformanceMetricsSnapshot = DEFAULT_PERFORMANCE_METRICS;
+  @State private appPss: number = 0
+  @State private componentsCount: number = 0;
+  @State private jsRuntimeHeapUsage: number = 0;
   @State private safeAreaInsets: SafeAreaInsets | undefined = undefined
   private cleanUpCallbacks: (() => void)[] = []
   private metricsPollingInterval: number | null = null
@@ -78,6 +88,9 @@ export struct RNPerfMonitorView {
       const metrics = this.perfMonitorController.getFpsMetrics()
       this.uiFps = Math.round(metrics.uiFps)
       this.jsFps = Math.round(metrics.jsFps)
+      this.appPss = Math.round(this.perfMonitorController.getAppPss() / 1000); // convert to MB
+      this.componentsCount = this.perfMonitorController.getComponentsCount()
+      this.jsRuntimeHeapUsage = this.perfMonitorController.getJSRuntimeHeapUsage() / 1000000 // convert to MB
     }, METRICS_POLLING_INTERVAL_MS)
   }
 
@@ -94,48 +107,116 @@ export struct RNPerfMonitorView {
     if (this.visible) {
       this.perfMonitorController.start()
       this.startMetricsPolling()
+      this.performanceMetrics = this.perfMonitorController.getPerformanceMetrics()
     } else {
       this.stopMetricsPolling()
       this.perfMonitorController.stop()
     }
   }
 
-  private formatTime(ms ?: number): string {
-    if (!ms) return 'N/A'
-    return `${(ms / 1000).toFixed(2)}s`
-  }
 
   build() {
     if (this.safeAreaInsets && this.visible) {
       Column() {
         // Always visible FPS metrics
         Row() {
-          Text(`JS: ${this.jsFps}`)
-            .fontColor(Color.White)
-            .fontSize(16)
+          PrimaryMetric({ name: "JS", value: this.jsFps.toString() })
+          PrimaryMetric({ name: "UI", value: this.uiFps.toString() })
+          PrimaryMetric({
+            name: "JS VM",
+            value: this.jsRuntimeHeapUsage.toFixed(2),
+            suffix: "MB",
+            minWidth: 60
+          })
+          PrimaryMetric({ name: "PSS", value: this.appPss.toString(), suffix: "MB" })
+          PrimaryMetric({ name: "Views", value: this.componentsCount.toString() })
+        }
 
-          Text(`UI: ${this.uiFps}`)
-            .fontColor(Color.White)
-            .fontSize(16)
-            .margin({ left: 16 })
+        if (this.showDetails) {
+          // Toggled onClick
+          Column() {
+            Divider()
+              .color(FONT_COLOR)
+              .opacity(0.3)
+              .margin(MARGIN)
+            ForEach(Object.keys(this.performanceMetrics), (name: string) => {
+              SecondaryMetric({ name, value: this.performanceMetrics[name] })
+            }, (name: string) => name)
+          }
+          .alignItems(HorizontalAlign.Start)
+          .margin({ left: PADDING })
+          .constraintSize({ maxWidth: 200 })
         }
       }
       .backgroundColor(Color.Black)
-        .opacity(0.8)
-        .borderRadius(8)
-        .borderColor(Color.White)
-        .borderWidth(1)
-        .padding(8)
-        .hitTestBehavior(HitTestMode.Transparent)
-        .position({
-          right: 8,
-          top: (this.safeAreaInsets?.top ?? 0) + 8 
-        })
-        .zIndex(1000)
-        .width(160)
-        .onClick(() => {
-          this.showDetails = !this.showDetails
-        })
+      .opacity(0.8)
+      .borderRadius(8)
+      .borderColor(FONT_COLOR)
+      .borderWidth(1)
+      .padding(PADDING)
+      .hitTestBehavior(HitTestMode.Transparent)
+      .position({
+        right: MARGIN,
+        top: (this.safeAreaInsets?.top ?? 0) + MARGIN
+      })
+      .zIndex(1000)
+      .onClick(() => {
+        this.showDetails = !this.showDetails
+      })
     }
+  }
+}
+
+@Component
+struct PrimaryMetric {
+  @Prop name: string;
+  @Prop value: string
+  @Prop minWidth: number = 32
+  @Prop suffix: string = ""
+
+
+  build() {
+    Column() {
+      Text(this.name)
+        .fontColor(FONT_COLOR)
+        .fontWeight(FontWeight.Bold)
+        .fontSize(FONT_SIZE)
+
+      Text(`${this.value} ${this.suffix}`)
+        .fontColor(FONT_COLOR)
+        .fontSize(FONT_SIZE)
+    }.padding(PADDING).constraintSize(({minWidth: this.minWidth}))
+  }
+}
+
+@Component
+struct SecondaryMetric {
+  @Prop name: string;
+  @Prop value: number
+
+  private formatValue(name: string, value?: number): string {
+    if(value === undefined) return "N/A"
+    let suffix = "ms"
+    if(name.toLowerCase().includes("size")){
+      suffix = "B"
+    }else if (name.toLowerCase().includes("count")){
+      suffix = ""
+    }
+    const formatted = Number.isInteger(value) ? value : value.toFixed(2);
+    return `${formatted} ${suffix}`
+  }
+
+  // EXAMPLE_VALUE -> ExampleValue
+  private formatName(name: string): string {
+    return name.split("_")
+      .map(word => word[0].toUpperCase() +
+      word.slice(1).toLowerCase())
+      .join("");
+  }
+
+  build() {
+    Text(`${this.formatName(this.name)}: ${this.formatValue(this.name, this.value)}`)
+      .fontColor(FONT_COLOR)
+      .fontSize(FONT_SIZE)
   }
 }

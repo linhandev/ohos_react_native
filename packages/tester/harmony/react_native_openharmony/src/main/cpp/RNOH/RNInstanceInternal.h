@@ -40,6 +40,9 @@ class RNInstanceInternal
    */
   static bool s_hasInitializedFeatureFlags;
 
+ private:
+  int64_t getHeapUsageFromJSRuntime(facebook::jsi::Runtime& rt) const;
+
  public:
   class RNInstanceRNOHMarkerListener : public RNOHMarker::RNOHMarkerListener {
    public:
@@ -57,7 +60,7 @@ class RNInstanceInternal
   };
 
   explicit RNInstanceInternal(
-      int id,
+      size_t id,
       std::shared_ptr<facebook::react::ContextContainer> contextContainer,
       TurboModuleFactory turboModuleFactory,
       TaskExecutor::Shared taskExecutor,
@@ -198,6 +201,7 @@ class RNInstanceInternal
   void unregisterFromInspector();
   void onCreate();
   void markSelfAboutToDestroyed();
+  int64_t getJSRuntimeHeapUsage();
 
  protected:
   void initialize();
@@ -216,7 +220,7 @@ class RNInstanceInternal
 
   virtual void installJSBindings(facebook::jsi::Runtime& rt) = 0;
 
-  int m_id;
+  size_t m_id;
   TaskExecutor::Shared m_taskExecutor;
   std::shared_ptr<std::atomic<bool>> m_isAboutToBeDestroyed;
   RNInstance::SafeWeak m_weakSelf;
@@ -266,5 +270,6 @@ class RNInstanceInternal
   std::shared_ptr<InspectorHostTarget> m_inspectorHostTarget;
   std::shared_ptr<facebook::react::JSRuntimeFactory> m_jsEngineProvider;
   std::shared_ptr<JSFpsMonitor> m_jsFpsMonitor;
+  std::atomic<int64_t> m_cachedJSRuntimeHeapUsage{0};
 };
 } // namespace rnoh

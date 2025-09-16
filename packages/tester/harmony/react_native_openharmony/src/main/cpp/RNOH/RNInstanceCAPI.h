@@ -27,7 +27,7 @@ using MutationsListener = std::function<void(
 class RNInstanceCAPI final : public RNInstanceInternal {
  public:
   RNInstanceCAPI(
-      int id,
+      size_t id,
       std::shared_ptr<facebook::react::ContextContainer> contextContainer,
       TurboModuleFactory&& turboModuleFactory,
       TaskExecutor::Shared taskExecutor,
@@ -85,7 +85,7 @@ class RNInstanceCAPI final : public RNInstanceInternal {
 
   ~RNInstanceCAPI() noexcept override;
 
-  int getId() override;
+  size_t getId() override;
 
   void createSurface(
       facebook::react::Tag surfaceId,
@@ -153,6 +153,13 @@ class RNInstanceCAPI final : public RNInstanceInternal {
 
   std::optional<Surface::Weak> getSurfaceByRootTag(
       facebook::react::Tag rootTag) override;
+
+  size_t getComponentInstancesCount() const {
+    if (m_componentInstanceRegistry) {
+      return m_componentInstanceRegistry->getComponentsCount();
+    }
+    return 0;
+  }
 
   void setArkUINodeContext(const ArkUINode::Context::Shared& arkUINodeContext) {
     if (m_componentInstanceFactory) {

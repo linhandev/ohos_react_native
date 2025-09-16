@@ -8,24 +8,42 @@
 #ifndef PERFORMANCEMETRICSREGISTRY_H
 #define PERFORMANCEMETRICSREGISTRY_H
 
-#include <glog/logging.h>
 #include "RNOHMarker.h"
 
 namespace rnoh {
 
 enum class PerformanceMetric {
-  TURBO_MODULE_SETUP,
   BUNDLE_SIZE,
-  // TODO: add rest of metrics
+  SCRIPT_DOWNLOAD,
+  SCRIPT_EXECUTION,
+  REACT_INSTANCE_INIT,
+  INIT_JS_RUNTIME,
+  ROOT_VIEW_TTI,
+  APP_STARTUP,
+  TURBO_MODULE_MAIN_THREAD_COUNT,
+  TURBO_MODULE_SETUP,
 };
 
 inline const char* to_cstring(PerformanceMetric metric) {
   switch (metric) {
-    case PerformanceMetric::TURBO_MODULE_SETUP:
-      return "TURBO_MODULE_SETUP";
     case PerformanceMetric::BUNDLE_SIZE:
       return "BUNDLE_SIZE";
-      // TODO: rest
+    case PerformanceMetric::INIT_JS_RUNTIME:
+      return "INIT_JS_RUNTIME";
+    case PerformanceMetric::SCRIPT_DOWNLOAD:
+      return "SCRIPT_DOWNLOAD";
+    case PerformanceMetric::SCRIPT_EXECUTION:
+      return "SCRIPT_EXECUTION";
+    case PerformanceMetric::REACT_INSTANCE_INIT:
+      return "REACT_INSTANCE_INIT";
+    case PerformanceMetric::ROOT_VIEW_TTI:
+      return "ROOT_VIEW_TTI";
+    case PerformanceMetric::APP_STARTUP:
+      return "APP_STARTUP";
+    case PerformanceMetric::TURBO_MODULE_SETUP:
+      return "TURBO_MODULE_SETUP";
+    case PerformanceMetric::TURBO_MODULE_MAIN_THREAD_COUNT:
+      return "TURBO_MODULE_MAIN_THREAD_COUNT";
     default:
       return "UNKNOWN_METRIC";
   }
@@ -89,18 +107,76 @@ class PerformanceMetricsRegistry : public RNOHMarker::RNOHMarkerListener {
     auto& instanceMetrics = m_metricsByInstanceId.at(rnInstanceId);
 
     switch (markerId) {
-      case RNOHMarkerId::INITIALIZE_MODULE_START:
+      case RNOHMarkerId::TURBO_MODULE_SETUP_START:
         instanceMetrics
             .durationByMetric[PerformanceMetric::TURBO_MODULE_SETUP][0] =
             timestamp;
         break;
-      case RNOHMarkerId::INITIALIZE_MODULE_END:
+      case RNOHMarkerId::TURBO_MODULE_SETUP_STOP:
         instanceMetrics
             .durationByMetric[PerformanceMetric::TURBO_MODULE_SETUP][1] =
             timestamp;
         break;
       case RNOHMarkerId::BUNDLE_SIZE:
         instanceMetrics.valueByMetric[PerformanceMetric::BUNDLE_SIZE] = value;
+        break;
+      case RNOHMarkerId::DOWNLOAD_START:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::SCRIPT_DOWNLOAD][0] =
+            timestamp;
+        break;
+      case RNOHMarkerId::DOWNLOAD_END:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::SCRIPT_DOWNLOAD][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::RUN_JS_BUNDLE_START:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::SCRIPT_EXECUTION][0] =
+            timestamp;
+        break;
+      case RNOHMarkerId::RUN_JS_BUNDLE_STOP:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::SCRIPT_EXECUTION][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::REACT_INSTANCE_INIT_START:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::REACT_INSTANCE_INIT][0] =
+            timestamp;
+        break;
+      case RNOHMarkerId::REACT_INSTANCE_INIT_STOP:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::REACT_INSTANCE_INIT][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::INIT_JS_RUNTIME_START:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::INIT_JS_RUNTIME][0] =
+            timestamp;
+        break;
+      case RNOHMarkerId::INIT_JS_RUNTIME_STOP:
+        instanceMetrics
+            .durationByMetric[PerformanceMetric::INIT_JS_RUNTIME][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::APP_STARTUP_START:
+        instanceMetrics.durationByMetric[PerformanceMetric::ROOT_VIEW_TTI][0] =
+            timestamp;
+        instanceMetrics.durationByMetric[PerformanceMetric::APP_STARTUP][0] =
+            timestamp;
+        break;
+      case RNOHMarkerId::APP_STARTUP_STOP:
+        instanceMetrics.durationByMetric[PerformanceMetric::APP_STARTUP][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::CONTENT_APPEARED:
+        instanceMetrics.durationByMetric[PerformanceMetric::ROOT_VIEW_TTI][1] =
+            timestamp;
+        break;
+      case RNOHMarkerId::TURBO_MODULE_MAIN_THREAD:
+        instanceMetrics
+            .valueByMetric[PerformanceMetric::TURBO_MODULE_MAIN_THREAD_COUNT]++;
         break;
       default:
         break;
@@ -132,10 +208,15 @@ class PerformanceMetricsRegistry : public RNOHMarker::RNOHMarkerListener {
  private:
   std::vector<PerformanceMetric> m_durationMetrics = {
       PerformanceMetric::TURBO_MODULE_SETUP,
-  }; // TODO: rest of metrics
+      PerformanceMetric::INIT_JS_RUNTIME,
+      PerformanceMetric::SCRIPT_DOWNLOAD,
+      PerformanceMetric::SCRIPT_EXECUTION,
+      PerformanceMetric::REACT_INSTANCE_INIT,
+      PerformanceMetric::APP_STARTUP,
+      PerformanceMetric::ROOT_VIEW_TTI};
   std::vector<PerformanceMetric> m_valueMetrics = {
       PerformanceMetric::BUNDLE_SIZE,
-  }; //
+      PerformanceMetric::TURBO_MODULE_MAIN_THREAD_COUNT};
 
   std::unordered_map<size_t, RNInstanceMetrics> m_metricsByInstanceId;
 };

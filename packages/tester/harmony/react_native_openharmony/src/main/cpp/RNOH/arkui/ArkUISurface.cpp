@@ -26,13 +26,13 @@ class SurfaceTouchEventHandler : public UIInputEventHandler,
  private:
   ComponentInstance::Shared m_rootView;
   TouchEventDispatcher m_touchEventDispatcher;
-  int m_rnInstanceId;
+  size_t m_rnInstanceId;
 
  public:
   SurfaceTouchEventHandler(
       ComponentInstance::Shared rootView,
       ArkTSMessageHub::Shared arkTSMessageHub,
-      int rnInstanceId)
+      size_t rnInstanceId)
       : UIInputEventHandler(rootView->getLocalRootArkUINode()),
         ArkTSMessageHub::Observer(arkTSMessageHub),
         m_rootView(std::move(rootView)),
@@ -87,13 +87,14 @@ ArkUISurface::ArkUISurface(
     ArkTSMessageHub::Shared arkTSMessageHub,
     DisplayMetricsManager::Shared displayMetricsManager,
     SurfaceId surfaceId,
-    int rnInstanceId,
+    size_t rnInstanceId,
     std::string const& appKey)
     : m_surfaceId(surfaceId),
       m_scheduler(std::move(scheduler)),
       m_componentInstanceRegistry(std::move(componentInstanceRegistry)),
       m_surfaceHandler(SurfaceHandler(appKey, surfaceId)),
-      m_displayMetricsManager(std::move(displayMetricsManager)) {
+      m_displayMetricsManager(std::move(displayMetricsManager)),
+      m_rnInstanceId(rnInstanceId) {
   m_scheduler->registerSurface(m_surfaceHandler);
   m_taskExecutor = taskExecutor;
   m_rootView = componentInstanceFactory->create(
@@ -159,7 +160,7 @@ void ArkUISurface::attachToNodeContent(NodeContentHandle nodeContentHandle) {
   m_nodeContentHandle = nodeContentHandle;
   m_nodeContentHandle.value().addNode(m_rootView->getLocalRootArkUINode());
   RNOHMarker::logMarker(
-      RNOHMarker::RNOHMarkerId::CONTENT_APPEARED, m_rootView->getTag());
+      RNOHMarker::RNOHMarkerId::CONTENT_APPEARED, m_rnInstanceId);
 }
 
 void ArkUISurface::detachFromNodeContent() {

@@ -28,9 +28,17 @@ import { JsBundle } from './JSBundleProvider';
 import { RNOHErrorStack } from './RNOHError';
 import { UIContext } from '@kit.ArkUI';
 
+// Keep in sync with PerformanceMetric in PerformanceMetricsRegistry.h
 export interface  RNInstancePerformanceMetricsSnapshot {
-  BUNDLE_SIZE: number; // Size of bundle in bytes
-  // TODO: rest
+  BUNDLE_SIZE: number;
+  SCRIPT_DOWNLOAD: number; 
+  SCRIPT_EXECUTION: number;
+  REACT_INSTANCE_INIT: number;
+  INIT_REACT_RUNTIME: number;
+  ROOT_VIEW_TTI: number;
+  TURBO_MODULE_SETUP: number;
+  APP_STARTUP: number;
+  TURBO_MODULE_MAIN_THREAD_COUNT: number;
 }
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
@@ -413,7 +421,17 @@ export class NapiBridge {
 
   stopJsFpsMonitor(instanceId: number): void {
     const result = this.libRNOHApp?.stopJsFpsMonitor(instanceId)
+    return this.unwrapResult(result)
+  }
 
+  getComponentInstancesCount(rnInstanceId: number):  number {
+    const result = this.libRNOHApp?.getComponentInstancesCount(rnInstanceId)
+    return this.unwrapResult(result)
+  }
+
+  getJSRuntimeHeapUsage(rnInstanceId: number): number {
+    const result = this.libRNOHApp?.getJSRuntimeHeapUsage(rnInstanceId)
+    return this.unwrapResult(result)
   }
 
   getPerformanceMetricsSnapshot(rnInstanceId: number): RNInstancePerformanceMetricsSnapshot {

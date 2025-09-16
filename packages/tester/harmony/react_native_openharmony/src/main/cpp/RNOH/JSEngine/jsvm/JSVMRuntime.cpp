@@ -1180,4 +1180,8 @@ inline void JSVMRuntime::ClearException(JSVM_Status status) const {
   }
 }
 
+JSVM_Status JSVMRuntime::getHeapStatistics(JSVM_HeapStatistics* result) {
+  return OH_JSVM_GetHeapStatistics(vm, result);
+}
+
 } // namespace jsvm

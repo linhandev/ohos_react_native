@@ -74,7 +74,13 @@ class RNOHMarker {
     FABRIC_BATCH_EXECUTION_END,
     FABRIC_UPDATE_UI_MAIN_THREAD_START,
     FABRIC_UPDATE_UI_MAIN_THREAD_END,
-    BUNDLE_SIZE
+    // rnoh,
+    BUNDLE_SIZE,
+    INIT_JS_RUNTIME_START,
+    INIT_JS_RUNTIME_STOP,
+    TURBO_MODULE_MAIN_THREAD,
+    TURBO_MODULE_SETUP_START,
+    TURBO_MODULE_SETUP_STOP,
   };
 
   class RNOHMarkerListener {
@@ -112,6 +118,9 @@ class RNOHMarker {
   static void logMarker(RNOHMarkerId, const char* tag, double timestamp);
 
   static void logMarker(RNOHMarkerId, size_t rnInstanceId, uint64_t value);
+  static void logMarker(const std::string& markerId, size_t rnInstanceId);
+
+  static void logMarker(RNOHMarkerId, size_t rnInstanceId);
 
   static void setAppStartTime(double startTime);
   static std::string harmonyMarkerIdToString(const RNOHMarkerId markerId);

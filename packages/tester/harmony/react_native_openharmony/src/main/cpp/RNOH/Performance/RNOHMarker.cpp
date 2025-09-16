@@ -29,6 +29,18 @@ void RNOHMarker::logMarker(RNOHMarkerId markerId, facebook::react::Tag tag) {
   logMarker(markerId, std::to_string(tag).c_str());
 }
 
+void RNOHMarker::logMarker(RNOHMarkerId markerId, size_t rnInstanceId) {
+  RNOHMarker::notifyListeners(
+      markerId,
+      rnInstanceId,
+      nullptr,
+      facebook::react::JSExecutor::performanceNow());
+}
+
+void RNOHMarker::logMarker(const std::string& markerId, size_t rnInstanceId) {
+  logMarker(harmonyMarkerIdForString(markerId), rnInstanceId);
+}
+
 void RNOHMarker::logMarker(RNOHMarkerId markerId, const char* tag) {
   notifyListeners(
       markerId, -1, tag, facebook::react::JSExecutor::performanceNow());
@@ -262,6 +274,18 @@ RNOHMarker::RNOHMarkerId RNOHMarker::harmonyMarkerIdForString(
   }
   if (markerId == "DOWNLOAD_END") {
     return RNOHMarkerId::DOWNLOAD_END;
+  }
+  if (markerId == "TURBO_MODULE_SETUP_START") {
+    return RNOHMarkerId::TURBO_MODULE_SETUP_START;
+  }
+  if (markerId == "TURBO_MODULE_SETUP_STOP") {
+    return RNOHMarkerId::TURBO_MODULE_SETUP_STOP;
+  }
+  if (markerId == "REACT_INSTANCE_INIT_START") {
+    return RNOHMarkerId::REACT_INSTANCE_INIT_START;
+  }
+  if (markerId == "REACT_INSTANCE_INIT_STOP") {
+    return RNOHMarkerId::REACT_INSTANCE_INIT_STOP;
   }
   throw std::invalid_argument("Unknown markerId: " + markerId);
 }

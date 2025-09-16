@@ -93,6 +93,11 @@ class ComponentInstanceRegistry : public ComponentInstance::Registry {
     m_componentInstanceByTag.erase(tag);
   }
 
+  size_t getComponentsCount() const {
+    assertMainThread();
+    return m_componentInstanceByTag.size();
+  }
+
  private:
   std::thread::id m_mainThreadId = std::this_thread::get_id();
   std::unordered_map<facebook::react::Tag, ComponentInstance::Shared>

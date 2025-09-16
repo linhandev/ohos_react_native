@@ -53,6 +53,13 @@ TurboModuleFactory::SharedTurboModule TurboModuleFactory::create(
   LOG(INFO) << "Creating Turbo Module: " << name;
   auto arkTSTurboModuleThread =
       this->findArkTSTurboModuleThread(name).value_or(TaskThread::JS);
+  if (arkTSTurboModuleThread == TaskThread::MAIN) {
+    if (auto weakSelf = instance.lock()) {
+      RNOHMarker::logMarker(
+          RNOHMarker::RNOHMarkerId::TURBO_MODULE_MAIN_THREAD,
+          weakSelf->getId());
+    }
+  }
   auto arkTSTurboModuleEnvironment =
       this->getArkTSTurboModuleEnvironmentByTaskThread(arkTSTurboModuleThread);
   Context ctx{

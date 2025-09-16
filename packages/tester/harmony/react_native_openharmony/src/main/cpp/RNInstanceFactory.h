@@ -55,7 +55,7 @@ class PackageToComponentInstanceFactoryDelegateAdapter
 };
 
 std::shared_ptr<RNInstanceInternal> createRNInstance(
-    int id,
+    size_t id,
     napi_env env,
     napi_env workerEnv,
     std::shared_ptr<TaskExecutor> taskExecutor,
@@ -76,11 +76,6 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
     std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
     std::string hspModuleName) {
-  PerformanceMetricsRegistry::getInstance().addNewRNInstanceMetrics(id);
-
-  RNOHMarker::logMarker(
-      RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_START, id);
-
   taskExecutor->setExceptionHandler(
       [weakExecutor = std::weak_ptr(taskExecutor),
        weakArkTsBridge = std::weak_ptr(arkTSBridge)](std::exception_ptr e) {
@@ -285,6 +280,5 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
   auto imageSourceResolver =
       std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
   componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
-  RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_STOP, id);
   return rnInstance;
 }

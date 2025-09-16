@@ -133,7 +133,8 @@ void JSFpsMonitor::JSProductivityMarkerListener::onMarkerReceived(
     const std::string& tag,
     double timestamp,
     uint64_t value) {
-  // Track JS work completion events that contribute to UI updates
+  // Track JS work completion events that contribute to UI updates. It assumes
+  // that the events below are sent by the currently active RNInstance.
   switch (markerId) {
     case RNOHMarker::RNOHMarkerId::FABRIC_COMMIT_START:
     case RNOHMarker::RNOHMarkerId::FABRIC_UPDATE_UI_MAIN_THREAD_START:

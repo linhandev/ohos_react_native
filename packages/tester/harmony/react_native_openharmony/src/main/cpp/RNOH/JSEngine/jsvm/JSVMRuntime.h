@@ -49,6 +49,8 @@ class JSVMRuntime : public Runtime {
 
   bool isInspectable();
 
+  JSVM_Status getHeapStatistics(JSVM_HeapStatistics* result);
+
  protected:
   Runtime::PointerValue* cloneSymbol(const Runtime::PointerValue* pv);
   Runtime::PointerValue* cloneBigInt(const Runtime::PointerValue* pv);

@@ -51,7 +51,7 @@ RNInstanceCAPI::~RNInstanceCAPI() noexcept {
   DLOG(INFO) << "~RNInstanceCAPI::stop";
 }
 
-int RNInstanceCAPI::getId() {
+size_t RNInstanceCAPI::getId() {
   return m_id;
 }
 

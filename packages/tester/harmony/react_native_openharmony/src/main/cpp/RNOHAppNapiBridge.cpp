@@ -202,6 +202,9 @@ static napi_value getNextRNInstanceId(
   return invoke(env, [&] {
     auto id = nextId++;
     DLOG(INFO) << "getNextRNInstanceId: " << id;
+    // We have to initialize PerformanceMetricsRegistry before
+    // REACT_INSTANCE_INIT_START is logged
+    PerformanceMetricsRegistry::getInstance().addNewRNInstanceMetrics(id);
     return arkJS.createInt(id);
   });
 }
@@ -331,7 +334,10 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     auto markerListener =
         std::make_unique<RNInstanceInternal::RNInstanceRNOHMarkerListener>(
             arkTSChannel);
-    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::APP_STARTUP_START);
+    RNOHMarker::logMarker(
+        RNOHMarker::RNOHMarkerId::APP_STARTUP_START, rnInstanceId);
+    RNOHMarker::logMarker(
+        RNOHMarker::RNOHMarkerId::INIT_JS_RUNTIME_START, rnInstanceId);
 #if USE_HERMES
     DLOG(INFO) << "Using HermesInstance";
     auto jsEngineProvider =
@@ -344,6 +350,8 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
             std::make_shared<facebook::react::EmptyReactNativeConfig>(),
             arkJS.getDynamic(args[11]));
 #endif
+    RNOHMarker::logMarker(
+        RNOHMarker::RNOHMarkerId::INIT_JS_RUNTIME_STOP, rnInstanceId);
     auto rnInstance = createRNInstance(
         rnInstanceId,
         env,
@@ -779,8 +787,8 @@ static napi_value logMarker(napi_env env, napi_callback_info info) {
     ArkJS arkJS(env);
     auto args = arkJS.getCallbackArgs(info, 2);
     auto markerId = arkJS.getString(args[0]);
-    auto rnInstanceId = std::to_string(arkJS.getDouble(args[1]));
-    RNOHMarker::logMarker(markerId, rnInstanceId.c_str());
+    size_t rnInstanceId = arkJS.getDouble(args[1]);
+    RNOHMarker::logMarker(markerId, rnInstanceId);
     return arkJS.getNull();
   });
 }
@@ -924,6 +932,40 @@ static napi_value registerFont(napi_env env, napi_callback_info info) {
     rnInstance->registerFont(fontName, fontPath);
 
     return arkJS.getUndefined();
+  });
+}
+
+static napi_value getComponentInstancesCount(
+    napi_env env,
+    napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.createDouble(0);
+    }
+    auto rnInstanceCAPI = std::static_pointer_cast<RNInstanceCAPI>(rnInstance);
+    if (!rnInstanceCAPI) {
+      return arkJS.createDouble(0);
+    }
+    size_t count = rnInstanceCAPI->getComponentInstancesCount();
+    return arkJS.createDouble(static_cast<double>(count));
+  });
+}
+
+static napi_value getJSRuntimeHeapUsage(napi_env env, napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    size_t instanceId = arkJS.getDouble(args[0]);
+    auto rnInstance = maybeGetInstanceById(instanceId);
+    if (!rnInstance) {
+      return arkJS.createDouble(0);
+    }
+    int64_t heapUsage = rnInstance->getJSRuntimeHeapUsage();
+    return arkJS.createDouble(static_cast<double>(heapUsage));
   });
 }
 
@@ -1190,6 +1232,22 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"setUIContext",
        nullptr,
        ::setUIContext,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"getComponentInstancesCount",
+       nullptr,
+       getComponentInstancesCount,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"getJSRuntimeHeapUsage",
+       nullptr,
+       getJSRuntimeHeapUsage,
        nullptr,
        nullptr,
        nullptr,

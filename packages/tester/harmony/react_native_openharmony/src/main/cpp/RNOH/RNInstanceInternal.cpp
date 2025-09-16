@@ -32,6 +32,13 @@
 #include "RNOH/TurboModuleProvider.h"
 #include "TextMeasurer.h"
 
+#if USE_HERMES
+#include <jsi/instrumentation.h>
+#else
+#include "RNOH/JSEngine/jsvm/JSVMRuntime.h"
+#include "ark_runtime/jsvm.h"
+#endif
+
 namespace rnoh {
 using namespace facebook;
 
@@ -327,8 +334,12 @@ void RNInstanceInternal::loadScript(
   try {
     RNOHMarker::logMarker(
         RNOHMarker::RNOHMarkerId::BUNDLE_SIZE, m_id, jsBundle->size());
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::RUN_JS_BUNDLE_START, m_id);
     m_reactInstance->loadScript(std::move(jsBundle), sourceURL);
     onFinish("");
+
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::RUN_JS_BUNDLE_STOP, m_id);
+    RNOHMarker::logMarker(RNOHMarker::RNOHMarkerId::APP_STARTUP_STOP, m_id);
   } catch (std::exception const& e) {
     try {
       std::rethrow_if_nested(e);
@@ -600,7 +611,7 @@ void RNInstanceInternal::unregisterFromInspector() {
  * @return descriptorWrapper
  */
 RNInstanceInternal::RNInstanceInternal(
-    int id,
+    size_t id,
     std::shared_ptr<facebook::react::ContextContainer> contextContainer,
     TurboModuleFactory turboModuleFactory,
     TaskExecutor::Shared taskExecutor,
@@ -683,6 +694,50 @@ void RNInstanceInternal::stopJsFpsMonitor() {
     m_jsFpsMonitor->setPublishCallback(nullptr);
     m_jsFpsMonitor.reset();
   }
+}
+
+/**
+ * @brief Returns JS runtime heap memory usage in bytes
+ */
+int64_t RNInstanceInternal::getHeapUsageFromJSRuntime(jsi::Runtime& rt) const {
+#if USE_HERMES
+  try {
+    auto heapInfo = rt.instrumentation().getHeapInfo(false);
+    auto it = heapInfo.find("hermes_allocatedBytes");
+    return (it != heapInfo.end()) ? it->second : 0;
+  } catch (...) {
+    DLOG(ERROR) << "Hermes getHeapInfo failed";
+    return 0;
+  }
+#else
+  try {
+    auto* jsvmRuntime = static_cast<jsvm::JSVMRuntime*>(&rt);
+    if (jsvmRuntime == nullptr) {
+      return 0;
+    }
+    JSVM_HeapStatistics stats;
+    return (jsvmRuntime->getHeapStatistics(&stats) == JSVM_OK)
+        ? static_cast<int64_t>(stats.usedHeapSize)
+        : 0;
+  } catch (...) {
+    DLOG(ERROR) << "JSVM getHeapStatistics failed";
+    return 0;
+  }
+#endif
+}
+
+int64_t RNInstanceInternal::getJSRuntimeHeapUsage() {
+  m_reactInstance->getBufferedRuntimeExecutor()([weakSelf = m_weakSelf](
+                                                    jsi::Runtime& rt) {
+    if (auto self =
+            std::static_pointer_cast<RNInstanceInternal>(weakSelf.lock())) {
+      self->m_cachedJSRuntimeHeapUsage = self->getHeapUsageFromJSRuntime(rt);
+    }
+  });
+
+  // Lamba passed to getBufferedRuntimeExecutor is executed async,
+  // so we are returning the previous value and scheduling an update
+  return m_cachedJSRuntimeHeapUsage;
 }
 
 } // namespace rnoh

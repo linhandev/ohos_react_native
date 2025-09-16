@@ -7,14 +7,19 @@
 
 import { UIFpsMonitor } from './UIFpsMonitor'
 import { RNOHLogger } from './RNOHLogger'
+import type {RNInstancePerformanceMetricsSnapshot} from "./NapiBridge.ts"
 import type { RNInstance } from './RNInstance';
 import { RNInstanceImpl } from './RNInstance';
+import { hidebug } from '@kit.PerformanceAnalysisKit';
 
 export interface FpsMetrics {
   uiFps: number;
   jsFps: number;
 }
 
+export const DEFAULT_PERFORMANCE_METRICS: RNInstancePerformanceMetricsSnapshot = {
+  BUNDLE_SIZE: 0, SCRIPT_DOWNLOAD: 0, SCRIPT_EXECUTION: 0, REACT_INSTANCE_INIT: 0, TURBO_MODULE_SETUP: 0, INIT_REACT_RUNTIME: 0, ROOT_VIEW_TTI: 0, TURBO_MODULE_MAIN_THREAD_COUNT: 0, APP_STARTUP: 0
+}
 
 export class PerfMonitorController {
   private uiFpsMonitor: UIFpsMonitor
@@ -69,8 +74,44 @@ export class PerfMonitorController {
     }
   }
 
+  public getAppPss(): number{
+    try {
+      return Number(hidebug.getPss())
+    } catch (error) {
+      this.logger.error(`Failed to get appPss: ${error}`);
+      return 0;
+    }
+  }
+
   public getFpsMetrics(): FpsMetrics {
     return { uiFps: this.uiFps, jsFps: this.jsFps }
+  }
+
+  public getComponentsCount(): number {
+    try {
+     return this.rnInstance.getComponentInstancesCount();
+    } catch (error) {
+      this.logger.error(`Failed to get component instance count: ${error}`);
+      return 0;
+    }
+  }
+
+  public getJSRuntimeHeapUsage(): number {
+    try {
+      return this.rnInstance.getJSRuntimeHeapUsage();
+    } catch (error) {
+      this.logger.error(`Failed to get runtime heap usage: ${error}`);
+      return 0;
+    }
+  }
+
+  public getPerformanceMetrics(): RNInstancePerformanceMetricsSnapshot {
+    try {
+      return this.rnInstance.getPerformanceMetricsSnapshot();
+    }catch(error){
+      this.logger.error(`Failed to get performance metrics: ${error}`);
+      return DEFAULT_PERFORMANCE_METRICS;
+    }
   }
 
 }

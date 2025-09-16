@@ -560,6 +560,7 @@ export class RNInstanceImpl implements RNInstance {
     private jsvmInitOptions?: ReadonlyArray<JSVMInitOption>,
     private hspModuleName?: string,
   ) {
+    this.logMarker("REACT_INSTANCE_INIT_START")
     this.defaultProps = { concurrentRoot: !disableConcurrentRoot };
     this.logger = injectedLogger.clone('RNInstance');
     this.frameNodeFactoryRef = { frameNodeFactory: null };
@@ -701,6 +702,7 @@ export class RNInstanceImpl implements RNInstance {
       this.hspModuleName ?? ""
     );
     stopTracing();
+    this.logMarker("REACT_INSTANCE_INIT_STOP")
   }
 
   private onCppMessage(type: string, payload: any) {
@@ -745,6 +747,7 @@ export class RNInstanceImpl implements RNInstance {
   }
 
   private async processPackages(packages: RNPackage[]) {
+    this.logMarker("TURBO_MODULE_SETUP_START")
     const logger = this.logger.clone('processPackages');
     const stopTracing = logger.startTracing();
     const turboModuleContext = this.createUITurboModuleContext(this);
@@ -835,6 +838,7 @@ export class RNInstanceImpl implements RNInstance {
         });
     }
     stopTracing();
+    this.logMarker("TURBO_MODULE_SETUP_STOP")
     return result;
   }
 
@@ -1265,5 +1269,29 @@ export class RNInstanceImpl implements RNInstance {
  */
   public stopJsFpsMonitor(): void {
     this.napiBridge.stopJsFpsMonitor(this.id);
+  }
+
+  /**
+ * @internal
+ * Called by PerfMonitorController when PerfMonitor is toggled
+ */
+  public getComponentInstancesCount(): number {
+    return this.napiBridge.getComponentInstancesCount(this.id);
+  }
+
+  /**
+ * @internal
+ * Called by PerfMonitorController to get runtime heap usage
+ */
+  public getJSRuntimeHeapUsage(): number {
+    return this.napiBridge.getJSRuntimeHeapUsage(this.id);
+  }
+
+  /**
+ * @internal
+ * Called by PerfMonitorController to get runtime heap usage
+ */
+  public getPerformanceMetricsSnapshot() {
+    return this.napiBridge.getPerformanceMetricsSnapshot(this.id);
   }
 }
