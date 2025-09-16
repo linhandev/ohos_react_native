@@ -7,7 +7,7 @@ import {
   AlertManagerTurboModule
 } from '@rnoh/react-native-openharmony/src/main/ets/RNOHCorePackage/turboModules/AlertManagerTurboModule';
 import { UITurboModuleContext } from '@rnoh/react-native-openharmony/ts';
-import { TM } from "@rnoh/react-native-openharmony/generated/ts"
+import { TM } from "./generated/ts"
 
 @Sendable
 class RNVersionReaderParams {

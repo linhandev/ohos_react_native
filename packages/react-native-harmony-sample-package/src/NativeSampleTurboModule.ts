@@ -1,5 +1,5 @@
 import { TurboModuleRegistry } from 'react-native';
-import { Spec } from './specs/v2/NativeGeneratedSampleTurboModule';
+import { Spec } from './specs/turbo-modules/NativeGeneratedSampleTurboModule';
 
 // Those types are not supported by codegen: null, any, never
 interface SampleTurboModule extends Spec {

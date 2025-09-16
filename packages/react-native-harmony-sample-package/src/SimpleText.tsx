@@ -1,5 +1,5 @@
 import React from 'react';
-import SimpleTextNativeComponent from './specs/v2/SimpleTextNativeComponent';
+import SimpleTextNativeComponent from './specs/cpp-components/SimpleTextNativeComponent';
 import { ViewProps } from 'react-native';
 
 type SimpleTextProps = {

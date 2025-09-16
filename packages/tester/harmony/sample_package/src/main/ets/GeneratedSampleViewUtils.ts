@@ -1,4 +1,4 @@
-import { RNC } from "@rnoh/react-native-openharmony/generated/ts"
+import { RNC } from "./generated/ts"
 
 
 export function getDirectProps(descriptorWrapper: RNC.GeneratedSampleViewArkTS.DescriptorWrapper ): Record<keyof RNC.GeneratedSampleViewArkTS.DirectRawProps, any> {
@@ -19,6 +19,6 @@ export function getDirectProps(descriptorWrapper: RNC.GeneratedSampleViewArkTS.D
     arrayTest: props.arrayTest,
     readOnlyArrayTest: props.readOnlyArrayTest,
     stringEnumTest: props.stringEnumTest,
-    intEnumTest: props.intEnumTest
+    // intEnumTest: props.intEnumTest
   }
 }

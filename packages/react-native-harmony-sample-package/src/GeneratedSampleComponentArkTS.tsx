@@ -3,7 +3,7 @@ import GeneratedSampleNativeComponent, {
   OutgoingData,
   IncomingData,
   Commands,
-} from './specs/v1/GeneratedSampleNativeComponent';
+} from './specs/arkts-components/GeneratedSampleNativeComponent';
 import { processColor } from 'react-native';
 
 export type GeneratedSampleComponentArkTSRef = {

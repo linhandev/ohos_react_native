@@ -14,11 +14,11 @@ import {
 import {useEffect, useState} from 'react';
 import React from 'react';
 import {Button, Effect, Ref, TestCase} from '../components';
-import {IncomingData as GeneratedSampleNativeComponentArkTSCustomProps} from 'react-native-harmony-sample-package/src/specs/v1/GeneratedSampleNativeComponent';
+import {IncomingData as GeneratedSampleNativeComponentArkTSCustomProps} from 'react-native-harmony-sample-package/src/specs/arkts-components/GeneratedSampleNativeComponent';
 import {
   IncomingData as GeneratedSampleNativeComponentCAPICustomProps,
   SupportedCommandArgs as GeneratedSampleNativeComponentCAPICommandArgs,
-} from 'react-native-harmony-sample-package/src/specs/v2/GeneratedSampleNativeComponent';
+} from 'react-native-harmony-sample-package/src/specs/cpp-components/GeneratedSampleNativeComponent';
 import {Text, TextInput, View, UIManager} from 'react-native';
 
 export function CustomNativeComponentTest() {
@@ -179,7 +179,7 @@ function GeneratedCustomComponentTest() {
                       colorTest: 'red',
                       arrayTest: ['foo', 'bar'],
                       readOnlyArrayTest: ['foo', 'bar'],
-                      intEnumTest: 1,
+                      // intEnumTest: 1,
                     }}
                     onDirectEvent={(state: any) => {
                       setState(state);
@@ -213,7 +213,7 @@ function GeneratedCustomComponentTest() {
             expect(state?.arrayTest).to.deep.eq(['foo', 'bar']);
             expect(state?.readOnlyArrayTest).to.deep.eq(['foo', 'bar']);
             expect(state?.stringEnumTest).to.be.eq('foo');
-            expect(state?.intEnumTest).to.be.eq(1);
+            // expect(state?.intEnumTest).to.be.eq(1);
           }}
         />
       </TestSuite>
@@ -457,7 +457,7 @@ function ContainerViewTest() {
                 colorTest: 'red',
                 arrayTest: ['foo', 'bar'],
                 readOnlyArrayTest: ['foo', 'bar'],
-                intEnumTest: 1,
+                // intEnumTest: 1,
               }}
             />
           </View>

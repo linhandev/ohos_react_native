@@ -72,10 +72,19 @@ export async function findChangedCppFiles(): Promise<Set<string>> {
 }
 
 export async function findChangedFiles(): Promise<Set<string>> {
-  const changedFiles = process.env.PR_FILE_PATHS; // provided by ci runner
-  if (changedFiles) {
-    return new Set(JSON.parse(changedFiles)['ohos_react_native']);
+  const changeInfo = process.env.CHANGE_INFO; // provided by ci runner
+  if (changeInfo) {
+    const changedFileList = JSON.parse(changeInfo)['third_party/ohos_react_native']['changed_file_list'];
+    const renameFiles = changedFileList['rename']?.map((res: string[]) => res[1]) || [];
+    const changedFiles = [
+      ...changedFileList['modified'] ?? [],
+      ...renameFiles,
+      ...changedFileList['added'] ?? []
+    ];
+    console.log(`changedFiles: \n ${changedFiles}`);
+    return new Set(changedFiles);
   }
+  console.log('process.env.CHANGE_INFO is undefined');
 
   const currentBranch = execSync('git branch --show-current').toString().trim();
   if (!currentBranch) {
@@ -84,7 +93,7 @@ export async function findChangedFiles(): Promise<Set<string>> {
     );
   }
   try {
-    const upstreamDiffCmd = 'git diff --name-only @{u} HEAD';
+    const upstreamDiffCmd = 'git diff --name-only --diff-filter=d @{u} HEAD';
     return new Set(await execGitDiffCommand(upstreamDiffCmd));
   } catch {
     const revList = execSync(

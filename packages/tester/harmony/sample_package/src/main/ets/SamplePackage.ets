@@ -8,7 +8,7 @@ import {
   WorkerTurboModuleContext,
   ComponentBuilderContext
 } from '@rnoh/react-native-openharmony';
-import { RNC, TM } from "@rnoh/react-native-openharmony/generated/ts"
+import { RNC, TM } from "./generated/ts"
 import { SampleTurboModule } from './SampleTurboModule';
 import { SampleWorkerTurboModule } from './SampleWorkerTurboModule';
 import { RNC as RNC2, TM as TM2 } from "./generated"

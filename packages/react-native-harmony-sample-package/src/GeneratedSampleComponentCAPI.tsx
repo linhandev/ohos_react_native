@@ -5,7 +5,7 @@ import GeneratedSampleNativeComponent, {
   ArgsOfEmitCommandArgs,
   SupportedCommandArgs,
   Commands,
-} from './specs/v2/GeneratedSampleNativeComponent';
+} from './specs/cpp-components/GeneratedSampleNativeComponent';
 import { processColor } from 'react-native';
 
 export type GeneratedSampleComponentCAPIRef = {

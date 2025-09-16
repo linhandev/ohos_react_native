@@ -3,13 +3,13 @@ export * from "./GeneratedSampleComponentArkTS";
 export * from "./GeneratedSampleComponentCAPI";
 export * from "./SimpleText";
 export * from "./CodegenLibSampleComponent";
-import NativeContainerView from "./specs/v1/NativeContainerView";
+import NativeContainerView from "./specs/arkts-components/NativeContainerView";
 import NativeSampleTurboModule from "./NativeSampleTurboModule";
-import NativeGeneratedSampleTurboModule from "./specs/v2/NativeGeneratedSampleTurboModule";
-import NativeSampleWorkerTurboModule from "./specs/v2/NativeSampleWorkerTurboModule";
-import NativeCodegenLibSampleTurboModule from "./specs/codegen-lib/NativeCodegenLibSampleModule";
-import BlankComponent from "./specs/v2/BlankComponent";
-import NativeBindSheetView from "./specs/v1/NativeBindSheetView"
+import NativeGeneratedSampleTurboModule from "./specs/turbo-modules/NativeGeneratedSampleTurboModule";
+import NativeSampleWorkerTurboModule from "./specs/turbo-modules/NativeSampleWorkerTurboModule";
+import NativeCodegenLibSampleTurboModule from "./specs/turbo-modules/NativeCodegenLibSampleModule";
+import BlankComponent from "./specs/cpp-components/BlankComponent";
+import NativeBindSheetView from "./specs/arkts-components/NativeBindSheetView"
 
 export const SampleTurboModule = NativeSampleTurboModule;
 export const GeneratedSampleTurboModule = NativeGeneratedSampleTurboModule;

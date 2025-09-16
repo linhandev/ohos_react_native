@@ -9,7 +9,7 @@ import {
   SomeEnum1,
   SomeEnum2,
   SomeEnum3,
-} from 'react-native-sample-package/src/specs/v2/NativeGeneratedSampleTurboModule';
+} from 'react-native-sample-package/src/specs/turbo-modules/NativeGeneratedSampleTurboModule';
 import {Button, TestCase} from '../components';
 import {ScrollView, Platform, DeviceEventEmitter} from 'react-native';
 

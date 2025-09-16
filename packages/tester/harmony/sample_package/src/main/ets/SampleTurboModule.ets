@@ -1,8 +1,8 @@
 import { RNOHError, Tag } from '@rnoh/react-native-openharmony/ts';
-import { TM } from "@rnoh/react-native-openharmony/generated/ts"
 import { EtsUITurboModule } from '@rnoh/react-native-openharmony/ets';
 import { ErrorData } from '@rnoh/react-native-openharmony';
 import { WorkerTaskRunnable, AnyThreadRNInstance } from '@rnoh/react-native-openharmony/src/main/ets/RNOH';
+import { TM } from "./generated/ts";
 
 interface Constants {
   const1: boolean,

@@ -1,6 +1,6 @@
 import React from 'react';
-import ArkTSNativeComponent from './specs/codegen-lib/CodegenLibArkTSSampleNativeComponent';
-import CppNativeComponent from './specs/codegen-lib/CodegenLibCppSampleNativeComponent';
+import ArkTSNativeComponent from './specs/arkts-components/CodegenLibArkTSSampleNativeComponent';
+import CppNativeComponent from './specs/cpp-components/CodegenLibCppSampleNativeComponent';
 import { ViewStyle } from 'react-native';
 
 export function CodegenLibSampleComponent({

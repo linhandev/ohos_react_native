@@ -1,3 +1,9 @@
+/**
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { ViewProps, HostComponent, ProcessedColorValue } from 'react-native';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
@@ -24,7 +30,7 @@ export interface OutgoingAndIncomingData {
   objectTest: { foo: { bar: string } };
   arrayTest: string[];
   stringEnumTest?: WithDefault<'foo' | 'bar', 'foo'>; // codegen restriction: A default enum value is required
-  intEnumTest?: WithDefault<0 | 1, 0>;
+  // intEnumTest?: WithDefault<0 | 1, 0>; // codegen bug on RN side: crashes with input.split is not a function
 }
 
 export interface OutgoingData extends OutgoingAndIncomingData {

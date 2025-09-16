@@ -1,5 +1,5 @@
 import { RNComponentContext, RNViewBase } from '@rnoh/react-native-openharmony';
-import { RNC } from "@rnoh/react-native-openharmony/generated"
+import { RNC } from "./generated"
 import { getDirectProps } from "./GeneratedSampleViewUtils"
 
 @Component
