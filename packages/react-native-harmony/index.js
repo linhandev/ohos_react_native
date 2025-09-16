@@ -1,3 +1,19 @@
+if (global.window === undefined) {
+  /**
+   * Some RN framework uses RNOH 72 as a dependency and users of that framework don't install RNOH directly.
+   * RN upstream code integration approach changed in RNOH 77, and RNOH must be installed directly.
+   *
+   * That RN framework SHOULD NOT use RNOH as a dependency (RNOH should be peerDependency). React Native expects
+   * Out of Tree platforms to be directly installed in application projects. There's no guarantee that preserving
+   * this behavior will be possible in future RN versions.
+   *
+   * If RN doesn't recognize RNOH as an OOT platform, serializer::getModulesRunBeforeMainModule won't be used.
+   * Part of the RN OOT recognition logic depends on dependencies listed in application's package.json
+   * (https://github.com/react-native-community/cli/blob/main/packages/cli-config/src/findDependencies.ts).
+   */
+  require('./Libraries/Core/InitializeCore');
+}
+
 module.exports = {
   get AccessibilityInfo() {
     return require('./Libraries/Components/AccessibilityInfo/AccessibilityInfo')
