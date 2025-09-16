@@ -325,6 +325,8 @@ void RNInstanceInternal::loadScript(
   }
 
   try {
+    RNOHMarker::logMarker(
+        RNOHMarker::RNOHMarkerId::BUNDLE_SIZE, m_id, jsBundle->size());
     m_reactInstance->loadScript(std::move(jsBundle), sourceURL);
     onFinish("");
   } catch (std::exception const& e) {
@@ -517,10 +519,12 @@ RNInstanceInternal::RNInstanceRNOHMarkerListener::RNInstanceRNOHMarkerListener(
     ArkTSChannel::Weak arkTSChannel)
     : m_arkTSChannel(arkTSChannel){};
 
-void RNInstanceInternal::RNInstanceRNOHMarkerListener::logMarker(
+void RNInstanceInternal::RNInstanceRNOHMarkerListener::onMarkerReceived(
     const RNOHMarker::RNOHMarkerId markerId,
+    size_t rnInstanceId,
     const std::string& tag,
-    const double timestamp) {
+    double timestamp,
+    uint64_t value) {
   auto arkTSChannel = m_arkTSChannel.lock();
   if (!arkTSChannel) {
     return;

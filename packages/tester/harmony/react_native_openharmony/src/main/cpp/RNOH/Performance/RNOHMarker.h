@@ -73,17 +73,20 @@ class RNOHMarker {
     FABRIC_BATCH_EXECUTION_START,
     FABRIC_BATCH_EXECUTION_END,
     FABRIC_UPDATE_UI_MAIN_THREAD_START,
-    FABRIC_UPDATE_UI_MAIN_THREAD_END
+    FABRIC_UPDATE_UI_MAIN_THREAD_END,
+    BUNDLE_SIZE
   };
 
   class RNOHMarkerListener {
    public:
     using Unique = std::unique_ptr<RNOHMarkerListener>;
 
-    virtual void logMarker(
+    virtual void onMarkerReceived(
         RNOHMarkerId markerId,
+        size_t rnInstanceId,
         const std::string& tag,
-        double timestamp) = 0;
+        double timestamp,
+        uint64_t value) = 0;
 
     RNOHMarkerListener(bool autoRegister = true) {
       if (autoRegister) {
@@ -107,10 +110,24 @@ class RNOHMarker {
   static void logMarker(const std::string& markerId, const char* tag);
   static void logMarker(ReactMarker::ReactMarkerId, const char* tag);
   static void logMarker(RNOHMarkerId, const char* tag, double timestamp);
+
+  static void logMarker(RNOHMarkerId, size_t rnInstanceId, uint64_t value);
+
   static void setAppStartTime(double startTime);
   static std::string harmonyMarkerIdToString(const RNOHMarkerId markerId);
 
  private:
+  static void notifyListeners(
+      RNOHMarkerId,
+      size_t rnInstanceId,
+      const char* tag,
+      uint64_t value);
+  static void notifyListeners(
+      RNOHMarkerId,
+      size_t rnInstanceId,
+      const char* tag,
+      double timestamp);
+
   static inline double sAppStartTime = 0.0;
   static double getAppStartTime();
   static RNOHMarkerId harmonyMarkerIdForReactMarkerId(

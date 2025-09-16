@@ -45,10 +45,12 @@ class RNInstanceInternal
    public:
     RNInstanceRNOHMarkerListener(ArkTSChannel::Weak arkTSChannel);
 
-    void logMarker(
+    void onMarkerReceived(
         RNOHMarker::RNOHMarkerId markerId,
+        size_t rnInstanceId,
         const std::string& tag,
-        double timestamp) override;
+        double timestamp,
+        uint64_t value) override;
 
    private:
     ArkTSChannel::Weak m_arkTSChannel;

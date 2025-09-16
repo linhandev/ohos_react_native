@@ -127,10 +127,12 @@ JSFpsMonitor::JSProductivityMarkerListener::JSProductivityMarkerListener(
     JSFpsMonitor& monitor)
     : RNOHMarker::RNOHMarkerListener(true), parentMonitor(monitor) {}
 
-void JSFpsMonitor::JSProductivityMarkerListener::logMarker(
+void JSFpsMonitor::JSProductivityMarkerListener::onMarkerReceived(
     RNOHMarker::RNOHMarkerId markerId,
+    size_t rnInstanceId,
     const std::string& tag,
-    double timestamp) {
+    double timestamp,
+    uint64_t value) {
   // Track JS work completion events that contribute to UI updates
   switch (markerId) {
     case RNOHMarker::RNOHMarkerId::FABRIC_COMMIT_START:

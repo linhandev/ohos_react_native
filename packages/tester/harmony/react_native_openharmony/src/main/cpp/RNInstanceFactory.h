@@ -29,6 +29,7 @@
 #include "RNOH/MountingManagerCAPI.h"
 #include "RNOH/MutationsToNapiConverter.h"
 #include "RNOH/PackageProvider.h"
+#include "RNOH/Performance/PerformanceMetricsRegistry.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNInstance.h"
 #include "RNOH/RNInstanceCAPI.h"
@@ -75,6 +76,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
     std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
     std::string hspModuleName) {
+  PerformanceMetricsRegistry::getInstance().addNewRNInstanceMetrics(id);
+
   RNOHMarker::logMarker(
       RNOHMarker::RNOHMarkerId::REACT_INSTANCE_INIT_START, id);
 

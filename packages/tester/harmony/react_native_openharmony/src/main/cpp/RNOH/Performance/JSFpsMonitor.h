@@ -36,10 +36,12 @@ class JSFpsMonitor {
   class JSProductivityMarkerListener : public RNOHMarker::RNOHMarkerListener {
    public:
     explicit JSProductivityMarkerListener(JSFpsMonitor& monitor);
-    void logMarker(
+    void onMarkerReceived(
         RNOHMarker::RNOHMarkerId markerId,
+        size_t rnInstanceId,
         const std::string& tag,
-        double timestamp) override;
+        double timestamp,
+        uint64_t value) override;
 
    private:
     JSFpsMonitor& parentMonitor;

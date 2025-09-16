@@ -15,10 +15,12 @@ HiTraceRNOHMarkerListener& HiTraceRNOHMarkerListener::getInstance() {
   return l;
 }
 
-void HiTraceRNOHMarkerListener::logMarker(
+void HiTraceRNOHMarkerListener::onMarkerReceived(
     const RNOHMarkerId markerId,
+    size_t rnInstanceId,
     const std::string& tag,
-    const double timestamp) {
+    double timestamp,
+    uint64_t value) {
   switch (markerId) {
     case RNOHMarkerId::RUN_JS_BUNDLE_START:
       logMarkerStart("RUN_JS_BUNDLE", tag);

@@ -28,6 +28,10 @@ import { JsBundle } from './JSBundleProvider';
 import { RNOHErrorStack } from './RNOHError';
 import { UIContext } from '@kit.ArkUI';
 
+export interface  RNInstancePerformanceMetricsSnapshot {
+  BUNDLE_SIZE: number; // Size of bundle in bytes
+  // TODO: rest
+}
 
 export type CppFeatureFlag = "PARTIAL_SYNC_OF_DESCRIPTOR_REGISTRY" | "WORKER_THREAD_ENABLED"
 
@@ -45,6 +49,8 @@ type Result<TOK = null> = {
   ok: null,
   err: RawRNOHError
 }
+
+
 
 export interface ArkTSBridgeHandler {
   getDisplayMetrics: () => DisplayMetrics
@@ -407,6 +413,11 @@ export class NapiBridge {
 
   stopJsFpsMonitor(instanceId: number): void {
     const result = this.libRNOHApp?.stopJsFpsMonitor(instanceId)
+
+  }
+
+  getPerformanceMetricsSnapshot(rnInstanceId: number): RNInstancePerformanceMetricsSnapshot {
+    const result = this.libRNOHApp?.getPerformanceMetricsSnapshot(rnInstanceId)
     return this.unwrapResult(result)
   }
 }

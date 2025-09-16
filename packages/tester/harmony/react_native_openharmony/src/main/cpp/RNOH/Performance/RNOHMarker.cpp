@@ -30,7 +30,8 @@ void RNOHMarker::logMarker(RNOHMarkerId markerId, facebook::react::Tag tag) {
 }
 
 void RNOHMarker::logMarker(RNOHMarkerId markerId, const char* tag) {
-  logMarker(markerId, tag, facebook::react::JSExecutor::performanceNow());
+  notifyListeners(
+      markerId, -1, tag, facebook::react::JSExecutor::performanceNow());
 }
 
 void RNOHMarker::logMarker(const std::string& markerId, const char* tag) {
@@ -44,12 +45,38 @@ void RNOHMarker::logMarker(
 }
 
 void RNOHMarker::logMarker(
+    RNOHMarker::RNOHMarkerId markerId,
+    const char* tag,
+    double timestamp) {
+  RNOHMarker::notifyListeners(markerId, -1, tag, timestamp);
+}
+
+void RNOHMarker::logMarker(
+    RNOHMarker::RNOHMarkerId markerId,
+    size_t rnInstanceId,
+    uint64_t value) {
+  RNOHMarker::notifyListeners(markerId, rnInstanceId, nullptr, value);
+}
+
+void RNOHMarker::notifyListeners(
     RNOHMarkerId markerId,
+    size_t rnInstanceId,
     const char* tag,
     double timestamp) {
   auto tagStr = tag == nullptr ? "" : std::string(tag);
   for (auto& listener : listeners) {
-    listener->logMarker(markerId, tagStr, timestamp);
+    listener->onMarkerReceived(markerId, rnInstanceId, tagStr, timestamp, 0);
+  }
+}
+
+void RNOHMarker::notifyListeners(
+    RNOHMarkerId markerId,
+    size_t rnInstanceId,
+    const char* tag,
+    uint64_t value) {
+  auto tagStr = tag == nullptr ? "" : std::string(tag);
+  for (auto& listener : listeners) {
+    listener->onMarkerReceived(markerId, rnInstanceId, tagStr, 0, value);
   }
 }
 

@@ -15,10 +15,12 @@ class HiTraceRNOHMarkerListener : public RNOHMarker::RNOHMarkerListener {
   HiTraceRNOHMarkerListener() : RNOHMarkerListener(false) {}
 
   static HiTraceRNOHMarkerListener& getInstance();
-  void logMarker(
+  void onMarkerReceived(
       RNOHMarkerId markerId,
+      size_t rnInstanceId,
       const std::string& tag,
-      double timestamp) override;
+      double timestamp,
+      uint64_t value) override;
 
  private:
   void logMarker(const std::string& marker, const std::string& tag);

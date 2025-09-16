@@ -24,6 +24,7 @@
 #include "RNOH/JSInspectorHostTargetDelegate.h"
 #include "RNOH/LogSink.h"
 #include "RNOH/Performance/HiTraceRNOHMarkerListener.h"
+#include "RNOH/Performance/PerformanceMetricsRegistry.h"
 #include "RNOH/Performance/RNOHMarker.h"
 #include "RNOH/RNFeatureFlags.h"
 #include "RNOH/RNInstance.h"
@@ -107,6 +108,8 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
   static int nextEnvId = 0;
   return invoke(env, [&] {
     RNOHMarker::setLogMarkerIfNeeded();
+
+    RNOHMarker::addListener(&PerformanceMetricsRegistry::getInstance());
 #ifdef WITH_HITRACE_REACT_MARKER
     RNOHMarker::addListener(&HiTraceRNOHMarkerListener::getInstance());
 #endif
@@ -427,6 +430,8 @@ static napi_value onDestroyRNInstance(napi_env env, napi_callback_info info) {
       instance = extractOrDefault(RN_INSTANCE_BY_ID, rnInstanceId, nullptr);
     }
     if (instance != nullptr) {
+      PerformanceMetricsRegistry::getInstance().removeRNInstanceMetrics(
+          rnInstanceId);
       auto taskExecutor = instance->getTaskExecutor();
       // Unregister the instance from the inspector synchronously to avoid
       // relying on the instance destructor, which is scheduled on the JS thread
@@ -922,6 +927,23 @@ static napi_value registerFont(napi_env env, napi_callback_info info) {
   });
 }
 
+static napi_value getPerformanceMetricsSnapshot(
+    napi_env env,
+    napi_callback_info info) {
+  return invoke(env, [&] {
+    ArkJS arkJS(env);
+    auto args = arkJS.getCallbackArgs(info, 1);
+    size_t rnInstanceId = arkJS.getDouble(args[0]);
+
+    auto optSnapshot =
+        PerformanceMetricsRegistry::getInstance().getSnapshot(rnInstanceId);
+    if (!optSnapshot.has_value()) {
+      return arkJS.getUndefined();
+    }
+    return arkJS.createFromDynamic(*optSnapshot);
+  });
+}
+
 EXTERN_C_START
 static napi_value Init(napi_env env, napi_value exports) {
   napi_property_descriptor desc[] = {
@@ -1168,6 +1190,14 @@ static napi_value Init(napi_env env, napi_value exports) {
       {"setUIContext",
        nullptr,
        ::setUIContext,
+       nullptr,
+       nullptr,
+       nullptr,
+       napi_default,
+       nullptr},
+      {"getPerformanceMetricsSnapshot",
+       nullptr,
+       ::getPerformanceMetricsSnapshot,
        nullptr,
        nullptr,
        nullptr,
