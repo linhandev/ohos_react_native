@@ -1,5 +1,28 @@
 # Changelog
 
+## Internal: v0.77.23
+- feat: add performance metrics to RNPerfMonitorView,([97b7b5167](https://gitcode.com/openharmony-sig/ohos_react_native/commit/97b7b51679ab959b6f1947891aeee1896a0a61e3))
+- docx: Add usage guide for HttpClient and caPathProvider in RNOH Worker threads,([fe5751ef6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fe5751ef6a53188f4066716f612f4e919b640116))
+- Fix image resizing,([f775d6e84](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f775d6e84906bc8db2f1c9ff02889e3fc65f99e4))
+- feat: extending rnoh marker,([01bf05c6b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01bf05c6bb38a98cbab79296f81b07850f1e7c7a))
+- feat: support installing RNOH as framework dependency (not recommended),([bcd1ac577](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bcd1ac5779010089e054127ffd57a220735a7de4))
+- refactor: remove the codegen-harmony configuration from sample-package.,([146958623](https://gitcode.com/openharmony-sig/ohos_react_native/commit/146958623e492ad2a0adffea38e70a1a7789a3b0))
+- revert(interop-61): "fix displaying images downloaded from Metro",([dd7cb758a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dd7cb758a7a28e1c696f4b27b6f79a16853bd4e7))
+- fix: receive negative offsetY in onScroll during pull to refresh to match iOS,([49eab9617](https://gitcode.com/openharmony-sig/ohos_react_native/commit/49eab96173e8051556c954f4eb7d3b17b43d8954))
+- feat: add PerfMonitor to DevMenu,([751705c9d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/751705c9d3209e7385660850661e760159fc2a59))
+- chore: move from Router to Navigation in multi_surface module,([f1c66c546](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f1c66c546072bf76b43be77bd988c606a086534b))
+- feat(interop-61): support Picker component,([5a189458b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5a189458be7494aa99f7d9d46d87f6c044413b03))
+- fix: update ScrollViewComponentInstance to handle more frequent updates,([2b0d8c2b1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2b0d8c2b1dc568412e1f0029f165713bfe196eb5))
+- Fix tintColor implementation,([6f0eacf9a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6f0eacf9a8f9fcd3657942cfdd0059f586dc8755))
+- docs: Support placing images in the hsp resource directory,([de4342e08](https://gitcode.com/openharmony-sig/ohos_react_native/commit/de4342e0829d3a5430af3c227c2d4f993f36a5f1))
+- feat: Support placing assets in the resfile of hsp resource directory,([b22d976bb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b22d976bb5d7d8374a6988ca1dc5992bfdd21266))
+- feat: Support building the react_native_openharmony release HAR package and bytecode HAR package.,([50080a588](https://gitcode.com/openharmony-sig/ohos_react_native/commit/50080a588d7990727f9d5a3e38556bcbfd093396))
+- feat: Support custom caPath,([e8e998990](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8e998990d741bdfd76ddbe847cd73f38b247eba))
+- feat: Add a new --ets-output-path parameter to codegen-harmony.,([b2bd12267](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b2bd122675f2dd6c07e6d3926b0a6b9ff5ab757c))
+- [doc]: Supplement the usage instructions for the release har.,([a44dfe1e2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a44dfe1e295687c989470f310adf4522dea91af9))
+- Add metro-react-native-babel-preset for interop61 tester in package.json,([0fd562902](https://gitcode.com/openharmony-sig/ohos_react_native/commit/0fd562902533aac0363753b53a9d60b842625b2d))
+- [chore]: updated to version 6.0.0.508(0.77.22),([3b32ab661](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3b32ab66101a2765f6f12898954787786849b1ff))
+
 ## Internal: v0.77.22
 - revert:fix:Fixed the issue where the content of textInput would be missing when the delete key is long-pressed in cases where the value is fixed and unchanging.,([86f3498a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86f3498a8e12e51ab3e2f4dd770c755fa3c26581))
 - fix(61): CheckBox default disabled color,([22c58fe61](https://gitcode.com/openharmony-sig/ohos_react_native/commit/22c58fe615bc38bef831e11e3e342ce10cc2a9ce))

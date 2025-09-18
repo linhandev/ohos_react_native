@@ -1,5 +1,18 @@
 # Changelog
 
+## Internal: v0.77.23
+- feat: add performance metrics to RNPerfMonitorView,([97b7b5167](https://gitcode.com/openharmony-sig/ohos_react_native/commit/97b7b51679ab959b6f1947891aeee1896a0a61e3))
+- Fix image resizing,([f775d6e84](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f775d6e84906bc8db2f1c9ff02889e3fc65f99e4))
+- feat: extending rnoh marker,([01bf05c6b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/01bf05c6bb38a98cbab79296f81b07850f1e7c7a))
+- fix: receive negative offsetY in onScroll during pull to refresh to match iOS,([49eab9617](https://gitcode.com/openharmony-sig/ohos_react_native/commit/49eab96173e8051556c954f4eb7d3b17b43d8954))
+- feat: add PerfMonitor to DevMenu,([751705c9d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/751705c9d3209e7385660850661e760159fc2a59))
+- fix: update ScrollViewComponentInstance to handle more frequent updates,([2b0d8c2b1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2b0d8c2b1dc568412e1f0029f165713bfe196eb5))
+- Fix tintColor implementation,([6f0eacf9a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6f0eacf9a8f9fcd3657942cfdd0059f586dc8755))
+- feat: Support placing assets in the resfile of hsp resource directory,([b22d976bb](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b22d976bb5d7d8374a6988ca1dc5992bfdd21266))
+- feat: Support building the react_native_openharmony release HAR package and bytecode HAR package.,([50080a588](https://gitcode.com/openharmony-sig/ohos_react_native/commit/50080a588d7990727f9d5a3e38556bcbfd093396))
+- feat: Support custom caPath,([e8e998990](https://gitcode.com/openharmony-sig/ohos_react_native/commit/e8e998990d741bdfd76ddbe847cd73f38b247eba))
+- [chore]: updated to version 6.0.0.508(0.77.22),([3b32ab661](https://gitcode.com/openharmony-sig/ohos_react_native/commit/3b32ab66101a2765f6f12898954787786849b1ff))
+
 ## Internal: v0.77.22
 - revert:fix:Fixed the issue where the content of textInput would be missing when the delete key is long-pressed in cases where the value is fixed and unchanging.,([86f3498a8](https://gitcode.com/openharmony-sig/ohos_react_native/commit/86f3498a8e12e51ab3e2f4dd770c755fa3c26581))
 - [chore]: updated to version 6.0.0.507(0.77.21),([d47ca02a4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d47ca02a43f31a2d71f262c6c380315d6721ec10))
