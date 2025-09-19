@@ -14,6 +14,7 @@
 #include "Nodes/DiffClampAnimatedNode.h"
 #include "Nodes/InterpolationAnimatedNode.h"
 #include "Nodes/ModulusAnimatedNode.h"
+#include "Nodes/ObjectAnimatedNode.h"
 #include "Nodes/PropsAnimatedNode.h"
 #include "Nodes/StyleAnimatedNode.h"
 #include "Nodes/TrackingAnimatedNode.h"
@@ -69,6 +70,8 @@ void AnimatedNodesManager::createNode(
     node = std::make_unique<TrackingAnimatedNode>(config, *this);
   } else if (type == "modulus") {
     node = std::make_unique<ModulusAnimatedNode>(config, *this);
+  } else if (type == "object") {
+    node = std::make_unique<ObjectAnimatedNode>(config, *this);
   } else {
     throw std::runtime_error("Unsupported animated node type: " + type);
   }
