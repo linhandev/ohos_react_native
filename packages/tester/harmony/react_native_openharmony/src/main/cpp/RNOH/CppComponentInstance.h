@@ -19,6 +19,7 @@
 #include <react/renderer/core/ReactPrimitives.h>
 #include <react/renderer/core/State.h>
 #include <vector>
+#include "RNOH/ApiVersionCheck.h"
 #include "RNOH/Assert.h"
 #include "RNOH/ComponentInstance.h"
 
@@ -764,6 +765,8 @@ class CppComponentInstance : public ComponentInstance,
       if (this->canSubtreeHandleTouch({x, y})) {
         mode = HitTestMode::HTM_DEFAULT;
       }
+    } else if (IsAtLeastApi20()) {
+      mode = HitTestMode::HTM_BLOCK_DESCENDANTS;
     }
     OH_ArkUI_PointerEvent_SetInterceptHitTestMode(event, mode);
   }
