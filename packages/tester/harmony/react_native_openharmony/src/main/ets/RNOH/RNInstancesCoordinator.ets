@@ -98,7 +98,8 @@ function getMetadata(name: string): string {
  * Use this class if RNAbility is too limiting for your use case, and adapting code to breaking changes is not a big deal in your project.
  */
 export class RNInstancesCoordinator {
-  private static isInitialized = false
+  private static isInitialized = false;
+  private isBoldTextEnabled:boolean | undefined = undefined;
 
   static create(dependencies: RNInstancesCoordinatorDependencies,
     options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
@@ -374,7 +375,21 @@ export class RNInstancesCoordinator {
 
   public onConfigurationUpdate(systemConfiguration: AbilityConfiguration.Configuration) {
     this.displayMetricsManager?.updateConfiguration(systemConfiguration);
-    this.rnInstanceRegistry?.forEach((rnInstance): void => rnInstance.onConfigurationUpdate(systemConfiguration))
+
+    const fontWeightScale = systemConfiguration.fontWeightScale;
+    let isEmitBoldTextEvent = false;
+    if (fontWeightScale !== undefined) {
+      if (this.isBoldTextEnabled !== (fontWeightScale > 1)) {
+        isEmitBoldTextEvent = true;
+      }
+      this.isBoldTextEnabled = fontWeightScale > 1;
+    }
+    this.rnInstanceRegistry?.forEach((rnInstance): void => {
+      rnInstance.onConfigurationUpdate(systemConfiguration);
+      if (isEmitBoldTextEvent) {
+        rnInstance.emitDeviceEvent('boldTextChanged', this.isBoldTextEnabled);
+      }
+    });
   }
 
   public onMemoryLevel(memoryLevel: number) {
