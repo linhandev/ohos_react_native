@@ -529,61 +529,50 @@ void TextInputComponentInstance::onLayoutChanged(
       layoutMetrics.pointScaleFactor);
 }
 
-int32_t TextInputComponentInstance::countUtf8Characters(
+int32_t TextInputComponentInstance::countUtf16Characters(
     std::string const& content) {
-  /**
-   * For TextInput component, when value is set and user tries to enter Chinese
-   * characters, the caret would not be kept at the end of TextInput value. The
-   * reason is that the under UTF-8 encoding, English and Chinese character
-   * length is calculated differently using m_content.size(). English char has
-   * length 1, while Chinese char has length 3, which would cause caret position
-   * calculation error.
-   */
-  int32_t length = 0;
-
-  // UTF-8 encoding constants in binary representation
-  constexpr uint8_t ONE_BYTE_MASK = 0b10000000;
-  constexpr uint8_t ONE_BYTE_FLAG = 0b00000000;
-  constexpr uint8_t TWO_BYTE_MASK = 0b11100000;
-  constexpr uint8_t TWO_BYTE_FLAG = 0b11000000;
-  constexpr uint8_t THREE_BYTE_MASK = 0b11110000;
-  constexpr uint8_t THREE_BYTE_FLAG = 0b11100000;
-  constexpr uint8_t FOUR_BYTE_MASK = 0b11111000;
-  constexpr uint8_t FOUR_BYTE_FLAG = 0b11110000;
-
-  // Character byte length constants
-  constexpr size_t SINGLE_BYTE_CHAR = 1;
-  constexpr size_t DOUBLE_BYTE_CHAR = 2;
-  constexpr size_t TRIPLE_BYTE_CHAR = 3;
-  constexpr size_t QUAD_BYTE_CHAR = 4;
-
-  for (size_t i = 0; i < content.size();) {
-    const uint8_t leadByte = static_cast<uint8_t>(content[i]);
-    size_t charBytes = SINGLE_BYTE_CHAR; // Default to 1 byte
-
-    if ((leadByte & ONE_BYTE_MASK) == ONE_BYTE_FLAG) {
-      charBytes = SINGLE_BYTE_CHAR;
-    } else if ((leadByte & TWO_BYTE_MASK) == TWO_BYTE_FLAG) {
-      charBytes = DOUBLE_BYTE_CHAR;
-    } else if ((leadByte & THREE_BYTE_MASK) == THREE_BYTE_FLAG) {
-      charBytes = TRIPLE_BYTE_CHAR;
-    } else if ((leadByte & FOUR_BYTE_MASK) == FOUR_BYTE_FLAG) {
-      charBytes = QUAD_BYTE_CHAR;
+  int32_t len = 0;
+  const unsigned char* currentByte =
+      reinterpret_cast<const unsigned char*>(content.data());
+  const unsigned char* endOfBytes = currentByte + content.size();
+  // Judge the length of UTF-8 characters based on the number of bits higher
+  // than the first byte, take out the significant bits, and record the number
+  // of continuation bytes that need to be read
+  while (currentByte < endOfBytes) {
+    uint32_t codePoint = 0;
+    int continuationBytes = 0;
+    if (*currentByte < 0x80) {
+      codePoint = *currentByte++;
+    } else if ((*currentByte >> 5) == 0x6) {
+      codePoint = *currentByte & 0x1F;
+      continuationBytes = 1;
+      ++currentByte;
+    } else if ((*currentByte >> 4) == 0xE) {
+      codePoint = *currentByte & 0x0F;
+      continuationBytes = 2;
+      ++currentByte;
+    } else if ((*currentByte >> 3) == 0x1E) {
+      codePoint = *currentByte & 0x07;
+      continuationBytes = 3;
+      ++currentByte;
     } else {
-      ++length;
+      ++currentByte;
       continue;
     }
-
-    // Verify we have enough bytes remaining
-    if (i + charBytes > content.size()) {
-      charBytes = content.size() - i;
+    // The remaining bytes are taken and the length is calculated
+    while (continuationBytes-- && currentByte < endOfBytes &&
+           ((*currentByte & 0xC0) == 0x80)) {
+      codePoint = (codePoint << 6) | (*currentByte++ & 0x3F);
     }
-
-    i += charBytes;
-    ++length;
+    // The number of code elements is calculated according to the hexadecimal
+    // format
+    if (codePoint < 0x10000) {
+      len += 1;
+    } else {
+      len += 2;
+    }
   }
-
-  return length;
+  return len;
 }
 
 void TextInputComponentInstance::setTextContentAndSelection(
@@ -608,8 +597,8 @@ void TextInputComponentInstance::setTextContent(std::string const& content) {
   // NOTE: if selection isn't set explicitly by JS side, we want it to stay
   // roughly in the same place, rather than have it move to the end of the
   // input (which is the ArkUI default behaviour)
-  auto selectionFromEnd = countUtf8Characters(m_content) - m_selectionLocation;
-  auto selectionStart = countUtf8Characters(content) - selectionFromEnd;
+  auto selectionFromEnd = countUtf16Characters(m_content) - m_selectionLocation;
+  auto selectionStart = countUtf16Characters(content) - selectionFromEnd;
   auto selectionEnd = selectionStart + m_selectionLength;
   if (m_isControlledTextInput) {
     m_caretPositionForControlledInput = selectionStart;
