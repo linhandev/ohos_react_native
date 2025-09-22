@@ -50,6 +50,28 @@ module.exports = mergeConfig(
        */
       monorepoRoot,
     ],
+    server: {
+      rewriteRequestUrl: (url) => {
+        /**
+         * RNOH_APP: This is needed to make images loaded from Metro server work.
+         * Metro provides assets by listening on requests with the following format: `assets/<path-relative-to-project-root>`
+         * However, when assets are outside the project root, "assets/.." cancels out. Changing `projectRoot` in Metro config also fixes this problem,
+         * but introduces different, transpilation problem.
+         */
+        let newUrl = url.replace(
+          'legacy-rn61-project',
+          'assets/../legacy-rn61-project'
+        );
+        /**
+         * INTERNAL: This is needed to display icons shipped with react-native.
+         */
+        newUrl = newUrl.replace(
+          '/react-native-harmony',
+          '/assets/../../react-native-harmony'
+        );
+        return newUrl;
+      },
+    },
     resolver: {
       nodeModulesPaths: [
         /**

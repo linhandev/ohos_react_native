@@ -34,5 +34,16 @@ module.exports = mergeConfig(
         pathUtils.resolve(monorepoRoot, 'node_modules'),
       ],
     },
+    server: {
+      rewriteRequestUrl: url => {
+        /**
+         * INTERNAL: This is needed to display icons shipped with react-native in this project structure.
+         */
+        return url.replace(
+          '/react-native-harmony',
+          '/assets/../react-native-harmony',
+        );
+      },
+    },
   },
 );
