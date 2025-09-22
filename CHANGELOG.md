@@ -1,5 +1,16 @@
 # Changelog
 
+## Internal: v0.77.24
+- fix: Cursor abnormally resets inside TextInput component -77,([25bd1f612](https://gitcode.com/openharmony-sig/ohos_react_native/commit/25bd1f61276dd473a39ed2a8e3e652eead6c1224))
+- fix: After adjusting the system font to bold, the isBoldTextEnabled method did not receive any callback events.,([f7ab7689f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7ab7689f22147a289a4525d3e5a4ae6e6964409))
+- fix: libv8_shared.so error,([aaf1c4495](https://gitcode.com/openharmony-sig/ohos_react_native/commit/aaf1c449572c84d7c4a565ea6561c39c065c1ce2))
+- fix: the issue where components inside a custom component can still respond to clicks when pointerEvents is set to none.,([b875f0ba3](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b875f0ba393de82c3a8cb8f8dde1889de737e39e))
+- feat: support ObjectAnimatedNodes,([6026bba6f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/6026bba6f8c73a702064f5072b9c9955db9b86e0))
+- Fix: the issue of automatic emulator pull up failure,([b748c5c1a](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b748c5c1aa09eb299e3f36eac96904accc69fc77))
+- [chore]: updated to version 6.0.0.601(0.77.23),([65ec5fcdd](https://gitcode.com/openharmony-sig/ohos_react_native/commit/65ec5fcdd4847272518dd603828b93a1a7841295))
+- docs: fix link error,([d321c80c1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d321c80c15567f17620cce34deaebb47702ca7ee))
+- fix:Fixed an issue where the keyboard could not be dismissed when tapping on a TextInput component with showSoftInputOnFocus set to false.,([a7808bf97](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7808bf97c8db744c6d872e3199bf7e52cafe1bf))
+
 ## Internal: v0.77.23
 - feat: add performance metrics to RNPerfMonitorView,([97b7b5167](https://gitcode.com/openharmony-sig/ohos_react_native/commit/97b7b51679ab959b6f1947891aeee1896a0a61e3))
 - docx: Add usage guide for HttpClient and caPathProvider in RNOH Worker threads,([fe5751ef6](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fe5751ef6a53188f4066716f612f4e919b640116))
