@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Technologies Co., Ltd.
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -12,10 +12,11 @@ namespace rnoh {
 
 EventBeat::EventBeat(
     std::shared_ptr<facebook::react::EventBeat::OwnerBox> ownerBox,
-    facebook::react::RuntimeScheduler& runtimeScheduler,
+    std::shared_ptr<facebook::react::RuntimeScheduler> runtimeScheduler,
     UITicker::Shared uiTicker)
-    : facebook::react::EventBeat(std::move(ownerBox), runtimeScheduler),
-      m_uiTicker(std::move(uiTicker)) {}
+    : facebook::react::EventBeat(std::move(ownerBox), *runtimeScheduler),
+      m_uiTicker(std::move(uiTicker)),
+      m_weakRuntimeScheduler(runtimeScheduler) {}
 
 /**
  * @thread MAIN
@@ -45,6 +46,14 @@ void EventBeat::request() const {
           m_unsubscribeUITickerListener = nullptr;
         }
       });
+}
+
+void EventBeat::induce() const {
+  // This is the safety check that runs on the VSync thread.
+  // The temporary `runtimeScheduler` shared_ptr keeps the object alive
+  if (auto runtimeScheduler = m_weakRuntimeScheduler.lock()) {
+    facebook::react::EventBeat::induce();
+  }
 }
 
 } // namespace rnoh

@@ -189,7 +189,7 @@ void RNInstanceInternal::initializeScheduler(
   react::EventBeat::Factory eventBeatFactory =
       [uiTicker = m_uiTicker, reactInstance = m_reactInstance](auto ownerBox) {
         return std::make_unique<EventBeat>(
-            ownerBox, *reactInstance->getRuntimeScheduler(), uiTicker);
+            ownerBox, reactInstance->getRuntimeScheduler(), uiTicker);
       };
 
   react::ComponentRegistryFactory componentRegistryFactory =
