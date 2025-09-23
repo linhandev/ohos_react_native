@@ -38,11 +38,11 @@ class TransparentHitTestExample extends React.Component<{}> {
 }
 
 exports.title = '<TransparentHitTestExample>';
-exports.displayName = 'TransparentHitTestExample';
+exports.displayName = 'TransparentHitTestExample (iOS)';
 exports.description = 'Transparent view receiving touch events';
 exports.examples = [
   {
-    title: 'TransparentHitTestExample',
+    title: 'TransparentHitTestExample (iOS)',
     render(): React.Element<any> {
       return <TransparentHitTestExample />;
     },

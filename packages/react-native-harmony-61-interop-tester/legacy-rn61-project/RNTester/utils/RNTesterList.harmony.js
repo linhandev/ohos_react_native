@@ -17,6 +17,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'ActivityIndicatorExample',
     module: require('../examples/ActivityIndicator/ActivityIndicatorExample'),
   },
+  // {
+  //   key: 'ARTExample',
+  //   module: require('../examples/ART/ARTExample'),
+  // },
   {
     key: 'ButtonExample',
     module: require('../examples/Button/ButtonExample'),
@@ -24,6 +28,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'CheckBoxExample',
     module: require('../examples/CheckBox/CheckBoxExample'),
+  },
+  {
+    key: 'DatePickerIOSExample',
+    module: require('../examples/DatePicker/DatePickerIOSExample'),
   },
   {
     key: 'FlatListExample',
@@ -38,8 +46,16 @@ const ComponentExamples: Array<RNTesterExample> = [
     module: require('../examples/JSResponderHandlerExample/JSResponderHandlerExample'),
   },
   {
+    key: 'InputAccessoryViewExample',
+    module: require('../examples/InputAccessoryView/InputAccessoryViewExample'),
+  },
+  {
     key: 'KeyboardAvoidingViewExample',
     module: require('../examples/KeyboardAvoidingView/KeyboardAvoidingViewExample'),
+  },
+  {
+    key: 'MaskedViewExample',
+    module: require('../examples/MaskedView/MaskedViewExample'),
   },
   // {
   //   key: 'ModalExample',
@@ -57,6 +73,14 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'PickerExample',
     module: require('../examples/Picker/PickerExample'),
   },
+  // {
+  //   key: 'PickerIOSExample',
+  //   module: require('../examples/Picker/PickerIOSExample'),
+  // },
+  {
+    key: 'ProgressViewIOSExample',
+    module: require('../examples/ProgressViewIOS/ProgressViewIOSExample'),
+  },
   {
     key: 'ProgressBarAndroidExample',
     module: require('../examples/ProgressBarAndroid/ProgressBarAndroidExample'),
@@ -64,6 +88,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'RefreshControlExample',
     module: require('../examples/RefreshControl/RefreshControlExample'),
+  },
+  {
+    key: 'SafeAreaViewExample',
+    module: require('../examples/SafeAreaView/SafeAreaViewExample'),
   },
   {
     key: 'ScrollViewExample',
@@ -84,6 +112,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'SectionListExample',
     module: require('../examples/SectionList/SectionListExample'),
+  },
+  {
+    key: 'SegmentedControlIOSExample',
+    module: require('../examples/SegmentedControlIOS/SegmentedControlIOSExample'),
   },
   {
     key: 'SliderExample',
@@ -110,6 +142,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     module: require('../examples/Touchable/TouchableExample'),
   },
   {
+    key: 'TransparentHitTestExample',
+    module: require('../examples/TransparentHitTest/TransparentHitTestExample'),
+  },
+  {
     key: 'ViewExample',
     module: require('../examples/View/ViewExample'),
   },
@@ -129,17 +165,38 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('../examples/Accessibility/AccessibilityAndroidExample'),
   },
   {
+    key: 'AccessibilityIOSExample',
+    module: require('../examples/Accessibility/AccessibilityIOSExample'),
+  },
+  {
+    key: 'ActionSheetIOSExample',
+    module: require('../examples/ActionSheetIOS/ActionSheetIOSExample'),
+  },
+  {
     key: 'AlertExample',
     module: require('../examples/Alert/AlertExample'),
+  },
+  {
+    key: 'AlertIOSExample',
+    module: require('../examples/Alert/AlertIOSExample'),
+    supportsTVOS: true,
   },
   {
     key: 'AnimatedExample',
     module: require('../examples/Animated/AnimatedExample'),
   },
   {
+    key: 'AnExApp',
+    module: require('../examples/Animated/AnimatedGratuitousApp/AnExApp'),
+  },
+  {
     key: 'AppStateExample',
     module: require('../examples/AppState/AppStateExample'),
   },
+  // {
+  //   key: 'AsyncStorageExample',
+  //   module: require('../examples/AsyncStorage/AsyncStorageExample'),
+  // },
   {
     key: 'BorderExample',
     module: require('../examples/Border/BorderExample'),
@@ -197,8 +254,16 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('../examples/PointerEvents/PointerEventsExample'),
   },
   {
+    key: 'PushNotificationIOSExample',
+    module: require('../examples/PushNotificationIOS/PushNotificationIOSExample'),
+  },
+  {
     key: 'PromiseExample - RNOH 0.61 Interop',
     module: require('../examples/Promise/PromiseExample'),
+  },
+  {
+    key: 'RCTRootViewIOSExample',
+    module: require('../examples/RCTRootView/RCTRootViewIOSExample'),
   },
   {
     key: 'RTLExample',
@@ -207,6 +272,10 @@ const APIExamples: Array<RNTesterExample> = [
   {
     key: 'ShareExample',
     module: require('../examples/Share/ShareExample'),
+  },
+  {
+    key: 'SnapshotExample',
+    module: require('../examples/Snapshot/SnapshotExample'),
   },
   {
     key: 'TimePickerAndroidExample',
@@ -223,6 +292,14 @@ const APIExamples: Array<RNTesterExample> = [
   {
     key: 'TransformExample',
     module: require('../examples/Transform/TransformExample'),
+  },
+  {
+    key: 'TurboModuleExample',
+    module: require('../examples/TurboModule/TurboModuleExample'),
+  },
+  {
+    key: 'TVEventHandlerExample',
+    module: require('../examples/TVEventHandler/TVEventHandlerExample'),
   },
   {
     key: 'VibrationExample',

@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 });
 
 exports.framework = 'React';
-exports.title = 'Alert';
+exports.title = 'Alert iOS';
 exports.description = 'iOS alerts and action sheets';
 exports.examples = [
   {
