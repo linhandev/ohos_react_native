@@ -1,0 +1,39 @@
+{
+  "name": "ReactProject",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "start": "react-native start --reset-cache --client-logs",
+    "dev": "react-native bundle-harmony --dev false --bundle-output ../NativeProject/entry/src/main/resources/rawfile/bundle.harmony.js"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-native": "0.77.1",
+    "@react-native-oh/react-native-harmony": "file:../react-native-oh/react-native-oh-react-native-harmony-0.77.22.tgz",
+    "react-native-performance": "^5.1.2",
+    "third-party-library": "file:../third-party-library-sample/third-party-library-sample-1.0.0.tgz"
+  },
+  "devDependencies": {
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-oh/react-native-harmony-cli": "file:../react-native-oh/react-native-oh-react-native-harmony-cli-0.77.22.tgz",
+    "@react-native/babel-preset": "0.77.1",
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/eslint-config": "0.77.1",
+    "@react-native/typescript-config": "0.77.1",
+    "@react-native/metro-config": "0.77.1",
+    "@types/react": "^18.0.24",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.2.1",
+    "eslint": "^8.19.0",
+    "jest": "^29.2.1",
+    "prettier": "^2.4.1",
+    "react-test-renderer": "18.2.0",
+    "typescript": "5.0.4"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
