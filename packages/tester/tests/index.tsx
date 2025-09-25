@@ -10,6 +10,7 @@ export * from './BlobTest';
 export * from './ButtonTest';
 export * from './ConsoleTest';
 export * from './CustomNativeComponentTest';
+export * from './DeviceOrientationTest';
 export * from './DevSettingsTest';
 export * from './DimensionsTest';
 export * from './ErrorHandlingTest';

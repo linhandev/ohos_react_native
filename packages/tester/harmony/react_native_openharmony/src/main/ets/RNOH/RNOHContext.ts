@@ -8,7 +8,7 @@
 import { RNInstanceImpl } from './RNInstance';
 import { RNInstanceError, RNOHError, RNOHErrorEventEmitter } from './RNOHError';
 import type common from '@ohos.app.ability.common';
-import { UIContext } from '@kit.ArkUI';
+import { display, UIContext } from '@kit.ArkUI';
 import type { DescriptorRegistry } from './DescriptorRegistry';
 import type { RNComponentCommandReceiver } from './RNComponentCommandHub';
 import type { RNInstance } from './RNInstance';
@@ -35,6 +35,7 @@ type RNOHCoreContextDependencies = {
     forEach(cb: (rnInstance: RNInstanceImpl) => void);
   };
   displayMetricsProvider: () => DisplayMetrics;
+  rnDisplayProvider: () => display.Display | undefined;
   uiAbilityStateProvider: () => UIAbilityState;
   rnohErrorEventEmitter: RNOHErrorEventEmitter;
   logger: RNOHLogger;
@@ -120,6 +121,7 @@ export class RNOHCoreContext {
     return this._rnohCoreContextDeps.displayMetricsProvider();
   }
 
+
   getUIAbilityState(): UIAbilityState {
     return this._rnohCoreContextDeps.uiAbilityStateProvider();
   }
@@ -190,6 +192,9 @@ export class InternalRNOHCoreContext extends RNOHCoreContext {
 
   get uiFpsMonitor(): UIFpsMonitor {
     return this._rnohCoreContextDeps.uiFpsMonitor;
+  }
+  getCurrentDisplay(): display.Display {
+    return this._rnohCoreContextDeps.rnDisplayProvider();
   }
 
   onDestroy() {}
@@ -351,7 +356,8 @@ implements AnyThreadTurboModuleContext {
  * @actor RNOH_LIBRARY
  * @deprecated: Use UITurboModuleContext or WorkerTurboModuleContext instead (latestRNOHVersion: 0.72.30)
  */
-export class TurboModuleContext extends UITurboModuleContext {}
+export class TurboModuleContext extends UITurboModuleContext {
+}
 
 /**
  * @internal

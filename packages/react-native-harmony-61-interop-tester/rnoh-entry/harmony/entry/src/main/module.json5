@@ -47,6 +47,7 @@
         "icon": "$media:layered_image",
         "label": "$string:EntryAbility_label",
         "startWindowIcon": "$media:startIcon",
+        "orientation": "auto_rotation",
         "startWindowBackground": "$color:start_window_background",
         "visible": true,
         "skills": [

@@ -71,44 +71,53 @@ export class DisplayMetricsManager {
     this.updateDisplayMetrics()
   }
 
-  public updateDisplayMetrics() {
-    let displayInstance: display.Display | undefined = undefined;
-    const errors: Object[] = []
+  public getRNDisplay(): display.Display | undefined {
+    const errors: unknown[] = [];
+    let displayInstance: display.Display | undefined;
+
     try {
-      // displayId can be "-1" on older ROMs. In that case, fallback to getDefaultDisplaySync.
       displayInstance = display.getDisplayByIdSync(this.displayId);
     } catch (err) {
-      errors.push(err)
+      errors.push(err);
       try {
-        displayInstance = display.getDefaultDisplaySync()
+        displayInstance = display.getDefaultDisplaySync();
       } catch (err2) {
-        errors.push(err2)
+        errors.push(err2);
       }
     }
+
     if (!displayInstance) {
-      this.logger.error('Failed to update display size: ' + JSON.stringify(errors));
+      this.logger.error('Failed to get display instance: ' + JSON.stringify(errors));
+    }
+
+    return displayInstance;
+  }
+
+  public updateDisplayMetrics() {
+    const currentDisplay = this.getRNDisplay();
+    if (!currentDisplay) {
       return;
     }
     this.displayMetrics = {
       screenPhysicalPixels: {
-        width: displayInstance.width,
-        height: displayInstance.height,
-        scale: displayInstance.densityPixels,
+        width: currentDisplay.width,
+        height: currentDisplay.height,
+        scale: currentDisplay.densityPixels,
         fontScale: this.displayMetrics.screenPhysicalPixels.fontScale,
-        densityDpi: displayInstance.densityDPI,
-        xDpi: displayInstance.xDPI,
-        yDpi: displayInstance.yDPI
+        densityDpi: currentDisplay.densityDPI,
+        xDpi: currentDisplay.xDPI,
+        yDpi: currentDisplay.yDPI
       },
       windowPhysicalPixels: {
         top: this.displayMetrics.windowPhysicalPixels.top,
         left: this.displayMetrics.windowPhysicalPixels.left,
         width: this.displayMetrics.windowPhysicalPixels.width,
         height: this.displayMetrics.windowPhysicalPixels.height,
-        scale: displayInstance.densityPixels,
+        scale: currentDisplay.densityPixels,
         fontScale: this.displayMetrics.windowPhysicalPixels.fontScale,
-        densityDpi: displayInstance.densityDPI,
-        xDpi: displayInstance.xDPI,
-        yDpi: displayInstance.yDPI
+        densityDpi: currentDisplay.densityDPI,
+        xDpi: currentDisplay.xDPI,
+        yDpi: currentDisplay.yDPI
       }
     };
   }

@@ -136,7 +136,8 @@ export class RNInstancesCoordinator {
     // NOTE: only initialize DevMenu in debug mode
     if (envInfo.isDebugModeEnabled) {
       const internalDevMenu =
-        new InternalDevMenu(devToolsController, new RNSettingDialog(), dependencies.uiAbilityContext, dependencies.logger);
+        new InternalDevMenu(devToolsController, new RNSettingDialog(), dependencies.uiAbilityContext,
+          dependencies.logger);
       onDestroyCallbacks.push(() => {
         internalDevMenu.onDestroy()
       })
@@ -270,6 +271,7 @@ export class RNInstancesCoordinator {
       jsEngineName: this.jsEngineName,
       rnInstanceRegistry: this.rnInstanceRegistry,
       displayMetricsProvider: () => this.displayMetricsManager.getDisplayMetrics(),
+      rnDisplayProvider: () => this.displayMetricsManager.getRNDisplay(),
       uiAbilityStateProvider: () => this.appState,
       launchUri: this.options?.launchURI,
       defaultBackPressHandler: this.defaultBackPressHandler,
@@ -362,7 +364,7 @@ export class RNInstancesCoordinator {
       if (this.timerId) {
         clearTimeout(this.timerId)
       }
-      this.timerId = setTimeout(() =>{
+      this.timerId = setTimeout(() => {
         this.displayMetricsManager.updateWindowSize(windowSize);
         this.rnInstanceRegistry.forEach((rnInstance) => {
           rnInstance.onWindowSizeChange(windowSize)
