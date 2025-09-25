@@ -22,6 +22,7 @@ configure_file(
 
 add_compile_definitions(
     REACT_NATIVE__RENDER__GRAPHICS__FLOAT=double
+    NDEBUG
     RAW_PROPS_ENABLED
     UNSET_FORMS_STACKING_CONTEXT)
 
