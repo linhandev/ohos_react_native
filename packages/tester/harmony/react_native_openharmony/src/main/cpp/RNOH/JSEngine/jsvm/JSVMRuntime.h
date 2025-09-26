@@ -8,6 +8,7 @@
 #ifndef JSVMRUNTIME_H
 #define JSVMRUNTIME_H
 #include <cxxreact/MessageQueueThread.h>
+#include <react/debug/react_native_assert.h>
 #include <deque>
 #include <unordered_map>
 #include "JSVMUtil.h"
@@ -191,11 +192,19 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
  public:
   JSVMPointerValue(JSVM_Env env, const JSVM_Value value, bool isWeak = false)
       : env(env), isWeak(isWeak), reference(nullptr) {
+    JSVMPointerValue* ptr = new JSVMPointerValue(env);
     uint32_t initialRef = 1;
     if (isWeak) {
       initialRef = 0;
     }
     OH_JSVM_CreateReference(env, value, initialRef, &reference);
+
+    ptr->next = head->next;
+    ptr->prev = head;
+    if (head->next) {
+      head->next->prev = ptr;
+    }
+    head->next = ptr;
   }
 
   JSVMPointerValue(const JSVMPointerValue* pointer)
@@ -211,6 +220,22 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
     } else {
       OH_JSVM_ReferenceRef(env, reference, nullptr);
     }
+  }
+
+  static void init() {
+    head = new JSVMPointerValue(static_cast<JSVM_Env>(nullptr));
+    isJsThread = true;
+  }
+
+  static void ReleasePointerValueList() {
+    if (!head) {
+      return;
+    }
+    while (head->next) {
+      head->next->CleanUp();
+    }
+    delete head;
+    head = nullptr;
   }
 
   static JSVMPointerValue* CreateWeakRef(JSVM_Env env, const JSVM_Value value) {
@@ -234,6 +259,9 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
     return value;
   }
 
+  JSVMPointerValue(JSVM_Env env)
+      : env(env), reference(nullptr), prev(nullptr), next(nullptr) {}
+
  private:
   enum { WEAK_REF_COUNT = 0, STRONG_REF_COUNT = 1, DUPLICATE_REF_COUNT = 2 };
   void UnRef() {
@@ -251,29 +279,51 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
     }
   }
 
+  void CleanUp() {
+    react_native_assert(!isThread && "Should be evaled in js thread");
+    if (!env) {
+      return;
+    }
+    if (prev) {
+      prev->next = next;
+    }
+    if (next) {
+      next->prev = prev;
+    }
+    OH_JSVM_DeleteReference(env, reference);
+    env = nullptr;
+    reference = nullptr;
+  }
+
   void invalidate() noexcept override {
-    if (unlikely(!isJsThread)) {
+    if (!env) {
+      delete this;
+      return;
+    }
+    if (!unlikely(isJsThread)) {
+      CleanUp();
+      delete this;
+    } else {
       void* data = nullptr;
-      OH_JSVM_GetInstanceData(env, &data);
       facebook::react::MessageQueueThread* jsQueue =
           static_cast<facebook::react::MessageQueueThread*>(data);
       jsQueue->runOnQueue([this]() {
-        this->UnRef();
+        CleanUp();
         delete this;
       });
-    } else {
-      UnRef();
-      delete this;
     }
   }
 
   JSVM_Ref reference;
   JSVM_Env env;
   bool isWeak;
+  JSVMPointerValue* prev;
+  JSVMPointerValue* next;
 
  private:
   friend class JSVMRuntime;
   friend class JSVMConverter;
+  static thread_local JSVMPointerValue* head;
   static thread_local bool isJsThread;
 };
 
