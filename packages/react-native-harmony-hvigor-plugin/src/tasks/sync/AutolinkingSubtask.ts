@@ -28,9 +28,15 @@ export class AutolinkingSubtask {
       return;
     }
     const result = this.commandExecutor.run(
-      pathUtils.join(this.input.nodeModulesPath, ".bin", "react-native") +
-        " link-harmony",
-      this.input
+      `node_modules${pathUtils.sep}.bin${pathUtils.sep}react-native link-harmony`,
+      {
+        ...this.input,
+        nodeModulesPath: 'node_modules'
+      },
+      {
+        encoding: "utf-8",
+        cwd: pathUtils.join(this.input.nodeModulesPath, "..")
+      }
     );
     this.logger.info(`[autolink]\n${result}`);
   }

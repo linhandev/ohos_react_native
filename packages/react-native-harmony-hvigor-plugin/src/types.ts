@@ -33,7 +33,8 @@ export class RNOHProjectPluginError extends Error {}
  * @actor RNOH_APP
  */
 export type CodegenConfig = {
-  rnohModulePath: string;
+  rnohModulePath?: string;
+  etsOutputPath?: string;
   cppOutputPath?: string;
   projectRootPath?: string;
   debug?: boolean;

@@ -271,7 +271,7 @@ export class Autolinking {
     const managedNativeDependencySpecifierByName: Record<string, string> = {};
     for (const library of autolinkableLibraries) {
       managedNativeDependencySpecifierByName[library.ohPackageName] =
-        'file:' + library.harFilePathRelativeToHarmony;
+        `file:${library.harFilePathRelativeToHarmony}`.split(pathUtils.sep).join('/');
     }
     return {
       skippedLibraryNpmPackageNames: input.skippedLibraryNpmPackageNames,

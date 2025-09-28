@@ -92,7 +92,7 @@ struct Index {
              * NOTE: The HBC format is recommended in a production environment. HBC is optimized pre-compiled bytecode.
              */
             // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),
-            // new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
+              new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')
             ]),
             this.rnohCoreContext.logger),
         })

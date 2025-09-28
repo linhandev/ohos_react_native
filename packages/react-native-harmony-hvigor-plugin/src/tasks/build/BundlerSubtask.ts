@@ -54,14 +54,29 @@ export class BundlerSubtask implements Subtask {
                 return;
               }
               delete bundlerOptions.enabled;
+              const projectRootPath = pathUtils.resolve(this.input.nodeModulesPath, '..');
+              const configRelativeToRoot = bundlerOptions.config ?
+                pathUtils.relative(projectRootPath, bundlerOptions.config) : undefined;
+              const bundleOutputeRelativeToRoot = bundlerOptions.bundleOutput ?
+                pathUtils.relative(projectRootPath, bundlerOptions.bundleOutput) : undefined;
+              const assetsDestRelativeToRoot = bundlerOptions.assetsDest ?
+                pathUtils.relative(projectRootPath, bundlerOptions.assetsDest) : undefined;
+              const sourcemapOutputRelativeToRoot = bundlerOptions.sourcemapOutput ?
+                pathUtils.relative(projectRootPath, bundlerOptions.sourcemapOutput) : undefined;
               try {
                 this.commandExecutor.run(
-                  "node_modules/.bin/react-native bundle-harmony",
-                  bundlerOptions,
+                  `node_modules${pathUtils.sep}.bin${pathUtils.sep}react-native bundle-harmony`,
+                  {
+                    ...bundlerOptions,
+                    config: configRelativeToRoot,
+                    bundleOutput: bundleOutputeRelativeToRoot,
+                    assetsDest: assetsDestRelativeToRoot,
+                    sourcemapOutput: sourcemapOutputRelativeToRoot
+                  },
                   {
                     encoding: "utf-8",
                     stdio: "ignore",
-                    cwd: pathUtils.join(this.input.nodeModulesPath, ".."),
+                    cwd: projectRootPath,
                   }
                 );
                 this.logger.info(`[bundler] done generating bundle`);
@@ -69,8 +84,8 @@ export class BundlerSubtask implements Subtask {
                 this.logger.error(`[bundler] failed: ${err}`);
               }
             },
-            dependencies: [`${targetName}@PackageHap`],
-            postDependencies: ["assembleHap"],
+            dependencies: [`${targetName}@ProcessResource`],
+            postDependencies: [`${targetName}@CompileResource`],
           });
         });
       });

@@ -16,11 +16,12 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@ohos/hvigor-ohos-plugin": "5.13.1",
-    "@ohos/hvigor": "5.13.1",
-    "glob": "^11.0.1"
+    "glob": "^11.0.1",
+    "json5": "^2.2.3"
   },
   "devDependencies": {
+    "@ohos/hvigor-ohos-plugin": "5.19.7",
+    "@ohos/hvigor": "5.19.7",
     "@tsconfig/node18": "^18.2.4",
     "@types/jest": "^29.5.13",
     "@types/mustache": "^4.2.5",

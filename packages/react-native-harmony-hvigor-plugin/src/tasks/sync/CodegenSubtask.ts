@@ -19,9 +19,12 @@ export class CodegenSubtask implements Subtask {
       return;
     }
     const result = this.commandExecutor.run(
-      pathUtils.join(this.nodeModulesPath, ".bin", "react-native") +
-        " codegen-harmony",
-      this.input
+      `node_modules${pathUtils.sep}.bin${pathUtils.sep}react-native codegen-harmony`,
+      this.input,
+      {
+        encoding: "utf-8",
+        cwd: pathUtils.join(this.nodeModulesPath, "..")
+      }
     );
     this.logger.info(`[codegen]\n${result}`);
   }

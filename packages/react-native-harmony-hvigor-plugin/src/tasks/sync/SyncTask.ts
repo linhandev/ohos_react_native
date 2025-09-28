@@ -14,6 +14,7 @@ import {
   MetroPortForwardSubtask,
   MetroPortForwardSubtaskInput,
 } from "./MetroPortForwardSubtask";
+import { CheckHvigorVersionSubtask } from "./CheckHvigorVersionSubtask";
 
 export class ValidationError extends RNOHModulePluginError {
   constructor(optionName: keyof RNOHModulePluginOptions, msg: string) {
@@ -48,10 +49,12 @@ export class SyncTask {
     if (!this.fs.existsSync(nodeModulesPath)) {
       throw new ValidationError("nodeModulesPath", "path doesn't exist");
     }
-    if (options.codegen !== null && !options.codegen?.rnohModulePath) {
+    if (options.codegen !== null &&
+        !options.codegen?.rnohModulePath &&
+        !options.codegen?.etsOutputPath) {
       throw new ValidationError(
         "codegen",
-        "rnohModulePath must be specified if codegen is not null"
+        "etsOutputPath must be specified if codegen is not null"
       );
     }
     const DEVECO_SDK_HOME = process.env.DEVECO_SDK_HOME;
@@ -61,15 +64,32 @@ export class SyncTask {
         "DEVECO_SDK_HOME must be specified if metro configuration is not null."
       );
     }
+    // The codegen and autolinking will switch to the parent directory of node_modules to execute.
+    const cwd = pathUtils.resolve(nodeModulesPath, '..');
+    const harmonyProjectPathRelativeToCWD = pathUtils.relative(cwd, './');
+    const projectRootPathRelativeToCWD = pathUtils.relative(
+      cwd,
+      options.codegen?.projectRootPath || '../'
+    ) || '.';
+    const cppOutputPathRelativeToCWD = pathUtils.relative(
+      cwd,
+      options.codegen?.cppOutputPath || './entry/src/main/cpp/generated'
+    );
+    const etsOutputPathRelativeToCWD = pathUtils.relative(
+      cwd,
+      options.codegen?.etsOutputPath || options.codegen?.rnohModulePath || './'
+    );
     return {
       nodeModulesPath,
       codegenArgs:
         options.codegen === null
           ? null
           : ({
-              projectRootPath: "../",
-              cppOutputPath: "./entry/src/main/cpp/generated",
               ...(options.codegen ?? {}),
+              projectRootPath: projectRootPathRelativeToCWD,
+              cppOutputPath: cppOutputPathRelativeToCWD,
+              etsOutputPath: etsOutputPathRelativeToCWD,
+              rnohModulePath: undefined,
             } satisfies CodegenConfig),
       metro:
         options.metro === null
@@ -79,7 +99,7 @@ export class SyncTask {
         options.autolinking === null
           ? null
           : ({
-              harmonyProjectPath: "./",
+              harmonyProjectPath: harmonyProjectPathRelativeToCWD,
               nodeModulesPath: nodeModulesPath,
               cmakeAutolinkPathRelativeToHarmony:
                 options.autolinking?.cmakeAutolinkPath ??
@@ -115,6 +135,7 @@ export class SyncTask {
   }) {
     (
       [
+        new CheckHvigorVersionSubtask(this.logger),
         new MetroPortForwardSubtask(
           this.commandExecutor,
           this.logger,

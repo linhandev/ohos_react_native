@@ -53,7 +53,7 @@ it('should handle port forwarding, call codegen-harmony, and log progress', () =
   );
   expect(executedCommands[1]).toBe(
     pathUtils.join('node_modules', '.bin', 'react-native') +
-      ' codegen-harmony --project-root-path ../ --cpp-output-path ./entry/src/main/cpp/generated --rnoh-module-path _'
+      ` codegen-harmony --project-root-path .. --cpp-output-path entry${pathUtils.sep}src${pathUtils.sep}main${pathUtils.sep}cpp${pathUtils.sep}generated --ets-output-path _`
   );
   expect(
     fakeLogger
