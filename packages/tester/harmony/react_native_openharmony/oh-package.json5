@@ -9,7 +9,7 @@
     org: '',
   },
   type: 'module',
-  version: '0.77.24',
+  version: '0.77.25',
   dependencies: {},
   main: 'index.ets',
   repository: 'https://gitcode.com/openharmony-sig/ohos_react_native/tree/0.77.1-rc.1-ohos'

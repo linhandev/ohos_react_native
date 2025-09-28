@@ -1,5 +1,11 @@
 # Changelog
 
+## Internal: v0.77.25
+- fix: libjsvm.so Mapping error,([dc4a4ed64](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dc4a4ed641b23ce273d0df1dd09af8489937f3d9))
+- feat: emit namedOrientationDidChange event,([d3e055ac1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d3e055ac1e3dffae70fc3238763af4d13f5731de))
+- fix: prevent crash from dangling reference in EventBeat,([2df264852](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2df2648525f76909f4cdf1515f69694448139d97))
+- [chore]: updated to version 6.0.0.602(0.77.24),([a7436d136](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7436d1361b8481f0e51e32987d6dbe63eee1d77))
+
 ## Internal: v0.77.24
 - fix: Cursor abnormally resets inside TextInput component -77,([25bd1f612](https://gitcode.com/openharmony-sig/ohos_react_native/commit/25bd1f61276dd473a39ed2a8e3e652eead6c1224))
 - fix: After adjusting the system font to bold, the isBoldTextEnabled method did not receive any callback events.,([f7ab7689f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7ab7689f22147a289a4525d3e5a4ae6e6964409))

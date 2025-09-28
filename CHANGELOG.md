@@ -1,5 +1,15 @@
 # Changelog
 
+## Internal: v0.77.25
+- fix: the issue where sample-package cannot be compiled when separated from tester.,([f4cfe3b4d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f4cfe3b4d925cbc59573ae474b65ef1ec3a7b572))
+- doc: 补充release包的使用说明,([b5d03952f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b5d03952f2653e25a1bfb3dd6a7cb2d1bdfd9950))
+- feat: emit namedOrientationDidChange event,([d3e055ac1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d3e055ac1e3dffae70fc3238763af4d13f5731de))
+- docs: Supplement the autolinking sample.,([a3a288f18](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a3a288f18d92862efadadb67f9689dd9c5f4fc35))
+- chore: add iOS examples to RNTester 61,([367d962e4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/367d962e4bdaef7b1a4fbcbd487db075cfe2df23))
+- fix: prevent crash from dangling reference in EventBeat,([2df264852](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2df2648525f76909f4cdf1515f69694448139d97))
+- chore: fix Metro config to support local images when using Metro;: fix displaying react-native icons in testers; ignore checking links to npm,([96a8df825](https://gitcode.com/openharmony-sig/ohos_react_native/commit/96a8df825716b1d61765a8fa9e60b8b20dc7bc20))
+- [chore]: updated to version 6.0.0.602(0.77.24),([a7436d136](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a7436d1361b8481f0e51e32987d6dbe63eee1d77))
+
 ## Internal: v0.77.24
 - fix: Cursor abnormally resets inside TextInput component -77,([25bd1f612](https://gitcode.com/openharmony-sig/ohos_react_native/commit/25bd1f61276dd473a39ed2a8e3e652eead6c1224))
 - fix: After adjusting the system font to bold, the isBoldTextEnabled method did not receive any callback events.,([f7ab7689f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f7ab7689f22147a289a4525d3e5a4ae6e6964409))
