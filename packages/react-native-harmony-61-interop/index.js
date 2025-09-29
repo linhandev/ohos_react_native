@@ -202,7 +202,7 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableNativeFeedback');
   },
   get TouchableOpacity() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableOpacity');
+    return require('./Libraries/Components/Touchable/TouchableOpacity');
   },
   get TouchableWithoutFeedback() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableWithoutFeedback');

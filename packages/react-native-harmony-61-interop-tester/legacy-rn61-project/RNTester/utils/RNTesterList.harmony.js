@@ -321,6 +321,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'AnimatedShimsWarningTest',
     module: require('../examples/Interop/AnimatedShimsWarningTest'),
   },
+  {
+    key: '[RNOH] TouchableOpacity interop test',
+    module: require('../examples/Interop/TouchableOpacityInteropTest'),
+  },
 ];
 
 const Modules = {};

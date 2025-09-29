@@ -228,6 +228,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'XHRExample',
     module: require('../examples/XHR/XHRExample'),
   },
+  {
+    key: '[RNOH] TouchableOpacity interop test',
+    module: require('../examples/Interop/TouchableOpacityInteropTest'),
+  },
 ];
 
 const Modules = {};

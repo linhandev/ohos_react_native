@@ -3114,6 +3114,15 @@ index 0fb5f86702e4177618fa9e2dde6f7133ca3e441f..e804b9db79a76904b38b41d08c6c8d20
        },
        ...children,
      );
+diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableOpacity.js b/packages/react-native/Libraries/Components/Touchable/TouchableOpacity.js
+index ef9b2572b69cb8260d8f0f18976a38f7e34ab9b1..52cfbf4630414fba6b45f61b7b91a436be91711d 100644
+--- a/packages/react-native/Libraries/Components/Touchable/TouchableOpacity.js
++++ b/packages/react-native/Libraries/Components/Touchable/TouchableOpacity.js
+@@ -337,3 +337,4 @@ const Touchable: component(
+ Touchable.displayName = 'TouchableOpacity';
+ 
+ module.exports = Touchable;
++module.exports.TouchableOpacity = TouchableOpacity;
 diff --git a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js b/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
 index d584a2f8623f5e8fb9afafa44215ca482216a938..dd164ea481e7a52b0dff0a99d976b2cc64d34cf6 100755
 --- a/packages/react-native/Libraries/Components/Touchable/TouchableWithoutFeedback.js
