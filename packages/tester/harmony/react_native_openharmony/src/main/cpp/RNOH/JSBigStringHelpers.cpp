@@ -44,13 +44,14 @@ std::unique_ptr<JSBigString const> fromRawFilePath(
               nativeResourceManager, rawFilePath.c_str()),
           OH_ResourceManager_CloseRawFile);
   if (!bundleRawFile) {
-    return nullptr;
+    throw std::runtime_error("Failed to open raw file: " + rawFilePath);
   }
   RawFileDescriptor bundleRawFileDescriptor{};
   auto success = OH_ResourceManager_GetRawFileDescriptorData(
       bundleRawFile.get(), &bundleRawFileDescriptor);
   if (!success) {
-    return nullptr;
+    throw std::runtime_error(
+        "Failed to get raw file descriptor data: " + rawFilePath);
   }
 
   auto result = std::make_unique<JSBigFileString>(
