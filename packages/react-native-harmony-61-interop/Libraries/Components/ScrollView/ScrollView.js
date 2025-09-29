@@ -26,4 +26,6 @@ const ScrollView = forwardRef((props, ref) => {
 
 ScrollView.displayName = 'ScrollView';
 ScrollView.Context = RNOHScrollView.Context;
-export default ScrollView;
+
+module.exports = ScrollView;
+module.exports.default = ScrollView;
