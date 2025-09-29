@@ -1,7 +1,7 @@
 {
   license: 'ISC',
   types: '',
-  name: '@rnoh/sample-package',
+  name: '@rnoh/react-native-harmony-sample-package',
   description: '',
   main: 'index.ets',
   type: 'module',

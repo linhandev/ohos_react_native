@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@react-native-oh/react-native-harmony-cli':
+        specifier: file:./packages/react-native-harmony-cli
+        version: file:packages/react-native-harmony-cli(@babel/preset-env@7.26.7(@babel/core@7.26.7))(@types/node@22.13.1)(encoding@0.1.13)(metro@0.81.1)
       '@swc/core':
         specifier: ^1.11.10
         version: 1.11.10

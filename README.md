@@ -1,6 +1,6 @@
 # React Native for OpenHarmony (RNOH)
 
-本项目为 [React Native](https://reactnative.dev/) 跨平台应用开发框架添加 [OpenHarmony](https://www.openharmony.cn/mainPlay) 平台支持
+本项目为 [React Native](https://reactnative.dev/) 跨平台应用开发框架添加 [OpenHarmony](https://www.openharmony.cn/) 平台支持
 
 | 角色 / Role                                | 中文文档                            | English Docs                                                 |
 | ------------------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
