@@ -121,4 +121,79 @@ class RNPickerProps final : public ViewProps {
   SharedColor selectedItemBackgroundColor{};
 };
 
+struct RNSegmentedControlOptionsButtonsStruct {
+  std::string text{};
+};
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNSegmentedControlOptionsButtonsStruct &result) {
+  auto map = (std::unordered_map<std::string, RawValue>)value;
+
+  auto tmp_text = map.find("text");
+  if (tmp_text != map.end()) {
+    fromRawValue(context, tmp_text->second, result.text);
+  }
+}
+
+static inline std::string toString(const RNSegmentedControlOptionsButtonsStruct &value) {
+  return "[Object RNSegmentedControlOptionsButtonsStruct]";
+}
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, std::vector<RNSegmentedControlOptionsButtonsStruct> &result) {
+  auto items = (std::vector<RawValue>)value;
+  for (const auto &item : items) {
+    RNSegmentedControlOptionsButtonsStruct newItem;
+    fromRawValue(context, item, newItem);
+    result.emplace_back(newItem);
+  }
+}
+
+
+struct RNSegmentedControlOptionsStruct {
+  std::vector<RNSegmentedControlOptionsButtonsStruct> buttons{};
+  SharedColor backgroundColor{};
+  SharedColor fontColor{};
+  SharedColor selectedBackgroundColor{};
+  SharedColor selectedFontColor{};
+};
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNSegmentedControlOptionsStruct &result) {
+  auto map = (std::unordered_map<std::string, RawValue>)value;
+
+  auto tmp_buttons = map.find("buttons");
+  if (tmp_buttons != map.end()) {
+    fromRawValue(context, tmp_buttons->second, result.buttons);
+  }
+  auto tmp_backgroundColor = map.find("backgroundColor");
+  if (tmp_backgroundColor != map.end()) {
+    fromRawValue(context, tmp_backgroundColor->second, result.backgroundColor);
+  }
+  auto tmp_fontColor = map.find("fontColor");
+  if (tmp_fontColor != map.end()) {
+    fromRawValue(context, tmp_fontColor->second, result.fontColor);
+  }
+  auto tmp_selectedBackgroundColor = map.find("selectedBackgroundColor");
+  if (tmp_selectedBackgroundColor != map.end()) {
+    fromRawValue(context, tmp_selectedBackgroundColor->second, result.selectedBackgroundColor);
+  }
+  auto tmp_selectedFontColor = map.find("selectedFontColor");
+  if (tmp_selectedFontColor != map.end()) {
+    fromRawValue(context, tmp_selectedFontColor->second, result.selectedFontColor);
+  }
+}
+
+static inline std::string toString(const RNSegmentedControlOptionsStruct &value) {
+  return "[Object RNSegmentedControlOptionsStruct]";
+}
+class RNSegmentedControlProps final : public ViewProps {
+ public:
+  RNSegmentedControlProps() = default;
+  RNSegmentedControlProps(const PropsParserContext& context, const RNSegmentedControlProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  RNSegmentedControlOptionsStruct options{};
+  std::vector<Float> selectedIndexes{};
+  bool enabled{false};
+};
+
 } // namespace facebook::react

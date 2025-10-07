@@ -45,5 +45,14 @@ RNPickerProps::RNPickerProps(
     selectedItemFontColor(convertRawProp(context, rawProps, "selectedItemFontColor", sourceProps.selectedItemFontColor, {})),
     selectedItemBackgroundColor(convertRawProp(context, rawProps, "selectedItemBackgroundColor", sourceProps.selectedItemBackgroundColor, {}))
       {}
+RNSegmentedControlProps::RNSegmentedControlProps(
+    const PropsParserContext &context,
+    const RNSegmentedControlProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    options(convertRawProp(context, rawProps, "options", sourceProps.options, {})),
+    selectedIndexes(convertRawProp(context, rawProps, "selectedIndexes", sourceProps.selectedIndexes, {})),
+    enabled(convertRawProp(context, rawProps, "enabled", sourceProps.enabled, {false}))
+      {}
 
 } // namespace facebook::react

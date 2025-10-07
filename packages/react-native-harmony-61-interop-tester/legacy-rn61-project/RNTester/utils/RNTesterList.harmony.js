@@ -57,10 +57,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'MaskedViewExample',
     module: require('../examples/MaskedView/MaskedViewExample'),
   },
-  {
-    key: 'ModalExample',
-    module: require('../examples/Modal/ModalExample'),
-  },
+  // {
+  //   key: 'ModalExample',
+  //   module: require('../examples/Modal/ModalExample'),
+  // },
   {
     key: 'MultiColumnExample',
     module: require('../examples/MultiColumn/MultiColumnExample'),

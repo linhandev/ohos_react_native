@@ -4,3 +4,4 @@
 
 export * from "./RNCheckBox"
 export * from "./RNPicker"
+export * from "./RNSegmentedControl"

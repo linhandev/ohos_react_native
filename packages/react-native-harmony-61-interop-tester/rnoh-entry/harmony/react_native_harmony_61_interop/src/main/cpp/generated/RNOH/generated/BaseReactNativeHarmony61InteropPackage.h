@@ -9,6 +9,7 @@
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/generated/components/RNCheckBoxJSIBinder.h"
 #include "RNOH/generated/components/RNPickerJSIBinder.h"
+#include "RNOH/generated/components/RNSegmentedControlJSIBinder.h"
 
 namespace rnoh {
 
@@ -32,11 +33,13 @@ class BaseReactNativeHarmony61InteropPackageEventEmitRequestHandler : public Eve
         std::vector<std::string> supportedComponentNames = {
             "RNCheckBox",
             "RNPicker",
+            "RNSegmentedControl",
         };
 
         std::vector<std::string> supportedEventNames = {
             "valueChange",
             "valueChange",
+            "change",
         };
 
         if (std::find(supportedComponentNames.begin(), supportedComponentNames.end(), componentName) != supportedComponentNames.end() &&
@@ -59,6 +62,7 @@ class BaseReactNativeHarmony61InteropPackage : public Package {
         return {
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNCheckBoxComponentDescriptor>(),
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNPickerComponentDescriptor>(),
+            facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSegmentedControlComponentDescriptor>(),
         };
     }
 
@@ -66,6 +70,7 @@ class BaseReactNativeHarmony61InteropPackage : public Package {
         return {
             {"RNCheckBox", std::make_shared<RNCheckBoxJSIBinder>()},
             {"RNPicker", std::make_shared<RNPickerJSIBinder>()},
+            {"RNSegmentedControl", std::make_shared<RNSegmentedControlJSIBinder>()},
         };
     };
 

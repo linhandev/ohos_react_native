@@ -33,4 +33,13 @@ class RNPickerEventEmitter : public ViewEventEmitter {
     };
   void onValueChange(OnValueChange value) const;
 };
+class RNSegmentedControlEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  struct OnChange {
+      int selectedSegmentIndex;
+    };
+  void onChange(OnChange value) const;
+};
 } // namespace facebook::react

@@ -38,4 +38,16 @@ public:
 #endif
 };
 
+class RNSegmentedControlState {
+public:
+  RNSegmentedControlState() = default;
+
+#ifdef ANDROID
+  RNSegmentedControlState(RNSegmentedControlState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
 } // namespace facebook::react

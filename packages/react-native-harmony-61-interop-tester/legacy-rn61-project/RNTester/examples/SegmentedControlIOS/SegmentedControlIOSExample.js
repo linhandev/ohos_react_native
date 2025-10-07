@@ -131,6 +131,44 @@ class EventSegmentedControlExample extends React.Component<
   };
 }
 
+class SingleSegmentedControlExample extends React.Component<
+  {},
+  $FlowFixMeState,
+> {
+  state = {
+    values: ['One'],
+    value: 'Not selected',
+    selectedIndex: undefined,
+  };
+
+  render() {
+    return (
+      <View>
+        <Text style={styles.text}>Value: {this.state.value}</Text>
+        <Text style={styles.text}>Index: {this.state.selectedIndex}</Text>
+        <SegmentedControlIOS
+          values={this.state.values}
+          selectedIndex={this.state.selectedIndex}
+          onChange={this._onChange}
+          onValueChange={this._onValueChange}
+        />
+      </View>
+    );
+  }
+
+  _onChange = event => {
+    this.setState({
+      selectedIndex: event.nativeEvent.selectedSegmentIndex,
+    });
+  };
+
+  _onValueChange = value => {
+    this.setState({
+      value: value,
+    });
+  };
+}
+
 const styles = StyleSheet.create({
   text: {
     fontSize: 14,
@@ -178,6 +216,12 @@ exports.examples = [
     title: 'Change events can be detected',
     render(): React.Element<any> {
       return <EventSegmentedControlExample />;
+    },
+  },
+    {
+    title: '[RNOH] Single item is supported',
+    render(): React.Element<any> {
+      return <SingleSegmentedControlExample />;
     },
   },
 ];

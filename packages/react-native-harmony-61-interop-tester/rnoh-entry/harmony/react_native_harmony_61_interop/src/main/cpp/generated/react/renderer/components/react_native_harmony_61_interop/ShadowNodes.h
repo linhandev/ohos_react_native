@@ -40,4 +40,15 @@ using RNPickerShadowNode = ConcreteViewShadowNode<
     RNPickerEventEmitter,
     RNPickerState>;
 
+JSI_EXPORT extern const char RNSegmentedControlComponentName[];
+
+/*
+ * `ShadowNode` for <RNSegmentedControl> component.
+ */
+using RNSegmentedControlShadowNode = ConcreteViewShadowNode<
+    RNSegmentedControlComponentName,
+    RNSegmentedControlProps,
+    RNSegmentedControlEventEmitter,
+    RNSegmentedControlState>;
+
 } // namespace facebook::react

@@ -158,8 +158,7 @@ module.exports = {
       .default;
   },
   get SegmentedControlIOS() {
-    // Placeholder
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
+    return require('./Libraries/Components/SegmentedControlIOS/SegmentedControlIOS');
   },
   get Settings() {
     return require('@react-native-oh/react-native-harmony/Libraries/Settings/Settings')

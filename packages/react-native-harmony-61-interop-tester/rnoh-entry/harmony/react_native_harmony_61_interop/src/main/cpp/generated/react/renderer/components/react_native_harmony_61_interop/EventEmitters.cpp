@@ -32,4 +32,13 @@ $payload.setProperty(runtime, "itemIndex", $event.itemIndex);
   });
 }
 
+
+void RNSegmentedControlEventEmitter::onChange(OnChange $event) const {
+  dispatchEvent("change", [$event=std::move($event)](jsi::Runtime &runtime) {
+    auto $payload = jsi::Object(runtime);
+    $payload.setProperty(runtime, "selectedSegmentIndex", $event.selectedSegmentIndex);
+    return $payload;
+  });
+}
+
 } // namespace facebook::react
