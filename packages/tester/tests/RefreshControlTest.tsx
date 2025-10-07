@@ -7,12 +7,18 @@ import {
   View,
   PanResponder,
   Animated,
+  TouchableHighlight,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import React, {useCallback, useEffect, useState} from 'react';
 import {Button, TestCase} from '../components';
+import {useEnvironment} from '../contexts';
 
 export const RefreshControlTest = () => {
+  const {
+    env: {driver},
+  } = useEnvironment();
+
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -195,6 +201,42 @@ export const RefreshControlTest = () => {
       <TestCase.Example modal itShould="RefreshControlBlockNativeExample">
         <RefreshControlBlockNativeExample />
       </TestCase.Example>
+      <TestCase.Automated
+        itShould="detect a press during pull to refresh"
+        tags={['sequential']}
+        initialState={{targetRef: React.createRef<View>()}}
+        act={({state}) => {
+          setTimeout(() => {
+            driver?.click({ref: state.targetRef});
+          }, 200);
+        }}
+        arrange={({state, done}) => {
+          return (
+            <ScrollView
+              style={{height: 256}}
+              refreshControl={
+                <RefreshControl refreshing={true} onRefresh={() => {}} />
+              }>
+              <TouchableHighlight
+                underlayColor={'red'}
+                ref={state.targetRef}
+                style={{
+                  width: '100%',
+                  height: 32,
+                  backgroundColor: 'cyan',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  done();
+                }}>
+                <Text>Press Me</Text>
+              </TouchableHighlight>
+            </ScrollView>
+          );
+        }}
+        assert={() => {}}
+      />
     </TestSuite>
   );
 };

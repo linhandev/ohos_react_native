@@ -550,7 +550,13 @@ bool rnoh::ScrollViewComponentInstance::isNestedScroll() {
 
 facebook::react::Point rnoh::ScrollViewComponentInstance::getCurrentOffset()
     const {
-  auto offset = getScrollOffset();
+  auto offset = this->getScrollOffset();
+  /**
+   * The line below fixes touch recognition issue that appeared,
+   * after getScrollOffset started returning a negative offset during pull to
+   * refresh.
+   */
+  offset.y += m_onPullToRefreshOffsetY.value_or(0);
   auto contentViewOffset = getContentViewOffset();
 
   return offset - contentViewOffset;
