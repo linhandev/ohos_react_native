@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const restoreRemoveListener = require('./compat/restoreRemoveListener');
+const { ensurePropTypes: withPropTypes } = require('./compat/ensurePropTypes');
 
 module.exports = {
   get AccessibilityInfo() {
@@ -72,8 +73,9 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Lists/FlatList');
   },
   get Image() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Image/Image')
-      .default;
+    return withPropTypes(
+      require('@react-native-oh/react-native-harmony/Libraries/Image/Image').default,
+    );
   },
   get ImageBackground() {
     return require('@react-native-oh/react-native-harmony/Libraries/Image/ImageBackground');
@@ -183,10 +185,12 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/Performance/Systrace');
   },
   get Text() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Text/Text');
+    return withPropTypes(require('@react-native-oh/react-native-harmony/Libraries/Text/Text'));
   },
   get TextInput() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/TextInput/TextInput');
+    return withPropTypes(
+      require('@react-native-oh/react-native-harmony/Libraries/Components/TextInput/TextInput'),
+    );
   },
   get ToastAndroid() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/ToastAndroid/ToastAndroid.android');
@@ -196,16 +200,24 @@ module.exports = {
       .default;
   },
   get TouchableHighlight() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableHighlight');
+    return withPropTypes(
+      require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableHighlight'),
+    );
   },
   get TouchableNativeFeedback() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableNativeFeedback');
+    return withPropTypes(
+      require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableNativeFeedback'),
+    );
   },
   get TouchableOpacity() {
-    return require('./Libraries/Components/Touchable/TouchableOpacity');
+    return withPropTypes(
+      require('./Libraries/Components/Touchable/TouchableOpacity'),
+    );
   },
   get TouchableWithoutFeedback() {
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableWithoutFeedback');
+    return withPropTypes(
+      require('@react-native-oh/react-native-harmony/Libraries/Components/Touchable/TouchableWithoutFeedback'),
+    );
   },
   get TurboModuleRegistry() {
     return require('@react-native-oh/react-native-harmony/Libraries/TurboModule/TurboModuleRegistry');
@@ -269,6 +281,19 @@ module.exports = {
   // BEGIN: 61 specific exports
   get CheckBox() {
     return require('./Libraries/Components/CheckBox/CheckBox').default;
+  },
+  // Top-level legacy RN61 PropTypes exports
+  get ColorPropType() {
+    return require('./Libraries/DeprecatedPropTypes/DeprecatedColorPropType');
+  },
+  get EdgeInsetsPropType() {
+    return require('./Libraries/DeprecatedPropTypes/DeprecatedEdgeInsetsPropType');
+  },
+  get PointPropType() {
+    return require('./Libraries/DeprecatedPropTypes/DeprecatedPointPropType');
+  },
+  get ViewPropTypes() {
+    return require('./Libraries/DeprecatedPropTypes/DeprecatedViewPropTypes');
   },
   // END: 61 specific exports
 };

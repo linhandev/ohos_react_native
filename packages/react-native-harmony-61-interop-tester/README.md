@@ -13,7 +13,7 @@ This is an internal project for testing `react-native-harmony-61-interop` packag
 ### OpenHarmony
 
 Similarly to the RNOH tester. Read [project-setup.md](../../docs/rnoh-maintainers/project-setup.md).
-However, there's one more extra step. You need to generate `react-native-openharmony.har` file in react-native-harmony project. To do it run `pnpm build:rnoh` from the project root level directory. 
+However, there's one more extra step. You need to generate `react-native-openharmony.har` file in react-native-harmony project. To do it run `pnpm build:rnoh` from the project root level directory.
 This file needs to be manually regenerated whenever `packages/tester/harmony/react_native_openharmony` is modified.
 
 ### Android
@@ -32,6 +32,7 @@ NOTE: gradlew should install the correct android SDK version automatically.
 
 ⚠️ IMPORTANT: The tester currently crashes on Android 16 (API 36). Use Android 15 or lower.
 
-1. Run `npm run android` in the `legacy-rn61-project` directory.
+1. Run `npm run dev` in the `legacy-rn61-project` directory to start Metro Bundler.
+2. Run `npm run android` in the `legacy-rn61-project` directory.
 
 NOTE: Normally, React Native 0.61 projects would use `"metro-react-native-babel-preset": "^0.56.0"`, but due to changes introduced in babel we use `^0.59.0`. Otherwise, the bundle won't work. You might need to clear metros cache with `--reset-cache` if you used a different version of the preset before.

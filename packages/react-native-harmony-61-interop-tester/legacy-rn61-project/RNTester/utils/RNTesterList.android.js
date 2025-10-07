@@ -229,6 +229,18 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('../examples/XHR/XHRExample'),
   },
   {
+    key: '[RNOH] LegacyListenersExample',
+    module: require('../examples/Interop/LegacyListenersExample'),
+  },
+  {
+    key: '[RNOH] AnimatedShimsWarningTest',
+    module: require('../examples/Interop/AnimatedShimsWarningTest'),
+  },
+  {
+    key: '[RNOH] PropTypesShimsTest',
+    module: require('../examples/Interop/PropTypesShimsTest'),
+  },
+  {
     key: '[RNOH] TouchableOpacity interop test',
     module: require('../examples/Interop/TouchableOpacityInteropTest'),
   },
