@@ -8,6 +8,7 @@
     "metro:harmony": "cross-env RNOH_TESTER_ONLY__TARGET_PLATFORM=harmony react-native start --client-logs",
     "metro:android": "react-native start --port 8086 --client-logs",
     "hdc-server": "hdc rport tcp:8083 tcp:8083 && npx hdc-server",
+    "ios": "npx pod-install && react-native run-ios --port 8086",
     "android": "react-native run-android --port 8086",
     "harmony": "react-native run-harmony --port 8081",
     "clean": "react-native clean-harmony",

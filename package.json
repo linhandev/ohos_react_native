@@ -28,6 +28,8 @@
     "harmony:61": "pnpm run --filter ./packages/react-native-harmony-61-interop-tester/rnoh-entry harmony",
     "//": "Run RNOH tester project on Android device.",
     "android:tester": "pnpm run --filter ./packages/tester android",
+    "//": "Run RNOH tester project on iOS device.",
+    "ios:tester": "pnpm run --filter ./packages/tester ios",
     "//": "Create offline JS bundle optimized for Hermes in the RNOH tester project.",
     "bundle:tester": "pnpm run --filter ./packages/tester bundle:hermes",
     "//": "Builds RNOH and tests its compatibility with popular libraries in RNOH ecosystem",
