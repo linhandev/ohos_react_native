@@ -14,6 +14,9 @@ module.exports = {
     restoreRemoveListener(mod, 'addEventListener', 'removeEventListener');
     return mod;
   },
+  get ActionSheetIOS() {
+    return require('@react-native-oh/react-native-harmony/Libraries/ActionSheetIOS/ActionSheetIOS');
+  },
   get ActivityIndicator() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/ActivityIndicator/ActivityIndicator')
       .default;

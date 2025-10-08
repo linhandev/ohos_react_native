@@ -1,4 +1,5 @@
 export * from './AccessibilityInfoTest';
+export * from './ActionSheetIOSTest';
 export * from './ActivityIndicatorTest';
 export * from './AlertTest';
 export * from './AnimatedTest';

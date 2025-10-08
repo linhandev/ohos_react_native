@@ -19,6 +19,9 @@ module.exports = {
     return require('./Libraries/Components/AccessibilityInfo/AccessibilityInfo')
       .default;
   },
+  get ActionSheetIOS() {
+    return require('./Libraries/ActionSheetIOS/ActionSheetIOS');
+  },
   get ActivityIndicator() {
     return require('./Libraries/Components/ActivityIndicator/ActivityIndicator')
       .default;

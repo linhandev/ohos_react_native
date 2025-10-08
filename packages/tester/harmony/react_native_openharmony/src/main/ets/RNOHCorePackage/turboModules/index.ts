@@ -7,6 +7,8 @@
 
 export * from './AccessibilityInfoTurboModule';
 
+export * from "./ActionSheetManagerTurboModule";
+
 export * from './AppStateTurboModule';
 
 export * from './Blob';

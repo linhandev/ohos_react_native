@@ -11,6 +11,7 @@ import type { AnyThreadTurboModule, UITurboModule } from '../RNOH/TurboModule';
 import type { AnyThreadTurboModuleContext, UITurboModuleContext } from "../RNOH/RNOHContext"
 import {
   AccessibilityInfoTurboModule,
+  ActionSheetManagerTurboModule,
   AlertManagerTurboModule,
   AppStateTurboModule,
   BlobTurboModule,
@@ -49,6 +50,7 @@ export class RNOHCorePackage extends RNPackage {
   override getUITurboModuleFactoryByNameMap(): Map<string, (ctx: UITurboModuleContext) => UITurboModule | null> {
     return new Map<string, ((ctx: UITurboModuleContext) => UITurboModule)>()
       .set(AccessibilityInfoTurboModule.NAME, (ctx) => new AccessibilityInfoTurboModule(ctx))
+      .set(ActionSheetManagerTurboModule.NAME, (ctx) => new ActionSheetManagerTurboModule(ctx))
       .set(AlertManagerTurboModule.NAME, (ctx) => new AlertManagerTurboModule(ctx))
       .set(AppStateTurboModule.NAME, (ctx) => new AppStateTurboModule(ctx))
       .set(DeviceEventManagerTurboModule.NAME, (ctx) => new DeviceEventManagerTurboModule(ctx))
