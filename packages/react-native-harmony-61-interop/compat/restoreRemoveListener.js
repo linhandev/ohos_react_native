@@ -15,7 +15,7 @@
  * on the subscription returned from `addEventListener` / `addListener`.
  * This helper bridges the gap by:
  *   1. Monkey-patching the original `add*` method so that it remembers the
- *      subscription object returned for every `(event, handler)` pair.
+ *      subscription object returned for every `(eventType, listener)` pair.
  *   2. Defining the legacy `remove*` method that looks up that subscription and
  *      calls `remove()` on it.
  *
@@ -29,9 +29,7 @@
  */
 function restoreRemoveListener(target, addName, removeName) {
   if (!target || typeof target[addName] !== 'function') {
-    console.warn(
-      `[restoreRemoveListener] Cannot patch. '${addName}' is missing on target`,
-    );
+    console.warn(`[restoreRemoveListener] Cannot patch. '${addName}' is missing on target`);
     return;
   }
 
@@ -40,33 +38,80 @@ function restoreRemoveListener(target, addName, removeName) {
     return;
   }
 
-  /** Map<event, Map<handler, subscription>> */
-  const subscriptionsByEvent = new Map();
+  /** Map<eventType, Map<listener, Set<subscription>>> */
+  const subsByListenerByEventType = new Map();
 
   // Patch add* so that we can later find the subscription.
-  const originalAdd = target[addName].bind(target);
-  target[addName] = function patchedAdd(event, handler, ...rest) {
-    const subscription = originalAdd(event, handler, ...rest);
-    let subscriptionsByHandler = subscriptionsByEvent.get(event);
-    if (!subscriptionsByHandler) {
-      subscriptionsByHandler = new Map();
-      subscriptionsByEvent.set(event, subscriptionsByHandler);
+  const originalAdd = target[addName];
+  target[addName] = function patchedAdd(eventType, listener, ...rest) {
+    const subscription = originalAdd.call(this, eventType, listener, ...rest);
+    let subsByListener = subsByListenerByEventType.get(eventType);
+    if (!subsByListener) {
+      subsByListener = new Map();
+      subsByListenerByEventType.set(eventType, subsByListener);
     }
-    subscriptionsByHandler.set(handler, subscription);
+    let listenerSubs = subsByListener.get(listener);
+    if (!listenerSubs) {
+      listenerSubs = new Set();
+      subsByListener.set(listener, listenerSubs);
+    }
+    listenerSubs.add(subscription);
+    // Ensure cleanup also if consumer calls subscription.remove() directly.
+    if (subscription && typeof subscription.remove === 'function') {
+      const originalRemove = subscription.remove.bind(subscription);
+      subscription.remove = function patchedSubscriptionRemove(...args) {
+        try {
+          return originalRemove(...args);
+        } finally {
+          const subsByListener = subsByListenerByEventType.get(eventType);
+          if (subsByListener) {
+            const listenerSubs = subsByListener.get(listener);
+            if (listenerSubs) {
+              listenerSubs.delete(subscription);
+              if (listenerSubs.size === 0) {
+                subsByListener.delete(listener);
+              }
+            }
+            if (subsByListener.size === 0) {
+              subsByListenerByEventType.delete(eventType);
+            }
+          }
+        }
+      };
+    }
     return subscription;
   };
 
   // Define legacy remove* API.
-  target[removeName] = function legacyRemove(event, handler) {
-    const subscriptionsByHandler = subscriptionsByEvent.get(event);
-    const subscription = subscriptionsByHandler
-      ? subscriptionsByHandler.get(handler)
-      : undefined;
-    if (subscription && typeof subscription.remove === 'function') {
-      subscription.remove();
-      subscriptionsByHandler.delete(handler);
+  target[removeName] = function legacyRemove(eventType, listener) {
+    const subsByListener = subsByListenerByEventType.get(eventType);
+    const listenerSubs = subsByListener ? subsByListener.get(listener) : undefined;
+    if (listenerSubs && listenerSubs.size > 0) {
+      // Remove all subscriptions for this (eventType, listener)
+      for (const sub of Array.from(listenerSubs)) {
+        if (sub && typeof sub.remove === 'function') {
+          sub.remove();
+        }
+      }
+      subsByListener.delete(listener);
+      if (subsByListener.size === 0) {
+        subsByListenerByEventType.delete(eventType);
+      }
     }
   };
+
+  // Optional cleanup for removeAllListeners to avoid stale entries in our map
+  const hasRemoveAll = typeof target.removeAllListeners === 'function';
+  if (hasRemoveAll && !target.__rnohPatchedRemoveAll) {
+    const originalRemoveAll = target.removeAllListeners.bind(target);
+    target.removeAllListeners = function patchedRemoveAllListeners(eventType) {
+      const result = originalRemoveAll(eventType);
+      subsByListenerByEventType.delete(eventType);
+      return result;
+    };
+    // Mark as patched to keep idempotency
+    Object.defineProperty(target, '__rnohPatchedRemoveAll', {value: true});
+  }
 }
 
 module.exports = restoreRemoveListener;

@@ -111,8 +111,7 @@ module.exports = {
       .default;
   },
   get NativeEventEmitter() {
-    return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/NativeEventEmitter')
-      .default;
+    return require('./Libraries/EventEmitter/NativeEventEmitter');
   },
   get NativeModules() {
     return require('@react-native-oh/react-native-harmony/Libraries/BatchedBridge/NativeModules');

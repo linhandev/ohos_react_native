@@ -6,7 +6,7 @@
  */
 
 /**
- * Simple smoke test for legacy removeEventListener/removeListener interop.
+ * Smoke test for interop-61: verifies RN 0.61 listener removal methods.
  * Registers and immediately removes listeners on several modules.
  */
 'use strict';
@@ -15,13 +15,13 @@ const React = require('react');
 const {
   Text,
   View,
-  Dimensions,
+  AccessibilityInfo,
   AppState,
+  BackHandler,
+  Dimensions,
   Keyboard,
   Linking,
-  AccessibilityInfo,
-  AppRegistry,
-  BackHandler,
+  NativeEventEmitter,
 } = require('react-native');
 
 function tryRemove(call) {
@@ -45,135 +45,201 @@ function pushSetupFailed(errors, moduleName, e) {
   );
 }
 
-function testAccessibilityInfo(errors) {
-  const accHandler = () => {};
+function testLegacyListener(options) {
+  const {
+    moduleName,
+    target,
+    addMethodName,
+    removeMethodName,
+    eventType,
+    listener,
+  } = options;
+  const errors = [];
   try {
-    const accSub = AccessibilityInfo.addEventListener('change', accHandler);
-    const errA = tryRemove(() =>
-      AccessibilityInfo.removeEventListener('change', accHandler),
+    const addMethod = target?.[addMethodName];
+    const removeMethod = target?.[removeMethodName];
+    if (typeof addMethod !== 'function' || typeof removeMethod !== 'function') {
+      throw new Error('Missing listener methods');
+    }
+    const subscription = addMethod.call(target, eventType, listener);
+    const removeError = tryRemove(() => {
+      removeMethod.call(target, eventType, listener);
+    });
+    pushErrorIfPresent(errors, moduleName, removeError);
+    const removeSubError = tryRemove(
+      () =>
+        subscription &&
+        typeof subscription.remove === 'function' &&
+        subscription.remove(),
     );
-    pushErrorIfPresent(errors, 'AccessibilityInfo', errA);
-    const errAb = tryRemove(
-      () => accSub && typeof accSub.remove === 'function' && accSub.remove(),
-    );
-    pushErrorIfPresent(errors, 'AccessibilityInfo sub.remove()', errAb);
+    pushErrorIfPresent(errors, `${moduleName} sub.remove()`, removeSubError);
   } catch (e) {
-    pushSetupFailed(errors, 'AccessibilityInfo', e);
+    pushSetupFailed(errors, moduleName, e);
   }
+  return {moduleName, passed: errors.length === 0, errors};
 }
 
-function testDimensions(errors) {
-  const dimHandler = () => {};
+function testNativeEventEmitter() {
+  const moduleName = 'NativeEventEmitter';
+  const errors = [];
   try {
-    const dimSub = Dimensions.addEventListener('change', dimHandler);
-    const err1 = tryRemove(() =>
-      Dimensions.removeEventListener('change', dimHandler),
+    const fakeNativeModule = {
+      addListener: (_eventType) => {},
+      removeListeners: (_count) => {},
+    };
+    const emitter = new NativeEventEmitter(fakeNativeModule);
+    const listener = () => {};
+    const subscription = emitter.addListener('rnohTestEvent1', listener);
+    // Verify removal via removeSubscription(subscription)
+    const removeSubscriptionError = tryRemove(() => {
+      emitter.removeSubscription(subscription);
+    });
+    pushErrorIfPresent(
+      errors,
+      `${moduleName} removeSubscription`,
+      removeSubscriptionError,
     );
-    pushErrorIfPresent(errors, 'Dimensions', err1);
-    const err1b = tryRemove(
-      () => dimSub && typeof dimSub.remove === 'function' && dimSub.remove(),
+    // Verify removal via removeListener(eventType, listener)
+    const secondSubscription = emitter.addListener('rnohTestEvent2', listener);
+    const removeListenerError = tryRemove(() => {
+      emitter.removeListener('rnohTestEvent2', listener);
+    });
+    pushErrorIfPresent(
+      errors,
+      `${moduleName} removeListener(eventType, listener)`,
+      removeListenerError,
     );
-    pushErrorIfPresent(errors, 'Dimensions sub.remove()', err1b);
+
+    // Same listener registered twice for the same eventType
+    const sameEventType = 'rnohSame';
+    let sameCount = 0;
+    const sameListener = () => {
+      sameCount++;
+    };
+    emitter.addListener(sameEventType, sameListener);
+    emitter.addListener(sameEventType, sameListener);
+    try {
+      emitter.emit(sameEventType);
+    } catch (e) {
+      pushSetupFailed(errors, moduleName, e);
+    }
+    if (sameCount !== 2) {
+      errors.push(
+        `${moduleName} same-listener first emit expected 2, got ${String(sameCount)}`,
+      );
+    }
+    const removeSameOnceErr = tryRemove(() => {
+      emitter.removeListener(sameEventType, sameListener);
+    });
+    pushErrorIfPresent(
+      errors,
+      `${moduleName} removeListener(same, listener)`,
+      removeSameOnceErr,
+    );
+    try {
+      emitter.emit(sameEventType);
+    } catch (e) {
+      pushSetupFailed(errors, moduleName, e);
+    }
+    if (sameCount !== 2) {
+      errors.push(
+        `${moduleName} same-listener second emit expected 2 (no listeners), got ${String(sameCount)}`,
+      );
+    }
   } catch (e) {
-    pushSetupFailed(errors, 'Dimensions', e);
+    pushSetupFailed(errors, moduleName, e);
   }
+  return {moduleName, passed: errors.length === 0, errors};
 }
 
-function testAppState(errors) {
-  const appHandler = () => {};
-  try {
-    const appSub = AppState.addEventListener('change', appHandler);
-    const err2 = tryRemove(() =>
-      AppState.removeEventListener('change', appHandler),
-    );
-    pushErrorIfPresent(errors, 'AppState', err2);
-    const err2b = tryRemove(
-      () => appSub && typeof appSub.remove === 'function' && appSub.remove(),
-    );
-    pushErrorIfPresent(errors, 'AppState sub.remove()', err2b);
-  } catch (e) {
-    pushSetupFailed(errors, 'AppState', e);
-  }
-}
-
-function testBackHandler(errors) {
-  const backHandler = () => false;
-  try {
-    const bhSub = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backHandler,
-    );
-    const errBH = tryRemove(() =>
-      BackHandler.removeEventListener('hardwareBackPress', backHandler),
-    );
-    pushErrorIfPresent(errors, 'BackHandler', errBH);
-    const errBHb = tryRemove(
-      () => bhSub && typeof bhSub.remove === 'function' && bhSub.remove(),
-    );
-    pushErrorIfPresent(errors, 'BackHandler sub.remove()', errBHb);
-  } catch (e) {
-    pushSetupFailed(errors, 'BackHandler', e);
-  }
-}
-
-function testKeyboard(errors) {
-  const kbHandler = () => {};
-  try {
-    const kbSub = Keyboard.addListener('keyboardDidShow', kbHandler);
-    const err3 = tryRemove(() =>
-      Keyboard.removeListener('keyboardDidShow', kbHandler),
-    );
-    pushErrorIfPresent(errors, 'Keyboard', err3);
-    const err3b = tryRemove(
-      () => kbSub && typeof kbSub.remove === 'function' && kbSub.remove(),
-    );
-    pushErrorIfPresent(errors, 'Keyboard sub.remove()', err3b);
-  } catch (e) {
-    pushSetupFailed(errors, 'Keyboard', e);
-  }
-}
-
-function testLinking(errors) {
-  const linkHandler = () => {};
-  try {
-    const linkSub = Linking.addEventListener('url', linkHandler);
-    const err4 = tryRemove(() =>
-      Linking.removeEventListener('url', linkHandler),
-    );
-    pushErrorIfPresent(errors, 'Linking', err4);
-    const err4b = tryRemove(
-      () => linkSub && typeof linkSub.remove === 'function' && linkSub.remove(),
-    );
-    pushErrorIfPresent(errors, 'Linking sub.remove()', err4b);
-  } catch (e) {
-    pushSetupFailed(errors, 'Linking', e);
-  }
-}
+const modulesToTest = [
+  {
+    moduleName: 'AccessibilityInfo',
+    target: AccessibilityInfo,
+    addMethodName: 'addEventListener',
+    removeMethodName: 'removeEventListener',
+    eventType: 'change',
+    listener: () => {},
+  },
+  {
+    moduleName: 'AppState',
+    target: AppState,
+    addMethodName: 'addEventListener',
+    removeMethodName: 'removeEventListener',
+    eventType: 'change',
+    listener: () => {},
+  },
+  {
+    moduleName: 'BackHandler',
+    target: BackHandler,
+    addMethodName: 'addEventListener',
+    removeMethodName: 'removeEventListener',
+    eventType: 'hardwareBackPress',
+    listener: () => false,
+  },
+  {
+    moduleName: 'Dimensions',
+    target: Dimensions,
+    addMethodName: 'addEventListener',
+    removeMethodName: 'removeEventListener',
+    eventType: 'change',
+    listener: () => {},
+  },
+  {
+    moduleName: 'Keyboard',
+    target: Keyboard,
+    addMethodName: 'addListener',
+    removeMethodName: 'removeListener',
+    eventType: 'keyboardDidShow',
+    listener: () => {},
+  },
+  {
+    moduleName: 'Linking',
+    target: Linking,
+    addMethodName: 'addEventListener',
+    removeMethodName: 'removeEventListener',
+    eventType: 'url',
+    listener: () => {},
+  },
+];
 
 function runLegacyListenerTests() {
-  const errors = [];
-  testAccessibilityInfo(errors);
-  testDimensions(errors);
-  testAppState(errors);
-  testBackHandler(errors);
-  testKeyboard(errors);
-  testLinking(errors);
-  return errors;
+  const results = [];
+  modulesToTest.forEach((module) => {
+    results.push(testLegacyListener(module));
+  });
+  results.push(testNativeEventEmitter());
+  return results;
 }
 
-exports.title = '[RNOH] LegacyListeners Smoke Test';
-exports.description = 'Verifies removeEventListener/removeListener exist and work.';
+exports.title = '[RNOH] Legacy Listener Methods';
+exports.description =
+  'Smoke test for interop-61: verifies RN 0.61 listener removal methods.';
 exports.examples = [
   {
-    title: 'Run',
+    title:
+      'Registers and immediately removes listeners on several modules via react-native 0.61 syntax.',
     render() {
-      const errors = runLegacyListenerTests();
-      const ok = errors.length === 0;
+      const results = runLegacyListenerTests();
       return (
         <View>
-          <Text>{ok ? 'OK - legacy listeners registered and removed correctly' : 'FAIL'}</Text>
-          {!ok && errors.map((e, i) => (
-            <Text key={String(i)}>{e}</Text>
+          {results.map((res, i) => (
+            <View key={String(i)}>
+              <Text style={{color: res.passed ? 'green' : 'red'}}>
+                {res.passed
+                  ? `pass: ${res.moduleName}`
+                  : `fail: ${res.moduleName}`}
+              </Text>
+              {!res.passed &&
+                Array.isArray(res.errors) &&
+                res.errors.map((err, j) => (
+                  <Text
+                    key={`${String(i)}:${String(j)}`}
+                    style={{color: 'red'}}>
+                    {err}
+                  </Text>
+                ))}
+            </View>
           ))}
         </View>
       );
