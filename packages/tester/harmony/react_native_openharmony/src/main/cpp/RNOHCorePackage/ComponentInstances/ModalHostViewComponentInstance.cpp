@@ -37,6 +37,14 @@ class ModalHostTouchHandler : public UIInputEventHandler {
     m_touchEventDispatcher.dispatchTouchEvent(
         event, m_rootView->shared_from_this());
   }
+
+  void onRootViewAboutToDisappear() override {
+    m_touchEventDispatcher.cancelActiveTouches();
+  }
+
+  ~ModalHostTouchHandler() {
+    m_touchEventDispatcher.cancelActiveTouches();
+  }
 };
 
 void ModalHostViewComponentInstance::updateDisplayRect(
@@ -149,9 +157,14 @@ void ModalHostViewComponentInstance::onFinalizeUpdates() {
   // only show modal after the screen size has been set and processed by RN
   auto isScreenSizeSet = m_state && m_state->getData().screenSize.height != 0 &&
       m_state->getData().screenSize.width != 0;
-  auto shouldShowDialog = !m_dialogHandler.isShow() && isScreenSizeSet;
+  auto shouldShowDialog =
+      m_props->visible && !m_dialogHandler.isShow() && isScreenSizeSet;
   if (shouldShowDialog) {
     showDialog();
+  }
+  auto shouldCloseDialog = !m_props->visible && m_dialogHandler.isShow();
+  if (shouldCloseDialog) {
+    closeDialog();
   }
   CppComponentInstance::onFinalizeUpdates();
 }
@@ -159,6 +172,13 @@ void ModalHostViewComponentInstance::onFinalizeUpdates() {
 void ModalHostViewComponentInstance::showDialog() {
   m_dialogHandler.setContent(m_rootStackNode);
   m_dialogHandler.show();
+}
+
+void ModalHostViewComponentInstance::closeDialog() {
+  m_touchHandler->onRootViewAboutToDisappear();
+  if (m_eventEmitter != nullptr) {
+    m_eventEmitter->onDismiss({});
+  }
 }
 
 void ModalHostViewComponentInstance::onShow() {

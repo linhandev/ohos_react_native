@@ -38,6 +38,7 @@ class ModalHostViewComponentInstance
       SharedConcreteState const& state);
 
   void updateSlideTransition(DisplayMetrics const& displayMetrics);
+  void closeDialog();
 
  public:
   ModalHostViewComponentInstance(Context context);

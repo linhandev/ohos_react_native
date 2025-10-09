@@ -53,6 +53,13 @@ class UIInputEventHandler {
    */
   virtual void onTouchEvent(ArkUI_UIInputEvent* event) = 0;
 
+  /**
+   * @brief The callback before the RootView is destroyed.
+   * Developers may need to manually cancel the pressed touches before the
+   * RootView is destroyed. Currently, this is how it's handled in Modal.
+   */
+  virtual void onRootViewAboutToDisappear() {}
+
  private:
   ArkUINode& m_node;
 };

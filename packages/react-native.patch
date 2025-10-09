@@ -3393,6 +3393,30 @@ index 22ac430c2190ef3af06e89e1d55210336354325d..c7646e6b7a8e8bcd084d5cd059c63f0d
            blurRadius: true,
            capInsets: {
              diff: require('../Utilities/differ/insetsDiffer'),
+diff --git a/packages/react-native/Libraries/Modal/Modal.js b/packages/react-native/Libraries/Modal/Modal.js
+index 345191ab52850f0d1fb5a4fa0c27543bbf95e680..90e09ad7b576f8b067061d0ba044b5224ee12041 100644
+--- a/packages/react-native/Libraries/Modal/Modal.js
++++ b/packages/react-native/Libraries/Modal/Modal.js
+@@ -260,7 +260,7 @@ class Modal extends React.Component<Props, State> {
+ 
+   // Helper function to encapsulate platform specific logic to show or not the Modal.
+   _shouldShowModal(): boolean {
+-    if (Platform.OS === 'ios') {
++    if (Platform.OS === 'ios' || Platform.OS === 'harmony') {
+       return this.props.visible === true || this.state.isRendered === true;
+     }
+ 
+@@ -296,8 +296,8 @@ class Modal extends React.Component<Props, State> {
+     );
+ 
+     const onDismiss = () => {
+-      // OnDismiss is implemented on iOS only.
+-      if (Platform.OS === 'ios') {
++      // OnDismiss is implemented on iOS and Harmony.
++      if (Platform.OS === 'ios' || Platform.OS === 'harmony') {
+         this.setState({isRendered: false}, () => {
+           if (this.props.onDismiss) {
+             this.props.onDismiss();
 diff --git a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js b/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js
 index 99a067ec35d8e2223171be297d2d2dbe8d3b33ff..d549fd2a07f7b9f45c17339853fc674a7b0d7b03 100644
 --- a/packages/react-native/Libraries/NativeComponent/ViewConfigIgnore.js

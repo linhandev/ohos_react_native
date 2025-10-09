@@ -8,8 +8,10 @@ import {
   ModalProps,
   TextInput,
   FlatList,
+  Pressable,
 } from 'react-native';
 import {Button, TestCase} from '../components';
+import {PALETTE} from '../components/palette';
 
 export function ModalTest() {
   return (
@@ -23,6 +25,20 @@ export function ModalTest() {
         arrange={({setState}) => (
           <ModalExample
             onShow={() => {
+              setState(true);
+            }}
+          />
+        )}
+        assert={({state, expect}) => {
+          expect(state).to.be.true;
+        }}
+      />
+      <TestCase.Manual
+        itShould="trigger onDismiss event after modal is closed"
+        initialState={false}
+        arrange={({setState}) => (
+          <ModalExample
+            onDismiss={() => {
               setState(true);
             }}
           />
@@ -72,6 +88,9 @@ export function ModalTest() {
       </TestCase.Example>
       <TestCase.Example itShould="display modal from flatlist item">
         <NestedModalInFlatlist />
+      </TestCase.Example>
+      <TestCase.Example itShould="long-pressing to close the Modal will not block the next touch action.">
+        <CloseModalByLongPress />
       </TestCase.Example>
     </TestSuite>
   );
@@ -261,6 +280,42 @@ const NestedModalInFlatlist = () => {
   );
 };
 
+const CloseModalByLongPress = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  return (
+    <>
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              After the Modal is closed, click "Show Modal" again.
+            </Text>
+            <Pressable
+              style={({pressed}) => [
+                styles.longPressButton,
+                {
+                  backgroundColor: pressed
+                    ? PALETTE.REACT_CYAN_DARK
+                    : PALETTE.REACT_CYAN_LIGHT,
+                },
+              ]}
+              onLongPress={() => setModalVisible(false)}>
+              <Text>Long-pressing to close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      <Button label="Show Modal" onPress={() => setModalVisible(true)} />
+    </>
+  );
+};
+
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
@@ -311,5 +366,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(200,200,200)',
     borderRadius: 12,
     marginVertical: 4,
+  },
+  longPressButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderWidth: 2,
+    borderColor: PALETTE.REACT_CYAN_DARK,
   },
 });

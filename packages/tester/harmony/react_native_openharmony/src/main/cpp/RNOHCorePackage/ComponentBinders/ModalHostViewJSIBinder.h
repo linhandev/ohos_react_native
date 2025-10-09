@@ -20,6 +20,7 @@ class ModalHostViewJSIBinder : public ViewComponentJSIBinder {
     events.setProperty(
         rt, "topRequestClose", createDirectEvent(rt, "onRequestClose"));
     events.setProperty(rt, "topShow", createDirectEvent(rt, "onShow"));
+    events.setProperty(rt, "topDismiss", createDirectEvent(rt, "onDismiss"));
     events.setProperty(
         rt,
         "topOrientationChange",
