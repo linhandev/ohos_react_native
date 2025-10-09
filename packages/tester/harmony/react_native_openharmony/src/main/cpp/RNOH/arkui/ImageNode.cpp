@@ -94,11 +94,11 @@ ImageNode& ImageNode::setResizeMode(
       val = ARKUI_OBJECT_FIT_COVER;
       break;
     case facebook::react::ImageResizeMode::Contain:
-      [[fallthrough]];
-    case facebook::react::ImageResizeMode::Center:
-      [[fallthrough]];
-    case facebook::react::ImageResizeMode::Repeat:
       val = ARKUI_OBJECT_FIT_CONTAIN;
+      break;
+    case facebook::react::ImageResizeMode::Center:
+    case facebook::react::ImageResizeMode::Repeat:
+      val = ARKUI_OBJECT_FIT_SCALE_DOWN;
       break;
     case facebook::react::ImageResizeMode::Stretch:
       val = ARKUI_OBJECT_FIT_FILL;
