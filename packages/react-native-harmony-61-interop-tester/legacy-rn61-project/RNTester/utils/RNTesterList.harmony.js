@@ -131,7 +131,7 @@ const ComponentExamples: Array<RNTesterExample> = [
   },
   {
     key: 'TextExample',
-    module: require('../examples/Text/TextExample'),
+    module: require('../examples/Text/TextExample.android'),
   },
   {
     key: 'TextInputExample',
