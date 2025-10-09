@@ -11,6 +11,7 @@ import {
   RootTag,
   RootTagContext,
   View,
+  InputAccessoryView,
 } from 'react-native';
 import {TestSuite} from '@rnoh/testerino';
 import {useContext} from 'react';
@@ -76,6 +77,12 @@ export const MiscPropsTest = () => {
         itShould="pass when RootTagContext is defined and have sensible value"
         fn={({expect}) => {
           expect(rootTag).to.be.greaterThan(0);
+        }}
+      />
+      <TestCase.Logical
+        itShould="pass when InputAccessoryView is exported"
+        fn={({expect}) => {
+          expect(InputAccessoryView).to.be.not.undefined;
         }}
       />
       <TestCase.Example itShould="have red background color after hiding, updating and showing again">

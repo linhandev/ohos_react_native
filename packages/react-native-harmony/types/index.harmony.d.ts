@@ -21,7 +21,7 @@ export * from '../Libraries/Components/ScrollView/ScrollView';
 // export * from '../Libraries/Components/Slider/Slider';
 export * from '../Libraries/Components/StatusBar/StatusBar';
 export * from '../Libraries/Components/Switch/Switch';
-// export * from '../Libraries/Components/TextInput/InputAccessoryView';
+export * from '../Libraries/Components/TextInput/InputAccessoryView';
 export * from '../Libraries/Components/TextInput/TextInput';
 export * from '../Libraries/Components/ToastAndroid/ToastAndroid';
 export * from '../Libraries/Components/Touchable/Touchable';

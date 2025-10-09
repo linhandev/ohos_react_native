@@ -74,6 +74,10 @@ module.exports = {
   get ImageBackground() {
     return require('./Libraries/Image/ImageBackground');
   },
+  get InputAccessoryView() {
+    return require('./Libraries/Components/TextInput/InputAccessoryView')
+      .default;
+  },
   get I18nManager() {
     return require('./Libraries/ReactNative/I18nManager');
   },
