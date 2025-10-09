@@ -13,6 +13,7 @@
 namespace facebook::react {
 
 extern const char RNCheckBoxComponentName[] = "RNCheckBox";
+extern const char RNMaskedViewComponentName[] = "RNMaskedView";
 extern const char RNPickerComponentName[] = "RNPicker";
 extern const char RNSegmentedControlComponentName[] = "RNSegmentedControl";
 

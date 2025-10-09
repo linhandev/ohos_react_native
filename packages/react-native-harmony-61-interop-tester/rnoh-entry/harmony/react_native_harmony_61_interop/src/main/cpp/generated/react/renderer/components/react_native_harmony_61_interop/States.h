@@ -26,6 +26,18 @@ public:
 #endif
 };
 
+class RNMaskedViewState {
+public:
+  RNMaskedViewState() = default;
+
+#ifdef ANDROID
+  RNMaskedViewState(RNMaskedViewState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
 class RNPickerState {
 public:
   RNPickerState() = default;

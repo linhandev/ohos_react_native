@@ -8,6 +8,7 @@
 #include "RNOH/Package.h"
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/generated/components/RNCheckBoxJSIBinder.h"
+#include "RNOH/generated/components/RNMaskedViewJSIBinder.h"
 #include "RNOH/generated/components/RNPickerJSIBinder.h"
 #include "RNOH/generated/components/RNSegmentedControlJSIBinder.h"
 
@@ -32,6 +33,7 @@ class BaseReactNativeHarmony61InteropPackageEventEmitRequestHandler : public Eve
 
         std::vector<std::string> supportedComponentNames = {
             "RNCheckBox",
+            "RNMaskedView",
             "RNPicker",
             "RNSegmentedControl",
         };
@@ -61,6 +63,7 @@ class BaseReactNativeHarmony61InteropPackage : public Package {
     std::vector<facebook::react::ComponentDescriptorProvider> createComponentDescriptorProviders() override {
         return {
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNCheckBoxComponentDescriptor>(),
+            facebook::react::concreteComponentDescriptorProvider<facebook::react::RNMaskedViewComponentDescriptor>(),
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNPickerComponentDescriptor>(),
             facebook::react::concreteComponentDescriptorProvider<facebook::react::RNSegmentedControlComponentDescriptor>(),
         };
@@ -69,6 +72,7 @@ class BaseReactNativeHarmony61InteropPackage : public Package {
     ComponentJSIBinderByString createComponentJSIBinderByName() override {
         return {
             {"RNCheckBox", std::make_shared<RNCheckBoxJSIBinder>()},
+            {"RNMaskedView", std::make_shared<RNMaskedViewJSIBinder>()},
             {"RNPicker", std::make_shared<RNPickerJSIBinder>()},
             {"RNSegmentedControl", std::make_shared<RNSegmentedControlJSIBinder>()},
         };

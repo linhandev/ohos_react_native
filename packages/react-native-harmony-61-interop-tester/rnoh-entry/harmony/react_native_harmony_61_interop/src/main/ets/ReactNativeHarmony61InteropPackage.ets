@@ -8,7 +8,7 @@ import {
   RNOHPackage,
   ComponentBuilderContext,
   DescriptorWrapperFactoryByDescriptorTypeCtx,
-  DescriptorWrapperFactoryByDescriptorType
+  DescriptorWrapperFactoryByDescriptorType,
 } from "@rnoh/react-native-openharmony"
 import { RNCheckBox } from "./components/RNCheckBox"
 import { RNPicker } from "./components/RNPicker"
@@ -20,6 +20,7 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
     const result = new Map<string, WrappedBuilder<[ComponentBuilderContext]>>();
     result.set(RNCheckBox.NAME, wrapBuilder(buildRNCheckBox))
     result.set(RNPicker.NAME, wrapBuilder(buildRNPicker))
+    
     result.set(RNSegmentedControl.NAME, wrapBuilder(buildRNSegmentedControl))
     return result;
   }
@@ -28,6 +29,7 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
     const result: DescriptorWrapperFactoryByDescriptorType = {}
     result[RNC.RNCheckBox.NAME] = (ctx) => new RNC.RNCheckBox.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNPicker.NAME] = (ctx) => new RNC.RNPicker.DescriptorWrapper(ctx.descriptor)
+    result[RNC.RNMaskedView.NAME] = (ctx) => new RNC.RNMaskedView.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNSegmentedControl.NAME] = (ctx) => new RNC.RNSegmentedControl.DescriptorWrapper(ctx.descriptor)
     return result;
   }

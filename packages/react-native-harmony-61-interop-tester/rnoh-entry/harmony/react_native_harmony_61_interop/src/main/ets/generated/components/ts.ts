@@ -3,5 +3,6 @@
  */
 
 export * from "./RNCheckBox"
+export * from "./RNMaskedView"
 export * from "./RNPicker"
 export * from "./RNSegmentedControl"

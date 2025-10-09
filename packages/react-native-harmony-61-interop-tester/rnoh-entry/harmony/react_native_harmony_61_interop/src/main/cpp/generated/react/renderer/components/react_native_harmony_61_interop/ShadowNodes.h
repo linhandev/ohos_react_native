@@ -29,6 +29,17 @@ using RNCheckBoxShadowNode = ConcreteViewShadowNode<
     RNCheckBoxEventEmitter,
     RNCheckBoxState>;
 
+JSI_EXPORT extern const char RNMaskedViewComponentName[];
+
+/*
+ * `ShadowNode` for <RNMaskedView> component.
+ */
+using RNMaskedViewShadowNode = ConcreteViewShadowNode<
+    RNMaskedViewComponentName,
+    RNMaskedViewProps,
+    RNMaskedViewEventEmitter,
+    RNMaskedViewState>;
+
 JSI_EXPORT extern const char RNPickerComponentName[];
 
 /*

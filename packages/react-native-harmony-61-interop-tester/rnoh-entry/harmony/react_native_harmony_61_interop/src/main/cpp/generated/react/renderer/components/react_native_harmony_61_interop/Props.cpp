@@ -29,6 +29,13 @@ RNCheckBoxProps::RNCheckBoxProps(
     boxType(convertRawProp(context, rawProps, "boxType", sourceProps.boxType, {RNCheckBoxBoxType::Square})),
     lineWidth(convertRawProp(context, rawProps, "lineWidth", sourceProps.lineWidth, {-1}))
       {}
+RNMaskedViewProps::RNMaskedViewProps(
+    const PropsParserContext &context,
+    const RNMaskedViewProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps)
+
+    
+      {}
 RNPickerProps::RNPickerProps(
     const PropsParserContext &context,
     const RNPickerProps &sourceProps,

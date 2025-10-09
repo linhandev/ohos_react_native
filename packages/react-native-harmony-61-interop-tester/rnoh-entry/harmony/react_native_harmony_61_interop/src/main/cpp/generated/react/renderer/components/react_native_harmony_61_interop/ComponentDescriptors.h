@@ -17,6 +17,7 @@
 namespace facebook::react {
 
 using RNCheckBoxComponentDescriptor = ConcreteComponentDescriptor<RNCheckBoxShadowNode>;
+using RNMaskedViewComponentDescriptor = ConcreteComponentDescriptor<RNMaskedViewShadowNode>;
 using RNPickerComponentDescriptor = ConcreteComponentDescriptor<RNPickerShadowNode>;
 using RNSegmentedControlComponentDescriptor = ConcreteComponentDescriptor<RNSegmentedControlShadowNode>;
 

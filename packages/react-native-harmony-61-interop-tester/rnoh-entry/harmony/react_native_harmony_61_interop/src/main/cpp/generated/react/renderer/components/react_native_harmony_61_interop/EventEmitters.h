@@ -23,6 +23,13 @@ class RNCheckBoxEventEmitter : public ViewEventEmitter {
     };
   void onValueChange(OnValueChange value) const;
 };
+class RNMaskedViewEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  
+  
+};
 class RNPickerEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;

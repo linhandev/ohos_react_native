@@ -51,6 +51,16 @@ class RNCheckBoxProps final : public ViewProps {
   int lineWidth{-1};
 };
 
+class RNMaskedViewProps final : public ViewProps {
+ public:
+  RNMaskedViewProps() = default;
+  RNMaskedViewProps(const PropsParserContext& context, const RNMaskedViewProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  
+};
+
 enum class RNPickerMode { Dialog, Dropdown };
 
 static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNPickerMode &result) {

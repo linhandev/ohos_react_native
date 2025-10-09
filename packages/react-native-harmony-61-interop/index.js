@@ -300,6 +300,9 @@ module.exports = {
   get CheckBox() {
     return require('./Libraries/Components/CheckBox/CheckBox').default;
   },
+  get MaskedViewIOS() {
+    return require('./Libraries/Components/MaskedView/MaskedView').default;
+  },
   // Top-level legacy RN61 PropTypes exports
   get ColorPropType() {
     return require('./Libraries/DeprecatedPropTypes/DeprecatedColorPropType');

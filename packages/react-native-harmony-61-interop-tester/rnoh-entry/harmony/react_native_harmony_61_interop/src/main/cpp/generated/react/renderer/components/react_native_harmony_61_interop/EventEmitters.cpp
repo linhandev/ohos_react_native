@@ -23,6 +23,7 @@ $payload.setProperty(runtime, "value", $event.value);
 }
 
 
+
 void RNPickerEventEmitter::onValueChange(OnValueChange $event) const {
   dispatchEvent("valueChange", [$event=std::move($event)](jsi::Runtime &runtime) {
     auto $payload = jsi::Object(runtime);

@@ -7,6 +7,7 @@
 
 #include <RNOH/Package.h>
 #include "RNOH/generated/BaseReactNativeHarmony61InteropPackage.h"
+#include "components/masked_view/MaskedViewComponentInstance.h"
 
 namespace rnoh {
 
@@ -16,5 +17,23 @@ class ReactNativeHarmony61InteropPackage
 
  public:
   ReactNativeHarmony61InteropPackage(Package::Context ctx) : Super(ctx) {}
+
+  ComponentInstanceFactoryDelegate::Shared
+  createComponentInstanceFactoryDelegate() override {
+    class InteropComponentInstanceFactoryDelegate
+        : public ComponentInstanceFactoryDelegate {
+     public:
+      using ComponentInstanceFactoryDelegate::ComponentInstanceFactoryDelegate;
+
+      ComponentInstance::Shared create(
+          ComponentInstance::Context ctx) override {
+        if (ctx.componentName == "RNMaskedView") {
+          return std::make_shared<MaskedViewComponentInstance>(std::move(ctx));
+        }
+        return nullptr;
+      }
+    };
+    return std::make_shared<InteropComponentInstanceFactoryDelegate>();
+  }
 };
 } // namespace rnoh
