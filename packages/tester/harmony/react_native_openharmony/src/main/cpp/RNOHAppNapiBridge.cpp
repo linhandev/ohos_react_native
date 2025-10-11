@@ -280,7 +280,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
     ArkJS arkJS(env);
     DLOG(INFO) << "onCreateRNInstance";
     RNOHMarker::setAppStartTime(facebook::react::JSExecutor::performanceNow());
-    auto args = arkJS.getCallbackArgs(info, 13);
+    auto args = arkJS.getCallbackArgs(info, 14);
     size_t rnInstanceId = arkJS.getDouble(args[0]);
     auto mainArkTSTurboModuleProviderRef = arkJS.createNapiRef(args[1]);
     auto mutationsListenerRef = arkJS.createNapiRef(args[2]);
@@ -350,6 +350,12 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
             std::make_shared<facebook::react::EmptyReactNativeConfig>(),
             arkJS.getDynamic(args[11]));
 #endif
+    auto imageSourceByNameEntries = arkJS.getObjectProperties(args[13]);
+    std::unordered_map<std::string, std::string> imageSourceByName;
+    for (auto& [name, path] : imageSourceByNameEntries) {
+      imageSourceByName.emplace(arkJS.getString(name), arkJS.getString(path));
+    }
+
     RNOHMarker::logMarker(
         RNOHMarker::RNOHMarkerId::INIT_JS_RUNTIME_STOP, rnInstanceId);
     auto rnInstance = createRNInstance(
@@ -411,6 +417,7 @@ static napi_value onCreateRNInstance(napi_env env, napi_callback_info info) {
         jsResourceManager,
         shouldEnableDebugger,
         std::move(fontPathByFontFamily),
+        std::move(imageSourceByName),
         std::move(jsEngineProvider),
         inspectorHostTarget,
         hspModuleName);

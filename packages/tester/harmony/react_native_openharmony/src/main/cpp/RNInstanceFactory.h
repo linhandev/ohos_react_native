@@ -73,6 +73,7 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
     napi_value jsResourceManager,
     bool shouldEnableDebugger,
     std::unordered_map<std::string, std::string> fontPathByFontFamily,
+    std::unordered_map<std::string, std::string> imageSourceByName,
     std::shared_ptr<facebook::react::JSRuntimeFactory> jsEngineProvider,
     std::shared_ptr<InspectorHostTarget> inspectorHostTarget,
     std::string hspModuleName) {
@@ -277,8 +278,8 @@ std::shared_ptr<RNInstanceInternal> createRNInstance(
       hspModuleName);
   rnInstance->onCreate();
   componentInstanceDependencies->rnInstance = rnInstance;
-  auto imageSourceResolver =
-      std::make_shared<ImageSourceResolver>(arkTSMessageHub, rnInstance);
+  auto imageSourceResolver = std::make_shared<ImageSourceResolver>(
+      arkTSMessageHub, rnInstance, std::move(imageSourceByName));
   componentInstanceDependencies->imageSourceResolver = imageSourceResolver;
   return rnInstance;
 }

@@ -49,7 +49,10 @@ void ImageComponentInstance::setSources(
       *this, m_layoutMetrics, sources);
 
   auto imageSource = newSource.uri;
-  if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
+  if (auto source =
+          m_deps->imageSourceResolver->getImageSourceByName(imageSource)) {
+    imageSource = *source;
+  } else if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
     std::string assetsPrefix = this->getAssetsPrefix();
     imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
   }

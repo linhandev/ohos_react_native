@@ -31,6 +31,9 @@ struct Index {
             name: "tester61",
             createRNPackages: getRNOHPackages,
             fontResourceByFontFamily: {},
+            imageSourceByName: {
+              "legacy_image": "resource://app/media/legacy_image.png",
+            },
             enableDebugger: this.rnohCoreContext?.isDebugModeEnabled,
           },
           appKey: "tester61",

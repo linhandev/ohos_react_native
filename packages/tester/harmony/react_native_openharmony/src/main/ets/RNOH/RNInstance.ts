@@ -450,6 +450,17 @@ export type RNInstanceOptions = {
    */
   fontResourceByFontFamily?: Record<string, Resource | string>;
   /**
+   * Specifies native-side images used by RN application.
+   * @example {
+   *   "imageSourceByName": {
+   *     "legacy_image": "resource://app/media/legacy_image.png",
+   *   }
+   *   To render the image in react native use:
+   *   <Image source={{uri: 'legacy_image', width: 100, height: 100}} />
+   * }
+   */
+  imageSourceByName?: Record<string, string>;
+  /**
    * @default: JSVM_INIT_OPTIONS_PRESET.DEFAULT
    * Specifies custom init options used by JSVM. The options has no effect if using Hermes.
    */
@@ -554,6 +565,7 @@ export class RNInstanceImpl implements RNInstance {
     private assetsDest: string,
     private resourceManager: resourceManager.ResourceManager,
     private fontPathByFontFamily: Record<string, string>,
+    private imageSourceByName: Record<string, string>,
     private _httpClient: HttpClient,
     private _caPathProvider: CAPathProvider,
     backPressHandler?: () => void,
@@ -699,7 +711,8 @@ export class RNInstanceImpl implements RNInstance {
       this.resourceManager,
       this.fontPathByFontFamily,
       this.jsvmInitOptions ?? JSVM_INIT_OPTIONS_PRESET.DEFAULT,
-      this.hspModuleName ?? ""
+      this.hspModuleName ?? "",
+      this.imageSourceByName,
     );
     stopTracing();
     this.logMarker("REACT_INSTANCE_INIT_STOP")

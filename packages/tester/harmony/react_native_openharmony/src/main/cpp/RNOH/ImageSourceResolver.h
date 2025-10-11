@@ -9,6 +9,7 @@
 
 #include <ReactCommon/RuntimeExecutor.h>
 #include <react/renderer/imagemanager/primitives.h>
+#include <unordered_map>
 #include "RNInstance.h"
 #include "RNOH/ArkTSMessageHub.h"
 #include "RNOH/Assert.h"
@@ -26,8 +27,11 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
 
   ImageSourceResolver(
       ArkTSMessageHub::Shared const& subject,
-      RNInstance::Weak rnInstance)
-      : ArkTSMessageHub::Observer(subject), m_rnInstance(rnInstance) {}
+      RNInstance::Weak rnInstance,
+      std::unordered_map<std::string, std::string> imageSourceByName)
+      : ArkTSMessageHub::Observer(subject),
+        m_rnInstance(rnInstance),
+        imageSourceByName(imageSourceByName) {}
 
   class ImageSourceUpdateListener {
    public:
@@ -161,6 +165,13 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
     removeListenerForURI(listener->observedUri, listener);
   }
 
+  std::optional<std::string> getImageSourceByName(const std::string& name) {
+    if (imageSourceByName.contains(name)) {
+      return {imageSourceByName[name]};
+    }
+    return std::nullopt;
+  }
+
  protected:
   virtual void onMessageReceived(const ArkTSMessage& message) override {
     if (message.name == "UPDATE_IMAGE_SOURCE_MAP") {
@@ -186,6 +197,7 @@ class ImageSourceResolver : public ArkTSMessageHub::Observer {
   std::unordered_map<std::string, std::string> remoteImageSourceMap;
   std::thread::id m_mainThreadId = std::this_thread::get_id();
   std::weak_ptr<RNInstance> m_rnInstance;
+  std::unordered_map<std::string, std::string> imageSourceByName;
 
   void assertMainThread() {
     RNOH_ASSERT_MSG(

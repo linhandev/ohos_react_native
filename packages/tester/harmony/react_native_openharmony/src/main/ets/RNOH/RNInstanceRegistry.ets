@@ -94,6 +94,12 @@ export class RNInstanceRegistry {
         font.registerFont({ familyName: fontFamily, familySrc: fontResource })
       }
     }
+    const imageSourceByName: Record<string, string> = {};
+    for (const imageNameAndSource of Object.entries(options.imageSourceByName ?? {})) {
+      const imageName = imageNameAndSource[0];
+      const imageSource = imageNameAndSource[1];
+      imageSourceByName[imageName] = imageSource;
+    }
     const rnInstance = new RNInstanceImpl(
       this.envId,
       this.isDebugModeEnabled,
@@ -112,6 +118,7 @@ export class RNInstanceRegistry {
       options.assetsDest ?? DEFAULT_ASSETS_DEST,
       this.resourceManager,
       fontPathByFontFamily,
+      imageSourceByName,
       options?.httpClient ?? this.defaultHttpClient,
       options?.caPathProvider ?? ((url: string) => ''),
       options.backPressHandler,
