@@ -1,5 +1,15 @@
 # Changelog
 
+## Internal: v0.77.26
+- fix: null pointer dereference in AnimatedNodesManager::runUpdates,([550ada855](https://gitcode.com/openharmony-sig/ohos_react_native/commit/550ada855efb659ce81abf89cd2f6eab10725e23))
+- Add: Add local legacy image support.,([bc47eeb85](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bc47eeb856485556bd3eeb3e4c0f64f3d4456637))
+- Fix resize mode for small images,([f95a72239](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f95a72239384f101bd7faf1b1f6ca7d3b2b05a22))
+- fix: Touch events do not respond after long-pressing to close the Modal.,([1f9c4de88](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1f9c4de8849f5d728beda2d2d0df173f0dd7367c))
+- feat: ActionSheetIOS partial support,([9587681df](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9587681df7a841a330ab8543080a4132593d9a3d))
+- fix: handle touches correctly during pull-to-refresh,([8316aa828](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8316aa8286f216f6740cae673a685c3667fe6324))
+- fix: crash when loading the bundle located under the HSP,([ee1fe3485](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee1fe3485e56b2436708f5bc121295134a16cb57))
+- [chore]: updated to version 6.0.0.603(0.77.25),([9ce020770](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9ce020770f49dac561b03ba321c827d2810def0f))
+
 ## Internal: v0.77.25
 - fix: libjsvm.so Mapping error,([dc4a4ed64](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dc4a4ed641b23ce273d0df1dd09af8489937f3d9))
 - feat: emit namedOrientationDidChange event,([d3e055ac1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d3e055ac1e3dffae70fc3238763af4d13f5731de))

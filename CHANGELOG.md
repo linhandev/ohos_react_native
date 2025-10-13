@@ -1,5 +1,30 @@
 # Changelog
 
+## Internal: v0.77.26
+- fix: null pointer dereference in AnimatedNodesManager::runUpdates,([550ada855](https://gitcode.com/openharmony-sig/ohos_react_native/commit/550ada855efb659ce81abf89cd2f6eab10725e23))
+- Add: Add local legacy image support.,([bc47eeb85](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bc47eeb856485556bd3eeb3e4c0f64f3d4456637))
+- feat(interop-61): MaskedViewIOS,([c8e2d9e23](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c8e2d9e2399989494f590adbfbdb9217d4cf90a5))
+- doc: 补充Autolinking的使用文档,([a3d413380](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a3d41338063cb3a0b750f79e9a96a819e1b04879))
+- Fix resize mode for small images,([f95a72239](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f95a72239384f101bd7faf1b1f6ca7d3b2b05a22))
+- fix(interop-61): eliminate crashes in interop 61 tester caused by not exporting unsupported API elements,([8f4009b38](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8f4009b389a82d63201f75938538696ffd41f85d))
+- chore(interop-61): remove TextExample.harmony.js,([58d52eb7f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/58d52eb7fa4856d1d1a55a9926dfb96fac70f355))
+- fix(interop-61): follow system font size in RNTester,([dc1b56b59](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dc1b56b5972be97aa54d9123039587b47e390217))
+- fix: Touch events do not respond after long-pressing to close the Modal.,([1f9c4de88](https://gitcode.com/openharmony-sig/ohos_react_native/commit/1f9c4de8849f5d728beda2d2d0df173f0dd7367c))
+- feat(interop-61): restore legacy listener removal methods on NativeEventEmitter,([68d604f35](https://gitcode.com/openharmony-sig/ohos_react_native/commit/68d604f354e38b24f340b23170aaf11b2c57c676))
+- feat: ActionSheetIOS partial support,([9587681df](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9587681df7a841a330ab8543080a4132593d9a3d))
+- feat(interop-61): SegmentedControlIOS,([63cbfac48](https://gitcode.com/openharmony-sig/ohos_react_native/commit/63cbfac4842e31ec69d0ecf5f71c1a4b14f41f83))
+- chore: update podfile lock and add `pnpm ios:tester` command,([feb696290](https://gitcode.com/openharmony-sig/ohos_react_native/commit/feb6962904fd0a08504d1e9e470644f245bc72d9))
+- feat(interop-61): add PropTypes support,([f00e0ba90](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f00e0ba90cfaf745b502a16aff843324e1de9185))
+- fix: handle touches correctly during pull-to-refresh,([8316aa828](https://gitcode.com/openharmony-sig/ohos_react_native/commit/8316aa8286f216f6740cae673a685c3667fe6324))
+- fix: crash when loading the bundle located under the HSP,([ee1fe3485](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ee1fe3485e56b2436708f5bc121295134a16cb57))
+- fix: Support for Modal in 0.61,([f404db6ed](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f404db6edeeae55a0bdf1f436553f1b85c03c86b))
+- feat(interop-61): add setOpacityTo to TouchableOpacity,([2c1327236](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2c1327236d341d4998eceda8f390905f07e4c90c))
+- chore: updates locks,([11fc7480d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/11fc7480dd89c7ba848fc236ff7fd0c4ce97c1cd))
+- fix: issues where the hvigor plugin fails to recognize commands such as link-harmony and cannot execute the CreateJSBundle task.,([a6347b478](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a6347b478765c272a31fd0c876d22f96bb6fbbdd))
+- Fix: Fix the bug where dependencies cannot be installed when running the run-harmony command.,([bea31ad68](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bea31ad6811f4fb74b168a68f236b3b8c3c7f417))
+- [chore]: updated to version 6.0.0.603(0.77.25),([9ce020770](https://gitcode.com/openharmony-sig/ohos_react_native/commit/9ce020770f49dac561b03ba321c827d2810def0f))
+- fix: libjsvm.so Mapping error,([dc4a4ed64](https://gitcode.com/openharmony-sig/ohos_react_native/commit/dc4a4ed641b23ce273d0df1dd09af8489937f3d9))
+
 ## Internal: v0.77.25
 - fix: the issue where sample-package cannot be compiled when separated from tester.,([f4cfe3b4d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f4cfe3b4d925cbc59573ae474b65ef1ec3a7b572))
 - doc: 补充release包的使用说明,([b5d03952f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b5d03952f2653e25a1bfb3dd6a7cb2d1bdfd9950))
