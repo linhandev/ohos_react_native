@@ -69,6 +69,9 @@ module.exports = {
     return require('@react-native-oh/react-native-harmony/Libraries/EventEmitter/RCTDeviceEventEmitter')
       .default;
   },
+  get DeviceInfo() {
+    return require('@react-native-oh/react-native-harmony/Libraries/Utilities/DeviceInfo');
+  },
   get DrawerLayoutAndroid() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid');
   },
