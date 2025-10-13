@@ -4,6 +4,7 @@ export * from './AnimationsExample';
 export * from './CheckerboardExample';
 export * from './ChessboardExample';
 export * from './CursorExample';
+export * from './DrawerLayoutAndroidExample';
 export * from './FlatListVsScrollViewExample';
 export * from './ImageGalleryExample';
 export * from './ImageGalleryWithMultipleSourcesExample';

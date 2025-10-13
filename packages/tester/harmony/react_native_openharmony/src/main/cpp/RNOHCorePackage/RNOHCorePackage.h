@@ -15,6 +15,8 @@
 #include <react/renderer/components/text/TextComponentDescriptor.h>
 #include <react/renderer/components/textinput/TextInputComponentDescriptor.h>
 #include <react/renderer/components/view/ViewComponentDescriptor.h>
+#include "ComponentBinders/DrawerLayoutAndroidJSIBinder.h"
+#include "ComponentBinders/DrawerLayoutChildViewJSIBinder.h"
 #include "RNOH/ArkTSTurboModule.h"
 #include "RNOH/Package.h"
 #include "RNOHCorePackage/ComponentBinders/ActivityIndicatorComponentJSIBinder.h"
@@ -37,6 +39,7 @@
 #include "RNOHCorePackage/ComponentInstances/TextComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/TextInputComponentInstance.h"
 #include "RNOHCorePackage/ComponentInstances/ViewComponentInstance.h"
+#include "RNOHCorePackage/EventEmitRequestHandlers/DrawerLayoutAndroidEventEmitRequestHandler.h"
 #include "RNOHCorePackage/GlobalBinders/BlobCollectorJSIBinder.h"
 #include "RNOHCorePackage/TurboModules/AccessibilityInfoTurboModule.h"
 #include "RNOHCorePackage/TurboModules/ActionSheetManagerTurboModule.h"
@@ -215,7 +218,9 @@ class RNOHCorePackage : public Package {
         facebook::react::concreteComponentDescriptorProvider<
             facebook::react::SwitchComponentDescriptor>(),
         facebook::react::concreteComponentDescriptorProvider<
-            facebook::react::ActivityIndicatorViewComponentDescriptor>()};
+            facebook::react::ActivityIndicatorViewComponentDescriptor>(),
+        facebook::react::concreteComponentDescriptorProvider<
+            facebook::react::AndroidDrawerLayoutComponentDescriptor>()};
   }
 
   ComponentJSIBinderByString createComponentJSIBinderByName() override {
@@ -234,12 +239,21 @@ class RNOHCorePackage : public Package {
         {"RCTSwitch", std::make_shared<SwitchComponentJSIBinder>()},
         {"RCTRefreshControl", std::make_shared<PullToRefreshViewJSIBinder>()},
         {"RCTActivityIndicatorView",
-         std::make_shared<ActivityIndicatorComponentJSIBinder>()}};
+         std::make_shared<ActivityIndicatorComponentJSIBinder>()},
+        {"AndroidDrawerLayout",
+         std::make_shared<DrawerLayoutAndroidJSIBinder>()},
+        {"DrawerLayoutChildWrapperView",
+         std::make_shared<DrawerLayoutChildWrapperViewJSIBinder>()}};
   };
 
   GlobalJSIBinders createGlobalJSIBinders(
       const GlobalJSIBinder::Context& ctx) override {
     return {std::make_shared<rnoh::BlobCollectorJSIBinder>(ctx)};
+  }
+  EventEmitRequestHandlers createEventEmitRequestHandlers() override {
+    return {
+        std::make_shared<DrawerLayoutAndroidEventEmitRequestHandler>(),
+    };
   }
 };
 

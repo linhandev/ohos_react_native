@@ -131,6 +131,7 @@ export class RNViewBaseAttributeModifier extends BaseAttributeModifier<ViewDescr
 
 @Component
 export struct RNViewBase {
+  public static readonly NAME = "View";
   @Require public ctx!: RNOHContext
   @Require public tag: number = 0
   public componentManager!: RNViewManager;

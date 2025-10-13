@@ -6,7 +6,6 @@
  */
 
 import { DescriptorWrapperFactoryByDescriptorType } from '../RNOH/ts';
-import { RNPackage } from "../RNOH/RNPackage"
 import type { AnyThreadTurboModule, UITurboModule } from '../RNOH/TurboModule';
 import type { AnyThreadTurboModuleContext, UITurboModuleContext } from "../RNOH/RNOHContext"
 import {
@@ -41,10 +40,25 @@ import {
 } from './turboModules';
 import { ViewDescriptorWrapper } from './components/ts';
 import { AppearanceTurboModule } from './turboModules/AppearanceTurboModule';
+import { RNOHPackage } from '../RNOH/RNOHPackage';
+import {
+  buildDrawerLayoutAndroid,
+  RNDrawerLayoutAndroid
+} from './components/RNDrawerLayoutAndroid/RNDrawerLayoutAndroid';
+import { ComponentBuilderContext } from '../RNOH';
+import {
+  buildRNDrawerLayoutChildWrapperView,
+  RNDrawerLayoutChildWrapperView
+} from './components/RNDrawerLayoutAndroid/RNDrawerLayoutChildWrapperView';
+import { RNDrawerLayoutAndroidDescriptorWrapper } from './components/RNDrawerLayoutAndroid/types';
+import { RNViewBase } from '.';
 
-export class RNOHCorePackage extends RNPackage {
+export class RNOHCorePackage extends RNOHPackage {
   override createDescriptorWrapperFactoryByDescriptorType(): DescriptorWrapperFactoryByDescriptorType {
-    return { View: ctx => new ViewDescriptorWrapper(ctx.descriptor) };
+    const result: DescriptorWrapperFactoryByDescriptorType = {}
+    result[RNDrawerLayoutAndroid.NAME] = ctx => new RNDrawerLayoutAndroidDescriptorWrapper(ctx.descriptor)
+    result[RNViewBase.NAME] = (ctx) => new ViewDescriptorWrapper(ctx.descriptor)
+    return result;
   }
 
   override getUITurboModuleFactoryByNameMap(): Map<string, (ctx: UITurboModuleContext) => UITurboModule | null> {
@@ -92,6 +106,12 @@ export class RNOHCorePackage extends RNPackage {
       .set(WebSocketTurboModule.NAME, (ctx) => new WebSocketTurboModule(ctx))
       .set(BlobTurboModule.NAME, (ctx) => new BlobTurboModule(ctx))
       .set(FileReaderTurboModule.NAME, (ctx) => new FileReaderTurboModule(ctx))
+  }
+
+  override createWrappedCustomRNComponentBuilderByComponentNameMap(): Map<string, WrappedBuilder<[ComponentBuilderContext]>> {
+    return new Map()
+      .set(RNDrawerLayoutAndroid.NAME, wrapBuilder(buildDrawerLayoutAndroid))
+      .set(RNDrawerLayoutChildWrapperView.NAME, wrapBuilder(buildRNDrawerLayoutChildWrapperView))
   }
 
   override getDebugName() {

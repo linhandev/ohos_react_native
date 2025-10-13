@@ -1312,6 +1312,218 @@ index 1b5c0b6027894dfd0165787555ca84d866c69692..7a530ee0cbfb0f68867111242339edc6
      ios: {
        color: '#cdcdcd',
      },
+diff --git a/packages/react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.android.js b/packages/react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.android.js
+index fc47c65e354fefb6f3e80220ad395b11aa943453..4c1c907a18b3980774a3aa95c4d2359009a1ac97 100644
+--- a/packages/react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.android.js
++++ b/packages/react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.android.js
+@@ -26,6 +26,7 @@ import AndroidDrawerLayoutNativeComponent, {
+ } from './AndroidDrawerLayoutNativeComponent';
+ import nullthrows from 'nullthrows';
+ import * as React from 'react';
++import DrawerLayoutAndroidDelegate from './delegates/DrawerLayoutAndroidDelegate'; // RNC_patch
+ 
+ const DRAWER_STATES = ['Idle', 'Dragging', 'Settling'];
+ 
+@@ -154,6 +155,13 @@ type State = {|
+  * ```
+  */
+ class DrawerLayoutAndroid extends React.Component<Props, State> {
++  _delegate: DrawerLayoutAndroidDelegate; // RNC_patch
++
++  constructor(props: Props) {
++    super(props);
++    this._delegate = new DrawerLayoutAndroidDelegate({ getProps: () => this.props }); // RNC_patch
++  }
++
+   static get positions(): mixed {
+     console.warn(
+       'Setting DrawerLayoutAndroid drawerPosition using `DrawerLayoutAndroid.positions` is deprecated. Instead pass the string value "left" or "right"',
+@@ -173,66 +181,76 @@ class DrawerLayoutAndroid extends React.Component<Props, State> {
+   };
+ 
+   render(): React.Node {
+-    const {
+-      drawerBackgroundColor = 'white',
+-      onDrawerStateChanged,
+-      renderNavigationView,
+-      onDrawerOpen,
+-      onDrawerClose,
+-      ...props
+-    } = this.props;
+-    const drawStatusBar = this.props.statusBarBackgroundColor != null;
+-    const drawerViewWrapper = (
+-      <View
+-        style={[
+-          styles.drawerSubview,
+-          {
+-            width: this.props.drawerWidth,
+-            backgroundColor: drawerBackgroundColor,
+-          },
+-        ]}
+-        pointerEvents={this.state.drawerOpened ? 'auto' : 'none'}
+-        collapsable={false}>
+-        {renderNavigationView()}
+-        {drawStatusBar && <View style={styles.drawerStatusBar} />}
+-      </View>
+-    );
+-    const childrenWrapper = (
+-      <View style={styles.mainSubview} collapsable={false}>
+-        {drawStatusBar && (
+-          <StatusBar
+-            translucent
+-            backgroundColor={this.props.statusBarBackgroundColor}
+-          />
+-        )}
+-        {drawStatusBar && (
+-          <View
+-            style={[
+-              styles.statusBar,
+-              {backgroundColor: this.props.statusBarBackgroundColor},
+-            ]}
+-          />
+-        )}
+-        {this.props.children}
+-      </View>
+-    );
+-    return (
+-      <AndroidDrawerLayoutNativeComponent
+-        {...props}
+-        ref={this._nativeRef}
+-        drawerBackgroundColor={drawerBackgroundColor}
+-        drawerWidth={this.props.drawerWidth}
+-        drawerPosition={this.props.drawerPosition}
+-        drawerLockMode={this.props.drawerLockMode}
+-        style={[styles.base, this.props.style]}
+-        onDrawerSlide={this._onDrawerSlide}
+-        onDrawerOpen={this._onDrawerOpen}
+-        onDrawerClose={this._onDrawerClose}
+-        onDrawerStateChanged={this._onDrawerStateChanged}>
+-        {childrenWrapper}
+-        {drawerViewWrapper}
+-      </AndroidDrawerLayoutNativeComponent>
+-    );
++    // RNC_patch
++
++    //  const {
++    //       drawerBackgroundColor = 'white',
++    //       onDrawerStateChanged,
++    //       renderNavigationView,
++    //       onDrawerOpen,
++    //       onDrawerClose,
++    //       ...props
++    //     } = this.props;
++    //     const drawStatusBar = this.props.statusBarBackgroundColor != null;
++    //     const drawerViewWrapper = (
++    //       <View
++    //         style={[
++    //           styles.drawerSubview,
++    //           {
++    //             width: this.props.drawerWidth,
++    //             backgroundColor: drawerBackgroundColor,
++    //           },
++    //         ]}
++    //         pointerEvents={this.state.drawerOpened ? 'auto' : 'none'}
++    //         collapsable={false}>
++    //         {renderNavigationView()}
++    //         {drawStatusBar && <View style={styles.drawerStatusBar} />}
++    //       </View>
++    //     );
++    //     const childrenWrapper = (
++    //       <View style={styles.mainSubview} collapsable={false}>
++    //         {drawStatusBar && (
++    //           <StatusBar
++    //             translucent
++    //             backgroundColor={this.props.statusBarBackgroundColor}
++    //           />
++    //         )}
++    //         {drawStatusBar && (
++    //           <View
++    //             style={[
++    //               styles.statusBar,
++    //               {backgroundColor: this.props.statusBarBackgroundColor},
++    //             ]}
++    //           />
++    //         )}
++    //         {this.props.children}
++    //       </View>
++    //     );
++    //     return (
++    //       <AndroidDrawerLayoutNativeComponent
++    //         {...props}
++    //         ref={this._nativeRef}
++    //         drawerBackgroundColor={drawerBackgroundColor}
++    //         drawerWidth={this.props.drawerWidth}
++    //         drawerPosition={this.props.drawerPosition}
++    //         drawerLockMode={this.props.drawerLockMode}
++    //         style={[styles.base, this.props.style]}
++    //         onDrawerSlide={this._onDrawerSlide}
++    //         onDrawerOpen={this._onDrawerOpen}
++    //         onDrawerClose={this._onDrawerClose}
++    //         onDrawerStateChanged={this._onDrawerStateChanged}>
++    //         {childrenWrapper}
++    //         {drawerViewWrapper}
++    //       </AndroidDrawerLayoutNativeComponent>
++    //     );
++    return this._delegate.render({
++      drawerOpened: this.state.drawerOpened,
++      nativeRef: this._nativeRef,
++      onDrawerOpen: this._onDrawerOpen,
++      onDrawerClose: this._onDrawerClose,
++      onDrawerSlide: this._onDrawerSlide,
++      onDrawerStateChanged: this._onDrawerStateChanged,
++    }); // RNC_patch
+   }
+ 
+   /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
+diff --git a/packages/react-native/Libraries/Components/DrawerAndroid/delegates/BaseDrawerLayoutAndroidDelegate.ts b/packages/react-native/Libraries/Components/DrawerAndroid/delegates/BaseDrawerLayoutAndroidDelegate.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..49b32db27c0d9bc8a0c430e1b3022b014d7f2007
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/DrawerAndroid/delegates/BaseDrawerLayoutAndroidDelegate.ts
+@@ -0,0 +1,28 @@
++/**
++ * @format
++ */
++import type { DrawerLayoutAndroidProps } from '../DrawerLayoutAndroid';
++import AndroidDrawerLayoutNativeComponent from '../AndroidDrawerLayoutNativeComponent';
++
++export type BaseDrawerLayoutAndroidDelegateContext = {
++    getProps: () => DrawerLayoutAndroidProps
++};
++
++export type DrawerLayoutAndroidDelegateInternalProps<
++    TNativeComponent extends { new(props: any): React.Component<any> },
++> = {
++    drawerOpened: boolean,
++    nativeRef: React.ElementRef<typeof AndroidDrawerLayoutNativeComponent>,
++    onDrawerOpen: () => void,
++    onDrawerClose: () => void,
++    onDrawerSlide: (event: { nativeEvent: { offset: number } }) => void,
++    onDrawerStateChanged: (newState: 'Idle' | 'Dragging' | 'Settling') => void,
++};
++
++
++export abstract class BaseDrawerLayoutAndroidDelegate {
++    constructor(protected ctx: BaseDrawerLayoutAndroidDelegateContext) { }
++    abstract render(
++        internalProps: DrawerLayoutAndroidDelegateInternalProps<any>,
++    ): React.ReactNode;
++}
+diff --git a/packages/react-native/Libraries/Components/DrawerAndroid/delegates/DrawerLayoutAndroidDelegate.ts b/packages/react-native/Libraries/Components/DrawerAndroid/delegates/DrawerLayoutAndroidDelegate.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..78968a6bd52b086539613b0d44ed0acb33326591
+--- /dev/null
++++ b/packages/react-native/Libraries/Components/DrawerAndroid/delegates/DrawerLayoutAndroidDelegate.ts
+@@ -0,0 +1,8 @@
++import { UnsupportedByPlatformError } from "../../../../delegates/DelegateError";
++import { BaseDrawerLayoutAndroidDelegate, DrawerLayoutAndroidDelegateInternalProps } from "./BaseDrawerLayoutAndroidDelegate";
++
++export default class DrawerLayoutAndroidDelegate extends BaseDrawerLayoutAndroidDelegate {
++    render(internalProps: DrawerLayoutAndroidDelegateInternalProps<any>): React.ReactNode {
++        throw new UnsupportedByPlatformError();
++    }
++}
+\ No newline at end of file
 diff --git a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js b/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
 index 77c81f04316e20ca7e32c942274e53699e0319e9..371979af8de4e8630370e16f2fa0b9f78b60d45f 100644
 --- a/packages/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
