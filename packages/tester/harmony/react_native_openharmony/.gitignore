@@ -7,3 +7,4 @@
 /oh_modules
 /generated
 src/main/include
+src/main/cpp/third-party/glog/test-driver
