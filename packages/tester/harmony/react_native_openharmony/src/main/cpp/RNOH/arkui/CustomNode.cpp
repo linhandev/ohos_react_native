@@ -35,7 +35,9 @@ void CustomNode::receiveCustomEvent(ArkUI_NodeCustomEvent* event) {
 CustomNode::CustomNode(const ArkUINode::Context::Shared& context)
     : ArkUINode(context, ArkUI_NodeType::ARKUI_NODE_CUSTOM),
       m_customNodeDelegate(nullptr) {
+#ifdef ALL_CONTAINERS_CLICKABLE
   registerNodeEvent(NODE_ON_CLICK);
+#endif
   registerNodeEvent(NODE_ON_HOVER);
   maybeThrow(NativeNodeApi::getInstance()->addNodeCustomEventReceiver(
       m_nodeHandle, receiveCustomEvent));
@@ -150,6 +152,13 @@ CustomNode& CustomNode::setLayoutRect(
 }
 
 CustomNode& CustomNode::setFocusable(bool focusable) {
+#ifndef ALL_CONTAINERS_CLICKABLE
+  if (focusable) {
+    registerNodeEvent(NODE_ON_CLICK);
+  } else {
+    unregisterNodeEvent(NODE_ON_CLICK);
+  }
+#endif
   int32_t focusableValue = focusable;
   ArkUI_NumberValue preparedFocusable[] = {{.i32 = focusableValue}};
   ArkUI_AttributeItem focusItem = {

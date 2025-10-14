@@ -54,3 +54,9 @@ endif()
 if(DEFINED ADD_JSVM_SO)
     add_subdirectory("${RNOH_CPP_DIR}/RNOH/JSEngine/jsvm")
 endif()
+
+if(ALL_CONTAINERS_CLICKABLE)
+  message("ALL_CONTAINERS_CLICKABLE is set to: ${ALL_CONTAINERS_CLICKABLE}")
+  target_compile_definitions(rnoh_core
+                             PUBLIC ALL_CONTAINERS_CLICKABLE)
+endif()

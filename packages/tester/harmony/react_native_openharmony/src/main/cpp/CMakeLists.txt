@@ -9,6 +9,8 @@ option(WITH_HITRACE_SYSTRACE "enables HiTrace-based Systrace implementation"
        OFF)
 option(WITH_HITRACE_REACT_MARKER
        "enables HiTrace-based React Marker implementation" OFF)
+option(ALL_CONTAINERS_CLICKABLE
+       "ColumnNode, CustomNode, and StackNode are clickable" ON)
 
 if(NOT DEFINED USE_HERMES)
   set(USE_HERMES ON)
