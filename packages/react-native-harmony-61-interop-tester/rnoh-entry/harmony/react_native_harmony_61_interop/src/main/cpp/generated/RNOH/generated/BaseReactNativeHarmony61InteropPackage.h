@@ -7,6 +7,7 @@
 #include <react/renderer/components/react_native_harmony_61_interop/ComponentDescriptors.h>
 #include "RNOH/Package.h"
 #include "RNOH/ArkTSTurboModule.h"
+#include "RNOH/generated/turbo_modules/RNDatePickerAndroid.h"
 #include "RNOH/generated/components/RNCheckBoxJSIBinder.h"
 #include "RNOH/generated/components/RNDatePickerNativeJSIBinder.h"
 #include "RNOH/generated/components/RNMaskedViewJSIBinder.h"
@@ -19,6 +20,9 @@ namespace rnoh {
 class BaseReactNativeHarmony61InteropPackageTurboModuleFactoryDelegate : public TurboModuleFactoryDelegate {
   public:
     SharedTurboModule createTurboModule(Context ctx, const std::string &name) const override {
+        if (name == "RNDatePickerAndroid") {
+            return std::make_shared<RNDatePickerAndroid>(ctx, name);
+        }
         return nullptr;
     };
 };

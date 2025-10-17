@@ -310,6 +310,10 @@ module.exports = {
     return require('./Libraries/Components/DatePickerIOS/DatePickerIOS')
       .default;
   },
+  get DatePickerAndroid() {
+    return require('./Libraries/Components/DatePickerAndroid/DatePickerAndroid')
+      .default;
+  },
   // Top-level legacy RN61 PropTypes exports
   get ColorPropType() {
     return require('./Libraries/DeprecatedPropTypes/DeprecatedColorPropType');

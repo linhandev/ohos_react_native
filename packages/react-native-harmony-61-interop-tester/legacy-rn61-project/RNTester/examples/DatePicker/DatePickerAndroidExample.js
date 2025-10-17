@@ -46,6 +46,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
     calendarDate: new Date(2020, 4, 5),
     defaultDate: new Date(2020, 4, 5),
     allDate: new Date(2020, 4, 5),
+    RNOHtoLocaleDateStringDate: new Date(2020, 4, 5),
     simpleText: 'pick a date',
     spinnerText: 'pick a date',
     calendarText: 'pick a date',
@@ -54,6 +55,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
     maxText: 'pick a date, no later than today',
     presetText: 'pick a date, preset to 2020/5/5',
     allText: 'pick a date between 2020/5/1 and 2020/5/10',
+    RNOHtoLocaleDateStringText: 'pick a date',
   };
 
   showPicker = async (stateKey, options) => {
@@ -73,12 +75,31 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
     }
   };
 
+  // @rnoh: using `toDateString` because `toLocaleDateString` is unimplemented
+  showPickerAlt = async (stateKey, options) => {
+    try {
+      const newState = {};
+      const {action, year, month, day} = await DatePickerAndroid.open(options);
+      if (action === DatePickerAndroid.dismissedAction) {
+        newState[stateKey + 'Text'] = 'dismissed';
+      } else {
+        const date = new Date(year, month, day);
+        newState[stateKey + 'Text'] = date.toDateString();
+        newState[stateKey + 'Date'] = date;
+      }
+      this.setState(newState);
+    } catch ({code, message}) {
+      console.warn(`Error in example '${stateKey}': `, message);
+    }
+  };
+
+
   render() {
     return (
       <RNTesterPage title="DatePickerAndroid">
         <RNTesterBlock title="Simple date picker">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'simple', {
+            onPress={this.showPickerAlt.bind(this, 'simple', {
               date: this.state.simpleDate,
             })}>
             <Text style={styles.text}>{this.state.simpleText}</Text>
@@ -86,7 +107,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Simple spinner date picker">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'spinner', {
+            onPress={this.showPickerAlt.bind(this, 'spinner', {
               date: this.state.spinnerDate,
               mode: 'spinner',
             })}>
@@ -95,7 +116,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Simple calendar date picker">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'calendar', {
+            onPress={this.showPickerAlt.bind(this, 'calendar', {
               date: this.state.calendarDate,
               mode: 'calendar',
             })}>
@@ -104,7 +125,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Simple default date picker">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'default', {
+            onPress={this.showPickerAlt.bind(this, 'default', {
               date: this.state.defaultDate,
               mode: 'default',
             })}>
@@ -113,7 +134,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Date picker with pre-set date">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'preset', {
+            onPress={this.showPickerAlt.bind(this, 'preset', {
               date: this.state.presetDate,
             })}>
             <Text style={styles.text}>{this.state.presetText}</Text>
@@ -121,7 +142,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Date picker with minDate">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'min', {
+            onPress={this.showPickerAlt.bind(this, 'min', {
               date: this.state.minDate,
               minDate: new Date(),
             })}>
@@ -130,7 +151,7 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Date picker with maxDate">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'max', {
+            onPress={this.showPickerAlt.bind(this, 'max', {
               date: this.state.maxDate,
               maxDate: new Date(),
             })}>
@@ -139,12 +160,22 @@ class DatePickerAndroidExample extends React.Component<Props, State> {
         </RNTesterBlock>
         <RNTesterBlock title="Date picker with all options">
           <TouchableWithoutFeedback
-            onPress={this.showPicker.bind(this, 'all', {
+            onPress={this.showPickerAlt.bind(this, 'all', {
               date: this.state.allDate,
               minDate: new Date(2020, 4, 1),
               maxDate: new Date(2020, 4, 10),
             })}>
             <Text style={styles.text}>{this.state.allText}</Text>
+          </TouchableWithoutFeedback>
+        </RNTesterBlock>
+        <RNTesterBlock title="[RNOH][unimplemented] Display date using Date.toLocaleDateString()">
+          <TouchableWithoutFeedback
+            onPress={this.showPicker.bind(this, 'RNOHtoLocaleDateString', {
+              date: this.state.RNOHtoLocaleDateStringDate,
+              minDate: new Date(2020, 4, 1),
+              maxDate: new Date(2020, 4, 10),
+            })}>
+            <Text style={styles.text}>{this.state.RNOHtoLocaleDateStringText}</Text>
           </TouchableWithoutFeedback>
         </RNTesterBlock>
       </RNTesterPage>
