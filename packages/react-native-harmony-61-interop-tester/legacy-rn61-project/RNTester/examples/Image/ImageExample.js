@@ -12,6 +12,9 @@
 
 const React = require('react');
 
+const IMAGE1 = 'https://images.unsplash.com/photo-1556740749-887f6717d7e4'  
+const IMAGE2 = 'https://raw.githubusercontent.com/kasperski95/images/master/reanimated-light.png'
+
 const {
   ActivityIndicator,
   Image,
@@ -312,18 +315,18 @@ class MultipleSourcesExample extends React.Component<
             style={{flex: 1}}
             source={[
               {
-                uri: 'https://facebook.github.io/react-native/img/favicon.png',
+                uri: IMAGE1,
                 width: 38,
                 height: 38,
               },
               {
-                uri: 'https://facebook.github.io/react-native/img/favicon.png',
+                uri: IMAGE1,
                 width: 76,
                 height: 76,
               },
               {
                 uri:
-                  'https://facebook.github.io/react-native/img/opengraph.png',
+                  IMAGE2,
                 width: 400,
                 height: 400,
               },
@@ -336,10 +339,10 @@ class MultipleSourcesExample extends React.Component<
 }
 
 const fullImage = {
-  uri: 'https://facebook.github.io/react-native/img/opengraph.png',
+  uri: IMAGE1,
 };
 const smallImage = {
-  uri: 'https://facebook.github.io/react-native/img/favicon.png',
+  uri: IMAGE2,
 };
 
 const styles = StyleSheet.create({
