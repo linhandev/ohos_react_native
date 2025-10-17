@@ -19,8 +19,21 @@ using namespace std::literals;
 constexpr std::string_view ASSET_PREFIX = "asset://"sv;
 constexpr std::string_view RAWFILE_PREFIX = "resource://RAWFILE/assets/";
 constexpr std::string_view FILE_PREFIX = "file://";
+const std::string BASE_64_PREFIX = "data:";
+const std::string BASE_64_MARK = ";base64,";
+const std::int32_t BASE_64_FORMAT_LENGTH = 8; // length of ";base64,"
+const std::int32_t BASE_64_MIME_TYPE_LENGTH = 6; // length of "image/"
+const std::string BASE_64_STANDARD_PREFIX = "data:image/png;base64,";
 constexpr std::string_view RESFILE_PREFIX = "file:///data/storage/el1/bundle/";
 constexpr std::string_view RESFILE_PATH = "/resources/resfile/assets/";
+const std::unordered_set<std::string> validImageTypes = {
+    "png",
+    "jpeg",
+    "jpg",
+    "gif",
+    "bmp",
+    "webp",
+};
 
 ImageComponentInstance::ImageComponentInstance(Context context)
     : CppComponentInstance(std::move(context)),
@@ -35,6 +48,35 @@ ImageComponentInstance::ImageComponentInstance(Context context)
       facebook::react::ImportantForAccessibility::Auto);
   this->getLocalRootArkUINode().setResizeMode(
       facebook::react::ImageResizeMode::Stretch);
+}
+
+bool isValidMimeType(const std::string& mimeType) {
+  if (mimeType.empty()) {
+    return false;
+  }
+
+  if (mimeType.substr(0, BASE_64_MIME_TYPE_LENGTH) != "image/") {
+    return false;
+  }
+  std::string imageType = mimeType.substr(BASE_64_MIME_TYPE_LENGTH);
+
+  return validImageTypes.find(imageType) != validImageTypes.end();
+}
+
+std::string processBase64Uri(const std::string& uri) {
+  size_t base64Pos = uri.find(BASE_64_MARK);
+  if (base64Pos == std::string::npos) {
+    return uri;
+  }
+  size_t mimeStart = BASE_64_PREFIX.length();
+  std::string mimeType = uri.substr(mimeStart, base64Pos - mimeStart);
+  if (base64Pos <= mimeStart || !isValidMimeType(mimeType)) {
+    // Only change to image/png when MIME type is illegal.
+    return BASE_64_STANDARD_PREFIX +
+        uri.substr(base64Pos + BASE_64_FORMAT_LENGTH);
+  }
+
+  return uri;
 }
 
 void ImageComponentInstance::setSources(
@@ -55,6 +97,10 @@ void ImageComponentInstance::setSources(
   } else if (imageSource.rfind(ASSET_PREFIX, 0) == 0) {
     std::string assetsPrefix = this->getAssetsPrefix();
     imageSource = assetsPrefix + imageSource.substr(ASSET_PREFIX.size());
+  } else if (
+      imageSource.rfind(BASE_64_PREFIX, 0) == 0 &&
+      imageSource.find(BASE_64_MARK) != std::string::npos) {
+    imageSource = processBase64Uri(imageSource);
   }
 
   this->getLocalRootArkUINode().setSource(imageSource);
