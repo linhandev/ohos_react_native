@@ -88,7 +88,7 @@ module.exports = {
   },
   get Image() {
     return withPropTypes(
-      require('@react-native-oh/react-native-harmony/Libraries/Image/Image')
+      require('./Libraries/Image/Image')
         .default
     );
   },
