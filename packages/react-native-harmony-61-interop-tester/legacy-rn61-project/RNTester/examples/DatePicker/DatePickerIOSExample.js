@@ -18,6 +18,9 @@ type State = {|
 |};
 
 type Props = {|
+  // @rnoh: toLocaleDateString and toLocaleTimeString are currently unimplemented.
+  // When this switch is off, dates are displayed, but without necessarily respecting the system locale.
+  useLocaleDateFunctions: Boolean,
   children: (State, (Date) => void) => React.Node,
 |};
 
@@ -26,8 +29,26 @@ class WithDatePickerData extends React.Component<Props, State> {
     date: new Date(),
   };
 
-  onDateChange = date => {
+  onDateChange = (date) => {
     this.setState({date: date});
+  };
+
+  dateToString = (date) =>
+    this.props.useLocaleDateFunctions
+      ? date.toLocaleDateString()
+      : date.toDateString();
+
+  timeToString = (date) => {
+    const args = [
+      [],
+      {
+        hour: '2-digit',
+        minute: '2-digit',
+      },
+    ];
+    return this.props.useLocaleDateFunctions
+      ? date.toLocaleTimeString(...args)
+      : date.toTimeString(...args);
   };
 
   render() {
@@ -35,14 +56,11 @@ class WithDatePickerData extends React.Component<Props, State> {
       <View>
         <WithLabel label="Value:">
           <Text testID="date-indicator">
-            {this.state.date.toLocaleDateString()}
+            {this.dateToString(this.state.date)}
           </Text>
           <Text>&nbsp;</Text>
           <Text testID="time-indicator">
-            {this.state.date.toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {this.timeToString(this.state.date)}
           </Text>
         </WithLabel>
         {this.props.children(this.state, this.onDateChange)}
@@ -97,9 +115,9 @@ exports.description = 'Select dates and times using the native UIDatePicker.';
 exports.examples = [
   {
     title: 'Date and time picker',
-    render: function(): React.Element<any> {
+    render: function (): React.Element<any> {
       return (
-        <WithDatePickerData>
+        <WithDatePickerData useLocaleDateFunctions={false}>
           {(state, onDateChange) => (
             <DatePickerIOS
               testID="date-and-time"
@@ -114,9 +132,9 @@ exports.examples = [
   },
   {
     title: 'Date only picker',
-    render: function(): React.Element<any> {
+    render: function (): React.Element<any> {
       return (
-        <WithDatePickerData>
+        <WithDatePickerData useLocaleDateFunctions={false}>
           {(state, onDateChange) => (
             <DatePickerIOS
               testID="date-only"
@@ -131,15 +149,33 @@ exports.examples = [
   },
   {
     title: 'Time only picker, 20-minute interval',
-    render: function(): React.Element<any> {
+    render: function (): React.Element<any> {
       return (
-        <WithDatePickerData>
+        <WithDatePickerData useLocaleDateFunctions={false}>
           {(state, onDateChange) => (
             <DatePickerIOS
               testID="time-with-interval"
               date={state.date}
               minuteInterval={20}
               mode="time"
+              onDateChange={onDateChange}
+            />
+          )}
+        </WithDatePickerData>
+      );
+    },
+  },
+  {
+    title:
+      '[RNOH][unimplemented] Display date using locale-dependent functions',
+    render: function (): React.Element<any> {
+      return (
+        <WithDatePickerData useLocaleDateFunctions={true}>
+          {(state, onDateChange) => (
+            <DatePickerIOS
+              testID="date-and-time-rnoh-locale"
+              date={state.date}
+              mode="datetime"
               onDateChange={onDateChange}
             />
           )}

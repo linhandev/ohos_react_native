@@ -13,8 +13,10 @@
 namespace facebook::react {
 
 extern const char RNCheckBoxComponentName[] = "RNCheckBox";
+extern const char RNDatePickerNativeComponentName[] = "RNDatePickerNative";
 extern const char RNMaskedViewComponentName[] = "RNMaskedView";
 extern const char RNPickerComponentName[] = "RNPicker";
 extern const char RNSegmentedControlComponentName[] = "RNSegmentedControl";
+extern const char RNTimePickerNativeComponentName[] = "RNTimePickerNative";
 
 } // namespace facebook::react

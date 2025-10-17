@@ -29,6 +29,19 @@ RNCheckBoxProps::RNCheckBoxProps(
     boxType(convertRawProp(context, rawProps, "boxType", sourceProps.boxType, {RNCheckBoxBoxType::Square})),
     lineWidth(convertRawProp(context, rawProps, "lineWidth", sourceProps.lineWidth, {-1}))
       {}
+RNDatePickerNativeProps::RNDatePickerNativeProps(
+    const PropsParserContext &context,
+    const RNDatePickerNativeProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    date(convertRawProp(context, rawProps, "date", sourceProps.date, {0.0})),
+    locale(convertRawProp(context, rawProps, "locale", sourceProps.locale, {})),
+    maximumDate(convertRawProp(context, rawProps, "maximumDate", sourceProps.maximumDate, {0.0})),
+    minimumDate(convertRawProp(context, rawProps, "minimumDate", sourceProps.minimumDate, {0.0})),
+    minuteInterval(convertRawProp(context, rawProps, "minuteInterval", sourceProps.minuteInterval, {RNDatePickerNativeMinuteInterval::MinuteInterval1})),
+    timeZoneOffsetInMinutes(convertRawProp(context, rawProps, "timeZoneOffsetInMinutes", sourceProps.timeZoneOffsetInMinutes, {0.0})),
+    enabled(convertRawProp(context, rawProps, "enabled", sourceProps.enabled, {true}))
+      {}
 RNMaskedViewProps::RNMaskedViewProps(
     const PropsParserContext &context,
     const RNMaskedViewProps &sourceProps,
@@ -60,6 +73,19 @@ RNSegmentedControlProps::RNSegmentedControlProps(
     options(convertRawProp(context, rawProps, "options", sourceProps.options, {})),
     selectedIndexes(convertRawProp(context, rawProps, "selectedIndexes", sourceProps.selectedIndexes, {})),
     enabled(convertRawProp(context, rawProps, "enabled", sourceProps.enabled, {false}))
+      {}
+RNTimePickerNativeProps::RNTimePickerNativeProps(
+    const PropsParserContext &context,
+    const RNTimePickerNativeProps &sourceProps,
+    const RawProps &rawProps): ViewProps(context, sourceProps, rawProps),
+
+    date(convertRawProp(context, rawProps, "date", sourceProps.date, {0.0})),
+    locale(convertRawProp(context, rawProps, "locale", sourceProps.locale, {})),
+    maximumDate(convertRawProp(context, rawProps, "maximumDate", sourceProps.maximumDate, {0.0})),
+    minimumDate(convertRawProp(context, rawProps, "minimumDate", sourceProps.minimumDate, {0.0})),
+    minuteInterval(convertRawProp(context, rawProps, "minuteInterval", sourceProps.minuteInterval, {RNTimePickerNativeMinuteInterval::MinuteInterval1})),
+    timeZoneOffsetInMinutes(convertRawProp(context, rawProps, "timeZoneOffsetInMinutes", sourceProps.timeZoneOffsetInMinutes, {0.0})),
+    enabled(convertRawProp(context, rawProps, "enabled", sourceProps.enabled, {true}))
       {}
 
 } // namespace facebook::react

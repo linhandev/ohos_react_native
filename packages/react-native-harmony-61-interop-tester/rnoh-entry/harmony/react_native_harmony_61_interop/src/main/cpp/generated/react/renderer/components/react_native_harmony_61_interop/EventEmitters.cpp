@@ -23,6 +23,15 @@ $payload.setProperty(runtime, "value", $event.value);
 }
 
 
+void RNDatePickerNativeEventEmitter::onChange(OnChange $event) const {
+  dispatchEvent("change", [$event=std::move($event)](jsi::Runtime &runtime) {
+    auto $payload = jsi::Object(runtime);
+    $payload.setProperty(runtime, "timestamp", $event.timestamp);
+    return $payload;
+  });
+}
+
+
 
 void RNPickerEventEmitter::onValueChange(OnValueChange $event) const {
   dispatchEvent("valueChange", [$event=std::move($event)](jsi::Runtime &runtime) {
@@ -38,6 +47,15 @@ void RNSegmentedControlEventEmitter::onChange(OnChange $event) const {
   dispatchEvent("change", [$event=std::move($event)](jsi::Runtime &runtime) {
     auto $payload = jsi::Object(runtime);
     $payload.setProperty(runtime, "selectedSegmentIndex", $event.selectedSegmentIndex);
+    return $payload;
+  });
+}
+
+
+void RNTimePickerNativeEventEmitter::onChange(OnChange $event) const {
+  dispatchEvent("change", [$event=std::move($event)](jsi::Runtime &runtime) {
+    auto $payload = jsi::Object(runtime);
+    $payload.setProperty(runtime, "timestamp", $event.timestamp);
     return $payload;
   });
 }

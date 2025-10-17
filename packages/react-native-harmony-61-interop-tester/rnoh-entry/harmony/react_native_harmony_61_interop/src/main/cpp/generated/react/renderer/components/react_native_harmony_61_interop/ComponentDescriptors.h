@@ -17,9 +17,11 @@
 namespace facebook::react {
 
 using RNCheckBoxComponentDescriptor = ConcreteComponentDescriptor<RNCheckBoxShadowNode>;
+using RNDatePickerNativeComponentDescriptor = ConcreteComponentDescriptor<RNDatePickerNativeShadowNode>;
 using RNMaskedViewComponentDescriptor = ConcreteComponentDescriptor<RNMaskedViewShadowNode>;
 using RNPickerComponentDescriptor = ConcreteComponentDescriptor<RNPickerShadowNode>;
 using RNSegmentedControlComponentDescriptor = ConcreteComponentDescriptor<RNSegmentedControlShadowNode>;
+using RNTimePickerNativeComponentDescriptor = ConcreteComponentDescriptor<RNTimePickerNativeShadowNode>;
 
 void react_native_harmony_61_interop_registerComponentDescriptorsFromCodegen(
   std::shared_ptr<const ComponentDescriptorProviderRegistry> registry);

@@ -29,6 +29,17 @@ using RNCheckBoxShadowNode = ConcreteViewShadowNode<
     RNCheckBoxEventEmitter,
     RNCheckBoxState>;
 
+JSI_EXPORT extern const char RNDatePickerNativeComponentName[];
+
+/*
+ * `ShadowNode` for <RNDatePickerNative> component.
+ */
+using RNDatePickerNativeShadowNode = ConcreteViewShadowNode<
+    RNDatePickerNativeComponentName,
+    RNDatePickerNativeProps,
+    RNDatePickerNativeEventEmitter,
+    RNDatePickerNativeState>;
+
 JSI_EXPORT extern const char RNMaskedViewComponentName[];
 
 /*
@@ -61,5 +72,16 @@ using RNSegmentedControlShadowNode = ConcreteViewShadowNode<
     RNSegmentedControlProps,
     RNSegmentedControlEventEmitter,
     RNSegmentedControlState>;
+
+JSI_EXPORT extern const char RNTimePickerNativeComponentName[];
+
+/*
+ * `ShadowNode` for <RNTimePickerNative> component.
+ */
+using RNTimePickerNativeShadowNode = ConcreteViewShadowNode<
+    RNTimePickerNativeComponentName,
+    RNTimePickerNativeProps,
+    RNTimePickerNativeEventEmitter,
+    RNTimePickerNativeState>;
 
 } // namespace facebook::react

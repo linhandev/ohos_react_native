@@ -26,6 +26,18 @@ public:
 #endif
 };
 
+class RNDatePickerNativeState {
+public:
+  RNDatePickerNativeState() = default;
+
+#ifdef ANDROID
+  RNDatePickerNativeState(RNDatePickerNativeState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
 class RNMaskedViewState {
 public:
   RNMaskedViewState() = default;
@@ -56,6 +68,18 @@ public:
 
 #ifdef ANDROID
   RNSegmentedControlState(RNSegmentedControlState const &previousState, folly::dynamic data){};
+  folly::dynamic getDynamic() const {
+    return {};
+  };
+#endif
+};
+
+class RNTimePickerNativeState {
+public:
+  RNTimePickerNativeState() = default;
+
+#ifdef ANDROID
+  RNTimePickerNativeState(RNTimePickerNativeState const &previousState, folly::dynamic data){};
   folly::dynamic getDynamic() const {
     return {};
   };

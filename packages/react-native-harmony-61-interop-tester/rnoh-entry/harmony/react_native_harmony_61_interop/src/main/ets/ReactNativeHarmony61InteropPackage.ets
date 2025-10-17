@@ -11,6 +11,8 @@ import {
   DescriptorWrapperFactoryByDescriptorType,
 } from "@rnoh/react-native-openharmony"
 import { RNCheckBox } from "./components/RNCheckBox"
+import { RNTimePickerNative } from "./components/RNTimePickerNative"
+import { RNDatePickerNative } from "./components/RNDatePickerNative"
 import { RNPicker } from "./components/RNPicker"
 import { RNSegmentedControl } from "./components/RNSegmentedControl"
 import { RNC } from "./generated"
@@ -19,6 +21,8 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
   override createWrappedCustomRNComponentBuilderByComponentNameMap() {
     const result = new Map<string, WrappedBuilder<[ComponentBuilderContext]>>();
     result.set(RNCheckBox.NAME, wrapBuilder(buildRNCheckBox))
+    result.set(RNDatePickerNative.NAME, wrapBuilder(buildRNDatePicker))
+    result.set(RNTimePickerNative.NAME, wrapBuilder(buildRNTestTimePicker))
     result.set(RNPicker.NAME, wrapBuilder(buildRNPicker))
     
     result.set(RNSegmentedControl.NAME, wrapBuilder(buildRNSegmentedControl))
@@ -28,6 +32,8 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
   override createDescriptorWrapperFactoryByDescriptorType(_: DescriptorWrapperFactoryByDescriptorTypeCtx) {
     const result: DescriptorWrapperFactoryByDescriptorType = {}
     result[RNC.RNCheckBox.NAME] = (ctx) => new RNC.RNCheckBox.DescriptorWrapper(ctx.descriptor)
+    result[RNC.RNDatePickerNative.NAME] = (ctx) => new RNC.RNDatePickerNative.DescriptorWrapper(ctx.descriptor)
+    result[RNC.RNTimePickerNative.NAME] = (ctx) => new RNC.RNTimePickerNative.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNPicker.NAME] = (ctx) => new RNC.RNPicker.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNMaskedView.NAME] = (ctx) => new RNC.RNMaskedView.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNSegmentedControl.NAME] = (ctx) => new RNC.RNSegmentedControl.DescriptorWrapper(ctx.descriptor)
@@ -38,6 +44,22 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
 @Builder
 function buildRNCheckBox(ctx: ComponentBuilderContext) {
   RNCheckBox({
+    ctx: ctx.rnComponentContext,
+    tag: ctx.tag,
+  })
+}
+
+@Builder
+function buildRNDatePicker(ctx: ComponentBuilderContext) {
+  RNDatePickerNative({
+    ctx: ctx.rnComponentContext,
+    tag: ctx.tag,
+  })
+}
+
+@Builder
+function buildRNTestTimePicker(ctx: ComponentBuilderContext) {
+  RNTimePickerNative({
     ctx: ctx.rnComponentContext,
     tag: ctx.tag,
   })

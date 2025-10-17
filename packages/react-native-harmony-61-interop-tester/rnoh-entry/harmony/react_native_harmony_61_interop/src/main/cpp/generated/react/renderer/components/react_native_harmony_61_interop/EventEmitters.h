@@ -23,6 +23,15 @@ class RNCheckBoxEventEmitter : public ViewEventEmitter {
     };
   void onValueChange(OnValueChange value) const;
 };
+class RNDatePickerNativeEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  struct OnChange {
+      double timestamp;
+    };
+  void onChange(OnChange value) const;
+};
 class RNMaskedViewEventEmitter : public ViewEventEmitter {
  public:
   using ViewEventEmitter::ViewEventEmitter;
@@ -46,6 +55,15 @@ class RNSegmentedControlEventEmitter : public ViewEventEmitter {
 
   struct OnChange {
       int selectedSegmentIndex;
+    };
+  void onChange(OnChange value) const;
+};
+class RNTimePickerNativeEventEmitter : public ViewEventEmitter {
+ public:
+  using ViewEventEmitter::ViewEventEmitter;
+
+  struct OnChange {
+      double timestamp;
     };
   void onChange(OnChange value) const;
 };

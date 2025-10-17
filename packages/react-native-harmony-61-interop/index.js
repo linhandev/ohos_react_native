@@ -306,6 +306,10 @@ module.exports = {
   get MaskedViewIOS() {
     return require('./Libraries/Components/MaskedView/MaskedView').default;
   },
+  get DatePickerIOS() {
+    return require('./Libraries/Components/DatePickerIOS/DatePickerIOS')
+      .default;
+  },
   // Top-level legacy RN61 PropTypes exports
   get ColorPropType() {
     return require('./Libraries/DeprecatedPropTypes/DeprecatedColorPropType');

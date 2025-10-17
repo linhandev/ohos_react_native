@@ -51,6 +51,81 @@ class RNCheckBoxProps final : public ViewProps {
   int lineWidth{-1};
 };
 
+enum class RNDatePickerNativeMinuteInterval { MinuteInterval1 = 1, MinuteInterval2 = 2, MinuteInterval3 = 3, MinuteInterval4 = 4, MinuteInterval5 = 5, MinuteInterval6 = 6, MinuteInterval10 = 10, MinuteInterval12 = 12, MinuteInterval15 = 15, MinuteInterval20 = 20, MinuteInterval30 = 30 };
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNDatePickerNativeMinuteInterval &result) {
+  assert(value.hasType<int>());
+  auto integerValue = (int)value;
+  switch (integerValue) {
+    case 1:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval1;
+      return;
+    case 2:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval2;
+      return;
+    case 3:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval3;
+      return;
+    case 4:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval4;
+      return;
+    case 5:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval5;
+      return;
+    case 6:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval6;
+      return;
+    case 10:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval10;
+      return;
+    case 12:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval12;
+      return;
+    case 15:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval15;
+      return;
+    case 20:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval20;
+      return;
+    case 30:
+      result = RNDatePickerNativeMinuteInterval::MinuteInterval30;
+      return;
+  }
+  abort();
+}
+
+static inline std::string toString(const RNDatePickerNativeMinuteInterval &value) {
+  switch (value) {
+    case RNDatePickerNativeMinuteInterval::MinuteInterval1: return "1";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval2: return "2";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval3: return "3";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval4: return "4";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval5: return "5";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval6: return "6";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval10: return "10";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval12: return "12";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval15: return "15";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval20: return "20";
+    case RNDatePickerNativeMinuteInterval::MinuteInterval30: return "30";
+  }
+}
+
+class RNDatePickerNativeProps final : public ViewProps {
+ public:
+  RNDatePickerNativeProps() = default;
+  RNDatePickerNativeProps(const PropsParserContext& context, const RNDatePickerNativeProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  double date{0.0};
+  std::string locale{};
+  double maximumDate{0.0};
+  double minimumDate{0.0};
+  RNDatePickerNativeMinuteInterval minuteInterval{RNDatePickerNativeMinuteInterval::MinuteInterval1};
+  double timeZoneOffsetInMinutes{0.0};
+  bool enabled{true};
+};
+
 class RNMaskedViewProps final : public ViewProps {
  public:
   RNMaskedViewProps() = default;
@@ -204,6 +279,81 @@ class RNSegmentedControlProps final : public ViewProps {
   RNSegmentedControlOptionsStruct options{};
   std::vector<Float> selectedIndexes{};
   bool enabled{false};
+};
+
+enum class RNTimePickerNativeMinuteInterval { MinuteInterval1 = 1, MinuteInterval2 = 2, MinuteInterval3 = 3, MinuteInterval4 = 4, MinuteInterval5 = 5, MinuteInterval6 = 6, MinuteInterval10 = 10, MinuteInterval12 = 12, MinuteInterval15 = 15, MinuteInterval20 = 20, MinuteInterval30 = 30 };
+
+static inline void fromRawValue(const PropsParserContext& context, const RawValue &value, RNTimePickerNativeMinuteInterval &result) {
+  assert(value.hasType<int>());
+  auto integerValue = (int)value;
+  switch (integerValue) {
+    case 1:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval1;
+      return;
+    case 2:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval2;
+      return;
+    case 3:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval3;
+      return;
+    case 4:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval4;
+      return;
+    case 5:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval5;
+      return;
+    case 6:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval6;
+      return;
+    case 10:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval10;
+      return;
+    case 12:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval12;
+      return;
+    case 15:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval15;
+      return;
+    case 20:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval20;
+      return;
+    case 30:
+      result = RNTimePickerNativeMinuteInterval::MinuteInterval30;
+      return;
+  }
+  abort();
+}
+
+static inline std::string toString(const RNTimePickerNativeMinuteInterval &value) {
+  switch (value) {
+    case RNTimePickerNativeMinuteInterval::MinuteInterval1: return "1";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval2: return "2";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval3: return "3";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval4: return "4";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval5: return "5";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval6: return "6";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval10: return "10";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval12: return "12";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval15: return "15";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval20: return "20";
+    case RNTimePickerNativeMinuteInterval::MinuteInterval30: return "30";
+  }
+}
+
+class RNTimePickerNativeProps final : public ViewProps {
+ public:
+  RNTimePickerNativeProps() = default;
+  RNTimePickerNativeProps(const PropsParserContext& context, const RNTimePickerNativeProps &sourceProps, const RawProps &rawProps);
+
+#pragma mark - Props
+
+  double date{0.0};
+  std::string locale{};
+  double maximumDate{0.0};
+  double minimumDate{0.0};
+  RNTimePickerNativeMinuteInterval minuteInterval{RNTimePickerNativeMinuteInterval::MinuteInterval1};
+  double timeZoneOffsetInMinutes{0.0};
+  bool enabled{true};
 };
 
 } // namespace facebook::react
