@@ -11,28 +11,126 @@ import {
   RemoteImageLoader, RemoteImageMemoryCache
 } from '../../RemoteImageLoader';
 import { UITurboModuleContext } from '../../RNOH/RNOHContext';
+import image from '@ohos.multimedia.image';
+import {fileIo} from '@kit.CoreFileKit';
+import {media} from '@kit.MediaKit';
 
 export class ImageLoaderTurboModule extends UITurboModule {
   static NAME = "ImageLoader" as const
-
   private imageLoader: RemoteImageLoader
+  private videoThumbnailCache: RemoteImageDiskCache
+  private thumbnailDir: string
+  private static readonly VIDEO_FORMATS: Set<string> = new Set([
+    ".mp4", ".mov", ".avi", ".mpeg", ".mpg", ".mkv", ".flv", ".wmv",
+    ".m2ts", ".vob", ".ts", ".webm", ".m3u8", ".mpd", ".3gp", ".3g2",
+    ".rm", ".rmvb", ".f4v", ".mxf"
+  ]);
 
   constructor(protected ctx: UITurboModuleContext) {
     super(ctx)
+    const cacheSize = 128;
     this.imageLoader = new RemoteImageLoader(
-      new RemoteImageMemoryCache(128), new RemoteImageDiskCache(128, `${ctx.uiAbilityContext.cacheDir}/rn_image_cache`),
+      new RemoteImageMemoryCache(cacheSize), new RemoteImageDiskCache(cacheSize, `${ctx.uiAbilityContext.cacheDir}/rn_image_cache`),
       ctx.uiAbilityContext, ({ remoteUri, fileUri }) => {
       ctx.rnInstance.postMessageToCpp('UPDATE_IMAGE_SOURCE_MAP', {
         remoteUri,
         fileUri,
       });
     })
+    this.thumbnailDir = `${ctx.uiAbilityContext.cacheDir}/rn_video_thumbnail_cache`;
+    this.videoThumbnailCache = new RemoteImageDiskCache(cacheSize, this.thumbnailDir);
   }
+
+  protected fetchVideoThumbnail(uri: string): string {
+    if (this.videoThumbnailCache.has(uri)) {
+      return this.getCacheFilePath(uri);
+    } else {
+      this.getVideoThumbnail(uri);
+      return 'pending';
+    }
+  }
+
+  private getCacheFilePath(uri: string): string {
+    return `file://${this.videoThumbnailCache.getLocation(uri)}`;
+  }
+
+  protected async getVideoThumbnail(uri) {
+    try {
+      let fd;
+      const avMetadataExtractor = await media.createAVMetadataExtractor();
+      fd = fileIo.openSync(uri, fileIo.OpenMode.READ_ONLY);
+      avMetadataExtractor.fdSrc = fd;
+
+      const metadata = await avMetadataExtractor.fetchMetadata();
+      avMetadataExtractor.release();
+
+      const avImageGenerator: media.AVImageGenerator = await media.createAVImageGenerator();
+      avImageGenerator.fdSrc = fd;
+
+      const timeUs: number = 0;
+      const queryOption: media.AVImageQueryOptions = media.AVImageQueryOptions.AV_IMAGE_QUERY_NEXT_SYNC;
+      const backUpNum = 100;
+      const param: media.PixelMapParams = {
+        width : Number(metadata.videoWidth) || backUpNum,
+        height : Number(metadata.videoHeight) || backUpNum,
+      };
+      const pixelMap = await avImageGenerator.fetchFrameByTime(
+        timeUs,
+        queryOption,
+        param,
+      );
+      avImageGenerator.release();
+
+      const imagePackerApi: image.ImagePacker = image.createImagePacker();
+      const packOpts: image.PackingOption = {format: 'image/jpeg', quality: 100};
+      if (pixelMap != undefined) {
+        await imagePackerApi
+          .packing(pixelMap, packOpts)
+          .then(async (data: ArrayBuffer) => {
+            const filePath = this.getCacheFilePath(uri);
+            const fd = fileIo.openSync(filePath, fileIo.OpenMode.READ_WRITE | fileIo.OpenMode.CREATE);
+            await fileIo.write(fd.fd, data);
+
+            this.videoThumbnailCache.set(uri);
+            this.ctx.rnInstance.postMessageToCpp('UPDATE_IMAGE_SOURCE_MAP', {
+              remoteUri: uri,
+              fileUri: filePath,
+            });
+          });
+      } else {
+       this.ctx.logger.info('pixelMap is undefined');
+      }
+    } catch (e) {
+      this.ctx.logger.error(JSON.stringify(e));
+    }
+  }
+
+private isVideoUri(uri: string): boolean {
+  if (!uri) {
+    return false;
+  } 
+
+  const paramIndex = uri.indexOf('?');
+  const path = paramIndex === -1 ? uri : uri.substring(0, paramIndex);
+
+  const lastDotIndex = path.lastIndexOf('.');
+  if (lastDotIndex === -1) {
+    return false;
+  }
+
+  const uriSuffix = path.slice(lastDotIndex); 
+  const uriSuffixLower = uriSuffix.toLowerCase();
+  
+  return ImageLoaderTurboModule.VIDEO_FORMATS.has(uriSuffixLower);
+}
 
   /**
    * called from cpp
    */
   protected getPrefetchResult(uri: string): string | undefined {
+    if (this.isVideoUri(uri)) {
+      return this.fetchVideoThumbnail(uri);
+    }
     return this.imageLoader.getPrefetchResult(uri);
   }
 
