@@ -39,7 +39,7 @@ class ArkUINode;
  */
 class ArkUINodeDelegate {
  public:
-  virtual ~ArkUINodeDelegate() = default;
+  virtual ~ArkUINodeDelegate() noexcept(false) = default;
 
   /**
    * Called when an ArkUI node is about to be destroyed.
@@ -586,7 +586,7 @@ class ArkUINode {
    */
   virtual bool isFocused();
 
-  virtual ~ArkUINode() noexcept;
+  virtual ~ArkUINode() noexcept(false);
 
  protected:
   void maybeThrow(int32_t status) const {

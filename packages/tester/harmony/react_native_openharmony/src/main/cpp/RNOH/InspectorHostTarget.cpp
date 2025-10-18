@@ -39,10 +39,15 @@ InspectorHostTarget::InspectorHostTarget(
           {.nativePageReloads = true, .prefersFuseboxFrontend = true});
 }
 
-InspectorHostTarget::~InspectorHostTarget() {
-  if (m_inspectorPageId.has_value()) {
-    facebook::react::jsinspector_modern::getInspectorInstance().removePage(
-        m_inspectorPageId.value());
+InspectorHostTarget::~InspectorHostTarget() noexcept(false) {
+  try {
+    if (m_inspectorPageId.has_value()) {
+      facebook::react::jsinspector_modern::getInspectorInstance().removePage(
+          m_inspectorPageId.value());
+    }
+  } catch (const std::logic_error& ex) {
+    LOG(FATAL) << "logic_error in InspectorHostTarget::~InspectorHostTarget():"
+               << ex.what();
   }
 }
 

@@ -50,13 +50,19 @@ void HarmonyTimerRegistry::createRecurringTimer(
   }
 };
 
-HarmonyTimerRegistry::~HarmonyTimerRegistry() noexcept {
-  if (m_wakeUpTask.has_value()) {
-    m_taskExecutor->cancelDelayedTask(m_wakeUpTask.value());
+HarmonyTimerRegistry::~HarmonyTimerRegistry() noexcept(false) {
+  try {
+    if (m_wakeUpTask.has_value()) {
+      m_taskExecutor->cancelDelayedTask(m_wakeUpTask.value());
+    }
+    m_taskExecutor->runTask(
+        TaskThread::MAIN,
+        [lifecycleObserver = std::move(m_lifecycleObserver)] {});
+  } catch (const std::logic_error& ex) {
+    LOG(FATAL)
+        << "logic_error in HarmonyTimerRegistry::~HarmonyTimerRegistry():"
+        << ex.what();
   }
-  m_taskExecutor->runTask(
-      TaskThread::MAIN,
-      [lifecycleObserver = std::move(m_lifecycleObserver)] {});
 }
 
 void HarmonyTimerRegistry::onForeground() {

@@ -22,7 +22,7 @@ class TextAreaNodeDelegate {
   /**
    * @brief Destructor
    */
-  virtual ~TextAreaNodeDelegate() = default;
+  virtual ~TextAreaNodeDelegate() noexcept(false) = default;
 
   /**
    * @brief Callback that is called when the text area's text changes.

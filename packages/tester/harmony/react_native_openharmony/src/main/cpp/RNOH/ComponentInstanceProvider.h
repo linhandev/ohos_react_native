@@ -41,7 +41,7 @@ class ComponentInstanceProvider
       UITicker::Shared uiTicker,
       TaskExecutor::Weak weakTaskExecutor);
 
-  ~ComponentInstanceProvider();
+  ~ComponentInstanceProvider() noexcept(false);
 
   void initialize();
 

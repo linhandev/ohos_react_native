@@ -119,7 +119,7 @@ void CustomNode::onMeasure(ArkUI_NodeCustomEventType eventType) {}
 
 void CustomNode::onLayout() {}
 
-CustomNode::~CustomNode() {
+CustomNode::~CustomNode() noexcept(false) {
   unregisterNodeEvent(NODE_ON_CLICK);
   unregisterNodeEvent(NODE_ON_HOVER);
   NativeNodeApi::getInstance()->unregisterNodeCustomEvent(

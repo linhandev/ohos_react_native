@@ -21,10 +21,14 @@ EventBeat::EventBeat(
 /**
  * @thread MAIN
  */
-EventBeat::~EventBeat() {
-  std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
-  if (m_unsubscribeUITickerListener != nullptr) {
-    m_unsubscribeUITickerListener();
+EventBeat::~EventBeat() noexcept(false) {
+  try {
+    std::lock_guard lock(m_unsubscribeUITickerListenerMtx);
+    if (m_unsubscribeUITickerListener != nullptr) {
+      m_unsubscribeUITickerListener();
+    }
+  } catch (const std::logic_error& ex) {
+    LOG(FATAL) << "logic_error in EventBeat::~EventBeat():" << ex.what();
   }
 }
 

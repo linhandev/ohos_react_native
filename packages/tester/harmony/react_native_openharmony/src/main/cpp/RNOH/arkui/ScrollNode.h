@@ -22,7 +22,7 @@ class ScrollNodeDelegate {
   /**
    * @brief Destructor for destroying the ScrollNodeDelegate object.
    */
-  virtual ~ScrollNodeDelegate() = default;
+  virtual ~ScrollNodeDelegate() noexcept(false) = default;
 
   /**
    * @brief Virtual function for implementing scrolling events.

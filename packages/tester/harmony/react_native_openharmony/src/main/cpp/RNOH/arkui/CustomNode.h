@@ -19,7 +19,7 @@ namespace rnoh {
  */
 class CustomNodeDelegate {
  public:
-  virtual ~CustomNodeDelegate() = default;
+  virtual ~CustomNodeDelegate() noexcept(false) = default;
 
   /**
    * @brief Triggered when a node is clicked.

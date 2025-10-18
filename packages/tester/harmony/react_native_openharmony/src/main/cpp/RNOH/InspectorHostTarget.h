@@ -22,7 +22,7 @@ class InspectorHostTarget {
   InspectorHostTarget(
       std::shared_ptr<ArkTSChannel> arkTSChannel,
       std::shared_ptr<NapiTaskRunner> taskRunner);
-  ~InspectorHostTarget();
+  ~InspectorHostTarget() noexcept(false);
 
   const std::shared_ptr<facebook::react::jsinspector_modern::HostTarget>
   getHostTarget() const;
