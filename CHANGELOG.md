@@ -1,6 +1,21 @@
 # Changelog
 
+## Internal: v0.77.27
+- feat: Support video frame extraction,([a50f91c0b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a50f91c0b9e471bbc15d6134135202c754af5b26))
+- fix some function to noexcept(false),([d0891d466](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d0891d46665b9b1d56599718aad4be4bdf73431e))
+- fix: Supplement null pointer protection.,([af594db33](https://gitcode.com/openharmony-sig/ohos_react_native/commit/af594db33f43cb4f0ea2e36e3d3cf45484682a2d))
+- feat(interop-61): Implement DatePickerAndroid,([7b7bc96c5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7b7bc96c5d33b5598e99049751e6d6b41b2cee0a))
+- feat(interop-61): handle 0.61 event scheme for Image.onLoad,([f76cb188f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/f76cb188f1a34845abac022a7f3076e661012658))
+- fix(interop-61): Replace dead URLs in Image example,([baa1c1768](https://gitcode.com/openharmony-sig/ohos_react_native/commit/baa1c1768ac6646dff402fc0a76f22747d7db44a))
+- feat: support invalid base64 image uri,([41e47d727](https://gitcode.com/openharmony-sig/ohos_react_native/commit/41e47d727b060ea40cef03a544258b2c159d5627))
+- feat(interop-61): Implement DatePickerIOS,([2fec4c03c](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2fec4c03cc8eac02e1055a3a5e0badaaa03855db))
+- chore: remove the symbolic link test-driver.,([a3dc5adb0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a3dc5adb08ed07c68495e92ab2bcaa4cb205b0b1))
+- fix: the issue where all locations can be selected and announced after enabling voice broadcast.,([071c94991](https://gitcode.com/openharmony-sig/ohos_react_native/commit/071c94991b1d1124a0eda2b9de0daa2236fd1b45))
+- fix: device info example in 0.61 tester,([49fe81bab](https://gitcode.com/openharmony-sig/ohos_react_native/commit/49fe81bab3acbeade43c46108dbba28936d2bec2))
+- [chore]: updated to version 6.0.0.604(0.77.26),([88d7c7b98](https://gitcode.com/openharmony-sig/ohos_react_native/commit/88d7c7b9864b24a30fb8594580e7fadccca6f543))
+
 ## Internal: v0.77.26
+- feat: DrawerLayoutAndroid,([54f3cd718](https://gitcode.com/openharmony-sig/ohos_react_native/commit/54f3cd718338601d83d3456d861d67317e6f5af1))
 - fix: null pointer dereference in AnimatedNodesManager::runUpdates,([550ada855](https://gitcode.com/openharmony-sig/ohos_react_native/commit/550ada855efb659ce81abf89cd2f6eab10725e23))
 - Add: Add local legacy image support.,([bc47eeb85](https://gitcode.com/openharmony-sig/ohos_react_native/commit/bc47eeb856485556bd3eeb3e4c0f64f3d4456637))
 - feat(interop-61): MaskedViewIOS,([c8e2d9e23](https://gitcode.com/openharmony-sig/ohos_react_native/commit/c8e2d9e2399989494f590adbfbdb9217d4cf90a5))
