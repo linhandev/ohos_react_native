@@ -547,12 +547,9 @@ class CppComponentInstance : public ComponentInstance,
       markBoundingBoxAsDirty();
     }
 
-    auto rawProps = ViewRawProps::getFromDynamic(props->rawProps);
-    if (m_rawProps.needsOffscreenAlphaCompositing !=
-        rawProps.needsOffscreenAlphaCompositing) {
-      m_rawProps.needsOffscreenAlphaCompositing =
-          rawProps.needsOffscreenAlphaCompositing;
-      localRoot.setRenderGroup(m_rawProps.needsOffscreenAlphaCompositing);
+    if (props->needsOffscreenAlphaCompositing !=
+        old->needsOffscreenAlphaCompositing) {
+      localRoot.setRenderGroup(props->needsOffscreenAlphaCompositing);
     }
 
     localRoot.setId(getIdFromProps(props));

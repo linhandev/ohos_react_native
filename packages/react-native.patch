@@ -4425,6 +4425,75 @@ index 1aec3ac18ac975e0b3c23a24b5931d2bc72780b4..8ba05dd2f14ebc9522ccc33be42a9098
    }
  #endif
  }
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.cpp b/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..317c6cdb24eb48e4923ac100b2ebc743f302ead7
+--- /dev/null
++++ b/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.cpp
+@@ -0,0 +1,33 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++#include "HostPlatformViewProps.h"
++
++#include <react/featureflags/ReactNativeFeatureFlags.h>
++#include <react/renderer/components/view/conversions.h>
++#include <react/renderer/components/view/propsConversions.h>
++#include <react/renderer/core/graphicsConversions.h>
++#include <react/renderer/core/propsConversions.h>
++
++namespace facebook::react {
++
++HostPlatformViewProps::HostPlatformViewProps(
++    const PropsParserContext& context,
++    const HostPlatformViewProps& sourceProps,
++    const RawProps& rawProps)
++    : BaseViewProps(context, sourceProps, rawProps),
++      needsOffscreenAlphaCompositing(
++          ReactNativeFeatureFlags::enableCppPropsIteratorSetter()
++              ? sourceProps.needsOffscreenAlphaCompositing
++              : convertRawProp(
++                    context,
++                    rawProps,
++                    "needsOffscreenAlphaCompositing",
++                    sourceProps.needsOffscreenAlphaCompositing,
++                    {})) {}
++
++} // namespace facebook::react
+diff --git a/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.h b/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.h
+index 527985d299021410d3de5f69c56606cc1b09f149..b7d40e2f37b344cdd93d0f2ad3e2b583f5dd24cd 100644
+--- a/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.h
++++ b/packages/react-native/ReactCommon/react/renderer/components/view/platform/cxx/react/renderer/components/view/HostPlatformViewProps.h
+@@ -8,7 +8,24 @@
+ #pragma once
+ 
+ #include <react/renderer/components/view/BaseViewProps.h>
++#include <react/renderer/components/view/primitives.h>
++#include <react/renderer/core/LayoutMetrics.h>
++#include <react/renderer/core/Props.h>
++#include <react/renderer/core/PropsParserContext.h>
++#include <react/renderer/graphics/Transform.h>
+ 
+ namespace facebook::react {
+-using HostPlatformViewProps = BaseViewProps;
++
++class HostPlatformViewProps : public BaseViewProps {
++ public:
++  HostPlatformViewProps() = default;
++  HostPlatformViewProps(
++      const PropsParserContext& context,
++      const HostPlatformViewProps& sourceProps,
++      const RawProps& rawProps);
++
++#pragma mark - Props
++  bool needsOffscreenAlphaCompositing{false};
++};
++
+ } // namespace facebook::react
 diff --git a/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h b/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h
 index ae88c8a5f517a2016c4d9ec4c142da7052335dc5..4146b636a9646e1f3f2ef89d32344308158482f7 100644
 --- a/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h
