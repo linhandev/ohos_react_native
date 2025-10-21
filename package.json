@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.3.0",
   "scripts": {
     "//": "Setup this project except for ./packages/react-native-harmony-interop-61-tester/legacy-rn61-project. It may take a while.",
-    "init-ws": "git submodule update --init --recursive --progress --jobs 16 && pnpm i && pnpm run _integrate-upstream-code && cd ./packages/react-native-harmony-cli && pnpm _recreate-hvigor-plugin && cd ../../",
+    "init-ws": "git submodule update --init --recursive --progress --jobs 16 && pnpm i && pnpm run _integrate-upstream-code && pnpm run codegen:61 && cd ./packages/react-native-harmony-cli && pnpm _recreate-hvigor-plugin && cd ../../",
     "//": "Apply ./packages/react-native.patch and copy the result to ./packages/react-native-harmony project.",
     "_integrate-upstream-code": "ts-node ./scripts/integrate-upstream-code.ts",
     "//": "[NPM hook] Ensures valid pnpm version is used because older pnpm versions don't support checking the packageManager field.",
