@@ -306,6 +306,10 @@ module.exports = {
   get MaskedViewIOS() {
     return require('./Libraries/Components/MaskedView/MaskedView').default;
   },
+  get TimePickerAndroid() {
+    return require('./Libraries/Components/TimePickerAndroid/TimePickerAndroid')
+      .default;
+  },
   get DatePickerIOS() {
     return require('./Libraries/Components/DatePickerIOS/DatePickerIOS')
       .default;
