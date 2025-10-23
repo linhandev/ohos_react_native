@@ -166,10 +166,6 @@ module.exports = {
     // Placeholder
     return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
   },
-  get ProgressViewIOS() {
-    // Placeholder
-    return require('@react-native-oh/react-native-harmony/Libraries/Components/View/View');
-  },
   get SafeAreaView() {
     return require('@react-native-oh/react-native-harmony/Libraries/Components/SafeAreaView/SafeAreaView')
       .default;
@@ -317,6 +313,9 @@ module.exports = {
   get DatePickerAndroid() {
     return require('./Libraries/Components/DatePickerAndroid/DatePickerAndroid')
       .default;
+  },
+  get ProgressViewIOS() {
+    return require('./Libraries/Components/ProgressViewIOS/ProgressViewIOS').default;
   },
   // Top-level legacy RN61 PropTypes exports
   get ColorPropType() {
