@@ -20,6 +20,7 @@ import { RNProgressView } from "./components/RNProgressView"
 import { RNSegmentedControl } from "./components/RNSegmentedControl"
 import { RNDatePickerAndroidModule } from "./turboModules/RNDatePickerAndroid";
 import { RNTimePickerAndroidModule } from "./turboModules/RNTimePickerAndroid";
+import { RNPushNotificationIOS } from "./turboModules/push_notification_ios/RNPushNotificationIOS"
 
 import { RNC } from "./generated"
 
@@ -38,7 +39,8 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
   override getUITurboModuleFactoryByNameMap() {
     return new Map<string, (ctx: UITurboModuleContext) => UITurboModule | null>()
       .set(RNDatePickerAndroidModule.NAME, (ctx) => new RNDatePickerAndroidModule(ctx))
-      .set(RNTimePickerAndroidModule.NAME, (ctx) => new RNTimePickerAndroidModule(ctx));
+      .set(RNTimePickerAndroidModule.NAME, (ctx) => new RNTimePickerAndroidModule(ctx))
+      .set(RNPushNotificationIOS.NAME, (ctx) => new RNPushNotificationIOS(ctx));
   }
 
   override createDescriptorWrapperFactoryByDescriptorType(_: DescriptorWrapperFactoryByDescriptorTypeCtx) {

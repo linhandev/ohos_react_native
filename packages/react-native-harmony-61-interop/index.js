@@ -330,5 +330,8 @@ module.exports = {
   get ViewPropTypes() {
     return require('./Libraries/DeprecatedPropTypes/DeprecatedViewPropTypes');
   },
+  get PushNotificationIOS() {
+    return require('./Libraries/Components/PushNotificationIOS/PushNotificationIOS').default;
+  }
   // END: 61 specific exports
 };
