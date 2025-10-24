@@ -284,7 +284,7 @@ index 9df0c465fa7c7491ce7d78ceaf0f07ce64fb6ddd..e59fed29b45ad534ef9b1cb187d3222a
    "peerDependencies": {
      "jest": "^29.7.0"
 diff --git a/packages/react-native/Libraries/Alert/Alert.js b/packages/react-native/Libraries/Alert/Alert.js
-index a6b0585f7865e11b8b807cc4e2435cad8d196f18..d3cddbd39c66707f6fa6945b44ceb44c874bde3d 100644
+index a6b0585f7865e11b8b807cc4e2435cad8d196f18..a58470a8e8a27836a6ab6fe2261bd6a5ccd55057 100644
 --- a/packages/react-native/Libraries/Alert/Alert.js
 +++ b/packages/react-native/Libraries/Alert/Alert.js
 @@ -8,10 +8,12 @@
@@ -472,7 +472,7 @@ index a6b0585f7865e11b8b807cc4e2435cad8d196f18..d3cddbd39c66707f6fa6945b44ceb44c
 -          }
 -        });
 -      }
-+    ALERT_DELEGATE.prompt(title, message, callbackOrButtons, type, defaultValue, keyboardValue, options);
++    ALERT_DELEGATE.prompt(title, message, callbackOrButtons, type, defaultValue, keyboardType, options);
 +    // if (Platform.OS === 'ios') {
 +    //   let callbacks: Array<?any> = [];
 +    //   const buttons = [];
