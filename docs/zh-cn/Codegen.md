@@ -41,6 +41,7 @@
 #### 1. codegenConfig
 
 同 Android 和 IOS，Codegen 是基于三方库或者前端工程的 package.json 中的 codegenConfig 配置来生成代码的，不过需要注意的是，在 **RNOH** 中，`codegenConfig` 字段需要嵌套在 `harmony` 中，如：
+指导文档：https://reactnative.cn/docs/0.77/the-new-architecture/using-codegen
 
 ```json
 ...
@@ -50,12 +51,16 @@
     {
       "version": 1,
       "specPaths": [
+        // 若仅需为 Turbo 原模块生成代码，请使用此值。
++       "type": "modules",
         "./src/specs/v1"
       ]
     },
     {
       "version": 2,
       "specPaths": [
+        // 若仅需为 Turbo 原模块生成代码，请使用此值。
++       "type": "modules",
         "./src/specs/v2"
       ]
     }

@@ -39,6 +39,7 @@ Codegen configuration involves the following scenarios:
 #### 1. codegenConfig
 
 For Android and iOS, Codegen generates code based on **codegenConfig** in the **package.json** file of the third-party library or frontend project. Note that the `codegenConfig` field in RNOH must be nested in `harmony`. For example:
+Guides：https://reactnative.dev/docs/0.77/the-new-architecture/using-codegen
 
    ```json
     ...
@@ -48,12 +49,16 @@ For Android and iOS, Codegen generates code based on **codegenConfig** in the **
         {
           "version": 1,
           "specPaths": [
+            // Use this value if you only need to generate code for Turbo native modules.
++           "type": "modules",
             "./src/specs/v1"
           ]
         },
         {
           "version": 2,
           "specPaths": [
+            // Use this value if you only need to generate code for Turbo native modules.
++           "type": "modules",
             "./src/specs/v2"
           ]
         }
