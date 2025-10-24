@@ -8,18 +8,39 @@ import {
 } from 'react-native';
 import {Button, TestCase} from '../components';
 
-const PropsDisplayer: typeof View = registerViewConfig('PropsDisplayer', () => {
-  return {
-    uiViewClassName: 'PropsDisplayer',
-    bubblingEventTypes: {},
-    directEventTypes: {},
-    validAttributes: {
-      ...ReactNativeViewAttributes.UIView,
-    },
-  };
-});
+let _PropsDisplayer: typeof View | undefined;
+
+function getPropsDisplayer() {
+  if (!_PropsDisplayer) {
+    try {
+      _PropsDisplayer = registerViewConfig('PropsDisplayer', () => {
+        return {
+          uiViewClassName: 'PropsDisplayer',
+          bubblingEventTypes: {},
+          directEventTypes: {},
+          validAttributes: {
+            ...ReactNativeViewAttributes.UIView,
+          },
+        };
+      });
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes('Tried to register two views')
+      ) {
+        // Already registered during HMR, use View as fallback
+        _PropsDisplayer = View;
+      } else {
+        throw error;
+      }
+    }
+  }
+  return _PropsDisplayer ?? View;
+}
 
 export function RenderingTest() {
+  const PropsDisplayer = getPropsDisplayer();
+
   return (
     <TestSuite name="Rendering">
       <TestCase.Example itShould="change the rectangle's color every second">
