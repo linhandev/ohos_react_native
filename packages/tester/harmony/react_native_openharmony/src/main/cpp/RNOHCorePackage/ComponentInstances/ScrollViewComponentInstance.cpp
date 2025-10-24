@@ -254,6 +254,13 @@ float ScrollViewComponentInstance::onScrollFrameBegin(
       m_internalState->onDragStop();
     }
   }
+  // When disableIntervalMomentum is used, we should set the
+  // offset in onScrollFrameBegin to 0. otherwise, in
+  // nested-scroll scenarios, conflicting scroll events will
+  // cause disableIntervalMomentum to be ignored.
+  if (!m_snapToOffsets.empty() && m_disableIntervalMomentum) {
+    return 0;
+  }
   return offset;
 }
 
