@@ -82,6 +82,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     module: require('../examples/ProgressViewIOS/ProgressViewIOSExample'),
   },
   {
+    key: 'PickerIOSExample',
+    module: require('../examples/Picker/PickerIOSExample'),
+  },
+  {
     key: 'ProgressBarAndroidExample',
     module: require('../examples/ProgressBarAndroid/ProgressBarAndroidExample'),
   },

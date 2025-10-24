@@ -135,6 +135,10 @@ module.exports = {
   get Picker() {
     return require('./Libraries/Components/Picker/Picker').default;
   },
+  get PickerIOS() {
+    return require('./Libraries/Components/PickerIOS/PickerIOS')
+      .default;
+  },
   get PixelRatio() {
     return require('@react-native-oh/react-native-harmony/Libraries/Utilities/PixelRatio')
       .default;

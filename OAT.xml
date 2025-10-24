@@ -40,6 +40,8 @@
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/CheckBox/CheckBox.tsx" desc="File from @react-native-community/checkbox" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/Picker/Picker.tsx" desc="File based on the code from RN 0.61.5" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/PushNotificationIOS/PushNotificationIOS.tsx" desc="File based on the code from RN 0.61.5" />
+                <filteritem type="filepath" name="packages/react-native-harmony-61-interop/src/private/specs/components/PickerIOSNativeComponent.ts" desc="File based on the code from RN 0.61.5" />
+                <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/PickerIOS/PickerIOS.tsx" desc="File based on the code from RN 0.61.5" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop/Libraries/Components/MaskedView/.*" desc="Files from @react-native-oh-tpl/masked-view" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/cpp/components/masked_view/.*" desc="Files from @react-native-oh-tpl/masked-view" />
                 <filteritem type="filepath" name="packages/react-native-harmony-61-interop-tester/rnoh-entry/harmony/react_native_harmony_61_interop/src/main/ets/RNMaskedView.ets" desc="Files from @react-native-oh-tpl/masked-view" />
