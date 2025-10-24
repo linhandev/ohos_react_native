@@ -280,7 +280,7 @@ class JSVMPointerValue : public JSVMRuntime::PointerValue {
   }
 
   void CleanUp() {
-    react_native_assert(!isThread && "Should be evaled in js thread");
+    react_native_assert(!isJsThread && "Should be evaled in js thread");
     if (!env) {
       return;
     }
