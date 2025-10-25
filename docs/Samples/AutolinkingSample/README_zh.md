@@ -19,8 +19,8 @@ AutolinkingSample
 1. 将 `react-native-oh-react-native-harmony-0.77.xx.tgz` 和 `react-native-oh-react-native-harmony-cli-0.77.xx.tgz` 放置在 `react-native-oh` 目录下；
 1. 在 `third-party-library-sample` 中运行 **npm pack** 进行打包；
 1. 修改 `ReactProject/package.json` 中 `@react-native-oh/react-native-harmony` 和 `@react-native-oh/react-native-harmony-cli` 的版本号；
-1. 修改 `NativeProject/hvigor/hvigor-config.json5` 中 `@rnoh/hvigor-plugin` 的版本号；
 1. 在 `ReactProject` 目录下执行 **npm i** 安装依赖;
+1. 修改 `NativeProject/hvigor/hvigor-config.json5` 中 `@rnoh/hvigor-plugin` 的版本号；
 1. 用 DevEco Studio 打开 `NativeProject`，执行 **Sync and Refresh Project**；
 1. 点击 File > Project Structure > Signing Configs，登录并完成签名；
 1. 在 `ReactProject` 目录下执行 **npm start** 启动Metro;
