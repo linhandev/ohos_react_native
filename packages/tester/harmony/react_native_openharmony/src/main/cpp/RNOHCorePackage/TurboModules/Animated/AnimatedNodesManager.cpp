@@ -292,8 +292,13 @@ PropUpdatesList AnimatedNodesManager::runUpdates(long long frameTimeNanos) {
 
   for (auto animationId : finishedAnimations) {
     auto const& animation = m_animationById.at(animationId);
-    animation->endCallback_(
-        true, animation->getAnimatedValue().getValueAsDouble());
+    std::optional<double> value = std::nullopt;
+    try {
+      value = animation->getAnimatedValue().getValueAsDouble();
+    } catch (const AnimatedNodeNotFoundError& _e) {
+      // If the node does not exist, the value is not returned.
+    }
+    animation->endCallback_(true, value);
     animation->endCallback_ = nullptr;
     m_animationById.erase(animationId);
   }
@@ -352,7 +357,7 @@ PropUpdatesList AnimatedNodesManager::updateNodes() {
         nodeTagsQueue.push(childTag);
         incomingEdgesCount[childTag]++;
       }
-    } catch (std::out_of_range& _e) {
+    } catch (const AnimatedNodeNotFoundError& _e) {
       // if a node is not found we skip over it and proceed with the
       // animation to maintain consistency with other platforms
       continue;
@@ -399,7 +404,7 @@ PropUpdatesList AnimatedNodesManager::updateNodes() {
         }
       }
 
-    } catch (std::out_of_range& _e) {
+    } catch (const AnimatedNodeNotFoundError& _e) {
       // if a node is not found we skip over it and proceed with the
       // animation to maintain consistency with other platforms
       continue;
@@ -440,9 +445,13 @@ int32_t AnimatedNodesManager::getMinAcceptableFrameRate(
     const std::vector<facebook::react::Tag>& valueNodeTags) {
   int32_t finalFrameRate = 30;
   for (const auto& tag : valueNodeTags) {
-    auto& node = getValueNodeByTag(tag);
-    int32_t currentFrameRate = node.getFrameRate();
-    finalFrameRate = std::max(finalFrameRate, currentFrameRate);
+    try {
+      auto& node = getValueNodeByTag(tag);
+      int32_t currentFrameRate = node.getFrameRate();
+      finalFrameRate = std::max(finalFrameRate, currentFrameRate);
+    } catch (const AnimatedNodeNotFoundError& _e) {
+      // if a node is not found we skip over it
+    }
   }
   return finalFrameRate;
 }
@@ -451,8 +460,7 @@ AnimatedNode& AnimatedNodesManager::getNodeByTag(facebook::react::Tag tag) {
   try {
     return *m_nodeByTag.at(tag);
   } catch (std::out_of_range& e) {
-    std::throw_with_nested(std::out_of_range(
-        "Animated node with tag " + std::to_string(tag) + " does not exist"));
+    throw AnimatedNodeNotFoundError(tag);
   }
 }
 

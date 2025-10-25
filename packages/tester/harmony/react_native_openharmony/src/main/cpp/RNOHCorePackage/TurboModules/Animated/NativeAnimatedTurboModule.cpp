@@ -130,7 +130,7 @@ jsi::Value startAnimatingNode(
         animationId,
         tag,
         config,
-        [self, &rt, animationId](bool finished, double value) {
+        [self, &rt, animationId](bool finished, std::optional<double> value) {
           self->emitAnimationEndedEvent(rt, animationId, finished, value);
         });
     return facebook::jsi::Value::undefined();
@@ -143,14 +143,16 @@ jsi::Value startAnimatingNode(
       config,
       self->wrapEndCallbackWithJSInvoker(
           [&rt, endCallbackWrapped = std::move(endCallbackWrapped)](
-              bool finished, double value) {
+              bool finished, std::optional<double> value) {
             auto endCallback = endCallbackWrapped.lock();
             if (endCallback == nullptr) {
               return;
             }
             auto result = jsi::Object(rt);
             result.setProperty(rt, "finished", jsi::Value(finished));
-            result.setProperty(rt, "value", value);
+            if (value.has_value()) {
+              result.setProperty(rt, "value", value.value());
+            }
             endCallback->callback().call(rt, {std::move(result)});
             endCallback->allowRelease();
           }));
@@ -397,7 +399,8 @@ jsi::Value queueAndExecuteBatchedOperations(
             animationId,
             opsAndArgs.getValueAtIndex(rt, i++).asNumber(),
             jsi::dynamicFromValue(rt, opsAndArgs.getValueAtIndex(rt, i++)),
-            [self, &rt, animationId](bool finished, double value) {
+            [self, &rt, animationId](
+                bool finished, std::optional<double> value) {
               self->emitAnimationEndedEvent(rt, animationId, finished, value);
             });
         break;
@@ -729,7 +732,7 @@ void NativeAnimatedTurboModule::emitAnimationEndedEvent(
     facebook::jsi::Runtime& rt,
     facebook::react::Tag animationId,
     bool finished,
-    double value) {
+    std::optional<double> value) {
   emitDeviceEvent(
       rt,
       "onNativeAnimatedModuleAnimationFinished",
@@ -738,7 +741,9 @@ void NativeAnimatedTurboModule::emitAnimationEndedEvent(
         jsi::Object param(rt);
         param.setProperty(rt, "animationId", animationId);
         param.setProperty(rt, "finished", finished);
-        param.setProperty(rt, "value", value);
+        if (value.has_value()) {
+          param.setProperty(rt, "value", value.value());
+        }
         args.emplace_back(std::move(param));
       });
 }
@@ -799,7 +804,7 @@ NativeAnimatedTurboModule::EndCallback
 NativeAnimatedTurboModule::wrapEndCallbackWithJSInvoker(
     EndCallback&& endCallback) {
   return [jsInvoker = this->jsInvoker_, endCallback = std::move(endCallback)](
-             bool finished, double value) mutable {
+             bool finished, std::optional<double> value) mutable {
     jsInvoker->invokeAsync(
         [finished, value, endCallback = std::move(endCallback)] {
           endCallback(finished, value);

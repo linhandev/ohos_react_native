@@ -13,6 +13,7 @@
 #include <jsi/jsi.h>
 #include <react/renderer/core/ReactPrimitives.h>
 
+#include "AnimatedErrors.h"
 #include "Drivers/AnimationDriver.h"
 #include "Drivers/EventAnimationDriver.h"
 #include "Nodes/AnimatedNode.h"

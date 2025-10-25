@@ -137,7 +137,7 @@ class NativeAnimatedTurboModule
       facebook::jsi::Runtime& rt,
       facebook::react::Tag animationId,
       bool completed,
-      double value);
+      std::optional<double> value);
 
   void emitAnimationGetValueEvent(
       facebook::jsi::Runtime& rt,
