@@ -98,18 +98,17 @@ function getMetadata(name: string): string {
  * Use this class if RNAbility is too limiting for your use case, and adapting code to breaking changes is not a big deal in your project.
  */
 export class RNInstancesCoordinator {
-  private static isInitialized = false;
   private isBoldTextEnabled:boolean | undefined = undefined;
+  private static coordinatorByAbilityName: Map<string, RNInstancesCoordinator> = new Map();
 
   static create(dependencies: RNInstancesCoordinatorDependencies,
     options?: RNInstancesCoordinatorOptions): RNInstancesCoordinator {
-    if (RNInstancesCoordinator.isInitialized) {
-      dependencies.logger.fatal(new RNOHError({
-        whatHappened: "RNInstancesCoordinator was already created",
-        howCanItBeFixed: ["Change your code to call RNInstancesCoordinator.create only once"]
-      }))
+    const abilityName = dependencies.uiAbilityContext.abilityInfo.name;
+    const cachedCoordinator = RNInstancesCoordinator.coordinatorByAbilityName.get(abilityName);
+    if (cachedCoordinator) {
+        console.error("Multiple RNInstancesCoordinator instances cannot be created in a single ability.");
+        return cachedCoordinator;
     }
-    RNInstancesCoordinator.isInitialized = true
     dependencies.logger.info(RNOH_BANNER)
     const onDestroyCallbacks: Function[] = []
     const devToolsController = new InternalDevToolsController(dependencies.logger);
@@ -154,7 +153,7 @@ export class RNInstancesCoordinator {
     if (jsPackagerClientConfig) {
       jsPackagerClient.connectToMetroMessages(jsPackagerClientConfig);
     }
-    return new RNInstancesCoordinator(napiBridge,
+    const coordinator = new RNInstancesCoordinator(napiBridge,
       dependencies.logger,
       displayMetricsManager,
       envInfo.isDebugModeEnabled,
@@ -169,6 +168,9 @@ export class RNInstancesCoordinator {
       dependencies.rnohWorkerScriptUrl,
       options,
       onDestroyCallbacks);
+
+    RNInstancesCoordinator.coordinatorByAbilityName.set(abilityName, coordinator);
+    return coordinator;
   }
 
   private rawLogger: RNOHLogger;
@@ -296,6 +298,8 @@ export class RNInstancesCoordinator {
     this.onDestroyCallbacks.forEach(cb => {
       cb()
     });
+    const abilityName = this.uiAbilityContext.abilityInfo.name;
+    RNInstancesCoordinator.coordinatorByAbilityName.delete(abilityName);
     stopTracing()
   }
 

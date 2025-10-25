@@ -155,7 +155,7 @@ static napi_value onInit(napi_env env, napi_callback_info info) {
         std::make_shared<ArkTSBridge>(
             env, std::move(arkTSBridgeHandler), isDebugModeEnabled));
 
-    facebook::react::ReactNativeFeatureFlags::override(
+    facebook::react::ReactNativeFeatureFlags::dangerouslyForceOverride(
         std::make_unique<RNFeatureFlags>());
 
     return arkJS.createObjectBuilder()
