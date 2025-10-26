@@ -23,7 +23,7 @@ class ImageNodeDelegate {
   /**
    * @brief Destructor for ImageNodeDelegate.
    */
-  virtual ~ImageNodeDelegate() noexcept(false) = default;
+  virtual ~ImageNodeDelegate() = default;
 
   /**
    * @brief Called when the image loading is completed.

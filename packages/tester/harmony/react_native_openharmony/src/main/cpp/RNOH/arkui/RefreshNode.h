@@ -59,7 +59,7 @@ class RefreshNode;
  */
 class RefreshNodeDelegate {
  public:
-  virtual ~RefreshNodeDelegate() noexcept(false) = default;
+  virtual ~RefreshNodeDelegate() = default;
 
   /**
    * @brief Refresh event callback, called when the component triggers a

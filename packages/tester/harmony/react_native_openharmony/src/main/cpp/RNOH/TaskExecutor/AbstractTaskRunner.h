@@ -31,5 +31,5 @@ class AbstractTaskRunner {
 
   virtual void setExceptionHandler(ExceptionHandler handler) = 0;
 
-  virtual ~AbstractTaskRunner() noexcept(false) = default;
+  virtual ~AbstractTaskRunner() = default;
 };

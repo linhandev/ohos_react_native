@@ -20,7 +20,7 @@ class TextInputNodeDelegate {
   /**
    * @brief Destructor
    */
-  virtual ~TextInputNodeDelegate() noexcept(false) = default;
+  virtual ~TextInputNodeDelegate() = default;
 
   /**
    * @brief Callback that is called when the text input's text changes.

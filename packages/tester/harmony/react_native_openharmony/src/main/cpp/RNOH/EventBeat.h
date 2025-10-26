@@ -19,7 +19,7 @@ class EventBeat final : public facebook::react::EventBeat {
       std::shared_ptr<facebook::react::RuntimeScheduler> runtimeScheduler,
       UITicker::Shared uiTicker);
 
-  ~EventBeat() noexcept(false);
+  ~EventBeat();
 
   void request() const override;
 

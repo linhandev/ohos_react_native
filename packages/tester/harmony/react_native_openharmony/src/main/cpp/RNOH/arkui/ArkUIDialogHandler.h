@@ -22,7 +22,7 @@ namespace rnoh {
  */
 class ArkUIDialogDelegate {
  public:
-  virtual ~ArkUIDialogDelegate() noexcept(false) = default;
+  virtual ~ArkUIDialogDelegate() = default;
 
   /**
    * @brief Called when the dialog is shown.

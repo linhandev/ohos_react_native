@@ -42,7 +42,7 @@ class UIInputEventHandler {
    * and removing the event receiver from the native node.
    *
    */
-  virtual ~UIInputEventHandler() noexcept(false);
+  virtual ~UIInputEventHandler() noexcept;
 
   /**
    * @brief Invoked when NODE_TOUCH_EVENT is received. Overrid this method

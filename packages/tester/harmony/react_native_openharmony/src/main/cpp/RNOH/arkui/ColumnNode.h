@@ -17,7 +17,7 @@ namespace rnoh {
  */
 class ColumnNodeDelegate {
  public:
-  virtual ~ColumnNodeDelegate() noexcept(false) = default;
+  virtual ~ColumnNodeDelegate() = default;
 
   /**
    * @brief Called when the column node is clicked.

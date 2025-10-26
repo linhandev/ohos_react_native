@@ -4494,19 +4494,6 @@ index 527985d299021410d3de5f69c56606cc1b09f149..b7d40e2f37b344cdd93d0f2ad3e2b583
 +};
 +
  } // namespace facebook::react
-diff --git a/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h b/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h
-index ae88c8a5f517a2016c4d9ec4c142da7052335dc5..4146b636a9646e1f3f2ef89d32344308158482f7 100644
---- a/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h
-+++ b/packages/react-native/ReactCommon/react/renderer/core/EventBeat.h
-@@ -64,7 +64,7 @@ class EventBeat {
-       std::shared_ptr<OwnerBox> ownerBox,
-       RuntimeScheduler& runtimeScheduler);
- 
--  virtual ~EventBeat() = default;
-+  virtual ~EventBeat() noexcept(false) = default;
- 
-   // not copyable
-   EventBeat(const EventBeat& other) = delete;
 diff --git a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp b/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
 index 2e494ba7d2fc4386099d21caabe459f49b71dac6..c7040c122838136a226dbaec774456d563d47c7f 100644
 --- a/packages/react-native/ReactCommon/react/renderer/core/Props.cpp
@@ -4562,19 +4549,6 @@ index ee0ee3e6a37681271ac3a34b5fe70d44f56fe9b6..0abacea1a320e524b72108e2068d0ab2
 +#endif
  
  } // namespace facebook::react
-diff --git a/packages/react-native/ReactCommon/react/runtime/PlatformTimerRegistry.h b/packages/react-native/ReactCommon/react/runtime/PlatformTimerRegistry.h
-index 9b65875e5d55fb2fcaf93ad6c317e262ae96aa23..0d9077dd56e02383cd5dc183473e4be9f4b9d685 100644
---- a/packages/react-native/ReactCommon/react/runtime/PlatformTimerRegistry.h
-+++ b/packages/react-native/ReactCommon/react/runtime/PlatformTimerRegistry.h
-@@ -24,7 +24,7 @@ class PlatformTimerRegistry {
- 
-   virtual void createRecurringTimer(uint32_t timerID, double delayMS) = 0;
- 
--  virtual ~PlatformTimerRegistry() noexcept = default;
-+  virtual ~PlatformTimerRegistry() noexcept(false) = default;
- };
- 
- using TimerManagerDelegate = PlatformTimerRegistry;
 diff --git a/packages/react-native/delegates/DelegateError.ts b/packages/react-native/delegates/DelegateError.ts
 new file mode 100644
 index 0000000000000000000000000000000000000000..15ef685ee68123083bcdae3ac37005563e509d74

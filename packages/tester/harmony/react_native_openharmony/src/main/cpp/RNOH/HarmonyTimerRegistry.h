@@ -19,7 +19,7 @@ class HarmonyTimerRegistry final
  public:
   HarmonyTimerRegistry(TaskExecutor::Shared taskExecutor);
 
-  ~HarmonyTimerRegistry() noexcept(false) override;
+  ~HarmonyTimerRegistry() noexcept override;
 
   void createTimer(uint32_t timerId, double delayMs) override;
 

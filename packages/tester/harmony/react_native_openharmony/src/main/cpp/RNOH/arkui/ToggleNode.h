@@ -26,7 +26,7 @@ class ToggleNodeDelegate {
    * @brief Virtual destructor for ToggleNodeDelegate.
    * Ensures that derived classes' destructors are called correctly.
    */
-  virtual ~ToggleNodeDelegate() noexcept(false) = default;
+  virtual ~ToggleNodeDelegate() = default;
 
   /**
    * @brief Called when the value of the ToggleNode changes.

@@ -73,7 +73,7 @@ class CppComponentInstance : public ComponentInstance,
     m_oldPointScaleFactor = m_deps->displayMetricsManager->getDisplayMetrics()
                                 .screenPhysicalPixels.scale;
   }
-  ~CppComponentInstance() noexcept(false) = default;
+
   /**
    * @brief Called when the component instance is created
    */

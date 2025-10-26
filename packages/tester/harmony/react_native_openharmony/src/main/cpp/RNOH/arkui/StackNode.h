@@ -21,7 +21,7 @@ class StackNodeDelegate {
   /**
    * @brief Virtual destructor ensures proper cleanup in derived classes.
    */
-  virtual ~StackNodeDelegate() noexcept(false) = default;
+  virtual ~StackNodeDelegate() = default;
 
   /**
    * @brief Handles the click event on the StackNode.
