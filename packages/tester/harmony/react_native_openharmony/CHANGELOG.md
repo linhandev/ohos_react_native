@@ -1,5 +1,15 @@
 # Changelog
 
+## Internal: v0.77.28
+- fix: noexcept revert,([89fc74721](https://gitcode.com/openharmony-sig/ohos_react_native/commit/89fc74721a074f3f5d23cb9cafb4f5c5b3fdb4db))
+- fix: a crash caused by multiple RNInstanceCoordinators,([7d7149355](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d7149355531d05a1aba18af4a1a2b8b82293b9f))
+- fix: the infinite loop caused by the error "Animated node with tag xxx does not exist".,([d7083d23e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d7083d23e9573c805196f813d5c1051c702e150c))
+- fix: rebuild hermes,([90d1730d2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/90d1730d2ed5252f2e53747e5511509f767108fa))
+- fix:Fix nested ScrollView scenario where scrolling inside causes the outer disableIntervalMomentum to not take effect.,([2d66c0953](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2d66c09537e6f5daf0f98cb9fb9b474e601c88ab))
+- fix: Resolve undeclared identifier isThread issue,([a1f5d7ad9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a1f5d7ad9a31fe48fcd331f5b78f86be2f97644f))
+- Fix: the issue where setting the 'needsOffscreenAlphaCompositing' of the 'SafeAreaView' component to 'true'  is not effective,([a17f43042](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a17f43042b13977ee591e26c1ea82df166c8d61d))
+- [chore]: updated to version 6.0.0.605(0.77.27),([d69046ef5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d69046ef558f916576474f08286c7eb38040c739))
+
 ## Internal: v0.77.27
 - feat: Support video frame extraction,([a50f91c0b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a50f91c0b9e471bbc15d6134135202c754af5b26))
 - fix some function to noexcept(false),([d0891d466](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d0891d46665b9b1d56599718aad4be4bdf73431e))

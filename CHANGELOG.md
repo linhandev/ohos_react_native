@@ -1,5 +1,25 @@
 # Changelog
 
+## Internal: v0.77.28
+- docs: usage of ALL_CONTAINERS_CLICKABLE.,([942678d51](https://gitcode.com/openharmony-sig/ohos_react_native/commit/942678d51532cea87e098d606c71c0fa25df64b5))
+- fix: noexcept revert,([89fc74721](https://gitcode.com/openharmony-sig/ohos_react_native/commit/89fc74721a074f3f5d23cb9cafb4f5c5b3fdb4db))
+- fix: a crash caused by multiple RNInstanceCoordinators,([7d7149355](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d7149355531d05a1aba18af4a1a2b8b82293b9f))
+- fix: the infinite loop caused by the error "Animated node with tag xxx does not exist".,([d7083d23e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d7083d23e9573c805196f813d5c1051c702e150c))
+- doc：Adjust the setup steps of AutolinkingSample.,([fb0571e5d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/fb0571e5d44490b64223ca2ee23cd948d45e89d2))
+- fix: rebuild hermes,([90d1730d2](https://gitcode.com/openharmony-sig/ohos_react_native/commit/90d1730d2ed5252f2e53747e5511509f767108fa))
+- fix:Fix nested ScrollView scenario where scrolling inside causes the outer disableIntervalMomentum to not take effect.,([2d66c0953](https://gitcode.com/openharmony-sig/ohos_react_native/commit/2d66c09537e6f5daf0f98cb9fb9b474e601c88ab))
+- fix: prevent multiple registerViewConfig calls for PropsDisplayer,([264811f8e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/264811f8e08e11b3301d3cc411211bf8d2298d71))
+- Add pickerIOS to tester61,([ba2fa4f9e](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ba2fa4f9e66b37cc566a6cfa72fa882b1d237fe3))
+- Fix alert ios typo in rn patch,([99891b89d](https://gitcode.com/openharmony-sig/ohos_react_native/commit/99891b89d68628a69bcbb4b639219d66e7e3c844))
+- Co-authored-by: luqi_tan<295099422@qq.com>,([23b429f31](https://gitcode.com/openharmony-sig/ohos_react_native/commit/23b429f31ab7ac0f1d73fe2e41cbc85dbc4b2a49))
+- Add push notification ios,([ec6aed7d4](https://gitcode.com/openharmony-sig/ohos_react_native/commit/ec6aed7d43c7071425a72c84a3d66871c0f5d3d9))
+- fix: Resolve undeclared identifier isThread issue,([a1f5d7ad9](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a1f5d7ad9a31fe48fcd331f5b78f86be2f97644f))
+- feat(interop-61): ProgressViewIOS,([a0a260806](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a0a26080614d0437254318685712a2193377563d))
+- feat(interop-61): Implement TimePickerAndroid,([19bd1cab1](https://gitcode.com/openharmony-sig/ohos_react_native/commit/19bd1cab1cd1382b501d3b68c65c020efc0ec4b6))
+- Include interop code generation in init-ws and remove generated files,([5fcc6783f](https://gitcode.com/openharmony-sig/ohos_react_native/commit/5fcc6783fc3072018da49e9a7524343c51de4795))
+- Fix: the issue where setting the 'needsOffscreenAlphaCompositing' of the 'SafeAreaView' component to 'true'  is not effective,([a17f43042](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a17f43042b13977ee591e26c1ea82df166c8d61d))
+- [chore]: updated to version 6.0.0.605(0.77.27),([d69046ef5](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d69046ef558f916576474f08286c7eb38040c739))
+
 ## Internal: v0.77.27
 - feat: Support video frame extraction,([a50f91c0b](https://gitcode.com/openharmony-sig/ohos_react_native/commit/a50f91c0b9e471bbc15d6134135202c754af5b26))
 - fix some function to noexcept(false),([d0891d466](https://gitcode.com/openharmony-sig/ohos_react_native/commit/d0891d46665b9b1d56599718aad4be4bdf73431e))
