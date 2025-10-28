@@ -1,5 +1,9 @@
 # Changelog
 
+## Internal: v0.77.29
+- Revert: fix libjsvm.so Mapping error,([b292b51b0](https://gitcode.com/openharmony-sig/ohos_react_native/commit/b292b51b036373af16f3321cac8a7edb3e19be58))
+- [chore]: updated to version 6.0.1.111 (0.77.28),([7f8455d30](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7f8455d30052222f2c7a42c26c6f21a7a1b31c55))
+
 ## Internal: v0.77.28
 - fix: noexcept revert,([89fc74721](https://gitcode.com/openharmony-sig/ohos_react_native/commit/89fc74721a074f3f5d23cb9cafb4f5c5b3fdb4db))
 - fix: a crash caused by multiple RNInstanceCoordinators,([7d7149355](https://gitcode.com/openharmony-sig/ohos_react_native/commit/7d7149355531d05a1aba18af4a1a2b8b82293b9f))

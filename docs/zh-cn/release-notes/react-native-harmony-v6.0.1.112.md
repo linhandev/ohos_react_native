@@ -4,8 +4,8 @@
 
 | 名称                          | 版本号                            |
 | ----------------------------- | -------------------------------|
-| react-native-harmony.tgz        | 0.77.28 |
-| react-native-harmony-cli.tgz    | 0.77.28 |
+| react-native-harmony.tgz        | 0.77.29 |
+| react-native-harmony-cli.tgz    | 0.77.29 |
 
 配套IDE、SDK版本和手机ROM:
 
