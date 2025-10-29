@@ -244,6 +244,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: '[RNOH] TouchableOpacity interop test',
     module: require('../examples/Interop/TouchableOpacityInteropTest'),
   },
+  {
+    key: '[RNOH] Date parsing behavior',
+    module: require('../examples/Interop/DateParsingInteropTest'),
+  },
 ];
 
 const Modules = {};

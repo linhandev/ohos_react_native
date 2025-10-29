@@ -57,4 +57,4 @@ export function getImageSourcesFromImageProps(imageProps) {
 ### Notes:
 - Do not import from this interop package inside interop files; import only from `@react-native-oh/react-native-harmony/...` to avoid cycles.
 - Mirror the file layout of `@react-native-oh/react-native-harmony` under this package.
-- Wrappers import from `@react-native-oh/react-native-harmony` and re-export a compatible API for RN 0.61.
+- Wrappers import from `@react-native-oh/react-native-harmony` and re-export a compatible API for RN 0.61'.
