@@ -22,6 +22,9 @@ import { RNDatePickerAndroidModule } from "./turboModules/RNDatePickerAndroid";
 import { RNTimePickerAndroidModule } from "./turboModules/RNTimePickerAndroid";
 import { RNPushNotificationIOS } from "./turboModules/push_notification_ios/RNPushNotificationIOS"
 import { RNPickerIOS } from "./components/RNPickerIOS"
+import { RNSlider } from "./components/RNSlider"
+import { RNSlider as RNSliderPatched } from "./patched/RNSlider"
+
 import { RNC } from "./generated"
 
 export default class ReactHarmony61InteropPackage extends RNOHPackage {
@@ -34,6 +37,7 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
     result.set(RNProgressView.NAME, wrapBuilder(buildRNProgressView))
     result.set(RNSegmentedControl.NAME, wrapBuilder(buildRNSegmentedControl))
     result.set(RNPickerIOS.NAME, wrapBuilder(buildRNPickerIOS))
+    result.set(RNSlider.NAME, wrapBuilder(buildRNSlider))
     return result;
   }
 
@@ -54,6 +58,7 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
     result[RNC.RNProgressView.NAME] = (ctx) => new RNC.RNProgressView.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNSegmentedControl.NAME] = (ctx) => new RNC.RNSegmentedControl.DescriptorWrapper(ctx.descriptor)
     result[RNC.RNPickerIOS.NAME] = (ctx) => new RNC.RNPickerIOS.DescriptorWrapper(ctx.descriptor)
+    result[RNC.RNSlider.NAME] = (ctx) => new RNSliderPatched.DescriptorWrapper(ctx.descriptor)
     return result;
   }
 }
@@ -61,6 +66,14 @@ export default class ReactHarmony61InteropPackage extends RNOHPackage {
 @Builder
 function buildRNCheckBox(ctx: ComponentBuilderContext) {
   RNCheckBox({
+    ctx: ctx.rnComponentContext,
+    tag: ctx.tag,
+  })
+}
+
+@Builder
+function buildRNSlider(ctx: ComponentBuilderContext) {
+  RNSlider({
     ctx: ctx.rnComponentContext,
     tag: ctx.tag,
   })

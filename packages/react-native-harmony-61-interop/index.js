@@ -336,6 +336,9 @@ module.exports = {
   },
   get PushNotificationIOS() {
     return require('./Libraries/Components/PushNotificationIOS/PushNotificationIOS').default;
-  }
+  },
+  get Slider() {
+    return require('./Libraries/Components/Slider/Slider').default;
+  },
   // END: 61 specific exports
 };
