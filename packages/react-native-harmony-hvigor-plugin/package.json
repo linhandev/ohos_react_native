@@ -16,7 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "glob": "^11.0.1",
+    "glob": "^11.1.0",
     "json5": "^2.2.3"
   },
   "devDependencies": {
